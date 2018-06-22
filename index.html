@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+        <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png">
+        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png">
+        <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <meta property="og:site_name" content="PSDE"/>
+        <meta property="og:title" content="Pack Street Development Edition"/>
+        <meta property="og:description" content="A development environment for a Pack Street game."/>
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:image" content="https://ztg.zapto.org/favicon.png"/>
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:height" content="512"/>
+        <meta property="og:image:width" content="512"/>
+        <meta property="og:url" content="https://ztg.zapto.org/"/>
+        <title>Pack Street Development Edition</title>
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #canvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" oncontextmenu="return false;"></canvas>
+        <script src="vendors/jquery/jquery-3.2.1.min.js"></script>
+        <script src="vendors/cannonjs/cannon.min.js"></script>
+        <script src="vendors/babylonjs/babylon.min.js"></script>
+        <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+        <script src="resources/js/Game.js"></script>
+        <script src="resources/js/CharacterController.js"></script>
+        <script src="resources/js/NetworkController.js"></script>
+        <script src="resources/js/MessageRouter.js"></script>
+        <script src="resources/js/Client.js"></script>
+        <script src="resources/js/mainBabylon.js"></script>
+    </body>
+</html>
