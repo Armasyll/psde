@@ -442,6 +442,7 @@ function generateApartmentScene() {
     Game.addItemMesh("cross", "crossInstance01", {mass:0.8,restitution:0.1}, {x:10, y:2, z:-22});
     Game.addItemMesh("plate", "planeInstance01", {mass:0.8,restitution:0.1}, {x:9.7, y:2, z:-22});
     Game.addItemMesh("plate", "plateInstance02", {mass:0.8,restitution:0.1}, {x:10.3, y:2, z:-22});
+    Game.addItemMesh("bookHardcoverClosed01", "packstreet23StrangeNewDay", {mass:0.8,restitution:0.1}, {x:10.3, y:1, z:-23}, {x:0, y:180, z:0});
 
     Game.addMesh("wall", undefined,                 {x:0, y:0, z:-24}, {x:0, y:-90, z:0});
     Game.addMesh("corner", undefined,               {x:4, y:0, z:-24}, {x:0, y:180, z:0});
