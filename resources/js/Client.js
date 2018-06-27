@@ -103,12 +103,12 @@ class Client {
             content: "lemme in :v"
         });
     }
-    static sendPublicChatMessage(_message) {
+    static sendChatMessage(_message) {
         if (!Client.online) {
             return null;
         }
         Client.sendMessage({
-            type: "P_PUBLIC_CHAT_MESSAGE",
+            type: "P_CHAT_MESSAGE",
             content: _message
         });
     }

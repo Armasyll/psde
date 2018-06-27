@@ -75,15 +75,22 @@ class Game {
         if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
         this.camera = new BABYLON.ArcRotateCamera(
             "camera",
-            0,
-            0,
+            -this.player.rotation.y-4.69,
+            Math.PI/2.5,
             3,
-            this.player,
+            new BABYLON.Vector3(this.player.position.x, (1.2 * this.player.scaling.y), this.player.position.z),
             this.scene);
-        this.camera.attachControl(this.canvas, true);
         this.camera.setPosition(new BABYLON.Vector3(0, 0, 3));
+        this.camera.checkCollisions = true;
+        this.camera.wheelPrecision = 10;
         this.camera.upperRadiusLimit = 3;
         this.camera.lowerRadiusLimit = 1;
+        this.camera.keysLeft=[];
+        this.camera.keysRight=[];
+        this.camera.keysUp=[];
+        this.camera.keysDown=[];
+        this.camera.attachControl(this.canvas, false);
+
         this.camera.minZ = 0.001;
         this.camera.lockedTarget = this.player.characterController.getMeshAttachedToBone("FOCUS"); // Why this and not the thirdEye? The third eye causes jittering of the rendered frame 'cause it moves
         this.hideCrosshair();
