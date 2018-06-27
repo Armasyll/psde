@@ -19,7 +19,6 @@ class CharacterController {
         this.moveForward = false;
         this.moveBackward = false;
         this.runForward = false;
-        this.runBackward = false;
         this.strafeRight = false;
         this.strafeLeft = false;
         this.turnRight = false;
@@ -44,11 +43,10 @@ class CharacterController {
     getNetworkID() {
         return this.networkID;
     }
-    setMovementStatus(_moveForward = false, _moveBackward = false, _runForward = false, _runBackward = false, _strafeRight = false, _strafeLeft = false, _turnRight = false, _turnLeft = false, _jump = false) {
+    setMovementStatus(_moveForward = false, _moveBackward = false, _runForward = false, _strafeRight = false, _strafeLeft = false, _turnRight = false, _turnLeft = false, _jump = false) {
         this.moveForward = _moveForward;
         this.moveBackward = _moveBackward;
         this.runForward = _runForward;
-        this.runBackward = _runBackward;
         this.strafeRight = _strafeRight;
         this.strafeLeft = _strafeLeft;
         this.turnRight = _turnRight;
@@ -203,7 +201,6 @@ class CharacterController {
         this.moveForward = true;
         this.moveBackward = false;
         this.runForward = false;
-        this.runBackward = false;
         if (this.networkID != undefined) {Client.updateLocRotSelf();}
     }
     doRunForward() {
@@ -213,7 +210,6 @@ class CharacterController {
         this.moveForward = false;
         this.moveBackward = false;
         this.runForward = true;
-        this.runBackward = false;
         if (this.networkID != undefined) {Client.updateLocRotSelf();}
     }
     _doMoveBackwardPhysics(_multiplier = 0.7) {
@@ -241,7 +237,6 @@ class CharacterController {
         this.moveBackward = true;
         this.moveForward = false;
         this.runForward = false;
-        this.runBackward = false;
         if (this.networkID != undefined) {Client.updateLocRotSelf();}
     }
     _doTurnLeftPhysics(_multiplier = 1.0) {
