@@ -188,7 +188,7 @@ class CharacterController {
         this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
         this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
         this.moveFallTime = this.moveFallTime + this.dt;
-        this.moveDistance = (0.54 * this.mesh.scaling.z * _multiplier) * this.dt; // 0.54 is the furthest distance between the rear foot's heel, and the front foot's toe
+        this.moveDistance = (0.72 * this.mesh.scaling.z * _multiplier) * this.dt; // 0.72 is the furthest distance between the rear foot's heel, and the front foot's toe
         this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, -this.moveDistance);
         if (this.moveVector.length() > 0.001) {
             this.mesh.moveWithCollisions(this.moveVector);
@@ -224,7 +224,7 @@ class CharacterController {
         this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
         this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
         this.moveFallTime = this.this.moveFallTime + this.dt;
-        this.moveDistance = (0.54 * this.mesh.scaling.z * _multiplier) * this.dt;
+        this.moveDistance = (0.72 * this.mesh.scaling.z * _multiplier) * this.dt;
         this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, this.moveDistance);
         if (this.moveVector.length() > 0.001) {
             this.mesh.moveWithCollisions(this.moveVector);

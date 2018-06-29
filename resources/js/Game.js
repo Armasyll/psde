@@ -139,7 +139,7 @@ class Game {
     static initKeyboardControls() {
         if (Game.debugEnabled) console.log("Running initKeyboardControls");
         this.keyboardControls['W'] = "Game.player.characterController.doRunForward()";
-        this.keyboardControls['w'] = "Game.player.characterController.doMoveForward(1.2)";
+        this.keyboardControls['w'] = "Game.player.characterController.doMoveForward()";
         this.keyboardControls['s'] = "Game.player.characterController.doMoveBackward()";
         //this.keyboardControls['A'] = "Game.player.characterController.doStrafeLeft()";
         this.keyboardControls['a'] = "Game.player.characterController.doTurnLeft()";
