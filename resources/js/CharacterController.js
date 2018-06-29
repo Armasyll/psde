@@ -183,12 +183,12 @@ class CharacterController {
             -Math.cos(this.mesh.physicsImposter.physicsBody.getQuaternion().y))
         );
     }
-    _doMoveForwardCollisions(_multiplier = 1.2) {
+    _doMoveForwardCollisions(_multiplier = 1) {
         this.u = this.moveFallTime * -Game.scene.gravity.y;
         this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
         this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
         this.moveFallTime = this.moveFallTime + this.dt;
-        this.moveDistance = this.mesh.getBoundingInfo().boundingBox.extendSize.y * _multiplier * this.dt;
+        this.moveDistance = (0.54 * this.mesh.scaling.z * _multiplier) * this.dt; // 0.54 is the furthest distance between the rear foot's heel, and the front foot's toe
         this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, -this.moveDistance);
         if (this.moveVector.length() > 0.001) {
             this.mesh.moveWithCollisions(this.moveVector);
@@ -223,8 +223,8 @@ class CharacterController {
         this.u = this.moveFallTime * -Game.scene.gravity.y;
         this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
         this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
-        this.moveFallTime = this.freeFallDistance + this.dt;
-        this.moveDistance = this.mesh.getBoundingInfo().boundingBox.extendSize.y * _multiplier * this.dt;
+        this.moveFallTime = this.this.moveFallTime + this.dt;
+        this.moveDistance = (0.54 * this.mesh.scaling.z * _multiplier) * this.dt;
         this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, this.moveDistance);
         if (this.moveVector.length() > 0.001) {
             this.mesh.moveWithCollisions(this.moveVector);

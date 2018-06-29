@@ -52,7 +52,7 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems) {
                 if (Game.debugEnabled) console.log("Finished loading assets.");
                 generateApartmentScene();
-                Game.initPlayer("foxSkeletonN", 1);
+                Game.initPlayer("foxM", 1);
                 Game._finishedLoading = true;
 
                 for (var _key in Game.keyboardControls) {
@@ -73,20 +73,6 @@ window.addEventListener("DOMContentLoaded", function() {
     });
 
     Game.scene.registerBeforeRender(function() {
-        for (var _i in Game.characterInstances) {
-            if (Game.characterInstances[_i].characterController instanceof CharacterController) {
-                if (Game.characterInstances[_i].characterController.moveForward || Game.characterInstances[_i].characterController.moveBackward) {
-                    Game.characterInstances[_i].characterController.stopAnimation("80_idle01");
-                    Game.characterInstances[_i].characterController.runAnimation("93_walkingKneesBent", 1.0, 1.2);
-                }
-                else {
-                    Game.characterInstances[_i].characterController.stopAnimation("93_walkingKneesBent");
-                    Game.characterInstances[_i].characterController.runAnimation("80_idle01");
-                }
-            }
-        };
-    });
-    Game.scene.registerAfterRender(function() {
         if (!(Game.player instanceof BABYLON.Mesh) || !(Game.player.characterController instanceof CharacterController))
             return null;
         for (var _key in Game.keyboardControls) {
@@ -134,6 +120,20 @@ window.addEventListener("DOMContentLoaded", function() {
                 }
             }
         }
+        for (var _i in Game.characterInstances) {
+            if (Game.characterInstances[_i].characterController instanceof CharacterController) {
+                if (Game.characterInstances[_i].characterController.moveForward || Game.characterInstances[_i].characterController.moveBackward) {
+                    Game.characterInstances[_i].characterController.stopAnimation("80_idle01");
+                    Game.characterInstances[_i].characterController.runAnimation("93_walkingKneesBent", 1.0, 1.2);
+                }
+                else {
+                    Game.characterInstances[_i].characterController.stopAnimation("93_walkingKneesBent");
+                    Game.characterInstances[_i].characterController.runAnimation("80_idle01");
+                }
+            }
+        };
+    });
+    Game.scene.registerAfterRender(function() {
     });
 });
 
