@@ -176,7 +176,7 @@ class CharacterController {
     doAttachRightHand() {
 
     }
-    _doMoveForwardPhysics(_multiplier = 1.2) {
+    _doMoveForwardPhysics(_multiplier = 1) {
         this.mesh.physicsImposter.setLinearVelocity(new BABYLON.Vector3(
             -Math.sin(this.mesh.physicsImposter.physicsBody.getQuaternion().y),
             Game.scene.gravity.y,
@@ -194,7 +194,7 @@ class CharacterController {
             this.mesh.moveWithCollisions(this.moveVector);
         }
     }
-    doMoveForward(_multiplier = 1.2) {
+    doMoveForward(_multiplier = 1) {
         if (Game.debugEnabled) console.log("Running doMoveForward");
         if (Game.physicsEnabled) {this._doMoveForwardPhysics(_multiplier);}
         else {this._doMoveForwardCollisions(_multiplier);}
