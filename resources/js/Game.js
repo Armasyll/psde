@@ -306,7 +306,7 @@ class Game {
             _instance.ellipsoid = new BABYLON.Vector3(0.13 * _scale.x, 1.2 * _scale.y, 0.13 * _scale.z);
             _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y + (_instance.ellipsoid.y * 0.06), 0);
         }
-        _instance.characterController = new CharacterController(_meshID, _instance);
+        _instance.characterController = new CharacterController(_instance, _meshID);
         return _instance;
     }
     static removeMesh(_mesh) {

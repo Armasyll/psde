@@ -1,5 +1,5 @@
 class CharacterController {
-    constructor(_meshID, _mesh) {
+    constructor(_mesh, _meshID) {
         _meshID = Game.filterID(_meshID);
         if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
         if (!_mesh instanceof BABYLON.Mesh || !_mesh.skeleton instanceof BABYLON.Skeleton) return null;
@@ -205,8 +205,8 @@ class CharacterController {
     }
     doRunForward() {
         if (Game.debugEnabled) console.log("Running doRunForward");
-        if (Game.physicsEnabled) {this._doMoveForwardPhysics(_multiplier);}
-        else {this._doMoveForwardCollisions(_multiplier);}
+        if (Game.physicsEnabled) {this._doMoveForwardPhysics(2.4);}
+        else {this._doMoveForwardCollisions(2.4);}
         this.moveForward = false;
         this.moveBackward = false;
         this.runForward = true;
