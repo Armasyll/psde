@@ -52,14 +52,12 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems) {
                 if (Game.debugEnabled) console.log("Finished loading assets.");
 
-                for (var _characterIndex in Game.characterModels) {
-                    var _character = Game.characterModels[_characterIndex];
-                    var _animationRange = _character.skeleton.getAnimationRanges();
-                    for (var _i = 0; _i < _animationRange.length; _i++) {
-                        if (_animationRange[_i].to - _animationRange[_i].from > 2) {
-                            _animationRange[_i].from = _animationRange[_i].from + 1;
-                            _animationRange[_i].to = _animationRange[_i].to - 1;
-                        }
+                var _character = Game.characterModels["nullSkeletonN"];
+                var _animationRange = _character.skeleton.getAnimationRanges();
+                for (var _i = 0; _i < _animationRange.length; _i++) {
+                    if (_animationRange[_i].to - _animationRange[_i].from > 2) {
+                        _animationRange[_i].from++;
+                        _animationRange[_i].to--;
                     }
                 }
 

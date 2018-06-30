@@ -15,7 +15,7 @@ class CharacterController {
         this.name = "";
         this.networkID = null;
 
-        this.walkSpeed = 0.72 * this.avatar.scaling.z;
+        this.walkSpeed = 0.62 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 2;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.walkSpeed * 2;
@@ -73,6 +73,8 @@ class CharacterController {
         this.setWalkAnim("93_walkingKneesBent", 1, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
         this.setIdleAnim("80_idle01", 1, true);
+        this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
+        this.setTurnRightAnim("93_walkingKneesBent", 1, true);
 
         this.attachedMeshes = {};
         Game.controllerInstances[this.id] = this;
