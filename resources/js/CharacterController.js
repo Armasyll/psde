@@ -213,6 +213,9 @@ class CharacterController {
         if (!(this.avatar instanceof BABYLON.Mesh)) {
             return undefined;
         }
+        if (Client.online) {
+            Client.updateMovementKeysSelf();
+        }
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
@@ -234,13 +237,15 @@ class CharacterController {
                 if (this.skeleton !== null) {
                     if (this.prevAnim !== anim) {
                         if (anim.exist) {
-                            var range = this.skeleton.getAnimationRange(anim.name);
-                            Game.scene.beginAnimation(this.avatar, range.from + 1, range.to - 1, anim.loop, anim.rate);
+                            this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
                         }
                         this.prevAnim = anim;
                     }
                 }
             }
+        }
+        if (Client.online) {
+            Client.updateLocRotScaleSelf();
         }
     }
     doJump(dt) {
@@ -285,9 +290,6 @@ class CharacterController {
                 }
             }
         }
-        if (this.networkID != undefined) {
-            Client.updateLocRotScaleSelf();
-        }
         return anim;
     }
     endJump() {
@@ -295,9 +297,6 @@ class CharacterController {
         this.jumpTime = 0;
         this.wasWalking = false;
         this.wasRunning = false;
-        if (this.networkID != undefined) {
-            Client.updateLocRotScaleSelf();
-        }
     }
     areVectorsEqual(v1, v2, p) {
         return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
@@ -421,18 +420,12 @@ class CharacterController {
                 }
             }
         }
-        if (this.networkID != undefined) {
-            Client.updateLocRotScaleSelf();
-        }
         return anim;
     }
     endFreeFall() {
         this.movFallTime = 0;
         this.fallFrameCount = 0;
         this.inFreeFall = false;
-        if (this.networkID != undefined) {
-            Client.updateLocRotScaleSelf();
-        }
     }
     doIdle(dt) {
         if (this.grounded) {
@@ -471,9 +464,6 @@ class CharacterController {
                     anim = this.slideBack;
                 }
             }
-        }
-        if (this.networkID != undefined) {
-            Client.updateLocRotScaleSelf();
         }
         return anim;
     }

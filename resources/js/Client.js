@@ -141,10 +141,21 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-            	Game.player.avatar.position,
+                Game.player.avatar.position,
                 Game.player.avatar.rotation,
                 Game.player.avatar.scaling,
-            	Game.player.key
+                Game.player.key
+            ]
+        });
+    }
+    static updateMovementKeysSelf() {
+        if (!Client.online) {
+            return null;
+        }
+        Client.sendMessage({
+            type: "P_UPDATE_MOVEMENTKEYS_SELF",
+            content: [
+                Game.player.key
             ]
         });
     }

@@ -177,7 +177,6 @@ class Game {
         this.useSelectedItem = 82;
     }
     static controlCharacterOnKeyDown(event) {
-        console.log(event);
         if (event === this.jumpCode)
             this.player.keyJump(true);
         else if (event === 16)
@@ -441,8 +440,9 @@ class Game {
         else if (typeof _meshNames == "array") {
             _meshNames = _meshNames.join('"');
         }
-        else
+        else {
             _meshNames = "";
+        }
         BABYLON.SceneLoader.ImportMesh(
             _meshNames, // meshNames
             "resources/data/", // rootUrl
@@ -457,7 +457,7 @@ class Game {
                     if (!(_meshes[_i].material instanceof BABYLON.Material))
                         _meshes[_i].material = new BABYLON.StandardMaterial("", Game.scene);
                     //_meshes[_i].material.freeze();
-                    _importedMeshes.push(_meshes[_i]);
+                    _importedMeshes[_meshes[_i].id] = _meshes[_i];
                     if (_skeletons[_i] != undefined) {
                         _meshes[_i].skeleton = _skeletons[_i];
                         _meshes[_i].skeleton.position = _meshes[_i].position;
@@ -798,6 +798,14 @@ class Game {
         else {
             return undefined;
         }
+    }
+    static createCharacter(_meshID, _id = undefined, _options = {mass:0.8,restitution:0.1}, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
+        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) _meshID = "foxSkeletonN";
+        if (typeof _id != "string") _id = genUUIDv4();
+        if (typeof _options != "object") _options = {mass:0.8,restitution:0.1};
+        var _mesh = Game.addCharacterMesh(_meshID, _id, _options, _position, _rotation, _scale);
+        var _character = new CharacterController(_mesh, _meshID);
+        return _character;
     }
     static deleteCharacter(_character) {
         _character = Game.getMesh(_character);

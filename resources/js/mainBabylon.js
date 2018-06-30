@@ -51,6 +51,18 @@ window.addEventListener("DOMContentLoaded", function() {
         if (!Game._finishedLoading) {
             if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems) {
                 if (Game.debugEnabled) console.log("Finished loading assets.");
+
+                for (var _characterIndex in Game.characterModels) {
+                    var _character = Game.characterModels[_characterIndex];
+                    var _animationRange = _character.skeleton.getAnimationRanges();
+                    for (var _i = 0; _i < _animationRange.length; _i++) {
+                        if (_animationRange[_i].to - _animationRange[_i].from > 2) {
+                            _animationRange[_i].from = _animationRange[_i].from + 1;
+                            _animationRange[_i].to = _animationRange[_i].to - 1;
+                        }
+                    }
+                }
+
                 generateApartmentScene();
                 Game.initPlayer("foxM", 1);
                 Game._finishedLoading = true;
@@ -410,16 +422,10 @@ function generateApartmentScene() {
     Game.addMesh("wall", undefined,                 {x:12, y:0, z:-28});
     Game.addMesh("wall", undefined,                 {x:14, y:0, z:-28});
 
-    rosie = Game.addCharacterMesh("foxF", "Rosie", undefined, {x:2.5, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
-    charlie = Game.addCharacterMesh("foxF", "Charlie", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
-    _corsacMaterial = new BABYLON.StandardMaterial();
-    _corsacMaterial.diffuseTexture = new BABYLON.Texture("/resources/data/foxCorsac.png");
-    _corsacMaterial.specularColor.set(0,0,0);
-    charlie.material = _corsacMaterial;
-    Game.addCharacterMesh("foxM", "Nick", undefined, {x:3.5, y:0, z:-19});
-    Game.addCharacterMesh("foxSkeletonN", "Fox Skeleton", undefined, {x:4, y:0, z:-19});
-    Game.addCharacterMesh("foxSkeletonM", "Fox Neutered Skeleton", undefined, {x:4.5, y:0, z:-19});
-    Game.addCharacterMesh("nullSkeletonN", "Null Neutered Skeleton", undefined, {x:5, y:0, z:-19});
-    //Game.camera.position.set(3.6193964911424654, 0.6644999999999996, -17.102033408967316);
-    //Game.camera.rotation.set(0.01304271019466829, 3.0824392834662313, 0);
+    rosie = Game.createCharacter("foxF", "Rosie", undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
+    charlie = Game.createCharacter("foxF", "Charlie", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
+        _corsacMaterial = new BABYLON.StandardMaterial();
+        _corsacMaterial.diffuseTexture = new BABYLON.Texture("/resources/data/foxCorsac.png");
+        _corsacMaterial.specularColor.set(0,0,0);
+        charlie.avatar.material = _corsacMaterial;
 }
