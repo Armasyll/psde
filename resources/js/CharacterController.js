@@ -352,13 +352,13 @@ class CharacterController {
         }
         if (!this.key.strafeLeft && !this.key.strafeRight) {
             if (this.key.turnLeft) {
-                this.avatar.addRotation(0, -this.avatar.scaling.y * 0.025, 0);
+                this.avatar.addRotation(0, -this.avatar.scaling.y * 0.05, 0);
                 if (!moving) {
                     anim = this.turnLeft;
                 }
             }
             else if (this.key.turnRight) {
-                this.avatar.addRotation(0, this.avatar.scaling.y * 0.025, 0);
+                this.avatar.addRotation(0, this.avatar.scaling.y * 0.05, 0);
                 if (!moving) {
                     anim = this.turnRight;
                 }
@@ -614,7 +614,6 @@ class CharacterController {
         if (_pressed === true) {
             this.key.forward = true;
             this.key.backward = false;
-            this.key.shift = false;
         }
         else {
             this.key.forward = false;
