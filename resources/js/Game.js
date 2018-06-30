@@ -145,6 +145,10 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
+        this.interfaceFocusedEntity = 69;
+        this.useFocusedEntity = 0;
+        this.interfaceSelectedItem = 0;
+        this.useSelectedItem = 82;
     }
     static initDvorakKeyboardControls() {
         this.walkCode = 188;
@@ -154,6 +158,10 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
+        this.interfaceFocusedEntity = 190;
+        this.useFocusedEntity = 0;
+        this.interfaceSelectedItem = 0;
+        this.useSelectedItem = 80;
     }
     static initAzertyKeyboardControls() {
         this.walkCode = 90;
@@ -163,6 +171,10 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
+        this.interfaceFocusedEntity = 69;
+        this.useFocusedEntity = 0;
+        this.interfaceSelectedItem = 0;
+        this.useSelectedItem = 82;
     }
     static controlCharacterOnKeyDown(event) {
         console.log(event);
