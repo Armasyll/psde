@@ -1,3 +1,7 @@
+/**
+ * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
+ * It's great :v you should check it out.
+ */
 class CharacterController {
     constructor(_avatar, _meshID) {
         _meshID = Game.filterID(_meshID);
