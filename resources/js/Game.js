@@ -138,13 +138,6 @@ class Game {
         return this.player;
     }
     static initQwertyKeyboardControls() {
-        this.walkKey = "W";
-        this.walkBackKey = "S";
-        this.turnLeftKey = "A";
-        this.turnRightKey = "D";
-        this.strafeLeftKey = "Shift+A";
-        this.strafeRightKey = "Shift+D";
-        this.jumpKey = " ";
         this.walkCode = 87;
         this.walkBackCode = 83;
         this.turnLeftCode = 0;
@@ -154,13 +147,6 @@ class Game {
         this.jumpCode = 32;
     }
     static initDvorakKeyboardControls() {
-        this.walkKey = ",";
-        this.walkBackKey = "O";
-        this.turnLeftKey = "A";
-        this.turnRightKey = "E";
-        this.strafeLeftKey = "Shift+A";
-        this.strafeRightKey = "Shift+E";
-        this.jumpKey = " ";
         this.walkCode = 188;
         this.walkBackCode = 73;
         this.turnLeftCode = 0;
@@ -170,13 +156,6 @@ class Game {
         this.jumpCode = 32;
     }
     static initAzertyKeyboardControls() {
-        this.walkKey = "Z";
-        this.walkBackKey = "S";
-        this.turnLeftKey = "Q";
-        this.turnRightKey = "D";
-        this.strafeLeftKey = "Shift+Q";
-        this.strafeRightKey = "Shift+D";
-        this.jumpKey = " ";
         this.walkCode = 90;
         this.walkBackCode = 83;
         this.turnLeftCode = 0;
@@ -186,42 +165,41 @@ class Game {
         this.jumpCode = 32;
     }
     static controlCharacterOnKeyDown(event) {
-        var chr = String.fromCharCode(event);
-        if ((chr === this.jumpKey) || (event.keyCode === this.jumpCode))
+        console.log(event);
+        if (event === this.jumpCode)
             this.player.keyJump(true);
         else if (event === 16)
             this.player.keyShift(true);
-        else if ((chr === this.walkKey) || (event.keyCode === this.walkCode))
+        else if (event === this.walkCode)
             this.player.keyMoveForward(true);
-        else if ((chr === this.turnLeftKey) || (event.keyCode === this.turnLeftCode))
+        else if (event === this.turnLeftCode)
             this.player.keyTurnLeft(true);
-        else if ((chr === this.turnRightKey) || (event.keyCode === this.turnRightCode))
+        else if (event === this.turnRightCode)
             this.player.keyTurnRight(true);
-        else if ((chr === this.walkBackKey) || (event.keyCode === this.walkBackCode))
+        else if (event === this.walkBackCode)
             this.player.keyMoveBackward(true);
-        else if ((chr === this.strafeLeftKey) || (event.keyCode === this.strafeLeftCode))
+        else if (event === this.strafeLeftCode)
             this.player.keyStrafeLeft(true);
-        else if ((chr === this.strafeRightKey) || (event.keyCode === this.strafeRightCode))
+        else if (event === this.strafeRightCode)
             this.player.keyStrafeRight(true);
         this.player.move = this.player.anyMovement();
     }
     static controlCharacterOnKeyUp(event) {
-        var chr = String.fromCharCode(event);
-        if ((chr === this.jumpKey) || (event.keyCode === this.jumpCode))
+        if (event === this.jumpCode)
             this.player.keyJump(false);
         else if (event === 16)
             this.player.keyShift(false);
-        else if ((chr === this.walkKey) || (event.keyCode === this.walkCode))
+        else if (event === this.walkCode)
             this.player.keyMoveForward(false);
-        else if ((chr === this.turnLeftKey) || (event.keyCode === this.turnLeftCode))
+        else if (event === this.turnLeftCode)
             this.player.keyTurnLeft(false);
-        else if ((chr === this.turnRightKey) || (event.keyCode === this.turnRightCode))
+        else if (event === this.turnRightCode)
             this.player.keyTurnRight(false);
-        else if ((chr === this.walkBackKey) || (event.keyCode === this.walkBackCode))
+        else if (event === this.walkBackCode)
             this.player.keyMoveBackward(false);
-        else if ((chr === this.strafeLeftKey) || (event.keyCode === this.strafeLeftCode))
+        else if (event === this.strafeLeftCode)
             this.player.keyStrafeLeft(false);
-        else if ((chr === this.strafeRightKey) || (event.keyCode === this.strafeRightCode))
+        else if (event === this.strafeRightCode)
             this.player.keyStrafeRight(false);
         this.player.move = this.player.anyMovement();
     }
