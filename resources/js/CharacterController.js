@@ -71,6 +71,7 @@ class CharacterController {
         this.renderer = function () { _this.moveAV(); };
 
         this.setWalkAnim("93_walkingKneesBent", 1, true);
+        this.setRunAnim("93_walkingKneesBent", 1, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
         this.setIdleAnim("80_idle01", 1, true);
         this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
@@ -631,7 +632,6 @@ class CharacterController {
         if (_pressed === true) {
             this.key.backward = true;
             this.key.forward = false;
-            this.key.shift = false;
         }
         else {
             this.key.backward = false;
