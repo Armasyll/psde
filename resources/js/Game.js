@@ -811,7 +811,10 @@ class Game {
     }
     static deleteCharacter(_character) {
         _character = Game.getMesh(_character);
-        if (!_character.hasOwnProperty("characterController")) {
+        if (_character instanceof CharacterController) {
+            _character = _character.avatar;
+        }
+        else if (!_character.hasOwnProperty("characterController")) {
             return undefined;
         }
         delete Game.characterInstances[_character.id];

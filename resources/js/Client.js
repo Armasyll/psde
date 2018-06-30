@@ -20,7 +20,7 @@ class Client {
 	}
     static setPlayerEntry(_networkID) {
     	console.log("Client::setPlayerEntry(" + _networkID + ")");
-        this.setEntry(Game.player.characterController, _networkID);
+        this.setEntry(Game.player, _networkID);
     }
     static setEntry(_character, _networkID) {
     	console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
@@ -34,15 +34,12 @@ class Client {
         this.networkCharacterMap[_networkID] = _character;
         _character.setNetworkID(_networkID);
     }
-    static getNetworkID(_character = Game.player.characterController) {
+    static getNetworkID(_character = Game.player) {
     	if (_character instanceof CharacterController) {
     		return _character.networkID;
     	}
     	else if (typeof _character == "string" && _character.length == 36) {
 			return Client.getCharacterByID(_character).networkID;
-    	}
-    	else if (_character.hasOwnProperty("characterController") && _character.characterController instanceof CharacterController) {
-    		return _character.characterController.networkID;
     	}
     	else {
     		return undefined;
@@ -128,41 +125,26 @@ class Client {
         Client.sendMessage({
             type: "P_INIT_SELF",
             content: {
-            	id:Game.player.characterController.id,
-                mesh:Game.player.characterController.meshID,
-                position:Game.player.position,
-                rotation:Game.player.rotation,
-                scaling:Game.player.scaling,
-            	moveForward:Game.player.characterController.moveForward,
-				moveBackward:Game.player.characterController.moveBackward,
-				runForward:Game.player.characterController.runForward,
-				runBackward:Game.player.characterController.runBackward,
-				strafeRight:Game.player.characterController.strafeRight,
-				strafeLeft:Game.player.characterController.strafeLeft,
-				turnRight:Game.player.characterController.turnRight,
-				turnLeft:Game.player.characterController.turnLeft,
-				jump:Game.player.characterController.jump
+            	id:Game.player.id,
+                mesh:Game.player.meshID,
+                position:Game.player.avatar.position,
+                rotation:Game.player.avatar.rotation,
+                scaling:Game.player.avatar.scaling,
+            	movementKeys:Game.player.key
 			}
         });
     }
-    static updateLocRotSelf() {
+    static updateLocRotScaleSelf() {
         if (!Client.online) {
             return null;
         }
         Client.sendMessage({
-            type: "P_UPDATE_LOCROT_SELF",
+            type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-            	Game.player.position,
-            	Game.player.rotation,
-            	Game.player.characterController.moveForward,
-				Game.player.characterController.moveBackward,
-				Game.player.characterController.runForward,
-				Game.player.characterController.runBackward,
-				Game.player.characterController.strafeRight,
-				Game.player.characterController.strafeLeft,
-				Game.player.characterController.turnRight,
-				Game.player.characterController.turnLeft,
-				Game.player.characterController.jump
+            	Game.player.avatar.position,
+                Game.player.avatar.rotation,
+                Game.player.avatar.scaling,
+            	Game.player.key
             ]
         });
     }

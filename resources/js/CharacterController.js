@@ -10,6 +10,7 @@ class CharacterController {
 
         this.meshID = _meshID;
         this.avatar = _avatar;
+        this.avatar.characterController = this;
         this.id = this.avatar.id;
         this.name = "";
         this.networkID = null;
@@ -209,6 +210,9 @@ class CharacterController {
         this._stopAnim = false;
     }
     moveAV() {
+        if (!(this.avatar instanceof BABYLON.Mesh)) {
+            return undefined;
+        }
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
@@ -281,6 +285,9 @@ class CharacterController {
                 }
             }
         }
+        if (this.networkID != undefined) {
+            Client.updateLocRotScaleSelf();
+        }
         return anim;
     }
     endJump() {
@@ -288,6 +295,9 @@ class CharacterController {
         this.jumpTime = 0;
         this.wasWalking = false;
         this.wasRunning = false;
+        if (this.networkID != undefined) {
+            Client.updateLocRotScaleSelf();
+        }
     }
     areVectorsEqual(v1, v2, p) {
         return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
@@ -328,18 +338,18 @@ class CharacterController {
                 anim = this.walkBack;
                 moving = true;
             }
-            else if (this.key.stepLeft) {
+            else if (this.key.strafeLeft) {
                 anim = this.strafeLeft;
                 this.moveVector = this.avatar.calcMovePOV(-(this.strafeSpeed * dt), -this.freeFallDist, 0);
                 moving = true;
             }
-            else if (this.key.stepRight) {
+            else if (this.key.strafeRight) {
                 anim = this.strafeRight;
                 this.moveVector = this.avatar.calcMovePOV((this.strafeSpeed * dt), -this.freeFallDist, 0);
                 moving = true;
             }
         }
-        if (!this.key.stepLeft && !this.key.stepRight) {
+        if (!this.key.strafeLeft && !this.key.strafeRight) {
             if (this.key.turnLeft) {
                 this.avatar.addRotation(0, -this.avatar.scaling.y * 0.025, 0);
                 if (!moving) {
@@ -411,12 +421,18 @@ class CharacterController {
                 }
             }
         }
+        if (this.networkID != undefined) {
+            Client.updateLocRotScaleSelf();
+        }
         return anim;
     }
     endFreeFall() {
         this.movFallTime = 0;
         this.fallFrameCount = 0;
         this.inFreeFall = false;
+        if (this.networkID != undefined) {
+            Client.updateLocRotScaleSelf();
+        }
     }
     doIdle(dt) {
         if (this.grounded) {
@@ -456,6 +472,9 @@ class CharacterController {
                 }
             }
         }
+        if (this.networkID != undefined) {
+            Client.updateLocRotScaleSelf();
+        }
         return anim;
     }
     groundIt() {
@@ -470,16 +489,28 @@ class CharacterController {
         this.groundFrameCount = 0;
     }
     anyMovement() {
-        return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.stepLeft || this.key.stepRight);
+        return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
-    setMovementStatus(_forward = false, _backward = false, _shift = false, _strafeRight = false, _strafeLeft = false, _turnRight = false, _turnLeft = false, _jump = false) {
+    setMovementKey(_key) {
+        if (typeof _key[0] == "boolean" && typeof _key[7] == "boolean") {
+            this.key.forward = _key[0];
+            this.key.shift = _key[1];
+            this.key.backward = _key[2];
+            this.key.strafeLeft = _key[3];
+            this.key.strafeRight = _key[4];
+            this.key.turnLeft = _key[5];
+            this.key.turnRight = _key[6];
+            this.key.jump = _key[7];
+        }
+    }
+    setMovementKeys(_forward = false, _shift = false, _backward = false, _strafeLeft = false, _strafeRight = false, _turnLeft = false, _turnRight = false, _jump = false) {
         this.key.forward = _forward;
-        this.key.backward = _backward;
         this.key.shift = _shift;
-        this.key.strafeRight = _strafeRight;
+        this.key.backward = _backward;
         this.key.strafeLeft = _strafeLeft;
-        this.key.turnRight = _turnRight;
+        this.key.strafeRight = _strafeRight;
         this.key.turnLeft = _turnLeft;
+        this.key.turnRight = _turnRight;
         this.key.jump = _jump;
     }
     getBone(_bone) {
@@ -635,20 +666,20 @@ class CharacterController {
     }
     keyStrafeLeft(_pressed = false) {
         if (_pressed === true) {
-            this.key.stepLeft = true;
-            this.key.stepRight = false;
+            this.key.strafeLeft = true;
+            this.key.strafeRight = false;
         }
         else {
-            this.key.stepLeft = false;
+            this.key.strafeLeft = false;
         }
     }
     keyStrafeRight(_pressed = false) {
         if (_pressed === true) {
-            this.key.stepLeft = false;
-            this.key.stepRight = true;
+            this.key.strafeLeft = false;
+            this.key.strafeRight = true;
         }
         else {
-            this.key.stepRight = false;
+            this.key.strafeRight = false;
         }
     }
     keyJump(_pressed = false) {
@@ -681,8 +712,8 @@ class Key {
         this.backward = false;
         this.turnRight = false;
         this.turnLeft = false;
-        this.stepRight = false;
-        this.stepLeft = false;
+        this.strafeRight = false;
+        this.strafeLeft = false;
         this.jump = false;
         this.shift = false;
     }
@@ -691,8 +722,8 @@ class Key {
         this.backward = false;
         this.turnRight = false;
         this.turnLeft = false;
-        this.stepRight = false;
-        this.stepLeft = false;
+        this.strafeRight = false;
+        this.strafeLeft = false;
         this.jump = false;
         this.shift = false;
     }
