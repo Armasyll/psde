@@ -140,28 +140,28 @@ class Game {
     static initQwertyKeyboardControls() {
         this.walkCode = 87;
         this.walkBackCode = 83;
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 65;
-        this.strafeRightCode = 68;
+        this.turnLeftCode = 65;
+        this.turnRightCode = 68;
+        this.strafeLeftCode = 0;
+        this.strafeRightCode = 0;
         this.jumpCode = 32;
     }
     static initDvorakKeyboardControls() {
         this.walkCode = 188;
         this.walkBackCode = 73;
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 65;
-        this.strafeRightCode = 69;
+        this.turnLeftCode = 65;
+        this.turnRightCode = 69;
+        this.strafeLeftCode = 0;
+        this.strafeRightCode = 0;
         this.jumpCode = 32;
     }
     static initAzertyKeyboardControls() {
         this.walkCode = 90;
         this.walkBackCode = 83;
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 81;
-        this.strafeRightCode = 68;
+        this.turnLeftCode = 81;
+        this.turnRightCode = 68;
+        this.strafeLeftCode = 0;
+        this.strafeRightCode = 0;
         this.jumpCode = 32;
     }
     static controlCharacterOnKeyDown(event) {
