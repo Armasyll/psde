@@ -34,6 +34,7 @@ class Game {
         this.furnitureInstances = {};
         this.characterInstances = {};
         this.itemInstances = {};
+        this.controllerInstances = {};
 
         this.characterIDsControllers = {};
 
@@ -53,7 +54,7 @@ class Game {
 
         this.loadMeshes();
         this.showCrosshair();
-        this.initKeyboardControls();
+        this.initQwertyKeyboardControls();
 
         this.initialized = true;
 
@@ -75,10 +76,10 @@ class Game {
         if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
         this.camera = new BABYLON.ArcRotateCamera(
             "camera",
-            -this.player.rotation.y-4.69,
+            -this.player.avatar.rotation.y-4.69,
             Math.PI/2.5,
             3,
-            new BABYLON.Vector3(this.player.position.x, (1.2 * this.player.scaling.y), this.player.position.z),
+            new BABYLON.Vector3(this.player.avatar.position.x, (1.2 * this.player.avatar.scaling.y), this.player.avatar.position.z),
             this.scene);
         this.camera.setPosition(new BABYLON.Vector3(0, 0, 3));
         this.camera.checkCollisions = true;
@@ -92,7 +93,7 @@ class Game {
         this.camera.attachControl(this.canvas, false);
 
         this.camera.minZ = 0.001;
-        this.camera.lockedTarget = this.player.characterController.getMeshAttachedToBone("FOCUS"); // Why this and not the thirdEye? The third eye causes jittering of the rendered frame 'cause it moves
+        this.camera.lockedTarget = this.player.getMeshAttachedToBone("FOCUS"); // Why this and not the thirdEye? The third eye causes jittering of the rendered frame 'cause it moves
         this.hideCrosshair();
     }
     static initFreeCamera(_applyGravity = true) {
@@ -128,25 +129,101 @@ class Game {
     static initPlayer(_meshID = "foxSkeletonN", _scale = 1) {
         _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) _meshID = "foxSkeletonN";
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.addCharacterMesh(_meshID, undefined, undefined, {x:3, y:0, z:-17});
-        this.player.characterController.attachToLeftEye("eye");
-        this.player.characterController.attachToRightEye("eye");
-        this.player.characterController.attachToFOCUS("eye");
+        this.player = new CharacterController(this.addCharacterMesh(_meshID, undefined, undefined, {x:3, y:0, z:-17}), _meshID);
+        this.player.attachToLeftEye("eye");
+        this.player.attachToRightEye("eye");
+        this.player.attachToFOCUS("eye");
         this.initFollowCamera();
 
         return this.player;
     }
-    static initKeyboardControls() {
-        if (Game.debugEnabled) console.log("Running initKeyboardControls");
-        this.keyboardControls['W'] = "Game.player.characterController.doRunForward()";
-        this.keyboardControls['w'] = "Game.player.characterController.doMoveForward()";
-        this.keyboardControls['s'] = "Game.player.characterController.doMoveBackward()";
-        //this.keyboardControls['A'] = "Game.player.characterController.doStrafeLeft()";
-        this.keyboardControls['a'] = "Game.player.characterController.doTurnLeft()";
-        //this.keyboardControls['D'] = "Game.player.characterController.doStrafeRight()";
-        this.keyboardControls['d'] = "Game.player.characterController.doTurnRight()";
-        this.keyboardControls[' '] = "Game.player.characterController.doJump()";
-        this.keyboardControls['Control'] = "Game.player.characterController.controlCrouch()";
+    static initQwertyKeyboardControls() {
+        this.walkKey = "W";
+        this.walkBackKey = "S";
+        this.turnLeftKey = "A";
+        this.turnRightKey = "D";
+        this.strafeLeftKey = "Shift+A";
+        this.strafeRightKey = "Shift+D";
+        this.jumpKey = " ";
+        this.walkCode = 87;
+        this.walkBackCode = 83;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 65;
+        this.strafeRightCode = 68;
+        this.jumpCode = 32;
+    }
+    static initDvorakKeyboardControls() {
+        this.walkKey = ",";
+        this.walkBackKey = "O";
+        this.turnLeftKey = "A";
+        this.turnRightKey = "E";
+        this.strafeLeftKey = "Shift+A";
+        this.strafeRightKey = "Shift+E";
+        this.jumpKey = " ";
+        this.walkCode = 188;
+        this.walkBackCode = 73;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 65;
+        this.strafeRightCode = 69;
+        this.jumpCode = 32;
+    }
+    static initAzertyKeyboardControls() {
+        this.walkKey = "Z";
+        this.walkBackKey = "S";
+        this.turnLeftKey = "Q";
+        this.turnRightKey = "D";
+        this.strafeLeftKey = "Shift+Q";
+        this.strafeRightKey = "Shift+D";
+        this.jumpKey = " ";
+        this.walkCode = 90;
+        this.walkBackCode = 83;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 81;
+        this.strafeRightCode = 68;
+        this.jumpCode = 32;
+    }
+    static controlCharacterOnKeyDown(event) {
+        var chr = String.fromCharCode(event);
+        if ((chr === this.jumpKey) || (event.keyCode === this.jumpCode))
+            this.player.keyJump(true);
+        else if (event === 16)
+            this.player.keyShift(true);
+        else if ((chr === this.walkKey) || (event.keyCode === this.walkCode))
+            this.player.keyMoveForward(true);
+        else if ((chr === this.turnLeftKey) || (event.keyCode === this.turnLeftCode))
+            this.player.keyTurnLeft(true);
+        else if ((chr === this.turnRightKey) || (event.keyCode === this.turnRightCode))
+            this.player.keyTurnRight(true);
+        else if ((chr === this.walkBackKey) || (event.keyCode === this.walkBackCode))
+            this.player.keyMoveBackward(true);
+        else if ((chr === this.strafeLeftKey) || (event.keyCode === this.strafeLeftCode))
+            this.player.keyStrafeLeft(true);
+        else if ((chr === this.strafeRightKey) || (event.keyCode === this.strafeRightCode))
+            this.player.keyStrafeRight(true);
+        this.player.move = this.player.anyMovement();
+    }
+    static controlCharacterOnKeyUp(event) {
+        var chr = String.fromCharCode(event);
+        if ((chr === this.jumpKey) || (event.keyCode === this.jumpCode))
+            this.player.keyJump(false);
+        else if (event === 16)
+            this.player.keyShift(false);
+        else if ((chr === this.walkKey) || (event.keyCode === this.walkCode))
+            this.player.keyMoveForward(false);
+        else if ((chr === this.turnLeftKey) || (event.keyCode === this.turnLeftCode))
+            this.player.keyTurnLeft(false);
+        else if ((chr === this.turnRightKey) || (event.keyCode === this.turnRightCode))
+            this.player.keyTurnRight(false);
+        else if ((chr === this.walkBackKey) || (event.keyCode === this.walkBackCode))
+            this.player.keyMoveBackward(false);
+        else if ((chr === this.strafeLeftKey) || (event.keyCode === this.strafeLeftCode))
+            this.player.keyStrafeLeft(false);
+        else if ((chr === this.strafeRightKey) || (event.keyCode === this.strafeRightCode))
+            this.player.keyStrafeRight(false);
+        this.player.move = this.player.anyMovement();
     }
     static initGUIs() {
         this.guis["crosshair"] = this._generateGUICrosshair();
@@ -306,7 +383,6 @@ class Game {
             _instance.ellipsoid = new BABYLON.Vector3(0.13 * _scale.x, 1.2 * _scale.y, 0.13 * _scale.z);
             _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y + (_instance.ellipsoid.y * 0.06), 0);
         }
-        _instance.characterController = new CharacterController(_instance, _meshID);
         return _instance;
     }
     static removeMesh(_mesh) {
@@ -355,7 +431,7 @@ class Game {
             return _mesh;
         }
         else if (_mesh instanceof CharacterController) {
-            return _mesh.mesh;
+            return _mesh.avatar;
         }
         else if (_mesh instanceof BABYLON.InstancedMesh || _mesh instanceof BABYLON.Mesh) {
             return _mesh;
@@ -559,6 +635,10 @@ class Game {
             var cNM4 = new BABYLON.GUI.StackPanel();
                 var speciesSelectLabel = new BABYLON.GUI.TextBlock();
                 var speciesSelect = new BABYLON.GUI.InputText();
+            var cNM5 = new BABYLON.GUI.StackPanel();
+            	var buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
+            	var buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
+            	var buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
             var cNMSubmit = new BABYLON.GUI.StackPanel();
                 var submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
                 var submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
@@ -567,6 +647,7 @@ class Game {
         cNM2.isVertical = false;
         cNM3.isVertical = false;
         cNM4.isVertical = false;
+        cNM5.isVertical = false;
         cNMSubmit.isVertical = false;
 
         cNM1.zIndex = 90;
@@ -607,6 +688,19 @@ class Game {
         speciesSelect.color = "white";
         speciesSelect.background = "grey";
 
+        buttonKBLayoutQwerty.height = "24px";
+        buttonKBLayoutQwerty.width = "128px";
+        buttonKBLayoutQwerty.color = "white";
+        buttonKBLayoutQwerty.background = "grey";
+		buttonKBLayoutDvorak.height = "24px";
+		buttonKBLayoutDvorak.width = "128px";
+		buttonKBLayoutDvorak.color = "white";
+		buttonKBLayoutDvorak.background = "grey";
+		buttonKBLayoutAzerty.height = "24px";
+		buttonKBLayoutAzerty.width = "128px";
+		buttonKBLayoutAzerty.color = "white";
+		buttonKBLayoutAzerty.background = "grey";
+
         submitOffline.height = "24px";
         submitOffline.width = "128px";
         submitOffline.color = "white";
@@ -619,13 +713,22 @@ class Game {
         submitOnline.backround = "grey";
         submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
+        buttonKBLayoutQwerty.onPointerDownObservable.add(function() {
+        	Game.initQwertyKeyboardControls();
+        });
+        buttonKBLayoutDvorak.onPointerDownObservable.add(function() {
+        	Game.initDvorakKeyboardControls();
+        });
+        buttonKBLayoutAzerty.onPointerDownObservable.add(function() {
+        	Game.initAzertyKeyboardControls();
+        });
         submitOnline.onPointerDownObservable.add(function() {
-            Game.player.characterController.setName(nameInput.text);
+            Game.player.setName(nameInput.text);
             Client.connect();
             Game.guis["characterChoiceMenu"].isVisible = false;
         });
         submitOffline.onPointerDownObservable.add(function() {
-            Game.player.characterController.setName(nameInput.text);
+            Game.player.setName(nameInput.text);
             Game.guis["characterChoiceMenu"].isVisible = false;
         });
 
@@ -639,6 +742,10 @@ class Game {
             cNM1.addControl(cNM4);
                 cNM4.addControl(speciesSelectLabel);
                 cNM4.addControl(speciesSelect);
+            cNM1.addControl(cNM5);
+            	cNM5.addControl(buttonKBLayoutQwerty);
+				cNM5.addControl(buttonKBLayoutDvorak);
+				cNM5.addControl(buttonKBLayoutAzerty);
             cNM1.addControl(cNMSubmit);
                 cNMSubmit.addControl(submitOffline);
                 cNMSubmit.addControl(submitOnline);

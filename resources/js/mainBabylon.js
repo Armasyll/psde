@@ -9,10 +9,10 @@ function isInt(n){
 function isFloat(n){
     return Number(n) === n && n % 1 !== 0;
 }
-function unsafeExec(_executableString = undefined) {
+function unsafeExec(_executableString = undefined, _param = undefined) {
     if (Game.debugEnabled) console.log("Running unsafeExec");
     var _return = undefined;
-    
+
     fn = new Function(_executableString);
     try {
         _return = fn();
@@ -55,15 +55,11 @@ window.addEventListener("DOMContentLoaded", function() {
                 Game.initPlayer("foxM", 1);
                 Game._finishedLoading = true;
 
-                for (var _key in Game.keyboardControls) {
-                    _map[_key] = false;
-                }
-
                 Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                    _map[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+                    Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
                 }));
                 Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                    _map[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+                    Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
                 }));
 
                 Client.initialize();
@@ -73,67 +69,13 @@ window.addEventListener("DOMContentLoaded", function() {
     });
 
     Game.scene.registerBeforeRender(function() {
-        if (!(Game.player instanceof BABYLON.Mesh) || !(Game.player.characterController instanceof CharacterController))
+        if (!(Game.player instanceof CharacterController))
             return null;
-        for (var _key in Game.keyboardControls) {
-            if (_map[_key]) {
-                unsafeExec(Game.keyboardControls[_key]);
-            }
-            else {
-                switch(Game.keyboardControls[_key].split('(')[0]) {
-                    case "Game.player.characterController.doMoveForward": {
-                        Game.player.characterController.moveForward = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doMoveBackward": {
-                        Game.player.characterController.moveBackward = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doRunForward": {
-                        Game.player.characterController.runForward = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doRunBackward": {
-                        Game.player.characterController.runBackward = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doTurnLeft": {
-                        Game.player.characterController.turnLeft = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doTurnRight": {
-                        Game.player.characterController.turnRight = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doStrafeLeft": {
-                        Game.player.characterController.strafeLeft = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doStrafeRight": {
-                        Game.player.characterController.strafeRight = false;
-                        break;
-                    }
-                    case "Game.player.characterController.doJump": {
-                        Game.player.characterController.jump = false;
-                        break;
-                    }
-                }
+        for (_character in Game.controllerInstances) {
+            if (Game.controllerInstances[_character] instanceof CharacterController) {
+                Game.controllerInstances[_character].moveAV();
             }
         }
-        for (var _i in Game.characterInstances) {
-            if (Game.characterInstances[_i].characterController instanceof CharacterController) {
-                if (Game.characterInstances[_i].characterController.moveForward || Game.characterInstances[_i].characterController.moveBackward) {
-                    Game.characterInstances[_i].characterController.stopAnimation("80_idle01");
-                    Game.characterInstances[_i].characterController.runAnimation("93_walkingKneesBent", 1.0, 1.2);
-                }
-                else {
-                    Game.characterInstances[_i].characterController.stopAnimation("93_walkingKneesBent");
-                    Game.characterInstances[_i].characterController.runAnimation("80_idle01");
-                }
-            }
-        };
-    });
-    Game.scene.registerAfterRender(function() {
     });
 });
 

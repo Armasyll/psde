@@ -1,41 +1,88 @@
 class CharacterController {
-    constructor(_mesh, _meshID) {
+    constructor(_avatar, _meshID) {
         _meshID = Game.filterID(_meshID);
         if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
-        if (!_mesh instanceof BABYLON.Mesh || !_mesh.skeleton instanceof BABYLON.Skeleton) return null;
+        if (!_avatar instanceof BABYLON.Mesh || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
 
         this.meshID = _meshID;
-        this.mesh = _mesh;
-        this.id = this.mesh.id;
+        this.avatar = _avatar;
+        this.id = this.avatar.id;
         this.name = "";
+        this.networkID = null;
 
-        this.moveDistance = 0;
+        this.walkSpeed = 0.72 * this.avatar.scaling.z;
+        this.runSpeed = this.walkSpeed * 2;
+        this.backSpeed = this.walkSpeed * 0.5;
+        this.jumpSpeed = this.walkSpeed * 2;
+        this.strafeSpeed = this.walkSpeed * 0.75;
+        this.gravity = -Game.scene.gravity.y;
+        this.minSlopeLimit = 30;
+        this.maxSlopeLimit = 50;
+        this.minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
+        this.maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
+        this._stepOffset = 0.25;
+        this._vMoveTot = 0;
+        this._vMovStartPos = new BABYLON.Vector3(0, 0, 0);
+        this.walk = new AnimData("walk");
+        this.walkBack = new AnimData("walkBack");
+        this.idle = new AnimData("idle");
+        this.run = new AnimData("run");
+        this.jump = new AnimData("jump");
+        this.fall = new AnimData("fall");
+        this.turnLeft = new AnimData("turnLeft");
+        this.turnRight = new AnimData("turnRight");
+        this.strafeLeft = new AnimData("strafeLeft");
+        this.strafeRight = new AnimData("strafeRight");
+        this.slideBack = new AnimData("slideBack");
+        this.animations = [this.walk, this.walkBack, this.idle, this.run, this.jump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
+
+        this.started = false;
+        this._stopAnim = false;
+        this.prevAnim = null;
         this.moveVector = new BABYLON.Vector3();
-        this.moveFallTime = 0;
-        this.freeFallDistance = 0;
-        this.dt = 0;
-        this.u = 0;
+        this.avStartPos = new BABYLON.Vector3(0, 0, 0);
+        this.grounded = false;
+        this.freeFallDist = 0;
+        this.fallFrameCountMin = 50;
+        this.fallFrameCount = 0;
+        this.inFreeFall = false;
+        this.wasWalking = false;
+        this.wasRunning = false;
+        this.jumpStartPosY = 0;
+        this.jumpTime = 0;
+        this.movFallTime = 0;
+        this.idleFallTime = 0;
+        this.groundFrameCount = 0;
+        this.groundFrameMax = 10;
 
-        this.moveForward = false;
-        this.moveBackward = false;
-        this.runForward = false;
-        this.strafeRight = false;
-        this.strafeLeft = false;
-        this.turnRight = false;
-        this.turnLeft = false;
-        this.jump = false;
-        this.animations = {};
-        this._populateAnimations();
+        this.skip = 0;
+        this.move = false;
+        this.skeleton = this.avatar.skeleton;
+        if (this.skeleton != null) {
+            this.checkAnims(this.skeleton);
+        }
+        this.key = new Key();
+        var _this = this;
+        this.renderer = function () { _this.moveAV(); };
+
+        this.setWalkAnim("93_walkingKneesBent", 1, true);
+        this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
+        this.setIdleAnim("80_idle01", 1, true);
 
         this.attachedMeshes = {};
+        Game.controllerInstances[this.id] = this;
     }
     setID(_id) {
         this.id = _id;
-        this.mesh.id = _id;
+    }
+    getID() {
+        return this.id;
     }
     setName(_name) {
         this.name = _name;
-        this.mesh.name = _name;
+    }
+    getName() {
+        return this.name;
     }
     setNetworkID(_id) {
         this.networkID = _id;
@@ -43,15 +90,393 @@ class CharacterController {
     getNetworkID() {
         return this.networkID;
     }
-    setMovementStatus(_moveForward = false, _moveBackward = false, _runForward = false, _strafeRight = false, _strafeLeft = false, _turnRight = false, _turnLeft = false, _jump = false) {
-        this.moveForward = _moveForward;
-        this.moveBackward = _moveBackward;
-        this.runForward = _runForward;
-        this.strafeRight = _strafeRight;
-        this.strafeLeft = _strafeLeft;
-        this.turnRight = _turnRight;
-        this.turnLeft = _turnLeft;
-        this.jump = _jump;
+    setAvatar(_avatar) {
+        this.avatar = _avatar;
+    }
+    geAvatar() {
+        return this.avatar;
+    }
+    setAvatarSkeleton(_skeleton) {
+        this.skeleton = _skeleton;
+        this.checkAnimations(this.skeleton);
+    }
+    getAvatarSkeleton() {
+        return this.skeleton;
+    }
+    setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
+        this.minSlopeLimit = minSlopeLimit;
+        this.maxSlopeLimit = maxSlopeLimit;
+        this.minSlopeLimitRads = Math.PI * minSlopeLimit / 180;
+        this.maxSlopeLimitRads = Math.PI * this.maxSlopeLimit / 180;
+    }
+    setStepOffset(stepOffset) {
+        this._stepOffset = stepOffset;
+    }
+    setWalkSpeed(_n) {
+        this.walkSpeed = _n;
+    }
+    setRunSpeed(_n) {
+        this.runSpeed = _n;
+    }
+    setBackSpeed(_n) {
+        this.backSpeed = _n;
+    }
+    setJumpSpeed(_n) {
+        this.jumpSpeed = _n;
+    }
+    setStrafeSpeed(_n) {
+        this.strafeSpeed = _n;
+    }
+    setGravity(_n) {
+        this.gravity = _n;
+    }
+    setAnim(_anim, _rangeName, _rate, _loop) {
+        if (this.skeleton == null)
+            return;
+        _anim.name = _rangeName;
+        _anim.rate = _rate;
+        _anim.loop = _loop;
+        if (this.skeleton.getAnimationRange(_anim.name) != null) {
+            _anim.exist = true;
+        }
+        else {
+            _anim.exist = false;
+        }
+    }
+    setWalkAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.walk, _rangeName, _rate, _loop);
+    }
+    setRunAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.run, _rangeName, _rate, _loop);
+    }
+    setWalkBackAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.walkBack, _rangeName, _rate, _loop);
+    }
+    setSlideBackAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.slideBack, _rangeName, _rate, _loop);
+    }
+    setIdleAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.idle, _rangeName, _rate, _loop);
+    }
+    setTurnRightAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.turnRight, _rangeName, _rate, _loop);
+    }
+    setTurnLeftAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.turnLeft, _rangeName, _rate, _loop);
+    }
+    setStrafeRightAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.strafeRight, _rangeName, _rate, _loop);
+    }
+    setSrafeLeftAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.strafeLeft, _rangeName, _rate, _loop);
+    }
+    setJumpAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.jump, _rangeName, _rate, _loop);
+    }
+    setFallAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.fall, _rangeName, _rate, _loop);
+    }
+    checkAnims(_skel) {
+        for (var _i = 0; _i < this.animations.length; _i++) {
+            var anim = this.animations[_i];
+            if (_skel.getAnimationRange(anim.name) != null)
+                anim.exist = true;
+        }
+    }
+    start() {
+        if (this.started)
+            return;
+        this.started = true;
+        this.key.reset();
+        this.movFallTime = 0;
+        this.idleFallTime = 0.001;
+        this.grounded = false;
+    }
+    stop() {
+        if (!this.started)
+            return;
+        this.started = false;
+        this.prevAnim = null;
+    }
+    pauseAnim() {
+        this._stopAnim = true;
+    }
+    resumeAnim() {
+        this._stopAnim = false;
+    }
+    moveAV() {
+        this.avStartPos.copyFrom(this.avatar.position);
+        var anim = null;
+        var dt = Game.engine.getDeltaTime() / 1000;
+        if (this.key.jump && !this.inFreeFall) {
+            this.grounded = false;
+            this.idleFallTime = 0;
+            anim = this.doJump(dt);
+        }
+        else if (this.anyMovement() || this.inFreeFall) {
+            this.grounded = false;
+            this.idleFallTime = 0;
+            anim = this.doMove(dt);
+        }
+        else if (!this.inFreeFall) {
+            anim = this.doIdle(dt);
+        }
+        if (!this._stopAnim) {
+            if (anim != null) {
+                if (this.skeleton !== null) {
+                    if (this.prevAnim !== anim) {
+                        if (anim.exist) {
+                            var range = this.skeleton.getAnimationRange(anim.name);
+                            Game.scene.beginAnimation(this.avatar, range.from + 1, range.to - 1, anim.loop, anim.rate);
+                        }
+                        this.prevAnim = anim;
+                    }
+                }
+            }
+        }
+    }
+    doJump(dt) {
+        var anim = null;
+        anim = this.jump;
+        if (this.jumpTime === 0) {
+            this.jumpStartPosY = this.avatar.position.y;
+        }
+        var js = this.jumpSpeed - this.gravity * this.jumpTime;
+        var jumpDist = js * dt - 0.5 * this.gravity * dt * dt;
+        this.jumpTime = this.jumpTime + dt;
+        var forwardDist = 0;
+        var disp;
+        if (this.wasRunning || this.wasWalking) {
+            if (this.wasRunning) {
+                forwardDist = this.runSpeed * dt;
+            }
+            else if (this.wasWalking) {
+                forwardDist = this.walkSpeed * dt;
+            }
+            disp = this.moveVector.clone();
+            disp.y = 0;
+            disp = disp.normalize();
+            disp.scaleToRef(forwardDist, disp);
+            disp.y = jumpDist;
+        }
+        else {
+            disp = new BABYLON.Vector3(0, jumpDist, 0);
+        }
+        this.avatar.moveWithCollisions(disp);
+        if (jumpDist < 0) {
+            anim = this.fall;
+            if ((this.avatar.position.y > this.avStartPos.y) || ((this.avatar.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
+                this.endJump();
+            }
+            else if (this.avatar.position.y < this.jumpStartPosY) {
+                var actDisp = this.avatar.position.subtract(this.avStartPos);
+                if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
+                    if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                        this.endJump();
+                    }
+                }
+            }
+        }
+        return anim;
+    }
+    endJump() {
+        this.key.jump = false;
+        this.jumpTime = 0;
+        this.wasWalking = false;
+        this.wasRunning = false;
+    }
+    areVectorsEqual(v1, v2, p) {
+        return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
+    }
+    verticalSlope(v) {
+        return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
+    }
+    doMove(dt) {
+        var u = this.movFallTime * this.gravity;
+        this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
+        this.movFallTime = this.movFallTime + dt;
+        var moving = false;
+        var anim = null;
+        if (this.inFreeFall) {
+            this.moveVector.y = -this.freeFallDist;
+            moving = true;
+        }
+        else {
+            this.wasWalking = false;
+            this.wasRunning = false;
+            if (this.key.forward) {
+                var forwardDist = 0;
+                if (this.key.shift) {
+                    this.wasRunning = true;
+                    forwardDist = this.runSpeed * dt;
+                    anim = this.run;
+                }
+                else {
+                    this.wasWalking = true;
+                    forwardDist = this.walkSpeed * dt;
+                    anim = this.walk;
+                }
+                this.moveVector = this.avatar.calcMovePOV(0, -this.freeFallDist, forwardDist);
+                moving = true;
+            }
+            else if (this.key.backward) {
+                this.moveVector = this.avatar.calcMovePOV(0, -this.freeFallDist, -(this.backSpeed * dt));
+                anim = this.walkBack;
+                moving = true;
+            }
+            else if (this.key.stepLeft) {
+                anim = this.strafeLeft;
+                this.moveVector = this.avatar.calcMovePOV(-(this.strafeSpeed * dt), -this.freeFallDist, 0);
+                moving = true;
+            }
+            else if (this.key.stepRight) {
+                anim = this.strafeRight;
+                this.moveVector = this.avatar.calcMovePOV((this.strafeSpeed * dt), -this.freeFallDist, 0);
+                moving = true;
+            }
+        }
+        if (!this.key.stepLeft && !this.key.stepRight) {
+            if (this.key.turnLeft) {
+                this.avatar.addRotation(0, -this.avatar.scaling.y * 0.025, 0);
+                if (!moving) {
+                    anim = this.turnLeft;
+                }
+            }
+            else if (this.key.turnRight) {
+                this.avatar.addRotation(0, this.avatar.scaling.y * 0.025, 0);
+                if (!moving) {
+                    anim = this.turnRight;
+                }
+            }
+        }
+        if (moving) {
+            if (this.moveVector.length() > 0.001) {
+                this.avatar.moveWithCollisions(this.moveVector);
+                if (this.avatar.position.y > this.avStartPos.y) {
+                    var actDisp = this.avatar.position.subtract(this.avStartPos);
+                    var _sl = this.verticalSlope(actDisp);
+                    if (_sl >= this.maxSlopeLimitRads) {
+                        if (this._stepOffset > 0) {
+                            if (this._vMoveTot == 0) {
+                                this._vMovStartPos.copyFrom(this.avStartPos);
+                            }
+                            this._vMoveTot = this._vMoveTot + (this.avatar.position.y - this.avStartPos.y);
+                            if (this._vMoveTot > this._stepOffset) {
+                                this._vMoveTot = 0;
+                                this.avatar.position.copyFrom(this._vMovStartPos);
+                                this.endFreeFall();
+                            }
+                        }
+                        else {
+                            this.avatar.position.copyFrom(this.avStartPos);
+                            this.endFreeFall();
+                        }
+                    }
+                    else {
+                        this._vMoveTot = 0;
+                        if (_sl > this.minSlopeLimitRads) {
+                            this.fallFrameCount = 0;
+                            this.inFreeFall = false;
+                        }
+                        else {
+                            this.endFreeFall();
+                        }
+                    }
+                }
+                else if ((this.avatar.position.y) < this.avStartPos.y) {
+                    var actDisp = this.avatar.position.subtract(this.avStartPos);
+                    if (!(this.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                        if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                            this.endFreeFall();
+                        }
+                        else {
+                            this.fallFrameCount = 0;
+                            this.inFreeFall = false;
+                        }
+                    }
+                    else {
+                        this.inFreeFall = true;
+                        this.fallFrameCount++;
+                        if (this.fallFrameCount > this.fallFrameCountMin) {
+                            anim = this.fall;
+                        }
+                    }
+                }
+                else {
+                    this.endFreeFall();
+                }
+            }
+        }
+        return anim;
+    }
+    endFreeFall() {
+        this.movFallTime = 0;
+        this.fallFrameCount = 0;
+        this.inFreeFall = false;
+    }
+    doIdle(dt) {
+        if (this.grounded) {
+            return this.idle;
+        }
+        this.wasWalking = false;
+        this.wasRunning = false;
+        this.movFallTime = 0;
+        var anim = this.idle;
+        this.fallFrameCount = 0;
+        if (dt === 0) {
+            this.freeFallDist = 5;
+        }
+        else {
+            var u = this.idleFallTime * this.gravity;
+            this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
+            this.idleFallTime = this.idleFallTime + dt;
+        }
+        if (this.freeFallDist < 0.01)
+            return anim;
+        var disp = new BABYLON.Vector3(0, -this.freeFallDist, 0);
+        ;
+        this.avatar.moveWithCollisions(disp);
+        if ((this.avatar.position.y > this.avStartPos.y) || (this.avatar.position.y === this.avStartPos.y)) {
+            this.groundIt();
+        }
+        else if (this.avatar.position.y < this.avStartPos.y) {
+            var actDisp = this.avatar.position.subtract(this.avStartPos);
+            if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
+                if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                    this.groundIt();
+                    this.avatar.position.copyFrom(this.avStartPos);
+                }
+                else {
+                    this.unGroundIt();
+                    anim = this.slideBack;
+                }
+            }
+        }
+        return anim;
+    }
+    groundIt() {
+        this.groundFrameCount++;
+        if (this.groundFrameCount > this.groundFrameMax) {
+            this.grounded = true;
+            this.idleFallTime = 0;
+        }
+    }
+    unGroundIt() {
+        this.grounded = false;
+        this.groundFrameCount = 0;
+    }
+    anyMovement() {
+        return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.stepLeft || this.key.stepRight);
+    }
+    setMovementStatus(_forward = false, _backward = false, _shift = false, _strafeRight = false, _strafeLeft = false, _turnRight = false, _turnLeft = false, _jump = false) {
+        this.key.forward = _forward;
+        this.key.backward = _backward;
+        this.key.shift = _shift;
+        this.key.strafeRight = _strafeRight;
+        this.key.strafeLeft = _strafeLeft;
+        this.key.turnRight = _turnRight;
+        this.key.turnLeft = _turnLeft;
+        this.key.jump = _jump;
     }
     getBone(_bone) {
         if (Game.debugEnabled) console.log("Running getBone");
@@ -69,10 +494,10 @@ class CharacterController {
         }
     }
     getBoneByName(_string) {
-        return this.mesh.skeleton.bones[this.mesh.skeleton.getBoneIndexByName(_string)];
+        return this.avatar.skeleton.bones[this.avatar.skeleton.getBoneIndexByName(_string)];
     }
     getBoneByID(_int) {
-        return this.mesh.skeleton.bones[_int];
+        return this.avatar.skeleton.bones[_int];
     }
     attachToBone(_mesh, _bone, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
         if (Game.debugEnabled) console.log("Running attachToBone");
@@ -81,11 +506,11 @@ class CharacterController {
         if (_mesh instanceof BABYLON.Mesh) {_mesh = _mesh.clone();}
         else if (_mesh == null) {return null;}
         _bone = this.getBone(_bone); if (_bone == null) {return null;}
-        _mesh.attachToBone(_bone, this.mesh);
+        _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.set(_position.x, _position.y, _position.z);
         _mesh.rotation.set(_rotation.x, _rotation.y, _rotation.z);
         if (_scale == 0) {
-            _mesh.scaling.copyFrom(this.mesh.scaling);
+            _mesh.scaling.copyFrom(this.avatar.scaling);
         }
         if (this.attachedMeshes[_bone.id] != undefined) {
             this.detachFromBone(_bone.id);
@@ -154,130 +579,117 @@ class CharacterController {
     attachToRightHand(_mesh) {
         return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
     }
-    _populateAnimations() {
-        for (var _key in this.mesh.skeleton.getAnimationRanges()) {
-            var _animationRange = this.mesh.skeleton.getAnimationRanges()[_key];
-            this.animations[_animationRange.name] = Game.scene.beginWeightedAnimation(this.mesh.skeleton, _animationRange.from + 1, _animationRange.to - 1, 0.0, true);
-        }
-    }
-    runAnimation(_animation, _weight = 1.0, _speedRatio = 1) {
-        this.animations[_animation].weight = _weight;
-        this.animations[_animation].speedRatio = _speedRatio;
-    }
-    /*runAnimationOnce(_animation, _weight = 1.0) {
-        this.animations[_animation].weight = _weight;
-    }*/
-    stopAnimation(_animation) {
-        this.animations[_animation].weight = 0.0;
-    }
     doAttackLeftHand() {
-
     }
     doAttachRightHand() {
-
     }
-    _doMoveForwardPhysics(_multiplier = 1) {
-        this.mesh.physicsImposter.setLinearVelocity(new BABYLON.Vector3(
-            -Math.sin(this.mesh.physicsImposter.physicsBody.getQuaternion().y),
-            Game.scene.gravity.y,
-            -Math.cos(this.mesh.physicsImposter.physicsBody.getQuaternion().y))
-        );
-    }
-    _doMoveForwardCollisions(_multiplier = 1) {
-        this.u = this.moveFallTime * -Game.scene.gravity.y;
-        this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
-        this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
-        this.moveFallTime = this.moveFallTime + this.dt;
-        this.moveDistance = (0.72 * this.mesh.scaling.z * _multiplier) * this.dt; // 0.72 is the furthest distance between the rear foot's heel, and the front foot's toe
-        this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, -this.moveDistance);
-        if (this.moveVector.length() > 0.001) {
-            this.mesh.moveWithCollisions(this.moveVector);
+    keyMoveForward(_pressed = false) {
+        if (_pressed === true) {
+            this.key.forward = true;
+            this.key.backward = false;
+            this.key.shift = false;
+        }
+        else {
+            this.key.forward = false;
         }
     }
-    doMoveForward(_multiplier = 1) {
-        if (Game.debugEnabled) console.log("Running doMoveForward");
-        if (Game.physicsEnabled) {this._doMoveForwardPhysics(_multiplier);}
-        else {this._doMoveForwardCollisions(_multiplier);}
-        this.moveForward = true;
-        this.moveBackward = false;
-        this.runForward = false;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
-    }
-    doRunForward() {
-        if (Game.debugEnabled) console.log("Running doRunForward");
-        if (Game.physicsEnabled) {this._doMoveForwardPhysics(2.4);}
-        else {this._doMoveForwardCollisions(2.4);}
-        this.moveForward = false;
-        this.moveBackward = false;
-        this.runForward = true;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
-    }
-    _doMoveBackwardPhysics(_multiplier = 0.7) {
-        this.mesh.physicsImposter.setLinearVelocity(new BABYLON.Vector3(
-            -Math.sin(this.mesh.physicsImposter.physicsBody.getQuaternion().y),
-            Game.scene.gravity.y,
-            -Math.cos(this.mesh.physicsImposter.physicsBody.getQuaternion().y))
-        );
-    }
-    _doMoveBackwardCollisions(_multiplier = 0.7) {
-        this.u = this.moveFallTime * -Game.scene.gravity.y;
-        this.dt = Game.scene.getEngine().getDeltaTime() / 1000;
-        this.freeFallDistance = this.u * this.dt + -Game.scene.gravity.y * this.dt * this.dt / 2;
-        this.moveFallTime = this.this.moveFallTime + this.dt;
-        this.moveDistance = (0.72 * this.mesh.scaling.z * _multiplier) * this.dt;
-        this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDistance, this.moveDistance);
-        if (this.moveVector.length() > 0.001) {
-            this.mesh.moveWithCollisions(this.moveVector);
+    keyShift(_pressed = false) {
+        if (_pressed === true) {
+            this.key.shift = true;
+        }
+        else {
+            this.key.shift = false;
         }
     }
-    doMoveBackward(_multiplier = 0.7) {
-        if (Game.debugEnabled) console.log("Running doMoveBackward");
-        if (Game.physicsEnabled) {this._doMoveBackwardPhysics();}
-        else {this._doMoveBackwardCollisions();}
-        this.moveBackward = true;
-        this.moveForward = false;
-        this.runForward = false;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
+    keyMoveBackward(_pressed = false) {
+        if (_pressed === true) {
+            this.key.backward = true;
+            this.key.forward = false;
+            this.key.shift = false;
+        }
+        else {
+            this.key.backward = false;
+        }
     }
-    _doTurnLeftPhysics(_multiplier = 1.0) {
-        this.mesh.physicsImposter.setAngularVelocity(new BABYLON.Quaternion(0,-6,0,0));
+    keyTurnLeft(_pressed = false) {
+        if (_pressed === true) {
+            this.key.turnLeft = true;
+            this.key.turnRight = false;
+        }
+        else {
+            this.key.turnLeft = false;
+        }
     }
-    _doTurnLeftCollisions(_multiplier = 1.0) {
-        this.mesh.addRotation(0, -this.mesh.scaling.y * 0.025, 0);
+    keyTurnRight(_pressed = false) {
+        if (_pressed === true) {
+            this.key.turnRight = true;
+            this.key.turnLeft = false;
+        }
+        else {
+            this.key.turnRight = false;
+        }
     }
-    doTurnLeft(_multiplier = 1.0) {
-        if (Game.debugEnabled) console.log("Running doTurnLeft");
-        if (Game.physicsEnabled) {this._doTurnLeftPhysics();}
-        else {this._doTurnLeftCollisions();}
-        this.turnLeft = true;
-        this.turnRight = false;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
+    keyStrafeLeft(_pressed = false) {
+        if (_pressed === true) {
+            this.key.stepLeft = true;
+            this.key.stepRight = false;
+        }
+        else {
+            this.key.stepLeft = false;
+        }
     }
-    _doTurnRightPhysics(_multiplier = 1.0) {
-        this.mesh.physicsImposter.setAngularVelocity(new BABYLON.Quaternion(0,6,0,0));
+    keyStrafeRight(_pressed = false) {
+        if (_pressed === true) {
+            this.key.stepLeft = false;
+            this.key.stepRight = true;
+        }
+        else {
+            this.key.stepRight = false;
+        }
     }
-    _doTurnRightCollisions(_multiplier = 1.0) {
-        this.mesh.addRotation(0, this.mesh.scaling.y * 0.025, 0);
-    }
-    doTurnRight(_multiplier = 1.0) {
-        if (Game.debugEnabled) console.log("Running doTurnRight");
-        if (Game.physicsEnabled) {this._doTurnRightPhysics();}
-        else {this._doTurnRightCollisions();}
-        this.turnRight = true;
-        this.turnLeft = false;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
-    }
-    doJump() {
-        if (Game.debugEnabled) console.log("Running doJump");
-        this.mesh.physicsImposter.setLinearVelocity(new BABYLON.Quaternion(0,3,0,0));
-        this.jump = true;
-        if (this.networkID != undefined) {Client.updateLocRotSelf();}
+    keyJump(_pressed = false) {
+        if (_pressed === true) {
+            this.key.jump = true;
+        }
+        else {
+            this.key.jump = false;
+        }
     }
     dispose() {
         this.detachFromAllBones();
-        this.mesh.characterController = null;
+        this.avatar.characterController = null;
         for (var _var in this) {
             this[_var] = null;
         }
+    }
+}
+class AnimData {
+    constructor(_name) {
+        this.loop = true;
+        this.rate = 1;
+        this.exist = false;
+        this.name = _name;
+    }
+}
+class Key {
+    constructor() {
+        this.forward = false;
+        this.backward = false;
+        this.turnRight = false;
+        this.turnLeft = false;
+        this.stepRight = false;
+        this.stepLeft = false;
+        this.jump = false;
+        this.shift = false;
+    }
+    reset() {
+        this.forward = false;
+        this.backward = false;
+        this.turnRight = false;
+        this.turnLeft = false;
+        this.stepRight = false;
+        this.stepLeft = false;
+        this.jump = false;
+        this.shift = false;
     }
 }
