@@ -371,6 +371,8 @@ class Game {
             _instance.checkCollisions = true;
             _instance.ellipsoid = new BABYLON.Vector3(0.13 * _scale.x, 1.2 * _scale.y, 0.13 * _scale.z);
             _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y + (_instance.ellipsoid.y * 0.06), 0);
+            _instance.ellipsoid.set(0.13 * _scale.x, 0.6 * _scale.y, 0.13 * _scale.z);
+            _instance.ellipsoidOffset.set(0, _instance.ellipsoid.y, 0);
         }
         return _instance;
     }

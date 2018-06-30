@@ -18,7 +18,7 @@ class CharacterController {
         this.walkSpeed = 0.62 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 2;
         this.backSpeed = this.walkSpeed * 0.5;
-        this.jumpSpeed = this.walkSpeed * 2;
+        this.jumpSpeed = this.avatar.scaling.y * 4;
         this.strafeSpeed = this.walkSpeed * 0.75;
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = 30;

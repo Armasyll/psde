@@ -38,6 +38,38 @@ function genUUIDv4() {
     }
     return uuid.toUpperCase();
 }
+BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
+
+    if (!this.isEnabled()) return;
+
+    this.refreshBoundingInfo();    
+
+    var sphere = BABYLON.MeshBuilder.CreateSphere("elli", { 
+        diameterX: this.ellipsoid.x * 2,
+        diameterZ: this.ellipsoid.z * 2,
+        diameterY: this.ellipsoid.y * 2
+        },
+    scene);
+
+//    sphere.position = this.position.add(this.ellipsoidOffset);
+    sphere.position = this.getAbsolutePosition().add(this.ellipsoidOffset);
+
+    this.ellipsoidMesh = sphere;
+    // sphere.showBoundingBox = true;
+    sphere.material = new BABYLON.StandardMaterial("collider", scene);
+    sphere.material.wireframe = true;
+    sphere.material.diffuseColor = BABYLON.Color3.Yellow();
+
+    // special barrel ellipsoid checks
+    if (this.name == "barrel" || this.name == "barrel2") {
+        sphere.material.diffuseColor = BABYLON.Color3.Green();
+        console.log("barrel.ellipsoid: ", this.ellipsoid)
+        var sbb = sphere.getBoundingInfo().boundingBox;
+        console.log("barrel sphere bb.maximum.scale(2): ", sbb.maximum.scale(2));
+    }
+
+    sphere.visibility = .1;
+}
 
 window.addEventListener('resize', function(){
     Game.engine.resize();
@@ -199,7 +231,7 @@ function generateApartmentScene() {
         Game.assignPlanePhysicsToMesh(_ground);
     }
     else {
-        Game.addCollisionPlane({x:-512, z:-512}, {x:512, z:512}, 0);
+        Game.addCollisionPlane({x:-512, z:-512}, {x:512, z:512}, -0.075);
     }
 
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
@@ -225,13 +257,13 @@ function generateApartmentScene() {
     noooMesh.scaling.x = 0.6;
     noooMesh.material = nooo;
 
-    /*var yipyipyipTexture = new BABYLON.StandardMaterial("yipyipyipTexture", Game.scene);
+    var yipyipyipTexture = new BABYLON.StandardMaterial("yipyipyipTexture", Game.scene);
     yipyipyipTexture.diffuseTexture = new BABYLON.VideoTexture("yipyipyipVideo", ["resources/videos/20180420_yipyipyip.mp4", "resources/videos/20180420_yipyipyip.webm"], Game.scene, true);
     yipyipyipTexture.emissiveColor = new BABYLON.Color3(0, 0, 0);
     var yipyipyipMesh = new BABYLON.Mesh.CreatePlane("yipyipyipPlayer", 2, Game.scene);
     yipyipyipMesh.position.set(1, 1.5, -17.06);
     yipyipyipMesh.scaling.set(0.75, 0.5, 0.5);
-    yipyipyipMesh.material = yipyipyipTexture;*/
+    yipyipyipMesh.material = yipyipyipTexture;
 
     var floorMaterial = new BABYLON.StandardMaterial("floorMaterial", Game.scene);
     floorMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
