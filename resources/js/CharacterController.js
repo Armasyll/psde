@@ -280,7 +280,6 @@ class CharacterController {
         }
         this.avatar.moveWithCollisions(disp);
         if (jumpDist < 0) {
-            anim = this.fall;
             if ((this.avatar.position.y > this.avStartPos.y) || ((this.avatar.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
                 this.endJump();
             }
