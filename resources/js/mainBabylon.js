@@ -105,7 +105,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 }));
 
                 Client.initialize();
-                Game.guis["characterChoiceMenu"].isVisible = true;
+                GameGUI.showCharacterChoiceMenu();
             }
         }
     });
