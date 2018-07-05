@@ -3,7 +3,7 @@
  * It's great :v you should check it out.
  */
 class CharacterController {
-    constructor(_avatar, _meshID) {
+    constructor(_id, _avatar, _meshID) {
         _meshID = Game.filterID(_meshID);
         if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
         if (!_avatar instanceof BABYLON.Mesh || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
@@ -78,7 +78,7 @@ class CharacterController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
 
         this.attachedMeshes = {};
-        Game.controllerInstances[this.id] = this;
+        Game.controllers[this.id] = this;
     }
     setID(_id) {
         this.id = _id;
