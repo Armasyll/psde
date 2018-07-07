@@ -38,10 +38,20 @@ class Entity {
         if (typeof _image == 'undefined')
             _image = "resources/images/items/genericItem.svg";
         /**
-         * Path to Character's picture
+         * Path to Entity's picture
          * @type {String} Relative path to an image, or base64 encoded String
          */
         this.image = _image;
+        /**
+         * Entity's mesh
+         * @type {BABYLON.Mesh}
+         */
+        this.avatar = undefined;
+        /**
+         * Entity's controller
+         * @type {CharacterController}
+         */
+        this.controller = undefined;
 
         /**
          * Actions available to this Entity

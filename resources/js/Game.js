@@ -709,6 +709,8 @@ class Game {
             _mesh.material.specularColor.set(0,0,0);
         }
         var _controller = new CharacterController(_id, _mesh, _entity);
+        _entity.controller = _controller;
+        _entity.mesh = _mesh;
         return _controller;
     }
     static deleteCharacter(_character) {
@@ -725,6 +727,17 @@ class Game {
         _character.dispose();
     }
     static highlightMesh(_mesh) {
+        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+            if (_mesh instanceof Entity) {
+                _mesh = _mesh.avatar;
+            }
+            else if (_mesh instanceof EntityController) {
+                _mesh = _mesh.avatar;
+            }
+            else {
+                return;
+            }
+        }
         if (!this.highlightEnabled || _mesh == this.highlightedMesh) {
             return;
         }

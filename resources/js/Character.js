@@ -24,15 +24,9 @@ class Character extends EntityWithStorage {
          */
         this.nickname = undefined;
         /**
-         * Path to Character's picture
-         * @type {String} Relative path to an image, or base64 encoded String
+         * Class title
+         * @type {String}
          */
-        this.image = undefined;
-        /**
-         * Character's mesh
-         * @type {[type]}
-         */
-        this.mesh = undefined;
         this.class = undefined;
         /**
          * Age
