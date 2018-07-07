@@ -130,6 +130,26 @@ class Entity {
     getImage() {
         return this.image;
     }
+    setAvatar(_mesh) {
+
+    }
+    getAvatar() {
+        return this.avatar;
+    }
+    setController(_controller) {
+        if (!(_controller instanceof EntityController)) {
+            if (Game.hasController(_controller)) {
+                Game.getController(_controller);
+            }
+            else {
+                return;
+            }
+        }
+        this.controller = _controller;
+    }
+    getController() {
+        return this.controller;
+    }
 
     /**
      * Adds an available Action when interacting with this Entity

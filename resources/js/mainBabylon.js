@@ -81,7 +81,7 @@ window.addEventListener("DOMContentLoaded", function() {
     Game.engine.runRenderLoop(function() {
         Game.scene.render();
         if (!Game._finishedLoading) {
-            if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems) {
+            if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems && Game.initialized && GameGUI.initialized) {
                 if (Game.debugEnabled) console.log("Finished loading assets.");
 
                 var _character = Game.characterMeshes["nullSkeletonN"];
@@ -105,7 +105,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 }));
 
                 Client.initialize();
-                GameGUI.showCharacterChoiceMenu();
+                GameGUI.showMainMenu();
             }
         }
     });
