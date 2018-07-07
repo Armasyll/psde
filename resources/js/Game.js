@@ -66,6 +66,14 @@ class Game {
         this.postProcess = {};
         this.initPostProcessing();
 
+        this.highlightEnabled = true;
+        this.highlightLayer = new BABYLON.HighlightLayer("hl1", this.scene);
+        this.highlightLayer.innerGlow = false;
+        this.highlightedMesh = undefined;
+        this.highlightedColorEnemy = "red";
+        this.highlightedColorFriend = "green";
+        this.highlightedColorNeutral = "white";
+
         this.MALE = 0, this.FEMALE = 1;
         this.RIGHT_HANDED = 0, this.LEFT_HANDED = 1;
         this.kSpeciesTypes = new Set(["fox","skeleton"]);
@@ -715,6 +723,16 @@ class Game {
         delete Game.characterIDsControllers[_character.id];
         _character.characterController.dispose();
         _character.dispose();
+    }
+    static highlightMesh(_mesh) {
+        if (!this.highlightEnabled || _mesh == this.highlightedMesh) {
+            return;
+        }
+        if (this.highlightedMesh != undefined) {
+            this.highlightLayer.removeMesh(this.highlightedMesh);
+        }
+        this.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
+        this.highlightedMesh = _mesh;
     }
 }
 class GameGUI {
