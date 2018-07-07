@@ -670,7 +670,7 @@ class Game {
     }
     static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.kMale, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
         if (typeof _id != "string") _id = genUUIDv4();
-        _id = _id.lowerCase();
+        _id = _id.toLowerCase();
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
         var _meshID = "";
         switch (_entity.species) {
