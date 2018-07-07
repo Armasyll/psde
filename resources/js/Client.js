@@ -126,7 +126,7 @@ class Client {
             type: "P_INIT_SELF",
             content: {
             	id:Game.player.id,
-                mesh:Game.player.meshID,
+                mesh:Game.player.avatar.name,
                 position:Game.player.avatar.position,
                 rotation:Game.player.avatar.rotation,
                 scaling:Game.player.avatar.scaling,

@@ -55,10 +55,10 @@ class Entity {
         this.specialProperties = new Set();
 
         /**
-         * Weight in kilograms
+         * Mass in kilograms
          * @type {Number} 0.001 to Number.MAX_SAFE_INTEGER
          */
-        this.defaultWeight = 0;
+        this.defaultMass = 0;
 
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");
@@ -94,7 +94,7 @@ class Entity {
         }
 
         if (typeof _image == "undefined")
-            this.image = "resources/items/genericItem/{0}.svg".format(this.id); // base64 image, or url
+            this.image = `resources/images/items/genericItem.svg`; // base64 image, or url
         else if (_image.slice(0, 17) == "resources/images/") {
             _image = _image.slice(17).split('/');
             _image = _image[_image.length];
@@ -103,18 +103,18 @@ class Entity {
             _image[1] = _image[1].replace(/[^0-9a-z]/gi, '');
             var _fileType = _image[1].toLowerCase();
             if (_fileType !== "png" && _fileType !== "svg" && _fileType !== "jpg" && _fileType !== "jpeg" && _fileType !== "gif")
-                this.image = "resources/images/{0}/{1}.svg".format(_subPath, this.id);
+                this.image = `resources/images/${_subPath}/${this.id}.svg`;
             else if (_image[0].length < 1)
-                this.image = "resources/images/{0}/{1}.svg".format(_subPath, this.id);
+                this.image = `resources/images/${_subPath}/${this.id}.svg`;
             else
-                this.image = "resources/images/{0}/{1}.{2}".format(_subPath, _image[0], _image[1]);
+                this.image = `resources/images/${_subPath}/${_image[0]}.${_image[1]}`;
             this._fileType = null;
         }
         else if (_image.slice(0, 11) == "data:image/") {
             this.image = _image;
         }
         else
-            this.image = "resources/images/items/genericItem.svg".format(this.id); // base64 image, or url
+            this.image = "resources/images/items/genericItem.svg"; // base64 image, or url
         return this;
     }
     getImage() {

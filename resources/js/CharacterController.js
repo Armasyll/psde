@@ -1,18 +1,22 @@
+class EntityController {
+	constructor(_id, _avatar, _entity) {
+        if (!_avatar instanceof BABYLON.Mesh || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
+        if (!_entity instanceof Character) return null;
+        this.id = _id;
+        this.avatar = _avatar;
+        this.entity = _entity;
+
+        Game.controllers[this.id] = this;
+	}
+}
 /**
  * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
  * It's great :v you should check it out.
  */
-class CharacterController {
-    constructor(_id, _avatar, _meshID) {
-        _meshID = Game.filterID(_meshID);
-        if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
-        if (!_avatar instanceof BABYLON.Mesh || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
-
-        this.meshID = _meshID;
-        this.avatar = _avatar;
-        this.avatar.characterController = this;
-        this.id = this.avatar.id;
-        this.name = "";
+class CharacterController extends EntityController {
+    constructor(_id, _avatar, _entity) {
+        super (_id, _avatar, _entity);
+        this.avatar.controller = this;
         this.networkID = null;
 
         this.walkSpeed = 0.62 * this.avatar.scaling.z;
@@ -78,19 +82,13 @@ class CharacterController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
 
         this.attachedMeshes = {};
-        Game.controllers[this.id] = this;
+        Game.characterControllers[this.id] = this;
     }
     setID(_id) {
         this.id = _id;
     }
     getID() {
         return this.id;
-    }
-    setName(_name) {
-        this.name = _name;
-    }
-    getName() {
-        return this.name;
     }
     setNetworkID(_id) {
         this.networkID = _id;
@@ -216,9 +214,6 @@ class CharacterController {
         if (!(this.avatar instanceof BABYLON.Mesh)) {
             return undefined;
         }
-        if (Client.online) {
-            Client.updateMovementKeysSelf();
-        }
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
@@ -246,9 +241,6 @@ class CharacterController {
                     }
                 }
             }
-        }
-        if (Client.online) {
-            Client.updateLocRotScaleSelf();
         }
     }
     doJump(dt) {
@@ -682,7 +674,7 @@ class CharacterController {
     }
     dispose() {
         this.detachFromAllBones();
-        this.avatar.characterController = null;
+        this.avatar.controller = null;
         for (var _var in this) {
             this[_var] = null;
         }

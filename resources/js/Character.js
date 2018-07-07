@@ -11,35 +11,7 @@ class Character extends EntityWithStorage {
      * @param  {String} _species Species
      */
     constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = undefined, _class = "classless", _age = 33, _sex = 0, _species = "fox") {
-        var _createNewInstanceFromScratch = true;
-        if (_id instanceof Object) {
-            super(_id.id, _id._name);
-            for (var property in _id) {
-                if (_id.hasOwnProperty(property)) {
-                    this[property] = _id[property];
-                }
-            }
-            return this;
-        }
-        
-        if (_id.slice(0,1) == '{') {
-            try {
-                var _json = JSON.parse(_id);
-            }
-            catch (e) {
-                console.log(e);
-            }
-            
-            if (_json instanceof Object) {
-                super(_json["id"], _json["name"]);
-                _createNewInstanceFromScratch = false;
-            }
-        }
-
-        if (PSDE.enableDebug) console.log("Creating a new instance of Character with ID `{0}`".format(_id));
-
-        if (_createNewInstanceFromScratch)
-            super(_id.replace(/[^0-9a-z]/gi, ''));
+        super(_id.replace(/[^0-9a-z]/gi, ''));
         /**
          * Surname
          * @type {String} Cannot be undefined!
@@ -71,15 +43,15 @@ class Character extends EntityWithStorage {
          * Physical sexual identity
          * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
          */
-        this._sex = PSDE.kMale;
+        this._sex = Game.MALE;
         /**
          * Personal sexual identity
          * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
          */
-        this.gender = PSDE.kMale;
+        this.gender = Game.MALE;
         /**
          * Intraactions this Character is currently performing
-         * @type {Map} <PSDE.kIntraactionTypes>
+         * @type {Map} <Game.kIntraactionTypes>
          */
         this.currentActions = {};
         /**
@@ -303,11 +275,6 @@ class Character extends EntityWithStorage {
          */
         this.furColourBHex = undefined;
         /**
-         * Bodyparts
-         * @type {Set} <Bodypart>
-         */
-        this.bodyParts = new Map();
-        /**
          * Size in reference to a tundra wolf
          * @type {Number}
          */
@@ -319,12 +286,12 @@ class Character extends EntityWithStorage {
         this.predator = false;
         /**
          * Hand type
-         * @type {String} (PSDE.kHandTypes)
+         * @type {String} (Game.kHandTypes)
          */
         this.handType = "pad";
         /**
          * Feet type
-         * @type {String} (PSDE.kHandTypes)
+         * @type {String} (Game.kHandTypes)
          */
         this.feetType = "pad";
         /**
@@ -339,7 +306,7 @@ class Character extends EntityWithStorage {
         this.spouse = undefined;
         /**
          * Eye type
-         * @type {String} (PSDE.kEyeTypes)
+         * @type {String} (Game.kEyeTypes)
          */
         this.eyeType = "circle";
         /**
@@ -349,7 +316,7 @@ class Character extends EntityWithStorage {
         this.eyeColour = "green";
         /**
          * Pelt type
-         * @type {String} (PSDE.kPeltTypes)
+         * @type {String} (Game.kPeltTypes)
          */
         this.peltType = "fur";
         /**
@@ -357,16 +324,6 @@ class Character extends EntityWithStorage {
          * @type {Number} 0 to 100
          */
         this.peltTrimmed = 50;
-        /**
-         * Pelt softness; I don't really know
-         * @type {Number} 0  to 100
-         */
-        this.peltSoftness = 50;
-        /**
-         * Breast size
-         * @type {Number} 0 - flat, 100 - DD; relative to body size
-         */
-        this.breastSize = 0;
         /**
          * Penis size in centimeters
          * @type {Number} 0 - none, 100 - Character dies from blood loss
@@ -387,21 +344,6 @@ class Character extends EntityWithStorage {
          * @type {Number} 0 - none, 100 - Character is basically a trash bag
          */
         this.vaginaGirth = 0;
-        /**
-         * Pubic hair, I don't know how that would work with fur
-         * @type {Number} 0 - none, 100 - 70s porn groove plays during sex
-         */
-        this.pubicHairSize = 0;
-        /**
-         * Body parts slick with precum
-         * @type {Set} <Bodypart>
-         */
-        this.bodyPartsSlickWithPre = new Set();
-        /**
-         * Body parts slick with cum
-         * @type {Set} <Bodypart>
-         */
-        this.bodyPartsSlickWithCum = new Set();
         /**
          * Virgin
          * @type {Boolean} True - virgin, false - not a virgin
@@ -623,7 +565,7 @@ class Character extends EntityWithStorage {
          * @type {Number}  Obsession
          * @type {Number}  Hate
          */
-        this.characterDisposition = new Map();
+        this.characterDisposition = {};
         /**
          * Set of Characters that are currently being dated
          * @type {Set} <Character>
@@ -739,7 +681,7 @@ class Character extends EntityWithStorage {
         this.addAvailableAction("hug");
         this.addAvailableAction("kiss");
 
-        PSDE.characters.set(this.id, this);
+        Game.characterEntities[this.id] = this;
 
         this._generateProperties();
         this.stand();
@@ -747,13 +689,13 @@ class Character extends EntityWithStorage {
     
     getFullName() {
         if (this.surname != undefined && this.surname.length > 0)
-            return "{0} {1}".format(this.name, this.surname);
+            return this.name + " " + this.surname;
         else
             return this.name;
     }
 
     setClass(_class) {
-        if (PSDE.kCharacterClasses.has(_class))
+        if (Game.kCharacterClasses.has(_class))
             this.class = _class;
         else
             this.class = "commoner";
@@ -768,8 +710,8 @@ class Character extends EntityWithStorage {
         else if (_cost instanceof Spell) {
             _cost = _cost.manaCost;
         }
-        else if (PSDE.spells.has(_cost))
-            _cost = PSDE.spells.get(_cost).manaCost;
+        else if (Game.spells.has(_cost))
+            _cost = Game.spells.get(_cost).manaCost;
         if (this.manaCostOffsetPercent == 0 || _cost == 0)
             return _cost;
         else if (_cost < 0)
@@ -778,26 +720,27 @@ class Character extends EntityWithStorage {
             return _cost - (_cost / (100 / this.manaCostOffsetPercent));
     }
 
-    setHandedness(_hand) {
-        if (_hand == "leftHand")
-            this.handedness = "leftHand";
-        else if (_hand == "rightHand")
-            this.handedness = "rightHand";
+    setHandedness(_int) {
+        if (_hand == Game.LEFT_HANDED)
+            this.handedness = 1;
+        else {
+            this.handedness = 0;
+        }
     }
     getHandedness() {
         return this.handedness;
     }
     setLeftHanded(_bool = true) {
         if (_bool === true)
-            this.setHandedness("leftHand");
+            this.setHandedness(1);
         else
-            this.setHandedness("rightHand");
+            this.setHandedness(0);
     }
     setRightHanded(_bool = true) {
         if (_bool === true)
-            this.setHandedness("rightHand");
+            this.setHandedness(0);
         else
-            this.setHandedness("leftHand");
+            this.setHandedness(1);
     }
 
     /**
@@ -809,8 +752,8 @@ class Character extends EntityWithStorage {
      */
     addHeldEntity(_entityInstance, _hand = undefined) {
         if (!(_entityInstance instanceof EntityInstance)) {
-            if (PSDE.instances.has(_entityInstance))
-                _entityInstance = PSDE.instances.get(_entityInstance);
+            if (Game.instances.has(_entityInstance))
+                _entityInstance = Game.instances.get(_entityInstance);
             else
                 return this;
         }
@@ -843,10 +786,10 @@ class Character extends EntityWithStorage {
             if (!this.removeHeldEntity(this.heldEntities[_hand]))
                 return this;
         }
-        if (this.triggerActionEvent("hold", _entityInstance.parent)) {
+        /*if (this.triggerActionEvent("hold", _entityInstance.parent)) {
             this.heldEntities[_hand] = _entityInstance;
             this.currentActions["hold"] = this.heldEntities;
-        }
+        }*/
         return this;
     }
     /**
@@ -857,8 +800,8 @@ class Character extends EntityWithStorage {
      */
     removeHeldEntity(_entityInstance) {
         if (!(_entityInstance instanceof EntityInstance)) {
-            if (PSDE.instances.has(_entityInstance))
-                _entityInstance = PSDE.instances.get(_entityInstance);
+            if (Game.instances.has(_entityInstance))
+                _entityInstance = Game.instances.get(_entityInstance);
             else if (_entityInstance == "leftHand")
                 _entityInstance = this.getEntityInLeftHand();
             else if (_entityInstance == "rightHand")
@@ -866,7 +809,7 @@ class Character extends EntityWithStorage {
             else
                 return this;
         }
-        if (this.hasHeldEntity(_entityInstance) && this.triggerActionEvent("release", _entityInstance.parent)) {
+        if (this.hasHeldEntity(_entityInstance) /*&& this.triggerActionEvent("release", _entityInstance.parent)*/) {
             if (this.getEntityInRightHand() == _entityInstance)
                 this.removeEntityInRightHand();
             if (this.getEntityInLeftHand() == _entityInstance)
@@ -877,8 +820,8 @@ class Character extends EntityWithStorage {
     }
     hasHeldEntity(_entityInstance) {
         if (!(_entityInstance instanceof EntityInstance)) {
-            if (PSDE.entityInstances.has(_entityInstance))
-                _entityInstance = PSDE.entityInstances.get(_entityInstance);
+            if (Game.entityInstances.has(_entityInstance))
+                _entityInstance = Game.entityInstances.get(_entityInstance);
             else {
                 _entityInstance = this.getItem(_entityInstance);
                 if (!(_entityInstance instanceof EntityInstance))
@@ -961,8 +904,6 @@ class Character extends EntityWithStorage {
     }
 
     clean() {
-        this.bodyPartsSlickWithCum.clear();
-        this.bodyPartsSlickWithPre.clear();
         this.cleanliness = 100;
         this.odorSex = 0;
         this.odorSweat = 0;
@@ -1321,9 +1262,9 @@ class Character extends EntityWithStorage {
             _int = 0;
         else if (_int < 0)
             _int = 0;
-        else if (_int > PSDE.kCharacterLevelMax)
-            _int = PSDE.kCharacterLevelMax;
-        this.experiencePoints = PSDE.calculateLevel(_int);
+        else if (_int > Game.kCharacterLevelMax)
+            _int = Game.kCharacterLevelMax;
+        this.experiencePoints = Game.calculateLevel(_int);
         return this;
     }
 
@@ -1332,8 +1273,8 @@ class Character extends EntityWithStorage {
             _int = 0;
         else if (_int < 0)
             _int = 0;
-        else if (_int > PSDE.kCharacterXPMax)
-            _int = PSDE.kCharacterXPMax;
+        else if (_int > Game.kCharacterXPMax)
+            _int = Game.kCharacterXPMax;
         this.experiencePoints = _int;
         return this;
     }
@@ -2145,43 +2086,6 @@ class Character extends EntityWithStorage {
         return this.avoidsPrey;
     }
 
-    addBodyPartSlickWithPre(_bodyPart) {
-        if (this.hasBodyPart(_bodyPart)) {
-            this.bodyPartsSlickWithPre.add(_bodyPart);
-        }
-        return this;
-    }
-    removeBodyPartSlickWithPre(_bodyPart) {
-        if (this.hasBodyPart(_bodyPart)) {
-            this.bodyPartsSlickWithPre.delete(_bodyPart);
-        }
-        return this;
-    }
-    hasBodyPartSlickWithPre(_bodyPart) {
-        return this.bodyPartsSlickWithPre.has(_bodyPart);
-    }
-    getBodyPartsSlickWithPre() {
-        return this.bodyPartsSlickWithPre;
-    }
-    addBodyPartSlickWithCum(_bodyPart) {
-        if (this.hasBodyPart(_bodyPart)) {
-            this.bodyPartsSlickWithCum.add(_bodyPart);
-        }
-        return this;
-    }
-    removeBodyPartSlickWithCum(_bodyPart) {
-        if (this.hasBodyPart(_bodyPart)) {
-            this.bodyPartsSlickWithCum.delete(_bodyPart);
-        }
-        return this;
-    }
-    hasBodyPartSlickWithCum(_bodyPart) {
-        return this.bodyPartsSlickWithCum.has(_bodyPart);
-    }
-    getBodyPartsSlickWithCum() {
-        return this.bodyPartsSlickWithCum;
-    }
-
     setSexualOrientation(_int) {
         if (isNaN(_int)) {
             switch (_int.slice(0, 1)) {
@@ -2215,6 +2119,9 @@ class Character extends EntityWithStorage {
     }
 
     setSex(_sex) {
+        if (_sex == undefined) {
+            _sex = 0;
+        }
         if (isNaN(_sex)) {
             switch (_sex.slice(0, 1)) {
                 case "m" : {
@@ -2240,7 +2147,7 @@ class Character extends EntityWithStorage {
         return this;
     }
     getSexName() {
-        return this.getSex() == PSDE.kMale ? "male" : (this.getSex() == PSDE.kFemale ? "female" : "herm");
+        return this.getSex() == Game.MALE ? "male" : (this.getSex() == Game.FEMALE ? "female" : "herm");
     }
     getSex() {
         return this._sex;
@@ -2280,8 +2187,8 @@ class Character extends EntityWithStorage {
 
     getSexualOrientationCompatibility(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2329,16 +2236,16 @@ class Character extends EntityWithStorage {
         return this;
     }
     setCharacterDisposition(_character, _passion = undefined, _friendship = undefined, _playfulness = undefined, _soulmate = undefined, _familial = undefined, _obsession = undefined, _hate = undefined) {
-        if (PSDE.enableDebug) console.log("Running setCharacterDisposition");
+        if (Game.enableDebug) console.log("Running setCharacterDisposition");
 
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
         if (_passion instanceof Object) {
-            this.characterDisposition.set(_character, {
+            this.characterDisposition[_character] = {
                 passion:(Number.parseInt(_passion.passion) || 0),
                 friendship:(Number.parseInt(_passion.friendship) || 0),
                 playfulness:(Number.parseInt(_passion.playfulness) || 0),
@@ -2346,12 +2253,12 @@ class Character extends EntityWithStorage {
                 familial:(Number.parseInt(_passion.familial) || 0),
                 obsession:(Number.parseInt(_passion.obsession) || 0),
                 hate:(Number.parseInt(_passion.hate) || 0)
-            });
+            };
         }
         else if (isNaN(_passion) && this.defaultDisposition.hasOwnProperty(_passion) && !isNaN(Number.parseInt(_friendship)))
-            this.characterDisposition.get(_character)[_passion] = Number.parseInt(_friendship);
+            this.characterDisposition[_character][_passion] = Number.parseInt(_friendship);
         else {
-            this.characterDisposition.set(_character, {
+            this.characterDisposition[_character] = {
                 passion:(Number.parseInt(_passion) || this.defaultDisposition.passion),
                 friendship:(Number.parseInt(_friendship) || this.defaultDisposition.friendship),
                 playfulness:(Number.parseInt(_playfulness) || this.defaultDisposition.playfulness),
@@ -2359,7 +2266,7 @@ class Character extends EntityWithStorage {
                 familial:(Number.parseInt(_familial) || this.defaultDisposition.familial),
                 obsession:(Number.parseInt(_obsession) || this.defaultDisposition.obsession),
                 hate:(Number.parseInt(_hate) || this.defaultDisposition.hate)
-            });
+            };
         }
 
         return this;
@@ -2449,30 +2356,30 @@ class Character extends EntityWithStorage {
         return this.getCharacterDisposition(_character, "hate");
     }
     getCharacterDisposition(_character, _dispositionType = undefined) {
-        if (PSDE.enableDebug) console.log("Running getCharacterDisposition");
+        if (Game.enableDebug) console.log("Running getCharacterDisposition");
 
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
-        if (this.characterDisposition.has(_character)) {
-            if (this.characterDisposition.get(_character).hasOwnProperty(_dispositionType))
-                return this.characterDisposition.get(_character)[_dispositionType];
+        if (this.characterDisposition.hasOwnProperty(_character)) {
+            if (this.characterDisposition[_character].hasOwnProperty(_dispositionType))
+                return this.characterDisposition[_character][_dispositionType];
             else
-                return this.characterDisposition.get(_character);
+                return this.characterDisposition[_character];
         }
         else
             return false;
     }
     hasCharacterDisposition(_character) {
-        if (PSDE.enableDebug) console.log("Running hasCharacterDisposition");
+        if (Game.enableDebug) console.log("Running hasCharacterDisposition");
         
         if (!(_character instanceof Character))
-            _character = PSDE.characters.has(_character) ? PSDE.getCharacterByID(_character) : undefined;
+            _character = Game.hasCharacter(_character) ? Game.getCharacter(_character) : undefined;
         
-        return this.characterDisposition.has(_character);
+        return this.characterDisposition.hasOwnProperty(_character);
     }
     getCharacterDispositions() {
         return this.characterDisposition;
@@ -2482,8 +2389,8 @@ class Character extends EntityWithStorage {
     }
     incCharacterAllDispositions(_character, _int) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2500,8 +2407,8 @@ class Character extends EntityWithStorage {
     }
     decCharacterAllDispositions(_character, _int) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2519,8 +2426,8 @@ class Character extends EntityWithStorage {
 
     addDating(_character, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2534,8 +2441,8 @@ class Character extends EntityWithStorage {
     }
     addDated(_character, _int = 1, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2569,8 +2476,8 @@ class Character extends EntityWithStorage {
     }
     isDatingCharacter(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2582,8 +2489,8 @@ class Character extends EntityWithStorage {
     }
     hasDatedCharacter(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2601,8 +2508,8 @@ class Character extends EntityWithStorage {
     }
     getNumberOfDates(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2614,8 +2521,8 @@ class Character extends EntityWithStorage {
     }
     removeDating(_character, _updateParent) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2630,8 +2537,8 @@ class Character extends EntityWithStorage {
     }
     removeDated(_character, _updateParent) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -2645,22 +2552,6 @@ class Character extends EntityWithStorage {
 
     hasColouration() {
         return typeof this.furColourA != 'undefined';
-    }
-
-    hasBreasts() {
-        return this.breastSize > 0;
-    }
-
-    hasVagina() {
-        return this.vaginaSize > 0;
-    }
-
-    hasPenis() {
-        return this.penisSize > 0;
-    }
-
-    hasPublicHair() {
-        return this.pubicHairSize > 0;
     }
 
     hasHat() {
@@ -2726,19 +2617,19 @@ class Character extends EntityWithStorage {
         return this.clothing["shoes"].parent;
     }
     getClothing(_type) {
-        if (PSDE.kClothingTypes.has(_type))
+        if (Game.kClothingTypes.has(_type))
             return this.clothing[_clothing.type];
         else
             return this.clothing;
     }
     setClothing(_itemInstance, _type = undefined) {
         if (!(_itemInstance instanceof ItemInstance) && _itemInstance !== undefined) {
-            if (PSDE.itemInstances.has(_itemInstance))
-                _itemInstance = PSDE.itemInstances.get(_itemInstance);
+            if (Game.itemInstances.has(_itemInstance))
+                _itemInstance = Game.itemInstances.get(_itemInstance);
             else if (_itemInstance instanceof Clothing)
                 _itemInstance = new ItemInstance(undefined, _itemInstance);
-            else if (PSDE.clothing.has(_itemInstance))
-                _itemInstance = new ItemInstance(undefined, PSDE.clothing.get(_itemInstance));
+            else if (Game.clothing.has(_itemInstance))
+                _itemInstance = new ItemInstance(undefined, Game.clothing.get(_itemInstance));
             else
                 return this;
         }
@@ -2746,9 +2637,9 @@ class Character extends EntityWithStorage {
         if (!(this.containsItem(_itemInstance, true)))
             this.addItem(_itemInstance);
 
-        if (_itemInstance instanceof ItemInstance && PSDE.kClothingTypes.has(_itemInstance.parent.type))
-            this.clothing[PSDE.kClothingTypes.has(_type) ? _type : _itemInstance.parent.type] = _itemInstance;
-        else if (PSDE.kClothingTypes.has(_type))
+        if (_itemInstance instanceof ItemInstance && Game.kClothingTypes.has(_itemInstance.parent.type))
+            this.clothing[Game.kClothingTypes.has(_type) ? _type : _itemInstance.parent.type] = _itemInstance;
+        else if (Game.kClothingTypes.has(_type))
             this.clothing[_type] = undefined;
         return this;
     }
@@ -2756,21 +2647,21 @@ class Character extends EntityWithStorage {
         return this.setClothing(_itemInstance, _type);
     }
     removeClothing(_itemInstance, _type = undefined) {
-        if (typeof _itemInstance == "string" && PSDE.kClothingTypes.has(_itemInstance)) {
+        if (typeof _itemInstance == "string" && Game.kClothingTypes.has(_itemInstance)) {
             this.clothing[_itemInstance] = undefined;
             return this;
         }
-        else if (PSDE.kClothingTypes.has(_type)) {
+        else if (Game.kClothingTypes.has(_type)) {
             this.clothing[_type] = undefined;
             return this;
         }
         if (!(_itemInstance instanceof ItemInstance) && _itemInstance !== undefined) {
-            if (PSDE.itemInstances.has(_itemInstance))
-                _itemInstance = PSDE.itemInstances.get(_itemInstance);
+            if (Game.itemInstances.has(_itemInstance))
+                _itemInstance = Game.itemInstances.get(_itemInstance);
             else if (_itemInstance instanceof Clothing)
                 _itemInstance = new ItemInstance(undefined, _itemInstance);
-            else if (PSDE.clothing.has(_itemInstance))
-                _itemInstance = new ItemInstance(undefined, PSDE.clothing.get(_itemInstance));
+            else if (Game.clothing.has(_itemInstance))
+                _itemInstance = new ItemInstance(undefined, Game.clothing.get(_itemInstance));
             else
                 return this;
         }
@@ -2780,25 +2671,25 @@ class Character extends EntityWithStorage {
     }
 
     addCurrentAction(_actionType, _entity = undefined) {
-        if (!PSDE.kActionTypes.has(_actionType))
+        if (!Game.kActionTypes.has(_actionType))
             return undefined;
         if (!(_entity instanceof Entity) && !(_entity instanceof EntityInstance))
-            _entity = PSDE.entities.has(_entity) ? PSDE.entities.get(_entity) : undefined;
+            _entity = Game.hasEntity(_entity) ? Game.getEntity(_entity) : undefined;
 
         this.currentActions[_actionType] = _entity;
         return this;
     }
     removeCurrentAction(_actionType, _entity = undefined) {
-        if (!PSDE.kActionTypes.has(_actionType))
+        if (!Game.kActionTypes.has(_actionType))
             return undefined;
         if (!(_entity instanceof Entity) && !(_entity instanceof EntityInstance))
-            _entity = PSDE.entities.has(_entity) ? PSDE.entities.get(_entity) : undefined;
+            _entity = Game.hasEntity(_entity) ? Game.getEntity(_entity) : undefined;
 
         delete this.currentActions[_actionType];
         return this;
     }
     hasCurrentAction(_actionType) {
-        if (!PSDE.kActionTypes.has(_actionType))
+        if (!Game.kActionTypes.has(_actionType))
             return undefined;
         return this.currentActions.hasOwnProperty(_actionType);
     }
@@ -2808,7 +2699,7 @@ class Character extends EntityWithStorage {
         return _currentActions;
     }
     getCurrentAction(_actionType) {
-        if (!PSDE.kActionTypes.has(_actionType))
+        if (!Game.kActionTypes.has(_actionType))
             return undefined;
         else if (!this.hasCurrentAction(_actionType))
             return undefined;
@@ -2860,7 +2751,7 @@ class Character extends EntityWithStorage {
         return this.positionPresentTense();
     }
     hasStance(_actionType) {
-        if (PSDE.kIntraactionTypes.has(_actionType))
+        if (Game.kIntraactionTypes.has(_actionType))
             return this.hasCurrentAction(_actionType);
         else
             return false;
@@ -2873,58 +2764,26 @@ class Character extends EntityWithStorage {
      */
     anal(_entity) {
         if (!(_entity instanceof Character)) {
-            if (PSDE.characters.has(_entity))
-                _entity = PSDE.getCharacterByID(_entity);
+            if (Game.hasCharacter(_entity))
+                _entity = Game.getCharacter(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity;
-            else if (PSDE.entityInstances.has(_entity))
-                _entity = PSDE.entityInstances.get(_entity);
+            else if (Game.entityInstances.has(_entity))
+                _entity = Game.entityInstances.get(_entity);
             else
                 return undefined;
         }
         this.fuck(_entity);
-        if (_entity instanceof Character) {
-            if (_entity.hasBodyPart("penis")) {
-                this.addCurrentAction("sex", _entity.getBodyPart("penis"));
-                _entity.addCurrentAction("sex", this.getBodyPart("anus"));
-                this.incAnalReceiveCount();
-                _entity.incAnalGiveCount();
-            }
-            else if (_entity.hasBodyPart("vagina") && _entity.hasStrapon()) {
-                this.addCurrentAction("sex", _entity.getStrapon());
-                _entity.addCurrentAction("sex", this.getBodyPart("anus"));
-                this.incAnalReceiveCount();
-                _entity.incAnalGiveCount();
-            }
-            else
-                return false;
-        }
-        else if (_entity instanceof BodyPartInstance) {
-            this.addCurrentAction("sex", _entity);
-            _entity.owner.addCurrentAction("sex", this.getBodyPart("anus"));
-            if (_entity.type == "penis") {
-                this.incAnalReceiveCount();
-                _entity.owner.incAnalGiveCount();
-            }
-            else
-                return false;
-        }
-        else if (_entity instanceof ItemInstance) {
-            this.addCurrentAction("sex", _entity);
-            this.incAnalReceiveCount();
-        }
-        else
-            return false;
         return true;
     }
     attack(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -2934,36 +2793,36 @@ class Character extends EntityWithStorage {
     }
     charmed(_character, _cron = "4m") {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
         this.addCurrentAction("charmed", _character);
-        new GameEvent("{0}CharmedRemove".format(this.id), "charmed", _character, this, undefined, undefined, undefined, undefined, _cron, "{0}.removeCurrentAction('charmed')".format(this.id), true);
+        //new GameEvent(`${this.id}CharmedRemove`, "charmed", _character, this, undefined, undefined, undefined, undefined, _cron, `${this.id}.removeCurrentAction('charmed')`, true);
         return true;
     }
     consume(_entityInstance) {
         if (!(_entityInstance instanceof EntityInstance)) {
-            if (PSDE.instances.has(_entityInstance))
-                _entityInstance = PSDE.instances.get(_entityInstance);
+            if (Game.instances.has(_entityInstance))
+                _entityInstance = Game.instances.get(_entityInstance);
             else
                 return undefined;
         }
 
-        if (this.triggerActionEvent("consume", _itemInstance.parent)) {
+        /*if (this.triggerActionEvent("consume", _itemInstance.parent)) {
             this.addCurrentAction("consume", _entityInstance);
             this.items.splice(this.items.indexOf(_itemInstance), 1);
-            PSDE.setTimedFunctionEvent(
-                "{0}Consume{1}{2}".format(this.id, _entityInstance.parent.id, PSDE.roll("1d4")),
-                "PSDE.getCharacterByID('{0}').removeCurrentAction('consume', _entityInstance)".format(this.id),
+            Game.setTimedFunctionEvent(
+                `${this.id}Consume${_entityInstance.parent.id}${Game.roll("1d4")}`,
+                `Game.getCharacter('${this.id}').removeCurrentAction('consume', _entityInstance)`,
                 "2m",
                 true
             );
             return true;
         }
         else
-            return false;
+            return false;*/
         return true;
     }
     /**
@@ -2982,15 +2841,15 @@ class Character extends EntityWithStorage {
      */
     fuck(_entity = undefined, _updateChild = true) {
         if (!(_entity instanceof Character)) {
-            if (PSDE.characters.has(_entity))
-                _entity = PSDE.getCharacterByID(_entity);
+            if (Game.hasCharacter(_entity))
+                _entity = Game.getCharacter(_entity);
             else
                 return undefined;
         }
 
-        if (_entity.getSex() == PSDE.kFemale)
+        if (_entity.getSex() == Game.FEMALE)
             this.hadSexWithFemale = true;
-        else if (_entity.getSex() == PSDE.kMale)
+        else if (_entity.getSex() == Game.MALE)
             this.hadSexWithMale = true;
 
         this.removeCurrentAction("masturbate");
@@ -3005,15 +2864,15 @@ class Character extends EntityWithStorage {
     }
     follow(_character, _preGeneratedPath = undefined, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character)
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character)
             else
                 return undefined;
         }
-        if (PSDE.characterPathes.has(_character))
+        /*if (Game.characterPathes.has(_character))
             this.move();
         else
-            this.stand();
+            this.stand();*/
 
         if (_character.following == this) {
             this.removeFollower(_character);
@@ -3023,20 +2882,20 @@ class Character extends EntityWithStorage {
         this.following = _character;
         this.addCurrentAction("follow", _character);
 
-        var _path = PSDE._findPathToRoom(PSDE.getCharacterCurrentRoom(this), PSDE.getCharacterCurrentRoom(_character));
-        PSDE.characterPathes.set(this, _path);
+        /*var _path = Game._findPathToRoom(Game.getCharacterCurrentRoom(this), Game.getCharacterCurrentRoom(_character));
+        Game.characterPathes.set(this, _path);
 
         if (this.hasFollowers()) {
             this.followers.forEach(function(_follower) {
                 if (_follower instanceof Character) {
-                    if (!(PSDE.getCharacterCurrentRoom(_follower) == PSDE.getCharacterCurrentRoom(this)))
-                        _follower.follow(_character, PSDE._findPathToRoom(PSDE.getCharacterCurrentRoom(_follower), PSDE.getCharacterCurrentRoom(_character)));
+                    if (!(Game.getCharacterCurrentRoom(_follower) == Game.getCharacterCurrentRoom(this)))
+                        _follower.follow(_character, Game._findPathToRoom(Game.getCharacterCurrentRoom(_follower), Game.getCharacterCurrentRoom(_character)));
                     else
                         _follower.follow(_character, _path);
                 }
             }, this);
             this.followers.clear();
-        }
+        }*/
         if (_updateChild) {
             _character.addFollower(this, false);
         }
@@ -3047,12 +2906,12 @@ class Character extends EntityWithStorage {
     }
     hug(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -3060,33 +2919,33 @@ class Character extends EntityWithStorage {
         this.addCurrentAction("hug", _entity);
         return true;
     }
-    kiss(_entity, _bodyPart = undefined) {
+    kiss(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
 
-        this.addCurrentAction("kiss", _entity, _bodyPart);
+        this.addCurrentAction("kiss", _entity);
         return true;
     }
     lay(_furniture = undefined, _dontOverride = []) {
         if (!(_furniture instanceof Furniture))
-            _furniture = PSDE.furniture.has(_furniture) ? PSDE.furniture.get(_furniture) : undefined;
+            _furniture = Game.furniture.has(_furniture) ? Game.furniture.get(_furniture) : undefined;
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
 
         this.removeCurrentAction("move");
-        if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
+        /*if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
         if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
+        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
 
         this.stance = 0;
 
@@ -3096,16 +2955,16 @@ class Character extends EntityWithStorage {
     }
     sit(_furniture = undefined, _dontOverride = []) {
         if (!(_furniture instanceof Furniture))
-            _furniture = PSDE.furniture.has(_furniture) ? PSDE.furniture.get(_furniture) : undefined;
+            _furniture = Game.furniture.has(_furniture) ? Game.furniture.get(_furniture) : undefined;
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
 
         this.removeCurrentAction("move");
-        if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
+        /*if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
         if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
+        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
 
         this.stance = 1;
         if (_furniture instanceof Furniture)
@@ -3114,12 +2973,12 @@ class Character extends EntityWithStorage {
     }
     crouch(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -3130,12 +2989,12 @@ class Character extends EntityWithStorage {
     stand(_dontOverride = []) {
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
 
         this.removeCurrentAction("move");
-        if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
+        /*if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
+        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
 
         this.stance = 3;
 
@@ -3145,20 +3004,17 @@ class Character extends EntityWithStorage {
     fly(_dontOverride = []) {
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
-
         this.stance = 4;
         return true;
     }
     look(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -3175,33 +3031,24 @@ class Character extends EntityWithStorage {
         if (typeof _dontOverride == "array") {}
         else if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
         else
             _dontOverride = [];
 
-        if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
+        /*if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
         if (_dontOverride.contains("move")) this.removeCurrentAction("move");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
-
-        if (this.getSex() == PSDE.kMale) {
-            this.addHeldEntity(this.getBodyPart("penis"));
-            this.addCurrentAction("masturbate", this.getBodyPart("penis"));
-        }
-        else if (this.getSex() == PSDE.kFemale) {
-            this.addHeldEntity(this.getBodyPart("vagina"));
-            this.addCurrentAction("masturbate", this.getBodyPart("vagina"));
-        }
+        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
         return true;
     }
     open(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -3214,62 +3061,26 @@ class Character extends EntityWithStorage {
      */
     oral(_entity) {
         if (!(_entity instanceof Character)) {
-            if (PSDE.characters.has(_entity))
-                _entity = PSDE.getCharacterByID(_entity);
+            if (Game.hasCharacter(_entity))
+                _entity = Game.getCharacter(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity;
-            else if (PSDE.entityInstances.has(_entity))
-                _entity = PSDE.entityInstances.get(_entity);
+            else if (Game.entityInstances.has(_entity))
+                _entity = Game.entityInstances.get(_entity);
             else
                 return undefined;
         }
         this.fuck(_entity);
-        if (_entity instanceof Character) {
-            if (_entity.hasBodyPart("penis")) {
-                this.addCurrentAction("sex", _entity.getBodyPart("penis"));
-                _entity.addCurrentAction("sex", this.getBodyPart("mouth"));
-                this.incFellatioGiveCount();
-                _entity.incFellatioReceiveCount();
-            }
-            else if (_entity.hasBodyPart("vagina")) {
-                this.addCurrentAction("sex", _entity.getBodyPart("vagina"));
-                _entity.addCurrentAction("sex", this.getBodyPart("mouth"));
-                this.incCunnilingusGiveCount();
-                _entity.incCunnilingusReceiveCount();
-            }
-        }
-        else if (_entity instanceof BodyPartInstance) {
-            this.addCurrentAction("sex", _entity);
-            _entity.owner.addCurrentAction("sex", this.getBodyPart("mouth"));
-            if (_entity.type == "penis") {
-                this.incFellatioGiveCount();
-                _entity.owner.incFellatioReceiveCount();
-            }
-            else if (_entity.type == "vagina") {
-                this.incCunnilingusGiveCount();
-                _entity.owner.incCunnilingusReceiveCount();
-            }
-            else if (_entity.type == "anus") {
-                this.incAnalingusGiveCount();
-                _entity.owner.incAnalingusReceiveCount();
-            }
-        }
-        else if (_entity instanceof ItemInstance) {
-            this.addCurrentAction("sex", _entity);
-            this.incFellatioGiveCount();
-        }
-        else
-            return false;
         return true;
     }
     pray(_entity) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity);
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity.parent;
-            else if (PSDE.instances.has(_entity))
-                _entity = PSDE.instances.get(_entity).parent;
+            else if (Game.instances.has(_entity))
+                _entity = Game.instances.get(_entity).parent;
             else
                 return undefined;
         }
@@ -3301,17 +3112,17 @@ class Character extends EntityWithStorage {
     }
     sleep(_furniture = undefined, _dontOverride = []) {
         if (!(_furniture instanceof Furniture))
-            _furniture = PSDE.furniture.has(_furniture) ? PSDE.furniture.get(_furniture) : undefined;
+            _furniture = Game.furniture.has(_furniture) ? Game.furniture.get(_furniture) : undefined;
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
 
         if (_furniture instanceof Furniture && (_furniture.type == "bed" || _furniture.type == "couch"))
             this.lay(_furniture, _dontOverride);
 
         this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
+        /*if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
         this.addCurrentAction("sleep");
 
         if (_furniture instanceof Furniture)
@@ -3325,14 +3136,14 @@ class Character extends EntityWithStorage {
     }
     steal(_entity, _itemInstance) {
         if (!(_entity instanceof Entity)) {
-            if (PSDE.entities.has(_entity))
-                _entity = PSDE.entities.get(_entity)
+            if (Game.hasEntity(_entity))
+                _entity = Game.getEntity(_entity)
             else
                 return undefined;
         }
         if (!(_itemInstance instanceof ItemInstance)) {
-            if (PSDE.itemInstances.has(_itemInstance))
-                _itemInstance = PSDE.itemInstances.get(_itemInstance);
+            if (Game.itemInstances.has(_itemInstance))
+                _itemInstance = Game.itemInstances.get(_itemInstance);
             else
                 return;
         }
@@ -3347,7 +3158,7 @@ class Character extends EntityWithStorage {
     }
     talk(_entity) {
         if (!(_entity instanceof Entity))
-            _entity = PSDE.entities.has(_entity) ? PSDE.entities.get(_entity) : undefined;
+            _entity = Game.hasEntity(_entity) ? Game.getEntity(_entity) : undefined;
         this.addCurrentAction("talk", _entity);
         return true;
     }
@@ -3358,48 +3169,16 @@ class Character extends EntityWithStorage {
      */
     vaginal(_entity) {
         if (!(_entity instanceof Character)) {
-            if (PSDE.characters.has(_entity))
-                _entity = PSDE.getCharacterByID(_entity);
+            if (Game.hasCharacter(_entity))
+                _entity = Game.getCharacter(_entity);
             else if (_entity instanceof EntityInstance)
                 _entity = _entity;
-            else if (PSDE.entityInstances.has(_entity))
-                _entity = PSDE.entityInstances.get(_entity);
+            else if (Game.entityInstances.has(_entity))
+                _entity = Game.entityInstances.get(_entity);
             else
                 return undefined;
         }
         this.fuck(_entity);
-        if (_entity instanceof Character) {
-            if (_entity.hasBodyPart("penis")) {
-                this.addCurrentAction("sex", _entity.getBodyPart("penis"));
-                _entity.addCurrentAction("sex", this.getBodyPart("vagina"));
-                this.incAnalReceiveCount();
-                _entity.incAnalGiveCount();
-            }
-            else if (_entity.hasBodyPart("vagina") && _entity.hasStrapon()) {
-                this.addCurrentAction("sex", _entity.getStrapon());
-                _entity.addCurrentAction("sex", this.getBodyPart("vagina"));
-                this.incAnalReceiveCount();
-                _entity.incAnalGiveCount();
-            }
-            else
-                return false;
-        }
-        else if (_entity instanceof BodyPartInstance) {
-            this.addCurrentAction("sex", _entity);
-            _entity.owner.addCurrentAction("sex", this.getBodyPart("vagina"));
-            if (_entity.type == "penis") {
-                this.incAnalReceiveCount();
-                _entity.owner.incAnalGiveCount();
-            }
-            else
-                return false;
-        }
-        else if (_entity instanceof ItemInstance) {
-            this.addCurrentAction("sex", _entity);
-            this.incAnalReceiveCount();
-        }
-        else
-            return false;
         return true;
     }
     /**
@@ -3413,14 +3192,14 @@ class Character extends EntityWithStorage {
     move(_dontOverride = []) {
         if (typeof _dontOverride == "undefined")
             _dontOverride = [];
-        else if (_dontOverride instanceof Set)
-            _dontOverride = Array.from(_dontOverride);
+        /*else if (_dontOverride instanceof Set)
+            _dontOverride = Array.from(_dontOverride);*/
 
         // If not crouching or standing, then stand; maybe I should add a 'crawl' method
         if (this.stance < 2)
         	this.stance = 3;
-        if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");
+        /*if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
+        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
 
         this.addCurrentAction("move");
 
@@ -3433,8 +3212,8 @@ class Character extends EntityWithStorage {
 
     addSexRefusalCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -3447,8 +3226,8 @@ class Character extends EntityWithStorage {
     }
     getSexRefusalCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -3487,7 +3266,7 @@ class Character extends EntityWithStorage {
     }
 
     isClothed() {
-        if (this.getSex() == PSDE.kMale)
+        if (this.getSex() == Game.MALE)
             return this.getPants() instanceof Clothing;
         else
             return (this.getShirt() instanceof Clothing && this.getPants() instanceof Clothing);
@@ -3511,15 +3290,15 @@ class Character extends EntityWithStorage {
         var _clothing;
         var _checkInstance = true;
         if (!(_itemInstance instanceof ItemInstance)) {
-            if (PSDE.itemInstances.has(_itemInstance))
-                _itemInstance = PSDE.itemInstances.get(_itemInstance);
+            if (Game.itemInstances.has(_itemInstance))
+                _itemInstance = Game.itemInstances.get(_itemInstance);
             else if (_itemInstance instanceof Clothing) {
                 _checkInstance = false;
                 _clothing = _itemInstance;
             }
-            else if (PSDE.clothing.has(_itemInstance)) {
+            else if (Game.clothing.has(_itemInstance)) {
                 _checkInstance = false;
-                _clothing = PSDE.clothing.get(_itemInstance).parent;
+                _clothing = Game.clothing.get(_itemInstance).parent;
             }
             else
                 return undefined;
@@ -3530,7 +3309,7 @@ class Character extends EntityWithStorage {
             _clothing = _itemInstance.parent;
 
         if (_clothing instanceof Clothing) {
-            if (PSDE.kClothingTypes.has(_clothing.type)) {
+            if (Game.kClothingTypes.has(_clothing.type)) {
                 if (!(this.clothing[_clothing.type] instanceof ItemInstance))
                     return false;
                 if (_checkInstance)
@@ -3545,7 +3324,7 @@ class Character extends EntityWithStorage {
 
     hasKey(_room) {
         if (!(_room instanceof Room))
-            _room = PSDE.rooms.has(_room) ? PSDE.rooms.get(_room) : undefined;
+            _room = Game.rooms.has(_room) ? Game.rooms.get(_room) : undefined;
 
         if (_room instanceof Room) {
             if (this.containsItem(_room.sid + "Key") || this.containsItem(_room.location.id + "Key") || this.containsItem(_room.cell.location.id + "Key") || this.containsItem("masterKey"))
@@ -3573,9 +3352,9 @@ class Character extends EntityWithStorage {
     }
     singularPossessiveName() {
         if (this.name.slice(-1) == 's' || this.name.slice(-1) == 'z')
-            return "{0}'".format(this.name);
+            return this.name;
         else
-            return "{0}'s".format(this.name);
+            return this.name;
     }
     grammaticalGender() {
         switch (this.species) {
@@ -3630,7 +3409,7 @@ class Character extends EntityWithStorage {
             return "hooves";
     }
     setHand(_type) {
-        if (PSDE.kHandTypes.has(_type))
+        if (Game.kHandTypes.has(_type))
             this.handType = _type;
         else
             this.handType = "pad";
@@ -3638,7 +3417,7 @@ class Character extends EntityWithStorage {
     }
 
     setFeet(_type) {
-        if (PSDE.kFeetTypes.has(_type))
+        if (Game.kFeetTypes.has(_type))
             this.feetType = _type;
         else
             this.feetType = "pad";
@@ -3646,7 +3425,7 @@ class Character extends EntityWithStorage {
     }
 
     setEyes(_type) {
-        if (PSDE.kEyeTypes.has(_type))
+        if (Game.kEyeTypes.has(_type))
             this.eyeType = _type;
         else
             this.eyeType = "circle";
@@ -3663,7 +3442,7 @@ class Character extends EntityWithStorage {
     }
 
     setPelt(_type) {
-        if (PSDE.kPeltTypes.has(_type))
+        if (Game.kPeltTypes.has(_type))
             this.peltType = _type;
         else
             this.peltType = "fur";
@@ -3706,83 +3485,8 @@ class Character extends EntityWithStorage {
         this.setFurColourBHex(_colourB);
         return this;
     }
-
-    hasBodyPart(_bodyPart) {
-        if (!PSDE.kBodyPartTypes.has(_bodyPart)) {
-            if (_bodyPart instanceof BodyPart)
-                _bodyPart = _bodyPart.type;
-            else if (PSDE.bodyParts.has(_bodyPart))
-                _bodyPart = PSDE.bodyParts.get(_bodyPart).type;
-            else if (_bodyPart instanceof BodyPartInstance)
-                _bodyPart = _bodyPart.parent.type;
-            else if (PSDE.bodyPartInstances.has(_bodyPart))
-                _bodyPart = PSDE.bodyPartInstances.get(_bodyPart).parent.type;
-            else
-                return undefined;
-        }
-        return this.bodyParts.has(_bodyPart);
-    }
-    removeBodyPart(_bodyPart) {
-        if (_bodyPart instanceof Array) {
-            _bodyPart.forEach(function(__bodyPart) {
-                this.removeBodyPart(__bodyPart);
-            }, this);
-            return this;
-        }
-        if (!(_bodyPart instanceof BodyPartInstance)) {
-            if (_bodyPart instanceof BodyPart)
-                _bodyPart = new BodyPartInstance(undefined, _bodyPart, this, undefined, undefined, this.species);
-            else if (PSDE.bodyParts.has(_bodyPart))
-                _bodyPart = new BodyPartInstance(undefined, PSDE.bodyParts.get(_bodyPart), this, undefined, undefined, this.species);
-            else if (PSDE.bodyPartInstances.has(_bodyPart))
-                _bodyPart = PSDE.bodyPartInstances.get(_bodyPart);
-            else
-                return undefined;
-        }
-        this.bodyParts.set(_bodyPart.type, undefined);
-        return this;
-    }
-    addBodyPart(_bodyPart) {
-        if (_bodyPart instanceof Array) {
-            _bodyPart.forEach(function(__bodyPart) {
-                this.addBodyPart(__bodyPart);
-            }, this);
-            return this;
-        }
-        if (!(_bodyPart instanceof BodyPartInstance)) {
-            if (_bodyPart instanceof BodyPart)
-                _bodyPart = new BodyPartInstance(undefined, _bodyPart.getType(), this, undefined, undefined, this.species);
-            else if (PSDE.bodyParts.has(_bodyPart))
-                _bodyPart = new BodyPartInstance(undefined, PSDE.bodyParts.get(_bodyPart).getType(), this, undefined, undefined, this.species);
-            else if (PSDE.bodyPartInstances.has(_bodyPart))
-                _bodyPart = PSDE.bodyPartInstances.get(_bodyPart);
-            else
-                return this;
-        }
-        this.bodyParts.set(_bodyPart.parent.type, _bodyPart);
-        return this;
-    }
-    getBodyPart(_bodyPart) {
-        if (!PSDE.kBodyPartTypes.has(_bodyPart)) {
-            if (_bodyPart instanceof BodyPart)
-                _bodyPart = _bodyPart.type;
-            else if (PSDE.bodyParts.has(_bodyPart))
-                _bodyPart = PSDE.bodyParts.get(_bodyPart).type;
-            else if (_bodyPart instanceof BodyPartInstance)
-                _bodyPart = _bodyPart.parent.type;
-            else if (PSDE.bodyPartInstances.has(_bodyPart))
-                _bodyPart = PSDE.bodyPartInstances.get(_bodyPart).parent.type;
-            else
-                return undefined;
-        }
-        return this.bodyParts.get(_bodyPart);
-    }
-    clearBodyParts() {
-        this.bodyParts.clear();
-    }
-
     setSpecies(_species) {
-        if (PSDE.kSpeciesTypes.has(_species))
+        if (Game.kSpeciesTypes.has(_species))
             this.species = _species;
         else
             this.species = "fox";
@@ -3791,19 +3495,12 @@ class Character extends EntityWithStorage {
     _generateProperties() {
         var _baseHeight = 0; // Average height in metres at the age of 20
         var _baseMass = 0; // Average mass in kilograms at the age of 20
-        this.clearBodyParts();
-        this.addBodyPart(["ankles","anus","arms","arms","back","chest","feet","fingers","groin","hands","head","leftAnkle","leftArm","leftEar","leftEye","leftFoot","leftHand","leftLeg","leftNipple","leftShoulder","legs","legs","lips","mouth","neck","nose","rear","rightAnkle","rightArm","rightEar","rightEye","rightFoot","rightHand","rightLeg","rightNipple","rightShoulder","shoulder","shoulders","stomach","toes","tongue","waist","wrists"]);
-        if (this.getSex() == PSDE.kMale)
-            this.addBodyPart(["penis","testicles"]);
-        else
-            this.addBodyPart(["vagina","clitoris"]);
         this.muscle = 0.5;
         this.fat = 0.25;
         if (this.species == "fox") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
-                this.addBodyPart("knot");
                 _baseMass = 36;
                 _baseHeight = 1.20;
             }
@@ -3821,10 +3518,9 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "wolf") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
-                this.addBodyPart("knot");
                 _baseMass = 72;
                 _baseHeight = 1.9;
             }
@@ -3842,7 +3538,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "aardwolf") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 32;
@@ -3862,7 +3558,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "hyena") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
             }
@@ -3879,7 +3575,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "sheep") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 19;
                 this.penisGirth = 11;
             }
@@ -3894,10 +3590,9 @@ class Character extends EntityWithStorage {
             this.setHand("clovenhoof");
             this.setEyes("rectangle");
             this.setFur("wool");
-            this.peltSoftness = 75;
         }
         else if (this.species == "stoat") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 8;
                 this.penisGirth = 7;
             }
@@ -3914,7 +3609,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "deer") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
             }
@@ -3929,10 +3624,9 @@ class Character extends EntityWithStorage {
             this.setHand("clovenhoof");
             this.setEyes("circle");
             this.setFur("wool");
-            this.peltSoftness = 75;
         }
         else if (this.species == "rabbit") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 12;
                 this.penisGirth = 8;
             }
@@ -3949,13 +3643,11 @@ class Character extends EntityWithStorage {
             this.setHand("fur");
             this.setEyes("circle");
             this.setFur("fur");
-            this.peltSoftness = 75;
         }
         else if (this.species == "jackal") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 18;
                 this.penisGirth = 12;
-                this.addBodyPart("knot");
             }
             else {
                 this.vaginaSize = 18;
@@ -3970,10 +3662,9 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "coyote") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
-                this.addBodyPart("knot");
             }
             else {
                 this.vaginaSize = 15;
@@ -3988,7 +3679,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "tiger") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 28;
                 this.penisGirth = 15;
             }
@@ -4004,7 +3695,7 @@ class Character extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "antelope") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
             }
@@ -4021,7 +3712,7 @@ class Character extends EntityWithStorage {
             this.setFur("hair");
         }
         else if (this.species == "pig") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
             }
@@ -4038,7 +3729,7 @@ class Character extends EntityWithStorage {
             this.setFur("skin");
         }
         else if (this.species == "horse") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 45;
                 this.penisGirth = 25;
             }
@@ -4055,7 +3746,7 @@ class Character extends EntityWithStorage {
             this.setFur("hair");
         }
         else if (this.species == "mouse") {
-            if (this.getSex() == PSDE.kMale) {
+            if (this.getSex() == Game.MALE) {
                 this.penisSize = 1;
                 this.penisGirth = 0.5;
             }
@@ -4070,7 +3761,6 @@ class Character extends EntityWithStorage {
             this.setHand("skin");
             this.setEyes("circle");
             this.setFur("fur");
-            this.peltSoftness = 75;
         }
         this.width = this.height / 2.4;
         return this;
@@ -4079,40 +3769,32 @@ class Character extends EntityWithStorage {
         return this.species;
     }
 
-    setPenisSize(_blob) {
-        if (isNaN(_blob))
-            _blob = toCM(_blob);
-        this.penisSize = _blob;
+    setPenisSize(_int) {
+        this.penisSize = _int;
         return this;
     }
     getPenisSize() {
         return this.penisSize;
     }
 
-    setPenisGirth(_blob) {
-        if (isNaN(_blob))
-            _blob = toCM(_blob);
-        this.penisGirth = _blob;
+    setPenisGirth(_int) {
+        this.penisGirth = _int;
         return this;
     }
     getPenisGirth() {
         return this.penisGirth;
     }
 
-    setVaginaSize(_blob) {
-        if (isNaN(_blob))
-            _blob = toCM(_blob);
-        this.vaginaSize = _blob;
+    setVaginaSize(_int) {
+        this.vaginaSize = _int;
         return this;
     }
     getVaginaSize() {
         return this.vaginaSize;
     }
 
-    setVaginaGirth(_blob) {
-        if (isNaN(_blob))
-            _blob = toCM(_blob);
-        this.vaginaGirth = _blob;
+    setVaginaGirth(_int) {
+        this.vaginaGirth = _int;
         return this;
     }
     getVaginaGirth() {
@@ -4133,8 +3815,8 @@ class Character extends EntityWithStorage {
      */
     incSexCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4153,8 +3835,8 @@ class Character extends EntityWithStorage {
      */
     addSexWith(_character, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4170,8 +3852,8 @@ class Character extends EntityWithStorage {
      */
     incVaginalReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4186,8 +3868,8 @@ class Character extends EntityWithStorage {
      */
     incVaginalGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4202,8 +3884,8 @@ class Character extends EntityWithStorage {
      */
     incAnalReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4218,8 +3900,8 @@ class Character extends EntityWithStorage {
      */
     incAnalGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4229,8 +3911,8 @@ class Character extends EntityWithStorage {
     }
     incCunnilingusReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4240,8 +3922,8 @@ class Character extends EntityWithStorage {
     }
     incCunnilingusGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4251,8 +3933,8 @@ class Character extends EntityWithStorage {
     }
     incAnalingusReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4262,8 +3944,8 @@ class Character extends EntityWithStorage {
     }
     incAnalingusGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4273,8 +3955,8 @@ class Character extends EntityWithStorage {
     }
     incFellatioReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4284,8 +3966,8 @@ class Character extends EntityWithStorage {
     }
     incFellatioGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4295,8 +3977,8 @@ class Character extends EntityWithStorage {
     }
     incHandjobReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4306,8 +3988,8 @@ class Character extends EntityWithStorage {
     }
     incHandjobGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4345,8 +4027,8 @@ class Character extends EntityWithStorage {
 
     addFollower(_character, _updateChild = false) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4358,8 +4040,8 @@ class Character extends EntityWithStorage {
     }
     removeFollower(_character, _updateChild = false) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4383,8 +4065,8 @@ class Character extends EntityWithStorage {
     }
     isFollowing(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return undefined;
         }
@@ -4396,8 +4078,8 @@ class Character extends EntityWithStorage {
 
     getSexCount(_character = undefined) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return 0;
         }
@@ -4406,8 +4088,8 @@ class Character extends EntityWithStorage {
 
     addFiance(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4425,8 +4107,8 @@ class Character extends EntityWithStorage {
     }
     removeFiance(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4447,8 +4129,8 @@ class Character extends EntityWithStorage {
     }
     addSpouse(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4469,8 +4151,8 @@ class Character extends EntityWithStorage {
     }
     removeSpouse(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4497,29 +4179,29 @@ class Character extends EntityWithStorage {
     }
 
     addBiologicalParent(_character, _updateChild = true) {
-        if (PSDE.enableDebug) console.log("Running addBiologicalParent");
+        if (Game.enableDebug) console.log("Running addBiologicalParent");
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
-        if (PSDE.enableDebug) console.log("    Checking if species are same");
+        if (Game.enableDebug) console.log("    Checking if species are same");
         if (_character.getSpecies() != this.getSpecies()) {
             return this;
         }
-        if (PSDE.enableDebug) console.log("    Checking if parent ({0}) is same-sex as first parent ({1})".format(_character.id, this.biologicalParents[0].id));
+        if (Game.enableDebug) console.log(`    Checking if parent (${_character.id}) is same-sex as first parent (${this.biologicalParents[0].id})`);
         if (this.biologicalParents.length == 1 && this.biologicalParents[0].getSex() == _character.getSex()) {
             return this;
         }
         else if (this.biologicalParents.length == 2) {
             return this;
         }
-        if (PSDE.enableDebug) console.log("    Checking if parent ({0}) is a foster parent".format(_character.id));
+        if (Game.enableDebug) console.log(`    Checking if parent (${_character.id}) is a foster parent`);
         if (this.fosterParents.contains(_character)) {
             this.fosterParents.remove(_character);
         }
-        if (PSDE.enableDebug) console.log("    Checking if parent ({0}) is already assigned to {1}".format(_character.id, this.id));
+        if (Game.enableDebug) console.log(`    Checking if parent (${_character.id}) is already assigned to ${this.id}`);
         if (!this.biologicalParents.contains(_character)) {
             this.biologicalParents.push(_character);
         }
@@ -4530,8 +4212,8 @@ class Character extends EntityWithStorage {
     }
     addFosterParent(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4571,8 +4253,8 @@ class Character extends EntityWithStorage {
 
     addBiologicalChild(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4592,8 +4274,8 @@ class Character extends EntityWithStorage {
     }
     addFosterChild(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -4807,8 +4489,8 @@ class Character extends EntityWithStorage {
      */
     calculateBiologicalSiblingRelations(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return 0;
         }
@@ -4833,8 +4515,8 @@ class Character extends EntityWithStorage {
     }
     calculateBiologicalRelations(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return 0;
         }
@@ -4851,8 +4533,8 @@ class Character extends EntityWithStorage {
 
     addKnownLocation(_location) {
         if (!(_location instanceof Location)) {
-            if (PSDE.locations.has(_location))
-                _location = PSDE.locations.get(_location);
+            if (Game.locations.has(_location))
+                _location = Game.locations.get(_location);
             else
                 return this;
         }
@@ -4864,8 +4546,8 @@ class Character extends EntityWithStorage {
     }
     removeKnownLocation(_location) {
         if (!(_location instanceof Location)) {
-            if (PSDE.locations.has(_location))
-                _location = PSDE.locations.get(_location);
+            if (Game.locations.has(_location))
+                _location = Game.locations.get(_location);
             else
                 return this;
         }
@@ -4875,8 +4557,8 @@ class Character extends EntityWithStorage {
 
     addSpell(_spell) {
         if (!(_spell instanceof Spell)) {
-            if (PSDE.spells.has(_spell))
-                _spell = PSDE.spells.get(_spell);
+            if (Game.spells.has(_spell))
+                _spell = Game.spells.get(_spell);
             else
                 return this;
         }
@@ -4885,8 +4567,8 @@ class Character extends EntityWithStorage {
     }
     removeSpell(_spell) {
         if (!(_spell instanceof Spell)) {
-            if (PSDE.spells.has(_spell))
-                _spell = PSDE.spells.get(_spell);
+            if (Game.spells.has(_spell))
+                _spell = Game.spells.get(_spell);
             else
                 return this;
         }
@@ -4900,8 +4582,8 @@ class Character extends EntityWithStorage {
             _cost = _spell;
         }
         else if (!(_spell instanceof Spell)) {
-            if (PSDE.spells.has(_spell))
-                _cost = PSDE.spells.get(_spell).manaCost;
+            if (Game.spells.has(_spell))
+                _cost = Game.spells.get(_spell).manaCost;
             else
                 return this;
         }
@@ -4914,7 +4596,7 @@ class Character extends EntityWithStorage {
     }
 
     addPreferredSpecies(_species) {
-        if (PSDE.kSpeciesTypes.has(_species)) {
+        if (Game.kSpeciesTypes.has(_species)) {
             _species = _species;
             this.prefersSpecies.add(_species);
         }
@@ -4922,7 +4604,7 @@ class Character extends EntityWithStorage {
     }
 
     addAvoidedSpecies(_species) {
-        if (PSDE.kSpeciesTypes.has(_species)) {
+        if (Game.kSpeciesTypes.has(_species)) {
             _species = _species;
             this.avoidsSpecies.add(_species);
         }
@@ -4934,8 +4616,8 @@ class Character extends EntityWithStorage {
     }
     addNewCharacterDispositionFor(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return this;
         }
@@ -5078,8 +4760,8 @@ class Character extends EntityWithStorage {
 
     hadSexWith(_character) {
         if (!(_character instanceof Character)) {
-            if (PSDE.characters.has(_character))
-                _character = PSDE.getCharacterByID(_character);
+            if (Game.hasCharacter(_character))
+                _character = Game.getCharacter(_character);
             else
                 return false;
         }
@@ -5087,7 +4769,7 @@ class Character extends EntityWithStorage {
     }
     calculateChanceToFuck(_character, _ignoreLustAndRut = false) {
         if (!(_character instanceof Character))
-            _character = PSDE.characters.has(_character) ? PSDE.getCharacterByID(_character) : undefined;
+            _character = Game.hasCharacter(_character) ? Game.getCharacter(_character) : undefined;
         if (typeof _character == 'undefined')
             return 0;
         if (!_character.characterDisposition.has(this))
@@ -5095,7 +4777,7 @@ class Character extends EntityWithStorage {
         if (typeof _ignoreLustAndRut != "boolean")
             _ignoreLustAndRut = false;
         
-        if (PSDE.enableDebug) console.log("Calculating chance for {0} to fuck {1}.".format(_character.name, this.name));
+        if (Game.enableDebug) console.log(`Calculating chance for ${_character.name} to fuck ${this.name}`);
 
         var chance = 0;
         var _disposition = _character.getCharacterDisposition(this);
@@ -5113,7 +4795,7 @@ class Character extends EntityWithStorage {
         chance += _disposition.obsession;
         chance -= _disposition.hate;
 
-        if (PSDE.enableDebug) console.log("\tAfter disposition check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter disposition check: " + Math.ceil(chance));
 
         // Species Preferences
         if (_character.prefersSpecies.has(this.species))
@@ -5127,7 +4809,7 @@ class Character extends EntityWithStorage {
         if (_character.avoidsPrey && this.predator == false || _character.avoidsPredators && this.predator == true)
             chance -= 5;
 
-        if (PSDE.enableDebug) console.log("\tAfter species preference check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter species preference check: " + Math.ceil(chance));
 
         // Sexual Orientation
         if (_character.sexualOrientation == 0 && this.getSex() != _character.getSex() || _character.sexualOrientation == 1 && this.getSex() == _character.getSex() || _character.sexualOrientation == 2)
@@ -5135,7 +4817,7 @@ class Character extends EntityWithStorage {
         else
             chance -= 50;
 
-        if (PSDE.enableDebug) console.log("\tAfter sexual preference check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter sexual preference check: " + Math.ceil(chance));
 
         if (!_ignoreLustAndRut) {
                 // Rut and Lust
@@ -5152,16 +4834,16 @@ class Character extends EntityWithStorage {
                 else
                     chance += (_character.rut ? _character.lust/16 : _character.lust/20);
         
-                if (PSDE.enableDebug) console.log("\tAfter rut and lust check: " + Math.ceil(chance));
+                if (Game.enableDebug) console.log("\tAfter rut and lust check: " + Math.ceil(chance));
         }
 
         // Exhibitionism
-        if (PSDE.getCharacterCurrentRoom(this) instanceof Room) {
+        if (Game.getCharacterCurrentRoom(this) instanceof Room) {
             if (this.room.characters.size > 2){
                 if (_character.exhibitionism > 0)
-                    chance += ((_character.exhibitionism / 5) * (PSDE.getCharacterCurrentRoom(this).characters.size - 2));
+                    chance += ((_character.exhibitionism / 5) * (Game.getCharacterCurrentRoom(this).characters.size - 2));
                 else {
-                    PSDE.getCharacterCurrentRoom(this).characters.forEach(function(_this) {
+                    Game.getCharacterCurrentRoom(this).characters.forEach(function(_this) {
                         if (_this != _character.this && _this != this)
                             chance += _character.hadSexWith(_this) ? 5 : -5;
                     }, this);
@@ -5169,7 +4851,7 @@ class Character extends EntityWithStorage {
             }
         }
 
-        if (PSDE.enableDebug) console.log("\tAfter Exhibitionism check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter Exhibitionism check: " + Math.ceil(chance));
 
         // Incest
         if (_character.hasSibling(this)) {
@@ -5183,22 +4865,22 @@ class Character extends EntityWithStorage {
                 chance -= 50;
         }
 
-        if (PSDE.enableDebug) console.log("\tAfter incest check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter incest check: " + Math.ceil(chance));
 
         // Intoxication
         chance += _character.intoxication/2.5;
 
-        if (PSDE.enableDebug) console.log("\tAfter intoxication check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter intoxication check: " + Math.ceil(chance));
 
         // Somnophilia
         if (_character.isSleeping()) {
-            if (PSDE.enableRape)
+            if (Game.enableRape)
                 chance = 100;
             else if (_character.somnophilia > 50 && _character.hadSexWith(this) && _disposition.passion > 75)
                 chance += 10;
         }
 
-        if (PSDE.enableDebug) console.log("\tAfter Somnophilia check: " + Math.ceil(chance));
+        if (Game.enableDebug) console.log("\tAfter Somnophilia check: " + Math.ceil(chance));
 
         return Math.ceil(chance);
     }

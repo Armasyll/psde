@@ -28,13 +28,15 @@ class Game {
         this.furnitureMeshes = undefined;
         this.characterMeshes = undefined;
         this.itemMeshes = undefined;
+        this.entityMeshInstances = {};
         this.furnitureMeshInstances = {};
         this.characterMeshInstances = {};
         this.itemMeshInstances = {};
         this.controllers = {};
+        this.characterControllers = {};
         this.entities = {};
         this.furnitureEntities = {};
-        this.charactersEntities = {};
+        this.characterEntities = {};
         this.itemEntities = {};
 
         this.characterIDsControllers = {};
@@ -56,9 +58,16 @@ class Game {
         this.loadMeshes();
         this.initQwertyKeyboardControls();
 
-        this.initialized = true;
+        if (this.physicsEnabled) {}
+        else {
+            this.scene.collisionsEnabled = true;
+        }
 
-        this.kMale = 0, this.kFemale = 1;
+        this.postProcess = {};
+        this.initPostProcessing();
+
+        this.MALE = 0, this.FEMALE = 1;
+        this.RIGHT_HANDED = 0, this.LEFT_HANDED = 1;
         this.kSpeciesTypes = new Set(["fox","skeleton"]);
         this.kBodyPartTypes = new Set(["ankles","anus","arms","back","breasts","chest","clitoris","feet","fingers","groin","hands","head","knot","leftAnkle","leftArm","leftEar","leftEye","leftFoot","leftHand","leftLeg","leftNipple","leftShoulder","legs","lips","mouth","neck","nose","penis","rear","rightAnkle","rightArm","rightEar","rightEye","rightFoot","rightHand","rightLeg","rightNipple","rightShoulder","shoulders","shoulders","stomach","testicles","toes","tongue","vagina","waist","wrists"]);
         this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","collar","neckwear","shirt","jacket","belt","gloves","underwear","pants","socks","shoes","bra"]);
@@ -75,13 +84,18 @@ class Game {
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
 
-        if (this.physicsEnabled) {}
-        else {
-            this.scene.collisionsEnabled = true;
-        }
+        this.XP_MIN = 0;
+        this.XP_MAP = 355000;
+        this.LEVEL_MIN = 0;
+        this.LEVEL_MAX = 20;
 
-        this.postProcess = {};
-        this.initPostProcessing();
+        /**
+         * Classless should be a broad description for commoner, expert, and noble; it shouldn't be used, unless I'm lazy.
+         * @type {Set}
+         */
+        this.kCharacterClasses = new Set(["bard","cleric","druid","paladin","ranger","sorcerer","warlock","wizard","classless","commoner","expert","noble"]);
+
+        this.initialized = true;
     }
     static initPhysics() {
         this.physicsPlugin = new BABYLON.CannonJSPlugin();
@@ -130,10 +144,9 @@ class Game {
         }
         GameGUI.showCrosshair();
     }
-    static initPlayer(_meshID = "foxSkeletonN", _scale = 1) {
-        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) _meshID = "foxSkeletonN";
+    static initPlayer() {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, _meshID, undefined, {x:3, y:0, z:-17}, undefined, {x:_scale, y:_scale, z:_scale});
+        this.player = this.createCharacter(undefined, "Player", 18, "male", "fox", undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
@@ -211,6 +224,9 @@ class Game {
         else if (event === this.strafeRightCode)
             this.player.keyStrafeRight(true);
         this.player.move = this.player.anyMovement();
+        if (Client.online) {
+            Client.updateLocRotScaleSelf();
+        }
     }
     static controlCharacterOnKeyUp(event) {
         if (event === this.jumpCode)
@@ -230,6 +246,9 @@ class Game {
         else if (event === this.strafeRightCode)
             this.player.keyStrafeRight(false);
         this.player.move = this.player.anyMovement();
+        if (Client.online) {
+            Client.updateLocRotScaleSelf();
+        }
     }
     static addCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0, _height = 3) {
         if (Game.debugEnabled) console.log("Running addCollisionWallX");
@@ -326,6 +345,7 @@ class Game {
 
         var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
         Game.itemMeshInstances[_id] = _instance;
+        Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -339,6 +359,7 @@ class Game {
 
         var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
         Game.furnitureMeshInstances[_id] = _instance;
+        Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -354,6 +375,7 @@ class Game {
         var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
         _instance.setEnabled(true);
         Game.characterMeshInstances[_id] = _instance;
+        Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -395,7 +417,7 @@ class Game {
                 _n.material.freeze();
             }
             _n.id = _id;
-            _n.name = _id;
+            _n.name = _mesh.name;
             _n.position = new BABYLON.Vector3(_position.x, _position.y, _position.z);
             _n.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
             _n.scaling = new BABYLON.Vector3(_scale.x, _scale.y, _scale.z);
@@ -539,47 +561,147 @@ class Game {
     static setPlayerID(_id, _updateChild = true) {
         Game.setCharacterID(Game.player, _id, _updateChild);
     }
-    static setCharacterID(_character, _id, _updateChild = false) {
+    // UPDATE SOON
+    static setEntityID(_currentID, _newID) {
+        // Three things: Mesh, CharacterController, Character
+        //   Game.characterMeshInstances
+        //   Game.characterControllers
+        //   Game.characterEntities
+        // They should all share the same ID; need to remove the methods to set the ID; will do that later :v
         console.log("Game::setCharacterID(" + _character.id + "," + _id + ")");
-        if (!(_character instanceof CharacterController)) {
-            if (_character.hasOwnProperty("characterController") && _character.characterController instanceof CharacterController) {
-                _character = _character.characterController;
+        if (typeof _currentID == "object") {
+            if (_currentID instanceof BABYLON.Mesh || _currentID instanceof BABYLON.InstancedMesh) {
+                _currentID.id = _newID;
+            }
+            else if (_currentID instanceof Controller) {
+                _currentID.id = _newID;
+            }
+            else if (_currentID instanceof Entity) {
+                _currentID.id = _newID;
             }
             else {
-                return undefined;
+                return null;
             }
         }
-        if (Game.characterIDsControllers[_id] != undefined && Game.characterMeshInstances[_id] != _character) {
-            return undefined;
+        else if (typeof _currentID == "string") {
+
         }
-        if (Game.characterIDsControllers[_character.id] != undefined) {
-            delete Game.characterIDsControllers[_character.id];
+        else {
+            return null;
         }
-        Game.characterIDsControllers[_id] = _character;
-        if (_updateChild) {
-            _character.setID(_id, false);
-        }
+        Game.meshInstances
     }
-    static getCharacter(_id) {
-        if (typeof _id == "string" && _id.length == 36) {
-            return Game.characterIDsControllers[_id];
+    static getEntityController(_id) {
+
+    }
+    static getCharacterController(_id) {
+        if (_id instanceof CharacterController) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.controllers.hasOwnProperty(_id)) {
+            return Game.controllers[_id];
         }
         else if (_id instanceof BABYLON.Mesh && _id.characterController instanceof CharacterController) {
             return _id.characterController;
-        }
-        else if (_id instanceof CharacterController) {
-            return _id;
         }
         else {
             return undefined;
         }
     }
-    static createCharacter(_id = undefined, _meshID = "foxSkeletonN", _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
-        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) _meshID = "foxSkeletonN";
+    static getEntity(_id) {
+        if (_id instanceof Entity) {
+            return _id;
+        }
+        else if (Game.entities.hasOwnProperty(_id)) {
+            return Game.entities[_id];
+        }
+        else if (_id.hasOwnProperty("entity") && _id.entity instanceof Entity) {
+            return _id.entity;
+        }
+        return null;
+    }
+    static hasEntity(_id) {
+        if (!(_id instanceof Entity)) {
+            if (Game.entities.hasOwnProperty(_id))
+                return true;
+            else
+                return undefined;
+        }
+        else if (Game.entities.hasOwnProperty(_id.id)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    static getCharacter(_id) {
+        if (_id instanceof Character) {
+            return _id;
+        }
+        else if (Game.characterEntities.hasOwnProperty(_id)) {
+            return Game.characterEntities[_id];
+        }
+        else if (_id.hasOwnProperty("entity") && _id.entity instanceof Character) {
+            return _id.entity;
+        }
+        return null;
+    }
+    static hasCharacter(_id) {
+        if (!(_id instanceof Character)) {
+            if (Game.characterEntities.hasOwnProperty(_id))
+                return true;
+            else
+                return undefined;
+        }
+        else if (Game.characterEntities.hasOwnProperty(_id.id)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.kMale, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
         if (typeof _id != "string") _id = genUUIDv4();
+        _id = _id.lowerCase();
+        var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
+        var _meshID = "";
+        switch (_entity.species) {
+            case "fox" : {
+                if (_entity.sex == 0) {
+                    _meshID = "foxM";
+                }
+                else {
+                    _meshID = "foxF";
+                }
+                break;
+            }
+            case "skeleton" : {
+                if (_entity.sex == 0) {
+                    _meshID = "foxSkeletonM";
+                }
+                else {
+                    _meshID = "foxSkeletonN";
+                }
+                break;
+            }
+            default : {
+                if (_entity.sex == 0) {
+                    _meshID = "foxM";
+                }
+                else {
+                    _meshID = "foxF";
+                }
+                break;
+            }
+        }
         var _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
-        var _character = new CharacterController(_id, _mesh, _meshID);
-        return _character;
+        if (typeof _skin == "string" && _skin.length > 5) {
+            _mesh.material = new BABYLON.StandardMaterial();
+            _mesh.material.diffuseTexture = new BABYLON.Texture("resources/data/" + _skin);
+            _mesh.material.specularColor.set(0,0,0);
+        }
+        var _controller = new CharacterController(_id, _mesh, _entity);
+        return _controller;
     }
     static deleteCharacter(_character) {
         _character = Game.getMesh(_character);
@@ -813,12 +935,12 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerDownObservable.add(function() {
-            Game.player.setName(nameInput.text);
+            Game.player.entity.setName(nameInput.text);
             Client.connect();
             GameGUI.hideCharacterChoiceMenu();
         });
         submitOffline.onPointerDownObservable.add(function() {
-            Game.player.setName(nameInput.text);
+            Game.player.entity.setName(nameInput.text);
             GameGUI.hideCharacterChoiceMenu();
         });
 
@@ -984,7 +1106,7 @@ class GameGUI {
         this.updateTargetPortraitStamina(_stamina);
     }
     static updatePlayerPortraitImage(_image) {
-        GameGUI.guis["hud"].children[0].children[0].children[0].setAttribute("src", _image);
+        GameGUI.guis["hud"].children[0].children[0].children[0].domImage.setAttribute("src", _image);
     }
     static updatePlayerPortraitName(_string) {
         GameGUI.guis["hud"].children[0].children[0].children[1].children[0].text = _string;
@@ -1011,7 +1133,7 @@ class GameGUI {
         GameGUI.guis["hud"].children[0].children[1].children[1].children[3].text = _int;
     }
     static updateTargetPortraitImage(_image) {
-        GameGUI.guis["hud"].children[0].children[1].children[0].setAttribute("src", _image);
+        GameGUI.guis["hud"].children[0].children[1].children[0].domImage.setAttribute("src", _image);
     }
     static updateTargetPortraitName(_string) {
         GameGUI.guis["hud"].children[0].children[1].children[1].children[0].text = _string;
