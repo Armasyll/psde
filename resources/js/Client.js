@@ -18,18 +18,18 @@ class Client {
 	static setOnline(_boolean) {
 		this.online = (_boolean === true ? true : false);
 	}
-    static setPlayerEntry(_networkID) {
-    	console.log("Client::setPlayerEntry(" + _networkID + ")");
-        this.setEntry(Game.player, _networkID);
+    static setPlayerEntity(_networkID) {
+    	console.log("Client::setPlayerEntity(" + _networkID + ")");
+        this.setEntity(Game.player, _networkID);
     }
-    static setEntry(_character, _networkID) {
-    	console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
+    static setEntity(_character, _networkID) {
+    	console.log("Client::setEntity(" + _character.id + ", " + _networkID + ")");
         if (!(_character instanceof CharacterController)) {
         	_character = Game.getCharacter(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
         }
 
-        this.deleteEntry(_character);
+        this.deleteEntity(_character);
         
         this.networkCharacterMap[_networkID] = _character;
         _character.setNetworkID(_networkID);
@@ -53,7 +53,7 @@ class Client {
     		return Game.getCharacter(_id);
     	}
     }
-    static deleteEntry(_character) {
+    static deleteEntity(_character) {
         if (!(_character instanceof CharacterController)) {
         	_character = Client.getCharacter(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}

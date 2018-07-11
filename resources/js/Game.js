@@ -723,8 +723,7 @@ class Game {
             if (!(_character instanceof CharacterController)) {return undefined;}
         }
         if (_character == this.player) {
-            console.log("You can't delete yourself :v");
-            return;
+            return false;
         }
         var _id = _character.id;
         //_character.entity.dipose();

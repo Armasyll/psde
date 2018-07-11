@@ -679,6 +679,9 @@ class CharacterController extends EntityController {
         }
     }
     dispose() {
+    	if (this == Game.player.controller) {
+    		return false;
+    	}
         this.detachFromAllBones();
         this.avatar.controller = null;
         delete Game.characterControllers[this.id];
