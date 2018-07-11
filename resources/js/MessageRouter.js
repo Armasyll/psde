@@ -60,8 +60,10 @@ class MessageRouter {
 						_data.content["scaling"]
 					);
 				}
+				_character.setMovementKey(_data.content["movementKeys"]);
 				Game.setEntityID(_character, _data.content["id"]);
 				Client.setEntry(_character, _data.content["nid"]);
+				//Game.networkCharacters[_data.content["nid"]] = _character;
 				break;
 			}
 			case "S_DESTROY_PLAYER" : {
@@ -91,9 +93,7 @@ class MessageRouter {
 							Client.getCharacter(_data.content[_character][0]).avatar.scaling.copyFrom(
 								_data.content[_character][3]
 							);
-							Client.getCharacter(_data.content[_character][0]).setMovementKey(
-								_data.content[_character][4]
-							);
+							Client.getCharacter(_data.content[_character][0]).key.copyFrom(_data.content[_character][4]);
 						}
 						else {
 							Client.requestPlayerByNetworkID(_data.content[_character][0]);

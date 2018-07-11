@@ -37,6 +37,7 @@ class Game {
         this.furnitureEntities = {};
         this.characterEntities = {};
         this.itemEntities = {};
+        //this.networkedCharacterControllers = {};
 
         this._loadedFurniture = false;
         this._loadedSurfaces = false;
@@ -247,8 +248,9 @@ class Game {
             }
         }
         this.player.move = this.player.anyMovement();
-        if (Client.online) {
+        if (Client.online && !this.player.key.equals(this.player.prevKey)) {
             Client.updateLocRotScaleSelf();
+            this.player.prevKey.copyFrom(this.player.key);
         }
     }
     static controlCharacterOnKeyUp(event) {
@@ -271,6 +273,7 @@ class Game {
         this.player.move = this.player.anyMovement();
         if (Client.online) {
             Client.updateLocRotScaleSelf();
+            this.player.prevKey.copyFrom(this.player.key);
         }
     }
     static addCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0, _height = 3) {
@@ -695,7 +698,7 @@ class Game {
             return undefined;
         }
     }
-    static hasEntityController(_id) {
+    /*static hasEntityController(_id) {
         if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
             return true;
         }
@@ -706,6 +709,23 @@ class Game {
             return false;
         }
     }
+    static getNetworkedCharacterController(_id) {
+        if (this.networkedCharacterControllers.hasOwnProperty(_id)) {
+            return this.networkedCharacterControllers[_id];
+        }
+        else if (_id instanceof CharacterController && this.networkedCharacterControllers.hasOwnProperty(_id.networkID)) {
+            return this.networkedCharacterControllers[_id.networkID];
+        }
+        else if (this.hasCharacterController(_id)) {
+            return this.networkedCharacterControllers[this.getCharacterController(_id).networkID];
+        }
+        else {
+            return undefined;
+        }
+    }
+    static hasNetworkedCharacterController(_id) {
+        return this.networkedCharacterControllers.hasOwnProperty(_id);
+    }*/
     static getCharacterController(_id) {
         if (_id instanceof CharacterController) {
             return _id;
@@ -832,6 +852,7 @@ class Game {
         }
         var _id = _character.id;
         //_character.entity.dipose();
+        delete this.networkedCharacterControllers[_character.networkID];
         _character.avatar.dispose();
         _character.dispose();
         delete Game.entityMeshInstances[_id];

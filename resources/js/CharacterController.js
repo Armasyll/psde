@@ -76,7 +76,8 @@ class CharacterController extends EntityController {
         if (this.skeleton != null) {
             this.checkAnims(this.skeleton);
         }
-        this.key = new Key();
+        this.key = new ControllerMovementKey();
+        this.prevKey = this.key.clone();
         var _this = this;
         this.renderer = function () { _this.moveAV(); };
 
@@ -481,6 +482,11 @@ class CharacterController extends EntityController {
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
+    getMovementKey() {
+    	return {
+    		forward:this.key.forward
+    	};
+    }
     setMovementKey(_key) {
         if (typeof _key[0] == "boolean" && typeof _key[7] == "boolean") {
             this.key.forward = _key[0];
@@ -699,25 +705,56 @@ class AnimData {
         this.name = _name;
     }
 }
-class Key {
-    constructor() {
-        this.forward = false;
-        this.backward = false;
-        this.turnRight = false;
-        this.turnLeft = false;
-        this.strafeRight = false;
-        this.strafeLeft = false;
-        this.jump = false;
-        this.shift = false;
+class ControllerMovementKey {
+    constructor(_forward = false, _shift = false, _backward = false, _turnRight = false, _turnLeft = false, _strafeRight = false, _strafeLeft = false, _jump = false) {
+        this.forward = _forward;
+        this.shift = _shift;
+        this.backward = _backward;
+        this.turnRight = _turnRight;
+        this.turnLeft = _turnLeft;
+        this.strafeRight = _strafeRight;
+        this.strafeLeft = _strafeLeft;
+        this.jump = _jump;
     }
     reset() {
         this.forward = false;
+        this.shift = false;
         this.backward = false;
         this.turnRight = false;
         this.turnLeft = false;
         this.strafeRight = false;
         this.strafeLeft = false;
         this.jump = false;
-        this.shift = false;
+    }
+    copyFrom(_key) {
+    	if (!(_key.hasOwnProperty("forward"))) {
+    		return undefined;
+    	}
+    	this.forward = _key.forward;
+    	this.shift = _key.shift;
+    	this.backward = _key.backward;
+    	this.turnRight = _key.turnRight;
+    	this.turnLeft = _key.turnLeft;
+    	this.strafeRight = _key.strafeRight;
+    	this.strafeLeft = _key.strafeLeft;
+    	this.jump = _key.jump;
+    }
+    clone() {
+    	return new ControllerMovementKey(this.forward, this.shift, this.backward, this.turnRight, this.turnLeft, this.strafeRight, this.strafeLeft, this.jump);
+    }
+    equals(_key) {
+    	if (!(_key.hasOwnProperty("forward"))) {
+    		return undefined;
+    	}
+    	return (
+    		this.forward == _key.forward &&
+    		this.shift == _key.shift &&
+    		this.backward == _key.backward &&
+    		this.turnRight == _key.turnRight &&
+    		this.turnLeft == _key.turnLeft &&
+    		this.strafeRight == _key.strafeRight &&
+    		this.strafeLeft == _key.strafeLeft &&
+    		this.jump == _key.jump
+    	)
     }
 }

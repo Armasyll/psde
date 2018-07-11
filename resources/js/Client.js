@@ -50,7 +50,7 @@ class Client {
     		return Client.networkCharacterMap[_id];
     	}
     	else {
-    		return Game.getCharacter(_id);
+    		return Game.getCharacterController(_id);
     	}
     }
     static deleteEntry(_character) {
