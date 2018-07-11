@@ -11,7 +11,7 @@ class Character extends EntityWithStorage {
      * @param  {String} _species Species
      */
     constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = undefined, _class = "classless", _age = 33, _sex = 0, _species = "fox") {
-        super(_id.replace(/[^0-9a-z]/gi, ''));
+        super(_id);
         /**
          * Surname
          * @type {String} Cannot be undefined!

@@ -11,7 +11,7 @@ class Entity {
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
         if (typeof _id == "string") {
-            _id = _id.replace(/\W+/g, "");
+            _id = _id.replace(/^[\W\-]+/g, "");
             if (_id.length == 0) {
                 return undefined;
             }

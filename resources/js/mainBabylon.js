@@ -111,9 +111,9 @@ window.addEventListener("DOMContentLoaded", function() {
     Game.scene.registerBeforeRender(function() {
         if (!(Game.player instanceof CharacterController))
             return null;
-        for (_character in Game.controllers) {
-            if (Game.controllers[_character] instanceof CharacterController) {
-                Game.controllers[_character].moveAV();
+        for (_character in Game.entityControllers) {
+            if (Game.entityControllers[_character] instanceof CharacterController) {
+                Game.entityControllers[_character].moveAV();
             }
         }
     });

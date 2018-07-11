@@ -1,15 +1,15 @@
 class EntityController {
 	constructor(_id, _avatar, _entity) {
-        if (!_avatar instanceof BABYLON.Mesh || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
+        if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh) || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
         if (!_entity instanceof Character) return null;
         this.id = _id;
         this.avatar = _avatar;
         this.entity = _entity;
 
-        Game.controllers[this.id] = this;
+        Game.entityControllers[this.id] = this;
 	}
 	dispose() {
-        delete Game.controllers[this.id];
+        delete Game.entityControllers[this.id];
         for (var _var in this) {
             this[_var] = null;
         }

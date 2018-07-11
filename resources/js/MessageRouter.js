@@ -45,34 +45,33 @@ class MessageRouter {
 				if (_data.content.nid == Game.player.networkID) {
 					return undefined;
 				}
-				var _character = undefined;
-				if (Game.getCharacter(_data.content[0]) instanceof CharacterController) {
-					_character = Game.getCharacter(_data.content[0]).avatar;
-				}
-				else {
-					_character = new CharacterController(Game.addCharacterMesh(
-						_data.content[3],
-						_data.content[0],
+				var _character = Game.getCharacterController(_data.content["id"]);
+				if (!(_character instanceof CharacterController)) {
+					_character = Game.createCharacter(
+						_data.content["id"],
+						_data.content["name"],
+						_data.content["age"],
+						_data.content["sex"],
+						_data.content["species"],
+						_data.content["skin"],
 						{mass:0.8,restitution:0.1},
-						_data.content[4],
-						_data.content[5],
-						_data.content[6]
-					), _data.content[3]);
+						_data.content["position"],
+						_data.content["rotation"],
+						_data.content["scaling"]
+					);
 				}
-				_character.setMovementKey(_data.content[7]);
-				Game.setCharacterID(_character, _data.content[0]);
-				Client.setEntry(_character, _data.content[1]);
+				Game.setEntityID(_character, _data.content["id"]);
+				Client.setEntry(_character, _data.content["nid"]);
 				break;
 			}
 			case "S_DESTROY_PLAYER" : {
-				console.log("S_DESTROY_PLAYER");
+				console.log(`S_DESTROY_PLAYER (${_data.content})`);
 				if (_data.content == Game.player.networkID) {
 					return undefined;
 				}
 				else {
-					_character = Client.getCharacter(_data.content);
-					Client.deleteEntry(_character);
-					Game.deleteCharacter(_character);
+					Client.deleteEntry(_data.content);
+					Game.deleteCharacter(_data.content);
 				}
 				break;
 			}
@@ -103,8 +102,10 @@ class MessageRouter {
 				}
 				break;
 			}
-			case "S_PUBLIC_CHAT_MESSAGE" : {
-				console.log("S_RECEIVE_PUBLIC_CHAT_MESSAGE : " + _data.content);
+			case "S_CHAT_MESSAGE" : {
+				var _timestamp = new Date(_data.content.time * 1000).toLocaleTimeString({ hour12: false });
+				var _name = Game.getCharacter(_data.content.from).name;
+				Game.chatOutputAppend(`${_timestamp} ${_name}: ${_data.content.message}`);
 				break;
 			}
 			case "S_SEND_ALL_PLAYERS" : {

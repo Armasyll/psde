@@ -12,24 +12,24 @@ class Client {
 	static disconnect() {
 
 	}
-	static getOnline() {
-		return this.online;
-	}
+    static isOnline() {
+        return this.online;
+    }
 	static setOnline(_boolean) {
 		this.online = (_boolean === true ? true : false);
 	}
-    static setPlayerEntity(_networkID) {
-    	console.log("Client::setPlayerEntity(" + _networkID + ")");
-        this.setEntity(Game.player, _networkID);
+    static setPlayerEntry(_networkID) {
+    	console.log("Client::setPlayerEntry(" + _networkID + ")");
+        this.setEntry(Game.player, _networkID);
     }
-    static setEntity(_character, _networkID) {
-    	console.log("Client::setEntity(" + _character.id + ", " + _networkID + ")");
+    static setEntry(_character, _networkID) {
+    	console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
         if (!(_character instanceof CharacterController)) {
         	_character = Game.getCharacter(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
         }
 
-        this.deleteEntity(_character);
+        this.deleteEntry(_character);
         
         this.networkCharacterMap[_networkID] = _character;
         _character.setNetworkID(_networkID);
@@ -53,7 +53,7 @@ class Client {
     		return Game.getCharacter(_id);
     	}
     }
-    static deleteEntity(_character) {
+    static deleteEntry(_character) {
         if (!(_character instanceof CharacterController)) {
         	_character = Client.getCharacter(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
@@ -126,6 +126,11 @@ class Client {
             type: "P_INIT_SELF",
             content: {
             	id:Game.player.id,
+                name:Game.player.entity.getName(),
+                age:Game.player.entity.getAge(),
+                sex:Game.player.entity.getSex(),
+                species:Game.player.entity.getSpecies(),
+                skin:Game.player.avatar.material.diffuseTexture.url.slice(15), // TEMPORARY SOLUTION FOR "resources/data/..."
                 mesh:Game.player.avatar.name,
                 position:Game.player.avatar.position,
                 rotation:Game.player.avatar.rotation,

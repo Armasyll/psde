@@ -113,23 +113,54 @@ class GameGUI {
         return bottomMenuContainer;
     }
     static _generateChat() {
-        var chatBox = new BABYLON.GUI.StackPanel("chatBox");
-            var chatOutput = new BABYLON.GUI.TextBlock("chatOutput");
-            var chatInput = new BABYLON.GUI.InputText("chatInput");
-
-        chatBox.bottom = 0;
-        chatBox.left = 0;
+        var chatBox = new BABYLON.GUI.Rectangle("chatBox");
+        chatBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        chatBox.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        chatBox.height = 0.3;
+        chatBox.width = 0.4;
         chatBox.isVertical = true;
-        chatBox.height = 0.1;
-        chatBox.width = 0.2;
-        chatOutput.height = 0.8;
-        chatOutput.width = 1.0;
-        chatInput.height = 0.2;
-        chatInput.width = 1.0;
-        chatBox.addControl(chatOutput);
+            var chatOutputContainer = new BABYLON.GUI.Rectangle("chatOutputContainer");
+            chatOutputContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            chatOutputContainer.height = 0.8;
+            chatOutputContainer.width = 1.0;
+            chatOutputContainer.background = "black";
+            chatOutputContainer.thickness = 0;
+            chatOutputContainer.alpha = 0.75;
+                var chatOutput = new BABYLON.GUI.TextBlock("chatOutput");
+                chatOutput.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                chatOutput.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                chatOutput.height = 1.0;
+                chatOutput.width = 1.0;
+                chatOutput.color = "white";
+            var chatInput = new BABYLON.GUI.InputText("chatInput");
+            chatInput.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            chatInput.height = 0.2;
+            chatInput.width = 1.0;
+            chatInput.background = "black";
+            chatInput.focusedBackground = "grey";
+            chatInput.color = "white";
+            chatInput.text = "";
+            chatInput.thickness = 1;
+            chatInput.alpha = 0.75;
+        chatOutputContainer.addControl(chatOutput);
+        chatBox.addControl(chatOutputContainer);
         chatBox.addControl(chatInput);
-        chatBox.isVisible = false;
+        chatInput.onBlurObservable.add(function() {
+            Game.controlCharacterOnKeyDown(13); // onBlurObservable triggers before ActionManager, so we'll just send the enter key manually
+        });
+        chatInput.onFocusObservable.add(function() {
+            Game._chatInputFocused = true;
+        });
         return chatBox;
+    }
+    static getChat() {
+        return this.hud.rootContainer.getChildByName("chatBox");
+    }
+    static getChatOutput() {
+        return this.hud.rootContainer.getChildByName("chatBox").children[0].children[0];
+    }
+    static getChatInput() {
+        return this.hud.rootContainer.getChildByName("chatBox").children[1];
     }
     static _generateCharacterChoiceMenu() {
         var cNM1 = new BABYLON.GUI.StackPanel("characterChoiceMenu");

@@ -30,7 +30,7 @@ class NetworkController {
         NetworkController.initialized = true;
     }
     static onClose(_event) {
-        if (Client.getOnline()) {
+        if (Client.isOnline()) {
             Client.disconnect();
         }
         NetworkController.initialized = false;
