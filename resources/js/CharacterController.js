@@ -8,6 +8,12 @@ class EntityController {
 
         Game.controllers[this.id] = this;
 	}
+	dispose() {
+        delete Game.controllers[this.id];
+        for (var _var in this) {
+            this[_var] = null;
+        }
+    }
 }
 /**
  * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
@@ -675,6 +681,8 @@ class CharacterController extends EntityController {
     dispose() {
         this.detachFromAllBones();
         this.avatar.controller = null;
+        delete Game.characterControllers[this.id];
+        super.dispose();
         for (var _var in this) {
             this[_var] = null;
         }

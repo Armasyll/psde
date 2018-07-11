@@ -1,6 +1,4 @@
 _map = {};
-charlie = undefined;
-rosie = undefined;
 
 function isInt(n){
     return Number(n) === n && n % 1 === 0;
@@ -452,6 +450,6 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:12, y:0, z:-28});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-28});
 
-    rosie = Game.createCharacter("rosie", "Rosie", 14, "f", "fox", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
-    charlie = Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxCorsac.png", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
+    Game.createCharacter("rosie", "Rosie", 14, "f", "fox", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
+    Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxCorsac.png", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
 }

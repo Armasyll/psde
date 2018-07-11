@@ -14,15 +14,14 @@ class Game {
         this.scene = new BABYLON.Scene(this.engine);
         this.scene.autoClear = false;
         this.scene.autoClearDepthAndStencil = false;
+        this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
+        this.scene.actionManager = new BABYLON.ActionManager(this.scene);
         if (this.physicsEnabled) {
             this.initPhysics();
         }
-        this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
-
-        GameGUI.initialize();
-        this.initFreeCamera();
-
-        this.scene.actionManager = new BABYLON.ActionManager(this.scene);
+        else {
+            this.scene.collisionsEnabled = true;
+        }
 
         this.surfaceMeshes = undefined;
         this.furnitureMeshes = undefined;
@@ -39,8 +38,6 @@ class Game {
         this.characterEntities = {};
         this.itemEntities = {};
 
-        this.characterIDsControllers = {};
-
         this._loadedFurniture = false;
         this._loadedSurfaces = false;
         this._loadedCharacters = false;
@@ -55,16 +52,7 @@ class Game {
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
 
-        this.loadMeshes();
-        this.initQwertyKeyboardControls();
-
-        if (this.physicsEnabled) {}
-        else {
-            this.scene.collisionsEnabled = true;
-        }
-
         this.postProcess = {};
-        this.initPostProcessing();
 
         this.highlightEnabled = true;
         this.highlightLayer = new BABYLON.HighlightLayer("hl1", this.scene);
@@ -102,6 +90,12 @@ class Game {
          * @type {Set}
          */
         this.kCharacterClasses = new Set(["bard","cleric","druid","paladin","ranger","sorcerer","warlock","wizard","classless","commoner","expert","noble"]);
+
+        GameGUI.initialize();
+        this.initFreeCamera();
+        this.loadMeshes();
+        this.initQwertyKeyboardControls();
+        this.initPostProcessing();
 
         this.initialized = true;
     }
@@ -724,17 +718,16 @@ class Game {
         return _controller;
     }
     static deleteCharacter(_character) {
-        _character = Game.getMesh(_character);
-        if (_character instanceof CharacterController) {
-            _character = _character.avatar;
+        if (!(_character instanceof CharacterController)) {
+            _character = Game.getCharacterController(_character);
+            if (!(_character instanceof CharacterController)) {return undefined;}
         }
-        else if (!_character.hasOwnProperty("characterController")) {
-            return undefined;
-        }
-        delete Game.characterMeshInstances[_character.id];
-        delete Game.characterIDsControllers[_character.id];
-        _character.characterController.dispose();
+        var _id = _character.id;
+        //_character.entity.dipose();
+        _character.avatar.dispose();
         _character.dispose();
+        delete Game.entityMeshInstances[_id];
+        delete Game.characterMeshInstances[_id];
     }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
