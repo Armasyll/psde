@@ -431,7 +431,7 @@ class Game {
         }
     }
     static getMesh(_mesh) {
-        if (_mesh.hasOwnProperty("characterController") && _mesh.characterController instanceof CharacterController) {
+        if (_mesh.hasOwnProperty("characterController") && _mesh.controller instanceof CharacterController) {
             return _mesh;
         }
         else if (_mesh instanceof CharacterController) {
@@ -599,8 +599,8 @@ class Game {
         else if (typeof _id == "string" && Game.controllers.hasOwnProperty(_id)) {
             return Game.controllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.characterController instanceof CharacterController) {
-            return _id.characterController;
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof CharacterController) {
+            return _id.controller;
         }
         else {
             return undefined;
@@ -613,8 +613,8 @@ class Game {
         else if (typeof _id == "string" && Game.controllers.hasOwnProperty(_id)) {
             return Game.controllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.characterController instanceof CharacterController) {
-            return _id.characterController;
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof CharacterController) {
+            return _id.controller;
         }
         else {
             return undefined;
@@ -721,6 +721,10 @@ class Game {
         if (!(_character instanceof CharacterController)) {
             _character = Game.getCharacterController(_character);
             if (!(_character instanceof CharacterController)) {return undefined;}
+        }
+        if (_character == this.player) {
+            console.log("You can't delete yourself :v");
+            return;
         }
         var _id = _character.id;
         //_character.entity.dipose();
