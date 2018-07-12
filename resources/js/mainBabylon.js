@@ -91,7 +91,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 }
 
                 generateApartmentScene();
-                Game.initPlayer("foxM", 1);
+                Game.initPlayer();
                 Game._finishedLoading = true;
 
                 Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
