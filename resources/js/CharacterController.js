@@ -87,6 +87,7 @@ class CharacterController extends EntityController {
         this.setIdleAnim("80_idle01", 1, true);
         this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
+        this.setJumpAnim("95_jump", 1, true);
 
         this.attachedMeshes = {};
         Game.characterControllers[this.id] = this;

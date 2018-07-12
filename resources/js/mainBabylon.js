@@ -82,11 +82,10 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems && Game.initialized && GameGUI.initialized) {
                 if (Game.debugEnabled) console.log("Finished loading assets.");
 
-                var _character = Game.characterMeshes["nullSkeletonN"];
+                var _character = Game.characterMeshes["foxSkeletonN"];
                 var _animationRange = _character.skeleton.getAnimationRanges();
                 for (var _i = 0; _i < _animationRange.length; _i++) {
                     if (_animationRange[_i].to - _animationRange[_i].from > 2) {
-                        _animationRange[_i].from++;
                         _animationRange[_i].to--;
                     }
                 }
