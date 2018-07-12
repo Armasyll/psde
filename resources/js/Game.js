@@ -797,14 +797,14 @@ class Game {
             return false;
         }
     }
-    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.kMale, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
         if (typeof _id != "string") _id = genUUIDv4();
         _id = _id.toLowerCase();
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
         var _meshID = "";
         switch (_entity.species) {
             case "fox" : {
-                if (_entity.getSex() == 0) {
+                if (_entity.getSex() == Game.MALE) {
                     _meshID = "foxM";
                 }
                 else {
@@ -813,7 +813,7 @@ class Game {
                 break;
             }
             case "skeleton" : {
-                if (_entity.getSex() == 0) {
+                if (_entity.getSex() == Game.MALE) {
                     _meshID = "foxSkeletonM";
                 }
                 else {
@@ -822,7 +822,7 @@ class Game {
                 break;
             }
             default : {
-                if (_entity.getSex() == 0) {
+                if (_entity.getSex() == Game.MALE) {
                     _meshID = "foxM";
                 }
                 else {

@@ -663,7 +663,7 @@ class Character extends EntityWithStorage {
         this.setClass(_class);
         this.setAge(_age);
         this.setSex(_sex);
-        this.setGender(this.getSex());
+        this.setGender(this._sex);
         this.setSpecies(_species);
         this.addAvailableAction("talk");
         this.addAvailableAction("attack");
