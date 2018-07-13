@@ -714,27 +714,22 @@ class Character extends EntityWithStorage {
             return _cost - (_cost / (100 / this.manaCostOffsetPercent));
     }
 
-    setHandedness(_int) {
-        if (_hand == Game.LEFT_HANDED)
-            this.handedness = 1;
+    setHandedness(_hand) {
+        if (_hand == "leftHand") {
+            this.handedness = "leftHand";
+        }
         else {
-            this.handedness = 0;
+            this.handedness = "rightHand";
         }
     }
     getHandedness() {
         return this.handedness;
     }
-    setLeftHanded(_bool = true) {
-        if (_bool === true)
-            this.setHandedness(1);
-        else
-            this.setHandedness(0);
+    setLeftHanded() {
+        this.setHandedness("leftHand");
     }
-    setRightHanded(_bool = true) {
-        if (_bool === true)
-            this.setHandedness(0);
-        else
-            this.setHandedness(1);
+    setRightHanded() {
+        this.setHandedness("rightHand");
     }
 
     /**
