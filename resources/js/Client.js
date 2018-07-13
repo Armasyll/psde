@@ -130,7 +130,7 @@ class Client {
                 age:Game.player.entity.getAge(),
                 sex:Game.player.entity.getSex(),
                 species:Game.player.entity.getSpecies(),
-                skin:Game.player.avatar.material.diffuseTexture.url.slice(15), // TEMPORARY SOLUTION FOR "resources/data/..."
+                skin:Game.player.skin,
                 mesh:Game.player.avatar.name,
                 position:Game.player.avatar.position,
                 rotation:Game.player.avatar.rotation,

@@ -65,6 +65,8 @@ class Game {
         this.highlightedColorFriend = "green";
         this.highlightedColorNeutral = "white";
 
+        this.kSkins = new Set(["foxRed.svg","foxRed.png","foxCorsac.svg","foxCorsac.png"]);
+
         this.MALE = 0, this.FEMALE = 1;
         this.kSpeciesTypes = new Set(["fox","skeleton"]);
         this.kBodyPartTypes = new Set(["ankles","anus","arms","back","breasts","chest","clitoris","feet","fingers","groin","hands","head","knot","leftAnkle","leftArm","leftEar","leftEye","leftFoot","leftHand","leftLeg","leftNipple","leftShoulder","legs","lips","mouth","neck","nose","penis","rear","rightAnkle","rightArm","rightEar","rightEye","rightFoot","rightHand","rightLeg","rightNipple","rightShoulder","shoulders","shoulders","stomach","testicles","toes","tongue","vagina","waist","wrists"]);
@@ -831,12 +833,8 @@ class Game {
             }
         }
         var _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
-        if (typeof _skin == "string" && _skin.length > 5) {
-            _mesh.material = new BABYLON.StandardMaterial();
-            _mesh.material.diffuseTexture = new BABYLON.Texture("resources/data/" + _skin);
-            _mesh.material.specularColor.set(0,0,0);
-        }
         var _controller = new CharacterController(_id, _mesh, _entity);
+        _controller.setAvatarSkin(_skin)
         _entity.setController(_controller);
         _entity.setAvatar(_mesh);
         return _controller;
@@ -877,6 +875,9 @@ class Game {
         }
         this.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
         this.highlightedMesh = _mesh;
+    }
+    static hasSkin(_string) {
+        return this.kSkins.has(_string);
     }
     static chatInputFocus() {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
