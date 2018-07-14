@@ -1,74 +1,5 @@
 _map = {};
 
-function isInt(n){
-    return Number(n) === n && n % 1 === 0;
-}
-
-function isFloat(n){
-    return Number(n) === n && n % 1 !== 0;
-}
-function unsafeExec(_executableString = undefined, _param = undefined) {
-    if (Game.debugEnabled) console.log("Running unsafeExec");
-    var _return = undefined;
-
-    fn = new Function(_executableString);
-    try {
-        _return = fn();
-    }
-    catch (err) {
-        if (Game.debugEnabled) console.log(err);
-    }
-    
-    if (_return == undefined)
-        return true;
-    else
-        return _return;
-}
-function genUUIDv4() {
-    var uuid = "", i, random;
-    for (i = 0; i < 32; i++) {
-        random = Math.random() * 16 | 0;
-
-        if (i == 8 || i == 12 || i == 16 || i == 20) {
-            uuid += "-"
-        }
-        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
-    }
-    return uuid.toUpperCase();
-}
-BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
-
-    if (!this.isEnabled()) return;
-
-    this.refreshBoundingInfo();    
-
-    var sphere = BABYLON.MeshBuilder.CreateSphere("elli", { 
-        diameterX: this.ellipsoid.x * 2,
-        diameterZ: this.ellipsoid.z * 2,
-        diameterY: this.ellipsoid.y * 2
-        },
-    scene);
-
-//    sphere.position = this.position.add(this.ellipsoidOffset);
-    sphere.position = this.getAbsolutePosition().add(this.ellipsoidOffset);
-
-    this.ellipsoidMesh = sphere;
-    // sphere.showBoundingBox = true;
-    sphere.material = new BABYLON.StandardMaterial("collider", scene);
-    sphere.material.wireframe = true;
-    sphere.material.diffuseColor = BABYLON.Color3.Yellow();
-
-    // special barrel ellipsoid checks
-    if (this.name == "barrel" || this.name == "barrel2") {
-        sphere.material.diffuseColor = BABYLON.Color3.Green();
-        console.log("barrel.ellipsoid: ", this.ellipsoid)
-        var sbb = sphere.getBoundingInfo().boundingBox;
-        console.log("barrel sphere bb.maximum.scale(2): ", sbb.maximum.scale(2));
-    }
-
-    sphere.visibility = .1;
-}
-
 window.addEventListener('resize', function(){
     Game.engine.resize();
 });
@@ -115,6 +46,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 Game.entityControllers[_character].moveAV();
             }
         }
+        Game.player.castRayTarget();
     });
 });
 

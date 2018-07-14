@@ -1,14 +1,15 @@
 class EntityController {
-	constructor(_id, _avatar, _entity) {
+    constructor(_id, _avatar, _entity) {
         if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh) || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
         if (!_entity instanceof Character) return null;
         this.id = _id;
         this.avatar = _avatar;
         this.entity = _entity;
+        this.avatar.isPickable = true;
 
         Game.entityControllers[this.id] = this;
-	}
-	dispose() {
+    }
+    dispose() {
         delete Game.entityControllers[this.id];
         for (var _var in this) {
             this[_var] = null;
@@ -26,6 +27,7 @@ class CharacterController extends EntityController {
         this.avatar.controller = this;
         this.networkID = null;
 
+        this.focus = undefined;
         this.targetController = null;
         this.targetedByControllers = new Set();
 
@@ -124,101 +126,101 @@ class CharacterController extends EntityController {
         return this.skeleton;
     }
     setAvatarSkin(_skin = undefined) {
-    	var _result = undefined;
-    	if (_skin == undefined) {
-    		_result = this._setAvatarSkinFromAvatar(this.avatar);
-    	}
-    	else if (typeof _skin == BABYLON.Texture) {
-    		_result = this._setAvatarSkinFromString(_skin.name);
-    	}
-    	else if (typeof _skin == BABYLON.Material) {
-    		_result = this._setAvatarSkinFromString(_skin.diffuseTexture.name);
-    	}
-    	else if (typeof _skin == "string") {
-    		_result = this._setAvatarSkinFromString(_skin);
-    	}
-    	else if ((_skin instanceof BABYLON.Mesh || _skin instanceof BABYLON.InstancedMesh) && _skin.material instanceof BABYLON.Material) {
-    		_result = this._setAvatarSkinFromAvatar(_skin);
-    	}
-    	else if (_skin instanceof CharacterController) {
-    		_result = this._setAvatarSkinFromAvatar(_skin.avatar);
-    	}
-    	return _result;
+        var _result = undefined;
+        if (_skin == undefined) {
+            _result = this._setAvatarSkinFromAvatar(this.avatar);
+        }
+        else if (typeof _skin == BABYLON.Texture) {
+            _result = this._setAvatarSkinFromString(_skin.name);
+        }
+        else if (typeof _skin == BABYLON.Material) {
+            _result = this._setAvatarSkinFromString(_skin.diffuseTexture.name);
+        }
+        else if (typeof _skin == "string") {
+            _result = this._setAvatarSkinFromString(_skin);
+        }
+        else if ((_skin instanceof BABYLON.Mesh || _skin instanceof BABYLON.InstancedMesh) && _skin.material instanceof BABYLON.Material) {
+            _result = this._setAvatarSkinFromAvatar(_skin);
+        }
+        else if (_skin instanceof CharacterController) {
+            _result = this._setAvatarSkinFromAvatar(_skin.avatar);
+        }
+        return _result;
     }
     _setAvatarSkinFromAvatar(_mesh) {
-    	if (!(_mesh instanceof BABYLON.Mesh && _mesh instanceof BABYLON.InstancedMesh) || !(_mesh.material instanceof BABYLON.Material)) {
-    		return false;
-    	}
-    	if (!Game.hasSkin(_mesh.material.diffuseTexture.name)) {
-    		return false;
-    	}
-		this.skin = _mesh.material.diffuseTexture.name;
-		this.avatar.material = _mesh.material.clone();
-		return true;
+        if (!(_mesh instanceof BABYLON.Mesh && _mesh instanceof BABYLON.InstancedMesh) || !(_mesh.material instanceof BABYLON.Material)) {
+            return false;
+        }
+        if (!Game.hasSkin(_mesh.material.diffuseTexture.name)) {
+            return false;
+        }
+        this.skin = _mesh.material.diffuseTexture.name;
+        this.avatar.material = _mesh.material.clone();
+        return true;
     }
     _setAvatarSkinFromString(_string) {
-    	if (!Game.hasSkin(_string)) {
-    		return false;
-    	}
-    	this.skin = _string;
+        if (!Game.hasSkin(_string)) {
+            return false;
+        }
+        this.skin = _string;
         this.avatar.material = new BABYLON.StandardMaterial();
         this.avatar.material.diffuseTexture = new BABYLON.Texture("resources/data/" + _string);
         this.avatar.material.specularColor.set(0,0,0);
         return true;
     }
     getAvatarSkin() {
-    	return this.skin;
+        return this.skin;
     }
 
     setTarget(_controller, _updateChild = true) {
-    	if (!(_controller instanceof EntityController)) {
-    		return undefined;
-    	}
-		this.targetController = _controller;
-		if (_updateChild) {
-			_controller.addTargetedBy(this, false);
-		}
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.targetController = _controller;
+        if (_updateChild) {
+            _controller.addTargetedBy(this, false);
+        }
     }
     deleteTarget(_updateChild = true) {
-    	if (_updateChild) {
-    		this.targetController.deleteTargetedBy(this, false);
-    	}
-    	this.targetController = null;
+        if (_updateChild) {
+            this.targetController.deleteTargetedBy(this, false);
+        }
+        this.targetController = null;
     }
     clearTarget(_updateChild = true) {
-    	this.deleteTarget();
+        this.deleteTarget();
     }
     getTarget() {
-    	return this.targetController;
+        return this.targetController;
     }
     addTargetedBy(_controller, _updateChild = true) {
-    	if (!(_controller instanceof EntityController)) {
-    		return undefined;
-    	}
-    	this.targetedByControllers.add(_controller);
-    	if (_updateChild) {
-    		_controller.setTarget(this, false);
-    	}
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.targetedByControllers.add(_controller);
+        if (_updateChild) {
+            _controller.setTarget(this, false);
+        }
     }
     deleteTargetedBy(_controller, _updateChild = true) {
-    	if (!(_controller instanceof EntityController)) {
-    		return undefined;
-    	}
-    	this.targetedByControllers.delete(_controller);
-    	if (_updateChild) {
-    		_controller.deleteTarget(this, false);
-    	}
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.targetedByControllers.delete(_controller);
+        if (_updateChild) {
+            _controller.deleteTarget(this, false);
+        }
     }
     clearTargetedBy() {
-    	this.targetedByControllers.forEach(function(_controller) {
-    		if (_controller.targetController == this) {
-    			_controller.targetController.deleteTarget(false);
-    		}
-    	}, this);
-    	this.targetedByControllers = null;
+        this.targetedByControllers.forEach(function(_controller) {
+            if (_controller.targetController == this) {
+                _controller.targetController.deleteTarget(false);
+            }
+        }, this);
+        this.targetedByControllers = null;
     }
     getTargetedBy() {
-    	return this.targetedByControllers;
+        return this.targetedByControllers;
     }
 
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
@@ -588,9 +590,9 @@ class CharacterController extends EntityController {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
     getMovementKey() {
-    	return {
-    		forward:this.key.forward
-    	};
+        return {
+            forward:this.key.forward
+        };
     }
     setMovementKey(_key) {
         if (typeof _key[0] == "boolean" && typeof _key[7] == "boolean") {
@@ -705,6 +707,7 @@ class CharacterController extends EntityController {
     attachToFOCUS(_mesh) {
         var _focus = this.attachToBone(_mesh, "FOCUS");
         _focus.material = Game._collisionMaterial;
+        this.focus = _focus;
         return _focus;
     }
     detachFromThirdEye(_mesh) {
@@ -718,6 +721,28 @@ class CharacterController extends EntityController {
     doAttackLeftHand() {
     }
     doAttachRightHand() {
+    }
+    castRayTarget() {
+    	var _direction = Game.camera.getDirection(this.focus._absolutePosition);
+    	_direction.x += Game.camera.position.x;
+        var _ray = new BABYLON.Ray(this.focus._absolutePosition, _direction.negate(), 6);
+        //let _rayHelper = new BABYLON.RayHelper(_ray);
+        //_rayHelper.show(Game.scene);
+        var _hit = Game.scene.pickWithRay(_ray, function(_mesh) {
+            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {
+                return true;
+            }
+            return false;
+        });
+        if (_hit.hit) {
+        	Game.setPlayerTarget(_hit.pickedMesh);
+        }
+        else {
+        	Game.clearPlayerTarget();
+        }
+    }
+    castRayFOV(_fov = 90) {
+        return undefined;
     }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {
@@ -790,9 +815,9 @@ class CharacterController extends EntityController {
         }
     }
     dispose() {
-    	if (this == Game.player) {
-    		return false;
-    	}
+        if (this == Game.player) {
+            return false;
+        }
         this.detachFromAllBones();
         this.avatar.controller = null;
         delete Game.characterControllers[this.id];
@@ -833,34 +858,34 @@ class ControllerMovementKey {
         this.jump = false;
     }
     copyFrom(_key) {
-    	if (!(_key.hasOwnProperty("forward"))) {
-    		return undefined;
-    	}
-    	this.forward = _key.forward;
-    	this.shift = _key.shift;
-    	this.backward = _key.backward;
-    	this.turnRight = _key.turnRight;
-    	this.turnLeft = _key.turnLeft;
-    	this.strafeRight = _key.strafeRight;
-    	this.strafeLeft = _key.strafeLeft;
-    	this.jump = _key.jump;
+        if (!(_key.hasOwnProperty("forward"))) {
+            return undefined;
+        }
+        this.forward = _key.forward;
+        this.shift = _key.shift;
+        this.backward = _key.backward;
+        this.turnRight = _key.turnRight;
+        this.turnLeft = _key.turnLeft;
+        this.strafeRight = _key.strafeRight;
+        this.strafeLeft = _key.strafeLeft;
+        this.jump = _key.jump;
     }
     clone() {
-    	return new ControllerMovementKey(this.forward, this.shift, this.backward, this.turnRight, this.turnLeft, this.strafeRight, this.strafeLeft, this.jump);
+        return new ControllerMovementKey(this.forward, this.shift, this.backward, this.turnRight, this.turnLeft, this.strafeRight, this.strafeLeft, this.jump);
     }
     equals(_key) {
-    	if (!(_key.hasOwnProperty("forward"))) {
-    		return undefined;
-    	}
-    	return (
-    		this.forward == _key.forward &&
-    		this.shift == _key.shift &&
-    		this.backward == _key.backward &&
-    		this.turnRight == _key.turnRight &&
-    		this.turnLeft == _key.turnLeft &&
-    		this.strafeRight == _key.strafeRight &&
-    		this.strafeLeft == _key.strafeLeft &&
-    		this.jump == _key.jump
-    	)
+        if (!(_key.hasOwnProperty("forward"))) {
+            return undefined;
+        }
+        return (
+            this.forward == _key.forward &&
+            this.shift == _key.shift &&
+            this.backward == _key.backward &&
+            this.turnRight == _key.turnRight &&
+            this.turnLeft == _key.turnLeft &&
+            this.strafeRight == _key.strafeRight &&
+            this.strafeLeft == _key.strafeLeft &&
+            this.jump == _key.jump
+        )
     }
 }

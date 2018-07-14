@@ -152,6 +152,7 @@ class Game {
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
+        this.player.avatar.isPickable = false;
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
             GameGUI.setPlayerPortrait(this.player);
@@ -444,6 +445,7 @@ class Game {
             _n.scaling = new BABYLON.Vector3(_scale.x, _scale.y, _scale.z);
             //_n.freezeWorldMatrix();
             _n.collisionMesh = undefined;
+            _n.isPickable = false;
             return _n;
         }
         else {
@@ -850,6 +852,9 @@ class Game {
         delete Game.characterMeshInstances[_id];
     }
     static highlightMesh(_mesh) {
+        if (!this.highlightEnabled) {
+            return;
+        }
         if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
             if (_mesh instanceof Entity) {
                 _mesh = _mesh.avatar;
@@ -860,9 +865,6 @@ class Game {
             else {
                 return;
             }
-        }
-        if (!this.highlightEnabled || _mesh == this.highlightedMesh) {
-            return;
         }
         if (this.highlightedMesh != undefined) {
             this.highlightLayer.removeMesh(this.highlightedMesh);
@@ -877,8 +879,14 @@ class Game {
         return this.kSkins.has(_string);
     }
     static setPlayerTarget(_controller) {
-        if (!(_controller instanceof EntityController)) {
+        if (_controller == undefined) {
             return undefined;
+        }
+        if (!(_controller instanceof EntityController)) {
+            if (_controller.hasOwnProperty("controller")) {
+                _controller = _controller.controller;
+            }
+            if (!(_controller instanceof EntityController)) return undefined;
         }
         this.highlightMesh(_controller.avatar);
         Game.player.setTarget(_controller);
@@ -886,6 +894,9 @@ class Game {
         GameGUI.showTargetPortrait();
     }
     static clearPlayerTarget() {
+        if (Game.player.getTarget() == undefined) {
+            return undefined;
+        }
         this.clearHightlightMesh();
         Game.player.clearTarget();
         GameGUI.hideTargetPortrait();

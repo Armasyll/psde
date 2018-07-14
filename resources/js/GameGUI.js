@@ -461,7 +461,7 @@ class GameGUI {
             _life = _image.entity.getLife() + "/" + _image.entity.getLifeMax();
             if (_image.entity.getManaMax() == 0) {
                 GameGUI.hidePlayerPortraitMana();
-                _mana = undefined;
+                _mana = "";
             }
             else {
                 _mana = _image.entity.getMana() + "/" + _image.entity.getManaMax();
