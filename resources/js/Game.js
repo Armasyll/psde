@@ -154,7 +154,7 @@ class Game {
         this.player.attachToFOCUS("eye");
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
-            GameGUI.updatePlayerPortrait(this.player);
+            GameGUI.setPlayerPortrait(this.player);
         }
 
         return this.player;
@@ -882,7 +882,7 @@ class Game {
         }
         this.highlightMesh(_controller.avatar);
         Game.player.setTarget(_controller);
-        GameGUI.updateTargetPortrait(_controller);
+        GameGUI.setTargetPortrait(_controller);
         GameGUI.showTargetPortrait();
     }
     static clearPlayerTarget() {

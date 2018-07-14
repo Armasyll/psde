@@ -273,7 +273,7 @@ class GameGUI {
                 Client.connect();
             }
             GameGUI.hideMainMenu();
-            GameGUI.updatePlayerPortrait(Game.player);
+            GameGUI.setPlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
         submitOffline.onPointerDownObservable.add(function() {
@@ -285,7 +285,7 @@ class GameGUI {
 
             }
             GameGUI.hideMainMenu();
-            GameGUI.updatePlayerPortrait(Game.player);
+            GameGUI.setPlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
 
@@ -429,17 +429,8 @@ class GameGUI {
     static hideTargetPortrait() {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").isVisible = false;
     }
-    static updatePlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
-        if (typeof _image != "string") {
-            if (!(_image instanceof EntityController)) {
-                _image = Game.player;
-            }
-            else {
-                _image = Game.getCharacterController(_image);
-            }
-            if (!(_image instanceof EntityController)) {
-                return undefined;
-            }
+    static setPlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+        if (_image instanceof EntityController) {
             _name = _image.entity.getFullName();
             _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
             if (_image.entity.getManaMax() == 0) {
@@ -452,23 +443,14 @@ class GameGUI {
             _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
             _image = _image.entity.getImage();
         }
-        this.updatePlayerPortraitImage(_image);
-        this.updatePlayerPortraitName(_name);
-        this.updatePlayerPortraitHealth(_life);
-        this.updatePlayerPortraitMana(_mana);
-        this.updatePlayerPortraitStamina(_stamina);
+        this.setPlayerPortraitImage(_image);
+        this.setPlayerPortraitName(_name);
+        this.setPlayerPortraitHealth(_life);
+        this.setPlayerPortraitMana(_mana);
+        this.setPlayerPortraitStamina(_stamina);
     }
-    static updateTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
-        if (typeof _image != "string") {
-            if (!(_image instanceof EntityController)) {
-                _image = Game.player.targetController;
-            }
-            else {
-                _image = Game.getCharacterController(_image);
-            }
-            if (!(_image instanceof EntityController)) {
-                return undefined;
-            }
+    static setTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+        if (_image instanceof CharacterController) {
             _name = _image.entity.getFullName();
             _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
             if (_image.entity.getManaMax() == 0) {
@@ -481,22 +463,26 @@ class GameGUI {
             _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
             _image = _image.entity.getImage();
         }
-        this.updateTargetPortraitImage(_image);
-        this.updateTargetPortraitName(_name);
-        this.updateTargetPortraitHealth(_life);
-        this.updateTargetPortraitMana(_mana);
-        this.updateTargetPortraitStamina(_stamina);
+        else if (_image instanceof EntityController) {
+            _name = _image.entity.getName();
+            _image = _image.entity.getImage();
+        }
+        this.setTargetPortraitImage(_image);
+        this.setTargetPortraitName(_name);
+        this.setTargetPortraitHealth(_life);
+        this.setTargetPortraitMana(_mana);
+        this.setTargetPortraitStamina(_stamina);
     }
-    static updatePlayerPortraitImage(_image) {
+    static setPlayerPortraitImage(_image) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[0].children[0].domImage.setAttribute("src", _image);
     }
-    static updatePlayerPortraitName(_string) {
+    static setPlayerPortraitName(_string) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[0].text = _string;
     }
-    static updatePlayerPortraitHealth(_int = 100) {
+    static setPlayerPortraitHealth(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[1].text = _int;
     }
-    static updatePlayerPortraitStamina(_int = 100) {
+    static setPlayerPortraitStamina(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[3].text = _int;
     }
     static showPlayerPortraitMana() {
@@ -505,19 +491,19 @@ class GameGUI {
     static hidePlayerPortraitMana() {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].isVisible = false;
     }
-    static updatePlayerPortraitMana(_int = 100) {
+    static setPlayerPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].text = _int;
     }
-    static updateTargetPortraitImage(_image) {
+    static setTargetPortraitImage(_image) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[0].domImage.setAttribute("src", _image);
     }
-    static updateTargetPortraitName(_string) {
+    static setTargetPortraitName(_string) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[0].text = _string;
     }
-    static updateTargetPortraitHealth(_int = 100) {
+    static setTargetPortraitHealth(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[1].text = _int;
     }
-    static updateTargetPortraitStamina(_int = 100) {
+    static setTargetPortraitStamina(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[3].text = _int;
     }
     static showTargetPortraitMana() {
@@ -526,7 +512,7 @@ class GameGUI {
     static hideTargetPortraitMana() {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].isVisible = false;
     }
-    static updateTargetPortraitMana(_int = 100) {
+    static setTargetPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].text = _int;
     }
     static chatInputFocus() {
