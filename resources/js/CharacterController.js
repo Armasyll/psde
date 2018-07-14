@@ -171,7 +171,7 @@ class CharacterController extends EntityController {
     }
 
     setTarget(_controller, _updateChild = true) {
-    	if (!(_controller instanceof Controller)) {
+    	if (!(_controller instanceof EntityController)) {
     		return undefined;
     	}
 		this.targetController = _controller;
@@ -192,7 +192,7 @@ class CharacterController extends EntityController {
     	return this.targetController;
     }
     addTargetedBy(_controller, _updateChild = true) {
-    	if (!(_controller instanceof Controller)) {
+    	if (!(_controller instanceof EntityController)) {
     		return undefined;
     	}
     	this.targetedByControllers.add(_controller);
@@ -201,7 +201,7 @@ class CharacterController extends EntityController {
     	}
     }
     deleteTargetedBy(_controller, _updateChild = true) {
-    	if (!(_controller instanceof Controller)) {
+    	if (!(_controller instanceof EntityController)) {
     		return undefined;
     	}
     	this.targetedByControllers.delete(_controller);

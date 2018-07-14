@@ -870,7 +870,24 @@ class Game {
         this.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
         this.highlightedMesh = _mesh;
     }
+    static clearHightlightMesh() {
+        this.highlightLayer.removeMesh(this.highlightedMesh);
+    }
     static hasSkin(_string) {
         return this.kSkins.has(_string);
+    }
+    static setPlayerTarget(_controller) {
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.highlightMesh(_controller.avatar);
+        Game.player.setTarget(_controller);
+        GameGUI.updateTargetPortrait(_controller);
+        GameGUI.showTargetPortrait();
+    }
+    static clearPlayerTarget() {
+        this.clearHightlightMesh();
+        Game.player.clearTarget();
+        GameGUI.hideTargetPortrait();
     }
 }

@@ -430,16 +430,25 @@ class GameGUI {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").isVisible = false;
     }
     static updatePlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
-        if (typeof CharacterController != "string") {
-            if (_image == undefined) {
+        if (typeof _image != "string") {
+            if (!(_image instanceof EntityController)) {
                 _image = Game.player;
             }
             else {
                 _image = Game.getCharacterController(_image);
             }
+            if (!(_image instanceof EntityController)) {
+                return undefined;
+            }
             _name = _image.entity.getFullName();
             _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
-            _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            if (_image.entity.getManaMax() == 0) {
+                GameGUI.hidePlayerPortraitMana();
+                _mana = undefined;
+            }
+            else {
+                _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            }
             _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
             _image = _image.entity.getImage();
         }
@@ -450,16 +459,25 @@ class GameGUI {
         this.updatePlayerPortraitStamina(_stamina);
     }
     static updateTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
-        if (typeof CharacterController != "string") {
-            if (_image == undefined) {
+        if (typeof _image != "string") {
+            if (!(_image instanceof EntityController)) {
                 _image = Game.player.targetController;
             }
             else {
                 _image = Game.getCharacterController(_image);
             }
+            if (!(_image instanceof EntityController)) {
+                return undefined;
+            }
             _name = _image.entity.getFullName();
             _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
-            _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            if (_image.entity.getManaMax() == 0) {
+                GameGUI.hideTargetPortraitMana();
+                _mana = undefined;
+            }
+            else {
+                _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            }
             _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
             _image = _image.entity.getImage();
         }
@@ -489,12 +507,6 @@ class GameGUI {
     }
     static updatePlayerPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].text = _int;
-        if (_int == 0 || !isInt(_int)) {
-            this.hidePlayerPortraitMana();
-        }
-        else {
-            this.showPlayerPortraitMana();
-        }
     }
     static updateTargetPortraitImage(_image) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[0].domImage.setAttribute("src", _image);
@@ -516,12 +528,6 @@ class GameGUI {
     }
     static updateTargetPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].text = _int;
-        if (_int == 0 || _int == NaN) {
-            GameGUI.hideTargetPortraitMana();
-        }
-        else {
-            GameGUI.showTargetPortraitMana();
-        }
     }
     static chatInputFocus() {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
