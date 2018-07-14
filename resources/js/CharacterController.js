@@ -724,7 +724,7 @@ class CharacterController extends EntityController {
     doAttachRightHand() {
     }
     castRayTarget() {
-    	var _direction = Game.camera.getDirection(this.focus._absolutePosition).add({x:Game.camera.position.x, y:0, z:0}).negate();
+    	var _direction = Game.camera.getDirection(this.focus._absolutePosition).add({x:Game.camera.position.x, y:Game.camera.position.y, z:0}).negate();
     	if (this.targetRay == undefined) {
     		this.targetRay = new BABYLON.Ray(this.focus._absolutePosition, _direction, 6);
     	}
