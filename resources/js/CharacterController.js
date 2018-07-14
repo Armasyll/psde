@@ -30,6 +30,7 @@ class CharacterController extends EntityController {
         this.focus = undefined;
         this.targetController = null;
         this.targetedByControllers = new Set();
+        this.targetRay = undefined;
 
         this.skin = null;
 
@@ -723,19 +724,22 @@ class CharacterController extends EntityController {
     doAttachRightHand() {
     }
     castRayTarget() {
-    	var _direction = Game.camera.getDirection(this.focus._absolutePosition);
-    	_direction.x += Game.camera.position.x;
-        var _ray = new BABYLON.Ray(this.focus._absolutePosition, _direction.negate(), 6);
-        //let _rayHelper = new BABYLON.RayHelper(_ray);
-        //_rayHelper.show(Game.scene);
-        var _hit = Game.scene.pickWithRay(_ray, function(_mesh) {
+    	var _direction = Game.camera.getDirection(this.focus._absolutePosition).add({x:Game.camera.position.x, y:0, z:0}).negate();
+    	if (this.targetRay == undefined) {
+    		this.targetRay = new BABYLON.Ray(this.focus._absolutePosition, _direction, 6);
+    	}
+    	else {
+        	this.targetRay.origin = this.focus._absolutePosition;
+        	this.targetRay.direction = _direction;
+        }
+        var _hit = Game.scene.pickWithRay(this.targetRay, function(_mesh) {
             if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {
                 return true;
             }
             return false;
         });
         if (_hit.hit) {
-        	Game.setPlayerTarget(_hit.pickedMesh);
+        	Game.setPlayerTarget(_hit.pickedMesh.controller);
         }
         else {
         	Game.clearPlayerTarget();

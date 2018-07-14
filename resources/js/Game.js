@@ -852,19 +852,8 @@ class Game {
         delete Game.characterMeshInstances[_id];
     }
     static highlightMesh(_mesh) {
-        if (!this.highlightEnabled) {
+        if (!this.highlightEnabled || this.highlightLayer.hasMesh(_mesh)) {
             return;
-        }
-        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
-            if (_mesh instanceof Entity) {
-                _mesh = _mesh.avatar;
-            }
-            else if (_mesh instanceof EntityController) {
-                _mesh = _mesh.avatar;
-            }
-            else {
-                return;
-            }
         }
         if (this.highlightedMesh != undefined) {
             this.highlightLayer.removeMesh(this.highlightedMesh);
@@ -879,15 +868,6 @@ class Game {
         return this.kSkins.has(_string);
     }
     static setPlayerTarget(_controller) {
-        if (_controller == undefined) {
-            return undefined;
-        }
-        if (!(_controller instanceof EntityController)) {
-            if (_controller.hasOwnProperty("controller")) {
-                _controller = _controller.controller;
-            }
-            if (!(_controller instanceof EntityController)) return undefined;
-        }
         this.highlightMesh(_controller.avatar);
         Game.player.setTarget(_controller);
         GameGUI.setTargetPortrait(_controller);

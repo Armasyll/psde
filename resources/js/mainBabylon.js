@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
-
+    var _rbrCount = 0;
     Game.scene.registerBeforeRender(function() {
         if (!(Game.player instanceof CharacterController))
             return null;
@@ -46,7 +46,13 @@ window.addEventListener("DOMContentLoaded", function() {
                 Game.entityControllers[_character].moveAV();
             }
         }
-        Game.player.castRayTarget();
+        if (_rbrCount >= 20) {
+            Game.player.castRayTarget();
+            _rbrCount = 0;
+        }
+        else {
+            _rbrCount++;
+        }
     });
 });
 
