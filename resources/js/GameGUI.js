@@ -30,6 +30,7 @@ class GameGUI {
         GameGUI.hud.rootContainer.isVisible = false;
     }
     static showMainMenu() {
+        GameGUI.hideHUD();
         GameGUI.mainMenu.rootContainer.isVisible = true;
     }
     static hideMainMenu() {
@@ -272,6 +273,7 @@ class GameGUI {
                 Client.connect();
             }
             GameGUI.hideMainMenu();
+            GameGUI.updatePlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
         submitOffline.onPointerDownObservable.add(function() {
@@ -283,6 +285,7 @@ class GameGUI {
 
             }
             GameGUI.hideMainMenu();
+            GameGUI.updatePlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
 
@@ -426,17 +429,43 @@ class GameGUI {
     static hideTargetPortrait() {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").isVisible = false;
     }
-    static updatePlayerPortrait(_image = undefined, _name = undefined, _health = undefined, _mana = undefined, _stamina = undefined) {
+    static updatePlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+        if (typeof CharacterController != "string") {
+            if (_image == undefined) {
+                _image = Game.player;
+            }
+            else {
+                _image = Game.getCharacterController(_image);
+            }
+            _name = _image.entity.getFullName();
+            _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
+            _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
+            _image = _image.entity.getImage();
+        }
         this.updatePlayerPortraitImage(_image);
         this.updatePlayerPortraitName(_name);
-        this.updatePlayerPortraitHealth(_health);
+        this.updatePlayerPortraitHealth(_life);
         this.updatePlayerPortraitMana(_mana);
         this.updatePlayerPortraitStamina(_stamina);
     }
-    static updateTargetPortrait(_image = undefined, _name = undefined, _health = undefined, _mana = undefined, _stamina = undefined) {
+    static updateTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+        if (typeof CharacterController != "string") {
+            if (_image == undefined) {
+                _image = Game.player.targetController;
+            }
+            else {
+                _image = Game.getCharacterController(_image);
+            }
+            _name = _image.entity.getFullName();
+            _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
+            _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+            _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
+            _image = _image.entity.getImage();
+        }
         this.updateTargetPortraitImage(_image);
         this.updateTargetPortraitName(_name);
-        this.updateTargetPortraitHealth(_health);
+        this.updateTargetPortraitHealth(_life);
         this.updateTargetPortraitMana(_mana);
         this.updateTargetPortraitStamina(_stamina);
     }

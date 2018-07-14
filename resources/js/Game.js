@@ -154,13 +154,7 @@ class Game {
         this.player.attachToFOCUS("eye");
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
-            GameGUI.updatePlayerPortrait(
-                this.player.entity.image,
-                this.player.entity.name,
-                Number.parseInt(this.player.entity.life/this.player.entity.lifeMax*100)+"%",
-                Number.parseInt(this.player.entity.mana/this.player.entity.manaMax*100)+"%",
-                Number.parseInt(this.player.entity.stamina/this.player.entity.staminaMax*100)+"%"
-            );
+            GameGUI.updatePlayerPortrait(this.player);
         }
 
         return this.player;
@@ -244,6 +238,9 @@ class Game {
             if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
                 GameGUI.chatInputSubmit();
             }
+        }
+        else if (event == 27) {
+            GameGUI.showMainMenu();
         }
         this.player.move = this.player.anyMovement();
         if (Client.online && !this.player.key.equals(this.player.prevKey)) {

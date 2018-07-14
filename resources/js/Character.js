@@ -646,19 +646,7 @@ class Character extends EntityWithStorage {
          */
         this.incestual = 0;
 
-        if (_name.split(", ").length > 1) {
-            var tempName = _name.split(", ");
-            this.name = tempName[1].replace(/[^0-9a-z]/gi, '');
-            this.surname = tempName[0].replace(/[^0-9a-z]/gi, '');
-        }
-        else if (_name.split(" ").length > 1) {
-            var tempName = _name.split(" ");
-            this.name = tempName[0].replace(/[^0-9a-z]/gi, '');
-            this.surname = tempName[1].replace(/[^0-9a-z]/gi, '');
-        }
-        else {
-            this.name = _name.replace(/[^0-9a-z]/gi, '');
-        }
+        this.setName(_name);
         this.setImage(_image);
         this.setClass(_class);
         this.setAge(_age);
@@ -681,6 +669,22 @@ class Character extends EntityWithStorage {
         this.stand();
     }
     
+    setName(_string) {
+        if (_string.split(", ").length > 1) {
+            var tempName = _string.split(", ");
+            this.name = tempName[1].replace(/[^0-9a-z]/gi, '');
+            this.surname = tempName[0].replace(/[^0-9a-z]/gi, '');
+        }
+        else if (_string.split(" ").length > 1) {
+            var tempName = _string.split(" ");
+            this.name = tempName[0].replace(/[^0-9a-z]/gi, '');
+            this.surname = tempName[1].replace(/[^0-9a-z]/gi, '');
+        }
+        else {
+            this.name = _string.replace(/[^0-9a-z]/gi, '');
+        }
+        return this;
+    }
     getFullName() {
         if (this.surname != undefined && this.surname.length > 0)
             return this.name + " " + this.surname;
@@ -1532,7 +1536,7 @@ class Character extends EntityWithStorage {
         return this.decStaminaMax(_int);
     }
     getStaminaMax() {
-        return this.getStaminaMax;
+        return this.staminaMax;
     }
 
     setMoney(_int) {

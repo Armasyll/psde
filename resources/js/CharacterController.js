@@ -26,6 +26,9 @@ class CharacterController extends EntityController {
         this.avatar.controller = this;
         this.networkID = null;
 
+        this.targetController = null;
+        this.targetedByControllers = new Set();
+
         this.skin = null;
 
         this.walkSpeed = 0.62 * this.avatar.scaling.z;
@@ -166,6 +169,58 @@ class CharacterController extends EntityController {
     getAvatarSkin() {
     	return this.skin;
     }
+
+    setTarget(_controller, _updateChild = true) {
+    	if (!(_controller instanceof Controller)) {
+    		return undefined;
+    	}
+		this.targetController = _controller;
+		if (_updateChild) {
+			_controller.addTargetedBy(this, false);
+		}
+    }
+    deleteTarget(_updateChild = true) {
+    	if (_updateChild) {
+    		this.targetController.deleteTargetedBy(this, false);
+    	}
+    	this.targetController = null;
+    }
+    clearTarget(_updateChild = true) {
+    	this.deleteTarget();
+    }
+    getTarget() {
+    	return this.targetController;
+    }
+    addTargetedBy(_controller, _updateChild = true) {
+    	if (!(_controller instanceof Controller)) {
+    		return undefined;
+    	}
+    	this.targetedByControllers.add(_controller);
+    	if (_updateChild) {
+    		_controller.setTarget(this, false);
+    	}
+    }
+    deleteTargetedBy(_controller, _updateChild = true) {
+    	if (!(_controller instanceof Controller)) {
+    		return undefined;
+    	}
+    	this.targetedByControllers.delete(_controller);
+    	if (_updateChild) {
+    		_controller.deleteTarget(this, false);
+    	}
+    }
+    clearTargetedBy() {
+    	this.targetedByControllers.forEach(function(_controller) {
+    		if (_controller.targetController == this) {
+    			_controller.targetController.deleteTarget(false);
+    		}
+    	}, this);
+    	this.targetedByControllers = null;
+    }
+    getTargetedBy() {
+    	return this.targetedByControllers;
+    }
+
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
         this.minSlopeLimit = minSlopeLimit;
         this.maxSlopeLimit = maxSlopeLimit;
