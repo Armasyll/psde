@@ -848,10 +848,11 @@ class Game {
             return false;
         }
         var _id = _character.id;
+        var _mesh = _character.avatar;
         //_character.entity.dipose();
-        delete this.networkedCharacterControllers[_character.networkID];
-        _character.avatar.dispose();
+        //delete this.networkedCharacterControllers[_character.networkID];
         _character.dispose();
+        _mesh.dispose();
         delete Game.entityMeshInstances[_id];
         delete Game.characterMeshInstances[_id];
     }
