@@ -196,4 +196,14 @@ class EntityWithStorage extends Entity {
         else
             return false;
     }
+    dispose() {
+        if (this == Game.player.entity) {
+            return false;
+        }
+        super.dispose();
+        for (var _var in this) {
+            this[_var] = null;
+        }
+        return undefined;
+    }
 }

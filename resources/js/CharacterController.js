@@ -13,6 +13,7 @@ class EntityController {
         for (var _var in this) {
             this[_var] = null;
         }
+        return undefined;
     }
 }
 /**
@@ -734,7 +735,7 @@ class CharacterController extends EntityController {
         }
     }
     dispose() {
-    	if (this == Game.player.controller) {
+    	if (this == Game.player) {
     		return false;
     	}
         this.detachFromAllBones();
@@ -744,6 +745,7 @@ class CharacterController extends EntityController {
         for (var _var in this) {
             this[_var] = null;
         }
+        return undefined;
     }
 }
 class AnimData {

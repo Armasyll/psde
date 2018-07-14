@@ -4873,4 +4873,15 @@ class Character extends EntityWithStorage {
 
         return Math.ceil(chance);
     }
+    dispose() {
+        if (this == Game.player.entity) {
+            return false;
+        }
+        delete Game.characterEntities[this.id];
+        super.dispose();
+        for (var _var in this) {
+            this[_var] = null;
+        }
+        return undefined;
+    }
 }

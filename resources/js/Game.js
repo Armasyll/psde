@@ -37,7 +37,6 @@ class Game {
         this.furnitureEntities = {};
         this.characterEntities = {};
         this.itemEntities = {};
-        //this.networkedCharacterControllers = {};
 
         this._loadedFurniture = false;
         this._loadedSurfaces = false;
@@ -849,8 +848,7 @@ class Game {
         }
         var _id = _character.id;
         var _mesh = _character.avatar;
-        //_character.entity.dipose();
-        //delete this.networkedCharacterControllers[_character.networkID];
+        _character.entity.dispose();
         _character.dispose();
         _mesh.dispose();
         delete Game.entityMeshInstances[_id];

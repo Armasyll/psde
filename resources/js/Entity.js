@@ -219,6 +219,9 @@ class Entity {
 
     dispose() {
         delete Game.entities[this.id];
+        for (var _var in this) {
+            this[_var] = null;
+        }
         return undefined;
     }
 }
