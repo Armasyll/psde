@@ -1,5 +1,9 @@
 class Client {
 	static initialize() {
+        /**
+         * Map of Network IDs to CharacterControllers
+         * @type {String: CharacterController}
+         */
         this.networkCharacterMap = {};
         this.online = false;
         this.initialized = true;
@@ -10,7 +14,10 @@ class Client {
 		NetworkController.initialize();
 	}
 	static disconnect() {
-
+        var _timestamp = new Date().toLocaleTimeString({ hour12: false });
+        this.deleteAllPlayers();
+        this.setOnline(false);
+        GameGUI.chatOutputAppend(`${_timestamp} Server: Connection Closed.`);
 	}
     static isOnline() {
         return this.online;
@@ -25,7 +32,7 @@ class Client {
     static setEntry(_character, _networkID) {
     	console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
         if (!(_character instanceof CharacterController)) {
-        	_character = Game.getCharacter(_character);
+        	_character = Game.getCharacterController(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
         }
 
@@ -38,8 +45,19 @@ class Client {
     	if (_character instanceof CharacterController) {
     		return _character.networkID;
     	}
-    	else if (typeof _character == "string" && _character.length == 36) {
-			return Client.getCharacterByID(_character).networkID;
+        else if (_character instanceof Character) {
+            return _character.controller.networkID;
+        }
+        else if (_character instanceof BABYLON.Mesh || _character instanceof BABYLON.InstancedMesh) {
+            if (_character.hasOwnProperty("controller") && _character.controller instanceof CharacterController) {
+                return _character.controller.networkID;
+            }
+            else {
+                return undefined;
+            }
+        }
+    	else if (typeof _character == "string") {
+			return Game.getCharacterController(_character).networkID;
     	}
     	else {
     		return undefined;
@@ -180,5 +198,13 @@ class Client {
             type: "P_REQUEST_ALL_PLAYERS",
             content: ""
         });
+    }
+    static deleteAllPlayers() {
+        for (var _networkID in this.networkCharacterMap) {
+            if (_networkID != Game.player.networkID) {
+                Client.deleteEntry(_data.content);
+                Game.deleteCharacter(_data.content);
+            }
+        }
     }
 }

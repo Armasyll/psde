@@ -1,6 +1,10 @@
 class NetworkController {
+    constructor() {
+        this.socket = undefined;
+        this.initialized = false;
+    }
     static initialize(_url = window.location.hostname) {
-        this.socket;
+        this.socket = undefined;
         this.initialized = false;
         NetworkController.connectToServer(_url);
     }

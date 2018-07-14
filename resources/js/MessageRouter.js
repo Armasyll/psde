@@ -105,7 +105,7 @@ class MessageRouter {
 			case "S_CHAT_MESSAGE" : {
 				var _timestamp = new Date(_data.content.time * 1000).toLocaleTimeString({ hour12: false });
 				var _name = Game.getCharacter(_data.content.from).name;
-				Game.chatOutputAppend(`${_timestamp} ${_name}: ${_data.content.message}`);
+				GameGUI.chatOutputAppend(`${_timestamp} ${_name}: ${_data.content.message}`);
 				break;
 			}
 			case "S_SEND_ALL_PLAYERS" : {

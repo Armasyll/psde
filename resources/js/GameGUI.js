@@ -8,6 +8,8 @@ class GameGUI {
         GameGUI.initHUD();
         GameGUI.initMainMenu();
 
+        GameGUI._chatInputFocused = false;
+
         GameGUI.initialized = true;
     }
     static initHUD() {
@@ -132,6 +134,7 @@ class GameGUI {
                 chatOutput.height = 1.0;
                 chatOutput.width = 1.0;
                 chatOutput.color = "white";
+                chatOutput.textWrapping = true;
             var chatInput = new BABYLON.GUI.InputText("chatInput");
             chatInput.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             chatInput.height = 0.2;
@@ -149,7 +152,7 @@ class GameGUI {
             Game.controlCharacterOnKeyDown(13); // onBlurObservable triggers before ActionManager, so we'll just send the enter key manually
         });
         chatInput.onFocusObservable.add(function() {
-            Game._chatInputFocused = true;
+            GameGUI._chatInputFocusedMALE = true;
         });
         return chatBox;
     }
@@ -262,12 +265,23 @@ class GameGUI {
         });
         submitOnline.onPointerDownObservable.add(function() {
             Game.player.entity.setName(nameInput.text);
-            Client.connect();
+            if (Client.isOnline()) {
+
+            }
+            else {
+                Client.connect();
+            }
             GameGUI.hideMainMenu();
             GameGUI.showHUD();
         });
         submitOffline.onPointerDownObservable.add(function() {
             Game.player.entity.setName(nameInput.text);
+            if (Client.isOnline) {
+                Client.disconnect();
+            }
+            else {
+
+            }
             GameGUI.hideMainMenu();
             GameGUI.showHUD();
         });
@@ -474,10 +488,40 @@ class GameGUI {
     static updateTargetPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].text = _int;
         if (_int == 0 || _int == NaN) {
-            this.hideTargetPortraitMana();
+            GameGUI.hideTargetPortraitMana();
         }
         else {
-            this.showTargetPortraitMana();
+            GameGUI.showTargetPortraitMana();
         }
+    }
+    static chatInputFocus() {
+        GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
+    }
+    static chatInputSubmit() {
+        GameGUI._chatInputFocusedMALE = false;
+        var _text = GameGUI.getChatInput().text.trim();
+        if (_text.length == 0) {
+            return;
+        }
+        if (Client.isOnline()) {
+            Client.sendChatMessage(_text);
+        }
+        else {
+            // SEKRIT DEV STUFF :V maybe
+        }
+        GameGUI.chatInputClear();
+    }
+    static chatInputClear() {
+        GameGUI.getChatInput().text = "";
+    }
+    static chatOutputClear() {
+        GameGUI.getChatOutput().text = "";
+    }
+    static chatOutputAppend(_string) {
+        GameGUI.getChatOutput().text += _string + "\n";
+    }
+    static chatOutputSet(_string) {
+        GameGUI.chatOutputClear();
+        GameGUI.chatOutputAppend(_string);
     }
 }

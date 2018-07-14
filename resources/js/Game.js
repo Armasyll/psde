@@ -52,8 +52,6 @@ class Game {
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
 
-        this._chatInputFocused = false;
-
         this.postProcess = {};
 
         this.highlightEnabled = true;
@@ -235,16 +233,16 @@ class Game {
         else if (event === this.strafeRightCode)
             this.player.keyStrafeRight(true);
         else if (event === this.chatInputFocusCode) {
-            if (!this._chatInputFocused) {
-                this.chatInputFocus();
+            if (!GameGUI._chatInputFocused) {
+                GameGUI.chatInputFocus();
             }
-            else if (this._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                this.chatInputSubmit();
+            else if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                GameGUI.chatInputSubmit();
             }
         }
         else if (event === this.chatInputSubmitCode) {
-            if (this._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                this.chatInputSubmit();
+            if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                GameGUI.chatInputSubmit();
             }
         }
         this.player.move = this.player.anyMovement();
@@ -877,35 +875,5 @@ class Game {
     }
     static hasSkin(_string) {
         return this.kSkins.has(_string);
-    }
-    static chatInputFocus() {
-        GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
-    }
-    static chatInputSubmit() {
-        Game._chatInputFocused = false;
-        var _text = GameGUI.getChatInput().text.trim();
-        if (_text.length == 0) {
-            return;
-        }
-        if (Client.isOnline()) {
-            Client.sendChatMessage(_text);
-        }
-        else {
-            // SEKRIT DEV STUFF :V maybe
-        }
-        this.chatInputClear();
-    }
-    static chatInputClear() {
-        GameGUI.getChatInput().text = "";
-    }
-    static chatOutputClear() {
-        GameGUI.getChatOutput().text = "";
-    }
-    static chatOutputAppend(_string) {
-        GameGUI.getChatOutput().text += _string + "\n";
-    }
-    static chatOutputSet(_string) {
-        GameGUI.chatOutputClear();
-        GameGUI.chatOutputAppend(_string);
     }
 }
