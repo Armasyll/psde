@@ -338,26 +338,29 @@ class GameGUI {
                 playerPortraitStatsName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 playerPortraitStatsName.height = 0.25;
                 playerPortraitStatsName.width = 1.0;
-                var playerPortraitStatsHealth = new BABYLON.GUI.TextBlock("playerHealth");
-                playerPortraitStatsHealth.text = "Health";
-                playerPortraitStatsHealth.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                playerPortraitStatsHealth.height = 0.25;
-                playerPortraitStatsHealth.width = 1.0;
+                var playerPortraitStatsLife = new BABYLON.GUI.TextBlock("playerLife");
+                playerPortraitStatsLife.text = "Life";
+                playerPortraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                playerPortraitStatsLife.height = 0.25;
+                playerPortraitStatsLife.width = 1.0;
+                playerPortraitStatsLife.color = "red";
                 var playerPortraitStatsMana = new BABYLON.GUI.TextBlock("playerMana");
                 playerPortraitStatsMana.text = "";
                 playerPortraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                 playerPortraitStatsMana.height = 0.25;
                 playerPortraitStatsMana.width = 1.0;
+                playerPortraitStatsMana.color = "blue";
                 var playerPortraitStatsStamina = new BABYLON.GUI.TextBlock("playerStamina");
                 playerPortraitStatsStamina.text = "Stamina";
                 playerPortraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                 playerPortraitStatsStamina.height = 0.25;
                 playerPortraitStatsStamina.width = 1.0;
+                playerPortraitStatsStamina.color = "green";
         playerPortrait.addControl(playerPortraitAvatarContainer);
         playerPortraitAvatarContainer.addControl(playerPortraitAvatar);
         playerPortrait.addControl(playerPortraitStats);
         playerPortraitStats.addControl(playerPortraitStatsName);
-        playerPortraitStats.addControl(playerPortraitStatsHealth);
+        playerPortraitStats.addControl(playerPortraitStatsLife);
         playerPortraitStats.addControl(playerPortraitStatsMana);
         playerPortraitStats.addControl(playerPortraitStatsStamina);
         return playerPortrait;
@@ -393,26 +396,29 @@ class GameGUI {
                 targetPortraitStatsName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 targetPortraitStatsName.height = 0.25;
                 targetPortraitStatsName.width = 1.0;
-                var targetPortraitStatsHealth = new BABYLON.GUI.TextBlock("targetHealth");
-                targetPortraitStatsHealth.text = "Health";
-                targetPortraitStatsHealth.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                targetPortraitStatsHealth.height = 0.25;
-                targetPortraitStatsHealth.width = 1.0;
+                var targetPortraitStatsLife = new BABYLON.GUI.TextBlock("targetLife");
+                targetPortraitStatsLife.text = "Life";
+                targetPortraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                targetPortraitStatsLife.height = 0.25;
+                targetPortraitStatsLife.width = 1.0;
+                targetPortraitStatsLife.color = "red";
                 var targetPortraitStatsMana = new BABYLON.GUI.TextBlock("targetMana");
                 targetPortraitStatsMana.text = "";
                 targetPortraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 targetPortraitStatsMana.height = 0.25;
                 targetPortraitStatsMana.width = 1.0;
+                targetPortraitStatsMana.color = "blue";
                 var targetPortraitStatsStamina = new BABYLON.GUI.TextBlock("targetStamina");
                 targetPortraitStatsStamina.text = "Stamina";
                 targetPortraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 targetPortraitStatsStamina.height = 0.25;
                 targetPortraitStatsStamina.width = 1.0;
+                targetPortraitStatsStamina.color = "green";
         targetPortrait.addControl(targetPortraitStats);
         targetPortrait.addControl(targetPortraitAvatarContainer);
         targetPortraitAvatarContainer.addControl(targetPortraitAvatar);
         targetPortraitStats.addControl(targetPortraitStatsName);
-        targetPortraitStats.addControl(targetPortraitStatsHealth);
+        targetPortraitStats.addControl(targetPortraitStatsLife);
         targetPortraitStats.addControl(targetPortraitStatsMana);
         targetPortraitStats.addControl(targetPortraitStatsStamina);
         return targetPortrait;
@@ -432,35 +438,35 @@ class GameGUI {
     static setPlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
         if (_image instanceof EntityController) {
             _name = _image.entity.getFullName();
-            _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
+            _life = _image.entity.getLife() + "/" + _image.entity.getLifeMax();
             if (_image.entity.getManaMax() == 0) {
                 GameGUI.hidePlayerPortraitMana();
                 _mana = undefined;
             }
             else {
-                _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+                _mana = _image.entity.getMana() + "/" + _image.entity.getManaMax();
             }
-            _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
+            _stamina = _image.entity.getStamina() + "/" + _image.entity.getStaminaMax();
             _image = _image.entity.getImage();
         }
         this.setPlayerPortraitImage(_image);
         this.setPlayerPortraitName(_name);
-        this.setPlayerPortraitHealth(_life);
+        this.setPlayerPortraitLife(_life);
         this.setPlayerPortraitMana(_mana);
         this.setPlayerPortraitStamina(_stamina);
     }
     static setTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
         if (_image instanceof CharacterController) {
             _name = _image.entity.getFullName();
-            _life = Number.parseInt(_image.entity.getLife()/_image.entity.getLifeMax()*100)+"%";
+            _life = _image.entity.getLife() + "/" + _image.entity.getLifeMax();
             if (_image.entity.getManaMax() == 0) {
-                GameGUI.hideTargetPortraitMana();
+                GameGUI.hidePlayerPortraitMana();
                 _mana = undefined;
             }
             else {
-                _mana = Number.parseInt(_image.entity.getMana()/_image.entity.getManaMax()*100)+"%";
+                _mana = _image.entity.getMana() + "/" + _image.entity.getManaMax();
             }
-            _stamina = Number.parseInt(_image.entity.getStamina()/_image.entity.getStaminaMax()*100)+"%";
+            _stamina = _image.entity.getStamina() + "/" + _image.entity.getStaminaMax();
             _image = _image.entity.getImage();
         }
         else if (_image instanceof EntityController) {
@@ -469,7 +475,7 @@ class GameGUI {
         }
         this.setTargetPortraitImage(_image);
         this.setTargetPortraitName(_name);
-        this.setTargetPortraitHealth(_life);
+        this.setTargetPortraitLife(_life);
         this.setTargetPortraitMana(_mana);
         this.setTargetPortraitStamina(_stamina);
     }
@@ -479,7 +485,7 @@ class GameGUI {
     static setPlayerPortraitName(_string) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[0].text = _string;
     }
-    static setPlayerPortraitHealth(_int = 100) {
+    static setPlayerPortraitLife(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[1].text = _int;
     }
     static setPlayerPortraitStamina(_int = 100) {
@@ -500,7 +506,7 @@ class GameGUI {
     static setTargetPortraitName(_string) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[0].text = _string;
     }
-    static setTargetPortraitHealth(_int = 100) {
+    static setTargetPortraitLife(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[1].text = _int;
     }
     static setTargetPortraitStamina(_int = 100) {
