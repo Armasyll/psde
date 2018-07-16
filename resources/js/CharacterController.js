@@ -708,17 +708,11 @@ class CharacterController extends EntityController {
         this.focus = _focus;
         return _focus;
     }
-    detachFromThirdEye(_mesh) {
-    }
     attachToLeftHand(_mesh) {
         return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
     }
     attachToRightHand(_mesh) {
         return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
-    }
-    doAttackLeftHand() {
-    }
-    doAttackRightHand() {
     }
     castRayTarget() {
     	var _direction = Game.camera.getDirection(this.focus._absolutePosition).add({x:Game.camera.position.x, y:Game.camera.position.y, z:0}).negate();
