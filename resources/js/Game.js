@@ -127,7 +127,7 @@ class Game {
 
         this.camera.minZ = 0.001;
         this.player.getMeshAttachedToBone("FOCUS").position.copyFrom(_offset);
-        this.camera.lockedTarget = this.player.getMeshAttachedToBone("FOCUS"); // Why this and not the thirdEye? The third eye causes jittering of the rendered frame 'cause it moves
+        this.camera.lockedTarget = this.player.getMeshAttachedToBone("FOCUS");
     }
     static initFreeCamera(_applyGravity = true) {
         if (Game.debugEnabled) console.log("Running initFreeCamera");
