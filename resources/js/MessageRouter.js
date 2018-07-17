@@ -81,6 +81,7 @@ class MessageRouter {
 				console.log("S_UPDATE_LOCROTSCALES_PLAYERS");
 				for (var _character in _data.content) {
 					if (_data.content[_character][0] == Game.player.networkID) {}
+					else if (isNaN(_data.content[_character][0])) {}
 					else {
 						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[_character][0]);
 						if (Client.getCharacter(_data.content[_character][0]) instanceof CharacterController) {

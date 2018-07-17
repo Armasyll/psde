@@ -47,7 +47,7 @@ window.addEventListener("DOMContentLoaded", function() {
             }
         }
         if (_rbrCount >= 20) {
-            Game.player.castRayTarget();
+            Game.castRayTarget();
             _rbrCount = 0;
         }
         else {

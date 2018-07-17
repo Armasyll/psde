@@ -551,4 +551,14 @@ class GameGUI {
         GameGUI.chatOutputClear();
         GameGUI.chatOutputAppend(_string);
     }
+    static showInventory(_characterEntityA, _characterEntityB = Game.player.entity) {
+        if (!(_entity instanceof EntityWithStorage)) {
+            _entity = Game.getEntity(_entity);
+            if (!(_entity instanceof Entity)) {return undefined;}
+        }
+
+    }
+    static hideInventory() {
+        GameGUI.hud.rootContainer.getChildByName("inventory").isVisible = false;
+    }
 }

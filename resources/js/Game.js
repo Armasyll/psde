@@ -881,4 +881,33 @@ class Game {
         Game.player.clearTarget();
         GameGUI.hideTargetPortrait();
     }
+    static castRayTarget() {
+        var _direction = Game.camera.getDirection(Game.player.focus._absolutePosition.subtract({x:3,y:0,z:0})).negate();
+        if (Game.player.targetRay == undefined) {
+            Game.player.targetRay = new BABYLON.Ray(Game.player.focus._absolutePosition, _direction, 6);
+        }
+        else {
+            Game.player.targetRay.origin = Game.player.focus._absolutePosition;
+            Game.player.targetRay.direction = _direction;
+        }
+        //if (Game.debugEnabled) {
+            var _rayHelper = new BABYLON.RayHelper(Game.player.targetRay);
+            _rayHelper.show(Game.scene);
+        //}
+        var _hit = Game.scene.pickWithRay(Game.player.targetRay, function(_mesh) {
+            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {
+                return true;
+            }
+            return false;
+        });
+        if (_hit.hit) {
+            Game.setPlayerTarget(_hit.pickedMesh.controller);
+        }
+        else {
+            Game.clearPlayerTarget();
+        }
+    }
+    static castRayFOV(_fov = 90) {
+        return undefined;
+    }
 }

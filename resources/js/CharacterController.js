@@ -714,31 +714,6 @@ class CharacterController extends EntityController {
     attachToRightHand(_mesh) {
         return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
     }
-    castRayTarget() {
-    	var _direction = Game.camera.getDirection(this.focus._absolutePosition).add({x:Game.camera.position.x, y:Game.camera.position.y, z:0}).negate();
-    	if (this.targetRay == undefined) {
-    		this.targetRay = new BABYLON.Ray(this.focus._absolutePosition, _direction, 6);
-    	}
-    	else {
-        	this.targetRay.origin = this.focus._absolutePosition;
-        	this.targetRay.direction = _direction;
-        }
-        var _hit = Game.scene.pickWithRay(this.targetRay, function(_mesh) {
-            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {
-                return true;
-            }
-            return false;
-        });
-        if (_hit.hit) {
-        	Game.setPlayerTarget(_hit.pickedMesh.controller);
-        }
-        else {
-        	Game.clearPlayerTarget();
-        }
-    }
-    castRayFOV(_fov = 90) {
-        return undefined;
-    }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {
             this.key.forward = true;
