@@ -882,7 +882,7 @@ class Game {
         GameGUI.hideTargetPortrait();
     }
     static castRayTarget() {
-        var _direction = Game.camera.getDirection(Game.player.focus._absolutePosition.subtract({x:3,y:0,z:0})).negate();
+        var _direction = Game.camera.getDirection(Game.player.focus._absolutePosition.subtract({x:3,y:0,z:0})).negate(); // I don't know why I have to offset the X value by 3; it just works
         if (Game.player.targetRay == undefined) {
             Game.player.targetRay = new BABYLON.Ray(Game.player.focus._absolutePosition, _direction, 6);
         }
