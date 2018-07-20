@@ -890,10 +890,10 @@ class Game {
             Game.player.targetRay.origin = Game.player.focus._absolutePosition;
             Game.player.targetRay.direction = _direction;
         }
-        //if (Game.debugEnabled) {
+        if (Game.debugEnabled) {
             var _rayHelper = new BABYLON.RayHelper(Game.player.targetRay);
             _rayHelper.show(Game.scene);
-        //}
+        }
         var _hit = Game.scene.pickWithRay(Game.player.targetRay, function(_mesh) {
             if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {
                 return true;

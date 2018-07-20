@@ -167,93 +167,132 @@ class GameGUI {
         return this.hud.rootContainer.getChildByName("chatBox").children[1];
     }
     static _generateCharacterChoiceMenu() {
-        var cNM1 = new BABYLON.GUI.StackPanel("characterChoiceMenu");
-            var cNM2 = new BABYLON.GUI.StackPanel();
-                var nameInputLabel = new BABYLON.GUI.TextBlock();
+        var characterChoiceMenuContainer = new BABYLON.GUI.StackPanel("characterChoiceMenu");
+            var nameContainer = new BABYLON.GUI.StackPanel();
+                var nameLabel = new BABYLON.GUI.TextBlock();
                 var nameInput = new BABYLON.GUI.InputText();
-            var cNM3 = new BABYLON.GUI.StackPanel();
-                var ageInputLabel = new BABYLON.GUI.TextBlock();
+            var ageContainer = new BABYLON.GUI.StackPanel();
+                var ageLabel = new BABYLON.GUI.TextBlock();
                 var ageInput = new BABYLON.GUI.InputText();
-            var cNM4 = new BABYLON.GUI.StackPanel();
-                var speciesSelectLabel = new BABYLON.GUI.TextBlock();
-                var speciesSelect = new BABYLON.GUI.InputText();
-            var cNM5 = new BABYLON.GUI.StackPanel();
-                var buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
-                var buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
-                var buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
-            var cNMSubmit = new BABYLON.GUI.StackPanel();
+            var speciesContainer = new BABYLON.GUI.StackPanel();
+                var speciesLabel = new BABYLON.GUI.TextBlock();
+                var speciesOptions = new BABYLON.GUI.StackPanel();
+                    var speciesFox = BABYLON.GUI.Button.CreateSimpleButton("speciesFox", "Fox");
+                    var speciesSkeleton = BABYLON.GUI.Button.CreateSimpleButton("speciesSkeleton", "Skeleton");
+            var genderContainer = new BABYLON.GUI.StackPanel();
+                var genderLabel = new BABYLON.GUI.TextBlock();
+                var genderOptions = new BABYLON.GUI.StackPanel();
+                    var genderMale = BABYLON.GUI.Button.CreateSimpleButton("genderMale", "Male");
+                    var genderFemale = BABYLON.GUI.Button.CreateSimpleButton("genderFemale", "Female");
+                    var genderNone = BABYLON.GUI.Button.CreateSimpleButton("genderNone", "None");
+            var buttonKBLayoutContainer = new BABYLON.GUI.StackPanel();
+                var buttonKBLayoutLabel = new BABYLON.GUI.TextBlock();
+                var buttonKBLayoutOptions = new BABYLON.GUI.StackPanel();
+                    var buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
+                    var buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
+                    var buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
+            var submitContainer = new BABYLON.GUI.StackPanel();
                 var submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
                 var submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
         
-        cNM1.isVertical = true;
-        cNM2.isVertical = false;
-        cNM3.isVertical = false;
-        cNM4.isVertical = false;
-        cNM5.isVertical = false;
-        cNMSubmit.isVertical = false;
+        characterChoiceMenuContainer.isVertical = true;
+        nameContainer.isVertical = false;
+        ageContainer.isVertical = false;
+        speciesContainer.isVertical = false;
+            speciesOptions.isVertical = true;
+        genderContainer.isVertical = false;
+            genderOptions.isVertical = true;
+        buttonKBLayoutContainer.isVertical = false;
+            buttonKBLayoutOptions.isVertical = true;
+        submitContainer.isVertical = false;
 
-        cNM1.zIndex = 90;
-        cNM1.width = "512px";
-        cNM1.height = "144px";
-        cNM1.background = "black";
-        cNM1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        cNM1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        characterChoiceMenuContainer.zIndex = 90;
+        characterChoiceMenuContainer.height = 0.6
+        characterChoiceMenuContainer.width = 0.5;
+        characterChoiceMenuContainer.background = "black";
+        characterChoiceMenuContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
 
-        nameInputLabel.text = "Name: ";
-        nameInputLabel.height = "24px";
-        nameInputLabel.width = "128px";
-        nameInputLabel.color = "white";
+        nameContainer.height = 0.05;
+            nameLabel.text = "Name: ";
+            nameLabel.width = 0.3;
+            nameLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            nameLabel.color = "white";
 
-        nameInput.height = "24px";
-        nameInput.width = "256px";
-        nameInput.color = "white";
-        nameInput.background = "grey";
-        nameInput.text = "Fox";
+            nameInput.width = 0.7;
+            nameInput.color = "white";
+            nameInput.background = "grey";
+            nameInput.text = "Fox";
 
-        ageInputLabel.text = "Age: ";
-        ageInputLabel.height = "24px";
-        ageInputLabel.width = "128px";
-        ageInputLabel.color = "white";
+        ageContainer.height = 0.05;
+            ageLabel.text = "Age: ";
+            ageLabel.width = 0.3;
+            ageLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            ageLabel.color = "white";
 
-        ageInput.height = "24px";
-        ageInput.width = "256px";
-        ageInput.color = "white";
-        ageInput.background = "grey";
+            ageInput.width = 0.7;
+            ageInput.color = "white";
+            ageInput.background = "grey";
+            ageInput.text = "18";
 
-        speciesSelectLabel.text = "Species: ";
-        speciesSelectLabel.height = "24px";
-        speciesSelectLabel.width = "128px";
-        speciesSelectLabel.color = "white";
+        speciesContainer.height = 0.10;
+            speciesLabel.text = "Species: ";
+            speciesLabel.width = 0.3;
+            speciesLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            speciesLabel.color = "white";
 
-        speciesSelect.height = "24px";
-        speciesSelect.width = "256px";
-        speciesSelect.color = "white";
-        speciesSelect.background = "grey";
+            speciesOptions.width = 0.7;
+                speciesFox.height = 0.5;
+                speciesFox.background = "grey";
+                speciesFox.color = "white";
+                speciesSkeleton.height = 0.5;
+                speciesSkeleton.background = "grey";
+                speciesSkeleton.color = "white";
 
-        buttonKBLayoutQwerty.height = "24px";
-        buttonKBLayoutQwerty.width = "128px";
-        buttonKBLayoutQwerty.color = "white";
-        buttonKBLayoutQwerty.background = "grey";
-        buttonKBLayoutDvorak.height = "24px";
-        buttonKBLayoutDvorak.width = "128px";
-        buttonKBLayoutDvorak.color = "white";
-        buttonKBLayoutDvorak.background = "grey";
-        buttonKBLayoutAzerty.height = "24px";
-        buttonKBLayoutAzerty.width = "128px";
-        buttonKBLayoutAzerty.color = "white";
-        buttonKBLayoutAzerty.background = "grey";
+        genderContainer.height = 0.15;
+            genderLabel.text = "Gender: ";
+            genderLabel.width = 0.3;
+            genderLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            genderLabel.color = "white";
 
-        submitOffline.height = "24px";
-        submitOffline.width = "128px";
-        submitOffline.color = "white";
-        submitOffline.background = "grey";
-        submitOffline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            genderOptions.width = 0.7;
+                genderMale.height = 0.3;
+                genderMale.background = "grey";
+                genderMale.color = "white";
+                genderFemale.height = 0.3;
+                genderFemale.background = "grey";
+                genderFemale.color = "white";
+                genderNone.height = 0.3;
+                genderNone.background = "grey";
+                genderNone.color = "white";
 
-        submitOnline.height = "24px";
-        submitOnline.width = "128px";
-        submitOnline.color = "white";
-        submitOnline.background = "grey";
-        submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        buttonKBLayoutContainer.height = 0.15;
+            buttonKBLayoutLabel.text = "Keyboard Layout: ";
+            buttonKBLayoutLabel.width = 0.3;
+            buttonKBLayoutLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            buttonKBLayoutLabel.color = "white";
+
+            buttonKBLayoutOptions.width = 0.7;
+                buttonKBLayoutQwerty.height = 0.3;
+                buttonKBLayoutQwerty.background = "grey";
+                buttonKBLayoutQwerty.color = "white";
+                buttonKBLayoutDvorak.height = 0.3;
+                buttonKBLayoutDvorak.background = "grey";
+                buttonKBLayoutDvorak.color = "white";
+                buttonKBLayoutAzerty.height = 0.3;
+                buttonKBLayoutAzerty.background = "grey";
+                buttonKBLayoutAzerty.color = "white";
+
+        submitContainer.height = 0.05;
+            submitOffline.width = 0.5;
+            submitOffline.color = "white";
+            submitOffline.background = "grey";
+            submitOffline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+
+            submitOnline.width = 0.5;
+            submitOnline.color = "white";
+            submitOnline.background = "grey";
+            submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
         buttonKBLayoutQwerty.onPointerDownObservable.add(function() {
             Game.initQwertyKeyboardControls();
@@ -289,24 +328,34 @@ class GameGUI {
             GameGUI.showHUD();
         });
 
-        cNM1.addControl(cNM2);
-            cNM2.addControl(nameInputLabel);
-            cNM2.addControl(nameInput);
-        cNM1.addControl(cNM3);
-            cNM3.addControl(ageInputLabel);
-            cNM3.addControl(ageInput);
-        cNM1.addControl(cNM4);
-            cNM4.addControl(speciesSelectLabel);
-            cNM4.addControl(speciesSelect);
-        cNM1.addControl(cNM5);
-            cNM5.addControl(buttonKBLayoutQwerty);
-            cNM5.addControl(buttonKBLayoutDvorak);
-            cNM5.addControl(buttonKBLayoutAzerty);
-        cNM1.addControl(cNMSubmit);
-            cNMSubmit.addControl(submitOffline);
-            cNMSubmit.addControl(submitOnline);
+        characterChoiceMenuContainer.addControl(nameContainer);
+            nameContainer.addControl(nameLabel);
+            nameContainer.addControl(nameInput);
+        characterChoiceMenuContainer.addControl(ageContainer);
+            ageContainer.addControl(ageLabel);
+            ageContainer.addControl(ageInput);
+        characterChoiceMenuContainer.addControl(speciesContainer);
+            speciesContainer.addControl(speciesLabel);
+            speciesContainer.addControl(speciesOptions);
+                speciesOptions.addControl(speciesFox);
+                speciesOptions.addControl(speciesSkeleton);
+        characterChoiceMenuContainer.addControl(genderContainer);
+            genderContainer.addControl(genderLabel);
+            genderContainer.addControl(genderOptions);
+                genderOptions.addControl(genderMale);
+                genderOptions.addControl(genderFemale);
+                genderOptions.addControl(genderNone);
+        characterChoiceMenuContainer.addControl(buttonKBLayoutContainer);
+            buttonKBLayoutContainer.addControl(buttonKBLayoutLabel);
+            buttonKBLayoutContainer.addControl(buttonKBLayoutOptions);
+                buttonKBLayoutOptions.addControl(buttonKBLayoutQwerty);
+                buttonKBLayoutOptions.addControl(buttonKBLayoutDvorak);
+                buttonKBLayoutOptions.addControl(buttonKBLayoutAzerty);
+        characterChoiceMenuContainer.addControl(submitContainer);
+            submitContainer.addControl(submitOffline);
+            submitContainer.addControl(submitOnline);
 
-        return cNM1;
+        return characterChoiceMenuContainer;
     }
     static _generatePlayerPortrait() {
         var playerPortrait = new BABYLON.GUI.Rectangle("playerPortrait");
