@@ -1,4 +1,3 @@
-
 class EntityWithStorage extends Entity {
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
         super(_id, _name, _description, _image);

@@ -1,6 +1,3 @@
-/**
- * Class that represents all Entity
- */
 class Entity {
     /**
      * Creates an Entity

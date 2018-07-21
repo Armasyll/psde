@@ -842,21 +842,53 @@ class Game {
         _entity.setAvatar(_mesh);
         return _controller;
     }
-    static deleteCharacter(_character) {
-        if (!(_character instanceof CharacterController)) {
-            _character = Game.getCharacterController(_character);
-            if (!(_character instanceof CharacterController)) {return undefined;}
+    static deleteCharacter(_controller) {
+        if (!(_controller instanceof CharacterController)) {
+            _controller = Game.getCharacterController(_controller);
+            if (!(_controller instanceof CharacterController)) {return undefined;}
         }
-        if (_character == this.player) {
+        if (_controller == this.player) {
             return false;
         }
-        var _id = _character.id;
-        var _mesh = _character.avatar;
-        _character.entity.dispose();
-        _character.dispose();
+        var _id = _controller.id;
+        var _mesh = _controller.avatar;
+        _controller.entity.dispose();
+        _controller.dispose();
         _mesh.dispose();
         delete Game.entityMeshInstances[_id];
         delete Game.characterMeshInstances[_id];
+    }
+    static createDoor(_id, _name = "Door", _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+        if (typeof _id != "string") {_id = genUUIDv4()};
+        _id = _id.toLowerCase();
+        var _entity = new Entity(_id, _name);
+        if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
+            _meshID = _mesh.name;
+        }
+        else if (Game.furnitureMeshes.has(_mesh)) {
+            _meshID = _mesh;
+        }
+        else {
+            _meshID = "door";
+        }
+        _mesh = Game.addFurnitureMesh(_id, _meshID, _options, _position, _rotation, _scale);
+        _controller = new EntityController(_id, _mesh, _entity);
+        if (_skin != undefined) {
+
+        }
+    }
+    static deleteDoor(_controller) {
+        if (!(_door instanceof EntityController)) {
+            _door = Game.getEntityController(_door);
+            if (!(_door instanceof EntityController)) {return undefined;}
+        }
+        var _id = _controller.id;
+        var _mesh = _controller.avatar;
+        _controller.entity.dispose();
+        _controller.dispose();
+        _mesh.dispose();
+        delete Game.entityMeshInstances[_id];
+        delete Game.furnitureMeshInstances[_id];
     }
     static highlightMesh(_mesh) {
         if (!this.highlightEnabled || this.highlightLayer.hasMesh(_mesh)) {
