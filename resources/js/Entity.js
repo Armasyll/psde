@@ -69,7 +69,7 @@ class Entity {
 
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");
-        
+
         Game.entities[this.id] = this;
     }
 
