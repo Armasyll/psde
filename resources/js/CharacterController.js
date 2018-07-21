@@ -5,101 +5,11 @@ class EntityController {
         this.id = _id;
         this.avatar = _avatar;
         this.entity = _entity;
+        this.networkID = null;
+        this.skin = null;
         this.avatar.isPickable = true;
 
         Game.entityControllers[this.id] = this;
-    }
-    dispose() {
-        delete Game.entityControllers[this.id];
-        for (var _var in this) {
-            this[_var] = null;
-        }
-        return undefined;
-    }
-}
-/**
- * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
- * It's great :v you should check it out.
- */
-class CharacterController extends EntityController {
-    constructor(_id, _avatar, _entity) {
-        super (_id, _avatar, _entity);
-        this.avatar.controller = this;
-        this.networkID = null;
-
-        this.focus = undefined;
-        this.targetController = null;
-        this.targetedByControllers = new Set();
-        this.targetRay = undefined;
-
-        this.skin = null;
-
-        this.walkSpeed = 0.62 * this.avatar.scaling.z;
-        this.runSpeed = this.walkSpeed * 2;
-        this.backSpeed = this.walkSpeed * 0.5;
-        this.jumpSpeed = this.avatar.scaling.y * 4;
-        this.strafeSpeed = this.walkSpeed * 0.75;
-        this.gravity = -Game.scene.gravity.y;
-        this.minSlopeLimit = 30;
-        this.maxSlopeLimit = 50;
-        this.minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
-        this.maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
-        this._stepOffset = 0.25;
-        this._vMoveTot = 0;
-        this._vMovStartPos = new BABYLON.Vector3(0, 0, 0);
-        this.walk = new AnimData("walk");
-        this.walkBack = new AnimData("walkBack");
-        this.idle = new AnimData("idle");
-        this.run = new AnimData("run");
-        this.jump = new AnimData("jump");
-        this.fall = new AnimData("fall");
-        this.turnLeft = new AnimData("turnLeft");
-        this.turnRight = new AnimData("turnRight");
-        this.strafeLeft = new AnimData("strafeLeft");
-        this.strafeRight = new AnimData("strafeRight");
-        this.slideBack = new AnimData("slideBack");
-        this.animations = [this.walk, this.walkBack, this.idle, this.run, this.jump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
-
-        this.started = false;
-        this._stopAnim = false;
-        this.prevAnim = null;
-        this.moveVector = new BABYLON.Vector3();
-        this.avStartPos = new BABYLON.Vector3(0, 0, 0);
-        this.grounded = false;
-        this.freeFallDist = 0;
-        this.fallFrameCountMin = 50;
-        this.fallFrameCount = 0;
-        this.inFreeFall = false;
-        this.wasWalking = false;
-        this.wasRunning = false;
-        this.jumpStartPosY = 0;
-        this.jumpTime = 0;
-        this.movFallTime = 0;
-        this.idleFallTime = 0;
-        this.groundFrameCount = 0;
-        this.groundFrameMax = 10;
-
-        this.skip = 0;
-        this.move = false;
-        this.skeleton = this.avatar.skeleton;
-        if (this.skeleton != null) {
-            this.checkAnims(this.skeleton);
-        }
-        this.key = new ControllerMovementKey();
-        this.prevKey = this.key.clone();
-        var _this = this;
-        this.renderer = function () { _this.moveAV(); };
-
-        this.setWalkAnim("93_walkingKneesBent", 1, true);
-        this.setRunAnim("93_walkingKneesBent", 1, true);
-        this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
-        this.setIdleAnim("80_idle01", 1, true);
-        this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
-        this.setTurnRightAnim("93_walkingKneesBent", 1, true);
-        this.setJumpAnim("95_jump", 1, true);
-
-        this.attachedMeshes = {};
-        Game.characterControllers[this.id] = this;
     }
     setID(_id) {
         this.id = _id;
@@ -171,6 +81,95 @@ class CharacterController extends EntityController {
     }
     getAvatarSkin() {
         return this.skin;
+    }
+    dispose() {
+        delete Game.entityControllers[this.id];
+        for (var _var in this) {
+            this[_var] = null;
+        }
+        return undefined;
+    }
+}
+/**
+ * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
+ * It's great :v you should check it out.
+ */
+class CharacterController extends EntityController {
+    constructor(_id, _avatar, _entity) {
+        super (_id, _avatar, _entity);
+        this.avatar.controller = this;
+
+        this.focus = undefined;
+        this.targetController = null;
+        this.targetedByControllers = new Set();
+        this.targetRay = undefined;
+
+        this.walkSpeed = 0.62 * this.avatar.scaling.z;
+        this.runSpeed = this.walkSpeed * 2;
+        this.backSpeed = this.walkSpeed * 0.5;
+        this.jumpSpeed = this.avatar.scaling.y * 4;
+        this.strafeSpeed = this.walkSpeed * 0.75;
+        this.gravity = -Game.scene.gravity.y;
+        this.minSlopeLimit = 30;
+        this.maxSlopeLimit = 50;
+        this.minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
+        this.maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
+        this._stepOffset = 0.25;
+        this._vMoveTot = 0;
+        this._vMovStartPos = new BABYLON.Vector3(0, 0, 0);
+        this.walk = new AnimData("walk");
+        this.walkBack = new AnimData("walkBack");
+        this.idle = new AnimData("idle");
+        this.run = new AnimData("run");
+        this.jump = new AnimData("jump");
+        this.fall = new AnimData("fall");
+        this.turnLeft = new AnimData("turnLeft");
+        this.turnRight = new AnimData("turnRight");
+        this.strafeLeft = new AnimData("strafeLeft");
+        this.strafeRight = new AnimData("strafeRight");
+        this.slideBack = new AnimData("slideBack");
+        this.animations = [this.walk, this.walkBack, this.idle, this.run, this.jump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
+
+        this.started = false;
+        this._stopAnim = false;
+        this.prevAnim = null;
+        this.moveVector = new BABYLON.Vector3();
+        this.avStartPos = new BABYLON.Vector3(0, 0, 0);
+        this.grounded = false;
+        this.freeFallDist = 0;
+        this.fallFrameCountMin = 50;
+        this.fallFrameCount = 0;
+        this.inFreeFall = false;
+        this.wasWalking = false;
+        this.wasRunning = false;
+        this.jumpStartPosY = 0;
+        this.jumpTime = 0;
+        this.movFallTime = 0;
+        this.idleFallTime = 0;
+        this.groundFrameCount = 0;
+        this.groundFrameMax = 10;
+
+        this.skip = 0;
+        this.move = false;
+        this.skeleton = this.avatar.skeleton;
+        if (this.skeleton != null) {
+            this.checkAnims(this.skeleton);
+        }
+        this.key = new ControllerMovementKey();
+        this.prevKey = this.key.clone();
+        var _this = this;
+        this.renderer = function () { _this.moveAV(); };
+
+        this.setWalkAnim("93_walkingKneesBent", 1, true);
+        this.setRunAnim("93_walkingKneesBent", 1, true);
+        this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
+        this.setIdleAnim("80_idle01", 1, true);
+        this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
+        this.setTurnRightAnim("93_walkingKneesBent", 1, true);
+        this.setJumpAnim("95_jump", 1, true);
+
+        this.attachedMeshes = {};
+        Game.characterControllers[this.id] = this;
     }
 
     setTarget(_controller, _updateChild = true) {

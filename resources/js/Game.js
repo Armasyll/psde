@@ -26,16 +26,22 @@ class Game {
             this.scene.collisionsEnabled = true;
         }
 
-        this.surfaceMeshes = undefined;
-        this.furnitureMeshes = undefined;
-        this.characterMeshes = undefined;
-        this.itemMeshes = undefined;
+        this.entityMeshes = {};
+        this.surfaceMeshes = {};
+        this.furnitureMeshes = {};
+        this.characterMeshes = {};
+        this.itemMeshes = {};
+
         this.entityMeshInstances = {};
         this.furnitureMeshInstances = {};
         this.characterMeshInstances = {};
         this.itemMeshInstances = {};
+
         this.entityControllers = {};
+        this.furnitureControllers = {};
         this.characterControllers = {};
+        this.itemControllers = {};
+
         this.entities = {};
         this.furnitureEntities = {};
         this.characterEntities = {};
@@ -505,12 +511,8 @@ class Game {
                         _meshes[_i].skeleton.scaling = _meshes[_i].scaling;
                     }
                 }
-                if (_callback == undefined) {}
-                else if (window.hasOwnProperty(_callback)) {
-                    window[_callback] = true;
-                }
-                else {
-                    unsafeExec(_callback);
+                if (typeof _callback == "function") {
+                    _callback();
                 }
             },
             function() { // onProgress
@@ -524,10 +526,10 @@ class Game {
     }
     static loadMeshes() {
         if (Game.debugEnabled) console.log("Running loadMeshes");
-        Game.furnitureMeshes = Game.importMeshes("furniture.babylon", undefined, "Game._loadedFurniture = true;");
-        Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon", undefined, "Game._loadedSurfaces = true;");
-        Game.characterMeshes = Game.importMeshes("fox.babylon", undefined, "Game._loadedCharacters = true;");
-        Game.itemMeshes = Game.importMeshes("items.babylon", undefined, "Game._loadedItems = true;");
+        Game.furnitureMeshes = Game.importMeshes("furniture.babylon", undefined, function(){Game._loadedFurniture = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.furnitureMeshes);});
+        Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon", undefined, function(){Game._loadedSurfaces = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.surfaceMeshes);});
+        Game.characterMeshes = Game.importMeshes("fox.babylon", undefined, function(){Game._loadedCharacters = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.characterMeshes);});
+        Game.itemMeshes = Game.importMeshes("items.babylon", undefined, function(){Game._loadedItems = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.itemMeshes);});
         return true;
     }
     static filterID(_id) {
@@ -798,7 +800,7 @@ class Game {
         }
     }
     static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
-        if (typeof _id != "string") _id = genUUIDv4();
+        if (typeof _id != "string") {_id = genUUIDv4()};
         _id = _id.toLowerCase();
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
         var _meshID = "";
@@ -833,7 +835,9 @@ class Game {
         }
         var _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
         var _controller = new CharacterController(_id, _mesh, _entity);
-        _controller.setAvatarSkin(_skin)
+        if (_skin != undefined) {
+            _controller.setAvatarSkin(_skin);
+        }
         _entity.setController(_controller);
         _entity.setAvatar(_mesh);
         return _controller;
