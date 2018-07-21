@@ -9,8 +9,11 @@ class Game {
 
         if (Game.debugEnabled) console.log("Running initialize");
         this.canvas = document.getElementById("canvas");
+            this.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            this.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
         this.engine = new BABYLON.Engine(this.canvas, false, null, false);
             this.engine.enableOfflineSupport = false; // Disables .manifest file errors
+            this.engine.isPointerLock = false;
         this.scene = new BABYLON.Scene(this.engine);
         this.scene.autoClear = false;
         this.scene.autoClearDepthAndStencil = false;
@@ -909,5 +912,67 @@ class Game {
     }
     static castRayFOV(_fov = 90) {
         return undefined;
+    }
+    static pointerLock(_event) {
+        if (Game.engine.isPointerLock) {
+            return;
+        }
+        Game.canvas.requestPointerLock();
+        Game.engine.isPointerLock = true;
+        setTimeout(
+            function() {
+                document.addEventListener("pointerlockchange", Game.pointerRelease);
+            },
+            121 // even would trigger if it were run synchronously; assuming we're running at 60FPS, this should run after 121 frames v:
+        );
+    }
+    static pointerRelease(_event) {
+        document.removeEventListener("pointerlockchange", Game.pointerRelease);
+        document.exitPointerLock();
+        Game.engine.isPointerLock = false;
+        GameGUI.showMainMenu();
+    }
+    static chatCommands(_command, ..._param) {
+        if (_command == undefined || typeof _command != "string") {
+            return undefined;
+        }
+        if (_command.slice(0, 1) == "/") {
+            _command = _command.slice(1);
+        }
+        switch (_command) {
+            case "clear" : {
+                GameGUI.chatOutputClear();
+                break;
+            }
+            case "menu" : {
+                GameGUI.showMainMenu();
+                break;
+            }
+            case "login" : {
+                break;
+            }
+            case "logout" : {
+                break;
+            }
+            case "exit" :
+            case "quit" : {
+                break;
+            }
+            case "save" : {
+                break;
+            }
+            case "load" : {
+                break;
+            }
+            case ":v" :
+            case "v:" :
+            case ":V" :
+            case "V:" : {
+                GameGUI.chatOutputAppend("\n    :V\n");
+            }
+            default : {
+                return;
+            }
+        }
     }
 }

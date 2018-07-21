@@ -23,14 +23,25 @@ class GameGUI {
         GameGUI.mainMenu.addControl(GameGUI._generateCharacterChoiceMenu());
         GameGUI.hideMainMenu();
     }
-    static showHUD() {
+    static showHUD(_updateChild = true) {
+        if (_updateChild) {
+            GameGUI.hideMainMenu(false);
+        }
         GameGUI.hud.rootContainer.isVisible = true;
+        Game.pointerLock();
+        window.addEventListener("click", function(_event) {
+            if (GameGUI.hud.rootContainer.isVisible) {
+                Game.pointerLock();
+            }
+        });
     }
     static hideHUD() {
         GameGUI.hud.rootContainer.isVisible = false;
     }
-    static showMainMenu() {
-        GameGUI.hideHUD();
+    static showMainMenu(_updateChild = true) {
+        if (_updateChild) {
+            GameGUI.hideHUD(false);
+        }
         GameGUI.mainMenu.rootContainer.isVisible = true;
     }
     static hideMainMenu() {
@@ -153,7 +164,7 @@ class GameGUI {
             Game.controlCharacterOnKeyDown(13); // onBlurObservable triggers before ActionManager, so we'll just send the enter key manually
         });
         chatInput.onFocusObservable.add(function() {
-            GameGUI._chatInputFocusedMALE = true;
+            GameGUI._chatInputFocused = true;
         });
         return chatBox;
     }
@@ -574,7 +585,7 @@ class GameGUI {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
     }
     static chatInputSubmit() {
-        GameGUI._chatInputFocusedMALE = false;
+        GameGUI._chatInputFocused = false;
         var _text = GameGUI.getChatInput().text.trim();
         if (_text.length == 0) {
             return;
@@ -583,7 +594,7 @@ class GameGUI {
             Client.sendChatMessage(_text);
         }
         else {
-            // SEKRIT DEV STUFF :V maybe
+            Game.chatCommands(_text);
         }
         GameGUI.chatInputClear();
     }
