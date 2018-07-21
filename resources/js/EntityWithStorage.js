@@ -27,7 +27,7 @@ class EntityWithStorage extends Entity {
         if (!(_entity instanceof Entity)) {
             if (PSDE.entities.has(_entity))
                 _entity = PSDE.entities.get(_entity);
-            else if (_entity instanceof EntityInstance)
+            else if (_entity instanceof InstancedEntity)
                 _entity = _entity.parent;
             else if (PSDE.instances.has(_entity))
                 _entity = PSDE.instances.get(_entity).parent;
@@ -172,7 +172,7 @@ class EntityWithStorage extends Entity {
         if (!(_entity instanceof Entity)) {
             if (PSDE.entities.has(_entity))
                 _entity = PSDE.entities.get(_entity);
-            else if (_entity instanceof EntityInstance)
+            else if (_entity instanceof InstancedEntity)
                 _entity = _entity.parent;
             else if (PSDE.instances.has(_entity))
                 _entity = PSDE.instances.get(_entity).parent;

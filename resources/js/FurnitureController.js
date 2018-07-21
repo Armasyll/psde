@@ -1,0 +1,3 @@
+class FurnitureController extends EntityController {
+	
+}

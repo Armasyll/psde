@@ -29,6 +29,11 @@ class EntityController {
     geAvatar() {
         return this.avatar;
     }
+    setEntity(_entity) {
+        if (_entity instanceof Entity || _entity instanceof InstancedEntity) {
+            this.entity = _entity;
+        }
+    }
     setAvatarSkeleton(_skeleton) {
         this.skeleton = _skeleton;
         this.checkAnimations(this.skeleton);

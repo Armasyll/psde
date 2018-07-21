@@ -1,11 +1,8 @@
-/**
- * Class that reprents all EntityInstances
- */
-class EntityInstance {
+class InstancedEntity {
     /**
-     * Creates an EntityInstance
+     * Creates an InstancedEntity
      * @param  {UUIDv4} _id            UUID
-     * @param  {Entity} _entity         Entity, String ID of Entity, EntityInstance, or String ID of EntityInstance
+     * @param  {Entity} _entity         Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
      * @param  {Character} _owner      Owner
      * @param  {Number} _price         Price, defaults to 0
      * @param  {Number} _mass        Weight, defaults to 0.001
@@ -41,7 +38,7 @@ class EntityInstance {
         this.setDurability(_durability || 1);
         this.setDurabilityMax(_durabilityMax || this.durability);
 
-        Game.entityInstances[this.id] = this;
+        Game.instancedEntities[this.id] = this;
     }
 
     /**
@@ -70,7 +67,7 @@ class EntityInstance {
         if (!(_entity instanceof Entity)){
             if (Game.hasEntity(_entity))
                 _entity = Game.getEntity(_entity);
-            else if (_entity instanceof EntityInstance)
+            else if (_entity instanceof InstancedEntity)
                 _entity = _entity.entity;
             else if (Game.hasInstance(_entity))
                 _entity = Game.getInstance(_entity).entity;
