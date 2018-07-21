@@ -940,6 +940,10 @@ class Game {
             _command = _command.slice(1);
         }
         switch (_command) {
+            case "help" : {
+                GameGUI.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
+                break;
+            }
             case "clear" : {
                 GameGUI.chatOutputClear();
                 break;
@@ -952,6 +956,7 @@ class Game {
                 break;
             }
             case "logout" : {
+                Client.disconnect();
                 break;
             }
             case "exit" :
@@ -971,6 +976,7 @@ class Game {
                 GameGUI.chatOutputAppend("\n    :V\n");
             }
             default : {
+                GameGUI.chatOutputAppend(`Command "${_command}" not found.\n`);
                 return;
             }
         }

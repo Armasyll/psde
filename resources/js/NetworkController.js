@@ -35,7 +35,7 @@ class NetworkController {
     }
     static onClose(_event) {
         if (Client.isOnline()) {
-            Client.disconnect();
+            Client.disconnect(false);
         }
         NetworkController.initialized = false;
         NetworkController.socket = undefined;

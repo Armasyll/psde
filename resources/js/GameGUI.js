@@ -328,7 +328,7 @@ class GameGUI {
         });
         submitOffline.onPointerDownObservable.add(function() {
             Game.player.entity.setName(nameInput.text);
-            if (Client.isOnline) {
+            if (Client.isOnline()) {
                 Client.disconnect();
             }
             else {

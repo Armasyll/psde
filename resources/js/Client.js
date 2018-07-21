@@ -13,11 +13,15 @@ class Client {
 		if (!this.initialized) {this.initialize();}
 		NetworkController.initialize();
 	}
-	static disconnect() {
+	static disconnect(_updateChild = true) {
         var _timestamp = new Date().toLocaleTimeString({ hour12: false });
         this.deleteAllPlayers();
         this.setOnline(false);
         GameGUI.chatOutputAppend(`${_timestamp} Server: Connection Closed.`);
+        if (_updateChild) {
+            NetworkController.initialized = false;
+            NetworkController.socket = undefined;
+        }
 	}
     static isOnline() {
         return this.online;
