@@ -24,7 +24,9 @@ class EntityController {
         return this.networkID;
     }
     setAvatar(_mesh) {
-        this.avatar = _mesh;
+        if (_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) {
+            this.avatar = _mesh;
+        }
     }
     geAvatar() {
         return this.avatar;
