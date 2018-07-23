@@ -17,7 +17,8 @@ window.addEventListener("DOMContentLoaded", function() {
                 var _animationRange = _character.skeleton.getAnimationRanges();
                 for (var _i = 0; _i < _animationRange.length; _i++) {
                     if (_animationRange[_i].to - _animationRange[_i].from > 2) {
-                        _animationRange[_i].to--;
+                        _animationRange[_i].from += 1;
+                        _animationRange[_i].to -= 1;
                     }
                 }
 
@@ -37,7 +38,6 @@ window.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
-    var _rbrCount = 0;
     Game.scene.registerBeforeRender(function() {
         if (!(Game.player instanceof CharacterController))
             return null;
@@ -45,13 +45,6 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game.entityControllers[_character] instanceof CharacterController) {
                 Game.entityControllers[_character].moveAV();
             }
-        }
-        if (_rbrCount >= 20) {
-            Game.castRayTarget();
-            _rbrCount = 0;
-        }
-        else {
-            _rbrCount++;
         }
     });
 });
