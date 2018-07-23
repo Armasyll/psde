@@ -53,6 +53,7 @@ class MessageRouter {
 						_data.content["age"],
 						_data.content["sex"],
 						_data.content["species"],
+						undefined,
 						_data.content["skin"],
 						{mass:0.8,restitution:0.1},
 						_data.content["position"],

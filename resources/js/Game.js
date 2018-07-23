@@ -157,7 +157,7 @@ class Game {
     }
     static initPlayer() {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", 18, "male", "fox", undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
+        this.player = this.createCharacter(undefined, "Player", 18, "male", "skeleton", undefined, undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
@@ -462,7 +462,10 @@ class Game {
         }
     }
     static getMesh(_mesh) {
-        if (_mesh.hasOwnProperty("controller") && _mesh.controller instanceof CharacterController) {
+        if (_mesh == undefined || _mesh == null) {
+            return undefined;
+        }
+        else if (_mesh.hasOwnProperty("controller") && _mesh.controller instanceof CharacterController) {
             return _mesh;
         }
         else if (_mesh instanceof CharacterController) {
@@ -799,41 +802,47 @@ class Game {
             return false;
         }
     }
-    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
         if (typeof _id != "string") {_id = genUUIDv4()};
         _id = _id.toLowerCase();
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
-        var _meshID = "";
-        switch (_entity.species) {
-            case "fox" : {
-                if (_entity.getSex() == Game.MALE) {
-                    _meshID = "foxM";
+        _mesh = Game.getMesh(_mesh);
+        if (_mesh == undefined) {
+            var _meshID = undefined;
+            switch (_entity.species) {
+                case "fox" : {
+                    if (_entity.getSex() == Game.MALE) {
+                        _meshID = "foxM";
+                    }
+                    else {
+                        _meshID = "foxF";
+                    }
+                    break;
                 }
-                else {
-                    _meshID = "foxF";
+                case "skeleton" : {
+                    if (_entity.getSex() == Game.MALE) {
+                        _meshID = "foxSkeletonN";
+                    }
+                    else {
+                        _meshID = "foxSkeletonN";
+                    }
+                    break;
                 }
-                break;
+                default : {
+                    if (_entity.getSex() == Game.MALE) {
+                        _meshID = "foxM";
+                    }
+                    else {
+                        _meshID = "foxF";
+                    }
+                    break;
+                }
             }
-            case "skeleton" : {
-                if (_entity.getSex() == Game.MALE) {
-                    _meshID = "foxSkeletonM";
-                }
-                else {
-                    _meshID = "foxSkeletonN";
-                }
-                break;
-            }
-            default : {
-                if (_entity.getSex() == Game.MALE) {
-                    _meshID = "foxM";
-                }
-                else {
-                    _meshID = "foxF";
-                }
-                break;
-            }
+            _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
         }
-        var _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
+        else {
+            _mesh = Game.addCharacterMesh(_id, _mesh.id, _options, _position, _rotation, _scale);
+        }
         var _controller = new CharacterController(_id, _mesh, _entity);
         if (_skin != undefined) {
             _controller.setAvatarSkin(_skin);
