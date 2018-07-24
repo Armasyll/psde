@@ -15,10 +15,10 @@ class Game {
             this.engine.enableOfflineSupport = false; // Disables .manifest file errors
             this.engine.isPointerLock = false;
         this.scene = new BABYLON.Scene(this.engine);
-        this.scene.autoClear = false;
-        this.scene.autoClearDepthAndStencil = false;
-        this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
-        this.scene.actionManager = new BABYLON.ActionManager(this.scene);
+            this.scene.autoClear = false;
+            this.scene.autoClearDepthAndStencil = false;
+            this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
+            this.scene.actionManager = new BABYLON.ActionManager(this.scene);
         if (this.physicsEnabled) {
             this.initPhysics();
         }

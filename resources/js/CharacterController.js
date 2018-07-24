@@ -12,7 +12,7 @@ class CharacterController extends EntityController {
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
 
-        this.walkSpeed = 0.62 * this.avatar.scaling.z;
+        this.walkSpeed = 0.38 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 2;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.avatar.scaling.y * 4;
@@ -236,6 +236,7 @@ class CharacterController extends EntityController {
         if (!(this.avatar instanceof BABYLON.Mesh)) {
             return undefined;
         }
+        this.avatar.position.y = Number(this.avatar.position.y.toFixed(4));
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
@@ -317,6 +318,9 @@ class CharacterController extends EntityController {
     areVectorsEqual(v1, v2, p) {
         return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
     }
+    arePointsEqual(p1, p2, p) {
+        return Math.abs(p1 - p2) < p;
+    }
     verticalSlope(v) {
         return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
@@ -379,7 +383,11 @@ class CharacterController extends EntityController {
             }
         }
         if (moving) {
+            this.avatar.position.y = this.avatar.position.y.toFixed(4);
             if (this.moveVector.length() > 0.001) {
+                if (this.arePointsEqual(this.avStartPos.y, this.avatar.position.y, 0.075)) {
+                    this.avatar.position.y = this.avStartPos.y;
+                }
                 this.avatar.moveWithCollisions(this.moveVector);
                 if (this.avatar.position.y > this.avStartPos.y) {
                     var actDisp = this.avatar.position.subtract(this.avStartPos);
