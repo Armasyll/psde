@@ -26,6 +26,8 @@ class Game {
             this.scene.collisionsEnabled = true;
         }
 
+        this._assignBoundingBoxCollisionQueue = new Set();
+
         this.entityMeshes = {};
         this.surfaceMeshes = {};
         this.furnitureMeshes = {};
@@ -281,8 +283,8 @@ class Game {
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
-    static addCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0, _height = 3) {
-        if (Game.debugEnabled) console.log("Running addCollisionWallX");
+    static createCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0, _height = 3) {
+        if (Game.debugEnabled) console.log("Running createCollisionWallX");
         if (_rotation != 0 && isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
         }
@@ -313,8 +315,8 @@ class Game {
         }
         return _wall;
     }
-    static addCollisionPlane(_posStart = {x:0, z:0}, _posEnd = {x:0, z:0}, _posY = 0) {
-        if (Game.debugEnabled) console.log("Running addCollisionPlane");
+    static createCollisionPlane(_posStart = {x:0, z:0}, _posEnd = {x:0, z:0}, _posY = 0) {
+        if (Game.debugEnabled) console.log("Running createCollisionPlane");
         if (_posStart.x instanceof BABYLON.Mesh || _posStart.x instanceof BABYLON.InstancedMesh) {
             var _zRadius = _posStart.x.getBoundingInfo().boundingBox.extendSize.z * _posStart.x.scaling.z;
             var _xRadius = _posStart.x.getBoundingInfo().boundingBox.extendSize.x * _posStart.x.scaling.x;
@@ -340,7 +342,7 @@ class Game {
         }
         return _floor;
     }
-    static addCollisionRamp(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotationY = 0) {
+    static createCollisionRamp(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotationY = 0) {
         if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
             return null;
         }
@@ -379,7 +381,6 @@ class Game {
     }
     static assignPlanePhysicsToMesh(_mesh) {
         if (Game.debugEnabled) console.log("Running assignPlanePhysicsToMesh");
-        if (typeof _options != "object" || typeof _object == "undefined") _options = {mass:0.8,restitution:0.1};
         _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.BoxImpostor, {mass:0}, Game.scene);
         return _mesh.physicsImposter;
     }
@@ -397,6 +398,24 @@ class Game {
     }
     static assignBoxPhysicsToBone(_bone, _options = {mass:0.8,restitution:0.1}) {
 
+    }
+    static assignBoxCollisionToMesh(_mesh) {
+        if (Game.debugEnabled) console.log("Running assignBoxCollisionToMesh");
+        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+            return null;
+        }
+        this._assignBoundingBoxCollisionQueue.add(_mesh);
+    }
+    static _assignBoundingBoxCollisionToMesh(_mesh) {
+        if (Game.debugEnabled) console.log("Running _assignBoundingBoxCollisionToMesh");
+        this._assignBoundingBoxCollisionQueue.delete(_mesh);
+        var _boundingBox = _mesh.getBoundingInfo().boundingBox;
+        _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox("collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
+        _mesh.collisionMesh.position = _boundingBox.centerWorld;
+        _mesh.collisionMesh.rotation = _mesh.rotation;
+        _mesh.collisionMesh.scaling = _mesh.scaling;
+        _mesh.collisionMesh.material = Game._collisionMaterial;
+        _mesh.collisionMesh.checkCollisions = true;
     }
     static addItemMesh(_id = undefined, _meshID, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
@@ -423,6 +442,9 @@ class Game {
         Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
+        }
+        else {
+            Game.assignBoxCollisionToMesh(_instance);
         }
         return _instance;
     }

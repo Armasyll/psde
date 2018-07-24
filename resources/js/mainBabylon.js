@@ -55,6 +55,13 @@ window.addEventListener("DOMContentLoaded", function() {
             _rbrCount++;
         }
     });
+    Game.scene.registerAfterRender(function() {
+        if (Game._assignBoundingBoxCollisionQueue.size > 0) {
+            Game._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
+                Game._assignBoundingBoxCollisionToMesh(_mesh);
+            });
+        }
+    })
 });
 
 function generateApartmentScene() {
@@ -67,7 +74,7 @@ function generateApartmentScene() {
         Game.assignPlanePhysicsToMesh(_ground);
     }
     else {
-        Game.addCollisionPlane({x:-512, z:-512}, {x:512, z:512}, -0.075);
+        Game.createCollisionPlane({x:-512, z:-512}, {x:512, z:512}, -0.075);
     }
 
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
@@ -121,27 +128,27 @@ function generateApartmentScene() {
     ceilingMesh.position.x -= 1;
     ceilingMesh.position.z -= 1;
 
-    Game.addCollisionWall({x:-1, y:0, z:1}, {x:15, y:0, z:1}); // Back floor wall
-    Game.addCollisionWall({x:-1, y:0, z:1}, {x:-1, y:0, z:-27}); // Left floor wall
-    Game.addCollisionWall({x:15, y:0, z:1}, {x:15, y:0, z:-27}); // Right floor wall
-    Game.addCollisionWall({x:-1, y:0, z:-27}, {x:3, y:0, z:-27}); // Front floor wall, left
-    Game.addCollisionWall({x:5, y:0, z:-27}, {x:15, y:0, z:-27}); // Front floor wall, right
+    Game.createCollisionWall({x:-1, y:0, z:1}, {x:15, y:0, z:1}); // Back floor wall
+    Game.createCollisionWall({x:-1, y:0, z:1}, {x:-1, y:0, z:-27}); // Left floor wall
+    Game.createCollisionWall({x:15, y:0, z:1}, {x:15, y:0, z:-27}); // Right floor wall
+    Game.createCollisionWall({x:-1, y:0, z:-27}, {x:3, y:0, z:-27}); // Front floor wall, left
+    Game.createCollisionWall({x:5, y:0, z:-27}, {x:15, y:0, z:-27}); // Front floor wall, right
 
-    Game.addCollisionWall({x:9, y:0, z:1}, {x:9, y:0, z:-5}); // Side wall between Ozzy's bathroom and Landlord's apartment
-    Game.addCollisionWall({x:5, y:0, z:-1}, {x:5, y:0, z:-7}); // Side wall between Ozzy's apartment and Landlord's bathroom
-    Game.addCollisionWall({x:7, y:0, z:-7}, {x:7, y:0, z:-13}); // Side wall between Ozzy's and Landord's kitchenettes
+    Game.createCollisionWall({x:9, y:0, z:1}, {x:9, y:0, z:-5}); // Side wall between Ozzy's bathroom and Landlord's apartment
+    Game.createCollisionWall({x:5, y:0, z:-1}, {x:5, y:0, z:-7}); // Side wall between Ozzy's apartment and Landlord's bathroom
+    Game.createCollisionWall({x:7, y:0, z:-7}, {x:7, y:0, z:-13}); // Side wall between Ozzy's and Landord's kitchenettes
 
-    Game.addCollisionWall({x:5, y:0, z:-3}, {x:9, y:0, z:-3}); // Front wall between Ozzy's and Landlord's bathrooms
-    Game.addCollisionWall({x:5, y:0, z:-7}, {x:9, y:0, z:-7}); // Front wall between Landlord's bathroom and Landlord's and Ozzy's kitchenettes
-    Game.addCollisionWall({x:5, y:0, z:-13}, {x:9, y:0, z:-13}); // Front wall between Landlord's kitchenette and Landlord's entrance
+    Game.createCollisionWall({x:5, y:0, z:-3}, {x:9, y:0, z:-3}); // Front wall between Ozzy's and Landlord's bathrooms
+    Game.createCollisionWall({x:5, y:0, z:-7}, {x:9, y:0, z:-7}); // Front wall between Landlord's bathroom and Landlord's and Ozzy's kitchenettes
+    Game.createCollisionWall({x:5, y:0, z:-13}, {x:9, y:0, z:-13}); // Front wall between Landlord's kitchenette and Landlord's entrance
 
-    Game.addCollisionWall({x:-1, y:0, z:-13}, {x:3, y:0, z:-13}); // Front wall between Commons and Ozzy's apartment
-    Game.addCollisionWall({x:5, y:0, z:-13}, {x:5, y:0, z:-15}); // Side wall between Commons and Landlord's apartment
-    Game.addCollisionWall({x:5, y:0, z:-17}, {x:15, y:0, z:-17}); // Front wall between Commons and Landlord's apartment
+    Game.createCollisionWall({x:-1, y:0, z:-13}, {x:3, y:0, z:-13}); // Front wall between Commons and Ozzy's apartment
+    Game.createCollisionWall({x:5, y:0, z:-13}, {x:5, y:0, z:-15}); // Side wall between Commons and Landlord's apartment
+    Game.createCollisionWall({x:5, y:0, z:-17}, {x:15, y:0, z:-17}); // Front wall between Commons and Landlord's apartment
 
-    Game.addCollisionRamp({x:0, y:0, z:-22}, {x:3, y:3, z:-17});
+    Game.createCollisionRamp({x:0, y:0, z:-22}, {x:3, y:3, z:-17});
 
-    Game.addCollisionWall({x:5, y:0, z:-25}, {x:5, y:0, z:-27}); // Side wall between Commons and building entrance
+    Game.createCollisionWall({x:5, y:0, z:-25}, {x:5, y:0, z:-27}); // Side wall between Commons and building entrance
 
     Game.addMesh(undefined, "floorWoodDark",        {x:0, y:0, z:0});
     Game.addMesh(undefined, "floorWoodDark",        {x:2, y:0, z:0});
@@ -261,11 +268,11 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-22}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-22}, {x:0, y:90, z:0});
     Game.addFurnitureMesh("tableInstance01", "diningTable", {mass:25,restitution:0.1}, {x:10, y:0, z:-22});
-    Game.addItemMesh("knifeInstance01", "knife", undefined, {x:10, y:2, z:-22});
-    Game.addItemMesh("crossInstance01", "cross", undefined, {x:10, y:2, z:-22});
-    Game.addItemMesh("planeInstance01", "plate", undefined, {x:9.7, y:2, z:-22});
-    Game.addItemMesh("plateInstance02", "plate", undefined, {x:10.3, y:2, z:-22});
-    Game.addItemMesh("packstreet23StrangeNewDay", "bookHardcoverClosed01", undefined, {x:10.3, y:1, z:-23}, {x:0, y:180, z:0});
+    Game.addItemMesh("knifeInstance01", "knife", undefined, {x:9.5, y:0.9, z:-22.5}, {x:180, y:0, z:0});
+    Game.addItemMesh("crossInstance01", "cross", undefined, {x:10, y:0.6, z:-22});
+    Game.addItemMesh("planeInstance01", "plate", undefined, {x:9.7, y:0.6, z:-21.5});
+    Game.addItemMesh("plateInstance02", "plate", undefined, {x:10.3, y:0.6, z:-23});
+    Game.addItemMesh("packstreet23StrangeNewDay", "bookHardcoverClosed01", undefined, {x:10.3, y:0.8, z:-21}, {x:0, y:180, z:0});
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-24}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "corner",               {x:4, y:0, z:-24}, {x:0, y:180, z:0});
@@ -289,7 +296,4 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:10, y:0, z:-28});
     Game.addMesh(undefined, "wall",                 {x:12, y:0, z:-28});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-28});
-
-    Game.createCharacter("rosie", "Rosie", 14, "f", "fox", undefined, undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
-    Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxF", "foxCorsac.png", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
 }
