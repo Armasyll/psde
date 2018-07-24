@@ -303,9 +303,7 @@ class Game {
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _wall = BABYLON.MeshBuilder.CreateBox("wall", {height:_height, depth:0.125, width:_width}, Game.scene);
         _wall.material = Game._collisionMaterial;
-        _wall.position.x = _posX;
-        _wall.position.y = _posY;
-        _wall.position.z = _posZ;
+        _wall.position.set(_posX,_posY,_posZ);
         _wall.rotation.y = _rotation;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_wall, {mass:0});
@@ -333,9 +331,7 @@ class Game {
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
         _floor.material = Game._collisionMaterial;
-        _floor.position.x = _posX;
-        _floor.position.y = _posY;
-        _floor.position.z = _posZ;
+        _floor.position.set(_posX,_posY,_posZ);
         if (this.physicsEnabled) {
             this.assignBoxPhysicsToMesh(_floor, {mass:0});
         }
@@ -344,8 +340,42 @@ class Game {
         }
         return _floor;
     }
-    static addCollisionRamp() {
-        return null;
+    static addCollisionRamp(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotationY = 0) {
+        if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
+            return null;
+        }
+        if (_posStart.x == _posEnd.x || _posStart.y == _posEnd.y || _posStart.z == _posEnd.z) {
+            return null;
+        }
+        if (_posStart.y > _posEnd.y) {
+            var _temp = _posStart;
+            var _posStart = _posEnd;
+            var _posEnd = _temp;
+        }
+        var _opp = _posEnd.y - _posStart.y;
+        var _width = 0;
+        var _adj = 0;
+        if (_posEnd.z - _posStart.z > _posEnd.x - _posStart.x) { // Z-based ramp
+            _width = _posEnd.x - _posStart.x;
+            _adj = _posEnd.z - _posStart.z;
+        }
+        else { // X-based ramp
+            _width = _posEnd.z - _posStart.z;
+            _adj = _posEnd.x - _posStart.x;
+        }
+        var _angle = Math.acos(_opp / _adj);
+        var _hyp = _opp * (1/Math.cos(_angle)); // height
+        var _ramp = BABYLON.MeshBuilder.CreateBox("ramp", {height:_hyp, depth:0.125, width:_width}, Game.scene);
+        _ramp.position.set((_posEnd.x + _posStart.x) / 2 - 1,(_posEnd.y + _posStart.y) / 2,(_posEnd.z + _posStart.z) / 2 - 1);
+        _ramp.rotation.set(_angle, BABYLON.Tools.ToRadians(_rotationY), 0);
+        _ramp.material = Game._collisionMaterial;
+        if (this.physicsEnabled) {
+            this.assignBoxPhysicsToMesh(_ramp, {mass:0});
+        }
+        else {
+            _ramp.checkCollisions = true;
+        }
+        return _ramp;
     }
     static assignPlanePhysicsToMesh(_mesh) {
         if (Game.debugEnabled) console.log("Running assignPlanePhysicsToMesh");

@@ -139,6 +139,8 @@ function generateApartmentScene() {
     Game.addCollisionWall({x:5, y:0, z:-13}, {x:5, y:0, z:-15}); // Side wall between Commons and Landlord's apartment
     Game.addCollisionWall({x:5, y:0, z:-17}, {x:15, y:0, z:-17}); // Front wall between Commons and Landlord's apartment
 
+    Game.addCollisionRamp({x:0, y:0, z:-22}, {x:3, y:3, z:-17});
+
     Game.addCollisionWall({x:5, y:0, z:-25}, {x:5, y:0, z:-27}); // Side wall between Commons and building entrance
 
     Game.addMesh(undefined, "floorWoodDark",        {x:0, y:0, z:0});
