@@ -139,6 +139,7 @@ class Game {
         this.camera.minZ = 0.001;
         this.player.getMeshAttachedToBone("FOCUS").position.copyFrom(_offset);
         this.camera.lockedTarget = this.player.getMeshAttachedToBone("FOCUS");
+        this.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
         if (Game.debugEnabled) console.log("Running initFreeCamera");
@@ -156,6 +157,7 @@ class Game {
             this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.2, 0.1);
             this.camera.checkCollisions = true;
         }
+        this.initPostProcessing();
     }
     static initPlayer() {
         if (Game.debugEnabled) console.log("Running initPlayer");
@@ -218,8 +220,8 @@ class Game {
         this.useSelectedItem = 82;
     }
     static initPostProcessing() {
-        this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 1.0, this.camera);
-        this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 0.1, Game.camera); // Could be used for darkness, when using too many lights is an issue
+        this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
+        //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, this.camera); // Could be used for darkness, when using too many lights is an issue
     }
     static controlCharacterOnKeyDown(event) {
         if (event === this.jumpCode)
