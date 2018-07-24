@@ -85,17 +85,17 @@ class MessageRouter {
 					else if (isNaN(_data.content[_character][0])) {}
 					else {
 						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[_character][0]);
-						if (Client.getCharacter(_data.content[_character][0]) instanceof CharacterController) {
-							Client.getCharacter(_data.content[_character][0]).avatar.position.copyFrom(
+						if (Client.getCharacterController(_data.content[_character][0]) instanceof CharacterController) {
+							Client.getCharacterController(_data.content[_character][0]).avatar.position.copyFrom(
 								_data.content[_character][1]
 							);
-							Client.getCharacter(_data.content[_character][0]).avatar.rotation.copyFrom(
+							Client.getCharacterController(_data.content[_character][0]).avatar.rotation.copyFrom(
 								_data.content[_character][2]
 							);
-							Client.getCharacter(_data.content[_character][0]).avatar.scaling.copyFrom(
+							Client.getCharacterController(_data.content[_character][0]).avatar.scaling.copyFrom(
 								_data.content[_character][3]
 							);
-							Client.getCharacter(_data.content[_character][0]).key.copyFrom(_data.content[_character][4]);
+							Client.getCharacterController(_data.content[_character][0]).key.copyFrom(_data.content[_character][4]);
 						}
 						else {
 							Client.requestPlayerByNetworkID(_data.content[_character][0]);
@@ -106,7 +106,7 @@ class MessageRouter {
 			}
 			case "S_CHAT_MESSAGE" : {
 				var _timestamp = new Date(_data.content.time * 1000).toLocaleTimeString({ hour12: false });
-				var _name = Game.getCharacter(_data.content.from).name;
+				var _name = Game.getCharacterEntity(_data.content.from).name;
 				GameGUI.chatOutputAppend(`${_timestamp} ${_name}: ${_data.content.message}`);
 				break;
 			}

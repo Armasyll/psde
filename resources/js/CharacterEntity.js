@@ -2180,8 +2180,8 @@ class Character extends EntityWithStorage {
 
     getSexualOrientationCompatibility(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2232,8 +2232,8 @@ class Character extends EntityWithStorage {
         if (Game.enableDebug) console.log("Running setCharacterDisposition");
 
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2352,8 +2352,8 @@ class Character extends EntityWithStorage {
         if (Game.enableDebug) console.log("Running getCharacterDisposition");
 
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2370,7 +2370,7 @@ class Character extends EntityWithStorage {
         if (Game.enableDebug) console.log("Running hasCharacterDisposition");
         
         if (!(_character instanceof Character))
-            _character = Game.hasCharacter(_character) ? Game.getCharacter(_character) : undefined;
+            _character = Game.hasCharacterEntity(_character) ? Game.getCharacterEntity(_character) : undefined;
         
         return this.characterDisposition.hasOwnProperty(_character);
     }
@@ -2382,8 +2382,8 @@ class Character extends EntityWithStorage {
     }
     incCharacterAllDispositions(_character, _int) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2400,8 +2400,8 @@ class Character extends EntityWithStorage {
     }
     decCharacterAllDispositions(_character, _int) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2419,8 +2419,8 @@ class Character extends EntityWithStorage {
 
     addDating(_character, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2434,8 +2434,8 @@ class Character extends EntityWithStorage {
     }
     addDated(_character, _int = 1, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2469,8 +2469,8 @@ class Character extends EntityWithStorage {
     }
     isDatingCharacter(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2482,8 +2482,8 @@ class Character extends EntityWithStorage {
     }
     hasDatedCharacter(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2501,8 +2501,8 @@ class Character extends EntityWithStorage {
     }
     getNumberOfDates(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2514,8 +2514,8 @@ class Character extends EntityWithStorage {
     }
     removeDating(_character, _updateParent) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2530,8 +2530,8 @@ class Character extends EntityWithStorage {
     }
     removeDated(_character, _updateParent) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2757,8 +2757,8 @@ class Character extends EntityWithStorage {
      */
     anal(_entity) {
         if (!(_entity instanceof Character)) {
-            if (Game.hasCharacter(_entity))
-                _entity = Game.getCharacter(_entity);
+            if (Game.hasCharacterEntity(_entity))
+                _entity = Game.getCharacterEntity(_entity);
             else if (_entity instanceof InstancedEntity)
                 _entity = _entity;
             else if (Game.instancedEntities.has(_entity))
@@ -2786,8 +2786,8 @@ class Character extends EntityWithStorage {
     }
     charmed(_character, _cron = "4m") {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -2808,7 +2808,7 @@ class Character extends EntityWithStorage {
             this.items.splice(this.items.indexOf(_itemInstance), 1);
             Game.setTimedFunctionEvent(
                 `${this.id}Consume${_instancedEntity.parent.id}${Game.roll("1d4")}`,
-                `Game.getCharacter('${this.id}').removeCurrentAction('consume', _instancedEntity)`,
+                `Game.getCharacterEntity('${this.id}').removeCurrentAction('consume', _instancedEntity)`,
                 "2m",
                 true
             );
@@ -2834,8 +2834,8 @@ class Character extends EntityWithStorage {
      */
     fuck(_entity = undefined, _updateChild = true) {
         if (!(_entity instanceof Character)) {
-            if (Game.hasCharacter(_entity))
-                _entity = Game.getCharacter(_entity);
+            if (Game.hasCharacterEntity(_entity))
+                _entity = Game.getCharacterEntity(_entity);
             else
                 return undefined;
         }
@@ -2857,8 +2857,8 @@ class Character extends EntityWithStorage {
     }
     follow(_character, _preGeneratedPath = undefined, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character)
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character)
             else
                 return undefined;
         }
@@ -3054,8 +3054,8 @@ class Character extends EntityWithStorage {
      */
     oral(_entity) {
         if (!(_entity instanceof Character)) {
-            if (Game.hasCharacter(_entity))
-                _entity = Game.getCharacter(_entity);
+            if (Game.hasCharacterEntity(_entity))
+                _entity = Game.getCharacterEntity(_entity);
             else if (_entity instanceof InstancedEntity)
                 _entity = _entity;
             else if (Game.instancedEntities.has(_entity))
@@ -3162,8 +3162,8 @@ class Character extends EntityWithStorage {
      */
     vaginal(_entity) {
         if (!(_entity instanceof Character)) {
-            if (Game.hasCharacter(_entity))
-                _entity = Game.getCharacter(_entity);
+            if (Game.hasCharacterEntity(_entity))
+                _entity = Game.getCharacterEntity(_entity);
             else if (_entity instanceof InstancedEntity)
                 _entity = _entity;
             else if (Game.instancedEntities.has(_entity))
@@ -3205,8 +3205,8 @@ class Character extends EntityWithStorage {
 
     addSexRefusalCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3219,8 +3219,8 @@ class Character extends EntityWithStorage {
     }
     getSexRefusalCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -3808,8 +3808,8 @@ class Character extends EntityWithStorage {
      */
     incSexCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3828,8 +3828,8 @@ class Character extends EntityWithStorage {
      */
     addSexWith(_character, _updateParent = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3845,8 +3845,8 @@ class Character extends EntityWithStorage {
      */
     incVaginalReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3861,8 +3861,8 @@ class Character extends EntityWithStorage {
      */
     incVaginalGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3877,8 +3877,8 @@ class Character extends EntityWithStorage {
      */
     incAnalReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3893,8 +3893,8 @@ class Character extends EntityWithStorage {
      */
     incAnalGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3904,8 +3904,8 @@ class Character extends EntityWithStorage {
     }
     incCunnilingusReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3915,8 +3915,8 @@ class Character extends EntityWithStorage {
     }
     incCunnilingusGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3926,8 +3926,8 @@ class Character extends EntityWithStorage {
     }
     incAnalingusReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3937,8 +3937,8 @@ class Character extends EntityWithStorage {
     }
     incAnalingusGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3948,8 +3948,8 @@ class Character extends EntityWithStorage {
     }
     incFellatioReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3959,8 +3959,8 @@ class Character extends EntityWithStorage {
     }
     incFellatioGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3970,8 +3970,8 @@ class Character extends EntityWithStorage {
     }
     incHandjobReceiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -3981,8 +3981,8 @@ class Character extends EntityWithStorage {
     }
     incHandjobGiveCount(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4020,8 +4020,8 @@ class Character extends EntityWithStorage {
 
     addFollower(_character, _updateChild = false) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4033,8 +4033,8 @@ class Character extends EntityWithStorage {
     }
     removeFollower(_character, _updateChild = false) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4058,8 +4058,8 @@ class Character extends EntityWithStorage {
     }
     isFollowing(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return undefined;
         }
@@ -4071,8 +4071,8 @@ class Character extends EntityWithStorage {
 
     getSexCount(_character = undefined) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return 0;
         }
@@ -4081,8 +4081,8 @@ class Character extends EntityWithStorage {
 
     addFiance(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4100,8 +4100,8 @@ class Character extends EntityWithStorage {
     }
     removeFiance(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4122,8 +4122,8 @@ class Character extends EntityWithStorage {
     }
     addSpouse(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4144,8 +4144,8 @@ class Character extends EntityWithStorage {
     }
     removeSpouse(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4174,8 +4174,8 @@ class Character extends EntityWithStorage {
     addBiologicalParent(_character, _updateChild = true) {
         if (Game.enableDebug) console.log("Running addBiologicalParent");
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4205,8 +4205,8 @@ class Character extends EntityWithStorage {
     }
     addFosterParent(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4246,8 +4246,8 @@ class Character extends EntityWithStorage {
 
     addBiologicalChild(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4267,8 +4267,8 @@ class Character extends EntityWithStorage {
     }
     addFosterChild(_character, _updateChild = true) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4482,8 +4482,8 @@ class Character extends EntityWithStorage {
      */
     calculateBiologicalSiblingRelations(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return 0;
         }
@@ -4508,8 +4508,8 @@ class Character extends EntityWithStorage {
     }
     calculateBiologicalRelations(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return 0;
         }
@@ -4609,8 +4609,8 @@ class Character extends EntityWithStorage {
     }
     addNewCharacterDispositionFor(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return this;
         }
@@ -4753,8 +4753,8 @@ class Character extends EntityWithStorage {
 
     hadSexWith(_character) {
         if (!(_character instanceof Character)) {
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 return false;
         }
@@ -4762,7 +4762,7 @@ class Character extends EntityWithStorage {
     }
     calculateChanceToFuck(_character, _ignoreLustAndRut = false) {
         if (!(_character instanceof Character))
-            _character = Game.hasCharacter(_character) ? Game.getCharacter(_character) : undefined;
+            _character = Game.hasCharacterEntity(_character) ? Game.getCharacterEntity(_character) : undefined;
         if (typeof _character == 'undefined')
             return 0;
         if (!_character.characterDisposition.has(this))

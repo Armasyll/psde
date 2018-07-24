@@ -12,7 +12,7 @@ class CharacterController extends EntityController {
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
 
-        this.walkSpeed = 0.38 * this.avatar.scaling.z;
+        this.walkSpeed = 0.58 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 2;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.avatar.scaling.y * 4;

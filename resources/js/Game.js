@@ -702,7 +702,7 @@ class Game {
         _temp.id = _newID;
         Game.entities[_newID] = _temp;
         delete Game.entities[_currentID];
-        if (Game.hasCharacter(_currentID)) {
+        if (Game.hasCharacterEntity(_currentID)) {
             Game.characterEntities[_newID] = _temp;
             delete Game.characterEntities[_currentID];
         }
@@ -833,7 +833,7 @@ class Game {
             return false;
         }
     }
-    static getCharacter(_id) {
+    static getCharacterEntity(_id) {
         if (_id instanceof Character) {
             return _id;
         }
@@ -845,11 +845,11 @@ class Game {
         }
         return null;
     }
-    static hasCharacter(_id) {
+    static hasCharacterEntity(_id) {
         if (typeof _id == "string" && Game.characterEntities.hasOwnProperty(_id)) {
             return true;
         }
-        else if ((_id instanceof Character || _id instanceof CharacterController || _id instanceof BABYLON.Mesh) && Game.entities.hasOwnProperty(_id.id)) {
+        else if (_id instanceof Character) {
             return true;
         }
         else {

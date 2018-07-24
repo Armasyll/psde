@@ -67,7 +67,7 @@ class Client {
     		return undefined;
     	}
     }
-    static getCharacter(_id) {
+    static getCharacterController(_id) {
     	if (isInt(_id)) {
     		return Client.networkCharacterMap[_id];
     	}
@@ -77,7 +77,7 @@ class Client {
     }
     static deleteEntry(_character) {
         if (!(_character instanceof CharacterController)) {
-        	_character = Client.getCharacter(_character);
+        	_character = Client.getCharacterController(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
         }
         delete this.networkCharacterMap[_character.networkID];

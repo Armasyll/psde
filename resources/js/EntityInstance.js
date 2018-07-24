@@ -87,8 +87,8 @@ class InstancedEntity {
      */
     setOwner(_character) {
         if (!(_character instanceof Character)){
-            if (Game.hasCharacter(_character))
-                _character = Game.getCharacter(_character);
+            if (Game.hasCharacterEntity(_character))
+                _character = Game.getCharacterEntity(_character);
             else
                 _character = undefined;
         }
