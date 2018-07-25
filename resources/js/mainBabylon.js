@@ -237,6 +237,8 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "corner",               {x:10, y:0, z:-12}, {x:0, y:270, z:0});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-12}, {x:0, y:90, z:0});
 
+    Game.createDoor("ozzyapartmentdoor", "Ozzy's Apartment", undefined, "door", undefined, undefined, {x:4, y:0, z:-13}, {x:0, y:0, z:0});
+
     Game.addMesh(undefined, "frontWallLeftWall",    {x:0, y:0, z:-14});
     Game.addMesh(undefined, "wall",                 {x:2, y:0, z:-14});
     Game.addMesh(undefined, "frontWallLeftDoor",    {x:4, y:0, z:-14}, {x:0, y:90, z:0});
@@ -248,7 +250,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-16}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "doorway",              {x:4, y:0, z:-16}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "frontDoorLeftWall",    {x:6, y:0, z:-16}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "door",                 {x:6, y:0, z:-16}, {x:0, y:-90, z:0});
+    Game.createDoor("landlordapartmentdoor", "Landlord's Apartment", undefined, "door", undefined, undefined, {x:5, y:0, z:-16}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "wall",                 {x:8, y:0, z:-16}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "wall",                 {x:10, y:0, z:-16}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "wall",                 {x:12, y:0, z:-16}, {x:0, y:180, z:0});

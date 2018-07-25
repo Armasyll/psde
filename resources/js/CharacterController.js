@@ -5,7 +5,6 @@
 class CharacterController extends EntityController {
     constructor(_id, _avatar, _entity) {
         super (_id, _avatar, _entity);
-        this.avatar.controller = this;
 
         this.focus = undefined;
         this.targetController = null;
@@ -100,35 +99,6 @@ class CharacterController extends EntityController {
     }
     getTarget() {
         return this.targetController;
-    }
-    addTargetedBy(_controller, _updateChild = true) {
-        if (!(_controller instanceof EntityController)) {
-            return undefined;
-        }
-        this.targetedByControllers.add(_controller);
-        if (_updateChild) {
-            _controller.setTarget(this, false);
-        }
-    }
-    deleteTargetedBy(_controller, _updateChild = true) {
-        if (!(_controller instanceof EntityController)) {
-            return undefined;
-        }
-        this.targetedByControllers.delete(_controller);
-        if (_updateChild) {
-            _controller.deleteTarget(this, false);
-        }
-    }
-    clearTargetedBy() {
-        this.targetedByControllers.forEach(function(_controller) {
-            if (_controller.targetController == this) {
-                _controller.targetController.deleteTarget(false);
-            }
-        }, this);
-        this.targetedByControllers = null;
-    }
-    getTargetedBy() {
-        return this.targetedByControllers;
     }
 
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {

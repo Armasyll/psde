@@ -515,7 +515,7 @@ class GameGUI {
         this.setPlayerPortraitMana(_mana);
         this.setPlayerPortraitStamina(_stamina);
     }
-    static setTargetPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+    static setTargetPortrait(_image = undefined, _name = undefined, _life = "", _mana = "", _stamina = "") {
         if (_image instanceof CharacterController) {
             _name = _image.entity.getFullName();
             _life = _image.entity.getLife() + "/" + _image.entity.getLifeMax();

@@ -7,7 +7,11 @@ class EntityController {
         this.entity = _entity;
         this.networkID = null;
         this.skin = null;
+        this.avatar.controller = this;
         this.avatar.isPickable = true;
+
+        this.targetController = null;
+        this.targetedByControllers = new Set();
 
         Game.entityControllers[this.id] = this;
     }
@@ -88,6 +92,35 @@ class EntityController {
     }
     getAvatarSkin() {
         return this.skin;
+    }
+    addTargetedBy(_controller, _updateChild = true) {
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.targetedByControllers.add(_controller);
+        if (_updateChild) {
+            _controller.setTarget(this, false);
+        }
+    }
+    deleteTargetedBy(_controller, _updateChild = true) {
+        if (!(_controller instanceof EntityController)) {
+            return undefined;
+        }
+        this.targetedByControllers.delete(_controller);
+        if (_updateChild) {
+            _controller.deleteTarget(this, false);
+        }
+    }
+    clearTargetedBy() {
+        this.targetedByControllers.forEach(function(_controller) {
+            if (_controller.targetController == this) {
+                _controller.targetController.deleteTarget(false);
+            }
+        }, this);
+        this.targetedByControllers = null;
+    }
+    getTargetedBy() {
+        return this.targetedByControllers;
     }
     dispose() {
         delete Game.entityControllers[this.id];

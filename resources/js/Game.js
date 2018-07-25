@@ -441,7 +441,6 @@ class Game {
 
         var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
         Game.furnitureMeshInstances[_id] = _instance;
-        Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -503,12 +502,13 @@ class Game {
             }
             _n.id = _id;
             _n.name = _mesh.name;
-            _n.position = new BABYLON.Vector3(_position.x, _position.y, _position.z);
+            _n.position.copyFrom(_position);
             _n.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
-            _n.scaling = new BABYLON.Vector3(_scale.x, _scale.y, _scale.z);
+            _n.scaling.copyFrom(_scale);
             //_n.freezeWorldMatrix();
             _n.collisionMesh = undefined;
             _n.isPickable = false;
+            this.entityMeshInstances[_n.id] = _n;
             return _n;
         }
         else {
@@ -519,17 +519,25 @@ class Game {
         if (_mesh == undefined || _mesh == null) {
             return undefined;
         }
-        else if (_mesh.hasOwnProperty("controller") && _mesh.controller instanceof CharacterController) {
+        else if (typeof _mesh == "string") {
+            if (this.entityMeshes.hasOwnProperty(_mesh)) {
+                return this.entityMeshes[_mesh];
+            }
+            else if (this.entityMeshInstances.hasOwnProperty(_mesh)) {
+                return this.entityMeshInstances[_mesh];
+            }
+            else {
+                return undefined;
+            }
+        }
+        else if (_mesh.hasOwnProperty("controller") && _mesh.controller instanceof EntityController) {
             return _mesh;
         }
-        else if (_mesh instanceof CharacterController) {
+        else if (_mesh instanceof EntityController) {
             return _mesh.avatar;
         }
         else if (_mesh instanceof BABYLON.InstancedMesh || _mesh instanceof BABYLON.Mesh) {
             return _mesh;
-        }
-        else if (Game.scene.getMeshByID(_mesh) instanceof BABYLON.Mesh || Game.scene.getMeshByID(_mesh) instanceof BABYLON.InstancedMesh) {
-            return Game.scene.getMeshByID(_mesh);
         }
         else {
             return undefined;
@@ -598,14 +606,24 @@ class Game {
         }
     }
     static filterVector(..._vector) {
-        if (_vector[0] instanceof BABYLON.Vector3)
-            return _vector[0];
-        else if (_vector[0] instanceof Array && _vector[0].length == 3)
-            return new BABYLON.Vector3(_vector[0][0], _vector[0][1], _vector[0][2]);
-        else if (_vector.hasOwnProperty("x") && _vector.hasOwnProperty("y") && _vector.hasOwnProperty("z"))
-            return new BABYLON.Vector3(_vector.x, _vector.y, _vector.z);
-        else
+        if (_vector == undefined || _vector[0] == undefined) {
             return BABYLON.Vector3.Zero();
+        }
+        else if (_vector[0] instanceof BABYLON.Vector3) {
+            return _vector[0];
+        }
+        else if (typeof _vector[0] == "object" && _vector[0].hasOwnProperty("x") && _vector[0].hasOwnProperty("y") && _vector[0].hasOwnProperty("z") && !isNaN(_vector[0].x) && !isNaN(_vector[0].y) && !isNaN(_vector[0].z)) {
+            return new BABYLON.Vector3(_vector[0].x, _vector[0].y, _vector[0].z);
+        }
+        else if (!isNaN(_vector[0]) && !isNaN(_vector[1]) && !isNaN(_vector[2])) {
+            return new BABYLON.Vector3(_vector[0], _vector[1], _vector[2]);
+        }
+        else if (_vector[0] instanceof Array && _vector[0].length == 3) {
+            return new BABYLON.Vector3(_vector[0][0], _vector[0][1], _vector[0][2]);
+        }
+        else {
+            return BABYLON.Vector3.Zero();
+        }
     }
     static contextMenu(_mesh) {
         if (Game.debugEnabled) console.log("Running contextMenu");
@@ -856,43 +874,42 @@ class Game {
             return false;
         }
     }
-    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
         if (typeof _id != "string") {_id = genUUIDv4()};
         _id = _id.toLowerCase();
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
         _mesh = Game.getMesh(_mesh);
         if (_mesh == undefined) {
-            var _meshID = undefined;
             switch (_entity.species) {
                 case "fox" : {
                     if (_entity.getSex() == Game.MALE) {
-                        _meshID = "foxM";
+                        _mesh = "foxM";
                     }
                     else {
-                        _meshID = "foxF";
+                        _mesh = "foxF";
                     }
                     break;
                 }
                 case "skeleton" : {
                     if (_entity.getSex() == Game.MALE) {
-                        _meshID = "foxSkeletonN";
+                        _mesh = "foxSkeletonN";
                     }
                     else {
-                        _meshID = "foxSkeletonN";
+                        _mesh = "foxSkeletonN";
                     }
                     break;
                 }
                 default : {
                     if (_entity.getSex() == Game.MALE) {
-                        _meshID = "foxM";
+                        _mesh = "foxM";
                     }
                     else {
-                        _meshID = "foxF";
+                        _mesh = "foxF";
                     }
                     break;
                 }
             }
-            _mesh = Game.addCharacterMesh(_id, _meshID, _options, _position, _rotation, _scale);
+            _mesh = Game.addCharacterMesh(_id, _mesh, _options, _position, _rotation, _scale);
         }
         else {
             _mesh = Game.addCharacterMesh(_id, _mesh.id, _options, _position, _rotation, _scale);
@@ -921,24 +938,30 @@ class Game {
         delete Game.entityMeshInstances[_id];
         delete Game.characterMeshInstances[_id];
     }
-    static createDoor(_id, _name = "Door", _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
         if (typeof _id != "string") {_id = genUUIDv4()};
+        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
         _id = _id.toLowerCase();
         var _entity = new Entity(_id, _name);
-        if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
-            _meshID = _mesh.name;
-        }
-        else if (Game.furnitureMeshes.has(_mesh)) {
-            _meshID = _mesh;
+        if (Game.furnitureMeshes.hasOwnProperty(_mesh)) {}
+        else if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
+            _mesh = _mesh.name;
         }
         else {
-            _meshID = "door";
+            _mesh = "door";
         }
-        _mesh = Game.addFurnitureMesh(_id, _meshID, _options, _position, _rotation, _scale);
-        _controller = new EntityController(_id, _mesh, _entity);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale);
+        var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
+        var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
+        var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
+        _mesh.position = _mesh.position.add({x:_xPos, y:0, z:-_yPos});
+        var _controller = new EntityController(_id, _mesh, _entity);
         if (_skin != undefined) {
-
+            _controller.setAvatarSkin(_skin);
         }
+        _entity.setController(_controller);
+        _entity.setAvatar(_mesh);
+        return _controller;
     }
     static deleteDoor(_controller) {
         if (!(_door instanceof EntityController)) {
@@ -953,7 +976,16 @@ class Game {
         delete Game.entityMeshInstances[_id];
         delete Game.furnitureMeshInstances[_id];
     }
+    static createItem() {
+
+    }
+    static deleteItem() {
+
+    }
     static highlightMesh(_mesh) {
+        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+            return;
+        }
         if (!this.highlightEnabled || this.highlightLayer.hasMesh(_mesh)) {
             return;
         }
