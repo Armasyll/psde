@@ -46,6 +46,9 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game.entityControllers[_character] instanceof CharacterController) {
                 Game.entityControllers[_character].moveAV();
             }
+            if (_character.propertiesChanged) {
+                _character.updateProperties();
+            }
         }
     });
     Game.scene.registerAfterRender(function() {
@@ -54,7 +57,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 Game._assignBoundingBoxCollisionToMesh(_mesh);
             });
         }
-        if (_rbrCount >= 20) {
+        if (_rbrCount >= 10) {
             Game.castRayTarget();
             _rbrCount = 0;
         }
@@ -300,5 +303,5 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-28});
 
     Game.createCharacter("rosie", "Rosie", 14, "f", "fox", undefined, undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
-    Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxF", "foxCorsac.png", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
+    Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxF", "foxCorsac", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
 }

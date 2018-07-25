@@ -49,6 +49,9 @@ class Game {
         this.characterEntities = {};
         this.itemEntities = {};
 
+        this.instancedEntities = {};
+        this.instancedItemEntities = {};
+
         this._loadedFurniture = false;
         this._loadedSurfaces = false;
         this._loadedCharacters = false;
@@ -67,27 +70,26 @@ class Game {
 
         this.highlightEnabled = true;
         this.highlightLayer = new BABYLON.HighlightLayer("hl1", this.scene);
+        this.highlightLayer.outerGlow = true;
         this.highlightLayer.innerGlow = false;
         this.highlightedMesh = undefined;
         this.highlightedColorEnemy = "red";
         this.highlightedColorFriend = "green";
         this.highlightedColorNeutral = "white";
 
-        this.kSkins = new Set(["foxRed.svg","foxRed.png","foxCorsac.svg","foxCorsac.png"]);
-
         this.MALE = 0, this.FEMALE = 1;
-        this.kSpeciesTypes = new Set(["fox","skeleton"]);
-        this.kBodyPartTypes = new Set(["ankles","anus","arms","back","breasts","chest","clitoris","feet","fingers","groin","hands","head","knot","leftAnkle","leftArm","leftEar","leftEye","leftFoot","leftHand","leftLeg","leftNipple","leftShoulder","legs","lips","mouth","neck","nose","penis","rear","rightAnkle","rightArm","rightEar","rightEye","rightFoot","rightHand","rightLeg","rightNipple","rightShoulder","shoulders","shoulders","stomach","testicles","toes","tongue","vagina","waist","wrists"]);
-        this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","collar","neckwear","shirt","jacket","belt","gloves","underwear","pants","socks","shoes","bra"]);
-        this.kHandTypes = new Set(["fur","pad","hoof","clovenhoof","skin"]);
+        this.kSpeciesTypes = {fox:"fox", skeleton:"foxSkeleton"};
+        this.kItemSkins = {bookHardcoverClosed01:"/resources/data/bookHardcoverClosed01.png"};
+        this.kCharacterSkins = {foxRed:"/resources/data/foxRed.svg", foxCorsac:"/resources/data/foxCorsac.svg"};
+        this.kSkins = Object.assign({}, this.kItemSkins, this.kCharacterSkins);
+        this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
         this.kFeetTypes = this.kHandTypes;
         this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
         this.kPeltTypes = new Set(["skin","fur","wool","hair"]);
-        this.kLocationTypes = new Set(["general","city","house","apartment","bank","park","store"]);
-        this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement","extBuilding","street","walkway","lot"]);
-        this.kFurnitureTypes = new Set(["chair","recliner","loveseat","couch","bed","table","desk","shelf","cupboard","cabinet","bureau","hook","tv","fridge","oven","microwave","toaster","tub","shower","sink","toilet","mirror","brokenMirror","basket","altar","sculpture"]);
+        this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
+        this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
-        this.kInteractionTypes = new Set(["attack","charmed","bite","boop","cast","channel","choke","consume","cut","disrobe","fist","follow","give","grope","hold","hug","kiss","lick","look","massage","masturbate","open","oral","pinch","poke","pray","pull","punch","push","put","rape","release","remove","rub","sex","sit","slap","steal","stroke","suck","take","talk","thrust","touch","use","wear"]);
+        this.kInteractionTypes = new Set(["consume","disrobe","hold","look","put","release","take","touch","use","wear"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
@@ -419,13 +421,10 @@ class Game {
         _mesh.collisionMesh.material = Game._collisionMaterial;
         _mesh.collisionMesh.checkCollisions = true;
     }
-    static addItemMesh(_id = undefined, _meshID, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
+    static addItemMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
-
-        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
-        if (typeof _id != "string") _id = genUUIDv4();
-
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
+        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale, _highlightFix);
+        if (_instance == null) {return null;}
         Game.itemMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
@@ -433,14 +432,12 @@ class Game {
         }
         return _instance;
     }
-    static addFurnitureMesh(_id = undefined, _meshID, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
+    static addFurnitureMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
-
-        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) return null;
-        if (typeof _id != "string") _id = genUUIDv4();
-
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
+        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale, _highlightFix);
+        if (_instance == null) {return null;}
         Game.furnitureMeshInstances[_id] = _instance;
+        Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -449,15 +446,11 @@ class Game {
         }
         return _instance;
     }
-    static addCharacterMesh(_id = undefined, _meshID, _options = {mass:0.8,restitution:0.1}, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
-        if (Game.debugEnabled) console.log("Running addCharacterMesh (" + _id + ")");
-
-        _meshID = this.filterID(_meshID); if (_meshID == null || !(Game.scene.getMeshByID(_meshID) instanceof BABYLON.Mesh)) _meshID = "foxSkeletonN";
-        if (typeof _id != "string") _id = genUUIDv4();
-        if (typeof _options != "object") _options = {mass:0.8,restitution:0.1};
-
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale); if (_instance == null) {return null;}
-        _instance.setEnabled(true);
+    static addCharacterMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+        if (Game.debugEnabled) console.log("Running addCharacterMesh");
+        if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
+        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale);
+        if (_instance == null) {return null;}
         Game.characterMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
         if (this.physicsEnabled) {
@@ -479,16 +472,31 @@ class Game {
         }
         _mesh.dispose();
     }
-    static addMesh(_id = undefined, _mesh, _position = {x:0, y:-4095, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
+    static addMesh(_id = undefined, _mesh = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addMesh");
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = this.filterID(_id);
         if (_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) {
             _mesh.setEnabled(false);
             _mesh.position.y = -4096;
         }
         else {
-            _mesh = Game.scene.getMeshByID(_mesh);
+            _mesh = this.getMesh(_mesh);
+            if (_mesh == undefined) {
+                return;
+            }
         }
-        if (typeof _id != "string") _id = genUUIDv4();
+        if (_position == undefined) {
+            _position = new BABLON.Vector3(0, -4095, 0)
+        }
+        else {
+            _position = this.filterVector(_position);
+        }
+        _rotation = this.filterVector(_rotation);
+        _scaling = this.filterVector(_scaling);
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
         if (_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) {
             var _n = undefined;
             if (_mesh.skeleton instanceof BABYLON.Skeleton) {
@@ -497,14 +505,18 @@ class Game {
                 _n.material.unfreeze();
             }
             else {
-                _n = _mesh.createInstance(_id);
+                if (_highlightFix) {
+                    _n = _mesh.clone(_id);
+                }
+                else {
+                    _n = _mesh.createInstance(_id);
+                }
                 _n.material.freeze();
             }
-            _n.id = _id;
             _n.name = _mesh.name;
             _n.position.copyFrom(_position);
             _n.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
-            _n.scaling.copyFrom(_scale);
+            _n.scaling.copyFrom(_scaling);
             //_n.freezeWorldMatrix();
             _n.collisionMesh = undefined;
             _n.isPickable = false;
@@ -602,7 +614,7 @@ class Game {
             return _id;
         }
         else if (typeof _id == "string") {
-            return _id.replace(/[^a-zA-Z0-9_\-]/g,"");
+            return _id.replace(/[^a-zA-Z0-9_\-]/g,"").toLowerCase();
         }
     }
     static filterVector(..._vector) {
@@ -874,9 +886,10 @@ class Game {
             return false;
         }
     }
-    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
-        if (typeof _id != "string") {_id = genUUIDv4()};
-        _id = _id.toLowerCase();
+    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = this.filterID(_id);
+        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
         var _entity = new Character(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
         _mesh = Game.getMesh(_mesh);
         if (_mesh == undefined) {
@@ -916,11 +929,25 @@ class Game {
         }
         var _controller = new CharacterController(_id, _mesh, _entity);
         if (_skin != undefined) {
+            if (this.kCharacterSkins.hasOwnProperty(_skin)) {
+                _skin = this.kCharacterSkins[_skin];
+            }
             _controller.setAvatarSkin(_skin);
         }
         _entity.setController(_controller);
-        _entity.setAvatar(_mesh);
+        _entity.setAvatar(_mesh.name);
         return _controller;
+    }
+    static createCharacterFromEntity(_entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+        if (!(_entity instanceof CharacterEntity)) {
+            _entity = this.getCharacterEntity(_entity);
+            if (!(_entity instanceof CharacterEntity)) {
+                return;
+            }
+        }
+        var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getAvatarID(), _options, _position, _rotation, _scale);
+        var _controller = new CharacterController(_entity.getID(), _mesh, _entity);
+        
     }
     static deleteCharacter(_controller) {
         if (!(_controller instanceof CharacterController)) {
@@ -939,9 +966,9 @@ class Game {
         delete Game.characterMeshInstances[_id];
     }
     static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
-        if (typeof _id != "string") {_id = genUUIDv4()};
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
-        _id = _id.toLowerCase();
         var _entity = new Entity(_id, _name);
         if (Game.furnitureMeshes.hasOwnProperty(_mesh)) {}
         else if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
@@ -950,7 +977,7 @@ class Game {
         else {
             _mesh = "door";
         }
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
         var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
         var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
@@ -960,7 +987,7 @@ class Game {
             _controller.setAvatarSkin(_skin);
         }
         _entity.setController(_controller);
-        _entity.setAvatar(_mesh);
+        _entity.setAvatar(_mesh.name);
         return _controller;
     }
     static deleteDoor(_controller) {
@@ -976,7 +1003,21 @@ class Game {
         delete Game.entityMeshInstances[_id];
         delete Game.furnitureMeshInstances[_id];
     }
-    static createItem() {
+    static createProtoItem(_id = undefined, _name = undefined, _description = "", _type = "book", _mesh = undefined, _skin = undefined, _options = undefined) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = this.filterID(_id);
+        var _entity = new ItemEntity(_id, _name, _description);
+        _mesh = this.getMesh(_mesh);
+        if (_mesh != undefined) {
+            _mesh = _mesh.name;
+        }
+        _entity.setAvatar(_mesh);
+        _entity.setSkin(_skin);
+    }
+    static deleteProtoItem() {
+
+    }
+    static createItem(_id, _protoItem) {
 
     }
     static deleteItem() {
@@ -992,6 +1033,18 @@ class Game {
         if (this.highlightedMesh != undefined) {
             this.highlightLayer.removeMesh(this.highlightedMesh);
         }
+        var _color = BABYLON.Color3.Gray();
+        if (_mesh.controller instanceof CharacterController) {
+            _color = BABYLON.Color3.White();
+        }
+        else if (_mesh.controller.getEntity() instanceof InstancedItemEntity) {
+            if (_mesh.controller.getEntity().getOwner() != this.player.getEntity()) {
+                _color = BABYLON.Color3.Red();
+            }
+            else {
+                _color = BABYLON.Color3.White();
+            }
+        }
         this.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
         this.highlightedMesh = _mesh;
     }
@@ -1000,9 +1053,6 @@ class Game {
             return;
         }
         this.highlightLayer.removeMesh(this.highlightedMesh);
-    }
-    static hasSkin(_string) {
-        return this.kSkins.has(_string);
     }
     static setPlayerTarget(_controller) {
         this.highlightMesh(_controller.avatar);

@@ -3479,7 +3479,7 @@ class Character extends EntityWithStorage {
         return this;
     }
     setSpecies(_species) {
-        if (Game.kSpeciesTypes.has(_species))
+        if (Game.kSpeciesTypes.hasOwnProperty(_species))
             this.species = _species;
         else
             this.species = "fox";
@@ -3579,8 +3579,8 @@ class Character extends EntityWithStorage {
             
             this.bodySize = 0.5;
             this.predator = false;
-            this.setFeet("clovenhoof");
-            this.setHand("clovenhoof");
+            this.setFeet("hoof");
+            this.setHand("hoof");
             this.setEyes("rectangle");
             this.setFur("wool");
         }
@@ -3613,8 +3613,8 @@ class Character extends EntityWithStorage {
             
             this.bodySize = 0.65;
             this.predator = false;
-            this.setFeet("clovenhoof");
-            this.setHand("clovenhoof");
+            this.setFeet("hoof");
+            this.setHand("hoof");
             this.setEyes("circle");
             this.setFur("wool");
         }
@@ -3699,8 +3699,8 @@ class Character extends EntityWithStorage {
             
             this.bodySize = 0.65;
             this.predator = false;
-            this.setFeet("clovenhoof");
-            this.setHand("clovenhoof");
+            this.setFeet("hoof");
+            this.setHand("hoof");
             this.setEyes("rectangle");
             this.setFur("hair");
         }
@@ -3716,8 +3716,8 @@ class Character extends EntityWithStorage {
             
             this.bodySize = 0.6;
             this.predator = false;
-            this.setFeet("clovenhoof");
-            this.setHand("clovenhoof");
+            this.setFeet("hoof");
+            this.setHand("hoof");
             this.setEyes("circle");
             this.setFur("skin");
         }
@@ -4589,7 +4589,7 @@ class Character extends EntityWithStorage {
     }
 
     addPreferredSpecies(_species) {
-        if (Game.kSpeciesTypes.has(_species)) {
+        if (Game.kSpeciesTypes.hasOwnProperty(_species)) {
             _species = _species;
             this.prefersSpecies.add(_species);
         }
@@ -4597,7 +4597,7 @@ class Character extends EntityWithStorage {
     }
 
     addAvoidedSpecies(_species) {
-        if (Game.kSpeciesTypes.has(_species)) {
+        if (Game.kSpeciesTypes.hasOwnProperty(_species)) {
             _species = _species;
             this.avoidsSpecies.add(_species);
         }

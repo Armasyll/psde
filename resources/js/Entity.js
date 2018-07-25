@@ -40,11 +40,6 @@ class Entity {
          */
         this.image = _image;
         /**
-         * Entity's mesh
-         * @type {BABYLON.Mesh}
-         */
-        this.avatar = undefined;
-        /**
          * Entity's controller
          * @type {CharacterController}
          */
@@ -127,11 +122,30 @@ class Entity {
     getImage() {
         return this.image;
     }
-    setAvatar(_mesh) {
-
+    setAvatarID(_avatar) {
+        _avatar = Game.getMesh(_avatar);
+        if (_avatar != undefined) {
+            this.avatarID = _avatar;
+        }
+    }
+    getAvatarID() {
+        return this.avatarID;
+    }
+    setAvatar(_avatar) {
+        return this.setAvatarID(_avatar);
     }
     getAvatar() {
-        return this.avatar;
+        if (this.controller instanceof EntityController && this.controller.getAvatar())
+        return Game.getMesh(this.avatarID);
+    }
+    setAvatarSkin(_skin) {
+
+    }
+    getAvatarSkin() {
+
+    }
+    clearAvatarSkin() {
+        this.avatarSkin = undefined;
     }
     setController(_controller) {
         if (!(_controller instanceof EntityController)) {
@@ -146,6 +160,10 @@ class Entity {
     }
     getController() {
         return this.controller;
+    }
+    clearController() {
+        this.controller.dispose();
+        this.controller = undefined;
     }
 
     /**
