@@ -983,7 +983,7 @@ class Game {
 
     }
     static highlightMesh(_mesh) {
-        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+        if (!(_mesh instanceof BABYLON.Mesh)) {
             return;
         }
         if (!this.highlightEnabled || this.highlightLayer.hasMesh(_mesh)) {
@@ -996,6 +996,9 @@ class Game {
         this.highlightedMesh = _mesh;
     }
     static clearHightlightMesh() {
+        if (!(this.highlightedMesh instanceof BABYLON.Mesh)) {
+            return;
+        }
         this.highlightLayer.removeMesh(this.highlightedMesh);
     }
     static hasSkin(_string) {
