@@ -28,12 +28,14 @@ class Game {
 
         this._assignBoundingBoxCollisionQueue = new Set();
 
+        // Original meshes
         this.entityMeshes = {};
         this.surfaceMeshes = {};
         this.furnitureMeshes = {};
         this.characterMeshes = {};
         this.itemMeshes = {};
 
+        // Instances and copies of original meshes
         this.entityMeshInstances = {};
         this.furnitureMeshInstances = {};
         this.characterMeshInstances = {};
@@ -414,7 +416,7 @@ class Game {
         if (Game.debugEnabled) console.log("Running _assignBoundingBoxCollisionToMesh");
         this._assignBoundingBoxCollisionQueue.delete(_mesh);
         var _boundingBox = _mesh.getBoundingInfo().boundingBox;
-        _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox("collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
+        _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
         _mesh.collisionMesh.position = _boundingBox.centerWorld;
         _mesh.collisionMesh.rotation = _mesh.rotation;
         _mesh.collisionMesh.scaling = _mesh.scaling;
@@ -467,9 +469,24 @@ class Game {
     }
     static removeMesh(_mesh) {
         if (Game.debugEnabled) console.log("Running removeMesh");
+        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+            _mesh = Game.getMesh(_mesh);
+            if (!(_mesh instanceof CharacterController)) {return undefined;}
+        }
+        // Don't delete the original meshes
+        if (this.entityMeshes[_mesh.name] == _mesh) {
+            return;
+        }
         if (_mesh.collisionMesh != undefined) {
             _mesh.collisionMesh.dispose();
         }
+        if (_mesh.material instanceof BABYLON.Material) {
+            _mesh.material.dispose();
+        }
+        delete Game.entityMeshInstances[_mesh.id];
+        delete Game.furnitureMeshInstances[_mesh.id];
+        delete Game.characterMeshInstances[_mesh.id];
+        delete Game.itemMeshInstances[_mesh.id];
         _mesh.dispose();
     }
     static addMesh(_id = undefined, _mesh = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _highlightFix = false) {
@@ -501,7 +518,7 @@ class Game {
             var _n = undefined;
             if (_mesh.skeleton instanceof BABYLON.Skeleton) {
                 _n = _mesh.clone(_id);
-                _n.skeleton = _mesh.skeleton.clone(_id + "Skeleton");
+                _n.skeleton = _mesh.skeleton.clone(_id);
                 _n.material.unfreeze();
             }
             else {
@@ -513,6 +530,7 @@ class Game {
                 }
                 _n.material.freeze();
             }
+            _n.id = _id;
             _n.name = _mesh.name;
             _n.position.copyFrom(_position);
             _n.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
@@ -528,7 +546,7 @@ class Game {
         }
     }
     static getMesh(_mesh) {
-        if (_mesh == undefined || _mesh == null) {
+        if (_mesh == undefined) {
             return undefined;
         }
         else if (typeof _mesh == "string") {
@@ -542,8 +560,30 @@ class Game {
                 return undefined;
             }
         }
-        else if (_mesh.hasOwnProperty("controller") && _mesh.controller instanceof EntityController) {
+        else if (_mesh instanceof EntityController) {
+            return _mesh.avatar;
+        }
+        else if (_mesh instanceof BABYLON.InstancedMesh || _mesh instanceof BABYLON.Mesh) {
             return _mesh;
+        }
+        else {
+            return undefined;
+        }
+    }
+    static getCharacterMesh(_mesh) {
+        if (_mesh == undefined) {
+            return undefined;
+        }
+        else if (typeof _mesh == "string") {
+            if (this.characterMeshes.hasOwnProperty(_mesh)) {
+                return this.characterMeshes[_mesh];
+            }
+            else if (this.characterMeshInstances.hasOwnProperty(_mesh)) {
+                return this.characterMeshInstances[_mesh];
+            }
+            else {
+                return undefined;
+            }
         }
         else if (_mesh instanceof EntityController) {
             return _mesh.avatar;
@@ -947,9 +987,12 @@ class Game {
         }
         var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getAvatarID(), _options, _position, _rotation, _scale);
         var _controller = new CharacterController(_entity.getID(), _mesh, _entity);
-        
+        _controller.setAvatarSkin(_entity.getAvatarSkin());
+        _entity.setController(_controller);
+        _entity.setAvatar(_mesh.name);
+        return _controller;
     }
-    static deleteCharacter(_controller) {
+    static removeCharacter(_controller) {
         if (!(_controller instanceof CharacterController)) {
             _controller = Game.getCharacterController(_controller);
             if (!(_controller instanceof CharacterController)) {return undefined;}
@@ -958,9 +1001,10 @@ class Game {
             return false;
         }
         var _id = _controller.id;
-        var _mesh = _controller.avatar;
+        var _mesh = _controller.getAvatar();
         _controller.entity.dispose();
         _controller.dispose();
+        _mesh.material.dispose();
         _mesh.dispose();
         delete Game.entityMeshInstances[_id];
         delete Game.characterMeshInstances[_id];
@@ -990,7 +1034,7 @@ class Game {
         _entity.setAvatar(_mesh.name);
         return _controller;
     }
-    static deleteDoor(_controller) {
+    static removeDoor(_controller) {
         if (!(_door instanceof EntityController)) {
             _door = Game.getEntityController(_door);
             if (!(_door instanceof EntityController)) {return undefined;}
@@ -1014,20 +1058,20 @@ class Game {
         _entity.setAvatar(_mesh);
         _entity.setSkin(_skin);
     }
-    static deleteProtoItem() {
+    static removeProtoItem() {
 
     }
     static createItem(_id, _protoItem) {
 
     }
-    static deleteItem() {
+    static removeItem() {
 
     }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh)) {
             return;
         }
-        if (!this.highlightEnabled || this.highlightLayer.hasMesh(_mesh)) {
+        if (!this.highlightEnabled || this.highlightedMesh == _mesh) {
             return;
         }
         if (this.highlightedMesh != undefined) {

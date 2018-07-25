@@ -73,8 +73,8 @@ class MessageRouter {
 					return undefined;
 				}
 				else {
-					Client.deleteEntry(_data.content);
-					Game.deleteCharacter(_data.content);
+					Client.removeEntry(_data.content);
+					Game.removeCharacter(_data.content);
 				}
 				break;
 			}

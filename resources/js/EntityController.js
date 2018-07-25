@@ -102,6 +102,10 @@ class EntityController {
     getAvatarSkin() {
         return this.skin;
     }
+    removeAvatar() {
+        this.avatarSkin = undefined;
+        this.avatar = undefined;
+    }
     addTargetedBy(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
             return undefined;
@@ -111,7 +115,7 @@ class EntityController {
             _controller.setTarget(this, false);
         }
     }
-    deleteTargetedBy(_controller, _updateChild = true) {
+    removeTargetedBy(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
             return undefined;
         }
@@ -132,7 +136,7 @@ class EntityController {
         return this.targetedByControllers;
     }
     updateProperties() {
-        if (this.entity instanceof Entity && (this.avatar instanceof BABYLON.Mesh || this.getAvatar() instanceof BABYLON.InstancedMesh)) {
+        if (this.entity instanceof Entity && (this.avatar instanceof BABYLON.Mesh || this.avatar instanceof BABYLON.InstancedMesh)) {
             this.entity.setAvatarID(this.avatar);
             this.entity.setAvatarSkin(this.avatarSkin);
             this.entity.setAvatarScaling(this.avatar.scaling);

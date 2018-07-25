@@ -88,14 +88,14 @@ class CharacterController extends EntityController {
             _controller.addTargetedBy(this, false);
         }
     }
-    deleteTarget(_updateChild = true) {
+    removeTarget(_updateChild = true) {
         if (_updateChild) {
-            this.targetController.deleteTargetedBy(this, false);
+            this.targetController.removeTargetedBy(this, false);
         }
         this.targetController = null;
     }
     clearTarget(_updateChild = true) {
-        this.deleteTarget();
+        this.removeTarget();
     }
     getTarget() {
         return this.targetController;

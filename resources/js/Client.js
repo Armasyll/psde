@@ -15,7 +15,7 @@ class Client {
 	}
 	static disconnect(_updateChild = true) {
         var _timestamp = new Date().toLocaleTimeString({ hour12: false });
-        this.deleteAllPlayers();
+        this.removeAllPlayers();
         this.setOnline(false);
         GameGUI.chatOutputAppend(`${_timestamp} Server: Connection Closed.`);
         if (_updateChild) {
@@ -40,7 +40,7 @@ class Client {
         	if (!(_character instanceof CharacterController)) {return undefined;}
         }
 
-        this.deleteEntry(_character);
+        this.removeEntry(_character);
         
         this.networkCharacterMap[_networkID] = _character;
         _character.setNetworkID(_networkID);
@@ -75,7 +75,7 @@ class Client {
     		return Game.getCharacterController(_id);
     	}
     }
-    static deleteEntry(_character) {
+    static removeEntry(_character) {
         if (!(_character instanceof CharacterController)) {
         	_character = Client.getCharacterController(_character);
         	if (!(_character instanceof CharacterController)) {return undefined;}
@@ -203,11 +203,11 @@ class Client {
             content: ""
         });
     }
-    static deleteAllPlayers() {
+    static removeAllPlayers() {
         for (var _networkID in this.networkCharacterMap) {
             if (_networkID != Game.player.networkID) {
-                Client.deleteEntry(_data.content);
-                Game.deleteCharacter(_data.content);
+                Client.removeEntry(_data.content);
+                Game.removeCharacter(_data.content);
             }
         }
     }
