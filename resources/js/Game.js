@@ -646,7 +646,7 @@ class Game {
         if (Game.debugEnabled) console.log("Running loadMeshes");
         Game.furnitureMeshes = Game.importMeshes("furniture.babylon", undefined, function(){Game._loadedFurniture = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.furnitureMeshes);});
         Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon", undefined, function(){Game._loadedSurfaces = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.surfaceMeshes);});
-        Game.characterMeshes = Game.importMeshes("fox.babylon", undefined, function(){Game._loadedCharacters = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.characterMeshes);});
+        Game.characterMeshes = Game.importMeshes("characters.babylon", undefined, function(){Game._loadedCharacters = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.characterMeshes);});
         Game.itemMeshes = Game.importMeshes("items.babylon", undefined, function(){Game._loadedItems = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.itemMeshes);});
         return true;
     }
