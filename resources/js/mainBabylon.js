@@ -277,7 +277,8 @@ function generateApartmentScene() {
     Game.addItemMesh("crossInstance01", "cross", undefined, {x:10, y:0.6, z:-22});
     Game.addItemMesh("planeInstance01", "plate", undefined, {x:9.7, y:0.6, z:-21.5});
     Game.addItemMesh("plateInstance02", "plate", undefined, {x:10.3, y:0.6, z:-23});
-    Game.addItemMesh("packstreet23StrangeNewDay", "bookHardcoverClosed01", undefined, {x:10.3, y:0.8, z:-21}, {x:0, y:180, z:0});
+
+    Game.createItem(undefined, Game.createProtoItem("packstreet23StrangeNewDay", "Pack Street Chapter 23", "", "book", "bookHardcoverClosed01"), undefined, {x:10.3, y:0.8, z:-21}, {x:0, y:180, z:0});
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-24}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "corner",               {x:4, y:0, z:-24}, {x:0, y:180, z:0});

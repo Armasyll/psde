@@ -12,9 +12,12 @@ class ItemEntity extends Entity {
             _plural = false;
         this.plural = _plural;
 
-        this.mass = _defaultWeight;
-        this.price = _defaultPrice;
-        this.durability = _defaultDurability;
+        this.mass = 0.001;
+        this.setMass(_defaultWeight);
+        this.price = 0;
+        this.setPrice(_defaultPrice);
+        this.durability = 1;
+        this.setDurability(_defaultDurability);
 
         Game.itemEntities[this.id] = this;
 	}
@@ -28,7 +31,7 @@ class ItemEntity extends Entity {
 		return this.mass;
 	}
 	setPrice(_int) {
-		if (isNaN(_float)) {
+		if (isNaN(_int)) {
 			return;
 		}
 		this.price = _int;
@@ -37,7 +40,7 @@ class ItemEntity extends Entity {
 		return this.price;
 	}
 	setDurability(_int) {
-		if (isNaN(_float)) {
+		if (isNaN(_int)) {
 			return;
 		}
 		this.durability = _int;

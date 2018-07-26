@@ -539,7 +539,7 @@ class GameGUI {
         this.setTargetPortraitMana(_mana);
         this.setTargetPortraitStamina(_stamina);
     }
-    static setPlayerPortraitImage(_image) {
+    static setPlayerPortraitImage(_image = "resources/images/characters/genericCharacter.svg") {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[0].children[0].domImage.setAttribute("src", _image);
     }
     static setPlayerPortraitName(_string) {
@@ -560,7 +560,7 @@ class GameGUI {
     static setPlayerPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].text = _int;
     }
-    static setTargetPortraitImage(_image) {
+    static setTargetPortraitImage(_image = "resources/images/items/genericItem.svg") {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[0].domImage.setAttribute("src", _image);
     }
     static setTargetPortraitName(_string) {

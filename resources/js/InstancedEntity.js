@@ -2,61 +2,49 @@ class InstancedEntity {
     /**
      * Creates an InstancedEntity
      * @param  {UUIDv4} _id            UUID
-     * @param  {Entity} _entity         Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
+     * @param  {Entity} _entity        Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
+     * @param  {String} _name          Name
      * @param  {Character} _owner      Owner
      * @param  {Number} _price         Price, defaults to 0
-     * @param  {Number} _mass        Weight, defaults to 0.001
+     * @param  {Number} _mass          Mass, defaults to 0.001
      * @param  {Number} _durability    Durability, defaults to 1
      * @param  {Number} _durabilityMax Max durability, defaults to 1
      */
-    constructor(_id, _entity, _owner = undefined, _price = 0, _mass = 1.0, _durability = 1, _durabilityMax = 1) {
-        if (_id == undefined)
-            _id = uuidv4();
-        else if (typeof _id == "string" || typeof _id == "number") {
-            _id = _id.replace(/[^0-9a-z\-]/gi, '');
-            if (_id.length == 0)
-                _id = uuidv4();
-        }
-
+    constructor(_id, _entity, _name = undefined, _description = undefined, _owner = undefined, _price = undefined, _mass = undefined, _durability = undefined, _durabilityMax = undefined) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = Game.filterID(_id);
         this.id = _id;
-
-        this.name = undefined;
-        this.description = undefined;
-        this.image = undefined;
-        this.child = undefined;
         this.entity = undefined;
-        this.owner = undefined;
-        this.price = 0;
-        this.mass = 1.0;
-        this.durability = 1;
-        this.durabilityMax = 1;
-
-        this.setOwner(_owner);
         this.setEntity(_entity);
-        this.setPrice(_price || _entity.price);
-        this.setWeight(_mass || _entity.mass);
-        this.setDurability(_durability || 1);
+        this.name = undefined;
+        this.setName(_name || _entity.getName());
+        this.description = undefined;
+        this.setDescription(_description || _entity.description);
+        this.owner = undefined;
+        this.setOwner(_owner);
+        this.price = 0;
+        this.setPrice(_price || _entity.getPrice() || 0);
+        this.mass = 0.001;
+        this.setMass(_mass || _entity.getMass() || 0.001);
+        this.durability = 1;
+        this.setDurability(_durability || _entity.getDurability() || 1);
+        this.durabilityMax = 1;
         this.setDurabilityMax(_durabilityMax || this.durability);
 
-        Game.instancedEntities[this.id] = this;
-    }
+        /**
+         * Actions available to this Entity
+         * @type {Set} <Game.kActionTypes>
+         */
+        this.availableActions = new Set(_entity.getAvailableActions());
+        /**
+         * Game.kSpecialProperties
+         * @type {Set} <Game.kSpecialProperties>
+         */
+        this.specialProperties = new Set(_entity.getSpecialProperties());
 
-    /**
-     * Sets Child
-     * @param {Entity} _entity Entity, or undefined
-     */
-    setChild(_entity) {
-        if (!(_entity instanceof Entity)){
-            if (Game.hasEntity(_entity))
-                _entity = Game.getEntity(_entity);
-            else
-                _entity = undefined;
-        }
-        this.child = _entity;
-        return this;
-    }
-    getChild() {
-        return this.child;
+        this.controller = undefined;
+
+        Game.instancedEntities[this.id] = this;
     }
 
     /**
@@ -64,21 +52,90 @@ class InstancedEntity {
      * @param {Entity} _entity Entity, or undefined
      */
     setEntity(_entity) {
-        if (!(_entity instanceof Entity)){
-            if (Game.hasEntity(_entity))
-                _entity = Game.getEntity(_entity);
-            else if (_entity instanceof InstancedEntity)
-                _entity = _entity.entity;
-            else if (Game.hasInstance(_entity))
-                _entity = Game.getInstance(_entity).entity;
-            else
-                _entity = undefined;
-        }
-        this.entity = _entity;
+        this.entity = Game.getEntity(_entity);
         return this;
     }
     getEntity() {
         return this.entity;
+    }
+
+    setName(_name) {
+        this.name = Game.filterName(_name);
+        return this;
+    }
+    getName() {
+        return (this.name || this.entity.getName());
+    }
+    setDescription(_description) {
+        this.description = _description;
+        return this;
+    }
+    getDescription() {
+        return (this.description || this.entity.getDescription());
+    }
+    /**
+     * Adds an available Action when interacting with this Entity
+     * @param {String} _actions (Game.kActionTypes)
+     */
+    addAvailableAction(_actions) {
+        if (Game.kActionTypes.has(_actions))
+            this.availableActions.add(_actions);
+        else if (_actions instanceof Array) {
+            _actions.forEach(function(_action) {
+                Game.kActionTypes.has(_action) && this.availableActions.add(_action);
+            }, this);
+        }
+        return this;
+    }
+    /**
+     * Removes an available Action when interacting with this Entity
+     * @param  {String} _actions (Game.kActionTypes)
+     * @return {Booealn}          Whether or not the Action was removed
+     */
+    removeAvailableAction(_actions) {
+        if (Game.kActionTypes.has(_actions))
+            this.availableActions.delete(_actions);
+        else if (_actions instanceof Array) {
+            _actions.forEach(function(_action) {
+                Game.kActionTypes.has(_action) && this.availableActions.delete(_action);
+            }, this);
+        }
+        return this;
+    }
+    getAvailableActions() {
+        return this.currentActions;
+    }
+    /**
+     * Adds a Game.kSpecialProperties
+     * @param {String} _specialProperties (Game.kSpecialProperties)
+     */
+    addSpecialProperty(_specialProperties) {
+        if (Game.kSpecialProperties.has(_specialProperties))
+            this.specialProperties.add(_specialProperties);
+        else if (_specialProperties instanceof Array) {
+            _specialProperties.forEach(function(_specialProperties) {
+                Game.kSpecialProperties.has(_specialProperties) && this.specialProperties.add(_specialProperties);
+            }, this);
+        }
+        return this;
+    }
+    /**
+     * Returns this Entity's Game.kSpecialProperties
+     * @return {Set} <String (Game.kSpecialProperties)>
+     */
+    getSpecialProperties() {
+        return this.specialProperties;
+    }
+    /**
+     * Returns whether or not this Entity has the specified Game.kSpecialProperties
+     * @param  {String}  _specialProperties (Game.kSpecialProperties)
+     * @return {Boolean}              Whether or not this Entity has the specified Game.kSpecialProperties
+     */
+    hasSpecialProperty(_specialProperties) {
+        if (Game.kSpecialProperties.has(_specialProperties))
+            return this.specialProperties.has(_specialProperties);
+        else
+            return false;
     }
 
     /**
@@ -86,13 +143,7 @@ class InstancedEntity {
      * @param {Character} _character Character, or undefined
      */
     setOwner(_character) {
-        if (!(_character instanceof Character)){
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                _character = undefined;
-        }
-        this.owner = _character;
+        this.owner = Game.getCharacterEntity(_character);
         return this;
     }
     getOwner() {
@@ -119,10 +170,10 @@ class InstancedEntity {
     }
 
     /**
-     * Sets Weight
+     * Sets Mass
      * @param {Number} _float Float
      */
-    setWeight(_float) {
+    setMass(_float) {
         _float = Number.parseFloat(_float);
         if (isNaN(_float))
             _float = 0.001;
@@ -133,7 +184,7 @@ class InstancedEntity {
         this.mass = _float;
         return this;
     }
-    getWeight() {
+    getMass() {
         return (this.mass || this.entity.mass);
     }
 
@@ -151,26 +202,6 @@ class InstancedEntity {
             _int = this.durabilityMax;
         this.durability = _int;
         return this;
-    }
-    incDurability(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setDurability(this.durability + Number.parseInt(_int));
-    }
-    addDurability(_int) {
-        return this.incDurability(_int);
-    }
-    decDurability(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setDurability(this.durability - Number.parseInt(_int));
-    }
-    subDurability(_int) {
-        return this.decDurability(_int);
     }
     /**
      * Returns Durability
@@ -195,26 +226,6 @@ class InstancedEntity {
         this.durabilityMax = _int;
         return this;
     }
-    incDurabilityMax(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setDurabilityMax(this.durabilityMax + Number.parseInt(_int));
-    }
-    addDurabilityMax(_int) {
-        return this.incDurabilityMax(_int);
-    }
-    decDurabilityMax(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setDurabilityMax(this.durabilityMax - Number.parseInt(_int));
-    }
-    subDurabilityMax(_int) {
-        return this.decDurabilityMax(_int);
-    }
     /**
      * Returns Max Durability
      * @return {Number} Integer
@@ -222,20 +233,33 @@ class InstancedEntity {
     getDurabilityMax() {
         return this.durabilityMax;
     }
-
-    setName(_name) {
-        this.name = _name.replace(/[^0-9a-z\-]/gi, '');
+    setController(_controller) {
+        if (!(_controller instanceof ItemController)) {
+            if (Game.hasController(_controller)) {
+                Game.getController(_controller);
+            }
+            else {
+                return;
+            }
+        }
+        this.controller = _controller;
+        return this;
     }
-    getName() {
-        return (this.name || this.entity.getName());
+    getAvatar() {
+        return this.entity.getAvatar();
     }
-    setDescription(_description) {
-        this.description = _description.replace(/[^0-9a-z\-\!\?\,\.\"\'\<\>\/\_]/gi, '');
+    getAvatarID() {
+        return this.entity.getAvatarID();
     }
-    getDescription() {
-        return (this.description || this.entity.getDescription());
+    getImage() {
+        return this.entity.getImage();
     }
-
+    getController() {
+        return this.controller;
+    }
+    clone(_id) {
+        return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
+    }
     dispose() {
         delete Game.instances[this.id];
         return undefined;

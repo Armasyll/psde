@@ -7,15 +7,8 @@ class Entity {
      * @param  {String}  _image      Image path of base64
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
-        if (typeof _id == "string") {
-            _id = _id.replace(/^[\W\-]+/g, "");
-            if (_id.length == 0) {
-                return undefined;
-            }
-        }
-        else {
-            return undefined;
-        }
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = Game.filterID(_id);
         /**
          * Identification
          * @type {String} Cannot be undefined!
@@ -25,25 +18,28 @@ class Entity {
          * Name
          * @type {String} Can be undefined
          */
-        this.name = _name;
+        this.name = undefined;
+        this.setName(_name);
         /**
          * Description
          * @type {String} Can be undefined
          */
-        this.description = _description;
-
-        if (typeof _image == 'undefined')
-            _image = "resources/images/items/genericItem.svg";
+        this.description = undefined;
+        this.setDescription(_description);
         /**
          * Path to Entity's picture
          * @type {String} Relative path to an image, or base64 encoded String
          */
-        this.image = _image;
+        this.image = undefined;
+        this.setImage(_image);
         /**
          * Entity's controller
          * @type {CharacterController}
          */
         this.controller = undefined;
+
+        this.avatarID = undefined;
+        this.avatarSkin = undefined;
 
         /**
          * Actions available to this Entity
@@ -69,54 +65,19 @@ class Entity {
     }
 
     setName(_name) {
-        this.name = _name.replace(/[^0-9a-z\-]/gi, '');
+        this.name = Game.filterName(_name);
     }
     getName() {
         return this.name;
     }
     setDescription(_description) {
-        this.description = _description.replace(/[^0-9a-z\-\!\?\,\.\"\'\<\>\/\_]/gi, '');
+        this.description = _description;
     }
     getDescription() {
         return this.description;
     }
     setImage(_image) {
-        var _subPath = "";
-        if (this instanceof Character) {
-            _subPath = "characters";
-        }
-        else if (this instanceof Furniture) {
-            _subPath = "furniture";
-        }
-        else if (this instanceof Item) {
-            _subPath = "items";
-        }
-        else if (this instanceof Location) {
-            _subPath = "locations";
-        }
-
-        if (typeof _image == "undefined")
-            this.image = `resources/images/items/genericItem.svg`; // base64 image, or url
-        else if (_image.slice(0, 17) == "resources/images/") {
-            _image = _image.slice(17).split('/');
-            _image = _image[_image.length];
-            _image = _image.split('.');
-            _image[0] = _image[0].replace(/[^0-9a-z]/gi, '');
-            _image[1] = _image[1].replace(/[^0-9a-z]/gi, '');
-            var _fileType = _image[1].toLowerCase();
-            if (_fileType !== "png" && _fileType !== "svg" && _fileType !== "jpg" && _fileType !== "jpeg" && _fileType !== "gif")
-                this.image = `resources/images/${_subPath}/${this.id}.svg`;
-            else if (_image[0].length < 1)
-                this.image = `resources/images/${_subPath}/${this.id}.svg`;
-            else
-                this.image = `resources/images/${_subPath}/${_image[0]}.${_image[1]}`;
-            this._fileType = null;
-        }
-        else if (_image.slice(0, 11) == "data:image/") {
-            this.image = _image;
-        }
-        else
-            this.image = "resources/images/items/genericItem.svg"; // base64 image, or url
+        this.image = _image;
         return this;
     }
     getImage() {
@@ -127,25 +88,29 @@ class Entity {
         if (_avatar != undefined) {
             this.avatarID = _avatar;
         }
+        return this;
     }
     getAvatarID() {
         return this.avatarID;
     }
     setAvatar(_avatar) {
-        return this.setAvatarID(_avatar);
+        this.setAvatarID(_avatar);
+        return this;
     }
     getAvatar() {
         if (this.controller instanceof EntityController && this.controller.getAvatar())
         return Game.getMesh(this.avatarID);
     }
     setAvatarSkin(_skin) {
-
+        this.avatarSkin = _skin;
+        return this;
     }
     getAvatarSkin() {
-
+        return this.avatarSkin;
     }
-    clearAvatarSkin() {
+    removeAvatarSkin() {
         this.avatarSkin = undefined;
+        return this;
     }
     setController(_controller) {
         if (!(_controller instanceof EntityController)) {
@@ -157,13 +122,15 @@ class Entity {
             }
         }
         this.controller = _controller;
+        return this;
     }
     getController() {
         return this.controller;
     }
-    clearController() {
+    removeController() {
         this.controller.dispose();
         this.controller = undefined;
+        return this;
     }
 
     /**

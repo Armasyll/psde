@@ -1,26 +1,11 @@
 class InstancedItemEntity extends InstancedEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined, _price = 0, _mass = 1.0, _durability = 1, _durabilityMax = 1) {
-        if (!(_entity instanceof ItemEntity)) {
-            if (Game.itemEntities.hasOwnProperty(_entity)) {
-                _entity = Game.itemEntities[_entity];
-            }
-            else if (_entity instanceof ItemInstance && _entity.entity instanceof ItemEntity) {
-                _entity = _entity.entity;
-            }
-            else if (Game.instancedItemEntities.hasOwnProperty(_entity)) {
-                _entity = Game.instancedItemEntities[_entity].entity;
-                if (!(_entity.entity instanceof ItemEntity)) {
-                    return undefined;
-                }
-            }
-            else {
-                return undefined;
-            }
-        }
-
-        super(_id, _entity, _owner, _price, _mass, _durability, _durabilityMax);
+    constructor(_id = undefined, _entity = undefined) {
+        super(_id, _entity);
 
         Game.instancedItemEntities[this.id] = this;
+    }
+    clone(_id) {
+        return new InstancedItemEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
     }
     dispose() {
         delete Game.instancedItemEntities[this.id];

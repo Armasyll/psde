@@ -49,7 +49,7 @@ class Client {
     	if (_character instanceof CharacterController) {
     		return _character.networkID;
     	}
-        else if (_character instanceof Character) {
+        else if (_character instanceof CharacterEntity) {
             return _character.controller.networkID;
         }
         else if (_character instanceof BABYLON.Mesh || _character instanceof BABYLON.InstancedMesh) {

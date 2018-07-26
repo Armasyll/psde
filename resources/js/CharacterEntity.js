@@ -1,16 +1,16 @@
-class Character extends EntityWithStorage {
+class CharacterEntity extends EntityWithStorage {
     /**
-     * Creates a Character
+     * Creates a CharacterEntity
      * @param  {String} _id      Unique ID
      * @param  {String} _name    Name
      * @param  {String} _description Description
      * @param  {String} _image   Image path
-     * @param  {String} _class   Character class
+     * @param  {String} _class   Role
      * @param  {Number} _age     Age
      * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = undefined, _class = "classless", _age = 33, _sex = 0, _species = "fox") {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "/resources/images/characters/genericCharacter.svg", _class = "classless", _age = 33, _sex = 0, _species = "fox") {
         super(_id);
         /**
          * Surname
@@ -44,12 +44,12 @@ class Character extends EntityWithStorage {
          */
         this.gender = Game.MALE;
         /**
-         * Intraactions this Character is currently performing
+         * Intraactions this CharacterEntity is currently performing
          * @type {Map} <Game.kIntraactionTypes>
          */
         this.currentActions = {};
         /**
-         * Stance this Character is currently performing
+         * Stance this CharacterEntity is currently performing
          * 0 - Lay, 1 - Sit, 2 - Crouch, 3 - Stand, 4 - Fly
          * @type {Number}
          */
@@ -70,7 +70,7 @@ class Character extends EntityWithStorage {
          */
         this.handedness = "rightHand";
         /**
-         * Item(s) this Character is holding; will never exceed two (2) Item(s)
+         * Item(s) this CharacterEntity is holding; will never exceed two (2) Item(s)
          * @type {Array} <ItemInstance>
          */
         this.heldEntities = {
@@ -78,12 +78,12 @@ class Character extends EntityWithStorage {
             rightHand:undefined
         };
         /**
-         * Current Phone this Character is using
+         * Current Phone this CharacterEntity is using
          * @type {Phone} Can be undefined
          */
         this.phone = undefined;
         /**
-         * Base disposition this Character has for others
+         * Base disposition this CharacterEntity has for others
          * @type {Number}  Passion
          * @type {Number}  Friendship
          * @type {Number}  Playfulness
@@ -219,7 +219,7 @@ class Character extends EntityWithStorage {
          */
         this.lust = 25;
         /**
-         * Whether or not this Character is in rut
+         * Whether or not this CharacterEntity is in rut
          * @type {Boolean} True - yes, false - no
          */
         this.rut = false;
@@ -274,7 +274,7 @@ class Character extends EntityWithStorage {
          */
         this.bodySize = 0.5;
         /**
-         * Whether or not this Character is a predator
+         * Whether or not this CharacterEntity is a predator
          * @type {Boolean} True - predator, false - prey
          */
         this.predator = false;
@@ -320,22 +320,22 @@ class Character extends EntityWithStorage {
         this.peltTrimmed = 50;
         /**
          * Penis size in centimeters
-         * @type {Number} 0 - none, 100 - Character dies from blood loss
+         * @type {Number} 0 - none, 100 - CharacterEntity dies from blood loss
          */
         this.penisSize = 0;
         /**
          * Penis girth in centimeters
-         * @type {Number} 0 - none, 100 - Character dies from blood loss
+         * @type {Number} 0 - none, 100 - CharacterEntity dies from blood loss
          */
         this.penisGirth = 0;
         /**
          * Vaginal depth in centimeters
-         * @type {Number} 0 - none, 100 - Character is basically a trash bag
+         * @type {Number} 0 - none, 100 - CharacterEntity is basically a trash bag
          */
         this.vaginaSize = 0;
         /**
          * Vaginal girth in centimeters
-         * @type {Number} 0 - none, 100 - Character is basically a trash bag
+         * @type {Number} 0 - none, 100 - CharacterEntity is basically a trash bag
          */
         this.vaginaGirth = 0;
         /**
@@ -354,177 +354,177 @@ class Character extends EntityWithStorage {
          */
         this.hadSexWithFemale = false;
         /**
-         * Number of times this Character has had sex
+         * Number of times this CharacterEntity has had sex
          * @type {Number}
          */
         this.sexCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has had sex with them
+         * Map of Characters and the Number of times this CharacterEntity has had sex with them
          * @type {Map} <Character, integer>
          */
         this.sexCountMap = new Map();
         /**
-         * Map of Characters and the Number of times this Character has been refused sex with them
+         * Map of Characters and the Number of times this CharacterEntity has been refused sex with them
          * @type {Map} <Character, integer>
          */
         this.sexRefusalCountMap = new Map();
         /**
-         * Number of times this Character has received vaginal
+         * Number of times this CharacterEntity has received vaginal
          * @type {Number}
          */
         this.vaginalReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received vaginal from them
+         * Map of Characters and the Number of times this CharacterEntity has received vaginal from them
          * @type {Map} <Character, Number>
          */
         this.vaginalReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given vaginal
+         * Number of times this CharacterEntity has given vaginal
          * @type {Number}
          */
         this.vaginalGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them vaginal
+         * Map of Characters and the Number of times this CharacterEntity has given them vaginal
          * @type {Map} <Character, Number>
          */
         this.vaginalGiveCountMap = new Map();
         /**
-         * Number of times this Character has received anal
+         * Number of times this CharacterEntity has received anal
          * @type {Number}
          */
         this.analReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received anal from them
+         * Map of Characters and the Number of times this CharacterEntity has received anal from them
          * @type {Map} <Character, Number>
          */
         this.analReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given anal
+         * Number of times this CharacterEntity has given anal
          * @type {Number}
          */
         this.analGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them anal
+         * Map of Characters and the Number of times this CharacterEntity has given them anal
          * @type {Map} <Character, Number>
          */
         this.analGiveCountMap = new Map();
         /**
-         * Number of times this Character has received cunnilingus
+         * Number of times this CharacterEntity has received cunnilingus
          * @type {Number}
          */
         this.cunnilingusReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received cunnilingus from them
+         * Map of Characters and the Number of times this CharacterEntity has received cunnilingus from them
          * @type {Map} <Character, Number>
          */
         this.cunnilingusReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given cunnilingus
+         * Number of times this CharacterEntity has given cunnilingus
          * @type {Number}
          */
         this.cunnilingusGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them cunnilingus
+         * Map of Characters and the Number of times this CharacterEntity has given them cunnilingus
          * @type {Map} <Character, Number>
          */
         this.cunnilingusGiveCountMap = new Map();
         /**
-         * Number of times this Character has received analingus
+         * Number of times this CharacterEntity has received analingus
          * @type {Number}
          */
         this.analingusReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received analingus from them
+         * Map of Characters and the Number of times this CharacterEntity has received analingus from them
          * @type {Map} <Character, Number>
          */
         this.analingusReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given analingus
+         * Number of times this CharacterEntity has given analingus
          * @type {Number}
          */
         this.analingusGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them analingus
+         * Map of Characters and the Number of times this CharacterEntity has given them analingus
          * @type {Map} <Character, Number>
          */
         this.analingusGiveCountMap = new Map();
         /**
-         * Number of times this Character has received fellatio
+         * Number of times this CharacterEntity has received fellatio
          * @type {Number}
          */
         this.fellatioReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received fellatio from them
+         * Map of Characters and the Number of times this CharacterEntity has received fellatio from them
          * @type {Map} <Character, Number>
          */
         this.fellatioReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given fellatio
+         * Number of times this CharacterEntity has given fellatio
          * @type {Number}
          */
         this.fellatioGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them fellatio
+         * Map of Characters and the Number of times this CharacterEntity has given them fellatio
          * @type {Map} <Character, Number>
          */
         this.fellatioGiveCountMap = new Map();
         /**
-         * Number of times this Character has received a handjob
+         * Number of times this CharacterEntity has received a handjob
          * @type {Number}
          */
         this.handjobReceiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has received a handjob from them
+         * Map of Characters and the Number of times this CharacterEntity has received a handjob from them
          * @type {Map} <Character, Number>
          */
         this.handjobReceiveCountMap = new Map();
         /**
-         * Number of times this Character has given a handjob
+         * Number of times this CharacterEntity has given a handjob
          * @type {Number}
          */
         this.handjobGiveCount = 0;
         /**
-         * Map of Characters and the Number of times this Character has given them a handjob
+         * Map of Characters and the Number of times this CharacterEntity has given them a handjob
          * @type {Map} <Character, Number>
          */
         this.handjobGiveCountMap = new Map();
         /**
-         * Number of times this Character has masturbated
+         * Number of times this CharacterEntity has masturbated
          * @type {Number}
          */
         this.masturbateCount = 0;
         /**
-         * Number of times this Character has performed autofellatio
+         * Number of times this CharacterEntity has performed autofellatio
          * @type {Number}
          */
         this.autofellatioCount = 0;
         /**
-         * Number of times this Character has performed autocunnilingus
+         * Number of times this CharacterEntity has performed autocunnilingus
          * @type {Number}
          */
         this.autocunnilingusCount = 0;
         /**
-         * Number of times this Character has performed autoanalingus
+         * Number of times this CharacterEntity has performed autoanalingus
          * @type {Number}
          */
         this.autoanalingusCount = 0;
         /**
-         * The Character this Character is following
+         * The CharacterEntity this CharacterEntity is following
          * @type {Character} Can be undefined
          */
         this.following = undefined; // Character
         /**
-         * Set of Character(s) this Character is leading
+         * Set of Character(s) this CharacterEntity is leading
          * @type {Set} <Character>
          */
         this.followers = new Set(); // Set<Character>
         /**
-         * Current Furniture this Character is using
+         * Current Furniture this CharacterEntity is using
          * @type {Furniture} Can be undefined
          */
         this.furniture = undefined;
         /**
-         * Clothing this Character is wearing
+         * Clothing this CharacterEntity is wearing
          * @type {Map} <String, Clothing>
          */
         this.clothing = {
@@ -566,7 +566,7 @@ class Character extends EntityWithStorage {
          */
         this._dating = new Set();
         /**
-         * Map of Characters and the Number of times this Character has dated them
+         * Map of Characters and the Number of times this CharacterEntity has dated them
          * @type {Map} <Character, Number>
          */
         this._dated = new Map();
@@ -669,7 +669,7 @@ class Character extends EntityWithStorage {
         this.stand();
     }
     
-    setName(_string) {
+    setName(_string = "") {
         if (_string.split(", ").length > 1) {
             var tempName = _string.split(", ");
             this.name = tempName[1].replace(/[^0-9a-z]/gi, '');
@@ -1173,7 +1173,7 @@ class Character extends EntityWithStorage {
         return this.charisma;
     }
     /**
-     * Sets Character attributes
+     * Sets CharacterEntity attributes
      * @param {Number} _str Strength, physical power
      * @param {Number} _dex Dexterity, agility
      * @param {Number} _con Constitution, endurance
@@ -1194,8 +1194,8 @@ class Character extends EntityWithStorage {
         return {strength: this.strength, dexterity: this.dexterity, constitution: this.constitution, intelligence: this.intelligence, wisdom: this.wisdom, charisma: this.charisma};
     }
     /**
-     * Sets Character attribute
-     * @param {String} _string Character attribute
+     * Sets CharacterEntity attribute
+     * @param {String} _string CharacterEntity attribute
      * @param {Number} _int    Number to set it to
      */
     setAttribute(_string, _int = undefined) {
@@ -2179,12 +2179,8 @@ class Character extends EntityWithStorage {
     }
 
     getSexualOrientationCompatibility(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.sexualOrientation == 2) // If you're bi
             return true;
         else if (this.getSex() != _character.getSex() && this.sexualOrientation == 0) // else if you're both opposite sex, and you're straight
@@ -2228,135 +2224,52 @@ class Character extends EntityWithStorage {
 
         return this;
     }
-    setCharacterDisposition(_character, _passion = undefined, _friendship = undefined, _playfulness = undefined, _soulmate = undefined, _familial = undefined, _obsession = undefined, _hate = undefined) {
-        if (Game.enableDebug) console.log("Running setCharacterDisposition");
-
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-        if (_passion instanceof Object) {
-            this.characterDisposition[_character] = {
-                passion:(Number.parseInt(_passion.passion) || 0),
-                friendship:(Number.parseInt(_passion.friendship) || 0),
-                playfulness:(Number.parseInt(_passion.playfulness) || 0),
-                soulmate:(Number.parseInt(_passion.soulmate) || 0),
-                familial:(Number.parseInt(_passion.familial) || 0),
-                obsession:(Number.parseInt(_passion.obsession) || 0),
-                hate:(Number.parseInt(_passion.hate) || 0)
-            };
-        }
-        else if (isNaN(_passion) && this.defaultDisposition.hasOwnProperty(_passion) && !isNaN(Number.parseInt(_friendship)))
-            this.characterDisposition[_character][_passion] = Number.parseInt(_friendship);
-        else {
-            this.characterDisposition[_character] = {
-                passion:(Number.parseInt(_passion) || this.defaultDisposition.passion),
-                friendship:(Number.parseInt(_friendship) || this.defaultDisposition.friendship),
-                playfulness:(Number.parseInt(_playfulness) || this.defaultDisposition.playfulness),
-                soulmate:(Number.parseInt(_soulmate) || this.defaultDisposition.soulmate),
-                familial:(Number.parseInt(_familial) || this.defaultDisposition.familial),
-                obsession:(Number.parseInt(_obsession) || this.defaultDisposition.obsession),
-                hate:(Number.parseInt(_hate) || this.defaultDisposition.hate)
-            };
-        }
-
-        return this;
-    }
     setCharacterPassion(_character, _int) {
-        return this.setCharacterDisposition(_character, "passion", _int);
-    }
-    addCharacterPassion(_character, _int) {
-        return this.incCharacterPassion(_character, _int);
-    }
-    incCharacterPassion(_character, _int = 1) {
-        return this.setCharacterPassion(_character, this.getCharacterDisposition(_character)["passion"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["passion"] = _int;
     }
     getCharacterPassion(_character) {
-        return this.getCharacterDisposition(_character, "passion");
+        return this.getCharacterDisposition[_character]["passion"];
     }
     setCharacterFriendship(_character, _int) {
-        return this.setCharacterDisposition(_character, "friendship", _int);
-    }
-    addCharacterFriendship(_character, _int) {
-        return this.incCharacterFriendship(_character, _int);
-    }
-    incCharacterFriendship(_character, _int = 1) {
-        return this.setCharacterFriendship(_character, this.getCharacterDisposition(_character)["friendship"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["friendship"] = _int;
     }
     getCharacterFriendship(_character) {
-        return this.getCharacterDisposition(_character, "friendship");
+        return this.getCharacterDisposition[_character]["friendship"];
     }
     setCharacterPlayfulness(_character, _int) {
-        return this.setCharacterDisposition(_character, "playfulness", _int);
-    }
-    addCharacterPlayfulness(_character, _int) {
-        return this.incCharacterPlayfulness(_character, _int);
-    }
-    incCharacterPlayfulness(_character, _int = 1) {
-        return this.setCharacterPlayfulness(_character, this.getCharacterDisposition(_character)["playfulness"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["playfulness"] = _int;
     }
     getCharacterPlayfulness(_character) {
-        return this.getCharacterDisposition(_character, "playfulness");
+        return this.getCharacterDisposition[_character]["playfulness"];
     }
     setCharacterSoulmate(_character, _int) {
-        return this.setCharacterDisposition(_character, "soulmate", _int);
-    }
-    addCharacterSoulmate(_character, _int) {
-        return this.incCharacterSoulmate(_character, _int);
-    }
-    incCharacterSoulmate(_character, _int = 1) {
-        return this.setCharacterSoulmate(_character, this.getCharacterDisposition(_character)["soulmate"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["soulmate"] = _int;
     }
     getCharacterSoulmate(_character) {
-        return this.getCharacterDisposition(_character, "soulmate");
+        return this.getCharacterDisposition[_character]["soulmate"];
     }
     setCharacterFamilial(_character, _int) {
-        return this.setCharacterDisposition(_character, "familial", _int);
-    }
-    addCharacterFamilial(_character, _int) {
-        return this.incCharacterFamilial(_character, _int);
-    }
-    incCharacterFamilial(_character, _int = 1) {
-        return this.setCharacterFamilial(_character, this.getCharacterDisposition(_character)["familial"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["familial"] = _int;
     }
     getCharacterFamilial(_character) {
-        return this.getCharacterDisposition(_character, "familial");
+        return this.getCharacterDisposition[_character]["familial"];
     }
     setCharacterObsession(_character, _int) {
-        return this.setCharacterDisposition(_character, "obsession", _int);
-    }
-    addCharacterObsession(_character, _int) {
-        return this.incCharacterObsession(_character, _int);
-    }
-    incCharacterObsession(_character, _int = 1) {
-        return this.setCharacterObsession(_character, this.getCharacterDisposition(_character)["obsession"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["obsession"] = _int;
     }
     getCharacterObsession(_character) {
-        return this.getCharacterDisposition(_character, "obsession");
+        return this.getCharacterDisposition[_character]["obsession"];
     }
     setCharacterHate(_character, _int) {
-        return this.setCharacterDisposition(_character, "hate", _int);
-    }
-    addCharacterHate(_character, _int) {
-        return this.incCharacterHate(_character, _int);
-    }
-    incCharacterHate(_character, _int = 1) {
-        return this.setCharacterHate(_character, this.getCharacterDisposition(_character)["hate"] + Number.parseInt(_int));
+        return this.characterDisposition[_character]["hate"] = _int;
     }
     getCharacterHate(_character) {
-        return this.getCharacterDisposition(_character, "hate");
+        return this.getCharacterDisposition[_character]["hate"];
     }
     getCharacterDisposition(_character, _dispositionType = undefined) {
         if (Game.enableDebug) console.log("Running getCharacterDisposition");
-
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.characterDisposition.hasOwnProperty(_character)) {
             if (this.characterDisposition[_character].hasOwnProperty(_dispositionType))
                 return this.characterDisposition[_character][_dispositionType];
@@ -2367,11 +2280,8 @@ class Character extends EntityWithStorage {
             return false;
     }
     hasCharacterDisposition(_character) {
-        if (Game.enableDebug) console.log("Running hasCharacterDisposition");
-        
-        if (!(_character instanceof Character))
-            _character = Game.hasCharacterEntity(_character) ? Game.getCharacterEntity(_character) : undefined;
-        
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         return this.characterDisposition.hasOwnProperty(_character);
     }
     getCharacterDispositions() {
@@ -2380,50 +2290,10 @@ class Character extends EntityWithStorage {
     hasMet(_character) {
         return this.hasCharacterDisposition(_character);
     }
-    incCharacterAllDispositions(_character, _int) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-        if (isNaN(_int)) {
-            _int = Number.parseInt(_int);
-            if (_isNaN(_int))
-                return undefined;
-        }
-        if (!this.hasCharacterDisposition(_character))
-            this.setCharacterDisposition(_character);
-        var _disposition = this.getCharacterDisposition(_character);
-        this.setCharacterDisposition(_character, _disposition.passion + _int, _disposition.friendship + _int, _disposition.playfulness + _int, _disposition.soulmate + _int, _disposition.familial + _int, _disposition.obsession + _int, _disposition.hate - Number.parseInt(_int));
-        return this;
-    }
-    decCharacterAllDispositions(_character, _int) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-        if (isNaN(_int)) {
-            _int = Number.parseInt(_int);
-            if (_isNaN(_int))
-                return undefined;
-        }
-        if (!this.hasCharacterDisposition(_character))
-            this.setCharacterDisposition(_character);
-        var _disposition = this.getCharacterDisposition(_character);
-        this.setCharacterDisposition(_character, _disposition.passion - _int, _disposition.friendship - _int, _disposition.playfulness - _int, _disposition.soulmate - _int, _disposition.familial - _int, _disposition.obsession - _int, _disposition.hate + Number.parseInt(_int));
-        return this;
-    }
 
     addDating(_character, _updateParent = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this._dating.add(_character);
         if (_updateParent)
             _character.addDating(this, false);
@@ -2433,12 +2303,8 @@ class Character extends EntityWithStorage {
         return this.addDating(_character, _updateParent);
     }
     addDated(_character, _int = 1, _updateParent = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (typeof _int === "boolean") {
             _updateParent = _int;
             if (this._dated.has(_character))
@@ -2468,26 +2334,16 @@ class Character extends EntityWithStorage {
         return this.addDated(_character, _int, _updateParent);
     }
     isDatingCharacter(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         return this._dating.has(_character);
     }
     isDating(_character) {
         return this.isDatingCharacter(_character);
     }
     hasDatedCharacter(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         return this._dated.has(_character);
     }
     hasDated(_character) {
@@ -2500,26 +2356,16 @@ class Character extends EntityWithStorage {
         return this._dated;
     }
     getNumberOfDates(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.hasDatedCharacter(_character))
             return this._dated.get(_character);
         else
             return 0;
     }
     removeDating(_character, _updateParent) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.isDating(_character)) {
             this._dating.delete(_character);
             this.hasDatedCharacter(_character);
@@ -2529,13 +2375,8 @@ class Character extends EntityWithStorage {
         return this;
     }
     removeDated(_character, _updateParent) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
-
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.hasDated(_character))
             this._dated.delete(_character);
         if (_updateParent)
@@ -2756,16 +2597,8 @@ class Character extends EntityWithStorage {
      * @return {Boolean}         [description]
      */
     anal(_entity) {
-        if (!(_entity instanceof Character)) {
-            if (Game.hasCharacterEntity(_entity))
-                _entity = Game.getCharacterEntity(_entity);
-            else if (_entity instanceof InstancedEntity)
-                _entity = _entity;
-            else if (Game.instancedEntities.has(_entity))
-                _entity = Game.instancedEntities.get(_entity);
-            else
-                return undefined;
-        }
+        _entity = Game.getCharacterEntity(_entity);
+        if (_entity == undefined) {return;}
         this.fuck(_entity);
         return true;
     }
@@ -2785,12 +2618,8 @@ class Character extends EntityWithStorage {
         return true;
     }
     charmed(_character, _cron = "4m") {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.addCurrentAction("charmed", _character);
         //new GameEvent(`${this.id}CharmedRemove`, "charmed", _character, this, undefined, undefined, undefined, undefined, _cron, `${this.id}.removeCurrentAction('charmed')`, true);
         return true;
@@ -2833,12 +2662,8 @@ class Character extends EntityWithStorage {
      * @return {Boolean}               [description]
      */
     fuck(_entity = undefined, _updateChild = true) {
-        if (!(_entity instanceof Character)) {
-            if (Game.hasCharacterEntity(_entity))
-                _entity = Game.getCharacterEntity(_entity);
-            else
-                return undefined;
-        }
+        _entity = Game.getCharacterEntity(_entity);
+        if (_entity == undefined) {return;}
 
         if (_entity.getSex() == Game.FEMALE)
             this.hadSexWithFemale = true;
@@ -2856,12 +2681,8 @@ class Character extends EntityWithStorage {
         return true;
     }
     follow(_character, _preGeneratedPath = undefined, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character)
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         /*if (Game.characterPathes.has(_character))
             this.move();
         else
@@ -2880,7 +2701,7 @@ class Character extends EntityWithStorage {
 
         if (this.hasFollowers()) {
             this.followers.forEach(function(_follower) {
-                if (_follower instanceof Character) {
+                if (_follower instanceof CharacterEntity) {
                     if (!(Game.getCharacterCurrentRoom(_follower) == Game.getCharacterCurrentRoom(this)))
                         _follower.follow(_character, Game._findPathToRoom(Game.getCharacterCurrentRoom(_follower), Game.getCharacterCurrentRoom(_character)));
                     else
@@ -3053,16 +2874,8 @@ class Character extends EntityWithStorage {
      * @return {Boolean}         [description]
      */
     oral(_entity) {
-        if (!(_entity instanceof Character)) {
-            if (Game.hasCharacterEntity(_entity))
-                _entity = Game.getCharacterEntity(_entity);
-            else if (_entity instanceof InstancedEntity)
-                _entity = _entity;
-            else if (Game.instancedEntities.has(_entity))
-                _entity = Game.instancedEntities.get(_entity);
-            else
-                return undefined;
-        }
+        _entity = Game.getCharacterEntity(_entity);
+        if (_entity == undefined) {return;}
         this.fuck(_entity);
         return true;
     }
@@ -3161,16 +2974,8 @@ class Character extends EntityWithStorage {
      * @return {Boolean}         [description]
      */
     vaginal(_entity) {
-        if (!(_entity instanceof Character)) {
-            if (Game.hasCharacterEntity(_entity))
-                _entity = Game.getCharacterEntity(_entity);
-            else if (_entity instanceof InstancedEntity)
-                _entity = _entity;
-            else if (Game.instancedEntities.has(_entity))
-                _entity = Game.instancedEntities.get(_entity);
-            else
-                return undefined;
-        }
+        _entity = Game.getCharacterEntity(_entity);
+        if (_entity == undefined) {return;}
         this.fuck(_entity);
         return true;
     }
@@ -3204,12 +3009,8 @@ class Character extends EntityWithStorage {
     }
 
     addSexRefusalCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.sexRefusalCountMap.has(_character))
             this.sexRefusalCountMap.set(_character, this.sexRefusalCountMap.get(_character) + 1);
         else
@@ -3218,12 +3019,8 @@ class Character extends EntityWithStorage {
         return this;
     }
     getSexRefusalCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.sexRefusalCountMap.has(_character))
             return this.sexRefusalCountMap.get(_character);
         else
@@ -3802,17 +3599,13 @@ class Character extends EntityWithStorage {
     }
 
     /**
-     * Increments sex count with Character
-     * @param  {Character} _character Character
+     * Increments sex count with CharacterEntity
+     * @param  {CharacterEntity} _character CharacterEntity
      * @param {this} This
      */
     incSexCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.virgin = false;
         this.sexCount++;
         if (this.sexCountMap.has(_character))
@@ -3822,170 +3615,118 @@ class Character extends EntityWithStorage {
         return this;
     }
     /**
-     * Wrapper function for this.incSexCount(Character)
-     * @param {Character}  _character   Character
+     * Wrapper function for this.incSexCount(CharacterEntity)
+     * @param {CharacterEntity}  _character   CharacterEntity
      * @param {this} This
      */
     addSexWith(_character, _updateParent = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.incSexCount(_character);
         if (_updateParent)
             _character.incSexCount(_character);
         return this;
     }
     /**
-     * Increments vaginal receiving count with Character
-     * @param  {Character} _character Character
+     * Increments vaginal receiving count with CharacterEntity
+     * @param  {CharacterEntity} _character CharacterEntity
      * @param {this} This
      */
     incVaginalReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.vaginalReceiveCount++;
         this.vaginalReceiveCountMap.set(_character, this.vaginalReceiveCountMap.get(_character) + 1);
         return this;
     }
     /**
-     * Increments vaginal penetration count with Character
-     * @param  {Character} _character Character
+     * Increments vaginal penetration count with CharacterEntity
+     * @param  {CharacterEntity} _character CharacterEntity
      * @param {this} This
      */
     incVaginalGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.vaginalGiveCount++;
         this.vaginalGiveCountMap.set(_character, this.vaginalGiveCountMap.get(_character) + 1);
         return this;
     }
     /**
-     * Increments anal receiving count with Character
-     * @param  {Character} _character Character
+     * Increments anal receiving count with CharacterEntity
+     * @param  {CharacterEntity} _character CharacterEntity
      * @param {this} This
      */
     incAnalReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.analReceiveCount++;
         this.analReceiveCountMap.set(_character, this.analReceiveCountMap.get(_character) + 1);
         return this;
     }
     /**
-     * Increments anal penetration count with Character
-     * @param  {Character} _character Character
+     * Increments anal penetration count with CharacterEntity
+     * @param  {CharacterEntity} _character CharacterEntity
      * @param {this} This
      */
     incAnalGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.analGiveCount++;
         this.analGiveCountMap.set(_character, this.analGiveCountMap.get(_character) + 1);
         return this;
     }
     incCunnilingusReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.cunnilingusReceiveCount++;
         this.cunnilingusReceiveCountMap.set(_character, this.cunnilingusReceiveCountMap.get(_character) + 1);
         return this;
     }
     incCunnilingusGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.cunnilingusGiveCount++;
         this.cunnilingusGiveCountMap.set(_character, this.cunnilingusGiveCountMap.get(_character) + 1);
         return this;
     }
     incAnalingusReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.analingusReceiveCount++;
         this.analingusReceiveCountMap.set(_character, this.analingusReceiveCountMap.get(_character) + 1);
         return this;
     }
     incAnalingusGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.analingusGiveCount++;
         this.analingusGiveCountMap.set(_character, this.analingusGiveCountMap.get(_character) + 1);
         return this;
     }
     incFellatioReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.fellatioReceiveCount++;
         this.fellatioReceiveCountMap.set(_character, this.fellatioReceiveCountMap.get(_character) + 1);
         return this;
     }
     incFellatioGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.fellatioGiveCount++;
         this.fellatioGiveCountMap.set(_character, this.fellatioGiveCountMap.get(_character) + 1);
         return this;
     }
     incHandjobReceiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.handjobReceiveCount++;
         this.handjobReceiveCountMap.set(_character, this.handjobReceiveCountMap.get(_character) + 1);
         return this;
     }
     incHandjobGiveCount(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.handjobGiveCount++;
         this.handjobGiveCountMap.set(_character, this.handjobGiveCountMap.get(_character) + 1);
         return this;
@@ -4019,12 +3760,8 @@ class Character extends EntityWithStorage {
 
 
     addFollower(_character, _updateChild = false) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         this.followers.add(_character);
         if (_updateChild) {
             _character.follow(this, undefined, false);
@@ -4032,12 +3769,8 @@ class Character extends EntityWithStorage {
         return this;
     }
     removeFollower(_character, _updateChild = false) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.followers.has(_character)) {
             if (_updateChild) {
                 _character.stay();
@@ -4057,12 +3790,8 @@ class Character extends EntityWithStorage {
         return this.followers.size > 0;
     }
     isFollowing(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return undefined;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (typeof this.following == "undefined")
             return false;
         else
@@ -4070,23 +3799,15 @@ class Character extends EntityWithStorage {
     }
 
     getSexCount(_character = undefined) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return 0;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return 0;}
         return this.sexCountMap.has(_character) ? this.sexCountMap.get(_character) : 0;
     }
 
     addFiance(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
-        if (this.fiance instanceof Character && _character != this.getFiance()) {
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
+        if (this.fiance instanceof CharacterEntity && _character != this.getFiance()) {
             this.removeFiance(this.getFiance());
         }
         this.spouse = _character;
@@ -4099,12 +3820,8 @@ class Character extends EntityWithStorage {
         return this.fiance;
     }
     removeFiance(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.fiance == _character) {
             this.fiance = undefined;
         }
@@ -4121,16 +3838,12 @@ class Character extends EntityWithStorage {
         return this;
     }
     addSpouse(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.fiance == _character) {
             this.clearFiance();
         }
-        if (this.spouse instanceof Character && _character != this.getSpouse()) {
+        if (this.spouse instanceof CharacterEntity && _character != this.getSpouse()) {
             this.removeSpouse(this.getSpouse());
         }
         this.spouse = _character;
@@ -4143,12 +3856,8 @@ class Character extends EntityWithStorage {
         return this.spouse;
     }
     removeSpouse(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.spouse == _character) {
             this.spouse = undefined;
         }
@@ -4173,12 +3882,8 @@ class Character extends EntityWithStorage {
 
     addBiologicalParent(_character, _updateChild = true) {
         if (Game.enableDebug) console.log("Running addBiologicalParent");
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (Game.enableDebug) console.log("    Checking if species are same");
         if (_character.getSpecies() != this.getSpecies()) {
             return this;
@@ -4204,12 +3909,8 @@ class Character extends EntityWithStorage {
         return this;
     }
     addFosterParent(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.biologicalParents.contains(_character)) {
             this.biologicalParents.remove(_character);
         }
@@ -4245,12 +3946,8 @@ class Character extends EntityWithStorage {
     }
 
     addBiologicalChild(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (_character.species != this.species) {
             return this;
         }
@@ -4266,12 +3963,8 @@ class Character extends EntityWithStorage {
         return this;
     }
     addFosterChild(_character, _updateChild = true) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return;}
         if (this.biologicalChildren.contains(_character)) {
             this.biologicalChildren.remove(_character);
         }
@@ -4328,7 +4021,7 @@ class Character extends EntityWithStorage {
     }
     /**
      * Returns whether or not this character is related to another.
-     * @param  {Character}  _character Character
+     * @param  {CharacterEntity}    _character CharacterEntity
      * @return {Boolean}            Whether or not this character is related to another.
      */
     hasBiologicalSibling(_character) {
@@ -4477,16 +4170,12 @@ class Character extends EntityWithStorage {
 
     /**
      * Returns an integer based off of the number of direct parents this character has with another.
-     * @param  {Character} _character Character
+     * @param  {CharacterEntity} _character CharacterEntity
      * @return {Number}            0 - None, 1 - One parent, 2 - Both parents
      */
     calculateBiologicalSiblingRelations(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return 0;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return 0;}
         if (this.biologicalParents.length > 0 && _character.biologicalParents.length > 0) {
             var _parentAHasChild = this.biologicalParents[0].hasBiologicalChild(_character);
             if (this.biologicalParents.length == 2) {
@@ -4507,12 +4196,8 @@ class Character extends EntityWithStorage {
         }
     }
     calculateBiologicalRelations(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return 0;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return 0;}
         // If they're your parent or your child
         if (this.getBiologicalParents().contains(_character) || this.getBiolgoicalChildren().containsCharacter)
             return 1.0;
@@ -4605,167 +4290,27 @@ class Character extends EntityWithStorage {
     }
 
     addNewDisposition(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
-        return this.addNewCharacterDispositionFor(_character, passionOffset, friendshipOffset, playfulnessOffset, soulmateOffset, familialOffset, obsessionOffset, hateOffset);
-    }
-    addNewCharacterDispositionFor(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return this;
+        this.characterDisposition[_character] = {
+            passion:_passionOffset + this.defaultDisposition.passion,
+            friendship:_friendshipOffset + this.defaultDisposition.friendship,
+            playfulness:_playfulnessOffset + this.defaultDisposition.playfulness,
+            soulmate:_soulmateOffset + this.defaultDisposition.soulmate,
+            familial:_familialOffset + this.defaultDisposition.familial,
+            obsession:_obsessionOffset + this.defaultDisposition.obsession,
+            hate:_hateOffset + this.defaultDisposition.hate
         }
-
-        if (this.prefersSpecies.has(_character.species)) {
-            if (this.prefersSex == _character.getSex()) {
-                if (this.sexualOrientation == 0 && _character.getSex() != this.getSex() || this.sexualOrientation == 1 && _character.getSex() == this.getSex() || this.sexualOrientation == 2) {
-                    if (this.philautia > 74) {
-                        if (this.agape > 74)
-                            passionOffset += 3;
-                        else if (this.agape > 49)
-                            passionOffset += 2;
-                        else {
-                            passionOffset++;
-                            obsessionOffset++;
-                        }
-                        passionOffset++;
-                    }
-                    else {
-                        if (this.agape > 74)
-                            passionOffset++;
-                        passionOffset += 2;
-                    }
-
-                    if (this.prefersPrey && _character.predator == false || this.prefersPredators && _character.predator == true) {
-                        passionOffset += 2;
-                        obsessionOffset++;
-                    }
-
-                    passionOffset++;
-                }
-            }
-
-            if (this.age >= _character.age + (this.age/10)) {
-                if (this.philautia > 74)
-                    obsessionOffset++;
-
-                if (this.agape > 74)
-                    familialOffset += 3;
-                else if (this.agape > 49)
-                    familialOffset += 2;
-
-                familialOffset++;
-            }
-
-            if (this.philautia > 74 && this.agape > 50) {
-                if (this.prefersPrey && _character.predator == false || this.prefersPredators && _character.predator == true) {
-                    friendshipOffset++;
-                    playfulnessOffset++;
-                }
-
-                friendshipOffset++;
-                playfulnessOffset += 2;
-            }
-
-            playfulnessOffset += 2;
-        }
-        else if (this.avoidsSpecies.has(_character.species)) {
-            if (this.prefersSex == _character.getSex()) {
-                if (this.sexualOrientation == 0 && _character.getSex() != this.getSex() || this.sexualOrientation == 1 && _character.getSex() == this.getSex() || this.sexualOrientation == 2) {
-                    if (this.philautia > 74) {
-                        if (this.agape > 74)
-                            passionOffset += 2;
-                    }
-                    else {
-                        if (this.agape > 74)
-                            passionOffset++;
-                    }
-
-                    if (this.prefersPrey && _character.predator == false || this.prefersPredators && _character.predator == true) {
-                        passionOffset++;
-                        obsessionOffset++;
-                    }
-                }
-            }
-
-            if (this.age >= _character.age + (this.age/10)) {
-                if (this.philautia > 74) {
-                    if (this.agape > 74)
-                        familialOffset++;
-                }
-                else {
-                    if (this.agape > 74)
-                        familialOffset++;
-                }
-                familialOffset++;
-            }
-
-            if (this.philautia > 74 && this.agape > 50) {
-                if (this.prefersPrey && _character.predator == false || this.prefersPredators && _character.predator == true) {
-                    friendshipOffset++;
-                    playfulnessOffset++;
-                }
-
-                friendshipOffset++;
-                playfulnessOffset += 2;
-            }
-        }
-        else {
-            if (this.prefersSex == _character.getSex()) {
-                if (this.sexualOrientation == 0 && _character.getSex() != this.getSex() || this.sexualOrientation == 1 && _character.getSex() == this.getSex() || this.sexualOrientation == 2) {
-                    if (this.philautia > 74) {
-                        if (this.agape > 74)
-                            passionOffset += 2;
-                        else if (this.agape > 49)
-                            passionOffset++;
-                        else
-                            obsessionOffset++;
-
-                        passionOffset++;
-                    }
-                    else {
-                        if (this.agape > 74)
-                            passionOffset++;
-                        passionOffset++;
-                    }
-
-                    if (this.prefersPrey && _character.predator == false || this.prefersPredators && _character.predator == true) {
-                        passionOffset++;
-                        obsessionOffset++;
-                    }
-
-                    passionOffset++;
-                }
-            }
-        }
-
-        this.setCharacterDisposition(
-            _character,
-            this.defaultDisposition.passion + passionOffset,
-            this.defaultDisposition.friendship + friendshipOffset,
-            this.defaultDisposition.playfulness + playfulnessOffset,
-            this.defaultDisposition.soulmate + soulmateOffset,
-            this.defaultDisposition.familial + familialOffset,
-            this.defaultDisposition.obsession + obsessionOffset,
-            this.defaultDisposition.hate + hateOffset
-        );
         return this;
     }
-
+    
     hadSexWith(_character) {
-        if (!(_character instanceof Character)) {
-            if (Game.hasCharacterEntity(_character))
-                _character = Game.getCharacterEntity(_character);
-            else
-                return false;
-        }
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return false;}
         return this.getSexCount(_character) > 0;
     }
     calculateChanceToFuck(_character, _ignoreLustAndRut = false) {
-        if (!(_character instanceof Character))
-            _character = Game.hasCharacterEntity(_character) ? Game.getCharacterEntity(_character) : undefined;
-        if (typeof _character == 'undefined')
-            return 0;
-        if (!_character.characterDisposition.has(this))
+        _character = Game.getCharacterEntity(_character);
+        if (_character == undefined) {return 0;}
+        if (!_character.characterDisposition.hasOwnProperty(this))
             return 0;
         if (typeof _ignoreLustAndRut != "boolean")
             _ignoreLustAndRut = false;
