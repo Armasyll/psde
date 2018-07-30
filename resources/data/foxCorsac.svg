@@ -130,9 +130,9 @@
      inkscape:window-height="1056"
      id="namedview4628"
      showgrid="false"
-     inkscape:zoom="0.69913174"
-     inkscape:cx="318.37429"
-     inkscape:cy="608.20079"
+     inkscape:zoom="6.8438072"
+     inkscape:cx="317.29737"
+     inkscape:cy="88.702496"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -156,7 +156,8 @@
      stroke="black"
      stroke-width="1"
      points="318.470,917.672 348.258,905.685 341.182,892.750 318.463,907.030 "
-     id="polygon1348" />
+     id="polygon1348"
+     style="fill:#f3c57f;fill-opacity:1;stroke:#f3c57f;stroke-opacity:1" />
   <g
      id="g7169">
     <polygon
@@ -13197,8 +13198,8 @@
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccc" />
   <path
-     style="fill:#f3c57f;fill-opacity:1;stroke:#f3c57f;stroke-opacity:1"
-     d="m 341.18164,892.75 -22.71875,11.97203 0.0209,16.6684 c 0,0 8.09044,3.8916 10.71697,7.13402 3.02326,3.73216 5.5917,13.04084 5.5917,13.04084 l 13.46535,-35.87974 z"
+     style="fill:#f3c57f;fill-opacity:1;stroke:#f3c57f;stroke-width:1.00624228;stroke-opacity:1"
+     d="m 341.09302,892.75 -23.00327,11.97203 0.0212,16.6684 c 0,0 8.19176,3.8916 10.85118,7.13402 3.06112,3.73216 8.16726,12.67922 8.16726,12.67922 l 11.12845,-35.51812 z"
      id="polygon1380"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cccsccc" />
