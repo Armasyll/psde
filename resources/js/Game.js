@@ -24,6 +24,7 @@ class Game {
         }
         else {
             this.scene.collisionsEnabled = true;
+            this.scene.workerCollisions = false;
         }
 
         this._assignBoundingBoxCollisionQueue = new Set();
