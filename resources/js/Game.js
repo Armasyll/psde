@@ -127,9 +127,8 @@ class Game {
             -this.player.avatar.rotation.y-4.69,
             Math.PI/2.5,
             3,
-            Game.player.focus._absolutePosition,
+            Game.player.focus.getAbsolutePosition(),
             this.scene);
-        //this.camera.setPosition(new BABYLON.Vector3(0, 0, 3));
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 10;
         this.camera.upperRadiusLimit = 3;
@@ -1149,7 +1148,7 @@ class Game {
         GameGUI.hideTargetPortrait();
     }
     static castRayTarget() {
-        var _ray = Game.camera.getForwardRay(6, Game.camera.getWorldMatrix(), Game.player.focus._absolutePosition)
+        var _ray = Game.camera.getForwardRay(6, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
         if (Game.player.targetRay == undefined) {
             Game.player.targetRay = _ray;
         }
