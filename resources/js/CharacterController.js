@@ -27,16 +27,18 @@ class CharacterController extends EntityController {
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
         this.idle = new AnimData("idle");
+        this.idleJump = new AnimData("idleJump");
         this.run = new AnimData("run");
-        this.jump = new AnimData("jump");
+        this.runJump = new AnimData("runJump");
         this.fall = new AnimData("fall");
         this.turnLeft = new AnimData("turnLeft");
         this.turnRight = new AnimData("turnRight");
         this.strafeLeft = new AnimData("strafeLeft");
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
-        this.animations = [this.walk, this.walkBack, this.idle, this.run, this.jump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
+        this.animations = [this.walk, this.walkBack, this.idle, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
 
+        this._ellipsoid = this.avatar.ellipsoid.clone();
         this.started = false;
         this._stopAnim = false;
         this.prevAnim = null;
@@ -73,7 +75,8 @@ class CharacterController extends EntityController {
         this.setIdleAnim("80_idle01", 1, true);
         this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
-        this.setJumpAnim("95_jump", 1, true);
+        this.setIdleJumpAnim("95_jump", 1, false);
+        this.setRunJumpAnim("95_jump", 1, false);
 
         this.attachedMeshes = {};
         Game.characterControllers[this.id] = this;
@@ -156,6 +159,9 @@ class CharacterController extends EntityController {
     setIdleAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.idle, _rangeName, _rate, _loop);
     }
+    setIdleJumpAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.idleJump, _rangeName, _rate, _loop);
+    }
     setTurnRightAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.turnRight, _rangeName, _rate, _loop);
     }
@@ -168,8 +174,8 @@ class CharacterController extends EntityController {
     setSrafeLeftAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.strafeLeft, _rangeName, _rate, _loop);
     }
-    setJumpAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.jump, _rangeName, _rate, _loop);
+    setRunJumpAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.runJump, _rangeName, _rate, _loop);
     }
     setFallAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.fall, _rangeName, _rate, _loop);
@@ -238,7 +244,7 @@ class CharacterController extends EntityController {
     }
     doJump(dt) {
         var anim = null;
-        anim = this.jump;
+        anim = this.runJump;
         if (this.jumpTime === 0) {
             this.jumpStartPosY = this.avatar.position.y;
         }
@@ -262,6 +268,7 @@ class CharacterController extends EntityController {
         }
         else {
             disp = new BABYLON.Vector3(0, jumpDist, 0);
+            anim = this.idleJump;
         }
         this.avatar.moveWithCollisions(disp);
         if (jumpDist < 0) {
