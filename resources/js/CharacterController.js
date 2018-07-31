@@ -11,7 +11,7 @@ class CharacterController extends EntityController {
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
 
-        this.walkSpeed = 0.58 * this.avatar.scaling.z;
+        this.walkSpeed = 0.68 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.avatar.scaling.y * 4;
@@ -69,7 +69,7 @@ class CharacterController extends EntityController {
         var _this = this;
         this.renderer = function () { _this.moveAV(); };
 
-        this.setWalkAnim("93_walkingKneesBent", 1, true);
+        this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
         this.setIdleAnim("80_idle01", 1, true);

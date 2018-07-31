@@ -1176,6 +1176,7 @@ class Game {
             return;
         }
         this.highlightLayer.removeMesh(this.highlightedMesh);
+        this.highlightedMesh = null;
     }
     static setPlayerTarget(_controller) {
         this.highlightMesh(_controller.avatar);
