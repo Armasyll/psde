@@ -245,6 +245,13 @@ class InstancedEntity {
         this.controller = _controller;
         return this;
     }
+    getController() {
+        return this.controller;
+    }
+    removeController() {
+        this.controller = undefined;
+        return this;
+    }
     getAvatar() {
         return this.entity.getAvatar();
     }
@@ -253,9 +260,6 @@ class InstancedEntity {
     }
     getImage() {
         return this.entity.getImage();
-    }
-    getController() {
-        return this.controller;
     }
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);

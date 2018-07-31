@@ -842,18 +842,10 @@ class Game {
             return undefined;
         }
     }
-    /*static hasEntityController(_id) {
-        if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
-            return true;
-        }
-        else if ((_id instanceof Entity || _id instanceof EntityController || _id instanceof BABYLON.Mesh) && Game.entityControllers.hasOwnProperty(_id.id)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    static hasEntityController(_id) {
+        return this.getEntityController(_id) != undefined;
     }
-    static getNetworkedCharacterController(_id) {
+    /*static getNetworkedCharacterController(_id) {
         if (this.networkedCharacterControllers.hasOwnProperty(_id)) {
             return this.networkedCharacterControllers[_id];
         }
@@ -870,6 +862,26 @@ class Game {
     static hasNetworkedCharacterController(_id) {
         return this.networkedCharacterControllers.hasOwnProperty(_id);
     }*/
+    static getItemController(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof ItemController) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.itemControllers.hasOwnProperty(_id)) {
+            return Game.itemControllers[_id];
+        }
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof ItemController) {
+            return _id.controller;
+        }
+        else {
+            return undefined;
+        }
+    }
+    static hasItemController(_id) {
+        return this.getItemController(_id) != undefined;
+    }
     static getCharacterController(_id) {
         if (_id == undefined) {
             return;
@@ -888,18 +900,7 @@ class Game {
         }
     }
     static hasCharacterController(_id) {
-        if (_id == undefined) {
-            return;
-        }
-        else if (typeof _id == "string" && Game.characterControllers.hasOwnProperty(_id)) {
-            return true;
-        }
-        else if ((_id instanceof CharacterEntity || _id instanceof CharacterController || _id instanceof BABYLON.Mesh) && Game.characterControllers.hasOwnProperty(_id.id)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.getCharacterController(_id) != undefined;
     }
     static getEntity(_id) {
         if (_id == undefined) {
@@ -908,7 +909,7 @@ class Game {
         else if (_id instanceof Entity) {
             return _id;
         }
-        else if (Game.entities.hasOwnProperty(_id)) {
+        else if (typeof _id == "string" && Game.entities.hasOwnProperty(_id)) {
             return Game.entities[_id];
         }
         else if (_id.hasOwnProperty("entity") && _id.entity instanceof Entity) {
@@ -917,18 +918,55 @@ class Game {
         return null;
     }
     static hasEntity(_id) {
+        return this.getEntity(_id) != undefined;
+    }
+    static getProtoItemEntity(_id) {
         if (_id == undefined) {
             return;
         }
-        else if (typeof _id == "string" && Game.entities.hasOwnProperty(_id)) {
-            return true;
+        else if (_id instanceof ItemEntity) {
+            return _id;
         }
-        else if ((_id instanceof Entity || _id instanceof EntityController || _id instanceof BABYLON.Mesh) && Game.entities.hasOwnProperty(_id.id)) {
-            return true;
+        else if (typeof _id == "string" && Game.itemEntities.hasOwnProperty(_id)) {
+            return Game.itemEntities[_id];
         }
-        else {
-            return false;
+        else if (_id instanceof InstancedItemEntity) {
+            return _id.getEntity();
         }
+        else if (_id instanceof ItemController && _id.getEntity() instanceof InstancedItemEntity) {
+            return _id.getEntity().getEntity();
+        }
+        return null;
+    }
+    static hasProtoItemEntity(_id) {
+        return this.getProtoItemEntity(_id) != undefined;
+    }
+    static getInstancedItemEntity(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof InstancedItemEntity) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.instancedItemEntities.hasOwnProperty(_id)) {
+            return Game.instancedItemEntities[_id];
+        }
+        else if (_id instanceof ItemController && _id.entity instanceof InstancedItemEntity) {
+            return _id.entity;
+        }
+        else if ((_id instanceof BABYLON.Mesh || _id instanceof BABYLON.InstancedMesh) && _id.hasOwnProperty("controller") && _id.controller instanceof ItemController) {
+            return _id.controller.entity;
+        }
+        return null;
+    }
+    static hasInstancedItemEntity(_id) {
+        return this.getInstancedItemEntity(_id) != undefined;
+    }
+    static getItemEntity(_id) {
+        return this.getInstancedItemEntity(_id);
+    }
+    static hasItemEntity(_id) {
+        return this.hasInstancedItemEntity(_id);
     }
     static getCharacterEntity(_id) {
         if (_id == undefined) {
@@ -937,7 +975,7 @@ class Game {
         else if (_id instanceof CharacterEntity) {
             return _id;
         }
-        else if (Game.characterEntities.hasOwnProperty(_id)) {
+        else if (typeof _id == "string" && Game.characterEntities.hasOwnProperty(_id)) {
             return Game.characterEntities[_id];
         }
         else if (typeof _id == "object" && _id.hasOwnProperty("entity") && _id.entity instanceof CharacterEntity) {
@@ -1025,14 +1063,11 @@ class Game {
         _controller = Game.getCharacterController(_controller);
         if (_controller == undefined) {return;}
         if (_controller == this.player) {return;}
-        var _id = _controller.id;
         var _mesh = _controller.getAvatar();
         _controller.entity.dispose();
         _controller.dispose();
         _mesh.material.dispose();
-        _mesh.dispose();
-        delete Game.entityMeshInstances[_id];
-        delete Game.characterMeshInstances[_id];
+        Game.removeMesh(_mesh);
     }
     static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
         if (typeof _id != "string") {_id = genUUIDv4();}
@@ -1062,13 +1097,10 @@ class Game {
     static removeDoor(_controller) {
         _controller = Game.getEntityController(_controller);
         if (_controller == undefined) {return;}
-        var _id = _controller.id;
-        var _mesh = _controller.avatar;
+        var _mesh = _controller.getAvatar();
         _controller.entity.dispose();
         _controller.dispose();
-        _mesh.dispose();
-        delete Game.entityMeshInstances[_id];
-        delete Game.furnitureMeshInstances[_id];
+        Game.removeMesh(_mesh);
     }
     static createProtoItem(_id = undefined, _name = undefined, _description = "", _type = "book", _mesh = undefined, _skin = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
@@ -1083,25 +1115,36 @@ class Game {
         return _entity;
     }
     static removeProtoItem() {}
-    static createItem(_id, _protoEntity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static createItem(_id, _entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        var _entity = new InstancedItemEntity(_id, _protoEntity);
+        if (_entity instanceof ItemEntity) {
+            _entity = new InstancedItemEntity(_id, _entity);
+        }
+        else if (_entity instanceof InstancedItemEntity) {}
+        else if (_id instanceof InstancedItemEntity) {
+            _entity = _id;
+            _id = _entity.getID();
+        }
         var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _options, _position, _rotation, _scale, true);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
         return _controller;
     }
     static removeItem(_controller) {
-        _controller = Game.getEntityController(_controller);
+        _controller = Game.getItemController(_controller);
         if (_controller == undefined) {return;}
-        var _id = _controller.id;
-        var _mesh = _controller.avatar;
+        var _mesh = _controller.getAvatar();
         _controller.entity.dispose();
         _controller.dispose();
-        _mesh.dispose();
-        delete Game.entityMeshInstances[_id];
-        delete Game.itemMeshInstances[_id];
+        Game.removeMesh(_mesh);
+    }
+    static removeItemInSpace(_controller) {
+        _controller = Game.getItemController(_controller);
+        if (_controller == undefined) {return;}
+        var _mesh = _controller.getAvatar();
+        _controller.dispose();
+        Game.removeMesh(_mesh);
     }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh)) {

@@ -3,7 +3,7 @@ class EntityController {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh) || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
-        if (!_entity instanceof CharacterEntity) return null;
+        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity)) return null;
         this.id = _id;
         this.avatar = undefined;
         this.setAvatar(_avatar);
@@ -147,6 +147,7 @@ class EntityController {
     }
     dispose() {
         delete Game.entityControllers[this.id];
+        this.entity.removeController();
         for (var _var in this) {
             this[_var] = null;
         }

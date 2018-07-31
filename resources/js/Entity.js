@@ -86,7 +86,7 @@ class Entity {
     setAvatarID(_avatar) {
         _avatar = Game.getMesh(_avatar);
         if (_avatar != undefined) {
-            this.avatarID = _avatar;
+            this.avatarID = _avatar.name;
         }
         return this;
     }
@@ -98,7 +98,6 @@ class Entity {
         return this;
     }
     getAvatar() {
-        if (this.controller instanceof EntityController && this.controller.getAvatar())
         return Game.getMesh(this.avatarID);
     }
     setAvatarSkin(_skin) {
@@ -128,7 +127,6 @@ class Entity {
         return this.controller;
     }
     removeController() {
-        this.controller.dispose();
         this.controller = undefined;
         return this;
     }
