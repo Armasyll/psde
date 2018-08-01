@@ -659,7 +659,7 @@ class Game {
         }
     }
     static filterName(_string) {
-        return _string.replace(/[^a-zA-Z0-9\-]/g, '');
+        return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
     }
     static filterVector(..._vector) {
         if (_vector == undefined || _vector[0] == undefined) {

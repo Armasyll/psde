@@ -274,8 +274,8 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "stairs",               {x:0, y:1.5, z:-19.9});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-22}, {x:0, y:90, z:0});
     Game.addFurnitureMesh("tableInstance01", "diningTable", {mass:25,restitution:0.1}, {x:10, y:0, z:-22});
-    Game.addItemMesh("knifeInstance01", "knife", undefined, {x:9.5, y:0.9, z:-22.5}, {x:180, y:0, z:0});
-    Game.addItemMesh("crossInstance01", "cross", undefined, {x:10, y:0.6, z:-22});
+    Game.createItem("knife", Game.createProtoItem("knife", "Knife", "", "weapon", "knife"), undefined, {x:9.5, y:0.9, z:-22.5}, {x:180, y:0, z:0});
+    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "", "weapon", "cross"), undefined, {x:10, y:0.6, z:-22});
     Game.addItemMesh("planeInstance01", "plate", undefined, {x:9.7, y:0.6, z:-21.5});
     Game.addItemMesh("plateInstance02", "plate", undefined, {x:10.3, y:0.6, z:-23});
 
