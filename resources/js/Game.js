@@ -191,9 +191,9 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntityCode = 69;
-        this.useFocusedEntityCode = 69;
-        this.interfaceSelectedItemCode = 70;
+        this.interfaceTargetedEntityCode = 70;
+        this.useTargetedEntityCode = 69;
+        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
 
     }
@@ -206,9 +206,9 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntityCode = 190;
-        this.useFocusedEntityCode = 190;
-        this.interfaceSelectedItemCode = 85;
+        this.interfaceTargetedEntityCode = 85;
+        this.useTargetedEntityCode = 190;
+        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 80;
     }
     static initAzertyKeyboardControls() {
@@ -220,9 +220,9 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntityCode = 69;
-        this.useFocusedEntityCode = 69;
-        this.interfaceSelectedItemCode = 70;
+        this.interfaceTargetedEntityCode = 70;
+        this.useTargetedEntityCode = 69;
+        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
     }
     static initPostProcessing() {
@@ -260,10 +260,10 @@ class Game {
                 GameGUI.chatInputSubmit();
             }
         }
-        else if (event === this.useFocusedEntityCode) {
+        else if (event === this.useTargetedEntityCode) {
 
         }
-        else if (event === this.interfaceFocusedEntity) {
+        else if (event === this.interfaceTargetedEntityCode) {
 
         }
         else if (event === this.showMainMenuCode) {
