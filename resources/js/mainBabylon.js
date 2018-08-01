@@ -149,8 +149,6 @@ function generateApartmentScene() {
     Game.createCollisionWall({x:5, y:0, z:-13}, {x:5, y:0, z:-15}); // Side wall between Commons and Landlord's apartment
     Game.createCollisionWall({x:5, y:0, z:-17}, {x:15, y:0, z:-17}); // Front wall between Commons and Landlord's apartment
 
-    Game.createCollisionRamp({x:0, y:0, z:-22}, {x:3, y:3, z:-17});
-
     Game.createCollisionWall({x:5, y:0, z:-25}, {x:5, y:0, z:-27}); // Side wall between Commons and building entrance
 
     Game.addMesh(undefined, "floorWoodDark",        {x:0, y:0, z:0});
@@ -271,6 +269,9 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-20}, {x:0, y:90, z:0});
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-22}, {x:0, y:-90, z:0});
+    Game.createCollisionRamp({x:0, y:0, z:-22.5}, {x:1.8, y:3, z:-17.35});
+    Game.addMesh(undefined, "stairs",               {x:0, y:0, z:-22});
+    Game.addMesh(undefined, "stairs",               {x:0, y:1.5, z:-19.9});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-22}, {x:0, y:90, z:0});
     Game.addFurnitureMesh("tableInstance01", "diningTable", {mass:25,restitution:0.1}, {x:10, y:0, z:-22});
     Game.addItemMesh("knifeInstance01", "knife", undefined, {x:9.5, y:0.9, z:-22.5}, {x:180, y:0, z:0});
