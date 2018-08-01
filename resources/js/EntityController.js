@@ -20,6 +20,7 @@ class EntityController {
         this.targetedByControllers = new Set();
 
         this.defaultAction = null;
+        this.setDefaultAction("look");
 
         Game.entityControllers[this.id] = this;
     }
