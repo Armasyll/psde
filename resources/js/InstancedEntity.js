@@ -35,12 +35,12 @@ class InstancedEntity {
          * Actions available to this Entity
          * @type {Set} <Game.kActionTypes>
          */
-        this.availableActions = new Set(_entity.getAvailableActions());
+        this.availableActions = new Set(this.entity.getAvailableActions());
         /**
          * Game.kSpecialProperties
          * @type {Set} <Game.kSpecialProperties>
          */
-        this.specialProperties = new Set(_entity.getSpecialProperties());
+        this.specialProperties = new Set(this.entity.getSpecialProperties());
 
         this.controller = undefined;
 
@@ -103,7 +103,10 @@ class InstancedEntity {
         return this;
     }
     getAvailableActions() {
-        return this.currentActions;
+        return this.availableActions;
+    }
+    hasAvailableAction(_action) {
+        return this.availableActions.has(_action);
     }
     /**
      * Adds a Game.kSpecialProperties

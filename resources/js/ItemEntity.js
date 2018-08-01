@@ -19,6 +19,8 @@ class ItemEntity extends Entity {
         this.durability = 1;
         this.setDurability(_defaultDurability);
 
+        this.addAvailableAction("take");
+
         Game.itemEntities[this.id] = this;
 	}
 	setMass(_float) {

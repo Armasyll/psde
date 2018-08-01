@@ -17,6 +17,7 @@ class GameGUI {
         GameGUI.hud.addControl(GameGUI._generateChat());
         GameGUI.hud.addControl(GameGUI._generatePlayerPortrait());
         GameGUI.hud.addControl(GameGUI._generateTargetPortrait());
+        GameGUI.hud.addControl(GameGUI._generateTargetActionTooltip());
         GameGUI.hideHUD();
     }
     static initMainMenu() {
@@ -58,7 +59,7 @@ class GameGUI {
         return GameGUI.mainMenu.rootContainer.isVisible;
     }
     static _generateCrosshair() {
-        if (Game.debugEnabled) console.log("Running showCrosshair");
+        if (Game.debugEnabled) console.log("Running GameGUI::_generateCrosshair");
         var crosshair = new BABYLON.GUI.Ellipse("crosshair");
         crosshair.width = "15px";
         crosshair.background = "white";
@@ -634,5 +635,75 @@ class GameGUI {
     }
     static hideInventory() {
         GameGUI.hud.rootContainer.getChildByName("inventory").isVisible = false;
+    }
+    static _generateTargetActionTooltip() {
+        if (Game.debugEnabled) console.log("Running GameGUI::_generateTargetActionTooltip");
+        var tooltip = new BABYLON.GUI.Rectangle("targetActionTooltip");
+            tooltip.width = 0.125;
+            tooltip.height = 0.075;
+            tooltip.top = "3.75%";
+            tooltip.left = "6.25%";
+            tooltip.background = "black";
+            tooltip.alpha = 0.5;
+            tooltip.isVertical = false;
+        var keyName = new BABYLON.GUI.TextBlock();
+            keyName.text = "E";
+            keyName.top = 0;
+            keyName.left = "10%";
+            keyName.textHorizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
+            keyName.color = "white";
+        var actionPanelActionName = new BABYLON.GUI.TextBlock();
+            actionPanelActionName.text = "";
+            actionPanelActionName.height = 0.5;
+            //actionPanelActionName.top = "-25%";
+            actionPanelActionName.left = "25%";
+            actionPanelActionName.color = "white";
+        var actionPanelTargetName = new BABYLON.GUI.TextBlock();
+            actionPanelTargetName.text = "";
+            actionPanelTargetName.height = 0.5;
+            actionPanelTargetName.top = "25%";
+            actionPanelTargetName.left = "25%";
+            actionPanelTargetName.color = "white";
+        tooltip.addControl(keyName);
+        tooltip.addControl(actionPanelActionName);
+        tooltip.addControl(actionPanelTargetName);
+        tooltip.isVisible = true;
+        return tooltip;
+    }
+    static setActionTooltipLetter(_string = String.fromCharCode(Game.useTargetedEntityCode)) {
+        GameGUI.hud.rootContainer.getChildByName("targetActionTooltip").children[0].text = _string;
+    }
+    static setActionTooltipAction(_string = "Use") {
+        if (Game.debugEnabled) console.log("Running GameGUI::setActionTooltipAction");
+        if (typeof _string != "string") {
+            _string = "Use";
+        }
+        else {
+            _string = _string.capitalize();
+        }
+        GameGUI.hud.rootContainer.getChildByName("targetActionTooltip").children[1].text = _string;
+    }
+    static setActionTooltipTarget(_string = "") {
+        if (typeof _string != "string") {
+            _string = "";
+        }
+        if (Game.debugEnabled) console.log("Running GameGUI::setActionTooltipTarget");
+        GameGUI.hud.rootContainer.getChildByName("targetActionTooltip").children[2].text = _string;
+    }
+    static setActionTooltip(_action, _target = "") {
+        GameGUI.setActionTooltipAction(_action);
+        GameGUI.setActionTooltipTarget(_target);
+    }
+    static showActionTooltip() {
+        GameGUI.hud.rootContainer.getChildByName("targetActionTooltip").isVisible = true;
+    }
+    static hideActionTooltip() {
+        GameGUI.hud.rootContainer.getChildByName("targetActionTooltip").isVisible = false;
+    }
+    static _generateTargetAvailableActionsRadialMenu() {
+        return;
+    }
+    static _generateTargetAvailableActionsMenu() {
+        return;
     }
 }

@@ -161,7 +161,10 @@ class Entity {
         return this;
     }
     getAvailableActions() {
-        return this.currentActions;
+        return this.availableActions;
+    }
+    hasAvailableAction(_action) {
+        return this.availableActions.has(_action);
     }
 
     /**

@@ -92,7 +92,7 @@ class Game {
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
         this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
-        this.kInteractionTypes = new Set(["consume","disrobe","hold","look","put","release","take","touch","use","wear"]);
+        this.kInteractionTypes = new Set(["consume","disrobe","hold","look","open","put","release","take","talk","touch","use","wear"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
@@ -195,7 +195,7 @@ class Game {
         this.useTargetedEntityCode = 69;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
-
+        this._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
         this.initBaseKeyboardControls();
@@ -210,6 +210,7 @@ class Game {
         this.useTargetedEntityCode = 190;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 80;
+        this._updateMenuKeyboardDisplayKeys();
     }
     static initAzertyKeyboardControls() {
         this.initBaseKeyboardControls();
@@ -224,6 +225,10 @@ class Game {
         this.useTargetedEntityCode = 69;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
+        this._updateMenuKeyboardDisplayKeys();
+    }
+    static _updateMenuKeyboardDisplayKeys() {
+        GameGUI.setActionTooltipLetter();
     }
     static initPostProcessing() {
         this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
@@ -1092,6 +1097,7 @@ class Game {
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
         var _entity = new Entity(_id, _name);
+        _entity.addAvailableAction("open");
         if (Game.furnitureMeshes.hasOwnProperty(_mesh)) {}
         else if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
             _mesh = _mesh.name;
@@ -1144,6 +1150,7 @@ class Game {
             _entity = _id;
             _id = _entity.getID();
         }
+        _entity.addAvailableAction("take");
         var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _options, _position, _rotation, _scale, true);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
@@ -1201,6 +1208,8 @@ class Game {
         Game.player.setTarget(_controller);
         GameGUI.setTargetPortrait(_controller);
         GameGUI.showTargetPortrait();
+        GameGUI.setActionTooltip(_controller.getDefaultAction());
+        GameGUI.showActionTooltip();
     }
     static clearPlayerTarget() {
         if (Game.player.getTarget() == undefined) {
@@ -1209,6 +1218,7 @@ class Game {
         this.clearHightlightMesh();
         Game.player.clearTarget();
         GameGUI.hideTargetPortrait();
+        GameGUI.hideActionTooltip();
     }
     static castRayTarget() {
         var _ray = Game.camera.getForwardRay(6, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
