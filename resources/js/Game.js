@@ -61,8 +61,8 @@ class Game {
         this._loadedItems = false;
         this._finishedLoading = false;
 
-        //this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
-        this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
+        this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
+        //this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
 
         this.keyboardControls = {};
         this.player = undefined;
@@ -180,6 +180,7 @@ class Game {
     static initBaseKeyboardControls() {
         this.chatInputFocusCode = 13;
         this.chatInputSubmitCode = 13;
+        this.showMainMenuCode = 27;
     }
     static initQwertyKeyboardControls() {
         this.initBaseKeyboardControls();
@@ -190,10 +191,11 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntity = 69;
-        this.useFocusedEntity = 0;
-        this.interfaceSelectedItem = 0;
-        this.useSelectedItem = 82;
+        this.interfaceFocusedEntityCode = 69;
+        this.useFocusedEntityCode = 69;
+        this.interfaceSelectedItemCode = 70;
+        this.useSelectedItemCode = 82;
+
     }
     static initDvorakKeyboardControls() {
         this.initBaseKeyboardControls();
@@ -204,10 +206,10 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntity = 190;
-        this.useFocusedEntity = 0;
-        this.interfaceSelectedItem = 0;
-        this.useSelectedItem = 80;
+        this.interfaceFocusedEntityCode = 190;
+        this.useFocusedEntityCode = 190;
+        this.interfaceSelectedItemCode = 85;
+        this.useSelectedItemCode = 80;
     }
     static initAzertyKeyboardControls() {
         this.initBaseKeyboardControls();
@@ -218,16 +220,17 @@ class Game {
         this.strafeLeftCode = 0;
         this.strafeRightCode = 0;
         this.jumpCode = 32;
-        this.interfaceFocusedEntity = 69;
-        this.useFocusedEntity = 0;
-        this.interfaceSelectedItem = 0;
-        this.useSelectedItem = 82;
+        this.interfaceFocusedEntityCode = 69;
+        this.useFocusedEntityCode = 69;
+        this.interfaceSelectedItemCode = 70;
+        this.useSelectedItemCode = 82;
     }
     static initPostProcessing() {
         this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
         //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, this.camera); // Could be used for darkness, when using too many lights is an issue
     }
     static controlCharacterOnKeyDown(event) {
+        if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         if (event === this.jumpCode)
             this.player.keyJump(true);
         else if (event === 16)
@@ -257,8 +260,23 @@ class Game {
                 GameGUI.chatInputSubmit();
             }
         }
-        else if (event == 27) {
-            GameGUI.showMainMenu();
+        else if (event === this.useFocusedEntityCode) {
+
+        }
+        else if (event === this.interfaceFocusedEntity) {
+
+        }
+        else if (event === this.showMainMenuCode) {
+            if (GameGUI.mainMenuVisible()) {
+                if (Game.debugEnabled) console.log(`\tShowing HUD`);
+                GameGUI.hideMainMenu(false);
+                GameGUI.showHUD(false);
+            }
+            else {
+                if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
+                GameGUI.hideHUD(false);
+                GameGUI.showMainMenu(false);
+            }
         }
         this.player.move = this.player.anyMovement();
         if (Client.online && !this.player.key.equals(this.player.prevKey)) {
@@ -1238,7 +1256,6 @@ class Game {
         document.removeEventListener("pointerlockchange", Game.pointerRelease);
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
-        GameGUI.showMainMenu();
     }
     static chatCommands(_command, ..._param) {
         if (_command == undefined || typeof _command != "string") {

@@ -24,6 +24,7 @@ class GameGUI {
         GameGUI.hideMainMenu();
     }
     static showHUD(_updateChild = true) {
+        if (Game.debugEnabled) console.log("Running GameGUI::showHUD");
         if (_updateChild) {
             GameGUI.hideMainMenu(false);
         }
@@ -36,16 +37,25 @@ class GameGUI {
         });
     }
     static hideHUD() {
+        if (Game.debugEnabled) console.log("Running GameGUI::hideHUD");
         GameGUI.hud.rootContainer.isVisible = false;
     }
+    static hudVisible() {
+        return GameGUI.hud.rootContainer.isVisible;
+    }
     static showMainMenu(_updateChild = true) {
+        if (Game.debugEnabled) console.log("Running GameGUI::showMainMenu");
         if (_updateChild) {
             GameGUI.hideHUD(false);
         }
         GameGUI.mainMenu.rootContainer.isVisible = true;
     }
     static hideMainMenu() {
+        if (Game.debugEnabled) console.log("Running GameGUI::hideMainMenu");
         GameGUI.mainMenu.rootContainer.isVisible = false;
+    }
+    static mainMenuVisible() {
+        return GameGUI.mainMenu.rootContainer.isVisible;
     }
     static _generateCrosshair() {
         if (Game.debugEnabled) console.log("Running showCrosshair");
