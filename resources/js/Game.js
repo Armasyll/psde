@@ -1344,6 +1344,7 @@ class Game {
         this.highlightedMesh = null;
     }
     static setPlayerTarget(_controller) {
+        if (_controller == Game.player.getTarget()) {return;}
         this.highlightMesh(_controller.avatar);
         Game.player.setTarget(_controller);
         GameGUI.setTargetPortrait(_controller);
@@ -1361,7 +1362,7 @@ class Game {
         GameGUI.hideActionTooltip();
     }
     static castRayTarget() {
-        var _ray = Game.camera.getForwardRay(6, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
+        var _ray = Game.camera.getForwardRay(2 * Game.player.getAvatar().scaling.y, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
         if (Game.player.targetRay == undefined) {
             Game.player.targetRay = _ray;
         }
