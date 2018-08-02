@@ -380,119 +380,143 @@ class GameGUI {
         return characterChoiceMenuContainer;
     }
     static _generatePlayerPortrait() {
-        var playerPortrait = new BABYLON.GUI.Rectangle("playerPortrait");
-        playerPortrait.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        playerPortrait.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        playerPortrait.height = 0.12;
-        playerPortrait.width = 0.24;
-        playerPortrait.top = 0;
-        playerPortrait.left = 0;
-        playerPortrait.thickness = 0;
-            var playerPortraitAvatarContainer = new BABYLON.GUI.Rectangle();
-            playerPortraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            playerPortraitAvatarContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            playerPortraitAvatarContainer.height = 1.0;
-            playerPortraitAvatarContainer.width = 0.33;
-            playerPortraitAvatarContainer.top = 0;
-            playerPortraitAvatarContainer.left = 0;
-            playerPortraitAvatarContainer.thickness = 0;
-                var playerPortraitAvatar = new BABYLON.GUI.Image("playerPortraitAvatar", "resources/images/characters/genericCharacter.svg");
-                playerPortraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-            var playerPortraitStats = new BABYLON.GUI.StackPanel("playerPortraitStats");
-            playerPortraitStats.isVertical = true;
-            playerPortraitStats.height = 1.0;
-            playerPortraitStats.width = 0.76;
-            playerPortraitStats.top = 0;
-            playerPortraitStats.left = "21%";
-                var playerPortraitStatsName = new BABYLON.GUI.TextBlock("playerName");
-                playerPortraitStatsName.text = "Your Name Here";
-                playerPortraitStatsName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                playerPortraitStatsName.height = 0.25;
-                playerPortraitStatsName.width = 1.0;
-                var playerPortraitStatsLife = new BABYLON.GUI.TextBlock("playerLife");
-                playerPortraitStatsLife.text = "Life";
-                playerPortraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                playerPortraitStatsLife.height = 0.25;
-                playerPortraitStatsLife.width = 1.0;
-                playerPortraitStatsLife.color = "red";
-                var playerPortraitStatsMana = new BABYLON.GUI.TextBlock("playerMana");
-                playerPortraitStatsMana.text = "";
-                playerPortraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                playerPortraitStatsMana.height = 0.25;
-                playerPortraitStatsMana.width = 1.0;
-                playerPortraitStatsMana.color = "blue";
-                var playerPortraitStatsStamina = new BABYLON.GUI.TextBlock("playerStamina");
-                playerPortraitStatsStamina.text = "Stamina";
-                playerPortraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                playerPortraitStatsStamina.height = 0.25;
-                playerPortraitStatsStamina.width = 1.0;
-                playerPortraitStatsStamina.color = "green";
-        playerPortrait.addControl(playerPortraitAvatarContainer);
-        playerPortraitAvatarContainer.addControl(playerPortraitAvatar);
-        playerPortrait.addControl(playerPortraitStats);
-        playerPortraitStats.addControl(playerPortraitStatsName);
-        playerPortraitStats.addControl(playerPortraitStatsLife);
-        playerPortraitStats.addControl(playerPortraitStatsMana);
-        playerPortraitStats.addControl(playerPortraitStatsStamina);
-        return playerPortrait;
+        var portrait = new BABYLON.GUI.Rectangle("playerPortrait");
+        portrait.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        portrait.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        portrait.height = 0.12;
+        portrait.width = 0.24;
+        portrait.top = 0;
+        portrait.left = 0;
+        portrait.thickness = 0;
+            var portraitBackground = new BABYLON.GUI.Rectangle("portraitBackground");
+            portraitBackground.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            portraitBackground.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            portraitBackground.height = 1;
+            portraitBackground.width = 1;
+            portraitBackground.top = 0;
+            portraitBackground.left = 0;
+            portraitBackground.thickness = 0;
+            portraitBackground.background = "black";
+            portraitBackground.alpha = 0.5;
+            var portraitAvatarContainer = new BABYLON.GUI.Rectangle();
+            portraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            portraitAvatarContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            portraitAvatarContainer.height = 1.0;
+            portraitAvatarContainer.width = 0.33;
+            portraitAvatarContainer.top = 0;
+            portraitAvatarContainer.left = 0;
+            portraitAvatarContainer.thickness = 0;
+                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/characters/genericCharacter.svg");
+                portraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+            var portraitStats = new BABYLON.GUI.StackPanel("portraitStats");
+            portraitStats.isVertical = true;
+            portraitStats.height = 1.0;
+            portraitStats.width = 0.76;
+            portraitStats.top = 0;
+            portraitStats.left = "21%";
+                var portraitName = new BABYLON.GUI.TextBlock("playerName");
+                portraitName.text = "Your Name Here";
+                portraitName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                portraitName.height = 0.25;
+                portraitName.width = 1.0;
+                portraitName.color = "white";
+                var portraitStatsLife = new BABYLON.GUI.TextBlock("portraitStatsLife");
+                portraitStatsLife.text = "Life";
+                portraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                portraitStatsLife.height = 0.25;
+                portraitStatsLife.width = 1.0;
+                portraitStatsLife.color = "red";
+                var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
+                portraitStatsMana.text = "";
+                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                portraitStatsMana.height = 0.25;
+                portraitStatsMana.width = 1.0;
+                portraitStatsMana.color = "blue";
+                var portraitStatsStamina = new BABYLON.GUI.TextBlock("portraitStatsStamina");
+                portraitStatsStamina.text = "Stamina";
+                portraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                portraitStatsStamina.height = 0.25;
+                portraitStatsStamina.width = 1.0;
+                portraitStatsStamina.color = "green";
+        portrait.addControl(portraitBackground);
+        portrait.addControl(portraitAvatarContainer);
+        portraitAvatarContainer.addControl(portraitAvatar);
+        portrait.addControl(portraitStats);
+        portraitStats.addControl(portraitName);
+        portraitStats.addControl(portraitStatsLife);
+        portraitStats.addControl(portraitStatsMana);
+        portraitStats.addControl(portraitStatsStamina);
+        return portrait;
     }
     static _generateTargetPortrait() {
-        var targetPortrait = new BABYLON.GUI.Rectangle("targetPortrait");
-        targetPortrait.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        targetPortrait.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        targetPortrait.height = 0.12;
-        targetPortrait.width = 0.24;
-        targetPortrait.top = 0;
-        targetPortrait.left = "24%";
-        targetPortrait.thickness = 0;
-        targetPortrait.isVisible = false;
-            var targetPortraitAvatarContainer = new BABYLON.GUI.Rectangle();
-            targetPortraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            targetPortraitAvatarContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            targetPortraitAvatarContainer.height = 1.0;
-            targetPortraitAvatarContainer.width = 0.33;
-            targetPortraitAvatarContainer.top = 0;
-            targetPortraitAvatarContainer.left = 0;
-            targetPortraitAvatarContainer.thickness = 0;
-                var targetPortraitAvatar = new BABYLON.GUI.Image("targetPortraitAvatar", "resources/images/characters/genericCharacter.svg");
-                targetPortraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-            var targetPortraitStats = new BABYLON.GUI.StackPanel("targetPortraitStats");
-            targetPortraitStats.isVertical = true;
-            targetPortraitStats.height = 1.0;
-            targetPortraitStats.width = 0.76;
-            targetPortraitStats.top = 0;
-            targetPortraitStats.left = "-21%";
-                var targetPortraitStatsName = new BABYLON.GUI.TextBlock("targetName");
-                targetPortraitStatsName.text = "Your Name Here";
-                targetPortraitStatsName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                targetPortraitStatsName.height = 0.25;
-                targetPortraitStatsName.width = 1.0;
-                var targetPortraitStatsLife = new BABYLON.GUI.TextBlock("targetLife");
-                targetPortraitStatsLife.text = "Life";
-                targetPortraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                targetPortraitStatsLife.height = 0.25;
-                targetPortraitStatsLife.width = 1.0;
-                targetPortraitStatsLife.color = "red";
-                var targetPortraitStatsMana = new BABYLON.GUI.TextBlock("targetMana");
-                targetPortraitStatsMana.text = "";
-                targetPortraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                targetPortraitStatsMana.height = 0.25;
-                targetPortraitStatsMana.width = 1.0;
-                targetPortraitStatsMana.color = "blue";
-                var targetPortraitStatsStamina = new BABYLON.GUI.TextBlock("targetStamina");
-                targetPortraitStatsStamina.text = "Stamina";
-                targetPortraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                targetPortraitStatsStamina.height = 0.25;
-                targetPortraitStatsStamina.width = 1.0;
-                targetPortraitStatsStamina.color = "green";
-        targetPortrait.addControl(targetPortraitStats);
-        targetPortrait.addControl(targetPortraitAvatarContainer);
-        targetPortraitAvatarContainer.addControl(targetPortraitAvatar);
-        targetPortraitStats.addControl(targetPortraitStatsName);
-        targetPortraitStats.addControl(targetPortraitStatsLife);
-        targetPortraitStats.addControl(targetPortraitStatsMana);
-        targetPortraitStats.addControl(targetPortraitStatsStamina);
-        return targetPortrait;
+        var portrait = new BABYLON.GUI.Rectangle("targetPortrait");
+        portrait.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        portrait.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        portrait.height = 0.12;
+        portrait.width = 0.24;
+        portrait.top = 0;
+        portrait.left = "26%";
+        portrait.thickness = 0;
+        portrait.isVisible = false;
+            var portraitBackground = new BABYLON.GUI.Rectangle("portraitBackground");
+            portraitBackground.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            portraitBackground.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            portraitBackground.height = 1;
+            portraitBackground.width = 1;
+            portraitBackground.top = 0;
+            portraitBackground.left = 0;
+            portraitBackground.thickness = 0;
+            portraitBackground.background = "black";
+            portraitBackground.alpha = 0.5;
+            var portraitAvatarContainer = new BABYLON.GUI.Rectangle();
+            portraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            portraitAvatarContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            portraitAvatarContainer.height = 1.0;
+            portraitAvatarContainer.width = 0.33;
+            portraitAvatarContainer.top = 0;
+            portraitAvatarContainer.left = 0;
+            portraitAvatarContainer.thickness = 0;
+                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/characters/genericCharacter.svg");
+                portraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+            var portraitStats = new BABYLON.GUI.StackPanel("portraitStats");
+            portraitStats.isVertical = true;
+            portraitStats.height = 1.0;
+            portraitStats.width = 0.76;
+            portraitStats.top = 0;
+            portraitStats.left = "-21%";
+                var portraitName = new BABYLON.GUI.TextBlock("portraitName");
+                portraitName.text = "Your Name Here";
+                portraitName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                portraitName.height = 0.25;
+                portraitName.width = 0.8;
+                portraitName.color = "white";
+                var portraitStatsLife = new BABYLON.GUI.TextBlock("portraitStatsLife");
+                portraitStatsLife.text = "Life";
+                portraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                portraitStatsLife.height = 0.25;
+                portraitStatsLife.width = 1.0;
+                portraitStatsLife.color = "red";
+                var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
+                portraitStatsMana.text = "";
+                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                portraitStatsMana.height = 0.25;
+                portraitStatsMana.width = 1.0;
+                portraitStatsMana.color = "blue";
+                var portraitStatsStamina = new BABYLON.GUI.TextBlock("portraitStatsStamina");
+                portraitStatsStamina.text = "Stamina";
+                portraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                portraitStatsStamina.height = 0.25;
+                portraitStatsStamina.width = 1.0;
+                portraitStatsStamina.color = "green";
+        portrait.addControl(portraitBackground);
+        portrait.addControl(portraitStats);
+        portrait.addControl(portraitAvatarContainer);
+        portraitAvatarContainer.addControl(portraitAvatar);
+        portraitStats.addControl(portraitName);
+        portraitStats.addControl(portraitStatsLife);
+        portraitStats.addControl(portraitStatsMana);
+        portraitStats.addControl(portraitStatsStamina);
+        return portrait;
     }
     static showPlayerPortrait() {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").isVisible = true;
@@ -555,46 +579,46 @@ class GameGUI {
         this.setTargetPortraitStamina(_stamina);
     }
     static setPlayerPortraitImage(_image = "resources/images/characters/genericCharacter.svg") {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[0].children[0].domImage.setAttribute("src", _image);
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[0].domImage.setAttribute("src", _image);
     }
     static setPlayerPortraitName(_string) {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[0].text = _string;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[0].text = _string;
     }
     static setPlayerPortraitLife(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[1].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[1].text = _int;
     }
     static setPlayerPortraitStamina(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[3].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[3].text = _int;
     }
     static showPlayerPortraitMana() {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].isVisible = true;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[2].isVisible = true;
     }
     static hidePlayerPortraitMana() {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].isVisible = false;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[2].isVisible = false;
     }
     static setPlayerPortraitMana(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[2].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[2].text = _int;
     }
     static setTargetPortraitImage(_image = "resources/images/items/genericItem.svg") {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[0].domImage.setAttribute("src", _image);
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[2].children[0].domImage.setAttribute("src", _image);
     }
     static setTargetPortraitName(_string) {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[0].text = _string;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[0].text = _string;
     }
     static setTargetPortraitLife(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[1].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[1].text = _int;
     }
     static setTargetPortraitStamina(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[3].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[3].text = _int;
     }
     static showTargetPortraitMana() {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].isVisible = true;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[2].isVisible = true;
     }
     static hideTargetPortraitMana() {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].isVisible = false;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[2].isVisible = false;
     }
     static setTargetPortraitMana(_int = 100) {
-        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[0].children[2].text = _int;
+        GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[1].children[2].text = _int;
     }
     static chatInputFocus() {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
