@@ -64,8 +64,8 @@ class Game {
         this._loadedItems = false;
         this._finishedLoading = false;
 
-        //this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
-        this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
+        this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
+        //this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
 
         this.keyboardControls = {};
         this.player = undefined;
