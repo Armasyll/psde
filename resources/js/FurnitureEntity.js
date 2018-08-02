@@ -78,10 +78,6 @@ class FurnitureEntity extends EntityWithStorage {
                 this.addAvailableAction("open");
                 break;
             }
-            case "hook" : {
-                this.addAvailableAction("open");
-                break;
-            }
             case "tv" : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("look");
@@ -138,6 +134,9 @@ class FurnitureEntity extends EntityWithStorage {
             }
         }
         return this;
+    }
+    getType() {
+        return this.type;
     }
     dispose() {
         delete Game.furnitureEntities[this.id];

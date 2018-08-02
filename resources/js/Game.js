@@ -1228,6 +1228,31 @@ class Game {
         var _controller = new FurnitureController(_id, _mesh, _entity);
         _entity.setController(_controller);
         _entity.setAvatar(_mesh.name);
+        switch (_entity.getType()) {
+            case "chair" :
+            case "loveseat" :
+            case "couch" : {
+                _controller.setDefaultAction("sit");
+                break;
+            }
+            case "bed" : {
+                _controller.setDefaultAction("lay");
+                break;
+            }
+            case "desk" :
+            case "shelf" :
+            case "cupboard" :
+            case "cabinet" :
+            case "bureau" :
+            case "fridge" :
+            case "oven" :
+            case "microwave" :
+            case "toaster" :
+            case "basket" : {
+                _controller.setDefaultAction("open");
+                break;
+            }
+        }
         return _controller;
     }
     static removeFurniture(_controller) {
