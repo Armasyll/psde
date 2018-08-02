@@ -165,6 +165,18 @@ class EntityController {
         }
         return this.entity.getAvailableActions();
     }
+    setParent(_mesh) {
+        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
+            _mesh = Game.getEntityMesh(_mesh);
+        }
+        this.getAvatar().setParent(_mesh);
+    }
+    getParent() {
+        return this.getAvatar().parent;
+    }
+    removeParent() {
+        this.getAvatar().setParent(null);
+    }
     dispose() {
         if (Game.player.targetController == this) {
             Game.clearPlayerTarget()

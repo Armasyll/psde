@@ -98,6 +98,7 @@ class Game {
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
 
         this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
+        this.actionSit = new ActionData("sit", Game.actionSitFunction, false);
         this.XP_MIN = 0;
         this.XP_MAP = 355000;
         this.LEVEL_MIN = 0;
@@ -1212,7 +1213,7 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
-    static createFurniture(_id, _name, _mesh, _skin, _options, _position, _rotation, _scale) {
+    static createFurniture(_id, _name, _type, _mesh, _skin, _options, _position, _rotation, _scale) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
@@ -1223,7 +1224,7 @@ class Game {
         else {
             _mesh = "chair";
         }
-        var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _mesh);
+        var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _type);
         var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
         var _controller = new FurnitureController(_id, _mesh, _entity);
         _entity.setController(_controller);
@@ -1463,6 +1464,9 @@ class Game {
             if (_action == "take" && _entity instanceof InstancedItemEntity) {
                 Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
             }
+            else if (_action == "sit" && _entity instanceof FurnitureEntity) {
+                Game.actionSitFunction(_entity.getController(), _subEntity.getController());
+            }
             return;
         }
         if (_entity instanceof InstancedEntity) {
@@ -1503,5 +1507,24 @@ class Game {
             return;
         }
         // idk yet :v
+    }
+    /**
+     * Places the subEntity near the Entity, and sets its parent to the Entity
+     * TODO: Add actual placement of Characters based on their width
+     * @param  {FurnitureController} _entityController    Furniture
+     * @param  {EntityController} _subEntityController    Entity to be placed
+     */
+    static actionSitFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof FurnitureController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof CharacterController)) {
+            return;
+        }
+        var _seatingBoundingBox = this.getMesh(_entityController.getAvatar().name).getBoundingInfo().boundingBox;
+        var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entityController.getAvatar().scaling.x);
+        _subEntityController.setParent(_entityController.getAvatar());
+        _subEntityController.getAvatar().position.set(_seatingWidth / 2, 0, 0.025);
+        _subEntityController.getAvatar().rotation.set(0,0,0);
     }
 }

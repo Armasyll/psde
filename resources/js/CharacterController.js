@@ -214,6 +214,9 @@ class CharacterController extends EntityController {
         if (!(this.avatar instanceof BABYLON.Mesh)) {
             return undefined;
         }
+        if (this.getParent() != undefined) {
+            this.removeParent();
+        }
         this.avatar.position.y = Number(this.avatar.position.y.toFixed(4));
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
