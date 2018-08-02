@@ -502,7 +502,7 @@ class Game {
         _mesh.collisionMesh.position = _boundingBox.centerWorld.clone();
         _mesh.collisionMesh.rotation = _mesh.rotation.clone();
         _mesh.collisionMesh.scaling = _mesh.scaling.clone();
-        _mesh.collisionMesh.material = Game._collisionMaterial.clone();
+        _mesh.collisionMesh.material = Game._collisionMaterial;
         _mesh.collisionMesh.checkCollisions = true;
         _mesh.collisionMesh.setParent(_mesh);
         if (_mesh.controller instanceof DoorController) {
