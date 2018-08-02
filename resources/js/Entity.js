@@ -61,12 +61,6 @@ class Entity {
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");
 
-        /**
-         * Function to call when an Action is done
-         * @type {Object}
-         */
-        this.actionData = {};
-
         Game.entities[this.id] = this;
     }
 

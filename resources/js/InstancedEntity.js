@@ -50,12 +50,6 @@ class InstancedEntity {
 
         this.controller = undefined;
 
-        /**
-         * Function to call when an Action is done
-         * @type {Object}
-         */
-        this.actionData = {};
-
         Game.instancedEntities[this.id] = this;
     }
 
