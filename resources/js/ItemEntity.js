@@ -20,6 +20,7 @@ class ItemEntity extends Entity {
         this.setDurability(_defaultDurability);
 
         this.addAvailableAction("take");
+        this.addAvailableAction("steal");
 
         Game.itemEntities[this.id] = this;
 	}

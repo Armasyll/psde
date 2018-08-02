@@ -285,6 +285,15 @@ class Game {
                 break;
             }
             case this.useTargetedEntityCode : {
+                if (!(this.player.targetController instanceof EntityController)) {
+                    return;
+                }
+                if (this.player.targetController.getEntity() instanceof InstancedEntity) {
+                    this.doEntityAction(this.player.targetController.getEntity().getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
+                }
+                else if (this.player.targetController.getEntity() instanceof Entity) {
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
+                }
                 break;
             }
             case this.interfaceTargetedEntityCode : {
@@ -1356,6 +1365,34 @@ class Game {
             default : {
                 GameGUI.chatOutputAppend(`Command "${_command}" not found.\n`);
                 return;
+            }
+        }
+    }
+    static doEntityAction(_entity, _subEntity, _action) {
+        if (!_entity.hasAvailableAction(_action)) {
+            return;
+        }
+        if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
+            // I should create some default, global actions :v
+            console.log("Attempt to act upon an entity that was not actionable.");
+            return;
+        }
+        if (_entity instanceof InstancedEntity) {
+            if (_entity.getAvailableAction(_action).overrideParent) {
+                _entity.getAvailableAction(_action).execute();
+            }
+            else if (_entity.getAvailableAction(_action).runBeforeParent) {
+                _entity.getAvailableAction(_action).execute();
+                _entity.getEntity().getAvailableAction(_action).execute();
+            }
+            else {
+                _entity.getEntity().getAvailableAction(_action).execute();
+                _entity.getAvailableAction(_action).execute();
+            }
+        }
+        else if (_entity instanceof Entity) {
+            if (_entity.getAvailableAction(_action).overrideParent) {
+                _entity.getAvailableAction(_action).execute();
             }
         }
     }

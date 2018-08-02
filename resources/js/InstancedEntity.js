@@ -33,9 +33,15 @@ class InstancedEntity {
 
         /**
          * Actions available to this Entity
-         * @type {Set} <Game.kActionTypes>
+         * @type {Set} <Game.kActionTypes: new ActionData()>
          */
-        this.availableActions = new Set(this.entity.getAvailableActions());
+        this.availableActions = {};
+        for (var _action in this.entity.getAvailableActions()) {
+            var _availableAction = this.entity.getAvailableAction(_action);
+            if (_availableAction instanceof ActionData) {
+                this.availableActions[_action] = this.entity.getAvailableAction(_action).clone();
+            }
+        }
         /**
          * Game.kSpecialProperties
          * @type {Set} <Game.kSpecialProperties>
@@ -43,6 +49,12 @@ class InstancedEntity {
         this.specialProperties = new Set(this.entity.getSpecialProperties());
 
         this.controller = undefined;
+
+        /**
+         * Function to call when an Action is done
+         * @type {Object}
+         */
+        this.actionData = {};
 
         Game.instancedEntities[this.id] = this;
     }
@@ -73,41 +85,43 @@ class InstancedEntity {
     getDescription() {
         return (this.description || this.entity.getDescription());
     }
+
     /**
      * Adds an available Action when interacting with this Entity
-     * @param {String} _actions (Game.kActionTypes)
+     * @param {String} _action (Game.kActionTypes)
      */
-    addAvailableAction(_actions) {
-        if (Game.kActionTypes.has(_actions))
-            this.availableActions.add(_actions);
-        else if (_actions instanceof Array) {
-            _actions.forEach(function(_action) {
-                Game.kActionTypes.has(_action) && this.availableActions.add(_action);
-            }, this);
+    addAvailableAction(_action, _function = undefined, _runOnce = false) {
+        if (Game.kActionTypes.has(_action)) {
+            this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
         }
         return this;
     }
     /**
      * Removes an available Action when interacting with this Entity
-     * @param  {String} _actions (Game.kActionTypes)
+     * @param  {String} _action (Game.kActionTypes)
      * @return {Booealn}          Whether or not the Action was removed
      */
-    removeAvailableAction(_actions) {
-        if (Game.kActionTypes.has(_actions))
-            this.availableActions.delete(_actions);
-        else if (_actions instanceof Array) {
-            _actions.forEach(function(_action) {
-                Game.kActionTypes.has(_action) && this.availableActions.delete(_action);
-            }, this);
+    removeAvailableAction(_action) {
+        if (this.availableActions.hasOwnProperty(_action)) {
+            if (this.availableActions[_action] instanceof ActionData) {
+                this.availableActions[_action].dispose();
+            }
+            delete this.availableActions[_action];
         }
         return this;
+    }
+    getAvailableAction(_action) {
+        if (this.availableActions.hasOwnProperty(_action)) {
+            return this.availableActions[_action];
+        }
     }
     getAvailableActions() {
         return this.availableActions;
     }
     hasAvailableAction(_action) {
-        return this.availableActions.has(_action);
+        return this.availableActions.hasOwnProperty(_action);
     }
+
     /**
      * Adds a Game.kSpecialProperties
      * @param {String} _specialProperties (Game.kSpecialProperties)
@@ -268,7 +282,10 @@ class InstancedEntity {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
     }
     dispose() {
-        delete Game.instances[this.id];
+        delete Game.instancedEntities[this.id];
+        for (var _var in this) {
+            this[_var] = null;
+        }
         return undefined;
     }
 }
