@@ -236,51 +236,74 @@ class Game {
     }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
-        if (event === this.jumpCode)
-            this.player.keyJump(true);
-        else if (event === 16)
-            this.player.keyShift(true);
-        else if (event === this.walkCode)
-            this.player.keyMoveForward(true);
-        else if (event === this.turnLeftCode)
-            this.player.keyTurnLeft(true);
-        else if (event === this.turnRightCode)
-            this.player.keyTurnRight(true);
-        else if (event === this.walkBackCode)
-            this.player.keyMoveBackward(true);
-        else if (event === this.strafeLeftCode)
-            this.player.keyStrafeLeft(true);
-        else if (event === this.strafeRightCode)
-            this.player.keyStrafeRight(true);
-        else if (event === this.chatInputFocusCode) {
-            if (!GameGUI._chatInputFocused) {
-                GameGUI.chatInputFocus();
+        switch (event) {
+            case this.jumpCode : {
+                this.player.keyJump(true);
+                break;
             }
-            else if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                GameGUI.chatInputSubmit();
+            case 16 : {
+                this.player.keyShift(true);
+                break;
             }
-        }
-        else if (event === this.chatInputSubmitCode) {
-            if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                GameGUI.chatInputSubmit();
+            case this.walkCode : {
+                this.player.keyMoveForward(true);
+                break;
             }
-        }
-        else if (event === this.useTargetedEntityCode) {
-
-        }
-        else if (event === this.interfaceTargetedEntityCode) {
-
-        }
-        else if (event === this.showMainMenuCode) {
-            if (GameGUI.mainMenuVisible()) {
-                if (Game.debugEnabled) console.log(`\tShowing HUD`);
-                GameGUI.hideMainMenu(false);
-                GameGUI.showHUD(false);
+            case this.turnLeftCode : {
+                this.player.keyTurnLeft(true);
+                break;
             }
-            else {
-                if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
-                GameGUI.hideHUD(false);
-                GameGUI.showMainMenu(false);
+            case this.turnRightCode : {
+                this.player.keyTurnRight(true);
+                break;
+            }
+            case this.walkBackCode : {
+                this.player.keyMoveBackward(true);
+                break;
+            }
+            case this.strafeLeftCode : {
+                this.player.keyStrafeLeft(true);
+                break;
+            }
+            case this.strafeRightCode : {
+                this.player.keyStrafeRight(true);
+                break;
+            }
+            case this.chatInputFocusCode : {
+                if (!GameGUI._chatInputFocused) {
+                    GameGUI.chatInputFocus();
+                }
+                else if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    GameGUI.chatInputSubmit();
+                }
+                break;
+            }
+            case this.chatInputSubmitCode : {
+                if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    GameGUI.chatInputSubmit();
+                }
+                break;
+            }
+            case this.useTargetedEntityCode : {
+                break;
+            }
+            case this.interfaceTargetedEntityCode : {
+                break;
+            }
+            case this.showMainMenuCode : {
+                if (GameGUI.mainMenuVisible()) {
+                    if (Game.debugEnabled) console.log(`\tShowing HUD`);
+                    GameGUI.hideMainMenu(false);
+                    GameGUI.showHUD(false);
+                }
+                else {
+                    if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
+                    GameGUI.hideHUD(false);
+                    GameGUI.showMainMenu(false);
+                }
+                break;
+            }
+            default : {
             }
         }
         this.player.move = this.player.anyMovement();
@@ -290,22 +313,42 @@ class Game {
         }
     }
     static controlCharacterOnKeyUp(event) {
-        if (event === this.jumpCode)
-            this.player.keyJump(false);
-        else if (event === 16)
-            this.player.keyShift(false);
-        else if (event === this.walkCode)
-            this.player.keyMoveForward(false);
-        else if (event === this.turnLeftCode)
-            this.player.keyTurnLeft(false);
-        else if (event === this.turnRightCode)
-            this.player.keyTurnRight(false);
-        else if (event === this.walkBackCode)
-            this.player.keyMoveBackward(false);
-        else if (event === this.strafeLeftCode)
-            this.player.keyStrafeLeft(false);
-        else if (event === this.strafeRightCode)
-            this.player.keyStrafeRight(false);
+        switch (event) {
+            case this.jumpCode : {
+                this.player.keyJump(false);
+                break;
+            }
+            case 16 : {
+                this.player.keyShift(false);
+                break;
+            }
+            case this.walkCode : {
+                this.player.keyMoveForward(false);
+                break;
+            }
+            case this.turnLeftCode : {
+                this.player.keyTurnLeft(false);
+                break;
+            }
+            case this.turnRightCode : {
+                this.player.keyTurnRight(false);
+                break;
+            }
+            case this.walkBackCode : {
+                this.player.keyMoveBackward(false);
+                break;
+            }
+            case this.strafeLeftCode : {
+                this.player.keyStrafeLeft(false);
+                break;
+            }
+            case this.strafeRightCode : {
+                this.player.keyStrafeRight(false);
+                break;
+            }
+            default : {
+            }
+        }
         this.player.move = this.player.anyMovement();
         if (Client.online) {
             Client.updateLocRotScaleSelf();
