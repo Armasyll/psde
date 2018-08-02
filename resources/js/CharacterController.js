@@ -94,7 +94,7 @@ class CharacterController extends EntityController {
         }
     }
     removeTarget(_updateChild = true) {
-        if (_updateChild) {
+        if (_updateChild && this.targetController instanceof EntityController) {
             this.targetController.removeTargetedBy(this, false);
         }
         this.targetController = null;

@@ -97,6 +97,7 @@ class Game {
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
 
+        this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
         this.XP_MIN = 0;
         this.XP_MAP = 355000;
         this.LEVEL_MIN = 0;
@@ -289,7 +290,7 @@ class Game {
                     return;
                 }
                 if (this.player.targetController.getEntity() instanceof InstancedEntity) {
-                    this.doEntityAction(this.player.targetController.getEntity().getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
                 }
                 else if (this.player.targetController.getEntity() instanceof Entity) {
                     this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
@@ -1373,8 +1374,9 @@ class Game {
             return;
         }
         if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
-            // I should create some default, global actions :v
-            console.log("Attempt to act upon an entity that was not actionable.");
+            if (_action == "take" && _entity instanceof InstancedItemEntity) {
+                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
+            }
             return;
         }
         if (_entity instanceof InstancedEntity) {
@@ -1395,5 +1397,25 @@ class Game {
                 _entity.getAvailableAction(_action).execute();
             }
         }
+    }
+    static actionTakeFunction(_itemController, _subEntityController = Game.player) {
+        if (!(_itemController instanceof ItemController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof EntityController) && !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        var _entity = _itemController.getEntity();
+        Game.removeItemInSpace(_itemController);
+        Game.player.getEntity().addItem(_entity);
+    }
+    static actionOpenFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof EntityController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof CharacterController)) {
+            return;
+        }
+        // idk yet :v
     }
 }

@@ -126,13 +126,13 @@ class EntityController {
         }
         this.targetedByControllers.delete(_controller);
         if (_updateChild) {
-            _controller.deleteTarget(this, false);
+            _controller.removeTarget(this, false);
         }
     }
     clearTargetedBy() {
         this.targetedByControllers.forEach(function(_controller) {
-            if (_controller.targetController == this) {
-                _controller.targetController.deleteTarget(false);
+            if (_controller instanceof CharacterController && _controller.targetController == this) {
+                _controller.removeTarget(false);
             }
         }, this);
         this.targetedByControllers = null;
@@ -166,6 +166,10 @@ class EntityController {
         return this.entity.getAvailableActions();
     }
     dispose() {
+        if (Game.player.targetController == this) {
+            Game.clearPlayerTarget()
+        }
+        this.clearTargetedBy();
         delete Game.entityControllers[this.id];
         this.entity.removeController();
         for (var _var in this) {

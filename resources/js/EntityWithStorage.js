@@ -5,7 +5,7 @@ class EntityWithStorage extends Entity {
          * Item(s) this Character has
          * @type {Array} <InstancedItem>
          */
-        this.inventory = new Array();
+        this.items = new Array();
     }
     /**
      * Adds _instancedItem; creates an InstancedItem if an Item is passed
@@ -43,7 +43,7 @@ class EntityWithStorage extends Entity {
                 }
             }
         }
-        this.inventory.remove(_instancedItem);
+        this.items.remove(_instancedItem);
         return this;
     }
     /**
@@ -57,7 +57,7 @@ class EntityWithStorage extends Entity {
         _instancedItem = Game.getInstancedItemEntity(_instancedItem);
         if (_instancedItem == undefined) {return null;}
 
-        this.inventory.some(function(__instancedItem) {
+        this.items.some(function(__instancedItem) {
             if (__instancedItem.id == _instancedItem.id)
                 _foundItem = true;
         });
@@ -72,10 +72,10 @@ class EntityWithStorage extends Entity {
         return this.getItem(_instancedItem) instanceof InstancedItem;
     }
     getItems() {
-        return this.inventory;
+        return this.items;
     }
     getNumberOfItems() {
-        return this.inventory.length;
+        return this.items.length;
     }
     dispose() {
         if (this == Game.player.entity) {
