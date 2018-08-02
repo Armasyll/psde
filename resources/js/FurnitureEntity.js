@@ -1,4 +1,4 @@
-class Furniture extends EntityWithStorage {
+class FurnitureEntity extends EntityWithStorage {
     /**
      * Creats Furniture
      * @param  {String}  _id            Unique ID
@@ -34,13 +34,6 @@ class Furniture extends EntityWithStorage {
             case "chair" : {
                 this.addAvailableAction("sit");
                 this.addAvailableAction("sleep");
-                break;
-            }
-            case "recliner" : {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
                 break;
             }
             case "loveseat" : {

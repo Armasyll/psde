@@ -270,6 +270,7 @@ function generateApartmentScene() {
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-22}, {x:0, y:-90, z:0});
     Game.createCollisionRamp({x:0, y:0, z:-22.5}, {x:2, y:3, z:-17.5});
+    Game.createFurniture(undefined, "Couch", "loveseat", undefined, undefined, new BABYLON.Vector3(8, 0, -21), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5))
     Game.addMesh(undefined, "stairs",               {x:0, y:0, z:-22});
     Game.addMesh(undefined, "stairs",               {x:0, y:1.5, z:-20});
     Game.addMesh(undefined, "wall",                 {x:14, y:0, z:-22}, {x:0, y:90, z:0});

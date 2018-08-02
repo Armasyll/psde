@@ -938,6 +938,26 @@ class Game {
     static hasNetworkedCharacterController(_id) {
         return this.networkedCharacterControllers.hasOwnProperty(_id);
     }*/
+    static getFurnitureController(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof FurnitureController) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.furnitureControllers.hasOwnProperty(_id)) {
+            return Game.furnitureControllers[_id];
+        }
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof FurnitureController) {
+            return _id.controller;
+        }
+        else {
+            return undefined;
+        }
+    }
+    static hasFurnitureController(_id) {
+        return this.getFurnitureController(_id) != undefined;
+    }
     static getItemController(_id) {
         if (_id == undefined) {
             return;
@@ -1145,12 +1165,23 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
+    /**
+     * Is it a Door? Is it Furniture? Or is it just an Entity?
+     * @param  {String} _id                 Unique ID, auto-generated if none given
+     * @param  {String} _name               Name
+     * @param  {Object} _to                 Future movement between cells
+     * @param  {String} _mesh               String ID of a Mesh
+     * @param  {String} _skin               String, Texture, or Material to be applied to the Mesh
+     * @param  {Object} _options            Physics options, if they're enabled
+     * @param  {BABYLON.Vector3} _position  Position
+     * @param  {BABYLON.Vector3} _rotation  Rotation
+     * @param  {BABYLON.Vector3} _scale     Scaling
+     * @return {EntityController}           The created EntityController in-game
+     */
     static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
-        var _entity = new Entity(_id, _name);
-        _entity.addAvailableAction("open");
         if (Game.furnitureMeshes.hasOwnProperty(_mesh)) {}
         else if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
             _mesh = _mesh.name;
@@ -1158,6 +1189,8 @@ class Game {
         else {
             _mesh = "door";
         }
+        var _entity = new Entity(_id, _name);
+        _entity.addAvailableAction("open");
         var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
         var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
@@ -1177,6 +1210,34 @@ class Game {
         var _mesh = _controller.getAvatar();
         _controller.entity.dispose();
         _controller.dispose();
+        Game.removeMesh(_mesh);
+    }
+    static createFurniture(_id, _name, _mesh, _skin, _options, _position, _rotation, _scale) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = this.filterID(_id);
+        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
+        if (Game.furnitureMeshes.hasOwnProperty(_mesh)) {}
+        else if ((_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) && Game.mesh) {
+            _mesh = _mesh.name;
+        }
+        else {
+            _mesh = "chair";
+        }
+        var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _mesh);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
+        var _controller = new FurnitureController(_id, _mesh, _entity);
+        _entity.setController(_controller);
+        _entity.setAvatar(_mesh.name);
+        return _controller;
+    }
+    static removeFurniture(_controller) {
+        _controller = Game.getFurnitureController(_controller);
+        if (_controller == undefined) {return;}
+        if (_controller == this.player) {return;}
+        var _mesh = _controller.getAvatar();
+        _controller.entity.dispose();
+        _controller.dispose();
+        _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
     static createProtoItem(_id = undefined, _name = undefined, _description = "", _type = "book", _mesh = undefined, _skin = undefined) {
