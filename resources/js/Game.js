@@ -64,8 +64,8 @@ class Game {
         this._loadedItems = false;
         this._finishedLoading = false;
 
-        this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
-        //this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
+        //this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
+        this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
 
         this.keyboardControls = {};
         this.player = undefined;
@@ -499,11 +499,20 @@ class Game {
         this._assignBoundingBoxCollisionQueue.delete(_mesh);
         var _boundingBox = _mesh.getBoundingInfo().boundingBox;
         _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
-        _mesh.collisionMesh.position = _boundingBox.centerWorld;
-        _mesh.collisionMesh.rotation = _mesh.rotation;
-        _mesh.collisionMesh.scaling = _mesh.scaling;
-        _mesh.collisionMesh.material = Game._collisionMaterial;
+        _mesh.collisionMesh.position = _boundingBox.centerWorld.clone();
+        _mesh.collisionMesh.rotation = _mesh.rotation.clone();
+        _mesh.collisionMesh.scaling = _mesh.scaling.clone();
+        _mesh.collisionMesh.material = Game._collisionMaterial.clone();
         _mesh.collisionMesh.checkCollisions = true;
+        _mesh.collisionMesh.setParent(_mesh);
+        if (_mesh.controller instanceof DoorController) {
+            if (_mesh.collisionMesh.scaling.x > _mesh.collisionMesh.scaling.z) {
+                _mesh.collisionMesh.scaling.z += _mesh.collisionMesh.scaling.z * 0.1;
+            }
+            else {
+                _mesh.collisionMesh.scaling.x += _mesh.collisionMesh.scaling.x * 0.2;
+            }
+        }
     }
     static addItemMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
