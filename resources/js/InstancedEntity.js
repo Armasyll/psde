@@ -277,6 +277,11 @@ class InstancedEntity {
     }
     dispose() {
         delete Game.instancedEntities[this.id];
+        for (_action in this.availableActions) {
+            if (this.availableActions[_action] instanceof ActionData) {
+                this.availableActions[_action].dispose();
+            }
+        }
         for (var _var in this) {
             this[_var] = null;
         }
