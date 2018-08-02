@@ -293,6 +293,6 @@
 ],
 "morphTargetManagers":[],
 "cameras":[],
-"lights":[{"name":"Lamp","id":"Lamp","type":0,"position":[4.0762,5.9039,1.0055],"intensity":1,"diffuse":[1,1,1],"specular":[1,1,1]}],
+"lights":[],
 "shadowGenerators":[]
 }
