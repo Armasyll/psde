@@ -282,6 +282,7 @@ function generateApartmentScene() {
     Game.createItem("cross", Game.createProtoItem("cross", "Cross", "", "weapon", "cross"), undefined, {x:10, y:0.6, z:-22});
     Game.addItemMesh("planeInstance01", "plate", undefined, {x:9.7, y:0.6, z:-21.5});
     Game.addItemMesh("plateInstance02", "plate", undefined, {x:10.3, y:0.6, z:-23});
+    Game.createItem("apartmentbuildingkey", Game.createProtoItem("apartmentbuildingkey", "Apartment Building Key", "", "key", "key01"), undefined, new BABYLON.Vector3(10, 0.6, -22.5));;
 
     Game.createItem("packstreet23StrangeNewDay", Game.createProtoItem("packstreet23StrangeNewDay", "Pack Street Chapter 23", "", "book", "bookHardcoverClosed01"), undefined, {x:10.3, y:0.8, z:-21}, {x:0, y:180, z:0});
 
@@ -298,6 +299,10 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall",                 {x:10, y:0, z:-26}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "wall",                 {x:12, y:0, z:-26}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "frontWallLeftWall",    {x:14, y:0, z:-26}, {x:0, y:180, z:0});
+
+    Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
+    Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
+    Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("apartmentbuildingkey");
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-28});
     Game.addMesh(undefined, "wall",                 {x:2, y:0, z:-28});

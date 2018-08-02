@@ -3,12 +3,12 @@ class EntityWithStorage extends Entity {
         super(_id, _name, _description, _image);
         /**
          * Item(s) this Character has
-         * @type {Array} <InstancedItem>
+         * @type {Array} <InstancedItemEntity>
          */
         this.items = new Array();
     }
     /**
-     * Adds _instancedItem; creates an InstancedItem if an Item is passed
+     * Adds _instancedItem; creates an InstancedItemEntity if an Item is passed
      * @param  {Entity} _entity       _entity to take the _instancedItem from
      * @return {this}
      */
@@ -19,8 +19,8 @@ class EntityWithStorage extends Entity {
         return this;
     }
     /**
-     * Removes an InstancedItem from this Character
-     * @param  {InstancedItem} _instancedItem InstancedItem, or Item, to be removed
+     * Removes an InstancedItemEntity from this Character
+     * @param  {InstancedItemEntity} _instancedItem InstancedItemEntity, or Item, to be removed
      * @return {this}
      */
     removeItem(_instancedItem) {
@@ -47,9 +47,9 @@ class EntityWithStorage extends Entity {
         return this;
     }
     /**
-     * Returns the InstancedItem of a passed Item or InstancedItem if this Character has it
-     * @param  {InstancedItem} _instancedItem The Item or InstancedItem to search for
-     * @return {InstancedItem}               The InstancedItem that is found, or undefined if it isn't
+     * Returns the InstancedItemEntity of a passed Item or InstancedItemEntity if this Character has it
+     * @param  {InstancedItemEntity} _instancedItem The Item or InstancedItemEntity to search for
+     * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or undefined if it isn't
      */
     getItem(_instancedItem) {
         var _foundItem = false;
@@ -58,9 +58,11 @@ class EntityWithStorage extends Entity {
         if (_instancedItem == undefined) {return null;}
 
         this.items.some(function(__instancedItem) {
-            if (__instancedItem.id == _instancedItem.id)
+            if (__instancedItem.id == _instancedItem.id) {
                 _foundItem = true;
-        });
+                return true;
+            }
+        }, this);
 
         if (_foundItem)
             return _instancedItem;
@@ -68,8 +70,19 @@ class EntityWithStorage extends Entity {
             return null;
     }
 
-    hasItem(_instancedItem) {
-        return this.getItem(_instancedItem) instanceof InstancedItem;
+    hasItem(_item) {
+        var _foundItem = false;
+        _item = Game.getProtoItemEntity(_item);
+        if (!(_item instanceof ItemEntity)) {
+            return false;
+        }
+        this.items.some(function(__instancedItem) {
+            if (__instancedItem.getEntity() == _item) {
+                _foundItem = true;
+                return true;
+            }
+        }, this);
+        return _foundItem;
     }
     getItems() {
         return this.items;

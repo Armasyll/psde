@@ -973,6 +973,26 @@ class Game {
     static hasFurnitureController(_id) {
         return this.getFurnitureController(_id) != undefined;
     }
+    static getDoorController(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof DoorController) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.doorControllers.hasOwnProperty(_id)) {
+            return Game.doorControllers[_id];
+        }
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof DoorController) {
+            return _id.controller;
+        }
+        else {
+            return undefined;
+        }
+    }
+    static hasDoorController(_id) {
+        return this.getDoorController(_id) != undefined;
+    }
     static getItemController(_id) {
         if (_id == undefined) {
             return;
@@ -1537,7 +1557,7 @@ class Game {
             return;
         }
         if (_entityController.getEntity().getLocked()) {
-            if (!_subEntityController.hasItem(_entityController.getEntity().getKey())) {
+            if (!_subEntityController.getEntity().hasItem(_entityController.getEntity().getKey())) {
                 return;
             }
             _entityController.getEntity().setLocked(false);
