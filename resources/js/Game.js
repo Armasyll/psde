@@ -44,13 +44,16 @@ class Game {
 
         this.entityControllers = {};
         this.furnitureControllers = {};
+        this.doorControllers = {};
         this.characterControllers = {};
         this.itemControllers = {};
 
         this.entities = {};
         this.furnitureEntities = {};
+        this.doorEntities = {};
         this.characterEntities = {};
         this.itemEntities = {};
+        this.keyEntities = {};
 
         this.instancedEntities = {};
         this.instancedItemEntities = {};
@@ -92,13 +95,15 @@ class Game {
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
         this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
-        this.kInteractionTypes = new Set(["consume","disrobe","hold","look","open","put","release","take","talk","touch","use","wear"]);
+        this.kInteractionTypes = new Set(["close","consume","disrobe","hold","look","open","put","release","take","talk","touch","use","wear"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
 
         this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
         this.actionSit = new ActionData("sit", Game.actionSitFunction, false);
+        this.actionOpen = new ActionData("open", Game.actionOpenFunction, false);
+        this.actionClose = new ActionData("close", Game.actionCloseFunction, false);
         this.XP_MIN = 0;
         this.XP_MAP = 355000;
         this.LEVEL_MIN = 0;
@@ -133,7 +138,7 @@ class Game {
             Game.player.focus.getAbsolutePosition(),
             this.scene);
         this.camera.checkCollisions = true;
-        this.camera.wheelPrecision = 10;
+        this.camera.wheelPrecision = 100;
         this.camera.upperRadiusLimit = 3;
         this.camera.lowerRadiusLimit = 1;
         this.camera.keysLeft=[];
@@ -1190,7 +1195,8 @@ class Game {
         else {
             _mesh = "door";
         }
-        var _entity = new Entity(_id, _name);
+        var _entity = new DoorEntity(_id, _name);
+        _entity.addAvailableAction("close");
         _entity.addAvailableAction("open");
         var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
         var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
@@ -1468,6 +1474,12 @@ class Game {
             else if (_action == "sit" && _entity instanceof FurnitureEntity) {
                 Game.actionSitFunction(_entity.getController(), _subEntity.getController());
             }
+            else if (_action == "open" && _entity instanceof DoorEntity) {
+                Game.actionOpenFunction(_entity.getController(), _subEntity.getController());
+            }
+            else if (_action == "close" && _entity instanceof DoorEntity) {
+                Game.actionCloseFunction(_entity.getController(), _subEntity.getController());
+            }
             return;
         }
         if (_entity instanceof InstancedEntity) {
@@ -1496,18 +1508,32 @@ class Game {
         if (!(_subEntityController instanceof EntityController) && !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
             return;
         }
-        var _entity = _itemController.getEntity();
+        Game.player.getEntity().addItem(_itemController.getEntity());
         Game.removeItemInSpace(_itemController);
-        Game.player.getEntity().addItem(_entity);
     }
-    static actionOpenFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof EntityController)) {
+    static actionCloseFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof DoorController)) {
             return;
         }
         if (!(_subEntityController instanceof CharacterController)) {
             return;
         }
-        // idk yet :v
+        _entityController.setOpen(false);
+    }
+    static actionOpenFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof DoorController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof CharacterController)) {
+            return;
+        }
+        if (_entityController.getEntity().getLocked()) {
+            if (!_subEntityController.hasItem(_entityController.getEntity().getKey())) {
+                return;
+            }
+            _entityController.getEntity().setLocked(false);
+        }
+        _entityController.setOpen(true);
     }
     /**
      * Places the subEntity near the Entity, and sets its parent to the Entity

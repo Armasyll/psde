@@ -42,13 +42,16 @@ window.addEventListener("DOMContentLoaded", function() {
     Game.scene.registerBeforeRender(function() {
         if (!(Game.player instanceof CharacterController))
             return null;
-        for (_character in Game.entityControllers) {
+        for (_character in Game.characterControllers) {
             if (Game.entityControllers[_character] instanceof CharacterController) {
                 Game.entityControllers[_character].moveAV();
             }
             if (_character.propertiesChanged) {
                 _character.updateProperties();
             }
+        }
+        for (_door in Game.doorControllers) {
+            Game.doorControllers[_door].moveAV();
         }
     });
     Game.scene.registerAfterRender(function() {
