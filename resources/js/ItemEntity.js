@@ -24,6 +24,9 @@ class ItemEntity extends Entity {
 
         Game.itemEntities[this.id] = this;
 	}
+	getID() {
+		return this.id;
+	}
 	setMass(_float) {
 		if (isNaN(_float)) {
 			return;
