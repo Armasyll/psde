@@ -25,11 +25,11 @@ class EntityWithStorage extends Entity {
      */
     removeItem(_instancedItem) {
         _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem == undefined) {return;}
+        if (_instancedItem == undefined) {return this;}
         if (!this.hasItem(_instancedItem)) {
             return this;
         }
-        if (this instanceof Character) {
+        if (this instanceof CharacterEntity) {
             if (this.isWearing(_instancedItem)) {
                 this.disrobe(_instancedItem);
                 if (this.isWearing(_instancedItem)) {
@@ -47,42 +47,42 @@ class EntityWithStorage extends Entity {
         return this;
     }
     /**
-     * Returns the InstancedItemEntity of a passed Item or InstancedItemEntity if this Character has it
-     * @param  {InstancedItemEntity} _instancedItem The Item or InstancedItemEntity to search for
-     * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or undefined if it isn't
+     * Returns the InstancedItemEntity of a passed ItemInstance or InstancedItemEntity if this Character has it
+     * @param  {InstancedItemEntity} _item The ItemInstance or InstancedItemEntity to search for
+     * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or null if it isn't
      */
-    getItem(_instancedItem) {
+    getItem(_item) {
         var _foundItem = false;
-
-        _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem == undefined) {return null;}
-
-        this.items.some(function(__instancedItem) {
-            if (__instancedItem.id == _instancedItem.id) {
-                _foundItem = true;
-                return true;
-            }
-        }, this);
+        var _tempItem = Game.getInstancedItemEntity(_item);
+        if (_tempItem == undefined) {
+            _item = Game.getProtoItemEntity(_item);
+            if (_item == undefined) {return null;}
+            this.items.some(function(__instancedItem) {
+                if (__instancedItem.getEntity().getID() == _item.getID()) {
+                    _item = __instancedItem;
+                    _foundItem = true;
+                    return true;
+                }
+            }, this);
+        }
+        else {
+            _item = _tempItem;
+            this.items.some(function(__instancedItem) {
+                if (__instancedItem.id == _item.id) {
+                    _foundItem = true;
+                    return true;
+                }
+            }, this);
+        }
 
         if (_foundItem)
-            return _instancedItem;
+            return _item;
         else
             return null;
     }
 
     hasItem(_item) {
-        var _foundItem = false;
-        _item = Game.getProtoItemEntity(_item);
-        if (!(_item instanceof ItemEntity)) {
-            return false;
-        }
-        this.items.some(function(__instancedItem) {
-            if (__instancedItem.getEntity() == _item) {
-                _foundItem = true;
-                return true;
-            }
-        }, this);
-        return _foundItem;
+        return this.getItem(_item) != null;
     }
     getItems() {
         return this.items;
