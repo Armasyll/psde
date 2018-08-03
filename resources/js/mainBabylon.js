@@ -303,6 +303,7 @@ function generateApartmentScene() {
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("apartmentbuildingkey");
+    Game.getDoorController("apartmentbuildingdoor").setOpensInward(false);
 
     Game.addMesh(undefined, "wall",                 {x:0, y:0, z:-28});
     Game.addMesh(undefined, "wall",                 {x:2, y:0, z:-28});
