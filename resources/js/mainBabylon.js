@@ -72,10 +72,14 @@ window.addEventListener("DOMContentLoaded", function() {
 
 function generateApartmentScene() {
     if (Game.debugEnabled) console.log("Running generateApartmentScene");
-    var _ground = Game.createCollisionPlane({x:-512, z:-512}, {x:512, z:512}, 0);
-    if (Game.physicsEnabled) {
-        Game.assignPlanePhysicsToMesh(_ground);
-    }
+    
+    var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("resources/images/skyboxes/m/skybox", Game.scene, ["_px.svg", "_py.svg", "_pz.svg", "_nx.svg", "_ny.svg", "_nz.svg"]);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.disableLighting = true;
+        skybox.material = skyboxMaterial;
 
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
         _ambientLight.intensity = 0.9;
@@ -111,30 +115,37 @@ function generateApartmentScene() {
     var floorMaterial = new BABYLON.StandardMaterial("floorMaterial", Game.scene);
         floorMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
         floorMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    var floorMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 27, subdivisions: {w:14, h:27}}, Game.scene);
+
+    var floorMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
         floorMesh01.material = floorMaterial;
         floorMesh01.position.set(1, 0, -27);
-    var floorMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 19, subdivisions: {w:2, h:19}}, Game.scene);
+    Game.createCollisionPlane(floorMesh01);
+    var floorMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
         floorMesh01b.material = floorMaterial;
         floorMesh01b.position.set(-1, 0, -19);
+    Game.createCollisionPlane(floorMesh01b);
     var floorMesh01c = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
         floorMesh01c.material = floorMaterial;
         floorMesh01c.position.set(-1, 0, -27);
+    Game.createCollisionPlane(floorMesh01c);
     var floorMesh02 = floorMesh01.createInstance("floorMesh02");
         floorMesh02.position.y += 3;
+    Game.createCollisionPlane(floorMesh02);
     var floorMesh02b = floorMesh01b.createInstance("floorMesh02b");
         floorMesh02b.position.y += 3;
+    Game.createCollisionPlane(floorMesh02b);
     var floorMesh02c = floorMesh01c.createInstance("floorMesh02c");
         floorMesh02c.position.y += 3;
+    Game.createCollisionPlane(floorMesh02c);
 
     var ceilingMaterial = new BABYLON.StandardMaterial("ceilingMaterial", Game.scene);
-    ceilingMaterial.diffuseTexture = new BABYLON.Texture("resources/data/wall.png", Game.scene);
-    ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    ceilingMaterial.backFaceCulling = false;
+        ceilingMaterial.diffuseTexture = new BABYLON.Texture("resources/data/wall.png", Game.scene);
+        ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        ceilingMaterial.backFaceCulling = false;
     var ceilingMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
         ceilingMesh01.material = ceilingMaterial;
         ceilingMesh01.position.set(1, 2.9, -27);
-    var ceilingMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 19, subdivisions: {w:2, h:19}}, Game.scene);
+    var ceilingMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
         ceilingMesh01b.material = ceilingMaterial;
         ceilingMesh01b.position.set(-1, 2.9, -19);
     var ceilingMesh01c = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);

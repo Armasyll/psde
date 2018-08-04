@@ -405,14 +405,16 @@ class Game {
     }
     static createCollisionPlane(_posStart = {x:0, z:0}, _posEnd = {x:0, z:0}, _posY = 0) {
         if (Game.debugEnabled) console.log("Running createCollisionPlane");
-        if (_posStart.x instanceof BABYLON.Mesh || _posStart.x instanceof BABYLON.InstancedMesh) {
-            var _zRadius = _posStart.x.getBoundingInfo().boundingBox.extendSize.z * _posStart.x.scaling.z;
-            var _xRadius = _posStart.x.getBoundingInfo().boundingBox.extendSize.x * _posStart.x.scaling.x;
-            _posStart.z = _posStart.x.position.z - _zRadius;
-            _posEnd.z = _posStart.x.position.z + _zRadius;
-            _posEnd.x = _posStart.x.position.x + _xRadius;
-            _posY = _posStart.x.position.y;
-            _posStart.x = _posStart.x.position.x - _xRadius;
+        if (_posStart instanceof BABYLON.Mesh || _posStart instanceof BABYLON.InstancedMesh) {
+            var _xRadius = _posStart.getBoundingInfo().boundingBox.extendSize.x * _posStart.scaling.x;
+            var _zRadius = _posStart.getBoundingInfo().boundingBox.extendSize.z * _posStart.scaling.z;
+            var _nPosStart = {x:0, z:0};
+            _nPosStart.x = _posStart.position.x;
+            _nPosStart.z = _posStart.position.z;
+            _posEnd.x = _posStart.position.x + _xRadius * 2;
+            _posEnd.z = _posStart.position.z + _zRadius * 2;
+            _posY = _posStart.position.y;
+            _posStart = _nPosStart;
         }
         var _width = Math.abs(_posEnd.x - _posStart.x);
         var _depth = Math.abs(_posEnd.z - _posStart.z);
