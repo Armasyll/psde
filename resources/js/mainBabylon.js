@@ -80,6 +80,11 @@ function generateApartmentScene() {
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
+    Game.createCollisionPlane({x:-512,z:-512}, {x:512,z:512}, -512);
+    Game.createCollisionWall(new BABYLON.Vector3(-512, -512, 512), new BABYLON.Vector3(512, 512, 512));
+    Game.createCollisionWall(new BABYLON.Vector3(512, -512, 512), new BABYLON.Vector3(512, 512, -512));
+    Game.createCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(512, 512, -512));
+    Game.createCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(-512, 512, 512));
 
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
         _ambientLight.intensity = 0.9;
@@ -152,25 +157,25 @@ function generateApartmentScene() {
         ceilingMesh01c.material = ceilingMaterial;
         ceilingMesh01c.position.set(-1, 2.9, -27);
 
-    Game.createCollisionWall({x:-1, y:0, z:1}, {x:15, y:0, z:1}); // Back floor wall
-    Game.createCollisionWall({x:-1, y:0, z:1}, {x:-1, y:0, z:-27}); // Left floor wall
-    Game.createCollisionWall({x:15, y:0, z:1}, {x:15, y:0, z:-27}); // Right floor wall
-    Game.createCollisionWall({x:-1, y:0, z:-27}, {x:3, y:0, z:-27}); // Front floor wall, left
-    Game.createCollisionWall({x:5, y:0, z:-27}, {x:15, y:0, z:-27}); // Front floor wall, right
+    Game.createCollisionWall({x:-1, y:0, z:1}, {x:15, y:3, z:1}); // Back floor wall
+    Game.createCollisionWall({x:-1, y:0, z:1}, {x:-1, y:3, z:-27}); // Left floor wall
+    Game.createCollisionWall({x:15, y:0, z:1}, {x:15, y:3, z:-27}); // Right floor wall
+    Game.createCollisionWall({x:-1, y:0, z:-27}, {x:3, y:3, z:-27}); // Front floor wall, left
+    Game.createCollisionWall({x:5, y:0, z:-27}, {x:15, y:3, z:-27}); // Front floor wall, right
 
-    Game.createCollisionWall({x:9, y:0, z:1}, {x:9, y:0, z:-5}); // Side wall between Ozzy's bathroom and Landlord's apartment
-    Game.createCollisionWall({x:5, y:0, z:-1}, {x:5, y:0, z:-7}); // Side wall between Ozzy's apartment and Landlord's bathroom
-    Game.createCollisionWall({x:7, y:0, z:-7}, {x:7, y:0, z:-13}); // Side wall between Ozzy's and Landord's kitchenettes
+    Game.createCollisionWall({x:9, y:0, z:1}, {x:9, y:3, z:-5}); // Side wall between Ozzy's bathroom and Landlord's apartment
+    Game.createCollisionWall({x:5, y:0, z:-1}, {x:5, y:3, z:-7}); // Side wall between Ozzy's apartment and Landlord's bathroom
+    Game.createCollisionWall({x:7, y:0, z:-7}, {x:7, y:3, z:-13}); // Side wall between Ozzy's and Landord's kitchenettes
 
-    Game.createCollisionWall({x:5, y:0, z:-3}, {x:9, y:0, z:-3}); // Front wall between Ozzy's and Landlord's bathrooms
-    Game.createCollisionWall({x:5, y:0, z:-7}, {x:9, y:0, z:-7}); // Front wall between Landlord's bathroom and Landlord's and Ozzy's kitchenettes
-    Game.createCollisionWall({x:5, y:0, z:-13}, {x:9, y:0, z:-13}); // Front wall between Landlord's kitchenette and Landlord's entrance
+    Game.createCollisionWall({x:5, y:0, z:-3}, {x:9, y:3, z:-3}); // Front wall between Ozzy's and Landlord's bathrooms
+    Game.createCollisionWall({x:5, y:0, z:-7}, {x:9, y:3, z:-7}); // Front wall between Landlord's bathroom and Landlord's and Ozzy's kitchenettes
+    Game.createCollisionWall({x:5, y:0, z:-13}, {x:9, y:3, z:-13}); // Front wall between Landlord's kitchenette and Landlord's entrance
 
-    Game.createCollisionWall({x:-1, y:0, z:-13}, {x:3, y:0, z:-13}); // Front wall between Commons and Ozzy's apartment
-    Game.createCollisionWall({x:5, y:0, z:-13}, {x:5, y:0, z:-15}); // Side wall between Commons and Landlord's apartment
-    Game.createCollisionWall({x:5, y:0, z:-17}, {x:15, y:0, z:-17}); // Front wall between Commons and Landlord's apartment
+    Game.createCollisionWall({x:-1, y:0, z:-13}, {x:3, y:3, z:-13}); // Front wall between Commons and Ozzy's apartment
+    Game.createCollisionWall({x:5, y:0, z:-13}, {x:5, y:3, z:-15}); // Side wall between Commons and Landlord's apartment
+    Game.createCollisionWall({x:5, y:0, z:-17}, {x:15, y:3, z:-17}); // Front wall between Commons and Landlord's apartment
 
-    Game.createCollisionWall({x:5, y:0, z:-25}, {x:5, y:0, z:-27}); // Side wall between Commons and building entrance
+    Game.createCollisionWall({x:5, y:0, z:-25}, {x:5, y:3, z:-27}); // Side wall between Commons and building entrance
 
     Game.addMesh(undefined, "floorWoodDark",        {x:0, y:0, z:0});
     Game.addMesh(undefined, "floorWoodDark",        {x:2, y:0, z:0});

@@ -371,7 +371,7 @@ class Game {
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
-    static createCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0, _height = 3) {
+    static createCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0) {
         if (Game.debugEnabled) console.log("Running createCollisionWallX");
         if (_rotation != 0 && isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
@@ -389,9 +389,9 @@ class Game {
             return null;
         }
         var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = (_posStart.y + _posEnd.y) / 2 + _height / 2;
+        var _posY = (_posStart.y + _posEnd.y) / 2;
         var _posZ = (_posStart.z + _posEnd.z) / 2;
-        var _wall = BABYLON.MeshBuilder.CreateBox("wall", {height:_height, depth:0.125, width:_width}, Game.scene);
+        var _wall = BABYLON.MeshBuilder.CreateBox("wall", {height:_posEnd.y - _posStart.y, depth:0.125, width:_width}, Game.scene);
         _wall.material = Game._collisionMaterial;
         _wall.position.set(_posX,_posY,_posZ);
         _wall.rotation.y = _rotation;
