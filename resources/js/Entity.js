@@ -126,6 +126,9 @@ class Entity {
     getController() {
         return this.controller;
     }
+    hasController() {
+        return this.controller instanceof EntityController;
+    }
     removeController() {
         this.controller = undefined;
         return this;

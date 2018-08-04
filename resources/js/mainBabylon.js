@@ -130,7 +130,7 @@ function generateApartmentScene() {
     ceilingMaterial.backFaceCulling = false;
     var ceilingMesh = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh", {xmin:0.0125, zmin:-26, xmax: 16, zmax: 2, subdivisions: {w:8, h:12}}, Game.scene);
     ceilingMesh.material = ceilingMaterial;
-    ceilingMesh.position.y = 3;
+    ceilingMesh.position.y = 2.9;
     ceilingMesh.position.x -= 1;
     ceilingMesh.position.z -= 1;
 

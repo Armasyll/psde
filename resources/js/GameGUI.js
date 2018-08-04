@@ -691,7 +691,7 @@ class GameGUI {
         tooltip.addControl(keyName);
         tooltip.addControl(actionPanelActionName);
         tooltip.addControl(actionPanelTargetName);
-        tooltip.isVisible = true;
+        tooltip.isVisible = false;
         return tooltip;
     }
     static setActionTooltipLetter(_string = String.fromCharCode(Game.useTargetedEntityCode)) {

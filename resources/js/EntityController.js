@@ -46,6 +46,9 @@ class EntityController {
     getAvatar() {
         return this.avatar;
     }
+    hasAvatar() {
+        return (this.avatar instanceof BABYLON.Mesh || this.avatar instanceof BABYLON.InstancedMesh)
+    }
     setEntity(_entity) {
         if (_entity instanceof Entity || _entity instanceof InstancedEntity) {
             this.entity = _entity;

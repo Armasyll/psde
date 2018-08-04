@@ -1540,6 +1540,17 @@ class Game {
         Game.player.getEntity().addItem(_itemController.getEntity());
         Game.removeItemInSpace(_itemController);
     }
+    static actionDropFunction(_itemEntity, _subEntityController = Game.player) {
+        if (!(_itemEntity instanceof ItemEntity)) {
+            return;
+        }
+        if (!(_subEntityController instanceof EntityController) && !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        if (_itemEntity.hasController() && _itemEntity.getController().hasAvatar()) { // it shouldn't have an EntityController :v but just in case
+            
+        }
+    }
     static actionCloseFunction(_entityController, _subEntityController = Game.player) {
         if (!(_entityController instanceof DoorController)) {
             return;
