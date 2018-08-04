@@ -72,67 +72,74 @@ window.addEventListener("DOMContentLoaded", function() {
 
 function generateApartmentScene() {
     if (Game.debugEnabled) console.log("Running generateApartmentScene");
+    var _ground = Game.createCollisionPlane({x:-512, z:-512}, {x:512, z:512}, 0);
     if (Game.physicsEnabled) {
-        var _ground = BABYLON.Mesh.CreateGround("ground", 1024,  1024, 1, Game.scene);
-        _ground.material = new BABYLON.Material();
-        _ground.position.y = 0.0;
-        _ground.material.alpha = 0;
         Game.assignPlanePhysicsToMesh(_ground);
-    }
-    else {
-        Game.createCollisionPlane({x:-512, z:-512}, {x:512, z:512}, -0.075);
     }
 
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
-    _ambientLight.intensity = 0.9;
+        _ambientLight.intensity = 0.9;
 
     var packStreetApartmentBuildingTexture = new BABYLON.StandardMaterial("packStreetApartmentBuildingTexture", Game.scene);
-    packStreetApartmentBuildingTexture.diffuseTexture = new BABYLON.Texture("resources/images/packStreetApartmentBuildingGroundFloor.png", Game.scene);
-    packStreetApartmentBuildingTexture.specularColor = new BABYLON.Color3(0, 0, 0);
-    packStreetApartmentBuildingTexture.backFaceCulling = false;
+        packStreetApartmentBuildingTexture.diffuseTexture = new BABYLON.Texture("resources/images/packStreetApartmentBuildingGroundFloor.png", Game.scene);
+        packStreetApartmentBuildingTexture.specularColor = new BABYLON.Color3(0, 0, 0);
+        packStreetApartmentBuildingTexture.backFaceCulling = false;
     var packStreetApartmentBuildingMap = new BABYLON.Mesh.CreatePlane("packStreetApartmentBuildingMap", 2, Game.scene);
-    packStreetApartmentBuildingMap.position.x = 5.6;
-    packStreetApartmentBuildingMap.position.y = 1.5;
-    packStreetApartmentBuildingMap.position.z = -17.06;
-    packStreetApartmentBuildingMap.scaling.x = 0.6;
-    packStreetApartmentBuildingMap.material = packStreetApartmentBuildingTexture;
+        packStreetApartmentBuildingMap.position.x = 5.6;
+        packStreetApartmentBuildingMap.position.y = 1.5;
+        packStreetApartmentBuildingMap.position.z = -17.06;
+        packStreetApartmentBuildingMap.scaling.x = 0.6;
+        packStreetApartmentBuildingMap.material = packStreetApartmentBuildingTexture;
 
     var nooo = new BABYLON.StandardMaterial("", Game.scene);
-    nooo.diffuseTexture = new BABYLON.Texture("resources/images/noooo.jpg", Game.scene);
-    nooo.specularColor = new BABYLON.Color3(0, 0, 0);
-    nooo.backFaceCulling = true;
+        nooo.diffuseTexture = new BABYLON.Texture("resources/images/noooo.jpg", Game.scene);
+        nooo.specularColor = new BABYLON.Color3(0, 0, 0);
+        nooo.backFaceCulling = true;
     var noooMesh = new BABYLON.Mesh.CreatePlane("noooMesh", 2, Game.scene);
-    noooMesh.position.set(4, 1, -27);
-    noooMesh.scaling.x = 0.6;
-    noooMesh.material = nooo;
+        noooMesh.position.set(4, 1, -27);
+        noooMesh.scaling.x = 0.6;
+        noooMesh.material = nooo;
 
     var yipyipyipTexture = new BABYLON.StandardMaterial("yipyipyipTexture", Game.scene);
-    yipyipyipTexture.diffuseTexture = new BABYLON.VideoTexture("yipyipyipVideo", ["resources/videos/20180420_yipyipyip.mp4", "resources/videos/20180420_yipyipyip.webm"], Game.scene, true);
-    yipyipyipTexture.emissiveColor = new BABYLON.Color3(0, 0, 0);
+        yipyipyipTexture.diffuseTexture = new BABYLON.VideoTexture("yipyipyipVideo", ["resources/videos/20180420_yipyipyip.mp4", "resources/videos/20180420_yipyipyip.webm"], Game.scene, true);
+        yipyipyipTexture.emissiveColor = new BABYLON.Color3(0, 0, 0);
     var yipyipyipMesh = new BABYLON.Mesh.CreatePlane("yipyipyipPlayer", 2, Game.scene);
-    yipyipyipMesh.position.set(1, 1.5, -17.06);
-    yipyipyipMesh.scaling.set(0.75, 0.5, 0.5);
-    yipyipyipMesh.material = yipyipyipTexture;
+        yipyipyipMesh.position.set(1, 1.5, -17.06);
+        yipyipyipMesh.scaling.set(0.75, 0.5, 0.5);
+        yipyipyipMesh.material = yipyipyipTexture;
 
     var floorMaterial = new BABYLON.StandardMaterial("floorMaterial", Game.scene);
-    floorMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
-    floorMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    var floorMesh = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh", {xmin:0.0125, zmin:-26, xmax: 16, zmax: 2, subdivisions: {w:8, h:12}}, Game.scene);
-    floorMesh.material = floorMaterial;
-    floorMesh.position.y = -0.0025;
-    floorMesh.position.x -= 1;
-    floorMesh.position.z -= 1;
-    if (Game.debugEnabled) console.log(floorMesh.getBoundingInfo().boundingBox);
+        floorMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
+        floorMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    var floorMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 27, subdivisions: {w:14, h:27}}, Game.scene);
+        floorMesh01.material = floorMaterial;
+        floorMesh01.position.set(1, 0, -27);
+    var floorMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 19, subdivisions: {w:2, h:19}}, Game.scene);
+        floorMesh01b.material = floorMaterial;
+        floorMesh01b.position.set(-1, 0, -19);
+    var floorMesh01c = new BABYLON.MeshBuilder.CreateTiledGround("floorMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+        floorMesh01c.material = floorMaterial;
+        floorMesh01c.position.set(-1, 0, -27);
+    var floorMesh02 = floorMesh01.createInstance("floorMesh02");
+        floorMesh02.position.y += 3;
+    var floorMesh02b = floorMesh01b.createInstance("floorMesh02b");
+        floorMesh02b.position.y += 3;
+    var floorMesh02c = floorMesh01c.createInstance("floorMesh02c");
+        floorMesh02c.position.y += 3;
 
     var ceilingMaterial = new BABYLON.StandardMaterial("ceilingMaterial", Game.scene);
     ceilingMaterial.diffuseTexture = new BABYLON.Texture("resources/data/wall.png", Game.scene);
     ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     ceilingMaterial.backFaceCulling = false;
-    var ceilingMesh = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh", {xmin:0.0125, zmin:-26, xmax: 16, zmax: 2, subdivisions: {w:8, h:12}}, Game.scene);
-    ceilingMesh.material = ceilingMaterial;
-    ceilingMesh.position.y = 2.9;
-    ceilingMesh.position.x -= 1;
-    ceilingMesh.position.z -= 1;
+    var ceilingMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
+        ceilingMesh01.material = ceilingMaterial;
+        ceilingMesh01.position.set(1, 2.9, -27);
+    var ceilingMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 19, subdivisions: {w:2, h:19}}, Game.scene);
+        ceilingMesh01b.material = ceilingMaterial;
+        ceilingMesh01b.position.set(-1, 2.9, -19);
+    var ceilingMesh01c = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+        ceilingMesh01c.material = ceilingMaterial;
+        ceilingMesh01c.position.set(-1, 2.9, -27);
 
     Game.createCollisionWall({x:-1, y:0, z:1}, {x:15, y:0, z:1}); // Back floor wall
     Game.createCollisionWall({x:-1, y:0, z:1}, {x:-1, y:0, z:-27}); // Left floor wall

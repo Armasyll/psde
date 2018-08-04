@@ -417,7 +417,7 @@ class Game {
         var _width = Math.abs(_posEnd.x - _posStart.x);
         var _depth = Math.abs(_posEnd.z - _posStart.z);
         var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = _posY;
+        var _posY = _posY - 0.06125;
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
         _floor.material = Game._collisionMaterial;
@@ -551,11 +551,13 @@ class Game {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
         else {
+            var _boundingBox = _instance.getBoundingInfo().boundingBox;
             _instance.checkCollisions = true;
-            _instance.ellipsoid = new BABYLON.Vector3(0.13 * _scale.x, 1.2 * _scale.y, 0.13 * _scale.z);
-            _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y + (_instance.ellipsoid.y * 0.06), 0);
-            _instance.ellipsoid.set(0.13 * _scale.x, 0.6 * _scale.y, 0.13 * _scale.z);
-            _instance.ellipsoidOffset.set(0, _instance.ellipsoid.y, 0);
+            /*
+                Using X for Z size 'cause the tail throws my collision box size off
+             */
+            _instance.ellipsoid = new BABYLON.Vector3(_boundingBox.extendSize.x * _scale.x, _boundingBox.extendSize.y * _scale.y, (_boundingBox.extendSize.x * 0.6) * _scale.z);
+            _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, 0);
         }
         return _instance;
     }
