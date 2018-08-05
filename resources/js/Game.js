@@ -29,6 +29,7 @@ class Game {
 
         this._assignBoundingBoxCollisionQueue = new Set();
 
+        this._filesToLoad = 1;
         // Original meshes
         this.entityMeshes = {};
         this.surfaceMeshes = {};
@@ -58,10 +59,6 @@ class Game {
         this.instancedEntities = {};
         this.instancedItemEntities = {};
 
-        this._loadedFurniture = false;
-        this._loadedSurfaces = false;
-        this._loadedCharacters = false;
-        this._loadedItems = false;
         this._finishedLoading = false;
 
         this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
@@ -121,6 +118,7 @@ class Game {
         this.initQwertyKeyboardControls();
         this.initPostProcessing();
 
+        this._filesToLoad -= 1;
         this.initialized = true;
     }
     static initPhysics() {
@@ -555,7 +553,7 @@ class Game {
         }
         return _instance;
     }
-    static addCharacterMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static addCharacterMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = new BABYLON.Vector3(0,0,0), _scale = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running addCharacterMesh");
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
         var _instance = Game.addMesh(_id, _meshID, _skin, _position, _rotation, _scale);
@@ -720,7 +718,7 @@ class Game {
 
     static importMeshes(_sceneFilename, _meshNames = "", _callback = undefined) {
         if (Game.debugEnabled) console.log("Running importMeshes");
-        var _importedMeshes = new Array();
+        var _importedMeshes = {};
         if (typeof _meshNames == "string") {}
         else if (typeof _meshNames == "array") {
             _meshNames = _meshNames.join('"');
@@ -728,6 +726,7 @@ class Game {
         else {
             _meshNames = "";
         }
+        Game._filesToLoad += 1;
         BABYLON.SceneLoader.ImportMesh(
             _meshNames, // meshNames
             "resources/data/", // rootUrl
@@ -735,12 +734,14 @@ class Game {
             Game.scene, // scene
             function(_meshes, _particleSystems, _skeletons) { // onSuccess
                 for(var _i = 0; _i < _meshes.length; _i++) {
+                    _meshes[_i].name = _meshes[_i].id;
                     _meshes[_i].setEnabled(false);
                     _meshes[_i].position.set(0,-4096,0);
                     _meshes[_i].rotation.set(0,0,0);
                     _meshes[_i].scaling.set(1,1,1);
-                    if (!(_meshes[_i].material instanceof BABYLON.Material))
+                    if (!(_meshes[_i].material instanceof BABYLON.Material)) {
                         _meshes[_i].material = new BABYLON.StandardMaterial("", Game.scene);
+                    }
                     //_meshes[_i].material.freeze();
                     _importedMeshes[_meshes[_i].id] = _meshes[_i];
                     if (_skeletons[_i] != undefined) {
@@ -749,26 +750,28 @@ class Game {
                         _meshes[_i].skeleton.rotation = _meshes[_i].rotation;
                         _meshes[_i].skeleton.scaling = _meshes[_i].scaling;
                     }
+                    Game.entityMeshes[_meshes[_i].id] = _meshes[_i];
                 }
+                Game._filesToLoad -= 1;
                 if (typeof _callback == "function") {
-                    _callback();
+                    _callback(_importedMeshes);
                 }
             },
             function() { // onProgress
 
             },
             function() { // onError
-
             }
         );
         return _importedMeshes;
     }
     static loadMeshes() {
         if (Game.debugEnabled) console.log("Running loadMeshes");
-        Game.furnitureMeshes = Game.importMeshes("furniture.babylon", undefined, function(){Game._loadedFurniture = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.furnitureMeshes);});
-        Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon", undefined, function(){Game._loadedSurfaces = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.surfaceMeshes);});
-        Game.characterMeshes = Game.importMeshes("characters.babylon", undefined, function(){Game._loadedCharacters = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.characterMeshes);});
-        Game.itemMeshes = Game.importMeshes("items.babylon", undefined, function(){Game._loadedItems = true; Game.entityMeshes = Object.assign(Game.entityMeshes, Game.itemMeshes);});
+        Game.furnitureMeshes = Game.importMeshes("furniture.babylon");
+        Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon");
+        Game.characterMeshes = Game.importMeshes("characters-swf.babylon");
+        Game.importMeshes("arachnids.babylon", undefined, function(_meshes) {Game.characterMeshes = Object.assign(Game.characterMeshes, _meshes);});
+        Game.itemMeshes = Game.importMeshes("items.babylon");
         return true;
     }
     static filterID(_id) {

@@ -10,34 +10,32 @@ window.addEventListener("DOMContentLoaded", function() {
 
     Game.engine.runRenderLoop(function() {
         Game.scene.render();
-        if (!Game._finishedLoading) {
-            if (Game._loadedFurniture && Game._loadedSurfaces && Game._loadedCharacters && Game._loadedItems && Game.initialized && GameGUI.initialized) {
-                if (Game.debugEnabled) console.log("Finished loading assets.");
+        if (!Game._finishedLoading && Game._filesToLoad == 0) {
+            if (Game.debugEnabled) console.log("Finished loading assets.");
 
-                var _character = Game.characterMeshes["foxSkeletonN"];
-                var _animationRange = _character.skeleton.getAnimationRanges();
-                for (var _i = 0; _i < _animationRange.length; _i++) {
-                    if (_animationRange[_i].to - _animationRange[_i].from > 2) {
-                        _animationRange[_i].from += 1;
-                        _animationRange[_i].to -= 1;
-                    }
+            var _character = Game.characterMeshes["foxSkeletonN"];
+            var _animationRange = _character.skeleton.getAnimationRanges();
+            for (var _i = 0; _i < _animationRange.length; _i++) {
+                if (_animationRange[_i].to - _animationRange[_i].from > 2) {
+                    _animationRange[_i].from += 1;
+                    _animationRange[_i].to -= 1;
                 }
-
-                generateApartmentScene();
-                Game.initPlayer();
-                Game._finishedLoading = true;
-
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                    Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
-                }));
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                    Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
-                }));
-
-                Client.initialize();
-                GameGUI.resizeText();
-                GameGUI.showCharacterChoiceMenu();
             }
+
+            generateApartmentScene();
+            Game.initPlayer();
+            Game._finishedLoading = true;
+
+            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
+            }));
+            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+                Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
+            }));
+
+            Client.initialize();
+            GameGUI.resizeText();
+            GameGUI.showCharacterChoiceMenu();
         }
     });
     var _rbrCount = 0;
@@ -342,4 +340,7 @@ function generateApartmentScene() {
 
     Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "/resources/data/foxRed.svg", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
     Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
+    Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05));
+    Game.getCharacterController("spider").setWalkAnim("93_walk", 1.2, true);
+    Game.getCharacterController("spider").walkSpeed = 1;
 }
