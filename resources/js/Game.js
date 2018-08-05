@@ -172,7 +172,7 @@ class Game {
     }
     static initPlayer() {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", 18, "male", "fox", undefined, undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", undefined, undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
@@ -1158,11 +1158,11 @@ class Game {
             return false;
         }
     }
-    static createCharacter(_id = undefined, _name = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static createCharacter(_id = undefined, _name = undefined, _description = "", _image = "resources/images/characters/genericCharacter.svg", _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
-        var _entity = new CharacterEntity(_id, _name, undefined, undefined, undefined, _age, _sex, _species);
+        var _entity = new CharacterEntity(_id, _name, _description, _image, undefined, _age, _sex, _species);
         _mesh = Game.getMesh(_mesh);
         if (_mesh == undefined) {
             switch (_entity.species) {

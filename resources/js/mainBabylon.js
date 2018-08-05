@@ -328,7 +328,7 @@ function generateApartmentScene() {
 
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
-    Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("apartmentbuildingkey");
+    Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
     Game.getDoorController("apartmentbuildingdoor").setOpensInward(false);
 
     Game.addMesh(undefined, "wall", undefined,                 {x:0, y:0, z:-28});
@@ -340,6 +340,6 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall", undefined,                 {x:12, y:0, z:-28});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-28});
 
-    Game.createCharacter("rosie", "Rosie", 14, "f", "fox", "/resources/data/foxRed.svg", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
-    Game.createCharacter("charlie", "Charlie", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
+    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "/resources/data/foxRed.svg", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
+    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
 }
