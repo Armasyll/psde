@@ -202,6 +202,7 @@ class Game {
         this.useTargetedEntityCode = 69;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
+        this.showInventoryCode = 73;
         this._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
@@ -217,6 +218,7 @@ class Game {
         this.useTargetedEntityCode = 190;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 80;
+        this.showInventoryCode = 73; // IDK :v maybe 
         this._updateMenuKeyboardDisplayKeys();
     }
     static initAzertyKeyboardControls() {
@@ -232,6 +234,7 @@ class Game {
         this.useTargetedEntityCode = 69;
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
+        this.showInventoryCode = 73;
         this._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
@@ -304,6 +307,16 @@ class Game {
                 break;
             }
             case this.interfaceTargetedEntityCode : {
+                break;
+            }
+            case this.showInventoryCode : {
+                if (GameGUI.inventoryVisible()) {
+                    GameGUI.hideInventory(false);
+                    GameGUI.showHUD(false);
+                }
+                else {
+                    GameGUI.showInventory(false);
+                }
                 break;
             }
             case this.showMainMenuCode : {

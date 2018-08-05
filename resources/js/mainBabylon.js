@@ -34,7 +34,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 }));
 
                 Client.initialize();
-                GameGUI.showMainMenu();
+                GameGUI.showCharacterChoiceMenu();
             }
         }
     });

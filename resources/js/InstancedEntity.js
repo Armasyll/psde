@@ -52,7 +52,9 @@ class InstancedEntity {
 
         Game.instancedEntities[this.id] = this;
     }
-
+    getID() {
+        return this.id;
+    }
     /**
      * Sets Entity
      * @param {Entity} _entity Entity, or undefined
@@ -70,14 +72,14 @@ class InstancedEntity {
         return this;
     }
     getName() {
-        return (this.name || this.entity.getName());
+        return (this.name || this.entity.getName() || "");
     }
     setDescription(_description) {
         this.description = _description;
         return this;
     }
     getDescription() {
-        return (this.description || this.entity.getDescription());
+        return (this.description || this.entity.getDescription() || "");
     }
 
     /**
@@ -270,7 +272,7 @@ class InstancedEntity {
         return this.entity.getAvatarID();
     }
     getImage() {
-        return this.entity.getImage();
+        return (this.entity.getImage() || "resources/images/items/genericItem.svg");
     }
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
