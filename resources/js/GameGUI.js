@@ -25,6 +25,13 @@ class GameGUI {
         GameGUI.mainMenu.addControl(GameGUI._generateCharacterChoiceMenu());
         GameGUI.mainMenu.addControl(GameGUI._generateInventoryMenu());
     }
+    static resizeText() {
+        if (!GameGUI.initialized) {
+            return;
+        }
+        GameGUI.hud.rootContainer.fontSize = String(Math.floor(24 * (window.innerWidth / 1920))) + "px";
+        GameGUI.mainMenu.rootContainer.fontSize = GameGUI.hud.rootContainer.fontSize;
+    }
     static showHUD(_updateChild = true) {
         if (Game.debugEnabled) console.log("Running GameGUI::showHUD");
         if (_updateChild) {
@@ -703,6 +710,9 @@ class GameGUI {
                 selectedDescription.height = 0.3;
                 selectedDescription.top = "5%";
                 selectedDescription.left = 0;
+                selectedDescription.paddingLeft = 0.1;
+                selectedDescription.paddingRight = 0.1;
+                selectedDescription.textWrapping = true;
                 selectedDescription.color = "white";
                 summary.addControl(selectedDescription);
             var selectedDetails = new BABYLON.GUI.TextBlock("selectedDetails");
@@ -746,6 +756,7 @@ class GameGUI {
                 _image.width = 0.2;
                 _image.height = 1.0;
                 _image.left = "-40%";
+                _image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                 _button.addControl(_image);
             var _name = new BABYLON.GUI.TextBlock();
                 _name.width = 0.8;

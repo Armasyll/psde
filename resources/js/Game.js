@@ -529,9 +529,9 @@ class Game {
             }
         }
     }
-    static addItemMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
+    static addItemMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale, _highlightFix);
+        var _instance = Game.addMesh(_id, _meshID, _skin, _position, _rotation, _scale, _highlightFix);
         if (_instance == null) {return null;}
         Game.itemMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
@@ -541,9 +541,9 @@ class Game {
         else {}
         return _instance;
     }
-    static addFurnitureMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
+    static addFurnitureMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale, _highlightFix);
+        var _instance = Game.addMesh(_id, _meshID, _skin, _position, _rotation, _scale, _highlightFix);
         if (_instance == null) {return null;}
         Game.furnitureMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
@@ -555,10 +555,10 @@ class Game {
         }
         return _instance;
     }
-    static addCharacterMesh(_id = undefined, _meshID = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static addCharacterMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         if (Game.debugEnabled) console.log("Running addCharacterMesh");
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
-        var _instance = Game.addMesh(_id, _meshID, _position, _rotation, _scale);
+        var _instance = Game.addMesh(_id, _meshID, _skin, _position, _rotation, _scale);
         if (_instance == null) {return null;}
         Game.characterMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
@@ -598,7 +598,7 @@ class Game {
         delete Game.itemMeshInstances[_mesh.id];
         _mesh.dispose();
     }
-    static addMesh(_id = undefined, _mesh = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _highlightFix = false) {
+    static addMesh(_id = undefined, _mesh = undefined, _skin = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _highlightFix = false) {
         if (Game.debugEnabled) console.log("Running addMesh");
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
@@ -613,7 +613,7 @@ class Game {
             }
         }
         if (_position == undefined) {
-            _position = new BABLON.Vector3(0, -4095, 0)
+            _position = new BABYLON.Vector3(0, -4095, 0)
         }
         else {
             _position = this.filterVector(_position);
@@ -627,17 +627,30 @@ class Game {
             var _n = undefined;
             if (_mesh.skeleton instanceof BABYLON.Skeleton) {
                 _n = _mesh.clone(_id);
+                _n.material = _n.material.clone();
                 _n.skeleton = _mesh.skeleton.clone(_id);
                 _n.material.unfreeze();
             }
             else {
                 if (_highlightFix) {
                     _n = _mesh.clone(_id);
+                    _n.material = _n.material.clone();
                 }
                 else {
                     _n = _mesh.createInstance(_id);
                 }
                 _n.material.freeze();
+            }
+            if (_skin == undefined) {}
+            else if (typeof _skin == BABYLON.Texture) {
+                _n.material.diffuseTexture = _skin;
+            }
+            else if (typeof _skin == BABYLON.Material) {
+                _n.material = _skin.clone();
+            }
+            else if (typeof _skin == "string") {
+                _n.material.diffuseTexture = new BABYLON.Texture(_skin);
+                _n.material.specularColor.set(0,0,0);
             }
             _n.id = _id;
             _n.name = _mesh.name;
@@ -763,7 +776,7 @@ class Game {
             return _id;
         }
         else if (typeof _id == "string") {
-            return _id.replace(/[^a-zA-Z0-9_\-]/g,"").toLowerCase();
+            return _id.replace(/[^a-zA-Z0-9_\-]/g,"");
         }
     }
     static filterName(_string) {
@@ -1181,10 +1194,10 @@ class Game {
                     break;
                 }
             }
-            _mesh = Game.addCharacterMesh(_id, _mesh, _options, _position, _rotation, _scale);
+            _mesh = Game.addCharacterMesh(_id, _mesh, _skin, _options, _position, _rotation, _scale);
         }
         else {
-            _mesh = Game.addCharacterMesh(_id, _mesh.id, _options, _position, _rotation, _scale);
+            _mesh = Game.addCharacterMesh(_id, _mesh.id, _skin, _options, _position, _rotation, _scale);
         }
         var _controller = new CharacterController(_id, _mesh, _entity);
         if (_skin != undefined) {
@@ -1200,7 +1213,7 @@ class Game {
     static createCharacterFromEntity(_entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         _entity = Game.getCharacterEntity(_entity);
         if (_entity == undefined) {return;}
-        var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getAvatarID(), _options, _position, _rotation, _scale);
+        var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getAvatarID(), _entity.getAvatarSkin(), _options, _position, _rotation, _scale);
         var _controller = new CharacterController(_entity.getID(), _mesh, _entity);
         _controller.setAvatarSkin(_entity.getAvatarSkin());
         _entity.setController(_controller);
@@ -1244,15 +1257,12 @@ class Game {
         var _entity = new DoorEntity(_id, _name);
         _entity.addAvailableAction("close");
         _entity.addAvailableAction("open");
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _skin, _options, _position, _rotation, _scale, true);
         var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
         var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
         _mesh.position = _mesh.position.add({x:_xPos, y:0, z:-_yPos});
         var _controller = new DoorController(_id, _mesh, _entity);
-        if (_skin != undefined) {
-            _controller.setAvatarSkin(_skin);
-        }
         _entity.setController(_controller);
         _entity.setAvatar(_mesh.name);
         return _controller;
@@ -1277,7 +1287,7 @@ class Game {
             _mesh = "chair";
         }
         var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _type);
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _options, _position, _rotation, _scale, true);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _skin, _options, _position, _rotation, _scale, true);
         var _controller = new FurnitureController(_id, _mesh, _entity);
         _entity.setController(_controller);
         _entity.setAvatar(_mesh.name);
@@ -1318,10 +1328,10 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id = undefined, _name = undefined, _description = "", _type = "book", _mesh = undefined, _skin = undefined) {
+    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _type = "book", _mesh = undefined, _skin = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        var _entity = new ItemEntity(_id, _name, _description);
+        var _entity = new ItemEntity(_id, _name, _description, _image);
         _mesh = this.getMesh(_mesh);
         if (_mesh != undefined) {
             _mesh = _mesh.name;
@@ -1343,7 +1353,7 @@ class Game {
             _id = _entity.getID();
         }
         _entity.addAvailableAction("take");
-        var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _options, _position, _rotation, _scale, true);
+        var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _entity.getAvatarSkin(), _options, _position, _rotation, _scale, true);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
         return _controller;

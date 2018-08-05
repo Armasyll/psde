@@ -271,6 +271,9 @@ class InstancedEntity {
     getAvatarID() {
         return this.entity.getAvatarID();
     }
+    getAvatarSkin() {
+        return this.entity.getAvatarSkin();
+    }
     getImage() {
         return (this.entity.getImage() || "resources/images/items/genericItem.svg");
     }
