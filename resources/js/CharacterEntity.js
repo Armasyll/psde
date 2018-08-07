@@ -739,95 +739,53 @@ class CharacterEntity extends EntityWithStorage {
     /**
      * Adds Entity(s) to this Character's heldEntities
      * NOTE: Directly modifies this.currentAction
-     * @param  {InstancedEntity} _instancedEntity The Entity to be held
+     * @param  {InstancedEntity} _instancedItemEntity The Entity to be held
      * @param  {String} _hand The hand to hold it in; can be "leftHand", "rightHand", or undefined
      * @param {this} This
      */
-    addHeldEntity(_instancedEntity, _hand = undefined) {
-        if (!(_instancedEntity instanceof InstancedEntity)) {
-            if (Game.instances.has(_instancedEntity))
-                _instancedEntity = Game.instances.get(_instancedEntity);
-            else
-                return this;
-        }
+    addHeldItem(_instancedItemEntity, _hand = this.getHandedness()) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
 
-        if (this.hasHeldEntity(_instancedEntity))
+        if (this.hasHeldItem(_instancedItemEntity)) {
             return this;
-        if (_hand !== undefined && _hand != "leftHand" && _hand != "rightHand") {
-            switch (_hand.slice(0, -1).toLowerCase()) {
-                case 0 :
-                case "0" :
-                case "l" : {
-                    _hand = "leftHand";
-                    break;
-                }
-                case 1 :
-                case "1" :
-                case "r" : {
-                    _hand = "rightHand";
-                    break;
-                }
-            }
-        }
-        if (_hand != "leftHand" && _hand != "rightHand") {
-            if (this.hasSomethingInBothHands())
-                _hand = this.handedness;
-            else
-                _hand = this.getFreeHand();
         }
         if (this.heldEntities[_hand] instanceof Entity) {
-            if (!this.removeHeldEntity(this.heldEntities[_hand]))
+            if (!this.removeHeldItem(this.heldEntities[_hand]))
                 return this;
         }
-        /*if (this.triggerActionEvent("hold", _instancedEntity.parent)) {
-            this.heldEntities[_hand] = _instancedEntity;
-            this.currentActions["hold"] = this.heldEntities;
-        }*/
         return this;
     }
     /**
      * Removes Entity held in either hand
      * NOTE: Directly modifies this.currentAction
-     * @param  {InstancedEntity, String} _instancedEntity InstancedEntity, InstancedEntity ID, "leftHand", or "rightHand"
+     * @param  {InstancedEntity, String} _instancedItemEntity InstancedEntity, InstancedEntity ID, "leftHand", or "rightHand"
      * @return {this} This
      */
-    removeHeldEntity(_instancedEntity) {
-        if (!(_instancedEntity instanceof InstancedEntity)) {
-            if (Game.instances.has(_instancedEntity))
-                _instancedEntity = Game.instances.get(_instancedEntity);
-            else if (_instancedEntity == "leftHand")
-                _instancedEntity = this.getEntityInLeftHand();
-            else if (_instancedEntity == "rightHand")
-                _instancedEntity = this.getEntityInRightHand();
-            else
-                return this;
+    removeHeldItem(_instancedItemEntity) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
+
+        if (this.getEntityInRightHand() == _instancedItemEntity) {
+            this.removeEntityInRightHand();
         }
-        if (this.hasHeldEntity(_instancedEntity) /*&& this.triggerActionEvent("release", _instancedEntity.parent)*/) {
-            if (this.getEntityInRightHand() == _instancedEntity)
-                this.removeEntityInRightHand();
-            if (this.getEntityInLeftHand() == _instancedEntity)
-                this.removeEntityInLeftHand();
-            this.currentActions["hold"] = this.heldEntities;
+        if (this.getEntityInLeftHand() == _instancedItemEntity) {
+            this.removeEntityInLeftHand();
         }
+        this.currentActions["hold"] = this.heldEntities;
         return this;
     }
-    hasHeldEntity(_instancedEntity) {
-        if (!(_instancedEntity instanceof InstancedEntity)) {
-            if (Game.instancedEntities.has(_instancedEntity))
-                _instancedEntity = Game.instancedEntities.get(_instancedEntity);
-            else {
-                _instancedEntity = this.getItem(_instancedEntity);
-                if (!(_instancedEntity instanceof InstancedEntity))
-                    return undefined;
-            }
-        }
-        return this.heldEntities["leftHand"] == _instancedEntity || this.heldEntities["rightHand"] == _instancedEntity;
+    hasHeldItem(_instancedItemEntity) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
+
+        return this.heldEntities["leftHand"] == _instancedItemEntity || this.heldEntities["rightHand"] == _instancedItemEntity;
     }
-    isHoldingEntity(_instancedEntity) {
-        return this.hasHeldEntity(_instancedEntity);
+    isHoldingEntity(_instancedItemEntity) {
+        return this.hasHeldItem(_instancedItemEntity);
     }
-    isHolding(_instancedEntity) {
-        return this.hasHeldEntity(_instancedEntity);
+    isHolding(_instancedItemEntity) {
+        return this.hasHeldItem(_instancedItemEntity);
     }
     hasSomethingInLeftHand() {
         return this.heldEntities["leftHand"] instanceof ItemInstance;
@@ -2624,20 +2582,20 @@ class CharacterEntity extends EntityWithStorage {
         //new GameEvent(`${this.id}CharmedRemove`, "charmed", _character, this, undefined, undefined, undefined, undefined, _cron, `${this.id}.removeCurrentAction('charmed')`, true);
         return true;
     }
-    consume(_instancedEntity) {
-        if (!(_instancedEntity instanceof InstancedEntity)) {
-            if (Game.instances.has(_instancedEntity))
-                _instancedEntity = Game.instances.get(_instancedEntity);
+    consume(_instancedItemEntity) {
+        if (!(_instancedItemEntity instanceof InstancedEntity)) {
+            if (Game.instances.has(_instancedItemEntity))
+                _instancedItemEntity = Game.instances.get(_instancedItemEntity);
             else
                 return undefined;
         }
 
         /*if (this.triggerActionEvent("consume", _itemInstance.parent)) {
-            this.addCurrentAction("consume", _instancedEntity);
+            this.addCurrentAction("consume", _instancedItemEntity);
             this.items.splice(this.items.indexOf(_itemInstance), 1);
             Game.setTimedFunctionEvent(
-                `${this.id}Consume${_instancedEntity.parent.id}${Game.roll("1d4")}`,
-                `Game.getCharacterEntity('${this.id}').removeCurrentAction('consume', _instancedEntity)`,
+                `${this.id}Consume${_instancedItemEntity.parent.id}${Game.roll("1d4")}`,
+                `Game.getCharacterEntity('${this.id}').removeCurrentAction('consume', _instancedItemEntity)`,
                 "2m",
                 true
             );
@@ -2715,8 +2673,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return true;
     }
-    hold(_instancedEntity, _hand = undefined) {
-        return this.addHeldEntity(_instancedEntity, _hand);
+    hold(_instancedItemEntity, _hand = undefined) {
+        return this.addHeldItem(_instancedItemEntity, _hand);
     }
     hug(_entity) {
         if (!(_entity instanceof Entity)) {
@@ -2906,7 +2864,7 @@ class CharacterEntity extends EntityWithStorage {
         this.fuck(_entity);
     }
     release(_itemInstance, _hand = undefined) {
-        return this.removeHeldEntity(_itemInstance, _hand);
+        return this.removeHeldItem(_itemInstance, _hand);
     }
     /**
      * Alias for fuck
@@ -2959,8 +2917,8 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {Entity} _entity [description]
      * @return {Boolean}         [description]
      */
-    suck(_instancedEntity) {
-        return this.oral(_instancedEntity);
+    suck(_instancedItemEntity) {
+        return this.oral(_instancedItemEntity);
     }
     talk(_entity) {
         if (!(_entity instanceof Entity))

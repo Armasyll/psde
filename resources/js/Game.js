@@ -326,7 +326,7 @@ class Game {
                 else {
                     if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
                     GameGUI.hideHUD(false);
-                    GameGUI.showMainMenu(false);
+                    GameGUI.showCharacterChoiceMenu(false);
                 }
                 break;
             }
@@ -1490,7 +1490,7 @@ class Game {
                 break;
             }
             case "menu" : {
-                GameGUI.showMainMenu();
+                GameGUI.showCharacterChoiceMenu();
                 break;
             }
             case "login" : {
