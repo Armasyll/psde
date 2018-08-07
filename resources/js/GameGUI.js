@@ -763,10 +763,11 @@ class GameGUI {
             });
             GameGUI.mainMenu.rootContainer.getChildByName("inventory").getChildByName("items").addControl(_button);
         });
+        GameGUI.clearInventorySelectedItem();
     }
     static setInventorySelectedItem(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player.getEntity()) {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
+        if (_instancedItemEntity == undefined) {GameGUI.clearInventorySelectedItem; return;}
         _targetEntity = Game.getEntity(_targetEntity);
         _playerEntity = Game.getEntity(_playerEntity);
         if (_playerEntity == undefined) {_playerEntity = Game.player.getEntity();}
@@ -792,7 +793,7 @@ class GameGUI {
             switch (_action) {
                 case "drop" : {
                     _actionButton = GameGUI._generateButton(undefined, "Drop");
-                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity.getController());});
+                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI.setPlayerInventory);});
                     break;
                 }
                 case "hold" : {
@@ -829,6 +830,16 @@ class GameGUI {
                 _actions.addControl(_actionButton);
                 _actionButton.top = ((_actions.children.length * 10) - 55) + "%";
             }
+        }
+    }
+    static clearInventorySelectedItem() {
+        var _summary = GameGUI.mainMenu.rootContainer.getChildByName("inventory").getChildByName("summary");
+        _summary.getChildByName("selectedName").text = "";
+        _summary.getChildByName("selectedImage").source = "";
+        _summary.getChildByName("selectedDescription").text = "";
+        var _actions = GameGUI.mainMenu.rootContainer.getChildByName("inventory").getChildByName("actions");
+        for (var _i = _actions.children.length - 1; _i > -1; _i--) {
+            _actions.removeControl(_actions.children[_i]);
         }
     }
     static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _image = undefined) {

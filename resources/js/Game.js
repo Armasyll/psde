@@ -54,6 +54,7 @@ class Game {
         this.doorEntities = {};
         this.characterEntities = {};
         this.itemEntities = {};
+        this.clothingEntities = {};
         this.keyEntities = {};
 
         this.instancedEntities = {};
@@ -1570,11 +1571,17 @@ class Game {
         Game.player.getEntity().addItem(_itemController.getEntity());
         Game.removeItemInSpace(_itemController);
     }
-    static actionDropFunction(_instancedItemEntity, _subEntityController = Game.player) {
+    static actionDropFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
             return;
         }
         if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+            if (typeof _callback == "function") {
+                _callback();
+            }
             return;
         }
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasAvatar()) { // it shouldn't have an EntityController :v but just in case
@@ -1587,6 +1594,10 @@ class Game {
             var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntityController.getAvatar().position.add(
                 new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getEntity().getAvatarID()).getBoundingInfo().boundingBox.extendSize.y, 0)
             ));
+        }
+        _subEntityController.getEntity().removeItem(_instancedItemEntity);
+        if (typeof _callback == "function") {
+            _callback();
         }
     }
     static actionCloseFunction(_entityController, _subEntityController = Game.player) {

@@ -14,36 +14,36 @@ class EntityWithStorage extends Entity {
      */
     addItem(_instancedItem) {
         _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem == undefined) {return;}
+        if (_instancedItem == undefined) {return this;}
         this.items.push(_instancedItem);
         return this;
     }
     /**
      * Removes an InstancedItemEntity from this Character
-     * @param  {InstancedItemEntity} _instancedItem InstancedItemEntity, or Item, to be removed
+     * @param  {InstancedItemEntity} _instancedItemEntity InstancedItemEntity, or Item, to be removed
      * @return {this}
      */
-    removeItem(_instancedItem) {
-        _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem == undefined) {return this;}
-        if (!this.hasItem(_instancedItem)) {
+    removeItem(_instancedItemEntity) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
+        if (!this.hasItem(_instancedItemEntity)) {
             return this;
         }
         if (this instanceof CharacterEntity) {
-            if (this.isWearing(_instancedItem)) {
-                this.disrobe(_instancedItem);
-                if (this.isWearing(_instancedItem)) {
+            if (this.isWearing(_instancedItemEntity)) {
+                this.disrobe(_instancedItemEntity);
+                if (this.isWearing(_instancedItemEntity)) {
                     return this;
                 }
             }
-            if (this.hasHeldEntity(_instancedItem)) {
-                this.removeHeldEntity(_instancedItem);
-                if (this.hasHeldEntity(_instancedItem)) {
+            if (this.hasHeldItem(_instancedItemEntity)) {
+                this.removeHeldItem(_instancedItemEntity);
+                if (this.hasHeldItem(_instancedItemEntity)) {
                     return this;
                 }
             }
         }
-        this.items.remove(_instancedItem);
+        this.items.remove(_instancedItemEntity);
         return this;
     }
     /**
