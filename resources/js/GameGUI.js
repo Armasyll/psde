@@ -802,6 +802,7 @@ class GameGUI {
                     }
                     else {
                         _actionButton = GameGUI._generateButton(undefined, "Hold");
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI.setInventorySelectedItem);});
                     }
                     break;
                 }

@@ -73,7 +73,7 @@ class CharacterEntity extends EntityWithStorage {
          * Item(s) this CharacterEntity is holding; will never exceed two (2) Item(s)
          * @type {Array} <InstancedItemEntity>
          */
-        this.heldEntities = {
+        this.heldItems = {
             leftHand:undefined,
             rightHand:undefined
         };
@@ -737,7 +737,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     /**
-     * Adds Entity(s) to this Character's heldEntities
+     * Adds Entity(s) to this Character's heldItems
      * NOTE: Directly modifies this.currentAction
      * @param  {InstancedEntity} _instancedItemEntity The Entity to be held
      * @param  {String} _hand The hand to hold it in; can be "leftHand", "rightHand", or undefined
@@ -750,10 +750,13 @@ class CharacterEntity extends EntityWithStorage {
         if (this.hasHeldItem(_instancedItemEntity)) {
             return this;
         }
-        if (this.heldEntities[_hand] instanceof Entity) {
-            if (!this.removeHeldItem(this.heldEntities[_hand]))
+        if (this.heldItems[_hand] instanceof Entity) {
+            if (!this.removeHeldItem(this.heldItems[_hand])) {
                 return this;
+            }
         }
+        this.heldItems[_hand] = _instancedItemEntity;
+
         return this;
     }
     /**
@@ -766,91 +769,72 @@ class CharacterEntity extends EntityWithStorage {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {return this;}
 
-        if (this.getEntityInRightHand() == _instancedItemEntity) {
-            this.removeEntityInRightHand();
+        if (this.getItemInRightHand() == _instancedItemEntity) {
+            this.removeItemInRightHand();
         }
-        if (this.getEntityInLeftHand() == _instancedItemEntity) {
-            this.removeEntityInLeftHand();
+        if (this.getItemInLeftHand() == _instancedItemEntity) {
+            this.removeItemInLeftHand();
         }
-        this.currentActions["hold"] = this.heldEntities;
+        this.currentActions["hold"] = this.heldItems;
         return this;
+    }
+    getHeldItems() {
+        return this.heldItems;
     }
     hasHeldItem(_instancedItemEntity) {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {return this;}
 
-        return this.heldEntities["leftHand"] == _instancedItemEntity || this.heldEntities["rightHand"] == _instancedItemEntity;
+        return this.heldItems["leftHand"] == _instancedItemEntity || this.heldItems["rightHand"] == _instancedItemEntity;
     }
-    isHoldingEntity(_instancedItemEntity) {
-        return this.hasHeldItem(_instancedItemEntity);
+    setHeldItemInRightHand(_instancedItemEntity) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
+
+        this.heldItems["rightHand"] = _instancedItemEntity;
+
+        return this;
     }
-    isHolding(_instancedItemEntity) {
-        return this.hasHeldItem(_instancedItemEntity);
-    }
-    hasSomethingInLeftHand() {
-        return this.heldEntities["leftHand"] instanceof InstancedItemEntity;
-    }
-    hasEntityInLeftHand() {
-        return this.hasSomethingInLeftHand();
-    }
-    hasSomethingInRightHand() {
-        return this.heldEntities["rightHand"] instanceof InstancedItemEntity;
-    }
-    hasEntityInRightHand() {
-        return this.hasSomethingInRightHand();
-    }
-    hasSomethingInBothHands() {
-        return this.heldEntities["leftHand"] instanceof InstancedItemEntity && this.heldEntities["rightHand"] instanceof InstancedItemEntity;
-    }
-    handsFull() {
-        return this.hasSomethingInBothHands();
-    }
-    hasSomethingInEitherHand() {
-        return this.hasSomethingInRightHand() || this.hasSomethingInLeftHand();
-    }
-    getEntityInRightHand() {
-        if (this.hasSomethingInRightHand())
-            return this.heldEntities["rightHand"];
-        else
-            return undefined;
-    }
-    getEntityInLeftHand() {
-        if (this.hasSomethingInLeftHand())
-            return this.heldEntities["leftHand"];
-        else
-            return undefined;
-    }
-    getFreeHand() {
-        if (this.handedness == "leftHand") {
-            if (!this.hasSomethingInLeftHand())
-                return "leftHand";
-            else if (!this.hasSomethingInRightHand())
-                return "rightHand";
+    getHeldItemInRightHand() {
+        if (this.heldItems["rightHand"] instanceof InstancedItemEntity) {
+            return this.heldItems["rightHand"];
         }
         else {
-            if (!this.hasSomethingInRightHand())
-                return "rightHand";
-            else if (!this.hasSomethingInLeftHand())
-                return "leftHand";
+            return null;
         }
-        return undefined;
+    }
+    setHeldItemInLeftHand(_instancedItemEntity) {
+        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        if (_instancedItemEntity == undefined) {return this;}
+
+        this.heldItems["leftHand"] = _instancedItemEntity;
+
+        return this;
+    }
+    getHeldItemInLeftHand() {
+        if (this.heldItems["leftHand"] instanceof InstancedItemEntity) {
+            return this.heldItems["leftHand"];
+        }
+        else {
+            return null;
+        }
     }
     /**
-     * Removes Entity in heldEntities["rightHand"]
-     * NOTE: Directly modifies this.heldEntities
+     * Removes Entity in heldItems["rightHand"]
+     * NOTE: Directly modifies this.heldItems
      * @return {this} This
      */
-    removeEntityInRightHand() {
-        this.heldEntities["rightHand"] = undefined;
+    removeItemInRightHand() {
+        this.heldItems["rightHand"] = undefined;
         return this;
     }
     /**
-     * Removes Entity in heldEntities["leftHand"]
-     * NOTE: Directly modifies this.heldEntities
+     * Removes Entity in heldItems["leftHand"]
+     * NOTE: Directly modifies this.heldItems
      * @return {this} This
      */
-    removeEntityInLeftHand() {
-        this.heldEntities["leftHand"] = undefined;
+    removeItemInLeftHand() {
+        this.heldItems["leftHand"] = undefined;
         return this;
     }
 

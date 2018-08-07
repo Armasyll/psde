@@ -1609,6 +1609,37 @@ class Game {
         }
         _entityController.setOpen(false);
     }
+    static actionHoldFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+            return;
+        }
+        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+            if (typeof _callback == "function") {
+                _callback();
+            }
+            return;
+        }
+        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasAvatar()) {
+        }
+        else {
+            _subEntityController.getEntity().addHeldItem(_instancedItemEntity);
+            if (_subEntityController.getEntity().getHeldItemInLeftHand() == _instancedItemEntity) {
+                _subEntityController.attachToLeftHand(Game.addMesh(undefined, _instancedItemEntity.getAvatarID(), _instancedItemEntity.getAvatarSkin()));
+            }
+            else if (_subEntityController.getEntity().getHeldItemInRightHand() == _instancedItemEntity) {
+                _subEntityController.attachToRightHand(Game.addMesh(undefined, _instancedItemEntity.getAvatarID(), _instancedItemEntity.getAvatarSkin()));
+            }
+            else {
+                // do nothing :v or maybe something with magic v:
+            }
+        }
+        if (typeof _callback == "function") {
+            _callback(_instancedItemEntity, undefined, _subEntityController);
+        }
+    }
     static actionOpenFunction(_entityController, _subEntityController = Game.player) {
         if (!(_entityController instanceof DoorController)) {
             return;

@@ -605,19 +605,11 @@ class CharacterController extends EntityController {
         this.focus = _focus;
         return _focus;
     }
-    attachToLeftHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
-    }
     attachToRightHand(_mesh) {
         return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
     }
-    holdInRightHand(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_nstancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
-    }
-    holdInLeftHand(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_nstancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
+    attachToLeftHand(_mesh) {
+        return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
     }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {
