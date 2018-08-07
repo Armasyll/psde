@@ -606,10 +606,10 @@ class CharacterController extends EntityController {
         return _focus;
     }
     attachToRightHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
+        return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(-90), z:BABYLON.Tools.ToRadians(-90)});
     }
     attachToLeftHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(90), z:BABYLON.Tools.ToRadians(-90)});
+        return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(-90), z:BABYLON.Tools.ToRadians(-90)});
     }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {
