@@ -396,10 +396,10 @@ class GameGUI {
     static showCharacterChoiceMenu() {
         GameGUI.showMainMenu(true);
         GameGUI.hideMainMenuChildren();
-        return this.mainMenu.rootContainer.getChildByName("characterChoiceMenu").isVisible = true;
+        this.mainMenu.rootContainer.getChildByName("characterChoiceMenu").isVisible = true;
     }
     static hideCharacterChoiceMenu() {
-        return this.mainMenu.rootContainer.getChildByName("characterChoiceMenu").isVisible = false;
+        this.mainMenu.rootContainer.getChildByName("characterChoiceMenu").isVisible = false;
     }
     static _generatePlayerPortrait() {
         var portrait = new BABYLON.GUI.Rectangle("playerPortrait");
@@ -764,11 +764,12 @@ class GameGUI {
             GameGUI.mainMenu.rootContainer.getChildByName("inventory").getChildByName("items").addControl(_button);
         });
     }
-    static setInventorySelectedItem(_instancedItemEntity, _entity = undefined) {
+    static setInventorySelectedItem(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player.getEntity()) {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {return;}
-        _entity = Game.getEntity(_instancedItemEntity);
-        if (_entity == undefined) {return;}
+        _targetEntity = Game.getEntity(_targetEntity);
+        _playerEntity = Game.getEntity(_playerEntity);
+        if (_playerEntity == undefined) {_playerEntity = Game.player.getEntity();}
 
         var _summary = GameGUI.mainMenu.rootContainer.getChildByName("inventory").getChildByName("summary");
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
@@ -789,40 +790,43 @@ class GameGUI {
         for (var _action in _instancedItemEntity.getAvailableActions()) {
             var _actionButton = undefined;
             switch (_action) {
+                case "drop" : {
+                    _actionButton = GameGUI._generateButton(undefined, "Drop");
+                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity.getController());});
+                    break;
+                }
                 case "hold" : {
                     if (_instancedItemEntity == Game.player.getEntity().hasHeldItem(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, "Release");
-                        _actions.addControl(_actionButton);
                     }
                     else {
                         _actionButton = GameGUI._generateButton(undefined, "Hold");
-                        _actions.addControl(_actionButton);
                     }
-                    break;
-                }
-                case "put" : {
-                    if (_entity != Game.player.getEntity()) {
-                        break;
-                    }
-                    _actionButton = GameGUI._generateButton(undefined, "Put");
-                    _actions.addControl(_actionButton);
-                    break;
-                }
-                case "take" : {
-                    if (_entity == Game.player.getEntity()) {
-                        break;
-                    }
-                    _actionButton = GameGUI._generateButton(undefined, "Take");
-                    _actions.addControl(_actionButton);
                     break;
                 }
                 case "look" : {
                     _actionButton = GameGUI._generateButton(undefined, "Look");
-                    _actions.addControl(_actionButton);
+                    break;
+                }
+                case "put" : {
+                    if (_playerEntity != Game.player.getEntity()) {
+                        break;
+                    }
+                    else if (_targetEntity instanceof EntityWithStorage) {
+                        _actionButton = GameGUI._generateButton(undefined, "Put");
+                    }
+                    break;
+                }
+                case "take" : {
+                    if (_playerEntity == Game.player.getEntity()) {}
+                    else {
+                        _actionButton = GameGUI._generateButton(undefined, "Take");
+                    }
                     break;
                 }
             }
             if (_actionButton != undefined) {
+                _actions.addControl(_actionButton);
                 _actionButton.top = ((_actions.children.length * 10) - 55) + "%";
             }
         }

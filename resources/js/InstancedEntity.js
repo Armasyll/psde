@@ -261,6 +261,9 @@ class InstancedEntity {
     getController() {
         return this.controller;
     }
+    hasController() {
+        return this.getController() instanceof EntityController;
+    }
     removeController() {
         this.controller = undefined;
         return this;

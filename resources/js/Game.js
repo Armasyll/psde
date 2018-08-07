@@ -92,7 +92,7 @@ class Game {
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
         this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
-        this.kInteractionTypes = new Set(["close","consume","disrobe","hold","look","open","put","release","take","talk","touch","use","wear"]);
+        this.kInteractionTypes = new Set(["close","consume","disrobe","drop","hold","look","open","put","release","take","talk","touch","use","wear"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
@@ -1570,15 +1570,23 @@ class Game {
         Game.player.getEntity().addItem(_itemController.getEntity());
         Game.removeItemInSpace(_itemController);
     }
-    static actionDropFunction(_itemEntity, _subEntityController = Game.player) {
-        if (!(_itemEntity instanceof ItemEntity)) {
+    static actionDropFunction(_instancedItemEntity, _subEntityController = Game.player) {
+        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) && !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
             return;
         }
-        if (_itemEntity.hasController() && _itemEntity.getController().hasAvatar()) { // it shouldn't have an EntityController :v but just in case
-            
+        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasAvatar()) { // it shouldn't have an EntityController :v but just in case
+            _instancedItemEntity.setParent(null);
+            _instancedItemEntity.position = _subEntityController.getAvatar().position.clone.add(
+                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getEntity().getAvatarID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+            );
+        }
+        else {
+            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntityController.getAvatar().position.add(
+                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getEntity().getAvatarID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+            ));
         }
     }
     static actionCloseFunction(_entityController, _subEntityController = Game.player) {
