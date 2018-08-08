@@ -338,7 +338,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall", undefined,                 {x:12, y:0, z:-28});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-28});
 
-    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "/resources/data/foxRed.svg", undefined, undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
+    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "foxF", "resources/data/foxRed.svg", undefined, {x:2, y:0, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
     Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
     Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05));
     Game.getCharacterController("spider").setWalkAnim("93_walk", 1.2, true);

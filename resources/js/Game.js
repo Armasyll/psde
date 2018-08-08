@@ -171,7 +171,7 @@ class Game {
     }
     static initPlayer() {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", undefined, undefined, undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/data/foxRed.svg", undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
