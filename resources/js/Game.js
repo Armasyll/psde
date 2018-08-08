@@ -74,8 +74,6 @@ class Game {
 
         this.highlightEnabled = true;
         this.highlightLayer = new BABYLON.HighlightLayer("hl1", this.scene);
-        this.highlightLayer.outerGlow = true;
-        this.highlightLayer.innerGlow = false;
         this.highlightedMesh = undefined;
         this.highlightedColorEnemy = "red";
         this.highlightedColorFriend = "green";
