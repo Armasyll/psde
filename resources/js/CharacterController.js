@@ -242,14 +242,14 @@ class CharacterController extends EntityController {
                 if (this.skeleton !== null) {
                     if (this.prevAnim !== anim) {
                         if (anim.exist) {
-                            /*
-                            // Have to cycle through all the bones just so I don't have to animate a handful :L
+=                            /*
+                                Have to cycle through all the bones just so I don't have to animate a handful :L
+                             */
                             this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
                                 Game.scene.beginAnimation(_bone, anim.from, anim.to, anim.loop, anim.rate);
                             });
-                            */
-                            this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
-                        }
+                            //this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
+=                        }
                         this.prevAnim = anim;
                     }
                 }
