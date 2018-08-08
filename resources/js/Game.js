@@ -138,7 +138,7 @@ class Game {
             this.scene);
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 100;
-        this.camera.upperRadiusLimit = 3;
+        this.camera.upperRadiusLimit = 1.5;
         this.camera.lowerRadiusLimit = 1;
         this.camera.keysLeft=[];
         this.camera.keysRight=[];
@@ -540,17 +540,19 @@ class Game {
         else {}
         return _instance;
     }
-    static addFurnitureMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
+    static addFurnitureMesh(_id = undefined, _meshID = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false, _createCollisionMesh = true) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
         var _instance = Game.addMesh(_id, _meshID, _skin, _position, _rotation, _scale, _highlightFix);
         if (_instance == null) {return null;}
         Game.furnitureMeshInstances[_id] = _instance;
         Game.entityMeshInstances[_id] = _instance;
-        if (this.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(_instance, _options);
-        }
-        else {
-            Game.assignBoxCollisionToMesh(_instance);
+        if (_createCollisionMesh) {
+            if (this.physicsEnabled) {
+                Game.assignBoxPhysicsToMesh(_instance, _options);
+            }
+            else {
+                Game.assignBoxCollisionToMesh(_instance);
+            }
         }
         return _instance;
     }
@@ -1279,7 +1281,21 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
-    static createFurniture(_id, _name, _type, _mesh, _skin, _options, _position, _rotation, _scale) {
+    /**
+     * Created a FurnitureController, FurnitureEntity, and BABYLON.InstancedMesh
+     * @param  {String}  _id                  Unique ID, randomly generated if undefined
+     * @param  {String}  _name                Name
+     * @param  {String}  _type                Furniture type
+     * @param  {BABYLON.Mesh}  _mesh          Mesh
+     * @param  {BABYLON.Texture}  _skin       Texture
+     * @param  {Object}  _options             Physics options
+     * @param  {BABYLON.Vector3}  _position   Position
+     * @param  {BABYLON.Vector3}  _rotation   Rotation
+     * @param  {BABYLON.Vector3}  _scale      Scaling       
+     * @param  {Boolean} _createCollisionMesh Whether or not a collisionMesh will be created
+     * @return {FurnitureController}          Furniture Controller
+     */
+    static createFurniture(_id, _name, _type, _mesh, _skin, _options, _position, _rotation, _scale, _createCollisionMesh = true) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
@@ -1291,7 +1307,8 @@ class Game {
             _mesh = "chair";
         }
         var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _type);
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _skin, _options, _position, _rotation, _scale, true);
+        var _mesh = Game.addFurnitureMesh(_id, _mesh, _skin, _options, _position, _rotation, _scale, true, _createCollisionMesh);
+            _mesh.checkCollisions = true; // _createCollisionMesh doesn't count this :v
         var _controller = new FurnitureController(_id, _mesh, _entity);
         _entity.setController(_controller);
         _entity.setAvatar(_mesh.name);
