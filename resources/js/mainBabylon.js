@@ -223,9 +223,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "frontDoorLeftWall", undefined,    {x:4, y:0, z:0}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "doorway", undefined,              {x:4, y:0, z:0}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "frontWallLeftDoor", undefined,    {x:6, y:0, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:6, y:0, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:8, y:0, z:0}, {x:0, y:90, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:8, y:0, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:10, y:0, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:12, y:0, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:14, y:0, z:0}, {x:0, y:90, z:0});
@@ -237,9 +235,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "doorway", undefined,              {x:4, y:0, z:-2}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:4, y:0, z:-2}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:6, y:0, z:-2}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:6, y:0, z:-2});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:8, y:0, z:-2}, {x:0, y:-180, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:8, y:0, z:-2});
     Game.addMesh(undefined, "wall", undefined,                 {x:10, y:0, z:-2}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-2}, {x:0, y:90, z:0});
 
@@ -248,9 +244,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall", undefined,                 {x:4, y:0, z:-4}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:4, y:0, z:-4}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:6, y:0, z:-4});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:6, y:0, z:-4});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:8, y:0, z:-4}, {x:0, y:90, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:8, y:0, z:-4});
     Game.addMesh(undefined, "wall", undefined,                 {x:10, y:0, z:-4}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-4}, {x:0, y:90, z:0});
 
@@ -261,9 +255,7 @@ function generateApartmentScene() {
     Game.addMesh(undefined, "wall", undefined,                 {x:4, y:0, z:-6}, {x:0, y:90, z:0});
     Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", undefined, undefined, {x:4, y:0, z:-6}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:6, y:0, z:-6}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:6, y:0, z:-6});
     Game.addMesh(undefined, "frontWallLeftDoor", undefined,    {x:8, y:0, z:-6}, {x:0, y:180, z:0});
-    Game.addMesh(undefined, "floorLinoleum", undefined,        {x:8, y:0, z:-6});
     Game.addMesh(undefined, "doorway", undefined,              {x:10, y:0, z:-6}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-6}, {x:0, y:90, z:0});
 

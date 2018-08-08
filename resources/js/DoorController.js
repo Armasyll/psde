@@ -11,7 +11,8 @@ class DoorController extends EntityController {
         this._closing = false;
         this.opensInward = true;
         this.avStartRot = this.avatar.rotation.clone();
-        this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
+        this.avEndRot = undefined;
+        this.setOpensInward();
 
         Game.doorControllers[this.id] = this;
     }
@@ -22,13 +23,13 @@ class DoorController extends EntityController {
     getOpen() {
     	return this.open;
     }
-    setOpensInward(_opensInward) {
+    setOpensInward(_opensInward = true) {
     	this.opensInward = _opensInward == true;
     	if (this.opensInward) {
-    		this.avEndRot.y = Math.abs(this.avEndRot.y);
+        	this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
     	}
     	else {
-        	this.avEndRot.y = -Math.abs(this.avEndRot.y);
+    		this.avEndRot = this.avStartRot.subtract(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
         }
     }
     getOpensInward() {
