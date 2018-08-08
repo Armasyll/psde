@@ -75,8 +75,8 @@ Array.prototype.difference = function() {
     if (!(a[0] instanceof Array) || a.length == 0 || this.length == 0) {
         return this;
     }
-    var _arr = this.slice(0);
-    var _cmpArr = a[0].slice(0);
+    var _arr = this.slice(0); // Array of bones that will be returned
+    var _cmpArr = a[0].slice(0); // Clone of passed array, which will be modified
     while (_cmpArr.length != 0) {
         this.some(function(_this) {
             if (_this == _cmpArr[_cmpArr.length - 1]) {
