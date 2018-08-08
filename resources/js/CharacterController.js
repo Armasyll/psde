@@ -64,6 +64,7 @@ class CharacterController extends EntityController {
         if (this.skeleton != null) {
             this.checkAnims(this.skeleton);
         }
+        this.bonesInUse = [];
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
         var _this = this;
@@ -141,6 +142,8 @@ class CharacterController extends EntityController {
         _anim.loop = _loop;
         if (this.skeleton.getAnimationRange(_anim.name) != null) {
             _anim.exist = true;
+            _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
+            _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
         }
         else {
             _anim.exist = false;
@@ -239,6 +242,12 @@ class CharacterController extends EntityController {
                 if (this.skeleton !== null) {
                     if (this.prevAnim !== anim) {
                         if (anim.exist) {
+                            /*
+                            // Have to cycle through all the bones just so I don't have to animate a handful :L
+                            this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
+                                Game.scene.beginAnimation(_bone, anim.from, anim.to, anim.loop, anim.rate);
+                            });
+                            */
                             this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
                         }
                         this.prevAnim = anim;
@@ -701,6 +710,8 @@ class AnimData {
         this.rate = 1;
         this.exist = false;
         this.name = _name;
+        this.from = 0;
+        this.to = 0;
     }
 }
 class ControllerMovementKey {

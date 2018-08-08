@@ -70,6 +70,42 @@ Array.prototype.getRandom = function() {
         return this[Math.floor(Math.random() * this.length)];
     }
 }
+Array.prototype.difference = function() {
+    var a = arguments;
+    if (!(a[0] instanceof Array) || a.length == 0 || this.length == 0) {
+        return this;
+    }
+    var _arr = this.slice(0);
+    var _cmpArr = a[0].slice(0);
+    while (_cmpArr.length != 0) {
+        this.some(function(_this) {
+            if (_this == _cmpArr[_cmpArr.length - 1]) {
+                _arr.remove(_this);
+                return true;
+            }
+        });
+        _cmpArr.pop();
+    }
+    return _arr;
+}
+Array.prototype.intersect = function() {
+    var a = arguments;
+    if (!(a[0] instanceof Array) || a.length == 0 || this.length == 0) {
+        return this;
+    }
+    var _arr = [];
+    var _cmpArr = a[0].slice(0);
+    while (_cmpArr.length != 0) {
+        this.some(function(_this) {
+            if (_this == _cmpArr[_cmpArr.length - 1]) {
+                _arr.push(_this);
+                return true;
+            }
+        });
+        _cmpArr.pop();
+    }
+    return _arr;
+}
 Date.prototype.addSeconds = function() {
     var args = arguments;
     if (Number.isInteger(args[0]) && args[0] > 0)
