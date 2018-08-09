@@ -73,7 +73,7 @@ class CharacterController extends EntityController {
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
-        this.setIdleAnim("80_idle01", 1, true);
+        this.setIdleAnim("90_idle01", 1, true);
         this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
