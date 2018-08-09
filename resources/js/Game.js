@@ -1454,8 +1454,11 @@ class Game {
             Game.player.targetRay.direction = _ray.direction;
         }
         if (Game.debugEnabled) {
-            var _rayHelper = new BABYLON.RayHelper(Game.player.targetRay);
-            _rayHelper.show(Game.scene);
+            if (Game.player.targetRayHelper != undefined) {
+                Game.player.targetRayHelper.dispose();
+            }
+            Game.player.targetRayHelper = new BABYLON.RayHelper(Game.player.targetRay);
+            Game.player.targetRayHelper.show(Game.scene);
         }
         var _hit = Game.scene.pickWithRay(Game.player.targetRay, function(_mesh) {
             if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.avatar) {

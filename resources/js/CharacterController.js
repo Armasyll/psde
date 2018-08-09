@@ -10,6 +10,7 @@ class CharacterController extends EntityController {
         this.targetController = null;
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
+        this.targetRayHelper = undefined;
 
         this.walkSpeed = 0.68 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
