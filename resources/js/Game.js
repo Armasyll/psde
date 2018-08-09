@@ -772,7 +772,7 @@ class Game {
         if (Game.debugEnabled) console.log("Running loadMeshes");
         Game.furnitureMeshes = Game.importMeshes("furniture.babylon");
         Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon");
-        Game.characterMeshes = Game.importMeshes("characters-sfw.babylon");
+        Game.characterMeshes = Game.importMeshes("characters.babylon");
         Game.importMeshes("arachnids.babylon", undefined, function(_meshes) {Game.characterMeshes = Object.assign(Game.characterMeshes, _meshes);});
         Game.itemMeshes = Game.importMeshes("items.babylon");
         return true;
