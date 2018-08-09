@@ -138,8 +138,8 @@ class Game {
             this.scene);
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 100;
-        this.camera.upperRadiusLimit = 1.5;
-        this.camera.lowerRadiusLimit = 1;
+        this.camera.upperRadiusLimit = 1.75;
+        this.camera.lowerRadiusLimit = 0.25;
         this.camera.keysLeft=[];
         this.camera.keysRight=[];
         this.camera.keysUp=[];
