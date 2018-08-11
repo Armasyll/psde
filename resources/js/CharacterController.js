@@ -334,7 +334,6 @@ class CharacterController extends EntityController {
             this.wasWalking = false;
             this.wasRunning = false;
             var xDist = 0;
-            var yDist = -this.freeFallDist;
             var zDist = 0;
             if (this.key.forward) {
                 if (this.key.shift) {
@@ -364,7 +363,7 @@ class CharacterController extends EntityController {
                 xDist = this.strafeSpeed * dt;
                 moving = true;
             }
-            this.moveVector = this.avatar.calcMovePOV(xDist, yDist, zDist);
+            this.moveVector = this.avatar.calcMovePOV(xDist, -this.freeFallDist, zDist);
         }
         if (!this.key.strafeLeft && !this.key.strafeRight) {
             if (this.key.turnLeft) {
@@ -394,6 +393,9 @@ class CharacterController extends EntityController {
                 this.avatar.rotation.y = -4.69 - Game.camera.alpha;
             }
             if (this.moveVector.length() > 0.001) {
+                this.moveVector.x = Number(this.moveVector.x.toFixed(3));
+                this.moveVector.y = Number(this.moveVector.y.toFixed(3));
+                this.moveVector.z = Number(this.moveVector.z.toFixed(3));
                 this.avatar.moveWithCollisions(this.moveVector);
                 if (this.avatar.position.y > this.avStartPos.y) {
                     var actDisp = this.avatar.position.subtract(this.avStartPos);
