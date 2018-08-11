@@ -221,7 +221,6 @@ class CharacterController extends EntityController {
         if (this.getParent() != undefined) {
             this.removeParent();
         }
-        this.avatar.position.y = Number(this.avatar.position.y.toFixed(4));
         this.avStartPos.copyFrom(this.avatar.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
@@ -387,15 +386,14 @@ class CharacterController extends EntityController {
                 }
             }
         }
+        /*
+         *  Jittering in the Y direction caused by moveVector
+         */
         if (moving) {
             if (this == Game.player && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
                 this.avatar.rotation.y = -4.69 - Game.camera.alpha;
             }
-            this.avatar.position.y = this.avatar.position.y.toFixed(4);
             if (this.moveVector.length() > 0.001) {
-                if (this.arePointsEqual(this.avStartPos.y, this.avatar.position.y, 0.075)) {
-                    this.avatar.position.y = this.avStartPos.y;
-                }
                 this.avatar.moveWithCollisions(this.moveVector);
                 if (this.avatar.position.y > this.avStartPos.y) {
                     var actDisp = this.avatar.position.subtract(this.avStartPos);
