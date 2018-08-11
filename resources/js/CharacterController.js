@@ -371,12 +371,9 @@ class CharacterController extends EntityController {
             if (this.key.turnLeft) {
                 this.avatar.addRotation(0, -0.022, 0);
                 if (this == Game.player && Game.enableCameraAvatarRotation) {
-                    Game.camera.alpha = Game.camera.alpha + 0.022;
+                    Game.camera.alpha = -this.avatar.rotation.y - 4.69;
                 }
                 if (!moving) {
-                    if (this == Game.player && Game.enableCameraAvatarRotation) {
-                        this.avatar.rotation.y = -4.69 - Game.camera.alpha;
-                    }
                     anim = this.turnLeft;
                 }
             }
@@ -386,15 +383,12 @@ class CharacterController extends EntityController {
                     Game.camera.alpha = -this.avatar.rotation.y - 4.69;
                 }
                 if (!moving) {
-                    if (this == Game.player && Game.enableCameraAvatarRotation) {
-                        this.avatar.rotation.y = -4.69 - Game.camera.alpha;
-                    }
                     anim = this.turnRight;
                 }
             }
         }
         if (moving) {
-            if (this == Game.player && Game.enableCameraAvatarRotation) {
+            if (this == Game.player && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
                 this.avatar.rotation.y = -4.69 - Game.camera.alpha;
             }
             this.avatar.position.y = this.avatar.position.y.toFixed(4);
