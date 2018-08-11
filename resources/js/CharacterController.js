@@ -617,13 +617,13 @@ class CharacterController extends EntityController {
         }
     }
     attachToLeftEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.l", {x:0, y:0, z:0}, {x:BABYLON.Tools.ToRadians(90), y:0, z:0});
+        return this.attachToBone(_mesh, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(90), 0, 0));
     }
     attachToRightEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.r", {x:0, y:0, z:0}, {x:BABYLON.Tools.ToRadians(90), y:0, z:0});
+        return this.attachToBone(_mesh, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(90), 0, 0));
     }
     attachToHead(_mesh) {
-        return this.attachToBone(_mesh, "head", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(180), z:0});
+        return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(180), 0));
     }
     attachToFOCUS(_mesh) {
         var _focus = this.attachToBone(_mesh, "FOCUS");
@@ -632,10 +632,10 @@ class CharacterController extends EntityController {
         return _focus;
     }
     attachToRightHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.r", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(-90), z:BABYLON.Tools.ToRadians(-90)});
+        return this.attachToBone(_mesh, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
     attachToLeftHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.l", {x:0, y:0, z:0}, {x:0, y:BABYLON.Tools.ToRadians(-90), z:BABYLON.Tools.ToRadians(-90)});
+        return this.attachToBone(_mesh, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {

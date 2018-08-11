@@ -130,7 +130,7 @@ class Game {
         this.scene.enablePhysics(this.scene.gravity, this.physicsPlugin);
         this.physicsEnabled = true;
     }
-    static initFollowCamera(_offset = {x:0, y:0, z:0}) {
+    static initFollowCamera(_offset = new BABYLON.Vector3(0, 0, 0)) {
         if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
         this.camera = new BABYLON.ArcRotateCamera(
             "camera",
@@ -385,7 +385,7 @@ class Game {
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
-    static createCollisionWall(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotation = 0) {
+    static createCollisionWall(_posStart = new BABYLON.Vector3(0, 0, 0), _posEnd = new BABYLON.Vector3(0, 0, 0), _rotation = 0) {
         if (Game.debugEnabled) console.log("Running createCollisionWallX");
         if (_rotation != 0 && isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
@@ -446,7 +446,7 @@ class Game {
         }
         return _floor;
     }
-    static createCollisionRamp(_posStart = {x:0, y:0, z:0}, _posEnd = {x:0, y:0, z:0}, _rotationY = 0) {
+    static createCollisionRamp(_posStart = new BABYLON.Vector3(0, 0, 0), _posEnd = new BABYLON.Vector3(0, 0, 0), _rotationY = 0) {
         if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
             return null;
         }
@@ -1251,7 +1251,7 @@ class Game {
      * @param  {BABYLON.Vector3} _scale     Scaling
      * @return {EntityController}           The created EntityController in-game
      */
-    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:1, y:1, z:1}) {
+    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _skin = undefined, _options = undefined, _position = new BABYLON.Vector3(0, 0, 0), _rotation = new BABYLON.Vector3(0, 0, 0), _scale = new BABYLON.Vector3(1, 1, 1)) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
@@ -1269,7 +1269,7 @@ class Game {
         var _radius = Game.getMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
         var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
-        _mesh.position = _mesh.position.add({x:_xPos, y:0, z:-_yPos});
+        _mesh.position = _mesh.position.add(new BABYLON.Vector3(_xPos, 0, -_yPos));
         var _controller = new DoorController(_id, _mesh, _entity);
         _entity.setController(_controller);
         _entity.setAvatar(_mesh.name);
