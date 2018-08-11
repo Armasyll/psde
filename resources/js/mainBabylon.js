@@ -216,6 +216,18 @@ function generateApartment() {
 
     Game.createCollisionWall({x:5, y:0, z:-25}, {x:5, y:3, z:-27}); // Side wall between Commons and building entrance
 
+    // Ground floor stairwell
+    Game.createCollisionRamp({x:0, y:0, z:-22.5}, {x:2, y:3, z:-17.5});
+
+    Game.addMesh(undefined, "corner", undefined,               {x:2, y:0, z:-18}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "stairWallSideRight", undefined,    {x:2, y:0, z:-20});
+    Game.addMesh(undefined, "stairWallCornerRight", undefined,    {x:2, y:0, z:-22});
+    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:0, z:-22});
+    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:1.5, z:-20});
+    Game.addMesh(undefined, "doorway", undefined,              {x:0, y:0, z:-18}, {x:0, y:180, z:0});
+    Game.createDoor("packstreetApt3Basement", "Basement", undefined, "door", undefined, undefined, {x:0, y:0, z:-19}, {x:0, y:180, z:0});
+    Game.getDoorController("packstreetApt3Basement").setOpensInward(false);
+
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:0, y:0, z:0});
     Game.addMesh(undefined, "frontDoorLeftWall", undefined,    {x:0, y:0, z:0}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:2, y:0, z:0});
@@ -301,8 +313,6 @@ function generateApartment() {
 
     Game.addMesh(undefined, "wall", undefined,                 {x:0, y:0, z:-16}, {x:0, y:-90, z:0});
     Game.addMesh(undefined, "doorway", undefined,              {x:4, y:0, z:-16}, {x:0, y:90, z:0});
-    Game.createDoor("packstreetApt3Basement", "Basement", undefined, "door", undefined, undefined, {x:0, y:0, z:-19}, {x:0, y:180, z:0});
-    Game.getDoorController("packstreetApt3Basement").setOpensInward(false);
     Game.addMesh(undefined, "frontDoorLeftWall", undefined,    {x:6, y:0, z:-16}, {x:0, y:-90, z:0});
     Game.createDoor("landlordapartmentdoor", "Landlord's Apartment", undefined, "door", undefined, undefined, {x:5, y:0, z:-16}, {x:0, y:90, z:0});
     Game.getDoorController("landlordapartmentdoor").getEntity().setLocked(true);
@@ -312,8 +322,6 @@ function generateApartment() {
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:14, y:0, z:-16}, {x:0, y:180, z:0});
 
     Game.addMesh(undefined, "wall", undefined,                 {x:0, y:0, z:-18}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "doorway", undefined,              {x:0, y:0, z:-18}, {x:0, y:180, z:0});
-    Game.addMesh(undefined, "corner", undefined,               {x:2, y:0, z:-18}, {x:0, y:270, z:0});
     Game.addMesh(undefined, "corner", undefined,               {x:4, y:0, z:-18}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "wall", undefined,                 {x:6, y:0, z:-18});
     Game.addMesh(undefined, "wall", undefined,                 {x:8, y:0, z:-18});
@@ -322,15 +330,10 @@ function generateApartment() {
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    {x:14, y:0, z:-18}, {x:0, y:90, z:0});
 
     Game.addMesh(undefined, "wall", undefined,                 {x:0, y:0, z:-20}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "stairWallSideRight", undefined,    {x:2, y:0, z:-20});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-20}, {x:0, y:90, z:0});
 
     Game.addMesh(undefined, "wall", undefined,                 {x:0, y:0, z:-22}, {x:0, y:-90, z:0});
-    Game.addMesh(undefined, "stairWallCornerRight", undefined,    {x:2, y:0, z:-22});
-    Game.createCollisionRamp({x:0, y:0, z:-22.5}, {x:2, y:3, z:-17.5});
     Game.createFurniture("couch", "Couch", "loveseat", "loveseat", undefined, undefined, new BABYLON.Vector3(8, 0, -21), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
-    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:0, z:-22});
-    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:1.5, z:-20});
     Game.addMesh(undefined, "wall", undefined,                 {x:14, y:0, z:-22}, {x:0, y:90, z:0});
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, {x:10, y:0, z:-22});
     Game.createItem("knife", Game.createProtoItem("knife", "Knife", "", "", "weapon", "knife"), undefined, {x:9.5, y:0.9, z:-22.5}, {x:180, y:0, z:0});
@@ -385,7 +388,12 @@ function generateApartment() {
     Game.createCollisionWall({x:-1, y:3, z:-13}, {x:3, y:6, z:-13}); // Front hallway wall
     Game.createCollisionWall({x:5, y:3, z:-13}, {x:5, y:6, z:-21}); // Side hallway wall
     Game.createCollisionWall({x:5, y:3, z:-23}, {x:5, y:6, z:-27}); // Side hallway wall
-
+    
+    Game.createCollisionRamp({x:0, y:3, z:-22.5}, {x:2, y:6, z:-17.5});
+    
+    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:3, z:-22});
+    Game.addMesh(undefined, "stairs", undefined,               {x:0, y:4.5, z:-20});
+    
     var commonsFloor02a = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
         commonsFloor02a.material = pinkCarpetMaterial;
         commonsFloor02a.position.set(1, 3, -27);
@@ -512,6 +520,17 @@ function generateApartment() {
         chartyBathroomFloor.position.set(5, 3, -5);
     Game.createCollisionPlane(chartyBathroomFloor);
 
+    Game.addMesh(undefined, "wall", undefined,    {x:6, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:0}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:-2}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:-4}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:-4}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "doorway", undefined, {x:6, y:3, z:-4}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:6, y:3, z:-4}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:6, y:3, z:-2}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:6, y:3, z:0}, {x:0, y:270, z:0});
+
     // Marty bedroom
     var martyBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("martyBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
         martyBedroomFloor.material = darkWoodMaterial;
@@ -533,6 +552,16 @@ function generateApartment() {
     Game.addMesh(undefined, "doorway", undefined, {x:10, y:3, z:-6}, {x:0, y:270, z:0});
     Game.addMesh(undefined, "wall", undefined, {x:10, y:3, z:-4}, {x:0, y:270, z:0});
     Game.addMesh(undefined, "wall", undefined, {x:10, y:3, z:-2}, {x:0, y:270, z:0});
+
+    // Marty Closet
+    Game.addMesh(undefined, "wall", undefined,    {x:10, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:12, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:14, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:14, y:3, z:0}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "doorway", undefined, {x:14, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:12, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:10, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:10, y:3, z:0}, {x:0, y:270, z:0});
 
     Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "foxF", "resources/data/foxRed.svg", undefined, {x:2, y:-512, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
     Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
