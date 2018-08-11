@@ -429,6 +429,9 @@ function generateApartment() {
         chartyLivingroomFloor.position.set(-1, 3, -13);
     Game.createCollisionPlane(chartyLivingroomFloor);
 
+    Game.createCollisionWall({x:-1, y:3, z:-7}, {x:7, y:6, z:-7}); // Front wall between livingroom and Charlie's bedroom
+    Game.createCollisionWall({x:9, y:3, z:-7}, {x:15, y:6, z:-7}); // Front wall between livingroom and Marty's bedroom
+
     Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:-8});
     Game.addMesh(undefined, "wall", undefined,    {x:2, y:3, z:-8});
     Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:-8});
@@ -458,14 +461,78 @@ function generateApartment() {
         chartyHallwayFloor.material = pinkCarpetMaterial;
         chartyHallwayFloor.position.set(5, 3, -7);
     Game.createCollisionPlane(chartyHallwayFloor);
+
+    Game.createCollisionWall({x:7, y:3, z:-5}, {x:9, y:6, z:-5}); // Front wall between hallway and bathroom
+
     Game.addMesh(undefined, "doorway", undefined,    {x:6, y:3, z:-6});
+    Game.createDoor("chartyBathroomDoor", "Bathroom", undefined, "door", undefined, undefined, {x:6, y:3, z:-5});
     Game.addMesh(undefined, "wall", undefined,    {x:8, y:3, z:-6});
     Game.addMesh(undefined, "doorway", undefined,    {x:8, y:3, z:-6}, {x:0, y:90, z:0});
-    Game.addMesh(undefined, "corner", undefined,  {x:8, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.createDoor("martyBedroomDoor", "Marty's Room", undefined, "door", undefined, undefined, {x:9, y:3, z:-6}, {x:0, y:90, z:0});
     Game.addMesh(undefined, "corner", undefined,  {x:8, y:3, z:-6}, {x:0, y:270, z:0});
     Game.addMesh(undefined, "wall", undefined,    {x:6, y:3, z:-6}, {x:0, y:180, z:0});
     Game.addMesh(undefined, "doorway", undefined,    {x:6, y:3, z:-6}, {x:0, y:270, z:0});
-    
+    Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", undefined, undefined, {x:5, y:3, z:-6}, {x:0, y:90, z:0}).setOpensInward(false);
+
+    // Charlie bedroom
+    var charlieBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
+        charlieBedroomFloor.material = darkWoodMaterial;
+        charlieBedroomFloor.position.set(-1, 3, -7);
+    Game.createCollisionPlane(charlieBedroomFloor);
+
+    Game.createCollisionWall({x:1, y:3, z:-1}, {x:5, y:6, z:-1}); // Front wall between Charlie's closet and bedroom
+    Game.createCollisionWall({x:5, y:3, z:1}, {x:5, y:6, z:-5}); // Side wall between Charlie's bedroom and bathroom
+
+    Game.addMesh(undefined, "doorway", undefined,    {x:0, y:3, z:-2});
+    Game.addMesh(undefined, "wall", undefined,    {x:2, y:3, z:-2});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:-2});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:-2}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:-4}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "doorway", undefined,    {x:4, y:3, z:-6}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:2, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:-6}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:-4}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:-2}, {x:0, y:270, z:0});
+
+    // Charlie Closet
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:2, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:0}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:4, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:2, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "doorway", undefined,    {x:0, y:3, z:0}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined,    {x:0, y:3, z:0}, {x:0, y:270, z:0});
+
+    // Charty Bathroom
+    var chartyBathroomFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
+        chartyBathroomFloor.material = linoleumMaterial;
+        chartyBathroomFloor.position.set(5, 3, -5);
+    Game.createCollisionPlane(chartyBathroomFloor);
+
+    // Marty bedroom
+    var martyBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("martyBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
+        martyBedroomFloor.material = darkWoodMaterial;
+        martyBedroomFloor.position.set(9, 3, -7);
+    Game.createCollisionPlane(martyBedroomFloor);
+
+    Game.createCollisionWall({x:9, y:3, z:-1}, {x:13, y:6, z:-1}); // Front wall between Marty's closet and bedroom
+    Game.createCollisionWall({x:9, y:3, z:1}, {x:9, y:6, z:-5}); // Side wall between Narty's bedroom and bathroom
+
+    Game.addMesh(undefined, "wall", undefined,    {x:10, y:3, z:-2});
+    Game.addMesh(undefined, "wall", undefined,    {x:12, y:3, z:-2});
+    Game.addMesh(undefined, "doorway", undefined, {x:14, y:3, z:-2});
+    Game.addMesh(undefined, "wall", undefined, {x:14, y:3, z:-2}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:14, y:3, z:-4}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:14, y:3, z:-6}, {x:0, y:90, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:14, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:12, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:10, y:3, z:-6}, {x:0, y:180, z:0});
+    Game.addMesh(undefined, "doorway", undefined, {x:10, y:3, z:-6}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:10, y:3, z:-4}, {x:0, y:270, z:0});
+    Game.addMesh(undefined, "wall", undefined, {x:10, y:3, z:-2}, {x:0, y:270, z:0});
 
     Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "foxF", "resources/data/foxRed.svg", undefined, {x:2, y:-512, z:-19}, undefined, {x:0.7, y:0.7, z:0.7});
     Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, {x:3, y:0, z:-19}, undefined, {x:0.9, y:0.9, z:0.9});
