@@ -171,7 +171,7 @@ class Game {
         }
         this.initPostProcessing();
     }
-    static initPlayer(_position = new BABYLON.Vector3(3, 3, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
+    static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
         this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/data/foxRed.svg", undefined, _position, _rotation, _scaling);
         this.player.attachToLeftEye("eye");
