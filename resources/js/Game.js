@@ -70,6 +70,9 @@ class Game {
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
 
+        this.enableFirstPerson = true;
+        this.enableCameraAvatarRotation = true;
+
         this.postProcess = {};
 
         this.highlightEnabled = true;
@@ -138,8 +141,8 @@ class Game {
             this.scene);
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 100;
-        this.camera.upperRadiusLimit = 1.75;
-        this.camera.lowerRadiusLimit = 0.25;
+        this.camera.upperRadiusLimit = 2;
+        this.camera.lowerRadiusLimit = 0.1;
         this.camera.keysLeft=[];
         this.camera.keysRight=[];
         this.camera.keysUp=[];
@@ -1540,6 +1543,22 @@ class Game {
                 GameGUI.chatOutputAppend(`Command "${_command}" not found.\n`);
                 return;
             }
+        }
+    }
+    static updateTargetValue() {
+        if (Game.camera.radius <= 0.75) {
+            if (Game.enableFirstPerson) {
+                Game.player.avatar.visibility = 0;
+                Game.camera.checkCollisions = false;
+                Game.camera.inertia = 0.75;
+                GameGUI.showCrosshair();
+            }
+        }
+        else {
+            Game.player.avatar.visibility = 1;
+            Game.camera.checkCollisions = true;
+            Game.camera.inertia = 0.9;
+            GameGUI.hideCrosshair();
         }
     }
     static doEntityAction(_entity, _subEntity, _action) {

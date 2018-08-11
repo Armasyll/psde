@@ -256,6 +256,7 @@ class CharacterController extends EntityController {
                 }
             }
         }
+        Game.updateTargetValue();
     }
     doJump(dt) {
         var anim = null;
@@ -268,6 +269,9 @@ class CharacterController extends EntityController {
         this.jumpTime = this.jumpTime + dt;
         var forwardDist = 0;
         var disp;
+        if (this == Game.player && Game.enableCameraAvatarRotation) {
+            this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+        }
         if (this.wasRunning || this.wasWalking) {
             if (this.wasRunning) {
                 forwardDist = this.runSpeed * dt;
@@ -327,54 +331,72 @@ class CharacterController extends EntityController {
             moving = true;
         }
         else {
+            this.moveVector.set(0,0,0);
             this.wasWalking = false;
             this.wasRunning = false;
+            var xDist = 0;
+            var yDist = -this.freeFallDist;
+            var zDist = 0;
             if (this.key.forward) {
-                var forwardDist = 0;
                 if (this.key.shift) {
                     this.wasRunning = true;
-                    forwardDist = this.runSpeed * dt;
+                    zDist = this.runSpeed * dt;
                     anim = this.run;
                 }
                 else {
                     this.wasWalking = true;
-                    forwardDist = this.walkSpeed * dt;
+                    zDist = this.walkSpeed * dt;
                     anim = this.walk;
                 }
-                this.moveVector = this.avatar.calcMovePOV(0, -this.freeFallDist, forwardDist);
                 moving = true;
             }
             else if (this.key.backward) {
-                this.moveVector = this.avatar.calcMovePOV(0, -this.freeFallDist, -(this.backSpeed * dt));
+                zDist = -(this.backSpeed * dt);
                 anim = this.walkBack;
                 moving = true;
             }
-            else if (this.key.strafeLeft) {
+            if (this.key.strafeLeft) {
                 anim = this.strafeLeft;
-                this.moveVector = this.avatar.calcMovePOV(-(this.strafeSpeed * dt), -this.freeFallDist, 0);
+                xDist = -(this.strafeSpeed * dt);
                 moving = true;
             }
             else if (this.key.strafeRight) {
                 anim = this.strafeRight;
-                this.moveVector = this.avatar.calcMovePOV((this.strafeSpeed * dt), -this.freeFallDist, 0);
+                xDist = this.strafeSpeed * dt;
                 moving = true;
             }
+            this.moveVector = this.avatar.calcMovePOV(xDist, yDist, zDist);
         }
         if (!this.key.strafeLeft && !this.key.strafeRight) {
             if (this.key.turnLeft) {
-                this.avatar.addRotation(0, -this.avatar.scaling.y * 0.05, 0);
+                this.avatar.addRotation(0, -0.022, 0);
+                if (this == Game.player && Game.enableCameraAvatarRotation) {
+                    Game.camera.alpha = Game.camera.alpha + 0.022;
+                }
                 if (!moving) {
+                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                        this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+                    }
                     anim = this.turnLeft;
                 }
             }
             else if (this.key.turnRight) {
-                this.avatar.addRotation(0, this.avatar.scaling.y * 0.05, 0);
+                this.avatar.addRotation(0, 0.022, 0);
+                if (this == Game.player && Game.enableCameraAvatarRotation) {
+                    Game.camera.alpha = -this.avatar.rotation.y - 4.69;
+                }
                 if (!moving) {
+                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                        this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+                    }
                     anim = this.turnRight;
                 }
             }
         }
         if (moving) {
+            if (this == Game.player && Game.enableCameraAvatarRotation) {
+                this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+            }
             this.avatar.position.y = this.avatar.position.y.toFixed(4);
             if (this.moveVector.length() > 0.001) {
                 if (this.arePointsEqual(this.avStartPos.y, this.avatar.position.y, 0.075)) {
