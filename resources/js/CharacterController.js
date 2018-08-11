@@ -545,7 +545,7 @@ class CharacterController extends EntityController {
     getBoneByID(_int) {
         return this.avatar.skeleton.bones[_int];
     }
-    attachToBone(_mesh, _bone, _position = {x:0, y:0, z:0}, _rotation = {x:0, y:0, z:0}, _scale = {x:0, y:0, z:0}) {
+    attachToBone(_mesh, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
         if (typeof _mesh == "string") {_mesh = Game.filterID(_mesh);}
         _mesh = Game.getMesh(_mesh);
@@ -555,7 +555,7 @@ class CharacterController extends EntityController {
         _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.set(_position.x, _position.y, _position.z);
         _mesh.rotation.set(_rotation.x, _rotation.y, _rotation.z);
-        if (_scale == 0) {
+        if (!(_scale instanceof BABYLON.Vector3)) {
             _mesh.scaling.copyFrom(this.avatar.scaling);
         }
         if (this.attachedMeshes[_bone.id] != undefined) {

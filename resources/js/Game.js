@@ -134,7 +134,7 @@ class Game {
             -this.player.avatar.rotation.y-4.69,
             Math.PI/2.5,
             3,
-            Game.player.focus.getAbsolutePosition(),
+            Game.player.getBoneByName("FOCUS").getAbsolutePosition(Game.player.getAvatar()),
             this.scene);
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 100;
@@ -147,8 +147,7 @@ class Game {
         this.camera.attachControl(this.canvas, false);
 
         this.camera.minZ = 0.001;
-        this.player.getMeshAttachedToBone("FOCUS").position.copyFrom(_offset);
-        this.camera.lockedTarget = this.player.getMeshAttachedToBone("FOCUS");
+        this.camera.lockedTarget = this.player.focus;
         this.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
@@ -169,13 +168,13 @@ class Game {
         }
         this.initPostProcessing();
     }
-    static initPlayer() {
+    static initPlayer(_position = new BABYLON.Vector3(3, 3, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/data/foxRed.svg", undefined, {x:3, y:0, z:-17}, undefined, {x:1, y:1, z:1});
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/data/foxRed.svg", undefined, _position, _rotation, _scaling);
         this.player.attachToLeftEye("eye");
         this.player.attachToRightEye("eye");
         this.player.attachToFOCUS("eye");
-        this.player.avatar.isPickable = false;
+        this.player.getAvatar().isPickable = false;
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
             GameGUI.setPlayerPortrait(this.player);
