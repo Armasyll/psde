@@ -155,41 +155,6 @@ Array.prototype.compare = function() {
     return true;
 }
 
-function unixTimeToDate(_unixTimestamp = currentTime) {
-    if (_unixTimestamp == 'undefined')
-        return true;
-    
-    _length = _unixTimestamp.toString().length;
-    
-    if (_length != 13) {
-        if (_length > 13)
-            _unixTimestamp = _unixTimestamp.toString().substring(0, 13);
-        else {
-            _padding = (13 - _length);
-            for (var _i = 0; _i < _padding; _i++) {
-                _unixTimestamp = _unixTimestamp + "0";
-            }
-        }
-    }
-    
-    _date = new Date(parseInt(_unixTimestamp));
-    
-    return _date;
-}
-function unixTimeToDateString(_unixTimestamp = PSDE.currentTime) {
-    if (Number.isInteger(_unixTimestamp) && _unixTimestamp.length > 10)
-        _date = unixTimeToDate(_unixTimestamp);
-    else
-        _date = PSDE.currentTime;
-    
-    return String(
-        _date.getFullYear() + "/" +
-        ('0' + (_date.getMonth() + 1)).slice(-2) + "/" +
-        ('0' + _date.getDate()).slice(-2) + ' ' +
-        ('0' + _date.getHours()).slice(-2) + ":" +
-        ('0' + _date.getMinutes()).slice(-2)
-    );
-}
 function genUUIDv4() {
     var uuid = "", i, random;
     for (i = 0; i < 32; i++) {
@@ -210,55 +175,7 @@ function colourNameToHex(_colour) {
 
     return undefined;
 }
-function unsafeExec(_executableString = undefined, _param = undefined) {
-    if (Game.debugEnabled) console.log("Running unsafeExec");
-    var _return = undefined;
 
-    fn = new Function(_executableString);
-    try {
-        _return = fn();
-    }
-    catch (err) {
-        if (Game.debugEnabled) console.log(err);
-    }
-    
-    if (_return == undefined)
-        return true;
-    else
-        return _return;
-}
-/**
- * Returns centimeters from strings ending in 'cm' or 'in'
- *
- * @param string _blob Takes "12cm" or "8in" or 12
- *
- * @return float
- *
- */
-function toCM(_blob) {
-    if (isNaN(_blob)) {
-        var _unit = _blob.slice(-2);
-        if (_unit == "cm") {
-            _blob = Number.parseFloat(_blob.slice(0, -2));
-            if (isNaN(_blob))
-                _blob = 0;
-        }
-        else if (_unit == "in") {
-            _blob = Number.parseFloat(_blob.slice(0, -2));
-            if (isNaN(_blob))
-                _blob = 0;
-            else
-                _blob *= 2.54;
-        }
-        else {
-            _blob = Number.parseFloat(_blob);
-            if (isNaN(_blob))
-                _blob = 0;
-        }
-    }
-    
-    return _blob;
-}
 function isInt(n){
     return Number(n) === n && n % 1 === 0;
 }
