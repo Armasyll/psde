@@ -16,7 +16,6 @@ class CharacterController extends EntityController {
         this.runSpeed = this.walkSpeed * 5;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.avatar.scaling.y * 4;
-        this.strafeSpeed = this.walkSpeed * 0.75;
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = 30;
         this.maxSlopeLimit = 50;
@@ -108,6 +107,10 @@ class CharacterController extends EntityController {
         return this.targetController;
     }
 
+    interruptAnimation() {
+        
+    }
+
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
         this.minSlopeLimit = minSlopeLimit;
         this.maxSlopeLimit = maxSlopeLimit;
@@ -128,9 +131,6 @@ class CharacterController extends EntityController {
     }
     setJumpSpeed(_n) {
         this.jumpSpeed = _n;
-    }
-    setStrafeSpeed(_n) {
-        this.strafeSpeed = _n;
     }
     setGravity(_n) {
         this.gravity = _n;
@@ -245,12 +245,12 @@ class CharacterController extends EntityController {
                             /*
                                 Have to cycle through all the bones just so I don't have to animate a handful :L
                              */
-                            //this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
-                            //    Game.scene.beginAnimation(_bone, anim.from, anim.to, anim.loop, anim.rate);
-                            //});
-                            this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
+                            this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
+                                Game.scene.beginAnimation(_bone, anim.from, anim.to, anim.loop, anim.rate);
+                            });
+                            //this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
+                            this.prevAnim = anim;
                         }
-                        this.prevAnim = anim;
                     }
                 }
             }
@@ -355,35 +355,35 @@ class CharacterController extends EntityController {
             }
             if (this.key.strafeLeft) {
                 anim = this.strafeLeft;
-                xDist = -(this.strafeSpeed * dt);
+                xDist = -(this.walkSpeed * dt);
                 moving = true;
             }
             else if (this.key.strafeRight) {
                 anim = this.strafeRight;
-                xDist = this.strafeSpeed * dt;
+                xDist = this.walkSpeed * dt;
                 moving = true;
             }
+            else {
+                if (this.key.turnLeft) {
+                    this.avatar.addRotation(0, -0.022, 0);
+                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                        Game.camera.alpha = -this.avatar.rotation.y - 4.69;
+                    }
+                    if (!moving) {
+                        anim = this.turnLeft;
+                    }
+                }
+                else if (this.key.turnRight) {
+                    this.avatar.addRotation(0, 0.022, 0);
+                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                        Game.camera.alpha = -this.avatar.rotation.y - 4.69;
+                    }
+                    if (!moving) {
+                        anim = this.turnRight;
+                    }
+                }
+            }
             this.moveVector = this.avatar.calcMovePOV(xDist, -this.freeFallDist, zDist);
-        }
-        if (!this.key.strafeLeft && !this.key.strafeRight) {
-            if (this.key.turnLeft) {
-                this.avatar.addRotation(0, -0.022, 0);
-                if (this == Game.player && Game.enableCameraAvatarRotation) {
-                    Game.camera.alpha = -this.avatar.rotation.y - 4.69;
-                }
-                if (!moving) {
-                    anim = this.turnLeft;
-                }
-            }
-            else if (this.key.turnRight) {
-                this.avatar.addRotation(0, 0.022, 0);
-                if (this == Game.player && Game.enableCameraAvatarRotation) {
-                    Game.camera.alpha = -this.avatar.rotation.y - 4.69;
-                }
-                if (!moving) {
-                    anim = this.turnRight;
-                }
-            }
         }
         /*
          *  Jittering in the Y direction caused by moveVector
@@ -571,6 +571,7 @@ class CharacterController extends EntityController {
         _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.set(_position.x, _position.y, _position.z);
         _mesh.rotation.set(_rotation.x, _rotation.y, _rotation.z);
+        _mesh.isVisible = true;
         if (!(_scale instanceof BABYLON.Vector3)) {
             _mesh.scaling.copyFrom(this.avatar.scaling);
         }

@@ -85,10 +85,102 @@ class Game {
         this.highlightedColorNeutral = "white";
 
         this.MALE = 0, this.FEMALE = 1;
-        this.kSpeciesTypes = {fox:"fox", skeleton:"foxSkeleton"};
-        this.kItemSkins = {bookHardcoverClosed01:"/resources/data/bookHardcoverClosed01.png"};
-        this.kCharacterSkins = {foxRed:"/resources/data/foxRed.svg", foxCorsac:"/resources/data/foxCorsac.svg"};
-        this.kSkins = Object.assign({}, this.kItemSkins, this.kCharacterSkins);
+        this.skeletonAnimationBonesInUse = {
+            "characterSkeleton":{
+                "10_blink":[
+                    "eyelidTop.r",
+                    "eyelidTop.l",
+                    "eyelidBot.r",
+                    "eyelidBot.l"
+                ],
+                "10_hand.l.grip":[
+                    "wrist.l",
+                    "hand.l",
+                    "thumbMetacarpal.l",
+                    "thumbProximinalPhalanx.l",
+                    "thumbDistalPhalanx.l",
+                    "fingersIndexMetacarpal.l",
+                    "fingersIndexProximinalPhalanx.l",
+                    "fingersIndexMiddlePhalanx.l",
+                    "fingersIndexDistalPhalanx.l",
+                    "fingersMetacarpal.l",
+                    "fingersProximinalPhalanx.l",
+                    "fingersMiddlePhalanx.l",
+                    "fingersDistalPhalanx.l",
+                    "fingersPinkieMetacarpal.l",
+                    "fingersPinkieProximinalPhalanx.l",
+                    "fingersPinkieMiddlePhalanx.l",
+                    "fingersPinkieDistalPhalanx.l"
+                ],
+                "10_hand.r.grip":[
+                    "wrist.r",
+                    "hand.r",
+                    "thumbMetacarpal.r",
+                    "thumbProximinalPhalanx.r",
+                    "thumbDistalPhalanx.r",
+                    "fingersIndexMetacarpal.r",
+                    "fingersIndexProximinalPhalanx.r",
+                    "fingersIndexMiddlePhalanx.r",
+                    "fingersIndexDistalPhalanx.r",
+                    "fingersMetacarpal.r",
+                    "fingersProximinalPhalanx.r",
+                    "fingersMiddlePhalanx.r",
+                    "fingersDistalPhalanx.r",
+                    "fingersPinkieMetacarpal.r",
+                    "fingersPinkieProximinalPhalanx.r",
+                    "fingersPinkieMiddlePhalanx.r",
+                    "fingersPinkieDistalPhalanx.r"
+                ],
+                "10_penis.erect":[
+                    "penis"
+                ],
+                "10_penis.flacid":[
+                    "penis"
+                ],
+                "70_reach.forward":[
+                    "head",
+                    "pelvis",
+                    "shoulder.r",
+                    "upperArm.r",
+                    "forearm.r",
+                    "IK.hand.r",
+                    "wrist.r",
+                    "hand.r",
+                    "thumbMetacarpal.r",
+                    "thumbProximinalPhalanx.r",
+                    "thumbDistalPhalanx.r",
+                    "fingersIndexMetacarpal.r",
+                    "fingersIndexProximinalPhalanx.r",
+                    "fingersIndexMiddlePhalanx.r",
+                    "fingersIndexDistalPhalanx.r",
+                    "fingersMetacarpal.r",
+                    "fingersProximinalPhalanx.r",
+                    "fingersMiddlePhalanx.r",
+                    "fingersDistalPhalanx.r",
+                    "fingersPinkieMetacarpal.r",
+                    "fingersPinkieProximinalPhalanx.r",
+                    "fingersPinkieMiddlePhalanx.r",
+                    "fingersPinkieDistalPhalanx.r"
+                ]
+            }
+        };
+        this.characterTextures = {
+            "foxM":{
+                foxRed:"resources/data/foxRed.svg",
+                foxCorsac:"resources/data/foxCorsac.svg"
+            },
+            "foxF":{
+                foxRed:"resources/data/foxRed.svg",
+                foxCorsac:"resources/data/foxCorsac.svg"
+            }
+        };
+        this.itemTextures = {
+            "bookHardcoverClosed01":{
+                packStreetChapter23:"resources/data/packStreetChapter23.svg",
+                packStreetChapter24:"resources/data/packStreetChapter24.svg"
+            }
+        };
+        this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
         this.kFeetTypes = this.kHandTypes;
         this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
@@ -194,10 +286,10 @@ class Game {
         this.initBaseKeyboardControls();
         this.walkCode = 87;
         this.walkBackCode = 83;
-        this.turnLeftCode = 65;
-        this.turnRightCode = 68;
-        this.strafeLeftCode = 0;
-        this.strafeRightCode = 0;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 65;
+        this.strafeRightCode = 68;
         this.jumpCode = 32;
         this.interfaceTargetedEntityCode = 70;
         this.useTargetedEntityCode = 69;
@@ -210,10 +302,10 @@ class Game {
         this.initBaseKeyboardControls();
         this.walkCode = 188;
         this.walkBackCode = 73;
-        this.turnLeftCode = 65;
-        this.turnRightCode = 69;
-        this.strafeLeftCode = 0;
-        this.strafeRightCode = 0;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 65;
+        this.strafeRightCode = 69;
         this.jumpCode = 32;
         this.interfaceTargetedEntityCode = 85;
         this.useTargetedEntityCode = 190;
@@ -226,10 +318,10 @@ class Game {
         this.initBaseKeyboardControls();
         this.walkCode = 90;
         this.walkBackCode = 83;
-        this.turnLeftCode = 81;
-        this.turnRightCode = 68;
-        this.strafeLeftCode = 0;
-        this.strafeRightCode = 0;
+        this.turnLeftCode = 0;
+        this.turnRightCode = 0;
+        this.strafeLeftCode = 81;
+        this.strafeRightCode = 68;
         this.jumpCode = 32;
         this.interfaceTargetedEntityCode = 70;
         this.useTargetedEntityCode = 69;
@@ -632,6 +724,7 @@ class Game {
                 _n = _mesh.clone(_id);
                 _n.material = _n.material.clone();
                 _n.skeleton = _mesh.skeleton.clone(_id);
+                _n.skeleton.name = _mesh.skeleton.name;
                 _n.material.unfreeze();
             }
             else {
@@ -1209,9 +1302,6 @@ class Game {
         }
         var _controller = new CharacterController(_id, _mesh, _entity);
         if (_skin != undefined) {
-            if (this.kCharacterSkins.hasOwnProperty(_skin)) {
-                _skin = this.kCharacterSkins[_skin];
-            }
             _controller.setAvatarSkin(_skin);
         }
         _entity.setController(_controller);
