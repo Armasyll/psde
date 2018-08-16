@@ -107,6 +107,35 @@ class CharacterController extends EntityController {
         return this.targetController;
     }
 
+    hideAvatar() {
+        this.avatar.isVisible = false;
+        this.hideAttachedMeshes();
+    }
+    showAvatar() {
+        this.avatar.isVisible = true;
+        this.showAttachedMeshes();
+    }
+    hideAttachedMeshes() {
+        for (var _i in this.attachedMeshes) {
+            this.attachedMeshes[_i].isVisible = false;
+        }
+    }
+    showAttachedMeshes() {
+        for (var _i in this.attachedMeshes) {
+            this.attachedMeshes[_i].isVisible = true;
+        }
+    }
+    hideHelmet() {
+        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+            this.attachedMeshes["head"].isVisible = false;
+        }
+    }
+    showHelmet() {
+        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+            this.attachedMeshes["head"].isVisible = true;
+        }
+    }
+
     interruptAnimation() {
         
     }
@@ -624,7 +653,7 @@ class CharacterController extends EntityController {
         return this.attachToBone(_mesh, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(90), 0, 0));
     }
     attachToHead(_mesh) {
-        return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(180), 0));
+        return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
     }
     attachToFOCUS(_mesh) {
         var _focus = this.attachToBone(_mesh, "FOCUS");

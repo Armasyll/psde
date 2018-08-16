@@ -1638,14 +1638,14 @@ class Game {
     static updateTargetValue() {
         if (Game.camera.radius <= 0.75) {
             if (Game.enableFirstPerson) {
-                Game.player.avatar.visibility = 0;
+                Game.player.hideAvatar();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
                 GameGUI.showCrosshair();
             }
         }
         else {
-            Game.player.avatar.visibility = 1;
+            Game.player.showAvatar();
             Game.camera.checkCollisions = true;
             Game.camera.inertia = 0.9;
             GameGUI.hideCrosshair();
