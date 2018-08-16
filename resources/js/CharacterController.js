@@ -595,8 +595,8 @@ class CharacterController extends EntityController {
         if (typeof _mesh == "string") {_mesh = Game.filterID(_mesh);}
         _mesh = Game.getMesh(_mesh);
         if (_mesh instanceof BABYLON.Mesh) {_mesh = _mesh.clone();}
-        else if (_mesh == null) {return null;}
-        _bone = this.getBone(_bone); if (_bone == null) {return null;}
+        else if (_mesh == null) {return this;}
+        _bone = this.getBone(_bone); if (_bone == null) {return this;}
         _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.set(_position.x, _position.y, _position.z);
         _mesh.rotation.set(_rotation.x, _rotation.y, _rotation.z);
@@ -608,7 +608,7 @@ class CharacterController extends EntityController {
             this.detachFromBone(_bone.id);
         }
         this.attachedMeshes[_bone.id] = _mesh;
-        return _mesh;
+        return this;
     }
     detachFromBone(_bone) {
         _bone = this.getBone(_bone);
@@ -656,10 +656,11 @@ class CharacterController extends EntityController {
         return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
     }
     attachToFOCUS(_mesh) {
-        var _focus = this.attachToBone(_mesh, "FOCUS");
+        this.attachToBone(_mesh, "FOCUS");
+        var _focus = this.getMeshAttachedToBone("FOCUS")
         _focus.material = Game._collisionMaterial;
         this.focus = _focus;
-        return _focus;
+        return this;
     }
     attachToRightHand(_mesh) {
         return this.attachToBone(_mesh, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
