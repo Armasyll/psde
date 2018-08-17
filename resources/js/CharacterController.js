@@ -666,7 +666,7 @@ class CharacterController extends EntityController {
         return this.attachToBone(_mesh, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
     attachToLeftHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        return this.attachToBone(_mesh, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
     keyMoveForward(_pressed = false) {
         if (_pressed === true) {

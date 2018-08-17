@@ -903,41 +903,6 @@ class Game {
             return BABYLON.Vector3.Zero();
         }
     }
-    static contextMenu(_mesh) {
-        if (Game.debugEnabled) console.log("Running contextMenu");
-        if (!(_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh))
-            return undefined;
-        if (!(_mesh.entity !== undefined && _mesh.entity instanceof Entity))
-            return undefined;
-        if (_mesh.entity.availableActions.size > 0) {
-            _mesh.entity.availableActions.forEach(function(_availableAction) {
-
-            }, this);
-        }
-    }
-    static startMenu() {
-
-    }
-    static gameMenu() {
-
-    }
-
-    static controlsDebug() {
-        Game.controlsToggleBoundingBoxes();
-    }
-    static controlsNormal() {
-        Game.scene.meshes.forEach(function(_mesh) {_mesh.showBoundingBox = false;});
-    }
-    static controlsToggleBoundingBoxes() {
-        if (!Game.showBoundingBoxes) {
-            Game.showBoundingBoxes = true;
-            Game.scene.meshes.forEach(function(_mesh) {_mesh.showBoundingBox = true;});
-        }
-        else {
-            Game.showBoundingBoxes = false;
-            Game.scene.meshes.forEach(function(_mesh) {_mesh.showBoundingBox = false;});
-        }
-    }
 
     static setPlayerID(_id) {
         Game.setEntityID(Game.player, _id);
