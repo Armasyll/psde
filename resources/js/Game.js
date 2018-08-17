@@ -231,6 +231,7 @@ class Game {
             3,
             Game.player.getBoneByName("FOCUS").getAbsolutePosition(Game.player.getAvatar()),
             this.scene);
+        this.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
         this.camera.checkCollisions = true;
         this.camera.wheelPrecision = 100;
         this.camera.upperRadiusLimit = 2;
@@ -258,7 +259,7 @@ class Game {
         if (this.physicsEnabled) {}
         else {
             this.camera.applyGravity = _applyGravity;
-            this.camera.ellipsoid = new BABYLON.Vector3(0.1, 0.2, 0.1);
+            this.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
             this.camera.checkCollisions = true;
         }
         this.initPostProcessing();
@@ -1601,7 +1602,7 @@ class Game {
         }
     }
     static updateTargetValue() {
-        if (Game.camera.radius <= 0.75) {
+        if (Game.camera.radius <= 0.5) {
             if (Game.enableFirstPerson) {
                 Game.player.hideAvatar();
                 Game.camera.checkCollisions = false;
