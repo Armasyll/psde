@@ -598,8 +598,12 @@ class CharacterController extends EntityController {
         else if (_mesh == null) {return this;}
         _bone = this.getBone(_bone); if (_bone == null) {return this;}
         _mesh.attachToBone(_bone, this.avatar);
-        _mesh.position.set(_position.x, _position.y, _position.z);
-        _mesh.rotation.set(_rotation.x, _rotation.y, _rotation.z);
+        _mesh.position.copyFrom(_position);
+        if (this.prevAnim == undefined) {
+            _rotation.x += BABYLON.Tools.ToRadians(180);
+            _rotation.z += BABYLON.Tools.ToRadians(180);
+        }
+        _mesh.rotation.copyFrom(_rotation);
         _mesh.isVisible = true;
         if (!(_scale instanceof BABYLON.Vector3)) {
             _mesh.scaling.copyFrom(this.avatar.scaling);
@@ -647,10 +651,10 @@ class CharacterController extends EntityController {
         }
     }
     attachToLeftEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(90), 0, 0));
+        return this.attachToBone(_mesh, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     attachToRightEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(90), 0, 0));
+        return this.attachToBone(_mesh, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     attachToHead(_mesh) {
         return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
