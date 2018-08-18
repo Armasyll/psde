@@ -85,61 +85,6 @@ class CharacterController extends EntityController {
         Game.characterControllers[this.id] = this;
     }
 
-    setTarget(_controller, _updateChild = true) {
-        if (!(_controller instanceof EntityController)) {
-            return undefined;
-        }
-        this.targetController = _controller;
-        if (_updateChild) {
-            _controller.addTargetedBy(this, false);
-        }
-    }
-    removeTarget(_updateChild = true) {
-        if (_updateChild && this.targetController instanceof EntityController) {
-            this.targetController.removeTargetedBy(this, false);
-        }
-        this.targetController = null;
-    }
-    clearTarget(_updateChild = true) {
-        this.removeTarget();
-    }
-    getTarget() {
-        return this.targetController;
-    }
-
-    hideAvatar() {
-        this.avatar.isVisible = false;
-        this.hideAttachedMeshes();
-    }
-    showAvatar() {
-        this.avatar.isVisible = true;
-        this.showAttachedMeshes();
-    }
-    hideAttachedMeshes() {
-        for (var _i in this.attachedMeshes) {
-            this.attachedMeshes[_i].isVisible = false;
-        }
-    }
-    showAttachedMeshes() {
-        for (var _i in this.attachedMeshes) {
-            this.attachedMeshes[_i].isVisible = true;
-        }
-    }
-    hideHelmet() {
-        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
-            this.attachedMeshes["head"].isVisible = false;
-        }
-    }
-    showHelmet() {
-        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
-            this.attachedMeshes["head"].isVisible = true;
-        }
-    }
-
-    interruptAnimation() {
-        
-    }
-
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
         this.minSlopeLimit = minSlopeLimit;
         this.maxSlopeLimit = maxSlopeLimit;
@@ -166,7 +111,7 @@ class CharacterController extends EntityController {
     }
     setAnim(_anim, _rangeName, _rate, _loop) {
         if (this.skeleton == null)
-            return;
+            return null;
         _anim.name = _rangeName;
         _anim.rate = _rate;
         _anim.loop = _loop;
@@ -245,7 +190,7 @@ class CharacterController extends EntityController {
     }
     moveAV() {
         if (!(this.avatar instanceof BABYLON.Mesh)) {
-            return undefined;
+            return this;
         }
         if (this.getParent() != undefined) {
             this.removeParent();
@@ -542,10 +487,9 @@ class CharacterController extends EntityController {
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
+
     getMovementKey() {
-        return {
-            forward:this.key.forward
-        };
+        return this.key;
     }
     setMovementKey(_key) {
         if (typeof _key[0] == "boolean" && typeof _key[7] == "boolean") {
@@ -558,17 +502,147 @@ class CharacterController extends EntityController {
             this.key.turnRight = _key[6];
             this.key.jump = _key[7];
         }
+        return this;
     }
-    setMovementKeys(_forward = false, _shift = false, _backward = false, _strafeLeft = false, _strafeRight = false, _turnLeft = false, _turnRight = false, _jump = false) {
-        this.key.forward = _forward;
-        this.key.shift = _shift;
-        this.key.backward = _backward;
-        this.key.strafeLeft = _strafeLeft;
-        this.key.strafeRight = _strafeRight;
-        this.key.turnLeft = _turnLeft;
-        this.key.turnRight = _turnRight;
-        this.key.jump = _jump;
+    keyMoveForward(_pressed = true) {
+        if (_pressed === true) {
+            this.key.forward = true;
+            this.key.backward = false;
+        }
+        else {
+            this.key.forward = false;
+        }
+        return this;
     }
+    keyShift(_pressed = true) {
+        if (_pressed === true) {
+            this.key.shift = true;
+        }
+        else {
+            this.key.shift = false;
+        }
+        return this;
+    }
+    keyMoveBackward(_pressed = true) {
+        if (_pressed === true) {
+            this.key.backward = true;
+            this.key.forward = false;
+        }
+        else {
+            this.key.backward = false;
+        }
+        return this;
+    }
+    keyTurnLeft(_pressed = true) {
+        if (_pressed === true) {
+            this.key.turnLeft = true;
+            this.key.turnRight = false;
+        }
+        else {
+            this.key.turnLeft = false;
+        }
+        return this;
+    }
+    keyTurnRight(_pressed = true) {
+        if (_pressed === true) {
+            this.key.turnRight = true;
+            this.key.turnLeft = false;
+        }
+        else {
+            this.key.turnRight = false;
+        }
+        return this;
+    }
+    keyStrafeLeft(_pressed = true) {
+        if (_pressed === true) {
+            this.key.strafeLeft = true;
+            this.key.strafeRight = false;
+        }
+        else {
+            this.key.strafeLeft = false;
+        }
+        return this;
+    }
+    keyStrafeRight(_pressed = true) {
+        if (_pressed === true) {
+            this.key.strafeLeft = false;
+            this.key.strafeRight = true;
+        }
+        else {
+            this.key.strafeRight = false;
+        }
+        return this;
+    }
+    keyJump(_pressed = true) {
+        if (_pressed === true) {
+            this.key.jump = true;
+        }
+        else {
+            this.key.jump = false;
+        }
+        return this;
+    }
+
+    setTarget(_controller, _updateChild = true) {
+        if (!(_controller instanceof EntityController)) {
+            return this;
+        }
+        this.targetController = _controller;
+        if (_updateChild) {
+            _controller.addTargetedBy(this, false);
+        }
+        return this;
+    }
+    removeTarget(_updateChild = true) {
+        if (_updateChild && this.targetController instanceof EntityController) {
+            this.targetController.removeTargetedBy(this, false);
+        }
+        this.targetController = null;
+        return this;
+    }
+    clearTarget(_updateChild = true) {
+        this.removeTarget();
+        return this;
+    }
+    getTarget() {
+        return this.targetController;
+    }
+
+    hideAvatar() {
+        this.avatar.isVisible = false;
+        this.hideAttachedMeshes();
+        return this;
+    }
+    showAvatar() {
+        this.avatar.isVisible = true;
+        this.showAttachedMeshes();
+        return this;
+    }
+    hideAttachedMeshes() {
+        for (var _i in this.attachedMeshes) {
+            this.attachedMeshes[_i].isVisible = false;
+        }
+        return this;
+    }
+    showAttachedMeshes() {
+        for (var _i in this.attachedMeshes) {
+            this.attachedMeshes[_i].isVisible = true;
+        }
+        return this;
+    }
+    hideHelmet() {
+        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+            this.attachedMeshes["head"].isVisible = false;
+        }
+        return this;
+    }
+    showHelmet() {
+        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+            this.attachedMeshes["head"].isVisible = true;
+        }
+        return this;
+    }
+
     getBone(_bone) {
         if (Game.debugEnabled) console.log("Running getBone");
         if (_bone instanceof BABYLON.Bone) {
@@ -599,6 +673,9 @@ class CharacterController extends EntityController {
         _bone = this.getBone(_bone); if (_bone == null) {return this;}
         _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.copyFrom(_position);
+        /*
+        Rotation for bones is off before and after animations, this is a workaround
+         */
         if (this.prevAnim == undefined) {
             _rotation.x += BABYLON.Tools.ToRadians(180);
             _rotation.z += BABYLON.Tools.ToRadians(180);
@@ -620,6 +697,7 @@ class CharacterController extends EntityController {
             this.attachedMeshes[_bone.id].dispose();
             this.attachedMeshes[_bone.id] = undefined;
         }
+        return this;
     }
     detachMeshFromBone(_mesh) {
         for (var _bone in this.attachedMeshes) {
@@ -630,6 +708,7 @@ class CharacterController extends EntityController {
                 this.detachFromBone(_bone);
             }
         }
+        return this;
     }
     detachFromAllBones() {
         for (var _bone in this.attachedMeshes) {
@@ -640,15 +719,14 @@ class CharacterController extends EntityController {
                 this.detachFromBone(_bone);
             }
         }
+        return this;
     }
     getMeshAttachedToBone(_bone) {
         _bone = this.getBone(_bone);
         if (_bone instanceof BABYLON.Bone) {
             return this.attachedMeshes[_bone.id];
         }
-        else {
-            return undefined;
-        }
+        return null;
     }
     attachToLeftEye(_mesh) {
         return this.attachToBone(_mesh, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
@@ -672,76 +750,7 @@ class CharacterController extends EntityController {
     attachToLeftHand(_mesh) {
         return this.attachToBone(_mesh, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
-    keyMoveForward(_pressed = false) {
-        if (_pressed === true) {
-            this.key.forward = true;
-            this.key.backward = false;
-        }
-        else {
-            this.key.forward = false;
-        }
-    }
-    keyShift(_pressed = false) {
-        if (_pressed === true) {
-            this.key.shift = true;
-        }
-        else {
-            this.key.shift = false;
-        }
-    }
-    keyMoveBackward(_pressed = false) {
-        if (_pressed === true) {
-            this.key.backward = true;
-            this.key.forward = false;
-        }
-        else {
-            this.key.backward = false;
-        }
-    }
-    keyTurnLeft(_pressed = false) {
-        if (_pressed === true) {
-            this.key.turnLeft = true;
-            this.key.turnRight = false;
-        }
-        else {
-            this.key.turnLeft = false;
-        }
-    }
-    keyTurnRight(_pressed = false) {
-        if (_pressed === true) {
-            this.key.turnRight = true;
-            this.key.turnLeft = false;
-        }
-        else {
-            this.key.turnRight = false;
-        }
-    }
-    keyStrafeLeft(_pressed = false) {
-        if (_pressed === true) {
-            this.key.strafeLeft = true;
-            this.key.strafeRight = false;
-        }
-        else {
-            this.key.strafeLeft = false;
-        }
-    }
-    keyStrafeRight(_pressed = false) {
-        if (_pressed === true) {
-            this.key.strafeLeft = false;
-            this.key.strafeRight = true;
-        }
-        else {
-            this.key.strafeRight = false;
-        }
-    }
-    keyJump(_pressed = false) {
-        if (_pressed === true) {
-            this.key.jump = true;
-        }
-        else {
-            this.key.jump = false;
-        }
-    }
+
     dispose() {
         if (this == Game.player) {
             return false;
