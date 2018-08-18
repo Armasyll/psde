@@ -6,12 +6,17 @@ class CharacterController extends EntityController {
     constructor(_id, _avatar, _entity) {
         super (_id, _avatar, _entity);
 
+        // Mesh, attached to the 'FOCUS' bone, which will be the focus of the camera
         this.focus = undefined;
+        // What EntityController this CharacterController is targeting
         this.targetController = null;
+        // The CharacterControllers targeting this CharacterController
         this.targetedByControllers = new Set();
+        // Ray which does the targeting
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
 
+        // Hard values calculated using the distance between the front heel and rear toe during the furthest stride in 24-frames per second, multiplied by the character's height. (then thrown out the window 'cause they were too damn slow)
         this.walkSpeed = 0.68 * this.avatar.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
         this.backSpeed = this.walkSpeed * 0.5;
