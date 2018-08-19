@@ -565,5 +565,5 @@ function generateApartment() {
 
     Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "foxF", "resources/data/foxRed.svg", undefined, new BABYLON.Vector3(2, -512, -19), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7));
     Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, new BABYLON.Vector3(3, 0, -19), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye").attachToRightEye("eye").attachToRightHand("wand");
-    Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05));
+    Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05)).attachToLeftEye("eye", "resources/data/feralEyeGreen.svg").attachToRightEye("eye", "resources/data/feralEyeGreen.svg");
 }
