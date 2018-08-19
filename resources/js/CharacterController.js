@@ -669,12 +669,24 @@ class CharacterController extends EntityController {
     getBoneByID(_int) {
         return this.avatar.skeleton.bones[_int];
     }
-    attachToBone(_mesh, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
+    attachToBone(_mesh, _skin, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
         if (typeof _mesh == "string") {_mesh = Game.filterID(_mesh);}
         _mesh = Game.getMesh(_mesh);
         if (_mesh instanceof BABYLON.Mesh) {_mesh = _mesh.clone();}
         else if (_mesh == null) {return this;}
+        if (typeof _skin == "string") {
+            _mesh.material = _mesh.material.clone();
+            _mesh.material.diffuseTexture = new BABYLON.Texture(_skin);
+            _mesh.material.specularColor.set(0,0,0);
+        }
+        else if (typeof _skin == BABYLON.Texture) {
+            _mesh.material = _mesh.material.clone();
+            _mesh.material.diffuseTexture = _skin;
+        }
+        else if (typeof _skin == BABYLON.Material) {
+            _mesh.material = _skin.clone();
+        }
         _bone = this.getBone(_bone); if (_bone == null) {return this;}
         _mesh.attachToBone(_bone, this.avatar);
         _mesh.position.copyFrom(_position);
@@ -733,27 +745,27 @@ class CharacterController extends EntityController {
         }
         return null;
     }
-    attachToLeftEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    attachToLeftEye(_mesh, _skin) {
+        return this.attachToBone(_mesh, _skin, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
-    attachToRightEye(_mesh) {
-        return this.attachToBone(_mesh, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    attachToRightEye(_mesh, _skin) {
+        return this.attachToBone(_mesh, _skin, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
-    attachToHead(_mesh) {
-        return this.attachToBone(_mesh, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
+    attachToHead(_mesh, _skin) {
+        return this.attachToBone(_mesh, _skin, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
     }
     attachToFOCUS(_mesh) {
-        this.attachToBone(_mesh, "FOCUS");
+        this.attachToBone(_mesh, undefined, "FOCUS");
         var _focus = this.getMeshAttachedToBone("FOCUS")
         _focus.material = Game._collisionMaterial;
         this.focus = _focus;
         return this;
     }
-    attachToRightHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+    attachToRightHand(_mesh, _skin) {
+        return this.attachToBone(_mesh, _skin, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
-    attachToLeftHand(_mesh) {
-        return this.attachToBone(_mesh, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+    attachToLeftHand(_mesh, _skin) {
+        return this.attachToBone(_mesh, _skin, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
 
     dispose() {
