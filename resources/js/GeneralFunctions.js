@@ -183,9 +183,9 @@ function isFloat(n){
     return Number(n) === n && n % 1 !== 0;
 }
 
-if(!jQuery) {
+/*if(!jQuery) {
     include_jQuery();
     var $ = jQuery.noConflict();
 } else {
     var $ = jQuery;
-}
+}*/
