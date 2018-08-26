@@ -14,8 +14,8 @@
    width="1024"
    height="512"
    viewBox="0 0 1024 512"
-   sodipodi:docname="feralEye.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   sodipodi:docname="feralEyeGreen.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -40,16 +40,20 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1056"
+     inkscape:window-height="1027"
      id="namedview4"
-     showgrid="false"
-     inkscape:zoom="0.85466507"
-     inkscape:cx="547.54731"
-     inkscape:cy="256.84502"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
+     showgrid="true"
+     inkscape:zoom="0.85466508"
+     inkscape:cx="367.93594"
+     inkscape:cy="164.12157"
+     inkscape:window-x="-8"
+     inkscape:window-y="22"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="svg2">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815" />
+  </sodipodi:namedview>
   <rect
      y="-2.6412093e-14"
      x="0"
@@ -57,7 +61,7 @@
      width="1024"
      id="sclera"
      style="opacity:1;vector-effect:none;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:5.33000612px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     inkscape:label="#sclera" />
+     inkscape:label="sclera" />
   <ellipse
      cy="255.48283"
      cx="215.57895"
@@ -65,13 +69,12 @@
      style="opacity:1;fill:#63b828;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.96665764px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      rx="114.9639"
      ry="129.29292"
-     inkscape:label="#iris" />
-  <ellipse
-     ry="64.646461"
-     rx="17.148325"
-     cy="253.41414"
-     cx="214.52121"
-     id="pupil"
+     inkscape:label="iris" />
+  <path
      style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5.02004623px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     inkscape:label="#pupil" />
+     d="m 231.66953,253.41414 c 0,35.70325 -12.66953,64.64646 -17.14832,64.64646 -4.52121,0 -17.14833,-28.9432 -17.14833,-64.64646 0,-35.70326 12.62712,-64.64646 17.14833,-64.64646 4.47879,0 17.14832,28.94321 17.14832,64.64646 z"
+     id="pupil"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="sssss"
+     inkscape:label="pupil" />
 </svg>
