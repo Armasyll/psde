@@ -336,8 +336,8 @@ function generateApartment() {
     Game.createFurniture("couch", "Couch", "loveseat", "loveseat", undefined, undefined, new BABYLON.Vector3(8, 0, -21), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(14, 0, -22), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22));
-    Game.createItem("knife", Game.createProtoItem("knife", "Knife", "", "", "weapon", "knife"), undefined, new BABYLON.Vector3(9.5, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
-    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "", "", "weapon", "cross"), undefined, new BABYLON.Vector3(10, 0.6, -22));
+    Game.createItem("knife", Game.createProtoItem("knife", "Knife", "A dull knife.", "", "weapon", "knife"), undefined, new BABYLON.Vector3(9.5, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
+    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "resources/images/items/cross01.png", "weapon", "cross01", "resources/data/cross01.svg"), undefined, new BABYLON.Vector3(10, 0.6, -22));
     Game.addItemMesh("planeInstance01", "plate", undefined, undefined, new BABYLON.Vector3(9.7, 0.6, -21.5));
     Game.addItemMesh("plateInstance02", "plate", undefined, undefined, new BABYLON.Vector3(10.3, 0.6, -23));
 
