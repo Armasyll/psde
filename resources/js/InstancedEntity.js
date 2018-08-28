@@ -247,7 +247,7 @@ class InstancedEntity {
         return this.durabilityMax;
     }
     setController(_controller) {
-        this.controller = Game.getController(_controller);
+        this.controller = Game.getEntityController(_controller);
         return this;
     }
     getController() {
