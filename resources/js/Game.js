@@ -30,7 +30,7 @@ class Game {
         this._assignBoundingBoxCollisionQueue = new Set();
 
         this._filesToLoad = 1;
-        // Original meshes
+        // Original meshes, donut touch
         this.entityMeshes = {};
         this.surfaceMeshes = {};
         this.furnitureMeshes = {};
@@ -947,7 +947,7 @@ class Game {
         _temp.id = _newID;
         Game.entityMeshInstances[_newID] = _temp;
         delete Game.entityMeshInstances[_currentID];
-        if (Game.hasCharacterMeshInstance(_currentID)) {
+        if (Game.hasEntityMesh(_currentID)) {
             Game.characterMeshInstances[_newID] = _temp;
             delete Game.characterMeshInstances[_currentID];
         }
@@ -981,37 +981,16 @@ class Game {
         else if ((_id instanceof EntityController || _id instanceof Entity) && (_id.avatar instanceof BABYLON.Mesh || _id.avatar instanceof BABYLON.InstancedMesh)) {
             return _id.avatar;
         }
-        else {
-            return undefined;
-        }
+        return undefined;
+    }
+    static getEntityMeshInstance(_id) {
+        return this.getEntityMesh(_id);
+    }
+    static hasEntityMesh(_id) {
+        return this.getEntityMesh(_id) != undefined;
     }
     static hasEntityMeshInstance(_id) {
-        if (_id == undefined) {
-            return;
-        }
-        else if (typeof _id == "string" && Game.entityMeshInstances.hasOwnProperty(_id)) {
-            return true;
-        }
-        else if ((_id instanceof Entity || _id instanceof EntityController || _id instanceof BABYLON.Mesh) && Game.entityMeshInstances.hasOwnProperty(_id.id)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    static hasCharacterMeshInstance(_id) {
-        if (_id == undefined) {
-            return;
-        }
-        else if (typeof _id == "string" && Game.characterMeshInstances.hasOwnProperty(_id)) {
-            return true;
-        }
-        else if ((_id instanceof CharacterEntity || _id instanceof CharacterController || _id instanceof BABYLON.Mesh) && Game.characterMeshInstances.hasOwnProperty(_id.id)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.getEntityMesh(_id) != undefined;
     }
     static getEntityController(_id) {
         if (_id == undefined) {
@@ -1212,20 +1191,26 @@ class Game {
         return null;
     }
     static hasCharacterEntity(_id) {
-        if (_id == undefined) {
-            return;
-        }
-        else if (typeof _id == "string" && Game.characterEntities.hasOwnProperty(_id)) {
-            return true;
-        }
-        else if (_id instanceof CharacterEntity) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.getCharacterEntity(_id) != undefined;
     }
-    static createCharacter(_id = undefined, _name = undefined, _description = "", _image = "resources/images/characters/genericCharacter.svg", _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    /**
+     * Creates a character mesh, entity, and controller.
+     * @param  {String} _id          ID
+     * @param  {String} _name        Name
+     * @param  {String} _description Description
+     * @param  {String} _image       Path to character icon
+     * @param  {Number} _age         Age
+     * @param  {Boolean} _sex        Sex: 0 - Male, 1 - Female, 2 - Wat
+     * @param  {String} _species     Species: fox, skeleton
+     * @param  {String} _mesh        String or BABYLON.Mesh: foxM, foxF, foxSkeletonN
+     * @param  {String} _skin        String or BABYLON.Texture: foxRed, foxCorsac
+     * @param  {Object} _options     Physics options: don't touch 'cause they're not used
+     * @param  {BABYLON.Vector3} _position    Position
+     * @param  {BABYLON.Vector3} _rotation    Rotation
+     * @param  {BABYLON.Vector3} _scale       Scale
+     * @return {CharacterController}              Character Controller
+     */
+    static createCharacter(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _skin = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
@@ -1344,8 +1329,8 @@ class Game {
      * @param  {String}  _id                  Unique ID, randomly generated if undefined
      * @param  {String}  _name                Name
      * @param  {String}  _type                Furniture type
-     * @param  {BABYLON.Mesh}  _mesh          Mesh
-     * @param  {BABYLON.Texture}  _skin       Texture
+     * @param  {String}  _mesh          String or Mesh
+     * @param  {String}  _skin       String or Texture
      * @param  {Object}  _options             Physics options
      * @param  {BABYLON.Vector3}  _position   Position
      * @param  {BABYLON.Vector3}  _rotation   Rotation

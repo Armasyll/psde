@@ -10,7 +10,7 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "resources/images/characters/genericCharacter.svg", _class = "classless", _age = 33, _sex = 0, _species = "fox") {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "resources/images/icons/characters/genericCharacter.svg", _class = "classless", _age = 33, _sex = 0, _species = "fox") {
         super(_id);
         /**
          * Surname

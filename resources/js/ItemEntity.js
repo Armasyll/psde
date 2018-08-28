@@ -1,5 +1,5 @@
 class ItemEntity extends Entity {
-	constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _plural = false, _specialProperties = undefined, _defaultPrice = 0, _defaultWeight = 0.001, _defaultDurability = 1) {
+	constructor(_id = undefined, _name = undefined, _description = undefined, _image = "resources/images/icons/items/genericItem.svg", _plural = false, _specialProperties = undefined, _defaultPrice = 0, _defaultWeight = 0.001, _defaultDurability = 1) {
         super(_id, _name, _description, _image);
 
         this.addAvailableAction("drop");
