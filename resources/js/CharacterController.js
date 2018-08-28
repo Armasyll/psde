@@ -629,13 +629,17 @@ class CharacterController extends EntityController {
     }
     hideAttachedMeshes() {
         for (var _i in this.attachedMeshes) {
-            this.attachedMeshes[_i].isVisible = false;
+            if (this.attachedMeshes[_i] instanceof BABYLON.Mesh || this.attachedMeshes[_i] instanceof BABYLON.InstancedMesh) {
+                this.attachedMeshes[_i].isVisible = false;
+            }
         }
         return this;
     }
     showAttachedMeshes() {
         for (var _i in this.attachedMeshes) {
-            this.attachedMeshes[_i].isVisible = true;
+            if (this.attachedMeshes[_i] instanceof BABYLON.Mesh || this.attachedMeshes[_i] instanceof BABYLON.InstancedMesh) {
+                this.attachedMeshes[_i].isVisible = true;
+            }
         }
         return this;
     }
@@ -768,8 +772,14 @@ class CharacterController extends EntityController {
     attachToRightHand(_mesh, _skin) {
         return this.attachToBone(_mesh, _skin, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
     }
+    detachFromRightHand() {
+        return this.detachFromBone("hand.r")
+    }
     attachToLeftHand(_mesh, _skin) {
         return this.attachToBone(_mesh, _skin, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+    }
+    detachFromLeftHand() {
+        return this.detachFromBone("hand.l");
     }
 
     dispose() {

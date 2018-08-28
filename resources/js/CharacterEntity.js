@@ -769,11 +769,11 @@ class CharacterEntity extends EntityWithStorage {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {return this;}
 
-        if (this.getItemInRightHand() == _instancedItemEntity) {
-            this.removeItemInRightHand();
+        if (this.getHeldItemInRightHand() == _instancedItemEntity) {
+            this.removeHeldItemInRightHand();
         }
-        if (this.getItemInLeftHand() == _instancedItemEntity) {
-            this.removeItemInLeftHand();
+        if (this.getHeldItemInLeftHand() == _instancedItemEntity) {
+            this.removeHeldItemInLeftHand();
         }
         this.currentActions["hold"] = this.heldItems;
         return this;
@@ -824,7 +824,7 @@ class CharacterEntity extends EntityWithStorage {
      * NOTE: Directly modifies this.heldItems
      * @return {this} This
      */
-    removeItemInRightHand() {
+    removeHeldItemInRightHand() {
         this.heldItems["rightHand"] = undefined;
         return this;
     }
@@ -833,7 +833,7 @@ class CharacterEntity extends EntityWithStorage {
      * NOTE: Directly modifies this.heldItems
      * @return {this} This
      */
-    removeItemInLeftHand() {
+    removeHeldItemInLeftHand() {
         this.heldItems["leftHand"] = undefined;
         return this;
     }

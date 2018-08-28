@@ -266,7 +266,7 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/nickWilde.svg", 18, "male", "spirit", "spiritN", undefined, undefined, _position, _rotation, _scaling);
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "spirit", "spiritN", undefined, undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("eye");
         this.player.getAvatar().isPickable = false;
         this.player.getAvatar().material.alpha = 0.25;
@@ -1580,7 +1580,7 @@ class Game {
     }
     static updateTargetValue() {
         if (Game.camera.radius <= 0.5) {
-            if (Game.enableFirstPerson) {
+            if (Game.enableFirstPerson && Game.player.avatar.isVisible) {
                 Game.player.hideAvatar();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
@@ -1588,10 +1588,12 @@ class Game {
             }
         }
         else {
-            Game.player.showAvatar();
-            Game.camera.checkCollisions = true;
-            Game.camera.inertia = 0.9;
-            GameGUI.hideCrosshair();
+            if (!Game.player.avatar.isVisible) {
+                Game.player.showAvatar();
+                Game.camera.checkCollisions = true;
+                Game.camera.inertia = 0.9;
+                GameGUI.hideCrosshair();
+            }
         }
     }
     static doEntityAction(_entity, _subEntity, _action) {
@@ -1706,6 +1708,34 @@ class Game {
             else {
                 // do nothing :v or maybe something with magic v:
             }
+        }
+        if (typeof _callback == "function") {
+            _callback(_instancedItemEntity, undefined, _subEntityController);
+        }
+    }
+    static actionReleaseFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+            return;
+        }
+        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+            if (typeof _callback == "function") {
+                _callback();
+            }
+            return;
+        }
+        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasAvatar()) {
+        }
+        else {
+            if (_subEntityController.getEntity().getHeldItemInLeftHand() == _instancedItemEntity) {
+                _subEntityController.detachFromLeftHand();
+            }
+            else if (_subEntityController.getEntity().getHeldItemInRightHand() == _instancedItemEntity) {
+                _subEntityController.detachFromRightHand();
+            }
+            _subEntityController.getEntity().removeHeldItem(_instancedItemEntity);
         }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntityController);

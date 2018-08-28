@@ -797,8 +797,9 @@ class GameGUI {
                     break;
                 }
                 case "hold" : {
-                    if (_instancedItemEntity == Game.player.getEntity().hasHeldItem(_instancedItemEntity)) {
+                    if (Game.player.getEntity().hasHeldItem(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, "Release");
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI.setInventorySelectedItem);});
                     }
                     else {
                         _actionButton = GameGUI._generateButton(undefined, "Hold");
