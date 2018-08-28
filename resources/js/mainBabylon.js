@@ -76,7 +76,7 @@ function generateApartment() {
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);
         skyboxMaterial.backFaceCulling = false;
-        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("resources/images/skyboxes/m/skybox", Game.scene, ["_px.svg", "_py.svg", "_pz.svg", "_nx.svg", "_ny.svg", "_nz.svg"]);
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("resources/images/textures/skyboxes/m/skybox", Game.scene, ["_px.svg", "_py.svg", "_pz.svg", "_nx.svg", "_ny.svg", "_nz.svg"]);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
@@ -90,7 +90,7 @@ function generateApartment() {
         _ambientLight.intensity = 0.9;
 
     var packStreetApartmentBuildingTexture = new BABYLON.StandardMaterial("packStreetApartmentBuildingTexture", Game.scene);
-        packStreetApartmentBuildingTexture.diffuseTexture = new BABYLON.Texture("resources/images/packStreetApartmentBuildingGroundFloor.png", Game.scene);
+        packStreetApartmentBuildingTexture.diffuseTexture = new BABYLON.Texture("resources/images/textures/packStreetApartmentBuildingGroundFloor.png", Game.scene);
         packStreetApartmentBuildingTexture.specularColor = new BABYLON.Color3(0, 0, 0);
         packStreetApartmentBuildingTexture.backFaceCulling = false;
     var packStreetApartmentBuildingMap = new BABYLON.Mesh.CreatePlane("packStreetApartmentBuildingMap", 2, Game.scene);
@@ -101,7 +101,7 @@ function generateApartment() {
         packStreetApartmentBuildingMap.material = packStreetApartmentBuildingTexture;
 
     var nooo = new BABYLON.StandardMaterial("", Game.scene);
-        nooo.diffuseTexture = new BABYLON.Texture("resources/images/noooo.jpg", Game.scene);
+        nooo.diffuseTexture = new BABYLON.Texture("resources/images/textures/noooo.jpg", Game.scene);
         nooo.specularColor = new BABYLON.Color3(0, 0, 0);
         nooo.backFaceCulling = true;
     var noooMesh = new BABYLON.Mesh.CreatePlane("noooMesh", 2, Game.scene);
@@ -337,13 +337,13 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(14, 0, -22), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22));
     Game.createItem("knife", Game.createProtoItem("knife", "Knife", "A dull knife.", "", "weapon", "knife"), undefined, new BABYLON.Vector3(9.5, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
-    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "resources/images/items/cross01.png", "weapon", "cross01", "resources/data/cross01.svg"), undefined, new BABYLON.Vector3(10, 0.6, -22));
+    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "resources/images/icons/items/cross01.png", "weapon", "cross01", "resources/images/textures/items/cross01.svg"), undefined, new BABYLON.Vector3(10, 0.6, -22));
     Game.addItemMesh("planeInstance01", "plate", undefined, undefined, new BABYLON.Vector3(9.7, 0.6, -21.5));
     Game.addItemMesh("plateInstance02", "plate", undefined, undefined, new BABYLON.Vector3(10.3, 0.6, -23));
 
-    Game.createItem("alBuildingLocationKey", Game.createProtoItem("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simple key to Pack Street Bldg 3", "resources/images/items/key.svg", "key", "key01"), undefined, new BABYLON.Vector3(10, 0.6, -22.5));;
-    Game.createProtoItem("pandorasBoxLocationKey", "Key to Pandora's Box", "A complex brass key meant for digitigrade mammals to Pandora's Box.", "resources/images/items/pandorasBoxLocationKey.svg", "key", "key01");
-    Game.createItem("packstreet23StrangeNewDay", Game.createProtoItem("packstreet23StrangeNewDay", "Pack Street Chapter 23", "In the wake of Bellwether's arrest, Remmy takes stock of a changed city.", "resources/images/items/packstreet23StrangeNewDay.png", "book", "bookHardcoverClosed01", "resources/data/packStreetChapter23.svg"), undefined, new BABYLON.Vector3(10.3, 0.8, -21), new BABYLON.Vector3(0, 180, 0));
+    Game.createItem("alBuildingLocationKey", Game.createProtoItem("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simple key to Pack Street Bldg 3", "resources/images/icons/items/key.svg", "key", "key01"), undefined, new BABYLON.Vector3(10, 0.6, -22.5));;
+    Game.createProtoItem("pandorasBoxLocationKey", "Key to Pandora's Box", "A complex brass key meant for digitigrade mammals to Pandora's Box.", "resources/images/icons/items/pandorasBoxLocationKey.svg", "key", "key01");
+    Game.createItem("packstreet23StrangeNewDay", Game.createProtoItem("packstreet23StrangeNewDay", "Pack Street Chapter 23", "In the wake of Bellwether's arrest, Remmy takes stock of a changed city.", "resources/images/icons/items/packstreet23StrangeNewDay.png", "book", "bookHardcoverClosed01", "resources/images/textures/items/packStreetChapter23.svg"), undefined, new BABYLON.Vector3(10.3, 0.8, -21), new BABYLON.Vector3(0, 180, 0));
 
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(0, 0, -24), new BABYLON.Vector3(0, -90, 0));
     Game.addMesh(undefined, "corner", undefined,               new BABYLON.Vector3(4, 0, -24), new BABYLON.Vector3(0, 180, 0));
@@ -563,7 +563,7 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
-    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/characters/rosie.png", 14, "f", "fox", "foxF", "resources/data/foxRed.svg", undefined, new BABYLON.Vector3(2, -512, -19), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7));
-    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/data/foxCorsac.svg", undefined, new BABYLON.Vector3(3, 0, -19), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye").attachToRightEye("eye").attachToRightHand("wand");
-    Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05)).attachToLeftEye("eye", "resources/data/feralEyeGreen.svg").attachToRightEye("eye", "resources/data/feralEyeGreen.svg");
+    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/icons/characters/rosie.png", 14, "f", "fox", "foxF", "resources/images/textures/characters/foxRed.svg", undefined, new BABYLON.Vector3(2, -512, -19), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7));
+    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/icons/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/images/textures/characters/foxCorsac.svg", undefined, new BABYLON.Vector3(3, 0, -19), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye").attachToRightEye("eye").attachToRightHand("wand");
+    Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeGreen.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
 }

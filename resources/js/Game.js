@@ -266,9 +266,9 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/data/foxRed.svg", undefined, _position, _rotation, _scaling);
-        this.player.attachToLeftEye("eye", "resources/data/feralEyeGreen.svg");
-        this.player.attachToRightEye("eye", "resources/data/feralEyeGreen.svg");
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/images/textures/characters/foxRed.svg", undefined, _position, _rotation, _scaling);
+        this.player.attachToLeftEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
+        this.player.attachToRightEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
         this.player.attachToFOCUS("eye");
         this.player.getAvatar().isPickable = false;
         this.initFollowCamera();

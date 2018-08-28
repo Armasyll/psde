@@ -428,7 +428,7 @@ class GameGUI {
             portraitAvatarContainer.top = 0;
             portraitAvatarContainer.left = 0;
             portraitAvatarContainer.thickness = 0;
-                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/characters/genericCharacter.svg");
+                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/icons/characters/genericCharacter.svg");
                 portraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
             var portraitStats = new BABYLON.GUI.StackPanel("portraitStats");
             portraitStats.isVertical = true;
@@ -498,7 +498,7 @@ class GameGUI {
             portraitAvatarContainer.top = 0;
             portraitAvatarContainer.left = 0;
             portraitAvatarContainer.thickness = 0;
-                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/characters/genericCharacter.svg");
+                var portraitAvatar = new BABYLON.GUI.Image("portraitAvatar", "resources/images/icons/characters/genericCharacter.svg");
                 portraitAvatar.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
             var portraitStats = new BABYLON.GUI.StackPanel("portraitStats");
             portraitStats.isVertical = true;
@@ -600,7 +600,7 @@ class GameGUI {
         this.setTargetPortraitMana(_mana);
         this.setTargetPortraitStamina(_stamina);
     }
-    static setPlayerPortraitImage(_image = "resources/images/characters/genericCharacter.svg") {
+    static setPlayerPortraitImage(_image = "resources/images/icons/characters/genericCharacter.svg") {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[1].children[0].domImage.setAttribute("src", _image);
     }
     static setPlayerPortraitName(_string) {
@@ -621,7 +621,7 @@ class GameGUI {
     static setPlayerPortraitMana(_int = 100) {
         GameGUI.hud.rootContainer.getChildByName("playerPortrait").children[2].children[2].text = _int;
     }
-    static setTargetPortraitImage(_image = "resources/images/items/genericItem.svg") {
+    static setTargetPortraitImage(_image = "resources/images/icons/items/genericItem.svg") {
         GameGUI.hud.rootContainer.getChildByName("targetPortrait").children[2].children[0].domImage.setAttribute("src", _image);
     }
     static setTargetPortraitName(_string) {

@@ -278,7 +278,7 @@ class InstancedEntity {
         return this.entity.getAvatarSkin();
     }
     getImage() {
-        return (this.entity.getImage() || "resources/images/items/genericItem.svg");
+        return (this.entity.getImage() || "resources/images/icons/items/genericItem.svg");
     }
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
