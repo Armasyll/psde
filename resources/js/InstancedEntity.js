@@ -247,15 +247,7 @@ class InstancedEntity {
         return this.durabilityMax;
     }
     setController(_controller) {
-        if (!(_controller instanceof ItemController)) {
-            if (Game.hasController(_controller)) {
-                Game.getController(_controller);
-            }
-            else {
-                return;
-            }
-        }
-        this.controller = _controller;
+        this.controller = Game.getController(_controller);
         return this;
     }
     getController() {
