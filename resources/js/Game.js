@@ -266,11 +266,10 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/nickWilde.svg", 18, "male", "fox", "foxM", "resources/images/textures/characters/foxRed.svg", undefined, _position, _rotation, _scaling);
-        this.player.attachToLeftEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
-        this.player.attachToRightEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/nickWilde.svg", 18, "male", "spirit", "spiritN", undefined, undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("eye");
         this.player.getAvatar().isPickable = false;
+        this.player.getAvatar().material.alpha = 0.25;
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
             GameGUI.setPlayerPortrait(this.player);
@@ -868,7 +867,7 @@ class Game {
         if (Game.debugEnabled) console.log("Running loadMeshes");
         Game.furnitureMeshes = Game.importMeshes("furniture.babylon");
         Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon");
-        Game.characterMeshes = Game.importMeshes("characters-sfw.babylon");
+        Game.characterMeshes = Game.importMeshes("characters.babylon");
         Game.importMeshes("arachnids.babylon", undefined, function(_meshes) {Game.characterMeshes = Object.assign(Game.characterMeshes, _meshes);});
         Game.itemMeshes = Game.importMeshes("items.babylon");
         return true;
@@ -1222,12 +1221,11 @@ class Game {
                     break;
                 }
                 case "skeleton" : {
-                    if (_entity.getSex() == Game.MALE) {
-                        _mesh = "foxSkeletonN";
-                    }
-                    else {
-                        _mesh = "foxSkeletonN";
-                    }
+                    _mesh = "foxSkeletonN";
+                    break;
+                }
+                case "spirit" : {
+                    _mesh = "spiritN";
                     break;
                 }
                 default : {
