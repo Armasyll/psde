@@ -983,13 +983,7 @@ class Game {
         }
         return undefined;
     }
-    static getEntityMeshInstance(_id) {
-        return this.getEntityMesh(_id);
-    }
     static hasEntityMesh(_id) {
-        return this.getEntityMesh(_id) != undefined;
-    }
-    static hasEntityMeshInstance(_id) {
         return this.getEntityMesh(_id) != undefined;
     }
     static getEntityController(_id) {
