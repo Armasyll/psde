@@ -85,6 +85,7 @@ class CharacterController extends EntityController {
         this.setRunJumpAnim("95_jump", 1, false);
 
         this.setDefaultAction("talk");
+        this._showHelmet = true;
 
         this.attachedMeshes = {};
         Game.characterControllers[this.id] = this;
@@ -644,15 +645,17 @@ class CharacterController extends EntityController {
         return this;
     }
     hideHelmet() {
-        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+        if (this.attachedMeshes["head"] instanceof BABYLON.Mesh || this.attachedMeshes["head"] instanceof BABYLON.InstancedMesh) {
             this.attachedMeshes["head"].isVisible = false;
         }
+        this._showHelmet = false;
         return this;
     }
     showHelmet() {
-        if (this.attachedMesh["head"] instanceof BABYLON.InstancedMesh) {
+        if (this.attachedMeshes["head"] instanceof BABYLON.Mesh || this.attachedMeshes["head"] instanceof BABYLON.InstancedMesh) {
             this.attachedMeshes["head"].isVisible = true;
         }
+        this._showHelmet = true;
         return this;
     }
 
@@ -754,13 +757,22 @@ class CharacterController extends EntityController {
         return null;
     }
     attachToLeftEye(_mesh, _skin) {
-        return this.attachToBone(_mesh, _skin, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        this.attachToBone(_mesh, _skin, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        return this;
     }
     attachToRightEye(_mesh, _skin) {
-        return this.attachToBone(_mesh, _skin, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        this.attachToBone(_mesh, _skin, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        return this;
     }
     attachToHead(_mesh, _skin) {
-        return this.attachToBone(_mesh, _skin, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
+        this.attachToBone(_mesh, _skin, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
+        if (this._showHelmet) {
+            this.showHelmet();
+        }
+        else {
+            this.hideHelmet();
+        }
+        return this;
     }
     attachToFOCUS(_mesh) {
         this.attachToBone(_mesh, undefined, "FOCUS");
@@ -770,16 +782,20 @@ class CharacterController extends EntityController {
         return this;
     }
     attachToRightHand(_mesh, _skin) {
-        return this.attachToBone(_mesh, _skin, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        this.attachToBone(_mesh, _skin, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        return this;
     }
     detachFromRightHand() {
-        return this.detachFromBone("hand.r")
+        this.detachFromBone("hand.r");
+        return this;
     }
     attachToLeftHand(_mesh, _skin) {
-        return this.attachToBone(_mesh, _skin, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        this.attachToBone(_mesh, _skin, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        return this;
     }
     detachFromLeftHand() {
-        return this.detachFromBone("hand.l");
+        this.detachFromBone("hand.l");
+        return this;
     }
 
     dispose() {

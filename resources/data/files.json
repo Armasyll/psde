@@ -5,16 +5,20 @@
         "meshes":[
             "foxM",
             "foxF",
-            "foxSkeletonN"
+            "foxSkeletonN",
+            "spiritN"
         ],
         "textures":{
             "foxM":{
-                "foxRed":"resources/data/foxRed.svg",
-                "foxCorsac":"resources/data/foxCorsac.svg"
+                "foxRed":"resources/images/textures/characters/foxRed.svg",
+                "foxCorsac":"resources/images/textures/characters/foxCorsac.svg"
             },
             "foxF":{
-                "foxRed":"resources/data/foxRed.svg",
-                "foxCorsac":"resources/data/foxCorsac.svg"
+                "foxRed":"resources/images/textures/characters/foxRed.svg",
+                "foxCorsac":"resources/images/textures/characters/foxCorsac.svg"
+            },
+            "spiritN":{
+                "spirit":"resources/data/spirit.png"
             }
         },
         "animations":{
@@ -133,12 +137,27 @@
         "file":"resources/data/items.babylon",
         "textures":{
             "bookHardcoverClosed01":{
-                "packStreetChapter23":"resources/data/packStreetChapter23.svg",
-                "packStreetChapter24":"resources/data/packStreetChapter24.svg"
+                "packStreetChapter23":"resources/images/textures/items/packStreetChapter23.svg",
+                "packStreetChapter24":"resources/images/textures/items/packStreetChapter24.svg"
+            },
+            "cross01":{
+                "cross01":"resources/images/textures/items/cross01.svg"
             },
             "eye":{
-                "blueFeralEye":"resources/data/blueFeralEye.png"
+                "feralEye":"resources/images/textures/items/feralEye.svg",
+                "feralEyeBlue":"resources/images/textures/items/feralEyeBlue.svg",
+                "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
+                "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
+                "oblongEye":"resources/images/textures/items/oblongEye.svg"
             }
+        },
+        "normalmaps":{
+        },
+        "bumpmaps":{
+        },
+        "specularmaps":{
+        },
+        "diffusemaps":{
         },
         "animations":{
         },

@@ -121,51 +121,52 @@ function generateApartment() {
         pinkCarpetMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
         pinkCarpetMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     var darkWoodMaterial = new BABYLON.StandardMaterial("darkWoodMaterial", Game.scene);
-        darkWoodMaterial.diffuseTexture = new BABYLON.Texture("resources/data/woodenFloorDark01.png", Game.scene);
-        darkWoodMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        darkWoodMaterial.diffuseTexture = new BABYLON.Texture("resources/data/woodenFloorDark01-DIFFUSE.png", Game.scene);
+        darkWoodMaterial.bumpTexture = new BABYLON.Texture("resources/data/woodenFloorDark01-NORMAL.png", Game.scene);
+        darkWoodMaterial.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
     var linoleumMaterial = new BABYLON.StandardMaterial("linoleumMaterial", Game.scene);
         linoleumMaterial.diffuseTexture = new BABYLON.Texture("resources/data/checkerLinoleumFloor01.png", Game.scene);
         linoleumMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
     // Ground Floor
-    var ozzyBedroomClosetFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, Game.scene);
+    var ozzyBedroomClosetFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, Game.scene);
         ozzyBedroomClosetFloor.material = darkWoodMaterial;
         ozzyBedroomClosetFloor.position.set(-1, 0, -1);
     //Game.createCollisionPlane(ozzyBedroomClosetFloor);
-    var ozzyHallwayClosetFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, Game.scene);
+    var ozzyHallwayClosetFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, Game.scene);
         ozzyHallwayClosetFloor.material = darkWoodMaterial;
         ozzyHallwayClosetFloor.position.set(1, 0, -1);
     //Game.createCollisionPlane(ozzyHallwayClosetFloor);
-    var ozzyBathroomFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 4, subdivisions: {w:4, h:4}}, Game.scene);
+    var ozzyBathroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 4, subdivisions: {w:4, h:4}}, Game.scene);
         ozzyBathroomFloor.material = linoleumMaterial;
         ozzyBathroomFloor.position.set(5, 0, -3);
     //Game.createCollisionPlane(ozzyBathroomFloor);
-    var ozzyBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
+    var ozzyBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
         ozzyBedroomFloor.material = darkWoodMaterial;
         ozzyBedroomFloor.position.set(-1, 0, -7);
     //Game.createCollisionPlane(ozzyBedroomFloor);
-    var ozzyHallwayFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 8, subdivisions: {w:2, h:8}}, Game.scene);
+    var ozzyHallwayFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 2, zmax: 8, subdivisions: {w:2, h:8}}, Game.scene);
         ozzyHallwayFloor.material = darkWoodMaterial;
         ozzyHallwayFloor.position.set(3, 0, -7);
     //Game.createCollisionPlane(ozzyHallwayFloor);
-    var ozzyLivingroomFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 8, zmax: 6, subdivisions: {w:8, h:6}}, Game.scene);
+    var ozzyLivingroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 8, zmax: 6, subdivisions: {w:8, h:6}}, Game.scene);
         ozzyLivingroomFloor.material = darkWoodMaterial;
         ozzyLivingroomFloor.position.set(-1, 0, -13);
     //Game.createCollisionPlane(ozzyLivingroomFloor);
 
-    var commonsFloor01a = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
+    var commonsFloor01a = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
         commonsFloor01a.material = pinkCarpetMaterial;
         commonsFloor01a.position.set(1, 0, -27);
     //Game.createCollisionPlane(commonsFloor01a);
-    var commonsFloor01b = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01b", {xmin:0, zmin:0, xmax: 10, zmax: 10, subdivisions: {w:10, h:10}}, Game.scene);
+    var commonsFloor01b = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01b", {xmin:0, zmin:0, xmax: 10, zmax: 10, subdivisions: {w:10, h:10}}, Game.scene);
         commonsFloor01b.material = pinkCarpetMaterial;
         commonsFloor01b.position.set(5, 0, -27);
     //Game.createCollisionPlane(commonsFloor01b);
-    var commonsFloor01c = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+    var commonsFloor01c = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
         commonsFloor01c.material = pinkCarpetMaterial;
         commonsFloor01c.position.set(-1, 0, -27);
     //Game.createCollisionPlane(commonsFloor01c);
-    var commonsFloor01d = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01d", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, Game.scene);
+    var commonsFloor01d = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor01d", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, Game.scene);
         commonsFloor01d.material = pinkCarpetMaterial;
         commonsFloor01d.position.set(-1, 0, -19);
     //Game.createCollisionPlane(commonsFloor01d);
@@ -175,13 +176,13 @@ function generateApartment() {
         ceilingMaterial.diffuseTexture = new BABYLON.Texture("resources/data/wall.png", Game.scene);
         ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         ceilingMaterial.backFaceCulling = false;
-    var ceilingMesh01 = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
+    var ceilingMesh01 = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
         ceilingMesh01.material = ceilingMaterial;
         ceilingMesh01.position.set(1, 2.9, -27);
-    var ceilingMesh01b = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
+    var ceilingMesh01b = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
         ceilingMesh01b.material = ceilingMaterial;
         ceilingMesh01b.position.set(-1, 2.9, -19);
-    var ceilingMesh01c = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+    var ceilingMesh01c = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
         ceilingMesh01c.material = ceilingMaterial;
         ceilingMesh01c.position.set(-1, 2.9, -27);
 
@@ -374,13 +375,13 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(14, 0, -28));
 
     // Second Floor
-    var ceilingMesh02a = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
+    var ceilingMesh02a = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
         ceilingMesh02a.material = ceilingMaterial;
         ceilingMesh02a.position.set(1, 5.9, -27);
-    var ceilingMesh02b = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
+    var ceilingMesh02b = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, Game.scene);
         ceilingMesh02b.material = ceilingMaterial;
         ceilingMesh02b.position.set(-1, 5.9, -19);
-    var ceilingMesh02c = new BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+    var ceilingMesh02c = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
         ceilingMesh02c.material = ceilingMaterial;
         ceilingMesh02c.position.set(-1, 5.9, -27);
 
@@ -394,15 +395,15 @@ function generateApartment() {
     Game.addMesh(undefined, "stairs", undefined,               new BABYLON.Vector3(0, 3, -22));
     Game.addMesh(undefined, "stairs", undefined,               new BABYLON.Vector3(0, 4.5, -20));
     
-    var commonsFloor02a = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
+    var commonsFloor02a = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
         commonsFloor02a.material = pinkCarpetMaterial;
         commonsFloor02a.position.set(1, 3, -27);
     Game.createCollisionPlane(commonsFloor02a);
-    var commonsFloor02b = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
+    var commonsFloor02b = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, Game.scene);
         commonsFloor02b.material = pinkCarpetMaterial;
         commonsFloor02b.position.set(-1, 3, -27);
     Game.createCollisionPlane(commonsFloor02b);
-    var commonsFloor02c = new BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, Game.scene);
+    var commonsFloor02c = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, Game.scene);
         commonsFloor02c.material = pinkCarpetMaterial;
         commonsFloor02c.position.set(-1, 3, -19);
     Game.createCollisionPlane(commonsFloor02c);
@@ -432,7 +433,7 @@ function generateApartment() {
 
     // Charty Apartment
     // Charty Livingroom
-    var chartyLivingroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("chartyLivingroomFloor", {xmin:0, zmin:0, xmax: 16, zmax: 6, subdivisions: {w:16, h:6}}, Game.scene);
+    var chartyLivingroomFloor = BABYLON.MeshBuilder.CreateTiledGround("chartyLivingroomFloor", {xmin:0, zmin:0, xmax: 16, zmax: 6, subdivisions: {w:16, h:6}}, Game.scene);
         chartyLivingroomFloor.material = pinkCarpetMaterial;
         chartyLivingroomFloor.position.set(-1, 3, -13);
     Game.createCollisionPlane(chartyLivingroomFloor);
@@ -465,7 +466,7 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(0, 3, -8), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Hallway
-    var chartyHallwayFloor = new BABYLON.MeshBuilder.CreateTiledGround("chartyHallwayFloor", {xmin:0, zmin:0, xmax: 4, zmax: 2, subdivisions: {w:4, h:2}}, Game.scene);
+    var chartyHallwayFloor = BABYLON.MeshBuilder.CreateTiledGround("chartyHallwayFloor", {xmin:0, zmin:0, xmax: 4, zmax: 2, subdivisions: {w:4, h:2}}, Game.scene);
         chartyHallwayFloor.material = pinkCarpetMaterial;
         chartyHallwayFloor.position.set(5, 3, -7);
     Game.createCollisionPlane(chartyHallwayFloor);
@@ -483,7 +484,7 @@ function generateApartment() {
     Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 3, -6), new BABYLON.Vector3(0, 90, 0)).setOpensInward(false);
 
     // Charlie bedroom
-    var charlieBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
+    var charlieBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
         charlieBedroomFloor.material = darkWoodMaterial;
         charlieBedroomFloor.position.set(-1, 3, -7);
     Game.createCollisionPlane(charlieBedroomFloor);
@@ -515,7 +516,7 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Bathroom
-    var chartyBathroomFloor = new BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
+    var chartyBathroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
         chartyBathroomFloor.material = linoleumMaterial;
         chartyBathroomFloor.position.set(5, 3, -5);
     Game.createCollisionPlane(chartyBathroomFloor);
@@ -532,7 +533,7 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Marty bedroom
-    var martyBedroomFloor = new BABYLON.MeshBuilder.CreateTiledGround("martyBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
+    var martyBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround("martyBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
         martyBedroomFloor.material = darkWoodMaterial;
         martyBedroomFloor.position.set(9, 3, -7);
     Game.createCollisionPlane(martyBedroomFloor);
