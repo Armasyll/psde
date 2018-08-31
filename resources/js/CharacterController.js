@@ -706,7 +706,9 @@ class CharacterController extends EntityController {
          */
         if (this.prevAnim == undefined) {
             _rotation.x += BABYLON.Tools.ToRadians(180);
-            _rotation.z += BABYLON.Tools.ToRadians(180);
+            if (_bone.id == "hand.l" || _bone.id == "hand.r") {
+                _rotation.z += BABYLON.Tools.ToRadians(180);
+            }
         }
         _mesh.rotation.copyFrom(_rotation);
         _mesh.isVisible = true;

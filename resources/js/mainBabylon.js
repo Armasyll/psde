@@ -360,6 +360,8 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(12, 0, -26), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(14, 0, -26), new BABYLON.Vector3(0, 180, 0));
 
+    Game.addFurnitureMesh("lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5));
+
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
@@ -565,6 +567,6 @@ function generateApartment() {
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     Game.createCharacter("rosie", "Rosie", undefined, "resources/images/icons/characters/rosie.png", 14, "f", "fox", "foxF", "resources/images/textures/characters/foxRed.svg", undefined, new BABYLON.Vector3(2, -512, -19), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg");
-    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/icons/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/images/textures/characters/foxCorsac.svg", undefined, new BABYLON.Vector3(3, 0, -19), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightHand("wand");
+    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/icons/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/images/textures/characters/foxCorsac.svg", undefined, new BABYLON.Vector3(3, 0, -19), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightHand("wand").attachToBone("ring02", "resources/images/textures/items/ring02BrokenRuby.svg", "fingersIndexProximinalPhalanx.l");
     Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeGreen.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
 }
