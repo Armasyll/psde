@@ -149,6 +149,16 @@
                 "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
                 "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
                 "oblongEye":"resources/images/textures/items/oblongEye.svg"
+            },
+            "ring01":{
+                "ring02Gold":"resources/images/textures/items/ring02Gold.svg",
+                "ring02Silver":"resources/images/textures/items/ring02Silver.svg"
+            },
+            "ring02":{
+                "ring02Gold":"resources/images/textures/items/ring02.svg",
+                "ring02GoldBrokenRuby":"resources/images/textures/items/ring02BrokenRuby.svg",
+                "ring02Silver":"resources/images/textures/items/ring02.svg",
+                "ring02SilverBrokenRuby":"resources/images/textures/items/ring02BrokenRuby.svg"
             }
         },
         "normalmaps":{
