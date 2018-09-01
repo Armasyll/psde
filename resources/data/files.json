@@ -1,24 +1,24 @@
 {
-    "characters":{
+    "characters":[{
         "name":"characters",
         "file":"resources/data/characters.babylon",
-        "meshes":[
-            "foxM",
-            "foxF",
-            "foxSkeletonN",
-            "spiritN"
-        ],
+        "meshes":{
+            "Male Fox":"foxM",
+            "Female Fox":"foxF",
+            "Fox Skeleton":"foxSkeletonN",
+            "Spirit":"spiritN"
+        },
         "textures":{
             "foxM":{
-                "foxRed":"resources/images/textures/characters/foxRed.svg",
-                "foxCorsac":"resources/images/textures/characters/foxCorsac.svg"
+                "Red":"resources/images/textures/characters/foxRed.svg",
+                "Corsac":"resources/images/textures/characters/foxCorsac.svg"
             },
             "foxF":{
-                "foxRed":"resources/images/textures/characters/foxRed.svg",
-                "foxCorsac":"resources/images/textures/characters/foxCorsac.svg"
+                "Red":"resources/images/textures/characters/foxRed.svg",
+                "Corsac":"resources/images/textures/characters/foxCorsac.svg"
             },
             "spiritN":{
-                "spirit":"resources/data/spirit.png"
+                "Spirit":"resources/data/spirit.png"
             }
         },
         "animations":{
@@ -97,9 +97,34 @@
                 "fingersPinkieMiddlePhalanx.r",
                 "fingersPinkieDistalPhalanx.r"
             ]
+        },
+        "properties":{
+            "foxM":{
+                "sex":0
+            },
+            "foxF":{
+                "sex":1
+            },
+            "foxSkeletonN":{
+                "sex":0
+            },
+            "spiritN":{
+                "sex":0
+            }
         }
     },
-    "furniture":{
+    {
+        "name":"arachnids",
+        "file":"resources/data/arachnids.babylon",
+        "meshes":{
+            "Spider":"spider"
+        },
+        "textures":{
+        },
+        "animations":{
+        }
+    }],
+    "furniture":[{
         "name":"furniture",
         "file":"resources/data/furniture.babylon",
         "meshes":[
@@ -131,50 +156,43 @@
                 "usableDepthEnd":0.58
             }
         }
-    },
-    "items":{
+    }],
+    "items":[{
         "name":"items",
         "file":"resources/data/items.babylon",
+        "meshes":{
+
+        },
         "textures":{
             "bookHardcoverClosed01":{
-                "packStreetChapter23":"resources/images/textures/items/packStreetChapter23.svg",
-                "packStreetChapter24":"resources/images/textures/items/packStreetChapter24.svg"
+                "Pack Street Chapter 23":"resources/images/textures/items/packStreetChapter23.svg",
+                "Pack Street Chapter 24":"resources/images/textures/items/packStreetChapter24.svg"
             },
             "cross01":{
-                "cross01":"resources/images/textures/items/cross01.svg"
+                "Wooden":"resources/images/textures/items/cross01.svg"
             },
             "eye":{
-                "feralEye":"resources/images/textures/items/feralEye.svg",
-                "feralEyeBlue":"resources/images/textures/items/feralEyeBlue.svg",
-                "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
-                "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
-                "oblongEye":"resources/images/textures/items/oblongEye.svg"
+                "Feral":"resources/images/textures/items/feralEye.svg",
+                "Feral Blue":"resources/images/textures/items/feralEyeBlue.svg",
+                "Feral Green":"resources/images/textures/items/feralEyeGreen.svg",
+                "Feral Yellow":"resources/images/textures/items/feralEyeYellow.svg",
+                "Oblong":"resources/images/textures/items/oblongEye.svg"
             },
             "ring01":{
-                "ring02Gold":"resources/images/textures/items/ring02Gold.svg",
-                "ring02Silver":"resources/images/textures/items/ring02Silver.svg"
+                "Gold":"resources/images/textures/items/ring02Gold.svg",
+                "Silver":"resources/images/textures/items/ring02Silver.svg"
             },
             "ring02":{
-                "ring02Gold":"resources/images/textures/items/ring02.svg",
-                "ring02GoldBrokenRuby":"resources/images/textures/items/ring02BrokenRuby.svg",
-                "ring02Silver":"resources/images/textures/items/ring02.svg",
-                "ring02SilverBrokenRuby":"resources/images/textures/items/ring02BrokenRuby.svg"
+                "Gold":"resources/images/textures/items/ring02.svg",
+                "Gold, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg",
+                "Silver":"resources/images/textures/items/ring02.svg",
+                "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
             }
-        },
-        "normalmaps":{
-        },
-        "bumpmaps":{
-        },
-        "specularmaps":{
-        },
-        "diffusemaps":{
-        },
-        "animations":{
         },
         "properties":{
             "knife":{
                 
             }
         }
-    }
+    }]
 }
