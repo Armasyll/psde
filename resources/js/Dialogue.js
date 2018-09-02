@@ -11,13 +11,13 @@ class Dialogue {
 	 * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
 	 * @example new Dialogue("exampleD", "Example D", function() {return "Last example, I swear!";}, "exampleA", "exampleB", "exampleC")
 	 */
-	constructor(_id = "", _title = "", _dialogue = "", ..._options) {
+	constructor(_id, _title, _dialogue, ..._options) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         if (typeof _title != "string") {_title = "";}
         if (typeof _dialogue != "string" && typeof _dialogue != "function") {
         	return;
         }
-        this.id = Game.filterName(_id);
+        this.id = Game.filterID(_id);
         this.title = Game.filterName(_title) || "";
         this.dialogue = _dialogue;
         this.options = [];
@@ -49,7 +49,15 @@ class Dialogue {
 		return this.title;
 	}
 	getDialogue() {
-		return this.dialogue;
+		if (typeof this.dialogue == "string") {
+			return this.dialogue;
+		}
+		else if (typeof this.dialogue == "function") {
+			return this.dialogue();
+		}
+		else {
+			return "";
+		}
 	}
 	getOptions() {
 		return this.options;
@@ -74,22 +82,24 @@ class DialogueOption {
 			this.dialogue = _dialogue;
 			this.setTitle(this.title);
 		}
+		return this;
 	}
 	getDialogue() {
 		return this.dialogue;
 	}
 	setTitle(_title) {
 		if (!(this.dialogue instanceof Dialogue)) {
-			return;
+			return this;
 		}
 		this.title = Game.filterName(_title) || this.dialogue.getTitle();
+		return this;
 	}
 	getTitle() {
 		return this.title || this.dialogue.getTitle();
 	}
 	setCondition(_function) {
 		if (!(this.dialogue instanceof Dialogue)) {
-			return;
+			return this;
 		}
 		if (typeof _function == "function") {
 			this.condition = _function;
@@ -97,9 +107,15 @@ class DialogueOption {
 		else {
 			this.condition = undefined;
 		}
+		return this;
 	}
 	getCondition() {
-		return this.condition;
+		if (typeof this.condition == "function") {
+			return this.condition();
+		}
+		else {
+			return true;
+		}
 	}
 	static createFromArray(_array) {
 		if (!(_array instanceof Array)) {
