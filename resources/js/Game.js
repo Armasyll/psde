@@ -60,6 +60,8 @@ class Game {
         this.instancedEntities = {};
         this.instancedItemEntities = {};
 
+        this.dialogues = {};
+
         this._finishedLoading = false;
 
         this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
@@ -881,6 +883,9 @@ class Game {
         }
     }
     static filterName(_string) {
+        if (typeof _string != "string") {
+            return "";
+        }
         return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
     }
     static filterVector(..._vector) {
@@ -1185,6 +1190,21 @@ class Game {
     }
     static hasCharacterEntity(_id) {
         return this.getCharacterEntity(_id) != undefined;
+    }
+    static getDialogue(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof Dialogue) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.dialogues.hasOwnProperty(_id)) {
+            return Game.dialogues[_id];
+        }
+        else if (typeof _id == "object" && _id.hasOwnProperty("dialogue") && _id.dialogue instanceof Dialogue) {
+            return _id.dialogue;
+        }
+        return null;
     }
     /**
      * Creates a character mesh, entity, and controller.
