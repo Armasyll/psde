@@ -3,22 +3,32 @@
         "name":"characters",
         "file":"resources/data/characters.babylon",
         "meshes":{
-            "Male Fox":"foxM",
-            "Female Fox":"foxF",
-            "Fox Skeleton":"foxSkeletonN",
-            "Spirit":"spiritN"
-        },
-        "textures":{
             "foxM":{
-                "Red":"resources/images/textures/characters/foxRed.svg",
-                "Corsac":"resources/images/textures/characters/foxCorsac.svg"
+                "name":"Male Fox",
+                "sex":"m",
+                "textures":{
+                    "Red":"resources/images/textures/characters/foxRed.svg",
+                    "Corsac":"resources/images/textures/characters/foxCorsac.svg"
+                }
             },
             "foxF":{
-                "Red":"resources/images/textures/characters/foxRed.svg",
-                "Corsac":"resources/images/textures/characters/foxCorsac.svg"
+                "name":"Female Fox",
+                "sex":"f",
+                "textures":{
+                    "Red":"resources/images/textures/characters/foxRed.svg",
+                    "Corsac":"resources/images/textures/characters/foxCorsac.svg"
+                }
+            },
+            "foxSkeletonN":{
+                "name":"Fox Skeleton",
+                "sex":"n"
             },
             "spiritN":{
-                "Spirit":"resources/data/spirit.png"
+                "name":"Spirit",
+                "sex":"n",
+                "textures":{
+                    "Spirit":"resources/data/spirit.png"
+                }
             }
         },
         "animations":{
@@ -97,29 +107,15 @@
                 "fingersPinkieMiddlePhalanx.r",
                 "fingersPinkieDistalPhalanx.r"
             ]
-        },
-        "properties":{
-            "foxM":{
-                "sex":0
-            },
-            "foxF":{
-                "sex":1
-            },
-            "foxSkeletonN":{
-                "sex":0
-            },
-            "spiritN":{
-                "sex":0
-            }
         }
     },
     {
         "name":"arachnids",
         "file":"resources/data/arachnids.babylon",
         "meshes":{
-            "Spider":"spider"
-        },
-        "textures":{
+            "spider":{
+                "name":"Spider"
+            }
         },
         "animations":{
         }
@@ -127,71 +123,74 @@
     "furniture":[{
         "name":"furniture",
         "file":"resources/data/furniture.babylon",
-        "meshes":[
-            "chair",
-            "loveseat",
-            "couch"
-        ],
-        "textures":{
-        },
-        "animations":{
-        },
-        "properties":{
+        "meshes":{
             "chair":{
+                "name":"Chair",
                 "usableWidth":0.5,
                 "usableHeight":0.4,
                 "usableDepthStart":0.118,
                 "usableDepthEnd":0.58
             },
             "loveseat":{
+                "name":"Loveseat",
                 "usableWidth":1.5,
                 "usableHeight":0.4,
                 "usableDepthStart":0.118,
                 "usableDepthEnd":0.58
             },
             "couch":{
+                "name":"Couch",
                 "usableWidth":2.5,
                 "usableHeight":0.4,
                 "usableDepthStart":0.118,
                 "usableDepthEnd":0.58
             }
+        },
+        "animations":{
         }
     }],
     "items":[{
         "name":"items",
         "file":"resources/data/items.babylon",
         "meshes":{
-
-        },
-        "textures":{
             "bookHardcoverClosed01":{
-                "Pack Street Chapter 23":"resources/images/textures/items/packStreetChapter23.svg",
-                "Pack Street Chapter 24":"resources/images/textures/items/packStreetChapter24.svg"
+                "name":"Hardcover Book",
+                "textures":{
+                    "Pack Street Chapter 23":"resources/images/textures/items/packStreetChapter23.svg",
+                    "Pack Street Chapter 24":"resources/images/textures/items/packStreetChapter24.svg"
+                }
             },
             "cross01":{
-                "Wooden":"resources/images/textures/items/cross01.svg"
+                "name":"Cross",
+                "textures":{
+                    "Wooden":"resources/images/textures/items/cross01.svg"
+                }
             },
             "eye":{
-                "Feral":"resources/images/textures/items/feralEye.svg",
-                "Feral Blue":"resources/images/textures/items/feralEyeBlue.svg",
-                "Feral Green":"resources/images/textures/items/feralEyeGreen.svg",
-                "Feral Yellow":"resources/images/textures/items/feralEyeYellow.svg",
-                "Oblong":"resources/images/textures/items/oblongEye.svg"
+                "name":"Eye",
+                "textures":{
+                    "Feral":"resources/images/textures/items/feralEye.svg",
+                    "Feral Blue":"resources/images/textures/items/feralEyeBlue.svg",
+                    "Feral Green":"resources/images/textures/items/feralEyeGreen.svg",
+                    "Feral Yellow":"resources/images/textures/items/feralEyeYellow.svg",
+                    "Oblong":"resources/images/textures/items/oblongEye.svg"
+                }
             },
             "ring01":{
-                "Gold":"resources/images/textures/items/ring02Gold.svg",
-                "Silver":"resources/images/textures/items/ring02Silver.svg"
+                "name":"Ring",
+                "textures":{
+                    "Gold":"resources/images/textures/items/ring02Gold.svg",
+                    "Silver":"resources/images/textures/items/ring02Silver.svg"
+                }
             },
             "ring02":{
-                "Gold":"resources/images/textures/items/ring02.svg",
-                "Gold, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg",
-                "Silver":"resources/images/textures/items/ring02.svg",
-                "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
-            }
-        },
-        "properties":{
-            "knife":{
-                
+                "name":"Ring",
+                "textures":{
+                    "Gold":"resources/images/textures/items/ring02.svg",
+                    "Gold, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg",
+                    "Silver":"resources/images/textures/items/ring02.svg",
+                    "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
+                }
             }
         }
     }]
