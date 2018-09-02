@@ -84,7 +84,6 @@ class CharacterController extends EntityController {
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
 
-        this.setDefaultAction("talk");
         this._showHelmet = true;
 
         this.attachedMeshes = {};

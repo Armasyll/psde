@@ -2,7 +2,7 @@ class DoorController extends EntityController {
     constructor(_id, _avatar, _entity) {
         super (_id, _avatar, _entity);
 
-        this.setDefaultAction("open");
+        this.entity.setDefaultAction("open");
 
         this.open = false;
         this.move = true;
@@ -44,7 +44,7 @@ class DoorController extends EntityController {
         }
     	if (this.open) {
     		if (this.avatar.rotation.equals(this.avEndRot)) {
-        		this.setDefaultAction("close");
+        		this.entity.setDefaultAction("close");
     			this.move = false;
     			return;
     		}
@@ -52,7 +52,7 @@ class DoorController extends EntityController {
     	}
     	else {
     		if (this.avatar.rotation.equals(this.avStartRot)) {
-       			this.setDefaultAction("open");
+       			this.entity.setDefaultAction("open");
     			this.move = false;
     			return;
     		}

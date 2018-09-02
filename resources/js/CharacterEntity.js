@@ -646,6 +646,12 @@ class CharacterEntity extends EntityWithStorage {
          */
         this.incestual = 0;
 
+        /**
+         * Initial dialogue
+         * @type {Dialogue}
+         */
+        this.dialogue = undefined;
+
         this.setName(_name);
         this.setImage(_image);
         this.setClass(_class);
@@ -653,7 +659,6 @@ class CharacterEntity extends EntityWithStorage {
         this.setSex(_sex);
         this.setGender(this._sex);
         this.setSpecies(_species);
-        this.addAvailableAction("talk");
         this.addAvailableAction("attack");
         this.addAvailableAction("follow");
         this.addAvailableAction("hold");
@@ -690,6 +695,15 @@ class CharacterEntity extends EntityWithStorage {
             return this.name + " " + this.surname;
         else
             return this.name;
+    }
+    getFirstName() {
+        return this.name || "";
+    }
+    getLastName() {
+        return this.surname || "";
+    }
+    getSurname() {
+        return this.getLastName();
     }
 
     setClass(_class) {
@@ -4337,6 +4351,26 @@ class CharacterEntity extends EntityWithStorage {
 
         return Math.ceil(chance);
     }
+
+    setDialogue(_dialogue) {
+        _dialogue = Game.getDialogue(_dialogue);
+        if (_dialogue instanceof Dialogue) {
+            this.dialogue = _dialogue;
+            this.addAvailableAction("talk");
+            this.setDefaultAction("talk");
+        }
+        return this;
+    }
+    removeDialogue() {
+        this.dialogue = undefined;
+        this.removeAvailableAction("talk");
+        this.setDefaultAction("look");
+        return this;
+    }
+    getDialogue() {
+        return this.dialogue;
+    }
+
     dispose() {
         if (this == Game.player.entity) {
             return false;

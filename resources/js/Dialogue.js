@@ -3,13 +3,13 @@ class Dialogue {
 	 * Creates a Dialogue
 	 * @param  {String}    _id       Unique ID
 	 * @param  {String}    _title    Title
-	 * @param  {String}    _dialogue String, or Function that returns a String
+	 * @param  {String}    _dialogue String, or Function, with the parameters _them and _you, that returns a String
 	 * @param  {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
 	 * @return {Dialogue}  Dialogue
 	 * @example new Dialogue("exampleA", "Example A", "This is a test!")
 	 * @example new Dialogue("exampleB", "Example B", "This is another test!")
 	 * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
-	 * @example new Dialogue("exampleD", "Example D", function() {return "Last example, I swear!";}, "exampleA", "exampleB", "exampleC")
+	 * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
 	 */
 	constructor(_id, _title, _dialogue, ..._options) {
         if (typeof _id != "string") {_id = genUUIDv4();}
@@ -53,7 +53,7 @@ class Dialogue {
 			return this.dialogue;
 		}
 		else if (typeof this.dialogue == "function") {
-			return this.dialogue();
+			return this.dialogue;
 		}
 		else {
 			return "";

@@ -19,9 +19,6 @@ class EntityController {
         this.targetController = null;
         this.targetedByControllers = new Set();
 
-        this.defaultAction = null;
-        this.setDefaultAction("look");
-
         Game.entityControllers[this.id] = this;
     }
     setID(_id) {
@@ -150,23 +147,6 @@ class EntityController {
             this.entity.setAvatarScaling(this.avatar.scaling);
         }
         this.propertiesChanged = false;
-    }
-    setDefaultAction(_action) {
-        if (!(this.entity instanceof Entity) && !(this.entity instanceof InstancedEntity)) {
-            return;
-        }
-        if (this.entity.hasAvailableAction(_action)) {
-            this.defaultAction = _action;
-        }
-    }
-    getDefaultAction() {
-        return this.defaultAction;
-    }
-    getAvailableActions() {
-        if (!(this.entity instanceof Entity) && !(this.entity instanceof InstancedEntity)) {
-            return;
-        }
-        return this.entity.getAvailableActions();
     }
     setParent(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {

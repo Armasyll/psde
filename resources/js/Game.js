@@ -199,6 +199,7 @@ class Game {
         this.actionSit = new ActionData("sit", Game.actionSitFunction, false);
         this.actionOpen = new ActionData("open", Game.actionOpenFunction, false);
         this.actionClose = new ActionData("close", Game.actionCloseFunction, false);
+        this.actionTalk = new ActionData("talk", Game.actionTalkFunction, false);
         this.XP_MIN = 0;
         this.XP_MAP = 355000;
         this.LEVEL_MIN = 0;
@@ -268,10 +269,11 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "spirit", "spiritN", undefined, undefined, _position, _rotation, _scaling);
+        this.player = this.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "fox", "foxM", "resources/images/textures/characters/foxRed.svg", undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("eye");
+        this.player.attachToLeftEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
+        this.player.attachToRightEye("eye", "resources/images/textures/items/feralEyeGreen.svg");
         this.player.getAvatar().isPickable = false;
-        this.player.getAvatar().material.alpha = 0.25;
         this.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
             GameGUI.setPlayerPortrait(this.player);
@@ -394,10 +396,10 @@ class Game {
                     return;
                 }
                 if (this.player.targetController.getEntity() instanceof InstancedEntity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
                 }
                 else if (this.player.targetController.getEntity() instanceof Entity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getDefaultAction());
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
                 }
                 break;
             }
@@ -1371,11 +1373,11 @@ class Game {
             case "chair" :
             case "loveseat" :
             case "couch" : {
-                _controller.setDefaultAction("sit");
+                _controller.getEntity().setDefaultAction("sit");
                 break;
             }
             case "bed" : {
-                _controller.setDefaultAction("lay");
+                _controller.getEntity().setDefaultAction("lay");
                 break;
             }
             case "desk" :
@@ -1388,7 +1390,7 @@ class Game {
             case "microwave" :
             case "toaster" :
             case "basket" : {
-                _controller.setDefaultAction("open");
+                _controller.getEntity().setDefaultAction("open");
                 break;
             }
         }
@@ -1487,7 +1489,7 @@ class Game {
         Game.player.setTarget(_controller);
         GameGUI.setTargetPortrait(_controller);
         GameGUI.showTargetPortrait();
-        GameGUI.setActionTooltip(_controller.getDefaultAction());
+        GameGUI.setActionTooltip(_controller.getEntity().getDefaultAction());
         GameGUI.showActionTooltip();
     }
     static clearPlayerTarget() {
@@ -1632,6 +1634,9 @@ class Game {
             }
             else if (_action == "close" && _entity instanceof DoorEntity) {
                 Game.actionCloseFunction(_entity.getController(), _subEntity.getController());
+            }
+            else if (_action == "talk" && _entity instanceof CharacterEntity) {
+                Game.actionTalkFunction(_entity.getController(), _subEntity.getController());
             }
             return;
         }
@@ -1794,5 +1799,23 @@ class Game {
         _subEntityController.setParent(_entityController.getAvatar());
         _subEntityController.getAvatar().position.set(_seatingWidth / 2, 0, 0.025);
         _subEntityController.getAvatar().rotation.set(0,0,0);
+    }
+    static actionTalkFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof CharacterController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof CharacterController)) {
+            return;
+        }
+        if (!(_entityController.getEntity().getDialogue() instanceof Dialogue)) {
+            return;
+        }
+        var _dialogue = _entityController.getEntity().getDialogue().getDialogue();
+        if (typeof _dialogue == "string") {
+            GameGUI.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
+        }
+        else if (typeof _dialogue == "function") {
+            GameGUI.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
+        }
     }
 }

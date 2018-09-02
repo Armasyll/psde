@@ -61,6 +61,9 @@ class Entity {
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");
 
+        this.defaultAction = null;
+        this.setDefaultAction("look");
+
         Game.entities[this.id] = this;
     }
 
@@ -201,6 +204,15 @@ class Entity {
             return this.specialProperties.has(_specialProperties);
         else
             return false;
+    }
+
+    setDefaultAction(_action) {
+        if (this.hasAvailableAction(_action)) {
+            this.defaultAction = _action;
+        }
+    }
+    getDefaultAction() {
+        return this.defaultAction;
     }
 
     dispose() {

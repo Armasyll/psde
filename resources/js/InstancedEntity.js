@@ -50,6 +50,9 @@ class InstancedEntity {
 
         this.controller = undefined;
 
+        this.defaultAction = null;
+        this.setDefaultAction("look");
+
         Game.instancedEntities[this.id] = this;
     }
     getID() {
@@ -271,6 +274,14 @@ class InstancedEntity {
     }
     getImage() {
         return this.entity.getImage();
+    }
+    setDefaultAction(_action) {
+        if (this.hasAvailableAction(_action)) {
+            this.defaultAction = _action;
+        }
+    }
+    getDefaultAction() {
+        return this.defaultAction;
     }
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);

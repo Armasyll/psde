@@ -258,7 +258,7 @@ class GameGUI {
             nameInput.width = 0.7;
             nameInput.color = "white";
             nameInput.background = "grey";
-            nameInput.text = "Fox";
+            nameInput.text = "Remmy Cormo";
 
         ageContainer.height = 0.05;
             ageLabel.text = "Age: ";
