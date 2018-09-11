@@ -60,6 +60,7 @@
             var plane = BABYLON.Mesh.CreatePlane("fireplane", 1.5, scene);
                 plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
                 plane.material = fire;
+                plane.scaling.y = 2;
 
             engine.runRenderLoop(function() {
                 if (scene) {
