@@ -570,4 +570,21 @@ function generateApartment() {
         }
     );
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
+
+    // Create fire material
+    var fire = new BABYLON.FireMaterial("fire", Game.scene);
+        fire.opacityTexture = new BABYLON.Texture("resources/images/textures/effects/fireOpacity.png", Game.scene);
+        fire.distortionTexture = new BABYLON.Texture("resources/images/textures/effects/fireDistortion.png", Game.scene);
+        fire.diffuseTexture = new BABYLON.Texture("resources/images/textures/effects/fire.png", Game.scene);
+        fire.speed = 5.0;
+
+    // Create plane to apply the fire material
+    var plane = BABYLON.Mesh.CreatePlane("fireplane", 1.5, Game.scene);
+        plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+        plane.material = fire;
+        plane.scaling.y = 2;
+
+    // Game.scene.getMeshByID("fireplane").attachToBone(Game.player.getBone("hand.r"), Game.player.avatar);
+    // Game.scene.getMeshByID("fireplane").rotation.set(0, BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180));
+    // Game.scene.getMeshByID("fireplane").scaling.set(0.1, 0.2, 0.1);
 }
