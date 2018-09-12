@@ -191,6 +191,45 @@
                     "Silver":"resources/images/textures/items/ring02.svg",
                     "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
                 }
+            },
+            "ring03":{
+                "name":"Ring",
+                "textures":{
+                    "Gold":"resources/images/textures/items/ring02.svg",
+                    "Gold, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg",
+                    "Silver":"resources/images/textures/items/ring02.svg",
+                    "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
+                }
+            },
+            "bottle03":{
+                "name":"Square Jar",
+                "textures":{
+                    "bottle03RedSarcophagusJuice":"resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
+                    "bottle03Red":"resources/images/textures/items/bottle03Red.svg",
+                    "bottle03Blue":"resources/images/textures/items/bottle03Blue.svg",
+                    "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
+                    "bottle03White":"resources/images/textures/items/bottle03White.svg"
+                }
+            },
+            "bottle04":{
+                "name":"Flask",
+                "textures":{
+                    "bottle03RedSarcophagusJuice":"resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
+                    "bottle03Red":"resources/images/textures/items/bottle03Red.svg",
+                    "bottle03Blue":"resources/images/textures/items/bottle03Blue.svg",
+                    "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
+                    "bottle03White":"resources/images/textures/items/bottle03White.svg"
+                }
+            },
+            "bottle05":{
+                "name":"Test Tube",
+                "textures":{
+                    "bottle03RedSarcophagusJuice":"resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
+                    "bottle03Red":"resources/images/textures/items/bottle03Red.svg",
+                    "bottle03Blue":"resources/images/textures/items/bottle03Blue.svg",
+                    "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
+                    "bottle03White":"resources/images/textures/items/bottle03White.svg"
+                }
             }
         }
     }]
