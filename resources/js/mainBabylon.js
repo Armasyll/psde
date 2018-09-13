@@ -252,7 +252,7 @@ function generateApartment() {
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, -90, 0));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", undefined, undefined, new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", undefined, undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(6, 0, -6), new BABYLON.Vector3(0, -90, 0));
     Game.addMesh(undefined, "frontWallLeftDoor", undefined,    new BABYLON.Vector3(8, 0, -6), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "doorway", undefined,              new BABYLON.Vector3(10, 0, -6), new BABYLON.Vector3(0, -90, 0));
@@ -264,7 +264,7 @@ function generateApartment() {
     Game.addMesh(undefined, "corner", undefined,               new BABYLON.Vector3(4, 0, -8));
     Game.addMesh(undefined, "corner", undefined,               new BABYLON.Vector3(4, 0, -8), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.addMesh(undefined, "refrigerator", undefined,         new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("refridgeratorInstance01", "refrigerator", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.5), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(8, 0, -8));
     Game.addMesh(undefined, "corner", undefined,               new BABYLON.Vector3(10, 0, -8));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(14, 0, -8), new BABYLON.Vector3(0, 90, 0));
@@ -352,7 +352,7 @@ function generateApartment() {
         Game.addMesh(undefined, "stairWallCornerLeft", undefined, new BABYLON.Vector3(0, 0, -22));
 
     Game.createFurniture("commonsCouch", "Couch", "couch", "couch01", undefined, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
-    Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22));
+    Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
     Game.createItem("knife", Game.createProtoItem("knife", "Knife", "A dull knife.", "", "weapon", "knife"), undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
     Game.createItem("cross", Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "resources/images/icons/items/cross01.png", "weapon", "cross01", "resources/images/textures/items/cross01.svg"), undefined, new BABYLON.Vector3(10, 0.6, -22));
     Game.addItemMesh("plateInstance01", "plate", undefined, undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));

@@ -124,26 +124,78 @@
         "name":"furniture",
         "file":"resources/data/furniture.babylon",
         "meshes":{
+            "bedsideTableSingleDrawer":{
+                "name":"Bedside Table (Single Drawer)",
+                "usableArea":[
+                    {"x1":-0.28125, "y1":0.5, "z1":-0.28125, "x2":0.28125, "y2":0.5, "z2":0.28125},
+                    {"x1":-0.225, "y1":0.025, "z1":-0.25, "x2":0.225, "y2":0.025, "z2":0.225}
+                ]
+            },
+            "bedsideTableDoubleDrawer":{
+                "name":"Bedside Table (Double Drawer)",
+                "usableArea":[
+                    {"x1":-0.28125, "y1":0.5, "z1":-0.28125, "x2":0.28125, "y2":0.5, "z2":0.28125},
+                    {"x1":-0.225, "y1":0.2475, "z1":-0.25, "x2":0.225, "y2":0.2475, "z2":0.225},
+                    {"x1":-0.225, "y1":0.025, "z1":-0.25, "x2":0.225, "y2":0.025, "z2":0.225}
+                ]
+            },
+            "bookshelfThin":{
+                "name":"Bookshelf (Thin)",
+                "usableArea":[
+                    {"x1":-0.225, "y1":0.807, "z1":-0.225, "x2":0.225, "y2":0.807, "z2":0.2},
+                    {"x1":-0.225, "y1":0.416, "z1":-0.225, "x2":0.225, "y2":0.416, "z2":0.2},
+                    {"x1":-0.225, "y1":0.025, "z1":-0.225, "x2":0.225, "y2":0.025, "z2":0.2},
+                ]
+            },
+            "bookshelf":{
+                "name":"Bookshelf",
+                "usableArea":[
+                    {"x1":-0.475, "y1":0.807, "z1":-0.225, "x2":0.475, "y2":0.807, "z2":0.2},
+                    {"x1":-0.475, "y1":0.416, "z1":-0.225, "x2":0.475, "y2":0.416, "z2":0.2},
+                    {"x1":-0.475, "y1":0.025, "z1":-0.225, "x2":0.475, "y2":0.025, "z2":0.2},
+                ]
+            },
             "chair":{
                 "name":"Chair",
-                "usableWidth":0.5,
-                "usableHeight":0.4,
-                "usableDepthStart":0.118,
-                "usableDepthEnd":0.58
+                "usableArea":[
+                    {"x1":-0.2839, "y1":0.25, "z1":-0.35, "x2":0.2839, "y2":0.25, "z2":0.115}
+                ]
+            },
+            "coffeeTable":{
+                "name":"Coffee Table",
+                "usableArea":[
+                    {"x1":-0.375, "y1":0.5, "z1":-0.375, "x2":0.375, "y2":0.5, "z2":0.375}
+                ]
+            },
+            "consoleTable":{
+                "name":"Console Table",
+                "usableArea":[
+                    {"x1":-0.75, "y1":0.5, "z1":-0.25, "x2":0.75, "y2":0.5, "z2":0.25}
+                ]
+            },
+            "diningTable":{
+                "name":"Dining Table",
+                "usableArea":[
+                    {"x1":-1.0, "y1":0.5, "z1":-0.375, "x2":1.0, "y2":0.5, "z2":0.375}
+                ]
             },
             "loveseat":{
                 "name":"Loveseat",
-                "usableWidth":1.5,
-                "usableHeight":0.4,
-                "usableDepthStart":0.118,
-                "usableDepthEnd":0.58
+                "usableArea":[
+                    {"x1":-0.5339, "y1":0.25, "z1":-0.35, "x2":0.5339, "y2":0.25, "z2":0.115}
+                ]
             },
-            "couch":{
+            "couch01":{
                 "name":"Couch",
-                "usableWidth":2.5,
-                "usableHeight":0.4,
-                "usableDepthStart":0.118,
-                "usableDepthEnd":0.58
+                "usableArea":[
+                    {"x1":-0.8464, "y1":0.25, "z1":-0.35, "x2":0.8592, "y2":0.25, "z2":0.115}
+                ]
+            },
+            "couch02":{
+                "name":"Couch",
+                "usableArea":[
+                    {"x1":-0.8464, "y1":0.25, "z1":-0.35, "x2":0.8592, "y2":0.25, "z2":0.115}
+                ]
             }
         },
         "animations":{
