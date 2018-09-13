@@ -252,7 +252,7 @@ function generateApartment() {
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, -90, 0));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", undefined, undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", "resources/images/textures/furniture/bookshelfThinBlackPlywood.svg", undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(6, 0, -6), new BABYLON.Vector3(0, -90, 0));
     Game.addMesh(undefined, "frontWallLeftDoor", undefined,    new BABYLON.Vector3(8, 0, -6), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "doorway", undefined,              new BABYLON.Vector3(10, 0, -6), new BABYLON.Vector3(0, -90, 0));
