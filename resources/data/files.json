@@ -282,6 +282,16 @@
                     "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
                     "bottle03White":"resources/images/textures/items/bottle03White.svg"
                 }
+            },
+            "bottle06":{
+                "name":"Cannister",
+                "textures":{
+                    "bottle03RedSarcophagusJuice":"resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
+                    "bottle03Red":"resources/images/textures/items/bottle03Red.svg",
+                    "bottle03Blue":"resources/images/textures/items/bottle03Blue.svg",
+                    "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
+                    "bottle03White":"resources/images/textures/items/bottle03White.svg"
+                }
             }
         }
     }]

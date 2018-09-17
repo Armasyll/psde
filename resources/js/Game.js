@@ -87,101 +87,6 @@ class Game {
         this.highlightedColorNeutral = "white";
 
         this.MALE = 0, this.FEMALE = 1;
-        this.skeletonAnimationBonesInUse = {
-            "characterSkeleton":{
-                "10_blink":[
-                    "eyelidTop.r",
-                    "eyelidTop.l",
-                    "eyelidBot.r",
-                    "eyelidBot.l"
-                ],
-                "10_hand.l.grip":[
-                    "wrist.l",
-                    "hand.l",
-                    "thumbMetacarpal.l",
-                    "thumbProximinalPhalanx.l",
-                    "thumbDistalPhalanx.l",
-                    "fingersIndexMetacarpal.l",
-                    "fingersIndexProximinalPhalanx.l",
-                    "fingersIndexMiddlePhalanx.l",
-                    "fingersIndexDistalPhalanx.l",
-                    "fingersMetacarpal.l",
-                    "fingersProximinalPhalanx.l",
-                    "fingersMiddlePhalanx.l",
-                    "fingersDistalPhalanx.l",
-                    "fingersPinkieMetacarpal.l",
-                    "fingersPinkieProximinalPhalanx.l",
-                    "fingersPinkieMiddlePhalanx.l",
-                    "fingersPinkieDistalPhalanx.l"
-                ],
-                "10_hand.r.grip":[
-                    "wrist.r",
-                    "hand.r",
-                    "thumbMetacarpal.r",
-                    "thumbProximinalPhalanx.r",
-                    "thumbDistalPhalanx.r",
-                    "fingersIndexMetacarpal.r",
-                    "fingersIndexProximinalPhalanx.r",
-                    "fingersIndexMiddlePhalanx.r",
-                    "fingersIndexDistalPhalanx.r",
-                    "fingersMetacarpal.r",
-                    "fingersProximinalPhalanx.r",
-                    "fingersMiddlePhalanx.r",
-                    "fingersDistalPhalanx.r",
-                    "fingersPinkieMetacarpal.r",
-                    "fingersPinkieProximinalPhalanx.r",
-                    "fingersPinkieMiddlePhalanx.r",
-                    "fingersPinkieDistalPhalanx.r"
-                ],
-                "10_penis.erect":[
-                    "penis"
-                ],
-                "10_penis.flacid":[
-                    "penis"
-                ],
-                "70_reach.forward":[
-                    "head",
-                    "pelvis",
-                    "shoulder.r",
-                    "upperArm.r",
-                    "forearm.r",
-                    "IK.hand.r",
-                    "wrist.r",
-                    "hand.r",
-                    "thumbMetacarpal.r",
-                    "thumbProximinalPhalanx.r",
-                    "thumbDistalPhalanx.r",
-                    "fingersIndexMetacarpal.r",
-                    "fingersIndexProximinalPhalanx.r",
-                    "fingersIndexMiddlePhalanx.r",
-                    "fingersIndexDistalPhalanx.r",
-                    "fingersMetacarpal.r",
-                    "fingersProximinalPhalanx.r",
-                    "fingersMiddlePhalanx.r",
-                    "fingersDistalPhalanx.r",
-                    "fingersPinkieMetacarpal.r",
-                    "fingersPinkieProximinalPhalanx.r",
-                    "fingersPinkieMiddlePhalanx.r",
-                    "fingersPinkieDistalPhalanx.r"
-                ]
-            }
-        };
-        this.characterTextures = {
-            "foxM":{
-                foxRed:"resources/data/foxRed.svg",
-                foxCorsac:"resources/data/foxCorsac.svg"
-            },
-            "foxF":{
-                foxRed:"resources/data/foxRed.svg",
-                foxCorsac:"resources/data/foxCorsac.svg"
-            }
-        };
-        this.itemTextures = {
-            "bookHardcoverClosed01":{
-                packStreetChapter23:"resources/data/packStreetChapter23.svg",
-                packStreetChapter24:"resources/data/packStreetChapter24.svg"
-            }
-        };
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
         this.kFeetTypes = this.kHandTypes;
@@ -729,7 +634,6 @@ class Game {
                 _n.material = _n.material.clone();
                 _n.skeleton = _mesh.skeleton.clone(_id);
                 _n.skeleton.name = _mesh.skeleton.name;
-                _n.material.unfreeze();
             }
             else {
                 if (_highlightFix) {
@@ -739,7 +643,6 @@ class Game {
                 else {
                     _n = _mesh.createInstance(_id);
                 }
-                _n.material.freeze();
             }
             if (_skin == undefined) {}
             else if (typeof _skin == BABYLON.Texture) {
@@ -752,6 +655,7 @@ class Game {
                 _n.material.diffuseTexture = new BABYLON.Texture(_skin);
                 _n.material.specularColor.set(0,0,0);
             }
+            _n.material.freeze();
             _n.id = _id;
             _n.name = _mesh.name;
             _n.position.copyFrom(_position);
@@ -1705,7 +1609,7 @@ class Game {
         if (!(_subEntityController instanceof CharacterController)) {
             return;
         }
-        _entityController.setOpen(false);
+        _entityController.doClose(false);
     }
     static actionHoldFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
@@ -1779,7 +1683,7 @@ class Game {
             }
             _entityController.getEntity().setLocked(false);
         }
-        _entityController.setOpen(true);
+        _entityController.doOpen(true);
     }
     /**
      * Places the subEntity near the Entity, and sets its parent to the Entity

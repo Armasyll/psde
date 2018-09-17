@@ -50,9 +50,6 @@ window.addEventListener("DOMContentLoaded", function() {
                 _character.updateProperties();
             }
         }
-        for (_door in Game.doorControllers) {
-            Game.doorControllers[_door].moveAV();
-        }
     });
     Game.scene.registerAfterRender(function() {
         if (Game._assignBoundingBoxCollisionQueue.size > 0) {
@@ -217,7 +214,7 @@ function generateApartment() {
     Game.addMesh(undefined, "frontWallLeftWall", undefined,    new BABYLON.Vector3(2, 0, 0));
     Game.addMesh(undefined, "frontWallLeftDoor", undefined,    new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 180, 0));
     Game.createDoor("ozzyhallwayclosetdoor", "Closet", undefined, "door", undefined, undefined, new BABYLON.Vector3(3, 0, 0), new BABYLON.Vector3(0, -90, 0));
-    Game.getDoorController("ozzyhallwayclosetdoor").setOpensInward(false);
+    Game.getDoorController("ozzyhallwayclosetdoor").setOpensInward();
     Game.createDoor("ozzybathroomdoor", "Bathroom", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 0, 0), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "frontDoorLeftWall", undefined,    new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, 90, 0));
     Game.addMesh(undefined, "doorway", undefined,              new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, -90, 0));
@@ -346,7 +343,7 @@ function generateApartment() {
         Game.addMesh(undefined, "stairs", undefined,               new BABYLON.Vector3(0, 1.5, -20));
         Game.addMesh(undefined, "doorway", undefined,              new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 180, 0));
         Game.createDoor("packstreetApt3Basement", "Basement", undefined, "door", undefined, undefined, new BABYLON.Vector3(0, 0, -19), new BABYLON.Vector3(0, 180, 0));
-        Game.getDoorController("packstreetApt3Basement").setOpensInward(false);
+        Game.getDoorController("packstreetApt3Basement").setOpensInward();
         Game.addMesh(undefined, "doorway", undefined,              new BABYLON.Vector3(0, 0, -20));
         Game.addMesh(undefined, "stairWallSideLeft", undefined,   new BABYLON.Vector3(0, 0, -20));
         Game.addMesh(undefined, "stairWallCornerLeft", undefined, new BABYLON.Vector3(0, 0, -22));
@@ -367,7 +364,6 @@ function generateApartment() {
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
-    Game.getDoorController("apartmentbuildingdoor").setOpensInward(false);
 
     // Second Floor
     var ceilingMesh02a = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
@@ -476,7 +472,7 @@ function generateApartment() {
     Game.addMesh(undefined, "corner", undefined,  new BABYLON.Vector3(8, 3, -6), new BABYLON.Vector3(0, 270, 0));
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "doorway", undefined, new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 3, -6), new BABYLON.Vector3(0, 90, 0)).setOpensInward(false);
+    Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 3, -6), new BABYLON.Vector3(0, 90, 0)).setOpensInward();
 
     // Charlie bedroom
     var charlieBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);

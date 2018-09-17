@@ -813,16 +813,6 @@ class CharacterController extends EntityController {
         return undefined;
     }
 }
-class AnimData {
-    constructor(_name) {
-        this.loop = true;
-        this.rate = 1;
-        this.exist = false;
-        this.name = _name;
-        this.from = 0;
-        this.to = 0;
-    }
-}
 class ControllerMovementKey {
     constructor(_forward = false, _shift = false, _backward = false, _turnRight = false, _turnLeft = false, _strafeRight = false, _strafeLeft = false, _jump = false) {
         this.forward = _forward;
