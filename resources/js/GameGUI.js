@@ -585,7 +585,7 @@ class GameGUI {
             _image = _image.getEntity().getImage();
         }
         else if (_image instanceof ItemController) {
-            _name = _image.getEntity().getEntity().getName();
+            _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
             _image = _image.getEntity().getImage();
         }
         else if (_image instanceof EntityController) {

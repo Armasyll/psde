@@ -246,6 +246,17 @@ class Game {
         this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
         //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, this.camera); // Could be used for darkness, when using too many lights is an issue
     }
+    static loadScript(_file) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = _file;
+        script.onload = function(){
+        };
+        document.body.appendChild(script);
+    }
+    static loadProtoItems() {
+        Game.loadScript("resources/js/InitItems.js");
+    }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         switch (event) {
@@ -1318,10 +1329,11 @@ class Game {
         if (_mesh != undefined) {
             _mesh = _mesh.name;
         }
-        _entity.setAvatar(_mesh);
+        _entity.setAvatarID(_mesh);
         _entity.setAvatarSkin(_skin);
         return _entity;
     }
+    static updateProtoItem() {}
     static removeProtoItem() {}
     static createItem(_id, _entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
@@ -1334,14 +1346,14 @@ class Game {
             _entity = _id;
             _id = _entity.getID();
         }
-        else if (typeof _entity == "string" && Game.hasItemEntity(_entity)) {
-            _entity = Game.getItemEntity(_entity);
+        else if (typeof _entity == "string" && Game.hasProtoItemEntity(_entity)) {
+            _entity = new InstancedItemEntity(_id, Game.getProtoItemEntity(_entity));
         }
         else {
             return null;
         }
         _entity.addAvailableAction("take");
-        var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _entity.getAvatarSkin(), _options, _position, _rotation, _scale, true);
+        var _mesh = Game.addItemMesh(_id, _entity.getAvatarID(), _entity.getAvatarSkin(), _options, _position, _rotation, _scale, true);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
         return _controller;

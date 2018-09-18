@@ -197,8 +197,6 @@
                     {"x1":-0.8464, "y1":0.25, "z1":-0.35, "x2":0.8592, "y2":0.25, "z2":0.115}
                 ]
             }
-        },
-        "animations":{
         }
     }],
     "items":[{
@@ -209,13 +207,21 @@
                 "name":"Hardcover Book",
                 "textures":{
                     "Pack Street Chapter 23":"resources/images/textures/items/packStreetChapter23.svg",
-                    "Pack Street Chapter 24":"resources/images/textures/items/packStreetChapter24.svg"
+                    "Pack Street Chapter 24":"resources/images/textures/items/packStreetChapter24.svg",
+                    "The Lesser Key of Solomon":"resources/images/textures/items/theLesserKeyOfSolomon.svg"
+                },
+                "icons":{
+                    "Pack Street Chapter 23":"resources/images/icons/items/packstreet23StrangeNewDay.png",
+                    "The Lesser Key of Solomon":"resources/images/icons/items/theLesserKeyOfSolomon.png"
                 }
             },
             "cross01":{
                 "name":"Cross",
                 "textures":{
-                    "Wooden":"resources/images/textures/items/cross01.svg"
+                    "Wooden Cross":"resources/images/textures/items/cross01.svg"
+                },
+                "icons":{
+                    "Wooden Cross":"resources/images/icons/items/cross01.png"
                 }
             },
             "eye":{
@@ -233,6 +239,10 @@
                 "textures":{
                     "Gold":"resources/images/textures/items/ring02Gold.svg",
                     "Silver":"resources/images/textures/items/ring02Silver.svg"
+                },
+                "icons":{
+                    "Gold":"resources/images/textures/items/ring01Gold.png",
+                    "Silver":"resources/images/textures/items/ring01Silver.png"
                 }
             },
             "ring02":{
@@ -242,6 +252,9 @@
                     "Gold, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg",
                     "Silver":"resources/images/textures/items/ring02.svg",
                     "Silver, Broken Ruby":"resources/images/textures/items/ring02BrokenRuby.svg"
+                },
+                "icons":{
+                    "Gold":"resources/images/textures/items/ring02Gold.png",
                 }
             },
             "ring03":{

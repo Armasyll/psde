@@ -3,7 +3,7 @@ window.addEventListener('resize', function(){
     GameGUI.resizeText();
 });
 window.addEventListener("DOMContentLoaded", function() {
-    if (Game.debugEnabled) console.log("Initializing game.");
+    console.log("Initializing game.");
     Game.initialize();
 
     Game.engine.runRenderLoop(function() {
@@ -11,6 +11,7 @@ window.addEventListener("DOMContentLoaded", function() {
         if (!Game._finishedLoading && Game._filesToLoad == 0) {
             if (Game.debugEnabled) console.log("Finished loading assets.");
 
+            Game.loadProtoItems();
             Game._finishedLoading = true;
 
             Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {

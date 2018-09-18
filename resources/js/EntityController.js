@@ -2,7 +2,7 @@ class EntityController {
     constructor(_id, _avatar, _entity) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
-        if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh) || !_avatar.skeleton instanceof BABYLON.Skeleton) return null;
+        if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh)) return null;
         if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity)) return null;
         this.id = _id;
         this.avatar = undefined;
