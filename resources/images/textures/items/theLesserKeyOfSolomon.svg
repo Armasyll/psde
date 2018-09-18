@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1024"
@@ -13,7 +14,11 @@
    version="1.1"
    id="svg3821"
    sodipodi:docname="theLesserKeyOfSolomon.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   enable-background="new"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/items/theLesserKeyOfSolomon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata3827">
     <rdf:RDF>
@@ -22,12 +27,17 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
      id="defs3825">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Strips1_1"
+       id="pattern7453"
+       patternTransform="matrix(3.0226507,0,0,10.000101,302.3022,-0.02652194)" />
     <filter
        inkscape:label="Old Postcard"
        inkscape:menu="Image Paint and Draw"
@@ -104,6 +114,43 @@
          result="fbSourceGraphic"
          id="feComposite5269" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5701">
+      <feBlend
+         inkscape:collect="always"
+         mode="overlay"
+         in2="BackgroundImage"
+         id="feBlend5703" />
+    </filter>
+    <pattern
+       inkscape:isstock="true"
+       inkscape:stockid="Stripes 1:1"
+       id="Strips1_1"
+       patternTransform="translate(0,0) scale(10,10)"
+       height="1"
+       width="2"
+       patternUnits="userSpaceOnUse"
+       inkscape:collect="always">
+      <rect
+         id="rect6538"
+         height="2"
+         width="1"
+         y="-0.5"
+         x="0"
+         style="fill:black;stroke:none" />
+    </pattern>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5701-3">
+      <feBlend
+         inkscape:collect="always"
+         mode="overlay"
+         in2="BackgroundImage"
+         id="feBlend5703-6" />
+    </filter>
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -118,9 +165,9 @@
      inkscape:window-height="1056"
      id="namedview3823"
      showgrid="false"
-     inkscape:zoom="0.97601067"
-     inkscape:cx="603.88334"
-     inkscape:cy="650.30155"
+     inkscape:zoom="1.688956"
+     inkscape:cx="553.81749"
+     inkscape:cy="545.73712"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -143,26 +190,16 @@
      stroke="black"
      fill-opacity="0.25"
      fill="rgb(204, 204, 204)" />
-  <polygon
-     points="512,400 512,0 488.48,0 488.48,400 "
+  <path
+     style="fill:#ead495;fill-opacity:1;stroke:none;stroke-width:1;filter:url(#filter5701)"
+     d="M 464.96094,0 V 400 H 488.48047 512 535.51953 559.03906 V 0 H 535.51953 512 488.48047 Z"
      id="polygon3735"
-     style="fill:#ead495;fill-opacity:0.14117648;stroke:none;stroke-width:1;filter:url(#filter5271)" />
-  <polygon
-     points="559.04,400 559.04,0 535.52,0 535.52,400 "
-     id="polygon3745"
-     style="fill:#ead495;fill-opacity:0.14117648;stroke:none;stroke-width:1;filter:url(#filter5271)" />
-  <polygon
-     points="488.48,400 488.48,0 464.96,0 464.96,400 "
-     id="polygon3781"
-     style="fill:#ead495;fill-opacity:0.14117648;stroke:none;stroke-width:1;filter:url(#filter5271)" />
-  <polygon
-     points="535.52,400 535.52,0 512,0 512,400 "
-     id="polygon3791"
-     style="fill:#ead495;fill-opacity:0.14117648;stroke:none;stroke-width:1;filter:url(#filter5271)" />
+     inkscape:connector-curvature="0"
+     transform="matrix(1.4626138,0,0,1,-236.85825,0)" />
   <polygon
      points="598.000,400.000 598.000,0.000 878.000,0.000 878.000,400.000 "
      id="polygon3801"
-     style="stroke:none;fill:#ead495;fill-opacity:0.14117648"
+     style="stroke:none;fill:#ead495;fill-opacity:1"
      stroke-width="1"
      stroke="black"
      fill-opacity="0.25"
@@ -174,7 +211,7 @@
      fill-opacity="0.25"
      points="426.000,-0.000 146.000,-0.000 146.000,399.999 426.000,400.000 "
      id="polygon3803"
-     style="stroke:none;fill:#ead495;fill-opacity:0.14117648" />
+     style="stroke:none;fill:#ead495;fill-opacity:1" />
   <g
      id="g5227"
      style="fill:#1a1a1a;fill-opacity:1;stroke:#1a1a1a;stroke-opacity:1">
@@ -2223,4 +2260,8 @@
        id="path686"
        style="fill:#e6e6e6" />
   </g>
+  <path
+     style="opacity:0.21799999;vector-effect:none;fill:url(#pattern7453);fill-opacity:1;stroke:none;stroke-width:0.54978919;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5701-3)"
+     d="M 442.84375 -0.02734375 L 442.84375 399.97656 L 449.95312 399.97656 L 457.0625 399.97656 L 464.17188 399.97656 L 470.84375 399.97656 L 470.84375 399.97852 L 477.95312 399.97852 L 485.0625 399.97852 L 492.17188 399.97852 L 499.2793 399.97852 L 505.95312 399.97852 L 513.0625 399.97852 L 520.17188 399.97852 L 527.2793 399.97852 L 533.95312 399.97852 L 541.0625 399.97852 L 548.17188 399.97852 L 554.84375 399.97852 L 555.2793 399.97852 L 561.95312 399.97852 L 569.0625 399.97852 L 576.17188 399.97852 L 583.2793 399.97852 L 583.2793 -0.02734375 L 576.17188 -0.02734375 L 569.0625 -0.02734375 L 561.95312 -0.02734375 L 555.2793 -0.02734375 L 554.84375 -0.02734375 L 548.17188 -0.02734375 L 541.0625 -0.02734375 L 533.95312 -0.02734375 L 527.2793 -0.02734375 L 520.17188 -0.02734375 L 513.0625 -0.02734375 L 505.95312 -0.02734375 L 499.2793 -0.02734375 L 492.17188 -0.02734375 L 485.0625 -0.02734375 L 477.95312 -0.02734375 L 471.2793 -0.02734375 L 464.17188 -0.02734375 L 457.0625 -0.02734375 L 449.95312 -0.02734375 L 442.84375 -0.02734375 z "
+     id="polygon3735-7" />
 </svg>

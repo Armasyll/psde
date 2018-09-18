@@ -1,73 +1,4 @@
-_map = {};
-
-window.addEventListener('resize', function(){
-    Game.engine.resize();
-    GameGUI.resizeText();
-});
-window.addEventListener("DOMContentLoaded", function() {
-    if (Game.debugEnabled) console.log("Initializing game.");
-    Game.initialize();
-
-    Game.engine.runRenderLoop(function() {
-        Game.scene.render();
-        if (!Game._finishedLoading && Game._filesToLoad == 0) {
-            if (Game.debugEnabled) console.log("Finished loading assets.");
-
-            var _character = Game.characterMeshes["foxSkeletonN"];
-            var _animationRange = _character.skeleton.getAnimationRanges();
-            for (var _i = 0; _i < _animationRange.length; _i++) {
-                if (_animationRange[_i].to - _animationRange[_i].from > 2) {
-                    _animationRange[_i].from += 1;
-                    _animationRange[_i].to -= 1;
-                }
-            }
-
-            generateApartment();
-            Game.initPlayer();
-            Game._finishedLoading = true;
-
-            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
-            }));
-            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
-            }));
-
-            Client.initialize();
-            GameGUI.resizeText();
-            GameGUI.showCharacterChoiceMenu();
-        }
-    });
-    var _rbrCount = 0;
-    Game.scene.registerBeforeRender(function() {
-        if (!(Game.player instanceof CharacterController))
-            return null;
-        for (_character in Game.characterControllers) {
-            if (Game.entityControllers[_character] instanceof CharacterController) {
-                Game.entityControllers[_character].moveAV();
-            }
-            if (_character.propertiesChanged) {
-                _character.updateProperties();
-            }
-        }
-    });
-    Game.scene.registerAfterRender(function() {
-        if (Game._assignBoundingBoxCollisionQueue.size > 0) {
-            Game._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
-                Game._assignBoundingBoxCollisionToMesh(_mesh);
-            });
-        }
-        if (_rbrCount >= 10) {
-            Game.castRayTarget();
-            _rbrCount = 0;
-        }
-        else {
-            _rbrCount++;
-        }
-    })
-});
-
-function generateApartment() {
+Game.generateApartment = function() {
     if (Game.debugEnabled) console.log("Running generateApartmentScene");
     
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
@@ -366,14 +297,13 @@ function generateApartment() {
 
     Game.createFurniture("commonsCouch", "Couch", "couch", "couch01", undefined, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
-    Game.createItem("knife", Game.createProtoItem("knife", "Knife", "A dull knife.", "", "weapon", "knife"), undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
-    Game.createItem("cross", Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "resources/images/icons/items/cross01.png", "weapon", "cross01", "resources/images/textures/items/cross01.svg"), undefined, new BABYLON.Vector3(10, 0.6, -22));
+    Game.createItem("knife", "knife", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
+    Game.createItem("cross", "cross", undefined, new BABYLON.Vector3(10, 0.6, -22));
     Game.addItemMesh("plateInstance01", "plate", undefined, undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));
     Game.addItemMesh("plateInstance02", "plate", undefined, undefined, new BABYLON.Vector3(10, 0.5, -22.5));
 
-    Game.createItem("alBuildingLocationKey", Game.createProtoItem("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simple key to Pack Street Bldg 3", "resources/images/icons/items/key.svg", "key", "key01"), undefined, new BABYLON.Vector3(10, 0.5, -22.75));
-    Game.createProtoItem("pandorasBoxLocationKey", "Key to Pandora's Box", "A complex brass key meant for digitigrade mammals to Pandora's Box.", "resources/images/icons/items/pandorasBoxLocationKey.svg", "key", "key01");
-    Game.createItem("packstreet23StrangeNewDay", Game.createProtoItem("packstreet23StrangeNewDay", "Pack Street Chapter 23", "In the wake of Bellwether's arrest, Remmy takes stock of a changed city.", "resources/images/icons/items/packstreet23StrangeNewDay.png", "book", "bookHardcoverClosed01", "resources/images/textures/items/packStreetChapter23.svg"), undefined, new BABYLON.Vector3(10, 0.5, -21.25), new BABYLON.Vector3(0, 180, 0));
+    Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.5, -22.75));
+    Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.5, -21.25), new BABYLON.Vector3(0, 180, 0));
 
     Game.addFurnitureMesh("lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5));
 

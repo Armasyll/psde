@@ -1334,6 +1334,12 @@ class Game {
             _entity = _id;
             _id = _entity.getID();
         }
+        else if (typeof _entity == "string" && Game.hasItemEntity(_entity)) {
+            _entity = Game.getItemEntity(_entity);
+        }
+        else {
+            return null;
+        }
         _entity.addAvailableAction("take");
         var _mesh = this.addItemMesh(_id, _entity.getAvatarID(), _entity.getAvatarSkin(), _options, _position, _rotation, _scale, true);
         var _controller = new ItemController(_id, _mesh, _entity);
@@ -1388,6 +1394,9 @@ class Game {
         this.highlightedMesh = null;
     }
     static setPlayerTarget(_controller) {
+        if (!(Game.player instanceof CharacterController)) {
+            return false;
+        }
         if (_controller == Game.player.getTarget()) {return;}
         this.highlightMesh(_controller.avatar);
         Game.player.setTarget(_controller);
@@ -1397,6 +1406,9 @@ class Game {
         GameGUI.showActionTooltip();
     }
     static clearPlayerTarget() {
+        if (!(Game.player instanceof CharacterController)) {
+            return false;
+        }
         if (Game.player.getTarget() == undefined) {
             return undefined;
         }
@@ -1406,6 +1418,9 @@ class Game {
         GameGUI.hideActionTooltip();
     }
     static castRayTarget() {
+        if (!(Game.player instanceof CharacterController)) {
+            return false;
+        }
         var _ray = Game.camera.getForwardRay(2 * Game.player.getAvatar().scaling.y, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
         if (Game.player.targetRay == undefined) {
             Game.player.targetRay = _ray;

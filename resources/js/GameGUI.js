@@ -340,11 +340,10 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerUpObservable.add(function() {
+            Game.generateApartment();
+            Game.initPlayer();
             Game.player.entity.setName(nameInput.text);
-            if (Client.isOnline()) {
-
-            }
-            else {
+            if (!Client.isOnline()) {
                 Client.connect();
             }
             GameGUI.hideMainMenu();
@@ -352,12 +351,11 @@ class GameGUI {
             GameGUI.showHUD();
         });
         submitOffline.onPointerUpObservable.add(function() {
+            Game.generateApartment();
+            Game.initPlayer();
             Game.player.entity.setName(nameInput.text);
             if (Client.isOnline()) {
                 Client.disconnect();
-            }
-            else {
-
             }
             GameGUI.hideMainMenu();
             GameGUI.setPlayerPortrait(Game.player);
