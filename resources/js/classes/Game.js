@@ -56,6 +56,7 @@ class Game {
         this.itemEntities = {};
         this.clothingEntities = {};
         this.keyEntities = {};
+        this.spellEntities = {};
 
         this.instancedEntities = {};
         this.instancedItemEntities = {};
@@ -115,6 +116,8 @@ class Game {
          * @type {Set}
          */
         this.kCharacterClasses = new Set(["bard","cleric","druid","paladin","ranger","sorcerer","warlock","wizard","classless","commoner","expert","noble"]);
+
+        this.kSpellSchools = new Set(["abjuration","conjuration","divination","enchantment","evocation","illusion","necromancy","transmutation","universal"]);
 
         GameGUI.initialize();
         this.initFreeCamera();
@@ -255,7 +258,7 @@ class Game {
         document.body.appendChild(script);
     }
     static loadProtoItems() {
-        Game.loadScript("resources/js/InitItems.js");
+        Game.loadScript("resources/js/items.js");
     }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
