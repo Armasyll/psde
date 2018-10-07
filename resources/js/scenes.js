@@ -38,14 +38,14 @@ Game.generateApartment = function() {
         noooMesh.material = nooo;
 
     var pinkCarpetMaterial = new BABYLON.StandardMaterial("pinkCarpetMaterial", Game.scene);
-        pinkCarpetMaterial.diffuseTexture = new BABYLON.Texture("resources/data/rug.png", Game.scene);
+        pinkCarpetMaterial.diffuseTexture = new BABYLON.Texture("resources/images/textures/static/rug.png", Game.scene);
         pinkCarpetMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     var darkWoodMaterial = new BABYLON.StandardMaterial("darkWoodMaterial", Game.scene);
-        darkWoodMaterial.diffuseTexture = new BABYLON.Texture("resources/data/woodenFloorDark01-DIFFUSE.png", Game.scene);
-        darkWoodMaterial.bumpTexture = new BABYLON.Texture("resources/data/woodenFloorDark01-NORMAL.png", Game.scene);
+        darkWoodMaterial.diffuseTexture = new BABYLON.Texture("resources/images/textures/static/woodenFloorDark01-DIFFUSE.png", Game.scene);
+        darkWoodMaterial.bumpTexture = new BABYLON.Texture("resources/images/textures/static/woodenFloorDark01-NORMAL.png", Game.scene);
         darkWoodMaterial.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
     var linoleumMaterial = new BABYLON.StandardMaterial("linoleumMaterial", Game.scene);
-        linoleumMaterial.diffuseTexture = new BABYLON.Texture("resources/data/checkerLinoleumFloor01.png", Game.scene);
+        linoleumMaterial.diffuseTexture = new BABYLON.Texture("resources/images/textures/static/checkerLinoleumFloor01.png", Game.scene);
         linoleumMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
     // Ground Floor
@@ -206,7 +206,7 @@ Game.generateApartment = function() {
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 270, 0));
     Game.addMesh(undefined, "windowframe", undefined,          new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.addMesh(undefined, "wall", undefined,                 new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
-    Game.addFurnitureMesh("refridgeratorInstance01", "refrigerator", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.5), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("refridgeratorInstance01", "refrigerator", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
     Game.addFurnitureMesh("trashBagFullInstance02", "trashBagFull", undefined, {mass:4.0}, new BABYLON.Vector3(6.5, 0, -10.6), new BABYLON.Vector3(0, 90, 0), undefined);
@@ -501,8 +501,9 @@ Game.generateApartment = function() {
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 180, 0));
     Game.addMesh(undefined, "wall", undefined,    new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
-    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/icons/characters/rosie.png", 14, "f", "fox", "foxF", "resources/images/textures/characters/foxRed.svg", undefined, new BABYLON.Vector3(2, 3.1, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg");
-    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/icons/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/images/textures/characters/foxCorsac.svg", undefined, new BABYLON.Vector3(2, 3.1, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightHand("wand02").attachToBone("ring01", "resources/images/textures/items/ring02Gold.svg", "thumbProximinalPhalanx.l").attachToBone("ring02", "resources/images/textures/items/ring02GoldBrokenRuby.svg", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "resources/images/textures/items/ring02Silver.svg", "fingersPinkieProximinalPhalanx.l");
+    Game.createCharacter("rinehart", "Rinehart Nye", undefined, "resources/images/icons/characters/genericCharacter.svg", 30, "m", "fox", undefined, "resources/images/textures/characters/foxRinehart.svg", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye", "resources/images/textures/items/circularEyeViolet.svg").attachToRightEye("eye", "resources/images/textures/items/circularEyeViolet.svg");
+    Game.createCharacter("rosie", "Rosie", undefined, "resources/images/icons/characters/rosie.png", 14, "f", "fox", "foxF", "resources/images/textures/characters/foxRed.svg", undefined, new BABYLON.Vector3(2, 3.1, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "resources/images/textures/items/circularEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/circularEyeBlue.svg");
+    Game.createCharacter("charlie", "Charlie", undefined, "resources/images/icons/characters/charlie.svg", 28, "f", "fox", "foxF", "resources/images/textures/characters/foxCorsac.svg", undefined, new BABYLON.Vector3(2, 3.1, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightEye("eye", "resources/images/textures/items/feralEyeBlue.svg").attachToRightHand("wand02").attachToBone("ring01", "resources/images/textures/items/ring02Gold.svg", "thumbProximinalPhalanx.l").attachToBone("ring02", "resources/images/textures/items/ring02GoldBrokenRuby.svg", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "resources/images/textures/items/ring02Silver.svg", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04");
     //Game.createCharacter("spider", "Spider", "A giant fucking spider!", undefined, undefined, undefined, undefined, "spider", undefined, undefined, new BABYLON.Vector3(3, 0, -16), undefined, new BABYLON.Vector3(0.05, 0.05, 0.05));
     new Dialogue(
         "charlieTalk",
