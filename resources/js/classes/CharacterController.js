@@ -122,6 +122,7 @@ class CharacterController extends EntityController {
         _anim.loop = _loop;
         if (this.skeleton.getAnimationRange(_anim.name) != null) {
             _anim.exist = true;
+            this.skeleton.getAnimationRange(_rangeName).from += 1;
             _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
             _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
         }
