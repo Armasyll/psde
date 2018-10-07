@@ -67,6 +67,9 @@ class Game {
 
         this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
         //this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
+        this.missingMaterial = new BABYLON.StandardMaterial("missingMaterial", this.scene);
+        this.missingTexture = new BABYLON.Texture("resources/images/textures/static/missingTexture.svg", this.scene);
+        this.missingMaterial.diffuseTexture = this.missingTexture;
 
         this.keyboardControls = {};
         this.player = undefined;
@@ -336,9 +339,9 @@ class Game {
                 break;
             }
             case this.showMainMenuCode : {
-                if (GameGUI.mainMenuVisible()) {
+                if (GameGUI.menuVisible()) {
                     if (Game.debugEnabled) console.log(`\tShowing HUD`);
-                    GameGUI.hideMainMenu(false);
+                    GameGUI.hideMenu(false);
                     GameGUI.showHUD(false);
                 }
                 else {
@@ -642,40 +645,42 @@ class Game {
             _scaling = BABYLON.Vector3.One();
         }
         if (_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) {
+            // If it's an instance, the skin change will fuck it up :v
+            // Will figure that out later, though :l - 20181006
             var _n = undefined;
             if (_mesh.skeleton instanceof BABYLON.Skeleton) {
                 _n = _mesh.clone(_id);
-                _n.material = _n.material.clone();
+                _n.material = _mesh.material.clone();
                 _n.skeleton = _mesh.skeleton.clone(_id);
                 _n.skeleton.name = _mesh.skeleton.name;
             }
             else {
                 if (_highlightFix) {
                     _n = _mesh.clone(_id);
-                    _n.material = _n.material.clone();
+                    _n.material = _mesh.material.clone();
                 }
                 else {
                     _n = _mesh.createInstance(_id);
                 }
             }
-            if (_skin == undefined) {}
-            else if (typeof _skin == BABYLON.Texture) {
-                _n.material.diffuseTexture = _skin;
+            if (_n instanceof BABYLON.Mesh) {
+                if (_skin == undefined) {}
+                else if (typeof _skin == BABYLON.Texture) {
+                    _n.material.diffuseTexture = _skin;
+                }
+                else if (typeof _skin == BABYLON.Material) {
+                    _n.material = _skin;
+                }
+                else if (typeof _skin == "string") {
+                    _n.material.diffuseTexture = new BABYLON.Texture(_skin);
+                    _n.material.specularColor.set(0,0,0);
+                }
             }
-            else if (typeof _skin == BABYLON.Material) {
-                _n.material = _skin.clone();
-            }
-            else if (typeof _skin == "string") {
-                _n.material.diffuseTexture = new BABYLON.Texture(_skin);
-                _n.material.specularColor.set(0,0,0);
-            }
-            _n.material.freeze();
             _n.id = _id;
             _n.name = _mesh.name;
             _n.position.copyFrom(_position);
             _n.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
             _n.scaling.copyFrom(_scaling);
-            //_n.freezeWorldMatrix();
             _n.collisionMesh = undefined;
             _n.isPickable = false;
             this.entityMeshInstances[_n.id] = _n;
@@ -760,7 +765,7 @@ class Game {
                     _meshes[_i].rotation.set(0,0,0);
                     _meshes[_i].scaling.set(1,1,1);
                     if (!(_meshes[_i].material instanceof BABYLON.Material)) {
-                        _meshes[_i].material = new BABYLON.StandardMaterial("", Game.scene);
+                        _meshes[_i].material = Game.missingMaterial;
                     }
                     //_meshes[_i].material.freeze();
                     _importedMeshes[_meshes[_i].id] = _meshes[_i];
@@ -788,6 +793,7 @@ class Game {
     static loadMeshes() {
         if (Game.debugEnabled) console.log("Running loadMeshes");
         Game.furnitureMeshes = Game.importMeshes("furniture.babylon");
+        Game.importMeshes("misc.babylon", undefined, function(_meshes) {Game.furnitureMeshes = Object.assign(Game.furnitureMeshes, _meshes);});
         Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon");
         Game.characterMeshes = Game.importMeshes("characters.babylon");
         Game.importMeshes("arachnids.babylon", undefined, function(_meshes) {Game.characterMeshes = Object.assign(Game.characterMeshes, _meshes);});

@@ -3212,8 +3212,9 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     _generateProperties() {
-        var _baseHeight = 0; // Average height in metres at the age of 20
-        var _baseMass = 0; // Average mass in kilograms at the age of 20
+        var _baseMass = 36; // Average mass, in kilograms, of NW at the age of 26
+        var _baseHeight = 1.20; // Average height, in metres, of NW at the age of 26
+        var _baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
         this.muscle = 0.5;
         this.fat = 0.25;
         if (this.species == "fox") {
@@ -3222,12 +3223,14 @@ class CharacterEntity extends EntityWithStorage {
                 this.penisGirth = 10;
                 _baseMass = 36;
                 _baseHeight = 1.20;
+                _baseWidth = 0.4;
             }
             else {
                 this.vaginaSize = 15;
                 this.vaginaGirth = 10;
                 _baseMass = 32;
                 _baseHeight = 1.12;
+                _baseWidth = 0.37;
             }
 
             this.predator = true;
@@ -3242,12 +3245,14 @@ class CharacterEntity extends EntityWithStorage {
                 this.penisGirth = 16;
                 _baseMass = 72;
                 _baseHeight = 1.9;
+                _baseWidth = 0.63;
             }
             else {
                 this.vaginaSize = 25;
                 this.vaginaGirth = 16;
                 _baseMass = 66;
                 _baseHeight = 1.8;
+                _baseWidth = 0.6;
             }
 
             this.predator = true;
@@ -3262,12 +3267,14 @@ class CharacterEntity extends EntityWithStorage {
                 this.penisGirth = 10;
                 _baseMass = 32;
                 _baseHeight = 1.10;
+                _baseWidth = 0.36;
             }
             else {
                 this.vaginaSize = 15;
                 this.vaginaGirth = 10;
                 _baseMass = 28;
                 _baseHeight = 1.02;
+                _baseWidth = 0.34;
             }
 
             this.predator = true;
@@ -3280,13 +3287,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
+                _baseMass = 58;
+                _baseHeight = 1.6;
+                _baseWidth = 0.53;
             }
             else {
                 this.vaginaSize = 25;
                 this.vaginaGirth = 16;
+                _baseMass = 62;
+                _baseHeight = 1.75;
+                _baseWidth = 0.58;
             }
 
-            this.bodySize = 0.85;
             this.predator = true;
             this.setFeet("pad");
             this.setHand("pad");
@@ -3297,13 +3309,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 19;
                 this.penisGirth = 11;
+                _baseMass = 34;
+                _baseHeight = 1.35;
+                _baseWidth = 0.45;
             }
             else {
                 this.vaginaSize = 19;
                 this.vaginaGirth = 11;
+                _baseMass = 28;
+                _baseHeight = 1.0;
+                _baseWidth = 0.33;
             }
             
-            this.bodySize = 0.5;
             this.predator = false;
             this.setFeet("hoof");
             this.setHand("hoof");
@@ -3314,13 +3331,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 8;
                 this.penisGirth = 7;
+                _baseMass = 10;
+                _baseHeight = 0.6;
+                _baseWidth = 0.2;
             }
             else {
                 this.vaginaSize = 8;
                 this.vaginaGirth = 7;
+                _baseMass = 8;
+                _baseHeight = 0.5;
+                _baseWidth = 0.16;
             }
 
-            this.bodySize = 0.25;
             this.predator = true;
             this.setFeet("pad");
             this.setHand("pad");
@@ -3331,13 +3353,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
+                _baseMass = 78;
+                _baseHeight = 2.2;
+                _baseWidth = 0.7;
             }
             else {
                 this.vaginaSize = 22;
                 this.vaginaGirth = 12;
+                _baseMass = 60;
+                _baseHeight = 1.9;
+                _baseWidth = 0.6;
             }
             
-            this.bodySize = 0.65;
             this.predator = false;
             this.setFeet("hoof");
             this.setHand("hoof");
@@ -3348,15 +3375,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 12;
                 this.penisGirth = 8;
+                _baseMass = 22;
+                _baseHeight = 0.95;
+                _baseWidth = 0.34;
             }
             else {
                 this.vaginaSize = 12;
                 this.vaginaGirth = 8;
-                this.mass = 14.9;
-                this.height = 0.81;
+                _baseMass = 14.9;
+                _baseHeight = 0.81;
+                _baseWidth = 0.3;
             }
             
-            this.bodySize = 0.4;
             this.predator = false;
             this.setFeet("fur");
             this.setHand("fur");
@@ -3367,13 +3397,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 18;
                 this.penisGirth = 12;
+                _baseMass = 55;
+                _baseHeight = 1.6;
+                _baseWidth = 0.53;
             }
             else {
                 this.vaginaSize = 18;
                 this.vaginaGirth = 12;
+                _baseMass = 51;
+                _baseHeight = 1.55;
+                _baseWidth = 0.5;
             }
             
-            this.bodySize = 0.5;
             this.predator = true;
             this.setFeet("pad");
             this.setHand("pad");
@@ -3384,13 +3419,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
+                _baseMass = 36;
+                _baseHeight = 1.20;
+                _baseWidth = 0.4;
             }
             else {
                 this.vaginaSize = 15;
                 this.vaginaGirth = 10;
+                _baseMass = 32;
+                _baseHeight = 1.12;
+                _baseWidth = 0.37;
             }
             
-            this.bodySize = 0.5;
             this.predator = true;
             this.setFeet("pad");
             this.setHand("pad");
@@ -3401,13 +3441,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 28;
                 this.penisGirth = 15;
+                _baseMass = 88;
+                _baseHeight = 2.2;
+                _baseWidth = 0.73;
             }
             else {
                 this.vaginaSize = 28;
                 this.vaginaGirth = 15;
+                _baseMass = 82;
+                _baseHeight = 2.0;
+                _baseWidth = 0.66;
             }
             
-            this.bodySize = 1.2;
             this.predator = true;
             this.setFeet("pad");
             this.setHand("pad");
@@ -3417,13 +3462,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
+                _baseMass = 68;
+                _baseHeight = 2.0;
+                _baseWidth = 0.66;
             }
             else {
                 this.vaginaSize = 22;
                 this.vaginaGirth = 12;
+                _baseMass = 60;
+                _baseHeight = 1.9;
+                _baseWidth = 0.63;
             }
             
-            this.bodySize = 0.65;
             this.predator = false;
             this.setFeet("hoof");
             this.setHand("hoof");
@@ -3434,13 +3484,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
+                _baseMass = 46;
+                _baseHeight = 1.3;
+                _baseWidth = 0.54;
             }
             else {
                 this.vaginaSize = 15;
                 this.vaginaGirth = 10;
+                _baseMass = 44;
+                _baseHeight = 1.2;
+                _baseWidth = 0.5;
             }
             
-            this.bodySize = 0.6;
             this.predator = false;
             this.setFeet("hoof");
             this.setHand("hoof");
@@ -3451,13 +3506,18 @@ class CharacterEntity extends EntityWithStorage {
             if (this.getSex() == Game.MALE) {
                 this.penisSize = 45;
                 this.penisGirth = 25;
+                _baseMass = 82;
+                _baseHeight = 2.0;
+                _baseWidth = 0.66;
             }
             else {
                 this.vaginaSize = 45;
                 this.vaginaGirth = 25;
+                _baseMass = 78;
+                _baseHeight = 1.9;
+                _baseWidth = 0.63;
             }
             
-            this.bodySize = 0.85;
             this.predator = false;
             this.setFeet("hoof");
             this.setHand("hoof");
@@ -3466,20 +3526,34 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == "mouse") {
             if (this.getSex() == Game.MALE) {
+                _baseMass = 0.4;
+                _baseHeight = 0.16;
+                _baseWidth = 0.05;
                 this.penisSize = 1;
                 this.penisGirth = 0.5;
             }
             else {
+                _baseMass = 0.4;
+                _baseHeight = 0.15;
+                _baseWidth = 0.05;
                 this.vaginaSize = 1;
                 this.vaginaGirth = 0.6;
             }
             
-            this.bodySize = 0.05;
             this.predator = false;
             this.setFeet("skin");
             this.setHand("skin");
             this.setEyes("circle");
             this.setFur("fur");
+        }
+        if (this.age > 25) {
+            this.height = _baseHeight;
+        }
+        else if (this.age < 0) {
+            this.height = _baseHeight / 20;
+        }
+        else {
+            this.height = _baseHeight / (1 + (_baseHeight / 20) + Math.E^(-0.35 * (this.age - 16)));
         }
         this.width = this.height / 2.4;
         return this;
