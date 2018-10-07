@@ -1,9 +1,6 @@
 {"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"items.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
-"materials":[{"name":"items.metalIron","id":"items.metalIron","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0.5,0.5,0.5],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
-"diffuseTexture":{"name":"metalTexture.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}},
-{"name":"items.eye","id":"items.eye","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0.5,0.5,0.5],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4, 
-"diffuseTexture":{"name":"feralEyeBlue.png","level":1,"hasAlpha":1,"coordinatesMode":0,"uOffset":0,"vOffset":0,"uScale":1,"vScale":1,"uAng":0,"vAng":0,"wAng":0,"wrapU":1,"wrapV":1,"coordinatesIndex":0}}],
+"materials":[],
 "multiMaterials":[],
 "skeletons":[],
 "meshes":[{"name":"hornsCurved01","id":"hornsCurved01","billboardMode":0,"position":[-7,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
@@ -1415,7 +1412,7 @@
 ,47,107,108,56,109,110,67,111,67,112,5,11,113,9,114,115,116,15,23,117,29,30]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":118,"indexStart":0,"indexCount":222}]
 ,"instances":[]}
-,{"name":"sword","id":"sword","materialId":"items.metalIron","billboardMode":0,"position":[-2,0.0352,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"sword","id":"sword","billboardMode":0,"position":[-2,0.0352,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.0175,0.075,0.0175,-0.015,-0.075,-0.015,-0.0175,0.075,-0.0175,0.0175,0.075,0.0175,0.015,-0.075,-0.015,0.015,-0.075,0.015,-0.0175,0.0898,-0.0175,-0.0175,0.5479,0.0175,-0.0175,0.0898,0.0175,-0.015,-0.075,0.015,0.024,-0.105,-0.024,0.024,-0.105,0.024,0.015,-0.075,-0.015,-0.015,-0.075,-0.015,-0.0175,0.075,-0.0175,-0.0059,0.0873,-0.135,-0.0175,0.0898,-0.0175
 ,0.0175,0.075,-0.0175,0.0059,0.0873,-0.135,0.0059,0.0775,-0.135,0,0.0898,-0.0376,-0.0175,0.5479,-0.0175,-0.0059,0.0775,-0.135,-0.0175,0.075,-0.0175,0.0059,0.0873,-0.135,0.0175,0.0898,-0.0175,0,0.0898,-0.0376,-0.0059,0.0873,0.135,-0.0059,0.0775,0.135,0.0059,0.0873,0.135,0.0059,0.0775,0.135,0,0.0898,0.0376,0.0175,0.5479,0.0175,0.0175,0.0898,0.0175
 ,0,0.0898,0.0376,0.0175,0.0898,0.0175,0.0059,0.0873,0.135,0.0175,0.0898,0.0175,0.0175,0.5479,-0.0175,0.0175,0.0898,-0.0175,0.0175,0.075,0.0175,0.0175,0.0898,-0.0175,0.0175,0.075,-0.0175,-0.0175,0.075,-0.0175,-0.0175,0.0898,0.0175,-0.0175,0.075,0.0175,-0.0175,0.0898,0.0175,0,0.5479,0.0376,0.0175,0.0898,-0.0175,0,0.5479,-0.0376,0,0.615,-0.0248
@@ -1475,7 +1472,7 @@
 ,25,134,19,18,79,135,136,76,83,137,84,138,139,140,29,141,142,29,28,143]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":144,"indexStart":0,"indexCount":270}]
 ,"instances":[]}
-,{"name":"katana","id":"katana","materialId":"items.metalIron","billboardMode":0,"position":[-1,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"katana","id":"katana","billboardMode":0,"position":[-1,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.0175,-0.1058,0.0155,0,-0.1058,-0.0201,0,-0.1058,0.0232,-0.0175,-0.1058,0.0155,-0.0175,0.1382,-0.0123,-0.0175,0.1382,0.0155,0,-0.1058,-0.0201,0,0.1382,-0.0201,0.0175,0.1382,0.0155,0,-0.1058,0.0232,0,0.1382,0.0232,0.0175,-0.1058,-0.0123,0.0175,-0.1058,0.0155,-0.0175,-0.1058,0.0155,-0.0175,-0.1058,-0.0123,0.0175,-0.1058,-0.0123,0.0175,0.1382,-0.0123
 ,0.0175,0.1382,-0.0123,0,0.1407,-0.044,0,0.1382,-0.0201,-0.0175,0.1382,0.0155,0,0.1407,0.0472,0,0.1382,0.0232,-0.0368,0.1407,0.0308,0,0.1458,0.0472,0,0.1407,0.0472,0.0368,0.1407,0.0308,0.0368,0.1458,-0.0276,0.0368,0.1407,-0.0277,-0.0175,0.1382,-0.0123,-0.0368,0.1407,0.0308,-0.0175,0.1382,0.0155,-0.0175,0.1382,-0.0123,-0.0368,0.1407,-0.0277
 ,0.0175,0.1382,0.0155,0.0368,0.1407,0.0308,0.0175,0.1382,-0.0123,0.0368,0.1407,0.0308,0.0368,0.1407,-0.0277,-0.0368,0.1458,0.0308,-0.0368,0.1458,-0.0277,-0.0049,0.1452,0.0016,0.0049,0.1452,0.0016,0.0368,0.1458,-0.0276,0.0368,0.1458,0.0308,0.0368,0.1407,-0.0277,0,0.1458,-0.044,0,0.1407,-0.044,-0.0368,0.1407,-0.0277,-0.0368,0.1458,0.0308,0,0.1407,0.0472
@@ -1508,7 +1505,7 @@
 ,81,91,87,68,92,68,67,91,87,88,93,93,90,89]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":143,"indexStart":0,"indexCount":264}]
 ,"instances":[]}
-,{"name":"eye","id":"eye","materialId":"items.eye","billboardMode":0,"position":[0.5,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":false,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"eye","id":"eye","billboardMode":0,"position":[0.5,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":false,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0,-0.045,0,0.0136,-0.0383,-0.0202,-0.0142,-0.0383,-0.0197,0.0231,-0.0201,-0.0344,0.0362,-0.0237,-0.013,-0.0224,-0.0383,0.0081,0.0004,-0.0383,0.0248,0.0226,-0.0383,0.0073,0.0359,0,-0.0283,-0.0242,-0.0201,-0.0336,-0.0007,-0.0237,-0.04,-0.0147,0,-0.0445,-0.0381,-0.0201,0.0137,-0.0366,-0.0237,-0.0117,-0.045,0,0.0009,0.0007,-0.0201,0.0421,-0.022,-0.0237,0.0328
 ,-0.0132,0,0.045,0.0385,-0.0201,0.0123,0.023,-0.0237,0.032,0.0369,0,0.027,0.0231,-0.0201,-0.0344,0.0359,0,-0.0283,0.0132,0,-0.045,-0.0369,0,-0.0269,-0.0359,0,0.0284,0.0147,0,0.0445,0.045,0,-0.0008,-0.0007,0.0201,-0.042,0.022,0.0237,-0.0327,-0.0004,0.0383,-0.0247,-0.0385,0.0201,-0.0123,-0.023,0.0237,-0.0319,-0.0226,0.0383,-0.0072
 ,-0.0231,0.0201,0.0345,-0.0362,0.0237,0.0131,-0.0136,0.0383,0.0203,0.0242,0.0201,0.0337,0.0007,0.0237,0.0401,0.0142,0.0383,0.0198,0.0381,0.0201,-0.0137,0.0366,0.0237,0.0117,0.0224,0.0383,-0.008,0,0.045,0,-0.0004,0.0383,-0.0247,-0.0004,0.0383,-0.0247,-0.023,0.0237,-0.0319,-0.0004,0.0383,-0.0247,-0.0004,0.0383,-0.0247,0.022,0.0237,-0.0327,0.022,0.0237,-0.0327
@@ -1527,7 +1524,7 @@
 ,19,6,16,15,6,5,16,5,12,16,5,13,12,5,2,13,2,61,13,4,7,18,4,1,7,1,0,7,62,10,9,63,64,10,65,66,10,23,28,11]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":67,"indexStart":0,"indexCount":240}]
 ,"instances":[]}
-,{"name":"knife","id":"knife","materialId":"items.metalIron","billboardMode":0,"position":[-0.5,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"knife","id":"knife","billboardMode":0,"position":[-0.5,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.0173,0.09,0.0156,-0.0062,0.09,-0.0194,-0.0062,0.09,0.0156,0.0176,0.09,0.0156,0.0064,0.09,-0.0194,0.0176,0.09,-0.0194,-0.0028,0.2753,-0.0153,0.0001,0.4293,0.0156,-0.0062,0.09,0.0156,-0.0062,0.09,0.0156,0.0064,0.09,0.0156,0.0046,0.1722,-0.0183,0.0001,0.1644,-0.0537,0.0001,0.09,-0.0599,0.0064,0.09,0.0156,0.0031,0.2753,-0.0153,0.0001,0.3452,-0.0222
 ,-0.0173,-0.09,0.0156,0.0176,-0.09,-0.0194,-0.0173,-0.09,-0.0194,-0.0173,0.07,-0.0127,0.0064,0.09,0.0156,0.0176,-0.09,0.0156,0.0176,-0.07,-0.0127,-0.0173,-0.07,-0.0127,0.0176,0.07,-0.0127,0.0001,0.2387,-0.0475,-0.0043,0.1722,-0.0183,-0.0062,0.09,-0.0194,0.0064,0.09,-0.0194,0.0064,0.09,-0.0194,0.0001,0.09,-0.0599,-0.0062,0.09,-0.0194,-0.0173,0.09,-0.0194
 ,0.0064,0.09,0.0156,-0.0062,0.09,0.0156,-0.0062,0.09,-0.0194,-0.0062,0.09,0.0156,0.0064,0.09,-0.0194,0.0064,0.09,0.0156,0.0064,0.09,0.0156,0.0064,0.09,0.0156]
@@ -2062,6 +2059,6 @@
 ],
 "morphTargetManagers":[],
 "cameras":[],
-"lights":[{"name":"Hemi","id":"Hemi","type":3,"direction":[0,1,0],"groundColor":[0,0,0],"intensity":1,"diffuse":[1,1,1],"specular":[1,1,1]},{"name":"Sun","id":"Sun","type":1,"position":[0,8,0],"direction":[0,-1,0],"intensity":1,"diffuse":[1,1,1],"specular":[1,1,1]}],
+"lights":[],
 "shadowGenerators":[]
 }
