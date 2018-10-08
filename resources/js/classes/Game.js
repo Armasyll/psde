@@ -32,10 +32,28 @@ class Game {
         this._filesToLoad = 1;
         // Original meshes, donut touch
         this.entityMeshes = {};
-        this.surfaceMeshes = {};
         this.furnitureMeshes = {};
         this.characterMeshes = {};
         this.itemMeshes = {};
+        // to replace the previous *Meshes maps
+        /**
+         * Map of Meshes per Mesh IDs
+         * eg, {"ring01":{ring01 Mesh}, "ring02":{...}}
+         * @type {<String, BABYLON.Mesh>}
+         */
+        this.meshes = {};
+        /**
+         * Map of Textures per Texture IDs
+         * eg, {"ring01Silver":{ring01Silver Texture}, "ring01Gold":{...}}
+         * @type {<String, BABYLON.Texture>}
+         */
+        this.textures = {};
+        /**
+         * Map of Meshes per Texture IDs per Mesh IDs
+         * eg, {"ring01":{"ring01Silver":{ring01 Mesh with ring01Silver Texture}, "ring01Gold":{ring01 Mesh with ring01Gold Texture}}, "ring02":{...}}
+         * @type {<String, <String, BABYLON.Mesh>>}
+         */
+        this.meshTextures = {};
 
         // Instances and copies of original meshes
         this.entityMeshInstances = {};
@@ -793,10 +811,10 @@ class Game {
     static loadMeshes() {
         if (Game.debugEnabled) console.log("Running loadMeshes");
         Game.furnitureMeshes = Game.importMeshes("furniture.babylon");
-        Game.importMeshes("misc.babylon", undefined, function(_meshes) {Game.furnitureMeshes = Object.assign(Game.furnitureMeshes, _meshes);});
-        Game.surfaceMeshes = Game.importMeshes("craftsmanWalls.babylon");
+        Game.importMeshes("misc.babylon");
+        Game.importMeshes("craftsmanWalls.babylon");
         Game.characterMeshes = Game.importMeshes("characters.babylon");
-        Game.importMeshes("arachnids.babylon", undefined, function(_meshes) {Game.characterMeshes = Object.assign(Game.characterMeshes, _meshes);});
+        Game.importMeshes("arachnids.babylon");
         Game.itemMeshes = Game.importMeshes("items.babylon");
         return true;
     }
