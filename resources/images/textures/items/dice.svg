@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg16"
+   sodipodi:docname="dice.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     id="namedview18"
+     showgrid="false"
+     inkscape:zoom="0.79763794"
+     inkscape:cx="528.61489"
+     inkscape:cy="411.40677"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16" />
+  <desc
+     id="desc2">'items.blend', Cube, (Blender 2.79 (sub 0))</desc>
+  <polygon
+     points="256.000,512.000 256.000,768.000 512.000,768.000 512.000,512.000 "
+     id="two"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <polygon
+     points="512.000,256.000 512.000,512.000 768.000,512.000 768.000,256.000 "
+     id="four"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <polygon
+     points="768.000,512.000 768.000,768.000 1024.000,768.000 1024.000,512.000 "
+     id="five"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <polygon
+     points="768.000,1024.000 768.000,768.000 512.000,768.000 512.000,1024.000 "
+     id="three"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <polygon
+     points="0.000,512.000 0.000,768.000 256.000,768.000 256.000,512.000 "
+     id="six"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <polygon
+     points="768.000,512.000 512.000,512.000 512.000,768.000 768.000,768.000 "
+     id="one"
+     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="grey" />
+  <g
+     id="g4753"
+     style="fill:#111106;fill-opacity:1">
+    <circle
+       r="32"
+       cy="640"
+       cx="640"
+       id="path4532"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="640"
+       cx="896"
+       id="path4532-3"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="896"
+       cx="640"
+       id="path4532-6"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="448"
+       cx="576"
+       id="path4532-5"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="960"
+       id="path4532-5-3"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="320"
+       cx="576"
+       id="path4532-5-5"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="320"
+       cx="704"
+       id="path4532-5-3-6"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="832"
+       id="path4532-5-2"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="448"
+       cx="704"
+       id="path4532-5-3-9"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="576"
+       cx="832"
+       id="path4532-5-5-1"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="576"
+       cx="960"
+       id="path4532-5-3-6-2"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="960"
+       cx="576"
+       id="path4532-5-6"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="832"
+       cx="704"
+       id="path4532-5-3-6-0"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="320"
+       id="path4532-5-2-6"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="576"
+       cx="448"
+       id="path4532-5-3-6-2-2"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="64"
+       id="path4532-5-61"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="576"
+       cx="64"
+       id="path4532-5-5-8"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="576"
+       cx="192"
+       id="path4532-5-3-6-7"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="192"
+       id="path4532-5-3-9-9"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="640"
+       cx="64"
+       id="path4532-5-61-2"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="640"
+       cx="192"
+       id="path4532-5-3-9-9-0"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+</svg>
