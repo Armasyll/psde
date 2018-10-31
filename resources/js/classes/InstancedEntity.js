@@ -1,4 +1,4 @@
-class InstancedEntity {
+class InstancedEntity extends AbstractEntity {
     /**
      * Creates an InstancedEntity
      * @param  {UUIDv4} _id            UUID
@@ -11,31 +11,20 @@ class InstancedEntity {
      * @param  {Number} _durabilityMax Max durability, defaults to 1
      */
     constructor(_id, _entity, _name = undefined, _description = undefined, _owner = undefined, _price = undefined, _mass = undefined, _durability = undefined, _durabilityMax = undefined) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = Game.filterID(_id);
-        this.id = _id;
+        super(_id, _name, _description);
         this.entity = undefined;
         this.setEntity(_entity);
-        this.name = undefined;
+        if (!(this.entity instanceof Entity)) {
+            return null;
+        }
         this.setName(_name || _entity.getName());
-        this.description = undefined;
         this.setDescription(_description || _entity.description);
-        this.owner = undefined;
         this.setOwner(_owner);
-        this.price = 0;
         this.setPrice(_price || _entity.getPrice() || 0);
-        this.mass = 0.001;
         this.setMass(_mass || _entity.getMass() || 0.001);
-        this.durability = 1;
         this.setDurability(_durability || _entity.getDurability() || 1);
-        this.durabilityMax = 1;
-        this.setDurabilityMax(_durabilityMax || this.durability);
+        this.setDurabilityMax(_durabilityMax || _entity.getDurabilityMax() || this.durability);
 
-        /**
-         * Actions available to this Entity
-         * @type {Set} <Game.kActionTypes: new ActionData()>
-         */
-        this.availableActions = {};
         for (var _action in this.entity.getAvailableActions()) {
             var _availableAction = this.entity.getAvailableAction(_action);
             if (_availableAction instanceof ActionData) {
@@ -48,15 +37,7 @@ class InstancedEntity {
          */
         this.specialProperties = new Set(this.entity.getSpecialProperties());
 
-        this.controller = undefined;
-
-        this.defaultAction = null;
-        this.setDefaultAction("look");
-
         Game.instancedEntities[this.id] = this;
-    }
-    getID() {
-        return this.id;
     }
     /**
      * Sets Entity
@@ -69,233 +50,27 @@ class InstancedEntity {
     getEntity() {
         return this.entity;
     }
-
-    setName(_name) {
-        this.name = Game.filterName(_name);
+    removeEntity() {
+        this.entity = null;
         return this;
     }
-    getName() {
-        return (this.name || this.entity.getName() || "");
+    getMeshID() {
+        return this.entity.getMeshID();
     }
-    setDescription(_description) {
-        this.description = _description;
-        return this;
+    getTextureID() {
+        return this.entity.getTextureID();
     }
-    getDescription() {
-        return (this.description || this.entity.getDescription() || "");
+    getMaterialID() {
+        return this.entity.getMaterialID();
     }
 
-    /**
-     * Adds an available Action when interacting with this Entity
-     * @param {String} _action (Game.kActionTypes)
-     */
-    addAvailableAction(_action, _function = undefined, _runOnce = false) {
-        if (Game.kActionTypes.has(_action)) {
-            this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
-        }
-        return this;
-    }
-    /**
-     * Removes an available Action when interacting with this Entity
-     * @param  {String} _action (Game.kActionTypes)
-     * @return {Booealn}          Whether or not the Action was removed
-     */
-    removeAvailableAction(_action) {
-        if (this.availableActions.hasOwnProperty(_action)) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
-            }
-            delete this.availableActions[_action];
-        }
-        return this;
-    }
-    getAvailableAction(_action) {
-        if (this.availableActions.hasOwnProperty(_action)) {
-            return this.availableActions[_action];
-        }
-    }
-    getAvailableActions() {
-        return this.availableActions;
-    }
-    hasAvailableAction(_action) {
-        return this.availableActions.hasOwnProperty(_action);
-    }
-
-    /**
-     * Adds a Game.kSpecialProperties
-     * @param {String} _specialProperties (Game.kSpecialProperties)
-     */
-    addSpecialProperty(_specialProperties) {
-        if (Game.kSpecialProperties.has(_specialProperties))
-            this.specialProperties.add(_specialProperties);
-        else if (_specialProperties instanceof Array) {
-            _specialProperties.forEach(function(_specialProperties) {
-                Game.kSpecialProperties.has(_specialProperties) && this.specialProperties.add(_specialProperties);
-            }, this);
-        }
-        return this;
-    }
-    /**
-     * Returns this Entity's Game.kSpecialProperties
-     * @return {Set} <String (Game.kSpecialProperties)>
-     */
-    getSpecialProperties() {
-        return this.specialProperties;
-    }
-    /**
-     * Returns whether or not this Entity has the specified Game.kSpecialProperties
-     * @param  {String}  _specialProperties (Game.kSpecialProperties)
-     * @return {Boolean}              Whether or not this Entity has the specified Game.kSpecialProperties
-     */
-    hasSpecialProperty(_specialProperties) {
-        if (Game.kSpecialProperties.has(_specialProperties))
-            return this.specialProperties.has(_specialProperties);
-        else
-            return false;
-    }
-
-    /**
-     * Sets Owner
-     * @param {Character} _character Character, or undefined
-     */
-    setOwner(_character) {
-        this.owner = Game.getCharacterEntity(_character);
-        return this;
-    }
-    getOwner() {
-        return this.owner;
-    }
-
-    /**
-     * Sets Price
-     * @param {Number} _int Integer
-     */
-    setPrice(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 0;
-        else if (_int < 0)
-            _int = 0;
-        else if (_int > Number.MAX_SAFE_INTEGER)
-            _int = Number.MAX_SAFE_INTEGER;
-        this.durability = _int;
-        return this;
-    }
-    getPrice() {
-        return this.price;
-    }
-
-    /**
-     * Sets Mass
-     * @param {Number} _float Float
-     */
-    setMass(_float) {
-        _float = Number.parseFloat(_float);
-        if (isNaN(_float))
-            _float = 0.001;
-        else if (_float < 0)
-            _float = 0.001;
-        else if (_float > Number.MAX_SAFE_INTEGER)
-            _float = Number.MAX_SAFE_INTEGER;
-        this.mass = _float;
-        return this;
-    }
-    getMass() {
-        return (this.mass || this.entity.mass);
-    }
-
-    /**
-     * Sets Durability
-     * @param {Number} _int Integer
-     */
-    setDurability(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 0)
-            _int = 1;
-        else if (_int > this.durabilityMax)
-            _int = this.durabilityMax;
-        this.durability = _int;
-        return this;
-    }
-    /**
-     * Returns Durability
-     * @return {Number} Integer
-     */
-    getDurability() {
-        return this.durability;
-    }
-
-    /**
-     * Sets Max Durability
-     * @param {Number} _int Integer
-     */
-    setDurabilityMax(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 0)
-            _int = 1;
-        else if (_int > Number.MAX_SAFE_INTEGER)
-            _int = Number.MAX_SAFE_INTEGER;
-        this.durabilityMax = _int;
-        return this;
-    }
-    /**
-     * Returns Max Durability
-     * @return {Number} Integer
-     */
-    getDurabilityMax() {
-        return this.durabilityMax;
-    }
-    setController(_controller) {
-        this.controller = Game.getEntityController(_controller);
-        return this;
-    }
-    getController() {
-        return this.controller;
-    }
-    hasController() {
-        return this.getController() instanceof EntityController;
-    }
-    removeController() {
-        this.controller = undefined;
-        return this;
-    }
-    getAvatar() {
-        return this.entity.getAvatar();
-    }
-    getAvatarID() {
-        return this.entity.getAvatarID();
-    }
-    getAvatarSkin() {
-        return this.entity.getAvatarSkin();
-    }
-    getImage() {
-        return this.entity.getImage();
-    }
-    setDefaultAction(_action) {
-        if (this.hasAvailableAction(_action)) {
-            this.defaultAction = _action;
-        }
-    }
-    getDefaultAction() {
-        return this.defaultAction;
-    }
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
     }
     dispose() {
         delete Game.instancedEntities[this.id];
-        for (_action in this.availableActions) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
-            }
-        }
-        for (var _var in this) {
-            this[_var] = null;
-        }
+        this.removeEntity();
+        super.dispose();
         return undefined;
     }
 }

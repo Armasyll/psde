@@ -152,11 +152,11 @@ class Client {
                 age:Game.player.entity.getAge(),
                 sex:Game.player.entity.getSex(),
                 species:Game.player.entity.getSpecies(),
-                skin:Game.player.skin,
-                mesh:Game.player.avatar.name,
-                position:Game.player.avatar.position,
-                rotation:Game.player.avatar.rotation,
-                scaling:Game.player.avatar.scaling,
+                skin:Game.player.textureID,
+                mesh:Game.player.meshID,
+                position:Game.player.mesh.position,
+                rotation:Game.player.mesh.rotation,
+                scaling:Game.player.mesh.scaling,
             	movementKeys:Game.player.key
 			}
         });
@@ -168,9 +168,9 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-                Game.player.avatar.position,
-                Game.player.avatar.rotation,
-                Game.player.avatar.scaling,
+                Game.player.mesh.position,
+                Game.player.mesh.rotation,
+                Game.player.mesh.scaling,
                 Game.player.key
             ]
         });

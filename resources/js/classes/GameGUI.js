@@ -359,7 +359,10 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerUpObservable.add(function() {
-            Game.generateApartment();
+            if (!Game._finishedScene) {
+                Game.generateApartment();
+                Game._finishedScene = true;
+            }
             Game.initPlayer();
             Game.player.entity.setName(nameInput.text);
             if (!Client.isOnline()) {
@@ -370,7 +373,10 @@ class GameGUI {
             GameGUI.showHUD();
         });
         submitOffline.onPointerUpObservable.add(function() {
-            Game.generateApartment();
+            if (!Game._finishedScene) {
+                Game.generateApartment();
+                Game._finishedScene = true;
+            }
             Game.initPlayer();
             Game.player.entity.setName(nameInput.text);
             if (Client.isOnline()) {
@@ -590,26 +596,28 @@ class GameGUI {
         this.setPlayerPortraitStamina(_stamina);
     }
     static setTargetPortrait(_image = undefined, _name = undefined, _life = "", _mana = "", _stamina = "") {
-        if (_image instanceof CharacterController) {
-            _name = _image.getEntity().getFullName();
-            _life = _image.getEntity().getLife() + "/" + _image.getEntity().getLifeMax();
-            if (_image.getEntity().getManaMax() == 0) {
-                GameGUI.hidePlayerPortraitMana();
-                _mana = "";
+        if (_image instanceof EntityController && _image.isEnabled()) {
+            if (_image instanceof CharacterController) {
+                _name = _image.getEntity().getFullName();
+                _life = _image.getEntity().getLife() + "/" + _image.getEntity().getLifeMax();
+                if (_image.getEntity().getManaMax() == 0) {
+                    GameGUI.hidePlayerPortraitMana();
+                    _mana = "";
+                }
+                else {
+                    _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
+                }
+                _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
+                _image = _image.getEntity().getImage();
+            }
+            else if (_image instanceof ItemController) {
+                _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
+                _image = _image.getEntity().getImage();
             }
             else {
-                _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
+                _name = _image.getEntity().getName();
+                _image = _image.getEntity().getImage();
             }
-            _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
-            _image = _image.getEntity().getImage();
-        }
-        else if (_image instanceof ItemController) {
-            _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
-            _image = _image.getEntity().getImage();
-        }
-        else if (_image instanceof EntityController) {
-            _name = _image.getEntity().getName();
-            _image = _image.getEntity().getImage();
         }
         this.setTargetPortraitImage(_image);
         this.setTargetPortraitName(_name);

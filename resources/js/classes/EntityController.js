@@ -1,53 +1,98 @@
 class EntityController {
-    constructor(_id, _avatar, _entity) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
+    constructor(_id, _mesh, _entity) {
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
         _id = Game.filterID(_id);
-        if (!(_avatar instanceof BABYLON.Mesh || _avatar instanceof BABYLON.InstancedMesh)) return null;
-        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity)) return null;
+        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+            return null;
+        }
+        if (!(_entity instanceof AbstractEntity)) {
+            return null;
+        }
         this.id = _id;
-        this.avatar = undefined;
-        this.setAvatar(_avatar);
         this.entity = undefined;
         this.setEntity(_entity);
+        this.texture = null;
+        this.material = null;
+        this.mesh = undefined;
+        this.setMesh(_mesh);
         this.networkID = null;
-        this.skin = null;
-        this.avatar.controller = this;
-        this.avatar.isPickable = true;
 
         this.propertiesChanged = true;
 
         this.targetController = null;
         this.targetedByControllers = new Set();
 
+        this._isEnabled = true;
+
         Game.entityControllers[this.id] = this;
     }
     setID(_id) {
         this.id = _id;
+        return this;
     }
     getID() {
         return this.id;
     }
     setNetworkID(_id) {
         this.networkID = _id;
+        return this;
     }
     getNetworkID() {
         return this.networkID;
     }
-    setAvatar(_mesh) {
-        if (_mesh instanceof BABYLON.Mesh || _mesh instanceof BABYLON.InstancedMesh) {
-            this.avatar = _mesh;
-            this.setAvatarSkin(this.avatar.material);
-            this.propertiesChanged = true;
+    setTexture(_texture = undefined) {
+        _texture = Game.loadTexture(_texture);
+        if (_texture instanceof BABYLON.Texture) {
+            this.texture = _texture;
+            if (this.entity instanceof Entity) {
+                this.entity.setTextureID(_texture);
+            }
         }
+        return this;
     }
-    getAvatar() {
-        return this.avatar;
+    getTexture() {
+        return this.texture;
     }
-    hasAvatar() {
-        return (this.avatar instanceof BABYLON.Mesh || this.avatar instanceof BABYLON.InstancedMesh)
+    setMaterial(_material = undefined) {
+        _material = Game.loadMaterial(_material);
+        if (_material instanceof BABYLON.Material) {
+            this.material = _material;
+            if (this.entity instanceof Entity) {
+                this.entity.setMaterialID(_material);
+            }
+        }
+        return this;
+    }
+    getMaterial() {
+        return this.material;
+    }
+    setMesh(_mesh) {
+        _mesh = Game.getAbstractMesh(_mesh);
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            this.mesh = _mesh;
+            if (this.mesh.material instanceof BABYLON.Material) {
+                this.setMaterial(this.mesh.material);
+                this.setTexture(this.mesh.material.texture);
+            }
+            this.mesh.controller = this;
+            this.mesh.isPickable = true;
+            this.propertiesChanged = true;
+            if (this.entity instanceof Entity) {
+                this.entity.setMeshID(_mesh);
+            }
+        }
+        return this;
+    }
+    getMesh() {
+        return this.mesh;
+    }
+    hasMesh() {
+        return (this.mesh instanceof BABYLON.AbstractMesh)
     }
     setEntity(_entity) {
-        if (_entity instanceof Entity || _entity instanceof InstancedEntity) {
+        if (_entity instanceof AbstractEntity) {
             this.entity = _entity;
             this.propertiesChanged = true;
         }
@@ -55,79 +100,42 @@ class EntityController {
     getEntity() {
         return this.entity;
     }
-    setAvatarSkeleton(_skeleton) {
-        this.skeleton = _skeleton;
-        this.checkAnimations(this.skeleton);
-        this.propertiesChanged = true;
+    setMeshSkeleton(_skeleton) {
+        if (_skeleton instanceof BABYLON.Skeleton) {
+            this.skeleton = _skeleton;
+            this.checkAnimations(this.skeleton);
+            this.propertiesChanged = true;
+        }
+        return this;
     }
-    getAvatarSkeleton() {
+    getMeshSkeleton() {
         return this.skeleton;
     }
-    setAvatarSkin(_skin = undefined) {
-        var _result = undefined;
-        if (_skin == undefined) {
-            _result = this.setAvatarSkinFromAvatar(this.avatar);
-        }
-        else if (typeof _skin == BABYLON.Texture) {
-            _result = this.setAvatarSkinFromString(_skin.name);
-        }
-        else if (typeof _skin == BABYLON.Material) {
-            _result = this.setAvatarSkinFromString(_skin.diffuseTexture.url);
-        }
-        else if (typeof _skin == "string") {
-            _result = this.setAvatarSkinFromString(_skin);
-        }
-        else if ((_skin instanceof BABYLON.Mesh || _skin instanceof BABYLON.InstancedMesh) && _skin.material instanceof BABYLON.Material) {
-            _result = this.setAvatarSkinFromAvatar(_skin);
-        }
-        else if (_skin instanceof CharacterController) {
-            _result = this.setAvatarSkinFromAvatar(_skin.avatar);
-        }
-        else {
-            return;
-        }
-        this.propertiesChanged = true;
-        return _result;
-    }
-    setAvatarSkinFromAvatar(_mesh) {
-        if (!(_mesh instanceof BABYLON.Mesh && _mesh instanceof BABYLON.InstancedMesh) || !(_mesh.material instanceof BABYLON.Material)) {
-            return false;
-        }
-        this.skin = _mesh.material.diffuseTexture.name;
-        this.avatar.material = _mesh.material.clone();
-        return true;
-    }
-    setAvatarSkinFromString(_string) {
-        this.skin = _string;
-        this.avatar.material = new BABYLON.StandardMaterial();
-        this.avatar.material.diffuseTexture = new BABYLON.Texture(_string);
-        this.avatar.material.specularColor.set(0,0,0);
-        return true;
-    }
-    getAvatarSkin() {
-        return this.skin;
-    }
-    removeAvatar() {
-        this.avatarSkin = undefined;
-        this.avatar = undefined;
-    }
     addTargetedBy(_controller, _updateChild = true) {
+        if (!this._isEnabled) {
+            return this;
+        }
         if (!(_controller instanceof EntityController)) {
-            return undefined;
+            return this;
         }
         this.targetedByControllers.add(_controller);
         if (_updateChild) {
             _controller.setTarget(this, false);
         }
+        return this;
     }
     removeTargetedBy(_controller, _updateChild = true) {
+        if (!this._isEnabled) {
+            return this;
+        }
         if (!(_controller instanceof EntityController)) {
-            return undefined;
+            return this;
         }
         this.targetedByControllers.delete(_controller);
         if (_updateChild) {
             _controller.removeTarget(this, false);
         }
+        return this;
     }
     clearTargetedBy() {
         this.targetedByControllers.forEach(function(_controller) {
@@ -135,32 +143,47 @@ class EntityController {
                 _controller.removeTarget(false);
             }
         }, this);
-        this.targetedByControllers = null;
+        if (!this._isEnabled) {
+            return this;
+        }
+        this.targetedByControllers.clear();
+        return this;
     }
     getTargetedBy() {
         return this.targetedByControllers;
     }
     updateProperties() {
-        if (this.entity instanceof Entity && (this.avatar instanceof BABYLON.Mesh || this.avatar instanceof BABYLON.InstancedMesh)) {
-            this.entity.setAvatarID(this.avatar);
-            this.entity.setAvatarSkin(this.avatarSkin);
-            this.entity.setAvatarScaling(this.avatar.scaling);
+        if (this.entity instanceof Entity && this.mesh instanceof BABYLON.AbstractMesh) {
+            this.entity.setMeshID(this.mesh);
+            this.entity.setTexture(this.texture);
+            this.entity.setMeshScaling(this.mesh.scaling);
         }
         this.propertiesChanged = false;
+        return this;
     }
     setParent(_mesh) {
-        if (!(_mesh instanceof BABYLON.Mesh) && !(_mesh instanceof BABYLON.InstancedMesh)) {
-            _mesh = Game.getEntityMesh(_mesh);
+        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+            _mesh = Game.getAbstractMesh(_mesh);
         }
-        this.getAvatar().setParent(_mesh);
+        this.getMesh().setParent(_mesh);
+        return this;
     }
     getParent() {
-        return this.getAvatar().parent;
+        return this.getMesh().parent;
     }
     removeParent() {
-        this.getAvatar().setParent(null);
+        this.getMesh().setParent(null);
+        return this;
+    }
+    isEnabled() {
+        return this._isEnabled;
+    }
+    setEnabled(_isEnabled = true) {
+        this._isEnabled = (_isEnabled == true);
+        return this;
     }
     dispose() {
+        this._isEnabled = false;
         if (Game.player.targetController == this) {
             Game.clearPlayerTarget()
         }
@@ -171,6 +194,6 @@ class EntityController {
             this[_var] = null;
         }
         this.propertiesChanged = false;
-        return undefined;
+        return null;
     }
 }

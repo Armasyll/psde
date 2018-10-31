@@ -1,23 +1,23 @@
 class DoorController extends EntityController {
-    constructor(_id, _avatar, _entity) {
-        super (_id, _avatar, _entity);
+    constructor(_id, _mesh, _entity) {
+        super (_id, _mesh, _entity);
 
-        this.avatar = _avatar;
+        this.mesh = _mesh;
         this.entity = _entity;
         
-        this.avatar.checkCollisions = true;
+        this.mesh.checkCollisions = true;
 
         this.entity.setDefaultAction("open");
 
         this.opensInward = false;
-        this.avStartRot = this.avatar.rotation.clone();
+        this.avStartRot = this.mesh.rotation.clone();
         this.avEndRot = undefined;
         this.setOpensOutward();
 
         Game.doorControllers[this.id] = this;
     }
     getOpen() {
-    	return this.avEndRot.equals(this.avatar.rotation);
+    	return this.avEndRot.equals(this.mesh.rotation);
     }
     setOpensOutward() {
         this.opensInward = false;
@@ -28,11 +28,11 @@ class DoorController extends EntityController {
         this.avEndRot = this.avStartRot.subtract(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
     }
     doOpen() {
-        this.avatar.rotation = this.avEndRot;
+        this.mesh.rotation = this.avEndRot;
         this.entity.setDefaultAction("close");
     }
     doClose() {
-        this.avatar.rotation = this.avStartRot;
+        this.mesh.rotation = this.avStartRot;
         this.entity.setDefaultAction("open");
     }
     dispose() {

@@ -86,13 +86,13 @@ class MessageRouter {
 					else {
 						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[_character][0]);
 						if (Client.getCharacterController(_data.content[_character][0]) instanceof CharacterController) {
-							Client.getCharacterController(_data.content[_character][0]).avatar.position.copyFrom(
+							Client.getCharacterController(_data.content[_character][0]).mesh.position.copyFrom(
 								_data.content[_character][1]
 							);
-							Client.getCharacterController(_data.content[_character][0]).avatar.rotation.copyFrom(
+							Client.getCharacterController(_data.content[_character][0]).mesh.rotation.copyFrom(
 								_data.content[_character][2]
 							);
-							Client.getCharacterController(_data.content[_character][0]).avatar.scaling.copyFrom(
+							Client.getCharacterController(_data.content[_character][0]).mesh.scaling.copyFrom(
 								_data.content[_character][3]
 							);
 							Client.getCharacterController(_data.content[_character][0]).key.copyFrom(_data.content[_character][4]);

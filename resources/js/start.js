@@ -8,22 +8,29 @@ window.addEventListener("DOMContentLoaded", function() {
 
     Game.engine.runRenderLoop(function() {
         Game.scene.render();
-        if (!Game._finishedLoading && Game._filesToLoad == 0) {
-            if (Game.debugEnabled) console.log("Finished loading assets.");
+        if (!Game.finishedFirstLoad()) {
+            if (!Game.finishedInitializing() && Game.finishedLoadingFiles()) {
+                if (Game.debugEnabled) console.log("Finished loading assets.");
 
-            Game.loadProtoItems();
-            Game._finishedLoading = true;
+                Game.loadDefaultTextures();
+                Game.loadDefaultMaterials();
+                Game.loadDefaultMeshes();
+                Game.importProtoItems();
+                Game._finishedInitializing = true;
 
-            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
-            }));
-            Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
-            }));
-
-            Client.initialize();
-            GameGUI.resizeText();
-            GameGUI.showCharacterChoiceMenu();
+                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                    Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
+                }));
+                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+                    Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
+                }));
+            }
+            else if (Game.finishedInitializing() && Game.finishedLoadingFiles()) {
+                Game._finishedFirstLoad = true;
+                Client.initialize();
+                GameGUI.resizeText();
+                GameGUI.showCharacterChoiceMenu();
+            }
         }
     });
     var _rbrCount = 0;

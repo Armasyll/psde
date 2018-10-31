@@ -3,8 +3,8 @@
  * It's great :v you should check it out.
  */
 class CharacterController extends EntityController {
-    constructor(_id, _avatar, _entity) {
-        super (_id, _avatar, _entity);
+    constructor(_id, _mesh, _entity) {
+        super (_id, _mesh, _entity);
 
         // Mesh, attached to the 'FOCUS' bone, which will be the focus of the camera
         this.focus = undefined;
@@ -17,10 +17,10 @@ class CharacterController extends EntityController {
         this.targetRayHelper = undefined;
 
         // Hard values calculated using the distance between the front heel and rear toe during the furthest stride in 24-frames per second, multiplied by the character's height. (then thrown out the window 'cause they were too damn slow)
-        this.walkSpeed = 0.68 * this.avatar.scaling.z;
+        this.walkSpeed = 0.68 * this.mesh.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
         this.backSpeed = this.walkSpeed * 0.5;
-        this.jumpSpeed = this.avatar.scaling.y * 4;
+        this.jumpSpeed = this.mesh.scaling.y * 4;
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = 30;
         this.maxSlopeLimit = 50;
@@ -43,7 +43,7 @@ class CharacterController extends EntityController {
         this.slideBack = new AnimData("slideBack");
         this.animations = [this.walk, this.walkBack, this.idle, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
 
-        this._ellipsoid = this.avatar.ellipsoid.clone();
+        this._ellipsoid = this.mesh.ellipsoid.clone();
         this.started = false;
         this._stopAnim = false;
         this.prevAnim = null;
@@ -65,7 +65,7 @@ class CharacterController extends EntityController {
 
         this.skip = 0;
         this.move = false;
-        this.skeleton = this.avatar.skeleton;
+        this.skeleton = this.mesh.skeleton;
         if (this.skeleton != null) {
             this.checkAnims(this.skeleton);
         }
@@ -195,13 +195,13 @@ class CharacterController extends EntityController {
         this._stopAnim = false;
     }
     moveAV() {
-        if (!(this.avatar instanceof BABYLON.Mesh)) {
+        if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
         if (this.getParent() != undefined) {
             this.removeParent();
         }
-        this.avStartPos.copyFrom(this.avatar.position);
+        this.avStartPos.copyFrom(this.mesh.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.inFreeFall) {
@@ -245,7 +245,7 @@ class CharacterController extends EntityController {
         var anim = null;
         anim = this.runJump;
         if (this.jumpTime === 0) {
-            this.jumpStartPosY = this.avatar.position.y;
+            this.jumpStartPosY = this.mesh.position.y;
         }
         var js = this.jumpSpeed - this.gravity * this.jumpTime;
         var jumpDist = js * dt - 0.5 * this.gravity * dt * dt;
@@ -253,7 +253,7 @@ class CharacterController extends EntityController {
         var forwardDist = 0;
         var disp;
         if (this == Game.player && Game.enableCameraAvatarRotation) {
-            this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+            this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
         if (this.wasRunning || this.wasWalking) {
             if (this.wasRunning) {
@@ -272,13 +272,13 @@ class CharacterController extends EntityController {
             disp = new BABYLON.Vector3(0, jumpDist, 0);
             anim = this.idleJump;
         }
-        this.avatar.moveWithCollisions(disp);
+        this.mesh.moveWithCollisions(disp);
         if (jumpDist < 0) {
-            if ((this.avatar.position.y > this.avStartPos.y) || ((this.avatar.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
+            if ((this.mesh.position.y > this.avStartPos.y) || ((this.mesh.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
                 this.endJump();
             }
-            else if (this.avatar.position.y < this.jumpStartPosY) {
-                var actDisp = this.avatar.position.subtract(this.avStartPos);
+            else if (this.mesh.position.y < this.jumpStartPosY) {
+                var actDisp = this.mesh.position.subtract(this.avStartPos);
                 if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
                     if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                         this.endJump();
@@ -349,55 +349,55 @@ class CharacterController extends EntityController {
             }
             else {
                 if (this.key.turnLeft) {
-                    this.avatar.addRotation(0, -0.022, 0);
+                    this.mesh.addRotation(0, -0.022, 0);
                     if (this == Game.player && Game.enableCameraAvatarRotation) {
-                        Game.camera.alpha = -this.avatar.rotation.y - 4.69;
+                        Game.camera.alpha = -this.mesh.rotation.y - 4.69;
                     }
                     if (!moving) {
                         anim = this.turnLeft;
                     }
                 }
                 else if (this.key.turnRight) {
-                    this.avatar.addRotation(0, 0.022, 0);
+                    this.mesh.addRotation(0, 0.022, 0);
                     if (this == Game.player && Game.enableCameraAvatarRotation) {
-                        Game.camera.alpha = -this.avatar.rotation.y - 4.69;
+                        Game.camera.alpha = -this.mesh.rotation.y - 4.69;
                     }
                     if (!moving) {
                         anim = this.turnRight;
                     }
                 }
             }
-            this.moveVector = this.avatar.calcMovePOV(xDist, -this.freeFallDist, zDist);
+            this.moveVector = this.mesh.calcMovePOV(xDist, -this.freeFallDist, zDist);
         }
         /*
          *  Jittering in the Y direction caused by moveVector
          */
         if (moving) {
             if (this == Game.player && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
-                this.avatar.rotation.y = -4.69 - Game.camera.alpha;
+                this.mesh.rotation.y = -4.69 - Game.camera.alpha;
             }
             if (this.moveVector.length() > 0.001) {
                 this.moveVector.x = Number(this.moveVector.x.toFixed(3));
                 this.moveVector.y = Number(this.moveVector.y.toFixed(3));
                 this.moveVector.z = Number(this.moveVector.z.toFixed(3));
-                this.avatar.moveWithCollisions(this.moveVector);
-                if (this.avatar.position.y > this.avStartPos.y) {
-                    var actDisp = this.avatar.position.subtract(this.avStartPos);
+                this.mesh.moveWithCollisions(this.moveVector);
+                if (this.mesh.position.y > this.avStartPos.y) {
+                    var actDisp = this.mesh.position.subtract(this.avStartPos);
                     var _sl = this.verticalSlope(actDisp);
                     if (_sl >= this.maxSlopeLimitRads) {
                         if (this._stepOffset > 0) {
                             if (this._vMoveTot == 0) {
                                 this._vMovStartPos.copyFrom(this.avStartPos);
                             }
-                            this._vMoveTot = this._vMoveTot + (this.avatar.position.y - this.avStartPos.y);
+                            this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this.avStartPos.y);
                             if (this._vMoveTot > this._stepOffset) {
                                 this._vMoveTot = 0;
-                                this.avatar.position.copyFrom(this._vMovStartPos);
+                                this.mesh.position.copyFrom(this._vMovStartPos);
                                 this.endFreeFall();
                             }
                         }
                         else {
-                            this.avatar.position.copyFrom(this.avStartPos);
+                            this.mesh.position.copyFrom(this.avStartPos);
                             this.endFreeFall();
                         }
                     }
@@ -412,8 +412,8 @@ class CharacterController extends EntityController {
                         }
                     }
                 }
-                else if ((this.avatar.position.y) < this.avStartPos.y) {
-                    var actDisp = this.avatar.position.subtract(this.avStartPos);
+                else if ((this.mesh.position.y) < this.avStartPos.y) {
+                    var actDisp = this.mesh.position.subtract(this.avStartPos);
                     if (!(this.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
                         if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                             this.endFreeFall();
@@ -464,16 +464,16 @@ class CharacterController extends EntityController {
             return anim;
         var disp = new BABYLON.Vector3(0, -this.freeFallDist, 0);
         ;
-        this.avatar.moveWithCollisions(disp);
-        if ((this.avatar.position.y > this.avStartPos.y) || (this.avatar.position.y === this.avStartPos.y)) {
+        this.mesh.moveWithCollisions(disp);
+        if ((this.mesh.position.y > this.avStartPos.y) || (this.mesh.position.y === this.avStartPos.y)) {
             this.groundIt();
         }
-        else if (this.avatar.position.y < this.avStartPos.y) {
-            var actDisp = this.avatar.position.subtract(this.avStartPos);
+        else if (this.mesh.position.y < this.avStartPos.y) {
+            var actDisp = this.mesh.position.subtract(this.avStartPos);
             if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
                 if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                     this.groundIt();
-                    this.avatar.position.copyFrom(this.avStartPos);
+                    this.mesh.position.copyFrom(this.avStartPos);
                 }
                 else {
                     this.unGroundIt();
@@ -618,19 +618,19 @@ class CharacterController extends EntityController {
         return this.targetController;
     }
 
-    hideAvatar() {
-        this.avatar.isVisible = false;
+    hideMesh() {
+        this.mesh.isVisible = false;
         this.hideAttachedMeshes();
         return this;
     }
-    showAvatar() {
-        this.avatar.isVisible = true;
+    showMesh() {
+        this.mesh.isVisible = true;
         this.showAttachedMeshes();
         return this;
     }
     hideAttachedMeshes() {
         for (var _i in this.attachedMeshes) {
-            if (this.attachedMeshes[_i] instanceof BABYLON.Mesh || this.attachedMeshes[_i] instanceof BABYLON.InstancedMesh) {
+            if (this.attachedMeshes[_i] instanceof BABYLON.AbstractMesh) {
                 this.attachedMeshes[_i].isVisible = false;
             }
         }
@@ -638,21 +638,21 @@ class CharacterController extends EntityController {
     }
     showAttachedMeshes() {
         for (var _i in this.attachedMeshes) {
-            if (this.attachedMeshes[_i] instanceof BABYLON.Mesh || this.attachedMeshes[_i] instanceof BABYLON.InstancedMesh) {
+            if (this.attachedMeshes[_i] instanceof BABYLON.AbstractMesh) {
                 this.attachedMeshes[_i].isVisible = true;
             }
         }
         return this;
     }
     hideHelmet() {
-        if (this.attachedMeshes["head"] instanceof BABYLON.Mesh || this.attachedMeshes["head"] instanceof BABYLON.InstancedMesh) {
+        if (this.attachedMeshes["head"] instanceof BABYLON.AbstractMesh) {
             this.attachedMeshes["head"].isVisible = false;
         }
         this._showHelmet = false;
         return this;
     }
     showHelmet() {
-        if (this.attachedMeshes["head"] instanceof BABYLON.Mesh || this.attachedMeshes["head"] instanceof BABYLON.InstancedMesh) {
+        if (this.attachedMeshes["head"] instanceof BABYLON.AbstractMesh) {
             this.attachedMeshes["head"].isVisible = true;
         }
         this._showHelmet = true;
@@ -675,31 +675,19 @@ class CharacterController extends EntityController {
         }
     }
     getBoneByName(_string) {
-        return this.avatar.skeleton.bones[this.avatar.skeleton.getBoneIndexByName(_string)];
+        return this.mesh.skeleton.bones[this.mesh.skeleton.getBoneIndexByName(_string)];
     }
     getBoneByID(_int) {
-        return this.avatar.skeleton.bones[_int];
+        return this.mesh.skeleton.bones[_int];
     }
-    attachToBone(_mesh, _skin, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
+    attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
-        if (typeof _mesh == "string") {_mesh = Game.filterID(_mesh);}
-        _mesh = Game.getMesh(_mesh);
-        if (_mesh instanceof BABYLON.Mesh) {_mesh = _mesh.clone();}
-        else if (_mesh == null) {return this;}
-        if (typeof _skin == "string") {
-            _mesh.material = _mesh.material.clone();
-            _mesh.material.diffuseTexture = new BABYLON.Texture(_skin);
-            _mesh.material.specularColor.set(0,0,0);
-        }
-        else if (typeof _skin == BABYLON.Texture) {
-            _mesh.material = _mesh.material.clone();
-            _mesh.material.diffuseTexture = _skin;
-        }
-        else if (typeof _skin == BABYLON.Material) {
-            _mesh.material = _skin.clone();
+        _mesh = Game.createMesh(_mesh, _texture, undefined, _position, _rotation, _scale);
+        if (_mesh == undefined) {
+            return null;
         }
         _bone = this.getBone(_bone); if (_bone == null) {return this;}
-        _mesh.attachToBone(_bone, this.avatar);
+        _mesh.attachToBone(_bone, this.mesh);
         _mesh.position.copyFrom(_position);
         /*
         Rotation for bones is off before and after animations, this is a workaround
@@ -713,7 +701,7 @@ class CharacterController extends EntityController {
         _mesh.rotation.copyFrom(_rotation);
         _mesh.isVisible = true;
         if (!(_scale instanceof BABYLON.Vector3)) {
-            _mesh.scaling.copyFrom(this.avatar.scaling);
+            _mesh.scaling.copyFrom(this.mesh.scaling);
         }
         if (this.attachedMeshes[_bone.id] != undefined) {
             this.detachFromBone(_bone.id);
@@ -734,7 +722,7 @@ class CharacterController extends EntityController {
             if (_bone == "ROOT" || _bone == "FOCUS") {
                 return undefined;
             }
-            if ((this.attachedMeshes[_bone] instanceof BABYLON.Mesh || this.attachedMeshes[_bone] instanceof BABYLON.InstancedMesh) && this.attachedMeshes[_bone].name == _mesh.name) {
+            if ((this.attachedMeshes[_bone] instanceof BABYLON.AbstractMesh) && this.attachedMeshes[_bone].name == _mesh.name) {
                 this.detachFromBone(_bone);
             }
         }
@@ -745,7 +733,7 @@ class CharacterController extends EntityController {
             if (_bone == "ROOT" || _bone == "FOCUS") {
                 return undefined;
             }
-            if (this.attachedMeshes[_bone] instanceof BABYLON.Mesh || this.attachedMeshes[_bone] instanceof BABYLON.InstancedMesh) {
+            if (this.attachedMeshes[_bone] instanceof BABYLON.AbstractMesh) {
                 this.detachFromBone(_bone);
             }
         }
@@ -758,16 +746,16 @@ class CharacterController extends EntityController {
         }
         return null;
     }
-    attachToLeftEye(_mesh, _skin) {
-        this.attachToBone(_mesh, _skin, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    attachToLeftEye(_mesh, _texture) {
+        this.attachToBone(_mesh, _texture, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
         return this;
     }
-    attachToRightEye(_mesh, _skin) {
-        this.attachToBone(_mesh, _skin, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    attachToRightEye(_mesh, _texture) {
+        this.attachToBone(_mesh, _texture, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
         return this;
     }
-    attachToHead(_mesh, _skin) {
-        this.attachToBone(_mesh, _skin, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
+    attachToHead(_mesh, _texture) {
+        this.attachToBone(_mesh, _texture, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
         if (this._showHelmet) {
             this.showHelmet();
         }
@@ -779,20 +767,19 @@ class CharacterController extends EntityController {
     attachToFOCUS(_mesh) {
         this.attachToBone(_mesh, undefined, "FOCUS");
         var _focus = this.getMeshAttachedToBone("FOCUS")
-        _focus.material = Game._collisionMaterial;
         this.focus = _focus;
         return this;
     }
-    attachToRightHand(_mesh, _skin) {
-        this.attachToBone(_mesh, _skin, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+    attachToRightHand(_mesh, _texture) {
+        this.attachToBone(_mesh, _texture, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
         return this;
     }
     detachFromRightHand() {
         this.detachFromBone("hand.r");
         return this;
     }
-    attachToLeftHand(_mesh, _skin) {
-        this.attachToBone(_mesh, _skin, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+    attachToLeftHand(_mesh, _texture) {
+        this.attachToBone(_mesh, _texture, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
         return this;
     }
     detachFromLeftHand() {
@@ -805,7 +792,7 @@ class CharacterController extends EntityController {
             return false;
         }
         this.detachFromAllBones();
-        this.avatar.controller = null;
+        this.mesh.controller = null;
         delete Game.characterControllers[this.id];
         super.dispose();
         for (var _var in this) {
