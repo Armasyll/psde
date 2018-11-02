@@ -11,3 +11,5 @@ Game.createProtoItem("bottle04RedSarcophagusJuice", "Red Sarcophagus Juice", "A 
 Game.createProtoItem("bottle05RedSarcophagusJuice", "Red Sarcophagus Juice", "A bottle of some red liquid from the bottom of an obsidian sarcophagus.", "resources/images/icons/items/bottle05RedSarcophagusJuice.png", "consumable", "bottle05", "bottle03RedSarcophagusJuice");
 Game.createProtoItem("mountainChocolateWrapper", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "resources/images/icons/items/mountainChocolate01.png", "consumable", "mountainChocolateWrapper01", "vChocolateV");
 Game.createProtoItem("mountainChocolateBar", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "resources/images/icons/items/mountainChocolate01.png", "consumable", "mountainChocolateBar01", "vChocolateV");
+Game.createProtoItem("woodenMallet", "Wooden Mallet", "A mallet made from unrefined wood.", undefined, "weapon", "mallet", "woodenMallet");
+Game.createProtoItem("birdMask", "Bird Mask", "A mask resembling a bird's beak.", undefined, "armor", "birdMask01", undefined)
