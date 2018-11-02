@@ -680,9 +680,20 @@ class CharacterController extends EntityController {
     getBoneByID(_int) {
         return this.mesh.skeleton.bones[_int];
     }
+    /**
+     * Attaches a mesh to a bone
+     * @param  {BABYLON.AbstractMesh} _mesh               Mesh, or Mesh ID
+     * @param  {BABYLON.Texture} _texture            Texture, or Texture ID
+     * @param  {String} _bone               Bone name
+     * @param  {BABYLON.Vector3} _position           Mesh position
+     * @param  {BABYLON.Vector3} _rotation           Mesh rotation
+     * @param  {BABYLON.Vector3} _scale              Mesh scaling
+     * @param  {Number} _scalingDeterminant Only to be used when attaching a mesh directly; -1 to fix inverted normals, otherwise null.
+     * @return {CharacterController}                     This character controller.
+     */
     attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
-        _mesh = Game.createMesh(_mesh, _texture, undefined, _position, _rotation, _scale);
+        _mesh = Game.createMesh(_mesh, _texture);
         if (_mesh == undefined) {
             return null;
         }
@@ -693,16 +704,19 @@ class CharacterController extends EntityController {
         Rotation for bones is off before and after animations, this is a workaround
          */
         if (this.prevAnim == undefined) {
-            _rotation.x += BABYLON.Tools.ToRadians(180);
-            if (_bone.id == "hand.l" || _bone.id == "hand.r") {
-                _rotation.z += BABYLON.Tools.ToRadians(180);
-            }
+            /*
+            Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
+             */
+            _mesh.scalingDeterminant = -1;
         }
         _mesh.rotation.copyFrom(_rotation);
         _mesh.isVisible = true;
         if (!(_scale instanceof BABYLON.Vector3)) {
             _mesh.scaling.copyFrom(this.mesh.scaling);
         }
+        /*
+        One mesh per bone, pls
+         */
         if (this.attachedMeshes[_bone.id] != undefined) {
             this.detachFromBone(_bone.id);
         }
