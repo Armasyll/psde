@@ -310,7 +310,7 @@ class Game {
         this.player.getEntity().addItem(new InstancedItemEntity(undefined, "woodenMallet"));
         this.player.getEntity().addItem(new InstancedItemEntity(undefined, "birdMask"));
         this.player.attachToHead("birdMask01");
-        this.player.attachToRightHand("mallet");
+        this.player.attachToRightHand("mallet", "woodenMallet");
         this.player.getMesh().isPickable = false;
         Game.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
@@ -853,9 +853,9 @@ class Game {
             }
         }
     }
-    static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false) {
+    static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
-        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _highlightFix);
+        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _forceCreateClone);
         if (_instance == null) {return null;}
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
@@ -863,9 +863,9 @@ class Game {
         else {}
         return _instance;
     }
-    static addFurnitureMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _highlightFix = false, _createCollisionMesh = true) {
+    static addFurnitureMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false, _createCollisionMesh = true) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
-        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _highlightFix);
+        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _forceCreateClone);
         if (_instance == null) {return null;}
         if (_createCollisionMesh) {
             if (this.physicsEnabled) {
@@ -911,7 +911,18 @@ class Game {
         
         _mesh.dispose();
     }
-    static createMesh(_mesh = undefined, _texture = undefined, _id = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _highlightFix = false) {
+    /**
+     * Creates a mesh from those stored in loadedMeshes
+     * @param  {String}  _mesh             Mesh
+     * @param  {String}  _texture          Texture
+     * @param  {String}  _id               Mesh ID
+     * @param  {BABYLON.Vector3}  _position         Mesh position
+     * @param  {BABYLON.Vector3}  _rotation         Mesh rotation
+     * @param  {BABYLON.Vector3}  _scaling          Mesh scaling
+     * @param  {Boolean} _forceCreateClone Forces the creation of a clone instead of an instance; workaround for highlighting and attaching to bones.
+     * @return {BABYLON.Mesh, BABYLON.InstancedMesh}                    The created mesh
+     */
+    static createMesh(_mesh = undefined, _texture = undefined, _id = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running createMesh");
         // If _mesh isn't a mesh, check loadedMeshes, else then then meshLocations, else then fail
         if (typeof _id != "string") {_id = genUUIDv4();}
@@ -927,12 +938,13 @@ class Game {
         }
         if (_mesh.skeleton instanceof BABYLON.Skeleton) {
             _newMesh = _mesh.clone(_id);
-            _newMesh.name = _mesh.name;
+            Game.addClonedMesh(_newMesh, _id);
+            
             _newMesh.material = _texture;
             _newMesh.skeleton = _mesh.skeleton.clone(_id + "Skeleton");
-            
             Game.setLoadedMeshMaterial(_newMesh, _texture);
-            Game.addClonedMesh(_newMesh, _id);
+            
+            _newMesh.name = _mesh.name;
             _mesh = _newMesh;
         }
         else {
@@ -947,9 +959,15 @@ class Game {
                 _newMesh.position.set(0,-4095,0);
                 Game.setLoadedMeshMaterial(_newMesh, _texture);
             }
-            _newMesh = this.loadedMeshMaterials[_mesh.name][_texture.name].createInstance(_id);
+            if (_forceCreateClone === true) {
+                _newMesh = this.loadedMeshMaterials[_mesh.name][_texture.name].clone(_id);
+                Game.addClonedMesh(_newMesh, _id);
+            }
+            else {
+                _newMesh = this.loadedMeshMaterials[_mesh.name][_texture.name].createInstance(_id);
+                Game.addInstancedMesh(_newMesh);
+            }
             _newMesh.name = _mesh.name;
-            Game.addInstancedMesh(_newMesh);
             _mesh = _newMesh;
         }
         if (_position == undefined) {

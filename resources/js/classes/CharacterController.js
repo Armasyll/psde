@@ -693,7 +693,7 @@ class CharacterController extends EntityController {
      */
     attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
-        _mesh = Game.createMesh(_mesh, _texture);
+        _mesh = Game.createMesh(_mesh, _texture, undefined, _position, _rotation, _scale, true);
         if (_mesh == undefined) {
             return null;
         }
