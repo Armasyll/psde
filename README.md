@@ -11,4 +11,4 @@ No money is made from this game, yo.
 
 ## About the game
 
-It's a browser-based 3d game. You can have sex with them, too, I guess.
+It's a browser-based 3d game.
