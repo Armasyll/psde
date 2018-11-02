@@ -98,6 +98,7 @@ class Game {
             "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
             "dice":"resources/images/textures/items/dice.svg",
             "bookshelfBlackPlywood":"resources/images/textures/furniture/bookshelfBlackPlywood.svg",
+            "woodenMallet":"resources/images/textures/items/woodenMallet.svg"
         };
         /**
          * Map of Textures per ID
@@ -302,10 +303,14 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = Game.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "fox", "foxSkeletonN", "foxRed", undefined, _position, _rotation, _scaling);
-        this.player.attachToFOCUS("eye");
+        this.player = Game.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "fox", "foxM", "foxRed", undefined, _position, _rotation, _scaling);
+        this.player.attachToFOCUS("cameraFocus");
         this.player.attachToLeftEye("eye", "feralEyeGreen");
         this.player.attachToRightEye("eye", "feralEyeGreen");
+        this.player.getEntity().addItem(new InstancedItemEntity(undefined, "woodenMallet"));
+        this.player.getEntity().addItem(new InstancedItemEntity(undefined, "birdMask"));
+        this.player.attachToHead("birdMask01");
+        this.player.attachToRightHand("mallet");
         this.player.getMesh().isPickable = false;
         Game.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
@@ -434,6 +439,7 @@ class Game {
                 var _newMaterial = new BABYLON.StandardMaterial(_material)
                 _newMaterial.name = _texture.name;
                 _newMaterial.diffuseTexture = _texture;
+                _newMaterial.specularColor.set(0,0,0);
                 if (typeof _options == "object") {
                     if (_options.hasOwnProperty("specularColor")) {
                         _newMaterial.specularColor.set(Game.filterVector(_options["specularColor"]));
@@ -1821,6 +1827,9 @@ class Game {
                 _callback();
             }
             return;
+        }
+        if (_subEntityController instanceof CharacterController) {
+            _subEntityController.detachMeshFromBone(_instancedItemEntity); // TODO: instance-specific detachment; what if the controller has two of the same meshes attached?
         }
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
             _instancedItemEntity.setParent(null);
