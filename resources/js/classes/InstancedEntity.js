@@ -17,13 +17,13 @@ class InstancedEntity extends AbstractEntity {
         if (!(this.entity instanceof Entity)) {
             return null;
         }
-        this.setName(_name || _entity.getName());
-        this.setDescription(_description || _entity.description);
+        this.setName(_name || this.entity.getName());
+        this.setDescription(_description || this.entity.description);
         this.setOwner(_owner);
-        this.setPrice(_price || _entity.getPrice() || 0);
-        this.setMass(_mass || _entity.getMass() || 0.001);
-        this.setDurability(_durability || _entity.getDurability() || 1);
-        this.setDurabilityMax(_durabilityMax || _entity.getDurabilityMax() || this.durability);
+        this.setPrice(_price || this.entity.getPrice() || 0);
+        this.setMass(_mass || this.entity.getMass() || 0.001);
+        this.setDurability(_durability || this.entity.getDurability() || 1);
+        this.setDurabilityMax(_durabilityMax || this.entity.getDurabilityMax() || this.durability);
 
         for (var _action in this.entity.getAvailableActions()) {
             var _availableAction = this.entity.getAvailableAction(_action);
