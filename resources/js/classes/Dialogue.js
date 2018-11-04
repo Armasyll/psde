@@ -62,6 +62,23 @@ class Dialogue {
 	getOptions() {
 		return this.options;
 	}
+	addOption(_dialogueOption) {
+		_dialogueOption = Game.getDialogue(_dialogueOption);
+		if (_dialogueOption instanceof Dialogue) {
+			this.options.push(new DialogueOption(_dialogueOption));
+		}
+	}
+	removeOption(_dialogueOption) {
+		_dialogueOption = Game.getDialogue(_dialogueOption);
+		if (_dialogueOption instanceof Dialogue) {
+			this.options.some(function(_option) {
+				if (_option.dialogue.id == _dialogueOption.id) {
+					this.options.splice(this.options.indexOf(_option), 1);
+					return true;
+				}
+			})
+		}
+	}
 }
 class DialogueOption {
 	constructor(_dialogue, _title = undefined, _condition = undefined) {

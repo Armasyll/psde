@@ -89,7 +89,7 @@ class EntityController {
         return this.mesh;
     }
     hasMesh() {
-        return (this.mesh instanceof BABYLON.AbstractMesh)
+        return this.mesh instanceof BABYLON.AbstractMesh;
     }
     setEntity(_entity) {
         if (_entity instanceof AbstractEntity) {

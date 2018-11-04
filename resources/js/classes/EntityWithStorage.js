@@ -36,9 +36,9 @@ class EntityWithStorage extends Entity {
                     return this;
                 }
             }
-            if (this.hasHeldItem(_instancedItemEntity)) {
-                this.removeHeldItem(_instancedItemEntity);
-                if (this.hasHeldItem(_instancedItemEntity)) {
+            if (this.hasEquippedEntity(_instancedItemEntity)) {
+                this.unequipEntity(_instancedItemEntity);
+                if (this.hasEquippedEntity(_instancedItemEntity)) {
                     return this;
                 }
             }

@@ -66,16 +66,28 @@ class CharacterEntity extends EntityWithStorage {
         this.spells = new Set();
         /**
          * Dominant hand
-         * @type {String} "leftHand" or "rightHand"
+         * @type {String} "hand.l" or "hand.r"
          */
-        this.handedness = "rightHand";
+        this.handedness = "hand.r";
         /**
-         * Item(s) this CharacterEntity is holding; will never exceed two (2) Item(s)
-         * @type {Array} <InstancedItemEntity>
+         * Entities this CharacterEntity has equiped
+         * @type {<String, AbstractEntity>} Bone ID and AbstractEntity
          */
-        this.heldItems = {
-            leftHand:undefined,
-            rightHand:undefined
+        this.attachedEntities = {
+            "ROOT":null,
+            "FOCUS":null,
+            "head":null,
+            "ear.l":null,
+            "ear.r":null,
+            "eye.l":null,
+            "eye.r":null,
+            "neck":null,
+            "shoulder.l":null,
+            "shoulder.r":null,
+            "hand.l":null,
+            "hand.r":null,
+            "foot.l":null,
+            "foot.r":null
         };
         /**
          * Current Phone this CharacterEntity is using
@@ -718,139 +730,101 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     calculateManaCost(_cost = 0) {
-        if (!isNaN(_cost)) {}
+        if (!isNaN(_cost)) {
+            _cost = 0;
+        }
         else if (_cost instanceof Spell) {
             _cost = _cost.manaCost;
         }
-        else if (Game.spells.has(_cost))
+        else if (Game.spells.has(_cost)) {
             _cost = Game.spells.get(_cost).manaCost;
-        if (this.manaCostOffsetPercent == 0 || _cost == 0)
+        }
+        if (this.manaCostOffsetPercent == 0 || _cost == 0) {
             return _cost;
-        else if (_cost < 0)
+        }
+        else if (_cost < 0 || this.manaCostOffsetPercent == 100) {
             return 0;
-        else
-            return _cost - (_cost / (100 / this.manaCostOffsetPercent));
-    }
-
-    setHandedness(_hand) {
-        if (_hand == "leftHand") {
-            this.handedness = "leftHand";
         }
         else {
-            this.handedness = "rightHand";
+            return _cost - (_cost / (100 / this.manaCostOffsetPercent));
         }
     }
-    getHandedness() {
-        return this.handedness;
-    }
-    setLeftHanded() {
-        this.setHandedness("leftHand");
-    }
-    setRightHanded() {
-        this.setHandedness("rightHand");
-    }
 
-    /**
-     * Adds Entity(s) to this Character's heldItems
-     * NOTE: Directly modifies this.currentAction
-     * @param  {InstancedEntity} _instancedItemEntity The Entity to be held
-     * @param  {String} _hand The hand to hold it in; can be "leftHand", "rightHand", or undefined
-     * @param {this} This
-     */
-    addHeldItem(_instancedItemEntity, _hand = this.getHandedness()) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-
-        if (this.hasHeldItem(_instancedItemEntity)) {
+    getEquipment() {
+        return this.attachedEntities;
+    }
+    equipEntity(_bone, _entity) {
+        if (_bone instanceof BABYLON.Bone) {
+            _bone = _bone.id;
+        }
+        if (!(this.attachedEntities.hasOwnProperty(_bone))) {
             return this;
         }
-        if (this.heldItems[_hand] instanceof Entity) {
-            if (!this.removeHeldItem(this.heldItems[_hand])) {
-                return this;
+        _entity = Game.getEntity(_entity);
+        if (!(_entity instanceof AbstractEntity)) {
+            return this;
+        }
+        this.attachedEntities[_bone] = _entity;
+        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
+            this.controller.attachToBone(_entity.getMeshID(), _entity.getTextureID(), _bone);
+        }
+        return this;
+    }
+    unequipEntity(_blob) {
+        if (_blob instanceof BABYLON.Bone || this.attachedEntities.hasOwnProperty(_blob)) {
+            return this.unequipByBone(_blob);
+        }
+        else {
+            return this.unequipByEntity(_blob);
+        }
+    }
+    unequipByEntity(_entity) {
+        _entity = Game.getEntity(_entity);
+        var _bone = null;
+        if (_entity instanceof AbstractEntity) {
+            for (var _i in this.attachedEntities) {
+                if (this.attachedEntities[_i] == _entity) {
+                    this.attachedEntities[_i] = null;
+                    _bone = _i;
+                }
             }
         }
-        this.heldItems[_hand] = _instancedItemEntity;
-
+        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
+            this.controller.detachFromBone(_bone);
+        }
         return this;
     }
-    /**
-     * Removes Entity held in either hand
-     * NOTE: Directly modifies this.currentAction
-     * @param  {InstancedEntity, String} _instancedItemEntity InstancedEntity, InstancedEntity ID, "leftHand", or "rightHand"
-     * @return {this} This
-     */
-    removeHeldItem(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-
-        if (this.getHeldItemInRightHand() == _instancedItemEntity) {
-            this.removeHeldItemInRightHand();
+    unequipByBone(_bone) {
+        if (_bone instanceof BABYLON.Bone) {
+            _bone = _bone.id;
         }
-        if (this.getHeldItemInLeftHand() == _instancedItemEntity) {
-            this.removeHeldItemInLeftHand();
+        this.attachedEntities[_blob] = null;
+        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
+            this.controller.detachFromBone(_bone);
         }
-        this.currentActions["hold"] = this.heldItems;
         return this;
     }
-    getHeldItems() {
-        return this.heldItems;
-    }
-    hasHeldItem(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-
-        return this.heldItems["leftHand"] == _instancedItemEntity || this.heldItems["rightHand"] == _instancedItemEntity;
-    }
-    setHeldItemInRightHand(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-
-        this.heldItems["rightHand"] = _instancedItemEntity;
-
-        return this;
-    }
-    getHeldItemInRightHand() {
-        if (this.heldItems["rightHand"] instanceof InstancedItemEntity) {
-            return this.heldItems["rightHand"];
+    hasEquippedEntity(_blob) {
+        if (_blob instanceof BABYLON.Bone) {
+            _blob = _blob.id;
         }
-        else {
-            return null;
+        if (this.attachedEntities.hasOwnProperty(_blob)) {
+            return this.attachedEntities[_blob] != null;
         }
-    }
-    setHeldItemInLeftHand(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-
-        this.heldItems["leftHand"] = _instancedItemEntity;
-
-        return this;
-    }
-    getHeldItemInLeftHand() {
-        if (this.heldItems["leftHand"] instanceof InstancedItemEntity) {
-            return this.heldItems["leftHand"];
+        _blob = Game.getEntity(_blob);
+        if (!(_blob instanceof AbstractEntity)) {
+            return false;
         }
-        else {
-            return null;
+        for (var _bone in this.attachedEntities) {
+            if (this.attachedEntities[_bone] instanceof AbstractEntity) {
+                if (this.attachedEntities[_bone].id == _blob.id) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
-    /**
-     * Removes Entity in heldItems["rightHand"]
-     * NOTE: Directly modifies this.heldItems
-     * @return {this} This
-     */
-    removeHeldItemInRightHand() {
-        this.heldItems["rightHand"] = undefined;
-        return this;
-    }
-    /**
-     * Removes Entity in heldItems["leftHand"]
-     * NOTE: Directly modifies this.heldItems
-     * @return {this} This
-     */
-    removeHeldItemInLeftHand() {
-        this.heldItems["leftHand"] = undefined;
-        return this;
-    }
+    
 
     clean() {
         this.cleanliness = 100;
@@ -2668,7 +2642,23 @@ class CharacterEntity extends EntityWithStorage {
         return true;
     }
     hold(_instancedItemEntity, _hand = undefined) {
-        return this.addHeldItem(_instancedItemEntity, _hand);
+        if (_hand != "hand.r" && _hand != "hand.l") {
+            _hand = this.handedness;
+            if (this.hasEquippedEntity(_hand)) {
+                if (_hand == "hand.r") {
+                    _hand = "hand.l";
+                }
+                else {
+                    _hand = "hand.r";
+                }
+            }
+        }
+        if (this.hasEquippedEntity(_hand)) {
+            if (!this.unequipEntity(_hand)) {
+                return this;
+            }
+        }
+        return this.equipEntity(_hand, _instancedItemEntity);
     }
     hug(_entity) {
         _entity = Game.getEntity(_entity);
@@ -2842,7 +2832,7 @@ class CharacterEntity extends EntityWithStorage {
         this.fuck(_entity);
     }
     release(_instancedItemEntity, _hand = undefined) {
-        return this.removeHeldItem(_instancedItemEntity, _hand);
+        return this.unequipEntity(_instancedItemEntity); // TODO: remove this
     }
     /**
      * Alias for fuck

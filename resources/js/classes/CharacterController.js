@@ -86,6 +86,10 @@ class CharacterController extends EntityController {
 
         this._showHelmet = true;
 
+        /**
+         * Map of bone IDs and the mesh attached to them.
+         * @type {<String, BABYLON.Mesh>}
+         */
         this.attachedMeshes = {};
         Game.characterControllers[this.id] = this;
     }
@@ -700,19 +704,15 @@ class CharacterController extends EntityController {
         _bone = this.getBone(_bone); if (_bone == null) {return this;}
         _mesh.attachToBone(_bone, this.mesh);
         _mesh.position.copyFrom(_position);
-        /*
-        Rotation for bones is off before and after animations, this is a workaround
-         */
+        _mesh.rotation.copyFrom(_rotation);
+        if (!(_scale instanceof BABYLON.Vector3)) {
+            _mesh.scaling.copyFrom(this.mesh.scaling);
+        }
         if (this.prevAnim == undefined) {
             /*
             Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
              */
             _mesh.scalingDeterminant = -1;
-        }
-        _mesh.rotation.copyFrom(_rotation);
-        _mesh.isVisible = true;
-        if (!(_scale instanceof BABYLON.Vector3)) {
-            _mesh.scaling.copyFrom(this.mesh.scaling);
         }
         /*
         One mesh per bone, pls

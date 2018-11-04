@@ -309,8 +309,6 @@ class Game {
         this.player.attachToRightEye("eye", "feralEyeGreen");
         this.player.getEntity().addItem(new InstancedItemEntity(undefined, "woodenMallet"));
         this.player.getEntity().addItem(new InstancedItemEntity(undefined, "birdMask"));
-        this.player.attachToHead("birdMask01");
-        this.player.attachToRightHand("mallet", "woodenMallet");
         this.player.getMesh().isPickable = false;
         Game.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
@@ -970,6 +968,7 @@ class Game {
             _newMesh.name = _mesh.name;
             _mesh = _newMesh;
         }
+        _mesh.isVisible = true;
         if (_position == undefined) {
             _position = new BABYLON.Vector3(0, -4095, 0)
         }
@@ -1847,7 +1846,7 @@ class Game {
             return;
         }
         if (_subEntityController instanceof CharacterController) {
-            _subEntityController.detachMeshFromBone(_instancedItemEntity); // TODO: instance-specific detachment; what if the controller has two of the same meshes attached?
+            _subEntityController.getEntity().unequipEntity(_instancedItemEntity);
         }
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
             _instancedItemEntity.setParent(null);
@@ -1887,20 +1886,7 @@ class Game {
             }
             return;
         }
-        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) {
-        }
-        else {
-            _subEntityController.getEntity().addHeldItem(_instancedItemEntity);
-            if (_subEntityController.getEntity().getHeldItemInLeftHand() == _instancedItemEntity) {
-                _subEntityController.attachToLeftHand(_instancedItemEntity.getMeshID(), _instancedItemEntity.getTextureID());
-            }
-            else if (_subEntityController.getEntity().getHeldItemInRightHand() == _instancedItemEntity) {
-                _subEntityController.attachToRightHand(_instancedItemEntity.getMeshID(), _instancedItemEntity.getTextureID());
-            }
-            else {
-                // do nothing :v or maybe something with magic v:
-            }
-        }
+        _subEntityController.getEntity().hold(_instancedItemEntity);
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntityController);
         }
@@ -1918,17 +1904,7 @@ class Game {
             }
             return;
         }
-        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) {
-        }
-        else {
-            if (_subEntityController.getEntity().getHeldItemInLeftHand() == _instancedItemEntity) {
-                _subEntityController.detachFromLeftHand();
-            }
-            else if (_subEntityController.getEntity().getHeldItemInRightHand() == _instancedItemEntity) {
-                _subEntityController.detachFromRightHand();
-            }
-            _subEntityController.getEntity().removeHeldItem(_instancedItemEntity);
-        }
+        _subEntityController.getEntity().unequipEntity(_instancedItemEntity);
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntityController);
         }

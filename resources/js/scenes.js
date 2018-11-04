@@ -515,6 +515,14 @@ Game.generateApartment = function() {
             return "Greetings" + (_you.getLastName() != undefined && _you.getLastName().length > 0 ? (", " + _you.getLastName()) : "") + ".";
         }
     );
+    new Dialogue(
+        "charlieKiss",
+        "Give Charlie a Kiss",
+        function(_them, you) {
+            return "You try to give Charlie a kiss on the lips, but she dodges her head aside and glares at you.";
+        }
+    );
+    Game.getDialogue("charlieTalk").addOption("charlieKiss");
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
 
     // Create fire material
