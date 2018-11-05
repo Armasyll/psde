@@ -189,6 +189,7 @@ class Game {
         this.characterEntities = {};
         this.itemEntities = {};
         this.clothingEntities = {};
+        this.weaponEntities = {};
         this.keyEntities = {};
         this.spellEntities = {};
 
@@ -225,6 +226,7 @@ class Game {
 
         this.MALE = 0, this.FEMALE = 1;
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
+        this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
         this.kFeetTypes = this.kHandTypes;
         this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
@@ -232,7 +234,7 @@ class Game {
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
         this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
-        this.kInteractionTypes = new Set(["close","consume","disrobe","drop","hold","look","open","put","release","take","talk","touch","use","wear"]);
+        this.kInteractionTypes = new Set(["close","consume","drop","equip","hold","look","open","release","take","talk","touch","unequip","use"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
         this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
         this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
@@ -242,6 +244,8 @@ class Game {
         this.actionOpen = new ActionData("open", Game.actionOpenFunction, false);
         this.actionClose = new ActionData("close", Game.actionCloseFunction, false);
         this.actionTalk = new ActionData("talk", Game.actionTalkFunction, false);
+        this.actionEquip = new ActionData("equip", Game.actionEquipFunction, false);
+        this.actionUnequip = new ActionData("unequip", Game.actionUnequipFunction, false);
         this.XP_MIN = 0;
         this.XP_MAP = 355000;
         this.LEVEL_MIN = 0;
@@ -254,6 +258,14 @@ class Game {
         this.kCharacterClasses = new Set(["bard","cleric","druid","paladin","ranger","sorcerer","warlock","wizard","classless","commoner","expert","noble"]);
 
         this.kSpellSchools = new Set(["abjuration","conjuration","divination","enchantment","evocation","illusion","necromancy","transmutation","universal"]);
+
+        this.kWeaponSimpleMeleeTypes = new Set(["club","dagger","greatclub","handaxe","javelin","lighthammer","mace","quarterstaff","sickle","spear"]);
+        this.kWeaponSimpleRangedTypes = new Set(["lightcrossbow","dart","shortbow","sling"]);
+        this.kWeaponMartialMeleeTypes = new Set(["battleaxe","flail","glaive","greataxe","greatsword","halberd","lance","longsword","maul","morningstar","pike","rapier","scimitar","shortsword","trident","warpick","warhammer","whip"]);
+        this.kWeaponMartialRangedTypes = new Set(["blowgun","handcrossbow","heavycrossbow","longbow","net"]);
+        this.kWeaponMeleeTypes = new Set([...this.kWeaponSimpleMeleeTypes, ...this.kWeaponMartialMeleeTypes]);
+        this.kWeaponRangedTypes = new Set([...this.kWeaponSimpleRangedTypes, ...this.kWeaponMartialRangedTypes]);
+        this.kWeaponTypes = new Set([...this.kWeaponMeleeTypes, ...this.kWeaponRangedTypes]);
 
         GameGUI.initialize();
         this.initFreeCamera();
@@ -1585,10 +1597,23 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _mesh = undefined, _texture = undefined) {
+    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = "general") {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        var _entity = new ItemEntity(_id, _name, _description, _image);
+        var _entity = null;
+        switch (_itemType) {
+            case "clothing": {
+                _entity = new ClothingEntity(_id, _name, _description, _image);
+                break;
+            }
+            case "key":{
+                _entity = new KeyEntity(_id, _name, _description, _image);
+            }
+            case "general": {}
+            default: {
+                _entity = new ItemEntity(_id, _name, _description, _image);
+            }
+        }
         _mesh = this.getAbstractMesh(_mesh);
         if (_mesh != undefined) {
             _mesh = _mesh.name;
@@ -1944,20 +1969,29 @@ class Game {
             }
             return;
         }
-        var _itemEntity = _instancedItemEntity;
-        if (_instancedItemEntity instanceof InstancedEntity) {
-            _itemEntity = _instancedItemEntity.getEntity();
+        if (_subEntityController instanceof CharacterController) {
+            _subEntityController.getEntity().equipEntity(_instancedItemEntity);
         }
-        if (_itemEntity instanceof ClothingEntity) {
-            
+        if (typeof _callback == "function") {
+            _callback(_instancedItemEntity, undefined, _subEntityController);
         }
-        else if (_itemEntity instanceof WeaponEntity) {
-            
+    }
+    static actionUnequipFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+            return;
         }
-        else {
-            
+        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
         }
-        _subEntityController.getEntity().hold(_instancedItemEntity);
+        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+            if (typeof _callback == "function") {
+                _callback();
+            }
+            return;
+        }
+        if (_subEntityController instanceof CharacterController) {
+            _subEntityController.getEntity().unequip(_instancedItemEntity);
+        }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntityController);
         }

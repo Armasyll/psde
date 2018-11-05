@@ -2,8 +2,11 @@ class AbstractEntity {
     /**
      * Creates an AbstractEntity
      * @param  {String} _id          Unique ID
+     * @param  {String} _name        Name
+     * @param  {String} _description Description
+     * @param  {String}  _image      Image path or base64
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = undefined) {
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
@@ -26,6 +29,7 @@ class AbstractEntity {
          */
         this.image = null;
         this.setImage(_image);
+        this.type = null;
         /**
          * Entity's controller
          * @type {CharacterController}
@@ -134,6 +138,9 @@ class AbstractEntity {
     setController(_controller) {
         this.controller = Game.getEntityController(_controller);
         return this;
+    }
+    getType() {
+        return this.type;
     }
     getController() {
         return this.controller;

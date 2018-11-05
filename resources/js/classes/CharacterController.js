@@ -8,6 +8,7 @@ class CharacterController extends EntityController {
 
         // Mesh, attached to the 'FOCUS' bone, which will be the focus of the camera
         this.focus = undefined;
+        this.root = undefined;
         // What EntityController this CharacterController is targeting
         this.targetController = null;
         // The CharacterControllers targeting this CharacterController
@@ -88,9 +89,14 @@ class CharacterController extends EntityController {
 
         /**
          * Map of bone IDs and the mesh attached to them.
-         * @type {<String, BABYLON.Mesh>}
+         * @type {String, {String, BABYLON.Mesh}}
          */
-        this.attachedMeshes = {};
+        this._meshesAttachedToBones = {};
+        /**
+         * Map of mesh IDs and the bones they're attached to.
+         * @type {String, {String, BABYLON.Bone}}
+         */
+        this._bonesAttachedToMeshes = {};
         Game.characterControllers[this.id] = this;
     }
 
@@ -633,31 +639,49 @@ class CharacterController extends EntityController {
         return this;
     }
     hideAttachedMeshes() {
-        for (var _i in this.attachedMeshes) {
-            if (this.attachedMeshes[_i] instanceof BABYLON.AbstractMesh) {
-                this.attachedMeshes[_i].isVisible = false;
+        for (var _bone in this._meshesAttachedToBones) {
+            if (_bone == "FOCUS" || _bone == "ROOT") {}
+            else if (this._showHelmet && _bone == "head") {}
+            for (var _mesh in this._meshesAttachedToBones[_bone]) {
+                if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones[_bone][_mesh].isVisible = false;
+                }
             }
         }
         return this;
     }
     showAttachedMeshes() {
-        for (var _i in this.attachedMeshes) {
-            if (this.attachedMeshes[_i] instanceof BABYLON.AbstractMesh) {
-                this.attachedMeshes[_i].isVisible = true;
+        for (var _bone in this._meshesAttachedToBones) {
+            if (_bone == "FOCUS" || _bone == "ROOT") {}
+            else if (!this._showHelmet && _bone == "head") {}
+            else {
+                for (var _mesh in this._meshesAttachedToBones[_bone]) {
+                    if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
+                        this._meshesAttachedToBones[_bone][_mesh].isVisible = true;
+                    }
+                }
             }
         }
         return this;
     }
     hideHelmet() {
-        if (this.attachedMeshes["head"] instanceof BABYLON.AbstractMesh) {
-            this.attachedMeshes["head"].isVisible = false;
+        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
+            for (var _mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][_mesh].isVisible = false;
+                }
+            }
         }
         this._showHelmet = false;
         return this;
     }
     showHelmet() {
-        if (this.attachedMeshes["head"] instanceof BABYLON.AbstractMesh) {
-            this.attachedMeshes["head"].isVisible = true;
+        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
+            for (var _mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][_mesh].isVisible = true;
+                }
+            }
         }
         this._showHelmet = true;
         return this;
@@ -701,7 +725,10 @@ class CharacterController extends EntityController {
         if (_mesh == undefined) {
             return null;
         }
-        _bone = this.getBone(_bone); if (_bone == null) {return this;}
+        _bone = this.getBone(_bone);
+        if (_bone == null) {
+            return this;
+        }
         _mesh.attachToBone(_bone, this.mesh);
         _mesh.position.copyFrom(_position);
         _mesh.rotation.copyFrom(_rotation);
@@ -714,59 +741,84 @@ class CharacterController extends EntityController {
              */
             _mesh.scalingDeterminant = -1;
         }
-        /*
-        One mesh per bone, pls
-         */
-        if (this.attachedMeshes[_bone.id] != undefined) {
-            this.detachFromBone(_bone.id);
+        if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
+            this._meshesAttachedToBones[_bone.id] = {};
         }
-        this.attachedMeshes[_bone.id] = _mesh;
+        this._meshesAttachedToBones[_bone.id][_mesh.id] = _mesh;
+        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
+            this._bonesAttachedToMeshes[_mesh.id] = {};
+        }
+        this._bonesAttachedToMeshes[_mesh.id][_bone.id] = _bone;
+        if (_bone.id == "FOCUS") {
+            this.focus = _mesh;
+            _mesh.isVisible = false;
+        }
+        else if (_bone.id == "ROOT") {
+            this.root = _mesh;
+            _mesh.isVisible = false;
+        }
         return this;
     }
     detachFromBone(_bone) {
+        return this.detachAllFromBone(_bone);
+    }
+    detachAllFromBone(_bone) {
         _bone = this.getBone(_bone);
-        if (_bone instanceof BABYLON.Bone) {
-            this.attachedMeshes[_bone.id].dispose();
-            this.attachedMeshes[_bone.id] = undefined;
+        if (!(_bone instanceof BABYLON.Bone)) {
+            return this;
         }
+        if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
+            return this;
+        }
+        for (var _mesh in this._meshesAttachedToBones[_bone.id]) {
+            if (this._meshesAttachedToBones[_bone.id][_mesh] instanceof BABYLON.AbstractMesh) {
+                this._meshesAttachedToBones[_bone.id][_mesh].detachFromBone();
+                Game.removeMesh(this._meshesAttachedToBones[_bone.id][_mesh]);
+                delete this._bonesAttachedToMeshes[_mesh][_bone.id];
+            }
+        }
+        delete this._meshesAttachedToBones[_bone.id];
         return this;
     }
     detachMeshFromBone(_mesh) {
-        for (var _bone in this.attachedMeshes) {
-            if (_bone == "ROOT" || _bone == "FOCUS") {
-                return undefined;
-            }
-            if ((this.attachedMeshes[_bone] instanceof BABYLON.AbstractMesh) && this.attachedMeshes[_bone].name == _mesh.name) {
-                this.detachFromBone(_bone);
+        _mesh = Game.getMesh(_mesh);
+        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+            return this;
+        }
+        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
+            return this;
+        }
+        for (var _bone in this._bonesAttachedToMeshes[_mesh.id]) {
+            if (this._bonesAttachedToMeshes[_mesh.id][_bone] instanceof BABYLON.Bone) {
+                delete this._meshesAttachedToBones[_bone][_mesh.id];
             }
         }
+        delete this._bonesAttachedToMeshes[_mesh.id];
+        _mesh.detachFromBone();
+        Game.removeMesh(_mesh);
         return this;
     }
     detachFromAllBones() {
-        for (var _bone in this.attachedMeshes) {
-            if (_bone == "ROOT" || _bone == "FOCUS") {
-                return undefined;
-            }
-            if (this.attachedMeshes[_bone] instanceof BABYLON.AbstractMesh) {
-                this.detachFromBone(_bone);
+        for (var _bone in this._meshesAttachedToBones) {
+            if (_bone == "FOCUS" || _bone == "ROOT") {}
+            else {
+                for (var _mesh in this._meshesAttachedToBones[_bone]) {
+                    if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
+                        this._meshesAttachedToBones[_bone][_mesh].detachFromBone();
+                        Game.removeMesh(this._meshesAttachedToBones[_bone][_mesh]);
+                        delete this._bonesAttachedToMeshes[_mesh][_bone];
+                    }
+                }
+                delete this._meshesAttachedToBones[_bone];
             }
         }
         return this;
-    }
-    getMeshAttachedToBone(_bone) {
-        _bone = this.getBone(_bone);
-        if (_bone instanceof BABYLON.Bone) {
-            return this.attachedMeshes[_bone.id];
-        }
-        return null;
     }
     attachToLeftEye(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
-        return this;
+        return this.attachToBone(_mesh, _texture, "eye.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     attachToRightEye(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
-        return this;
+        return this.attachToBone(_mesh, _texture, "eye.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     attachToHead(_mesh, _texture) {
         this.attachToBone(_mesh, _texture, "head", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
@@ -779,26 +831,19 @@ class CharacterController extends EntityController {
         return this;
     }
     attachToFOCUS(_mesh) {
-        this.attachToBone(_mesh, undefined, "FOCUS");
-        var _focus = this.getMeshAttachedToBone("FOCUS")
-        this.focus = _focus;
-        return this;
+        return this.attachToBone(_mesh, undefined, "FOCUS");
     }
     attachToRightHand(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
-        return this;
+        return this.attachToBone(_mesh, _texture, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
     }
     detachFromRightHand() {
-        this.detachFromBone("hand.r");
-        return this;
+        return this.detachFromBone("hand.r");
     }
     attachToLeftHand(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
-        return this;
+        return this.attachToBone(_mesh, _texture, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
     }
     detachFromLeftHand() {
-        this.detachFromBone("hand.l");
-        return this;
+        return this.detachFromBone("hand.l");
     }
 
     dispose() {

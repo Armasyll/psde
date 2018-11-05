@@ -4,7 +4,6 @@ class ItemEntity extends Entity {
 
         this.addAvailableAction("drop");
         this.addAvailableAction("hold");
-        this.addAvailableAction("put");
         this.addAvailableAction("take");
 
         this.addSpecialProperty(_specialProperties);

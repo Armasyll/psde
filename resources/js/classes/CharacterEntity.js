@@ -726,16 +726,16 @@ class CharacterEntity extends EntityWithStorage {
     getEquipment() {
         return this.attachedEntities;
     }
-    equipEntity(_bone, _entity) {
+    equipEntity(_entity, _bone = undefined) {
         if (_bone instanceof BABYLON.Bone) {
             _bone = _bone.id;
-        }
-        if (!(this.attachedEntities.hasOwnProperty(_bone))) {
-            return this;
         }
         _entity = Game.getEntity(_entity);
         if (!(_entity instanceof AbstractEntity)) {
             return this;
+        }
+        if (!(this.attachedEntities.hasOwnProperty(_bone))) {
+            
         }
         this.attachedEntities[_bone] = _entity;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
@@ -2410,7 +2410,7 @@ class CharacterEntity extends EntityWithStorage {
                 return this;
             }
         }
-        return this.equipEntity(_hand, _instancedItemEntity);
+        return this.equipEntity(_instancedItemEntity, _hand);
     }
     lay(_entity = undefined, _dontOverride = undefined) {
         _entity = Game.getEntity(_entity);
