@@ -1,5 +1,5 @@
 Game.generateApartment = function() {
-    if (Game.debugEnabled) console.log("Running generateApartmentScene");
+    console.log("Initializing apartment...");
     
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);

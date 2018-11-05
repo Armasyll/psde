@@ -1,4 +1,4 @@
-console.log("Initializing Items...");
+console.log("Initializing items...");
 Game.createProtoItem("knife", "Knife", "A dull knife.", "knife", "knife");
 Game.createProtoItem("cross", "Cross", "A metal-capped cross.", "cross01", "cross01", "cross01");
 Game.createProtoItem("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simple key to Pack Street Bldg 3", "key", "key01");
