@@ -536,30 +536,6 @@ class CharacterEntity extends EntityWithStorage {
          */
         this.furniture = undefined;
         /**
-         * ClothingEntity this CharacterEntity is wearing
-         * @type {Map} <String, ClothingEntity>
-         */
-        this.clothing = {
-            hat:undefined,
-            mask:undefined,
-            glasses:undefined,
-            earPiercingLeft:undefined,
-            earPiercingRight:undefined,
-            nosePiercing:undefined,
-            lipPiercing:undefined,
-            tonguePiercing:undefined,
-            neckwear:undefined,
-            shirt:undefined,
-            jacket:undefined,
-            belt:undefined,
-            gloves:undefined,
-            underwear:undefined,
-            pants:undefined,
-            socks:undefined,
-            shoes:undefined,
-            bra:undefined
-        };
-        /**
          * Map of Characters and this Character's disposition for them
          * @type {Map} <Character, Object>
          * 
@@ -672,13 +648,10 @@ class CharacterEntity extends EntityWithStorage {
         this.setGender(this._sex);
         this.setSpecies(_species);
         this.addAvailableAction("attack");
-        this.addAvailableAction("follow");
         this.addAvailableAction("hold");
         this.addAvailableAction("open"); // inventory... maybe :v
         this.addAvailableAction("give");
         this.addAvailableAction("take");
-        this.addAvailableAction("hug");
-        this.addAvailableAction("kiss");
 
         Game.characterEntities[this.id] = this;
 
@@ -766,7 +739,22 @@ class CharacterEntity extends EntityWithStorage {
         }
         this.attachedEntities[_bone] = _entity;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
-            this.controller.attachToBone(_entity.getMeshID(), _entity.getTextureID(), _bone);
+            switch (_bone) {
+                case "head": {
+                    this.controller.attachToHead(_entity.getMeshID(), _entity.getTextureID());
+                }
+                case "hand.r": {
+                    this.controller.attachToRightHand(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "hand.l": {
+                    this.controller.attachToLeftHand(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                default: {
+                    this.controller.attachToBone(_entity.getMeshID(), _entity.getTextureID(), _bone);
+                }
+            }
         }
         return this;
     }
@@ -798,7 +786,7 @@ class CharacterEntity extends EntityWithStorage {
         if (_bone instanceof BABYLON.Bone) {
             _bone = _bone.id;
         }
-        this.attachedEntities[_blob] = null;
+        this.attachedEntities[_bone] = null;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
             this.controller.detachFromBone(_bone);
         }
@@ -2318,122 +2306,6 @@ class CharacterEntity extends EntityWithStorage {
         return typeof this.furColourA != 'undefined';
     }
 
-    hasHat() {
-        return this.clothing["hat"] instanceof InstancedItemEntity && this.clothing["hat"].getEntity() instanceof ItemEntity;
-    }
-    getHat() {
-        return this.clothing["hat"].getEntity();
-    }
-
-    hasShirt() {
-        return this.clothing["shirt"] instanceof InstancedItemEntity && this.clothing["shirt"].getEntity() instanceof ItemEntity;
-    }
-    getShirt() {
-        return this.clothing["shirt"].getEntity();
-    }
-
-    hasJacket() {
-        return this.clothing["jacket"] instanceof InstancedItemEntity && this.clothing["jacket"].getEntity() instanceof ItemEntity;
-    }
-    getJacket() {
-        return this.clothing["jacket"].getEntity();
-    }
-
-    hasNeckwear() {
-        return this.clothing["neckwear"] instanceof InstancedItemEntity && this.clothing["neckwear"].getEntity() instanceof ItemEntity;
-    }
-    getNeckwear() {
-        return this.clothing["neckwear"].getEntity();
-    }
-
-    hasBra() {
-        return this.clothing["bra"] instanceof InstancedItemEntity && this.clothing["bra"].getEntity() instanceof ItemEntity;
-    }
-    getBra() {
-        return this.clothing["bra"].getEntity();
-    }
-
-    hasBelt() {
-        return this.clothing["belt"] instanceof InstancedItemEntity && this.clothing["belt"].getEntity() instanceof ItemEntity;
-    }
-    getBelt() {
-        return this.clothing["belt"].getEntity();
-    }
-
-    hasUnderwear() {
-        return this.clothing["underwear"] instanceof InstancedItemEntity && this.clothing["underwear"].getEntity() instanceof ItemEntity;
-    }
-    getUnderwear() {
-        return this.clothing["underwear"].getEntity();
-    }
-
-    hasPants() {
-        return this.clothing["pants"] instanceof InstancedItemEntity && this.clothing["pants"].getEntity() instanceof ItemEntity;
-    }
-    getPants() {
-        return this.clothing["pants"].getEntity();
-    }
-    
-    hasShoes() {
-        return this.clothing["shoe"] instanceof InstancedItemEntity && this.clothing["shoe"].getEntity() instanceof ItemEntity;
-    }
-    getShoes() {
-        return this.clothing["shoes"].getEntity();
-    }
-    getClothing(_type) {
-        if (Game.kClothingTypes.has(_type))
-            return this.clothing[_clothing.type];
-        else
-            return this.clothing;
-    }
-    setClothing(_instancedItemEntity, _type = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity) && _instancedItemEntity !== undefined) {
-            if (Game.itemInstances.has(_instancedItemEntity))
-                _instancedItemEntity = Game.itemInstances.get(_instancedItemEntity);
-            else if (_instancedItemEntity instanceof ClothingEntity)
-                _instancedItemEntity = new InstancedItemEntity(undefined, _instancedItemEntity);
-            else if (Game.clothing.has(_instancedItemEntity))
-                _instancedItemEntity = new InstancedItemEntity(undefined, Game.clothing.get(_instancedItemEntity));
-            else
-                return this;
-        }
-
-        if (!(this.containsItem(_instancedItemEntity, true)))
-            this.addItem(_instancedItemEntity);
-
-        if (_instancedItemEntity instanceof InstancedItemEntity && Game.kClothingTypes.has(_instancedItemEntity.getEntity().type))
-            this.clothing[Game.kClothingTypes.has(_type) ? _type : _instancedItemEntity.getEntity().type] = _instancedItemEntity;
-        else if (Game.kClothingTypes.has(_type))
-            this.clothing[_type] = undefined;
-        return this;
-    }
-    addClothing(_instancedItemEntity, _type) {
-        return this.setClothing(_instancedItemEntity, _type);
-    }
-    removeClothing(_instancedItemEntity, _type = undefined) {
-        if (typeof _instancedItemEntity == "string" && Game.kClothingTypes.has(_instancedItemEntity)) {
-            this.clothing[_instancedItemEntity] = undefined;
-            return this;
-        }
-        else if (Game.kClothingTypes.has(_type)) {
-            this.clothing[_type] = undefined;
-            return this;
-        }
-        if (!(_instancedItemEntity instanceof InstancedItemEntity) && _instancedItemEntity !== undefined) {
-            if (Game.itemInstances.has(_instancedItemEntity))
-                _instancedItemEntity = Game.itemInstances.get(_instancedItemEntity);
-            else if (_instancedItemEntity instanceof ClothingEntity)
-                _instancedItemEntity = new InstancedItemEntity(undefined, _instancedItemEntity);
-            else if (Game.clothing.has(_instancedItemEntity))
-                _instancedItemEntity = new InstancedItemEntity(undefined, Game.clothing.get(_instancedItemEntity));
-            else
-                return this;
-        }
-
-        this.clothing[_instancedItemEntity.getEntity().type] = undefined;
-        return this;
-    }
-
     addCurrentAction(_actionType, _entity = undefined) {
         if (!Game.kActionTypes.has(_actionType))
             return undefined;
@@ -2521,126 +2393,6 @@ class CharacterEntity extends EntityWithStorage {
             return false;
     }
 
-    /**
-     * Have anal sex with _entity
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    anal(_entity) {
-        _entity = Game.getCharacterEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.fuck(_entity);
-
-        return true;
-    }
-    attack(_entity) {
-        _entity = Game.getCharacterEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.addCurrentAction("attack", _entity);
-
-        return true;
-    }
-    charmed(_character, _cron = "4m") {
-        _character = Game.getCharacterEntity(_character);
-        if (_character == undefined) {return;}
-
-        this.addCurrentAction("charmed", _character);
-        //new GameEvent(`${this.id}CharmedRemove`, "charmed", _character, this, undefined, undefined, undefined, undefined, _cron, `${this.id}.removeCurrentAction('charmed')`, true);
-
-        return true;
-    }
-    consume(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
-
-        /*if (this.triggerActionEvent("consume", _instancedItemEntity.getEntity())) {
-            this.addCurrentAction("consume", _instancedItemEntity);
-            this.items.splice(this.items.indexOf(_instancedItemEntity), 1);
-            Game.setTimedFunctionEvent(
-                `${this.id}Consume${_instancedItemEntity.getEntity().id}${Game.roll("1d4")}`,
-                `Game.getCharacterEntity('${this.id}').removeCurrentAction('consume', _instancedItemEntity)`,
-                "2m",
-                true
-            );
-            return true;
-        }
-        else {
-            return false;
-        }*/
-
-        return true;
-    }
-    /**
-     * Alias for removeClothing
-     * @param  {InstancedItemEntity} _instancedItemEntity Item Instance
-     * @return {[type]}               [description]
-     */
-    disrobe(_instancedItemEntity) {
-        return this.removeClothing(_instancedItemEntity);
-    }
-    /**
-     * Have sex with )entity
-     * @param  {Entity}  _entity      [description]
-     * @param  {Boolean} _updateChild [description]
-     * @return {Boolean}               [description]
-     */
-    fuck(_entity = undefined, _updateChild = true) {
-        _entity = Game.getCharacterEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        if (_entity.getSex() == Game.FEMALE) {
-            this.hadSexWithFemale = true;
-        }
-        else if (_entity.getSex() == Game.MALE) {
-            this.hadSexWithMale = true;
-        }
-        this.removeCurrentAction("masturbate");
-        this.addCurrentAction("sex");
-        this.incSexCount();
-        if (_updateChild) {
-            _entity.fuck(this, false);
-        }
-
-        return true;
-    }
-    follow(_character, _preGeneratedPath = undefined, _updateChild = true) {
-        _character = Game.getCharacterEntity(_character);
-        if (_character == undefined) {return;}
-        /*if (Game.characterPathes.has(_character))
-            this.move();
-        else
-            this.stand();*/
-
-        if (_character.following == this) {
-            this.removeFollower(_character);
-            _character.following = undefiend;
-        }
-
-        this.following = _character;
-        this.addCurrentAction("follow", _character);
-
-        /*var _path = Game._findPathToRoom(Game.getCharacterCurrentRoom(this), Game.getCharacterCurrentRoom(_character));
-        Game.characterPathes.set(this, _path);
-
-        if (this.hasFollowers()) {
-            this.followers.forEach(function(_follower) {
-                if (_follower instanceof CharacterEntity) {
-                    if (!(Game.getCharacterCurrentRoom(_follower) == Game.getCharacterCurrentRoom(this)))
-                        _follower.follow(_character, Game._findPathToRoom(Game.getCharacterCurrentRoom(_follower), Game.getCharacterCurrentRoom(_character)));
-                    else
-                        _follower.follow(_character, _path);
-                }
-            }, this);
-            this.followers.clear();
-        }*/
-        if (_updateChild) {
-            _character.addFollower(this, false);
-        }
-
-        return true;
-    }
     hold(_instancedItemEntity, _hand = undefined) {
         if (_hand != "hand.r" && _hand != "hand.l") {
             _hand = this.handedness;
@@ -2659,22 +2411,6 @@ class CharacterEntity extends EntityWithStorage {
             }
         }
         return this.equipEntity(_hand, _instancedItemEntity);
-    }
-    hug(_entity) {
-        _entity = Game.getEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.addCurrentAction("hug", _entity);
-
-        return true;
-    }
-    kiss(_entity) {
-        _entity = Game.getEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.addCurrentAction("kiss", _entity);
-
-        return true;
     }
     lay(_entity = undefined, _dontOverride = undefined) {
         _entity = Game.getEntity(_entity);
@@ -2778,116 +2514,14 @@ class CharacterEntity extends EntityWithStorage {
 
         return true;
     }
-    /**
-     * Masturbate
-     * @param  {Array}  _dontOverride Current actions to not override
-     * @return {Boolean}               [description]
-     */
-    masturbate(_dontOverride = undefined) {
-        if (_dontOverride == undefined) {}
-        else if (typeof _dontOverride == "string") {
-            _dontOverride = _dontOverride.split(/[\s,]+/);
-        }
-        else if (_dontOverride instanceof Set) {
-            _dontOverride = Array.from(_dontOverride);
-        }
-        else {
-            _dontOverride = undefined;
-        }
-
-        /*if (_dontOverride.contains("sleep")) this.removeCurrentAction("sleep");
-        if (_dontOverride.contains("move")) this.removeCurrentAction("move");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
-
-        return true;
-    }
     open(_entity) {
         _entity = Game.getEntity(_entity);
         if (_entity == undefined) {return;}
 
         return true;
     }
-    /**
-     * Have oral sex with _entity
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    oral(_entity) {
-        _entity = Game.getCharacterEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.fuck(_entity);
-
-        return true;
-    }
-    put(_entity, _instancedItemEntity) {
-        return this.give(_entity, _instancedItemEntity);
-    }
-    /**
-     * Alias for fuck (for now :v)
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    rape(_entity) {
-        this.fuck(_entity);
-    }
     release(_instancedItemEntity, _hand = undefined) {
         return this.unequipEntity(_instancedItemEntity); // TODO: remove this
-    }
-    /**
-     * Alias for fuck
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    sex(_entity) {
-        return this.fuck(_entity);
-    }
-    sleep(_entity = undefined, _dontOverride = undefined) {
-        _entity = Game.getEntity(_entity);
-        if (_dontOverride == undefined) {}
-        else if (typeof _dontOverride == "string") {
-            _dontOverride = _dontOverride.split(/[\s,]+/);
-        }
-        else if (_dontOverride instanceof Set) {
-            _dontOverride = Array.from(_dontOverride);
-        }
-        else {
-            _dontOverride = undefined;
-        }
-
-        if (_entity instanceof Furniture && (_entity.type == "bed" || _entity.type == "couch")) {
-            this.lay(_entity, _dontOverride);
-        }
-        this.removeCurrentAction("masturbate");
-        /*if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
-        this.addCurrentAction("sleep");
-        if (_entity instanceof Furniture) {
-            this.furniture = _entity;
-        }
-
-        return true;
-    }
-    stay() {
-        this.following = undefined;
-        this.removeCurrentAction("follow");
-
-        return true;
-    }
-    steal(_entity, _instancedItemEntity) {
-        _entity = Game.getEntity(_entity);
-        if (_entity == undefined) {return;}
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
-
-        return false;
-    }
-    /**
-     * Alias for oral
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    suck(_instancedItemEntity) {
-        return this.oral(_instancedItemEntity);
     }
     talk(_entity) {
         _entity = Game.getEntity(_entity);
@@ -2895,53 +2529,6 @@ class CharacterEntity extends EntityWithStorage {
         this.addCurrentAction("talk", _entity);
 
         return true;
-    }
-    /**
-     * Have vaginal sex with _entity
-     * @param  {Entity} _entity [description]
-     * @return {Boolean}         [description]
-     */
-    vaginal(_entity) {
-        _entity = Game.getCharacterEntity(_entity);
-        if (_entity == undefined) {return;}
-
-        this.fuck(_entity);
-
-        return true;
-    }
-    /**
-     * Remove current action "sleep"
-     * @return {Boolean} [description]
-     */
-    wake() {
-        this.removeCurrentAction("sleep");
-
-        return true;
-    }
-    move(_dontOverride = undefined) {
-        if (_dontOverride == undefined) {}
-        else if (typeof _dontOverride == "string") {
-            _dontOverride = _dontOverride.split(/[\s,]+/);
-        }
-        else if (_dontOverride instanceof Set) {
-            _dontOverride = Array.from(_dontOverride);
-        }
-        else {
-            _dontOverride = undefined;
-        }
-
-        // If not crouching or standing, then stand; maybe I should add a 'crawl' method
-        if (this.stance < 2)
-        	this.stance = 3;
-        /*if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
-        this.addCurrentAction("move");
-        this.furniture = undefined;
-
-        return true;
-    }
-    wear(_instancedItemEntity, _type = undefined) {
-        return this.setClothing(_instancedItemEntity, _type);
     }
 
     addSexRefusalCount(_character) {
@@ -2989,46 +2576,6 @@ class CharacterEntity extends EntityWithStorage {
     }
     isFlying() {
         return this.stance == 4;
-    }
-
-    isClothed() {
-        if (this.getSex() == Game.MALE)
-            return this.getPants() instanceof ClothingEntity;
-        else
-            return (this.getShirt() instanceof ClothingEntity && this.getPants() instanceof ClothingEntity);
-    }
-    isNaked() {
-        if (this.isClothed())
-            return false;
-
-        return !(this.getUnderwear() instanceof ClothingEntity);
-    }
-    
-    putOn(_instancedItemEntity, _type = undefined) {
-        return this.setClothing(_instancedItemEntity, _type);
-    }
-    takeOff(_instancedItemEntity, _type) {
-        return this.removeClothing(_instancedItemEntity);
-    }
-    isWearing(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return;}
-        var _clothing;
-        var _checkInstance = true;
-
-        if (_clothing instanceof ClothingEntity) {
-            if (Game.kClothingTypes.has(_clothing.type)) {
-                if (!(this.clothing[_clothing.type] instanceof InstancedItemEntity))
-                    return false;
-                if (_checkInstance)
-                    return this.clothing[_clothing.type] == _instancedItemEntity;
-                else
-                    return this.clothing[_clothing.type].getEntity() == _clothing;
-            }
-        }
-        else {
-            return undefined;
-        }
     }
 
     hasKey(_room) {

@@ -81,7 +81,12 @@ class AbstractEntity {
         return this.description;
     }
     setImage(_image) {
-        this.image = _image;
+        if (Game.hasIcon(_image)) {
+            this.image = _image;
+        }
+        else {
+            this.image = "missingIcon";
+        }
         return this;
     }
     getImage() {

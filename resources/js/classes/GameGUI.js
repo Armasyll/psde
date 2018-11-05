@@ -587,7 +587,7 @@ class GameGUI {
                 _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
             }
             _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
-            _image = _image.getEntity().getImage();
+            _image = Game.getIcon(_image.getEntity().getImage());
         }
         this.setPlayerPortraitImage(_image);
         this.setPlayerPortraitName(_name);
@@ -608,15 +608,15 @@ class GameGUI {
                     _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
                 }
                 _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
-                _image = _image.getEntity().getImage();
+                _image = Game.getIcon(_image.getEntity().getImage());
             }
             else if (_image instanceof ItemController) {
                 _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
-                _image = _image.getEntity().getImage();
+                _image = Game.getIcon(_image.getEntity().getImage());
             }
             else {
                 _name = _image.getEntity().getName();
-                _image = _image.getEntity().getImage();
+                _image = Game.getIcon(_image.getEntity().getImage());
             }
         }
         this.setTargetPortraitImage(_image);
@@ -794,7 +794,7 @@ class GameGUI {
             GameGUI.inventoryMenu.getChildByName("items").removeControl(_inventory[_i]);
         }
         _entity.items.forEach(function(_instancedItemEntity) {
-            var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, _instancedItemEntity.getImage());
+            var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, Game.getIcon(_instancedItemEntity.getImage()));
                 _button.width = 1.0;
                 _button.height = 0.1;
             _button.onPointerUpObservable.add(function() {
@@ -819,7 +819,7 @@ class GameGUI {
 
         var _summary = GameGUI.inventoryMenu.getChildByName("summary");
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
-        _summary.getChildByName("selectedImage").source = _instancedItemEntity.getImage();
+        _summary.getChildByName("selectedImage").source = Game.getIcon(_instancedItemEntity.getImage());
         _summary.getChildByName("selectedDescription").text = _instancedItemEntity.getDescription();
         var _massString = undefined;
         if (_instancedItemEntity.getMass() < 1) {

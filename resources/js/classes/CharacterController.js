@@ -785,7 +785,7 @@ class CharacterController extends EntityController {
         return this;
     }
     attachToRightHand(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        this.attachToBone(_mesh, _texture, "hand.r", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
         return this;
     }
     detachFromRightHand() {
@@ -793,7 +793,7 @@ class CharacterController extends EntityController {
         return this;
     }
     attachToLeftHand(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(-90)));
+        this.attachToBone(_mesh, _texture, "hand.l", new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
         return this;
     }
     detachFromLeftHand() {

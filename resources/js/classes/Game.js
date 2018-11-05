@@ -117,6 +117,7 @@ class Game {
          * @type {<String, String>}
          */
         this.iconLocations = {
+            "missingIcon":"resources/images/icons/static/missingIcon.svg",
             "rosie":"resources/images/icons/characters/rosie.png",
             "charlie":"resources/images/icons/characters/charlie.svg",
             "genericItem":"resources/images/icons/items/genericItem.svg",
@@ -135,7 +136,11 @@ class Game {
             "bottle03RedSarcophagusJuice":"resources/images/icons/items/bottle03RedSarcophagusJuice.png",
             "bottle03Jarate":"resources/images/icons/items/bottle03Jarate.png",
             "theLesserKeyOfSolomon":"resources/images/icons/items/theLesserKeyOfSolomon.png",
-            "mountainChocolate01":"resources/images/icons/items/mountainChocolate01.png"
+            "mountainChocolate01":"resources/images/icons/items/mountainChocolate01.png",
+            "birdMask01":"resources/images/icons/items/birdMask01.png",
+            "trumpet01":"resources/images/icons/items/trumpet01.png",
+            "glass01":"resources/images/icons/items/glass01.png",
+            "knife":"resources/images/icons/items/knife.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs
@@ -153,6 +158,24 @@ class Game {
          * @type {<String, BABYLON.Mesh>}
          */
         this.clonedMeshes = {};
+        this.meshAttachToBoneModifications = {
+            "bookHardcoverClosed01":{
+                "hand.r":{
+                    "position":{
+                        "x":0,
+                        "y":0,
+                        "z":0.125
+                    }
+                },
+                "hand.l":{
+                    "position":{
+                        "x":0,
+                        "y":0,
+                        "z":0.125
+                    }
+                }
+            }
+        };
 
         this.entityControllers = {};
         this.furnitureControllers = {};
@@ -303,7 +326,7 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = Game.createCharacter(undefined, "Player", undefined, "resources/images/icons/characters/genericCharacter.svg", 18, "male", "fox", "foxM", "foxRed", undefined, _position, _rotation, _scaling);
+        this.player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", "fox", "foxM", "foxRed", undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("cameraFocus");
         this.player.attachToLeftEye("eye", "feralEyeGreen");
         this.player.attachToRightEye("eye", "feralEyeGreen");
@@ -554,6 +577,23 @@ class Game {
     }
     static hasAbstractMesh(_mesh) {
         return Game.getAbstractMesh(_mesh) != undefined;
+    }
+    static hasIcon(_icon) {
+        return this.iconLocations.hasOwnProperty(_icon);
+    }
+    static addIcon(_id, _location) {
+        if (Game.hasIcon(_id)) {
+            return null;
+        }
+        this.iconLocations[_id] = _location;
+    }
+    static getIcon(_id) {
+        if (Game.hasIcon(_id)) {
+            return this.iconLocations[_id];
+        }
+        else {
+            return this.iconLocations["missingIcon"];
+        }
     }
     static importScript(_file) {
         var script = document.createElement("script");
@@ -1545,7 +1585,7 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _type = "book", _mesh = undefined, _texture = undefined) {
+    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _mesh = undefined, _texture = undefined) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         var _entity = new ItemEntity(_id, _name, _description, _image);
@@ -1885,6 +1925,37 @@ class Game {
                 _callback();
             }
             return;
+        }
+        _subEntityController.getEntity().hold(_instancedItemEntity);
+        if (typeof _callback == "function") {
+            _callback(_instancedItemEntity, undefined, _subEntityController);
+        }
+    }
+    static actionEquipFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+            return;
+        }
+        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+            return;
+        }
+        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+            if (typeof _callback == "function") {
+                _callback();
+            }
+            return;
+        }
+        var _itemEntity = _instancedItemEntity;
+        if (_instancedItemEntity instanceof InstancedEntity) {
+            _itemEntity = _instancedItemEntity.getEntity();
+        }
+        if (_itemEntity instanceof ClothingEntity) {
+            
+        }
+        else if (_itemEntity instanceof WeaponEntity) {
+            
+        }
+        else {
+            
         }
         _subEntityController.getEntity().hold(_instancedItemEntity);
         if (typeof _callback == "function") {

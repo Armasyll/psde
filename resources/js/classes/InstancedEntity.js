@@ -63,6 +63,9 @@ class InstancedEntity extends AbstractEntity {
     getMaterialID() {
         return this.entity.getMaterialID();
     }
+    getImage() {
+        return this.entity.getImage();
+    }
 
     clone(_id) {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
