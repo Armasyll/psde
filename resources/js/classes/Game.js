@@ -98,7 +98,8 @@ class Game {
             "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
             "dice":"resources/images/textures/items/dice.svg",
             "bookshelfBlackPlywood":"resources/images/textures/furniture/bookshelfBlackPlywood.svg",
-            "woodenMallet":"resources/images/textures/items/woodenMallet.svg"
+            "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
+            "bone01":"resources/images/textures/items/bone01.svg"
         };
         /**
          * Map of Textures per ID
