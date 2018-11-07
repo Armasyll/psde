@@ -19,4 +19,4 @@ Game.createProtoItem("warhammer01", "Warhammer", "A dangerous looking, spiked ha
 Game.createProtoItem("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02", "wizardHat02", undefined, "weapon");
 Game.createProtoItem("shortsword", "Short Sword", "A simple short sword.", "shortsword", "shortsword", undefined, "weapon");
 Game.createProtoItem("sword", "Sword", "A simple sword.", "sword", "sword", undefined, "weapon");
-
+Game.createProtoItem("trumpet01", "Trumpet", "A simple trumpet.", "trumpet01", "trumpet01", undefined, "instrument");
