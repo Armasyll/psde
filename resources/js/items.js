@@ -13,3 +13,10 @@ Game.createProtoItem("mountainChocolateWrapper", "Giant Toblerone", "A giant, de
 Game.createProtoItem("mountainChocolateBar", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "mountainChocolate01", "mountainChocolateBar01", "vChocolateV", "consumable");
 Game.createProtoItem("woodenMallet", "Wooden Mallet", "A mallet made from unrefined wood.", undefined, "mallet", "woodenMallet", "weapon");
 Game.createProtoItem("birdMask", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01", "birdMask01", undefined, "clothing");
+Game.createProtoItem("morningstar", "Morningstar", "A spiked mace.", "morningstar", "morningstar", undefined, "weapon");
+Game.createProtoItem("cudgel", "Cudgel", "A chunk of metal attached to a stick.", "cudgel", "cudgel", undefined, "weapon");
+Game.createProtoItem("warhammer01", "Warhammer", "A dangerous looking, spiked hammer.", "warhammer01", "warhammer01", undefined, "weapon");
+Game.createProtoItem("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02", "wizardHat02", undefined, "weapon");
+Game.createProtoItem("shortsword", "Short Sword", "A simple short sword.", "shortsword", "shortsword", undefined, "weapon");
+Game.createProtoItem("sword", "Sword", "A simple sword.", "sword", "sword", undefined, "weapon");
+
