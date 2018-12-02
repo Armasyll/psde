@@ -47,7 +47,12 @@ class Game {
             "pylon01":"resources/data/misc.babylon",
             "obelisk01":"resources/data/misc.babylon",
             "obelisk02":"resources/data/misc.babylon",
-            "grave01":"resources/data/misc.babylon"
+            "tombstone01":"resources/data/misc.babylon",
+            "tombstone02":"resources/data/misc.babylon",
+            "coffinComplex":"resources/meshes/coffinComplex.babylon",
+            "refrigeratorComplex":"resources/meshes/refrigeratorComplex.babylon",
+            "borb":"resources/meshes/borb.babylon",
+            "pylon":"resources/meshes/pylon.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -314,10 +319,10 @@ class Game {
         GameGUI.initialize();
         this.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
-        this.importMeshes("resources/data/misc.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
-        this.importMeshes("resources/data/characters.babylon");
+        this.importMeshes("resources/data/characters.sfw.babylon");
         this.importMeshes("resources/data/items.babylon");
+        this.importMeshes("resources/data/misc.babylon");
         this.initQwertyKeyboardControls();
         this.initPostProcessing();
 
@@ -542,7 +547,7 @@ class Game {
             if (this.loadedMeshes.hasOwnProperty(_mesh)) {
                 return this.loadedMeshes[_mesh];
             }
-            else if (this.meshLocations.hasOwnProperty(_mesh)) {
+            else if (this.meshLocations.hasOwnProperty(_mesh)) { // TODO: Use placeholder mesh until _mesh is loaded; throw _mesh into a loading mesh list that's checked every few moments
                 Game.importMeshes(this.meshLocations[_mesh], _mesh);
                 
                 return Game.loadMesh(_mesh);
@@ -1102,6 +1107,7 @@ class Game {
             _sceneFilename.substr(_sceneFilename.lastIndexOf("/")+1), // sceneFilename
             Game.scene, // scene
             function(_meshes, _particleSystems, _skeletons) { // onSuccess
+                console.log("Loading mesh.");
                 for(var _i = 0; _i < _meshes.length; _i++) {
                     _meshes[_i].name = _meshes[_i].id;
                     _meshes[_i].setEnabled(false);
@@ -1113,6 +1119,7 @@ class Game {
                         _meshes[_i].skeleon = _skeletons[_i];
                     }
                     Game.loadedMeshes[_meshes[_i].id] = _meshes[_i];
+                    console.log("Imported mesh " + _meshes[_i].id);
                 }
                 Game._filesToLoad -= 1;
                 if (typeof _callback == "function") {
@@ -1120,8 +1127,10 @@ class Game {
                 }
             },
             function() { // onProgress
+                console.log("Loading mesh...");
             },
             function() { // onError
+                console.log("Error while importing mesh");
                 Game._filesToLoad -= 1;
             }
         );
