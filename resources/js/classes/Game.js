@@ -320,7 +320,7 @@ class Game {
         this.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
-        this.importMeshes("resources/data/characters.sfw.babylon");
+        this.importMeshes("resources/data/characters.babylon");
         this.importMeshes("resources/data/items.babylon");
         this.importMeshes("resources/data/misc.babylon");
         this.initQwertyKeyboardControls();
@@ -471,7 +471,9 @@ class Game {
         Game.loadMaterial("missingMaterial", "missingTexture");
     }
     static loadDefaultMeshes() {
-        Game.loadMesh(BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene), );
+        Game.loadMesh(BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
+        Game.loadMesh(BABYLON.MeshBuilder.CreateSphere("loadingMesh", {diameter: 0.6}, Game.scene));
+        Game.loadedMeshes["missingMesh"].material = Game.loadedMaterials["missingMaterial"];
     }
     static loadTexture(_texture = "") {
         if (_texture == undefined) {
@@ -548,9 +550,11 @@ class Game {
                 return this.loadedMeshes[_mesh];
             }
             else if (this.meshLocations.hasOwnProperty(_mesh)) { // TODO: Use placeholder mesh until _mesh is loaded; throw _mesh into a loading mesh list that's checked every few moments
-                Game.importMeshes(this.meshLocations[_mesh], _mesh);
-                
-                return Game.loadMesh(_mesh);
+                Game.importMeshes(this.meshLocations[_mesh]);
+                return this.loadedMeshes["loadingMesh"];
+            }
+            else {
+                return this.loadedMeshes["missingMesh"];
             }
         }
         return null;
@@ -1026,50 +1030,56 @@ class Game {
         // If _mesh isn't a mesh, check loadedMeshes, else then then meshLocations, else then fail
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        _mesh = Game.loadMesh(_mesh);
-        _texture = Game.loadMaterial(_texture); // async, but needed now
-        if (_mesh == undefined) {
+        var _loadedMesh = Game.loadMesh(_mesh);
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.name;
+        }
+        if (_loadedMesh.id == "loadingMesh") {
+            console.log("Using " + _loadedMesh.name + " while loading " + _mesh);
+        }
+        var _loadedTexture = Game.loadMaterial(_texture); // async, but needed now
+        if (_loadedMesh == undefined) {
             return null;
         }
         var _newMesh = null;
-        if (_texture == undefined || _texture == undefined) {
-            _texture = Game.loadMaterial("missingMaterial");
+        if (_loadedTexture == undefined || _loadedTexture == undefined) {
+            _loadedTexture = Game.loadMaterial("missingMaterial");
         }
-        if (_mesh.skeleton instanceof BABYLON.Skeleton) {
-            _newMesh = _mesh.clone(_id);
+        if (_loadedMesh.skeleton instanceof BABYLON.Skeleton) {
+            _newMesh = _loadedMesh.clone(_id);
             Game.addClonedMesh(_newMesh, _id);
             
-            _newMesh.material = _texture;
-            _newMesh.skeleton = _mesh.skeleton.clone(_id + "Skeleton");
-            Game.setLoadedMeshMaterial(_newMesh, _texture);
+            _newMesh.material = _loadedTexture;
+            _newMesh.skeleton = _loadedMesh.skeleton.clone(_id + "Skeleton");
+            Game.setLoadedMeshMaterial(_newMesh, _loadedTexture);
             
-            _newMesh.name = _mesh.name;
-            _mesh = _newMesh;
+            _newMesh.name = _loadedMesh.name;
+            _loadedMesh = _newMesh;
         }
         else {
-            if (!this.loadedMeshMaterials.hasOwnProperty(_mesh.name)) {
-                this.loadedMeshMaterials[_mesh.name] = {};
+            if (!this.loadedMeshMaterials.hasOwnProperty(_loadedMesh.name)) {
+                this.loadedMeshMaterials[_loadedMesh.name] = {};
             }
-            if (!this.loadedMeshMaterials[_mesh.name].hasOwnProperty(_texture.name)) {
-                var _newMesh = _mesh.clone(_mesh.name + _texture.name);
-                _newMesh.material = _texture;
-                _newMesh.name = _mesh.name;
+            if (!this.loadedMeshMaterials[_loadedMesh.name].hasOwnProperty(_loadedTexture.name)) {
+                var _newMesh = _loadedMesh.clone(_loadedMesh.name + _loadedTexture.name);
+                _newMesh.material = _loadedTexture;
+                _newMesh.name = _loadedMesh.name;
                 _newMesh.setEnabled(false);
                 _newMesh.position.set(0,-4095,0);
-                Game.setLoadedMeshMaterial(_newMesh, _texture);
+                Game.setLoadedMeshMaterial(_newMesh, _loadedTexture);
             }
             if (_forceCreateClone === true) {
-                _newMesh = this.loadedMeshMaterials[_mesh.name][_texture.name].clone(_id);
+                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedTexture.name].clone(_id);
                 Game.addClonedMesh(_newMesh, _id);
             }
             else {
-                _newMesh = this.loadedMeshMaterials[_mesh.name][_texture.name].createInstance(_id);
+                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedTexture.name].createInstance(_id);
                 Game.addInstancedMesh(_newMesh);
             }
-            _newMesh.name = _mesh.name;
-            _mesh = _newMesh;
+            _newMesh.name = _loadedMesh.name;
+            _loadedMesh = _newMesh;
         }
-        _mesh.isVisible = true;
+        _loadedMesh.isVisible = true;
         if (_position == undefined) {
             _position = new BABYLON.Vector3(0, -4095, 0)
         }
@@ -1081,13 +1091,13 @@ class Game {
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
-        _mesh.position.copyFrom(_position);
-        _mesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
-        _mesh.scaling.copyFrom(_scaling);
-        _mesh.collisionMesh = undefined;
-        _mesh.isPickable = false;
-        _mesh.setEnabled(true);
-        return _mesh;
+        _loadedMesh.position.copyFrom(_position);
+        _loadedMesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
+        _loadedMesh.scaling.copyFrom(_scaling);
+        _loadedMesh.collisionMesh = undefined;
+        _loadedMesh.isPickable = false;
+        _loadedMesh.setEnabled(true);
+        return _loadedMesh;
     }
 
     static importMeshes(_sceneFilename, _meshNames = "", _callback = undefined) {
@@ -1107,7 +1117,6 @@ class Game {
             _sceneFilename.substr(_sceneFilename.lastIndexOf("/")+1), // sceneFilename
             Game.scene, // scene
             function(_meshes, _particleSystems, _skeletons) { // onSuccess
-                console.log("Loading mesh.");
                 for(var _i = 0; _i < _meshes.length; _i++) {
                     _meshes[_i].name = _meshes[_i].id;
                     _meshes[_i].setEnabled(false);
@@ -1119,7 +1128,7 @@ class Game {
                         _meshes[_i].skeleon = _skeletons[_i];
                     }
                     Game.loadedMeshes[_meshes[_i].id] = _meshes[_i];
-                    console.log("Imported mesh " + _meshes[_i].id);
+                    console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
                 }
                 Game._filesToLoad -= 1;
                 if (typeof _callback == "function") {
@@ -1127,10 +1136,10 @@ class Game {
                 }
             },
             function() { // onProgress
-                console.log("Loading mesh...");
+                console.log("Importing meshes from " + _sceneFilename + "...");
             },
             function() { // onError
-                console.log("Error while importing mesh");
+                console.log("Error while importing meshes from " + _sceneFilename);
                 Game._filesToLoad -= 1;
             }
         );
