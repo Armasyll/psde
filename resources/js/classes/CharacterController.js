@@ -20,6 +20,7 @@ class CharacterController extends EntityController {
         // Hard values calculated using the distance between the front heel and rear toe during the furthest stride in 24-frames per second, multiplied by the character's height. (then thrown out the window 'cause they were too damn slow)
         this.walkSpeed = 0.68 * this.mesh.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
+        this.sprintSpeed = this.walkSpeed * 2;
         this.backSpeed = this.walkSpeed * 0.5;
         this.jumpSpeed = this.mesh.scaling.y * 4;
         this.gravity = -Game.scene.gravity.y;
@@ -57,6 +58,7 @@ class CharacterController extends EntityController {
         this.inFreeFall = false;
         this.wasWalking = false;
         this.wasRunning = false;
+        this.wasSprinting = false;
         this.jumpStartPosY = 0;
         this.jumpTime = 0;
         this.movFallTime = 0;
@@ -265,12 +267,15 @@ class CharacterController extends EntityController {
         if (this == Game.player && Game.enableCameraAvatarRotation) {
             this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
-        if (this.wasRunning || this.wasWalking) {
+        if (this.wasSprinting || this.wasRunning || this.wasWalking) {
             if (this.wasRunning) {
                 forwardDist = this.runSpeed * dt;
             }
             else if (this.wasWalking) {
                 forwardDist = this.walkSpeed * dt;
+            }
+            else if (this.wasSprinting) {
+                forwardDist = this.sprintSpeed * dt;
             }
             disp = this.moveVector.clone();
             disp.y = 0;
@@ -303,6 +308,7 @@ class CharacterController extends EntityController {
         this.jumpTime = 0;
         this.wasWalking = false;
         this.wasRunning = false;
+        this.wasSprinting = false;
     }
     areVectorsEqual(v1, v2, p) {
         return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
@@ -327,22 +333,23 @@ class CharacterController extends EntityController {
             this.moveVector.set(0,0,0);
             this.wasWalking = false;
             this.wasRunning = false;
+            this.wasSprinting = false;
             var xDist = 0;
             var zDist = 0;
             if (this.key.forward) {
-                if (this.key.shift) {
+                if (this.key.shift) { // TODO: add option to toggle walking somewhere
+                    this.wasSprinting = true;
+                    zDist = this.sprintSpeed * dt;
+                    anim = this.sprint;
+                }
+                else {
                     this.wasRunning = true;
                     zDist = this.runSpeed * dt;
                     anim = this.run;
                 }
-                else {
-                    this.wasWalking = true;
-                    zDist = this.walkSpeed * dt;
-                    anim = this.walk;
-                }
                 moving = true;
             }
-            else if (this.key.backward) {
+            else if (this.key.backward) { // TODO: also fix strafing and backwards 'running' speeds
                 zDist = -(this.backSpeed * dt);
                 anim = this.walkBack;
                 moving = true;
@@ -459,6 +466,7 @@ class CharacterController extends EntityController {
         }
         this.wasWalking = false;
         this.wasRunning = false;
+        this.wasSprinting = false;
         this.movFallTime = 0;
         var anim = this.idle;
         this.fallFrameCount = 0;
