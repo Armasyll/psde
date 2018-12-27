@@ -59,5 +59,6 @@ window.addEventListener("DOMContentLoaded", function() {
         else {
             _rbrCount++;
         }
+        Game._createBackloggedMeshes();
     })
 });

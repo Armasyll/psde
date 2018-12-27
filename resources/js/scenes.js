@@ -144,71 +144,71 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(5, 0, -25), new BABYLON.Vector3(5, 3, -27)); // Side wall between Commons and building entrance
 
     // Ozzy Hallway Closet
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Bedroom Closet
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Bedroom
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(0, 0, -2));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -2));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(2, 0, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("windowframe", undefined, undefined,       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(0, 0, -2));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -2));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(2, 0, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "windowframe", undefined,       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Bathroom
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Hallway
-    Game.createMesh("windowframe", undefined, undefined,       new BABYLON.Vector3(4, 0, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createDoor("ozzybathroomdoor", "Bathroom", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -4), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, -2), new BABYLON.Vector3(0, -90, 0));
-    Game.createDoor("ozzybedroomdoor", "Bedroom", undefined, "door", undefined, undefined, new BABYLON.Vector3(3, 0, -2), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, -90, 0));
-    Game.createDoor("ozzyhallwayclosetdoor", "Closet", undefined, "door", undefined, undefined, new BABYLON.Vector3(3, 0, 0), new BABYLON.Vector3(0, -90, 0)).setOpensInward();
+    Game.createMesh(undefined, "windowframe", undefined,       new BABYLON.Vector3(4, 0, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createDoor("ozzybathroomdoor", "Bathroom", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(5, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -6), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -4), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, -2), new BABYLON.Vector3(0, -90, 0));
+    Game.createDoor("ozzybedroomdoor", "Bedroom", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(3, 0, -2), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, -90, 0));
+    Game.createDoor("ozzyhallwayclosetdoor", "Closet", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(3, 0, 0), new BABYLON.Vector3(0, -90, 0)).setOpensInward();
     Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", "resources/images/textures/furniture/bookshelfThinBlackPlywood", undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
 
     // Ozzy Livingroom
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -8));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -8));
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(4, 0, -8));
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(4, 0, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -8));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -10), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -12), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("windowframe", undefined, undefined,       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -8));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -8));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(4, 0, -8));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(4, 0, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -8));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -10), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -12), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "windowframe", undefined,       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
     Game.addFurnitureMesh("refridgeratorInstance01", "refrigeratorComplex", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
@@ -216,87 +216,87 @@ Game.generateApartment = function() {
     
     
     // Landlord Blob
-    /*Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(12, 0, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, -180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, -2), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, -4), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(10, 0, -6), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -8));
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(10, 0, -8));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -10), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -10), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -12), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(10, 0, -12), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -12), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -14));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -14));
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(10, 0, -14));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -14), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(6, 0, -16), new BABYLON.Vector3(0, -90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -16), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, -16), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(12, 0, -16), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -16), new BABYLON.Vector3(0, 180, 0));*/
+    /*Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(12, 0, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, -180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, -2), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, -4), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(10, 0, -6), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -8));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(10, 0, -8));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -10), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -10), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -12), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(10, 0, -12), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -12), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -14));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -14));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(10, 0, -14));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -14), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(6, 0, -16), new BABYLON.Vector3(0, -90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -16), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, -16), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(12, 0, -16), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -16), new BABYLON.Vector3(0, 180, 0));*/
 
     // Lobby
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -14));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -14));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, -14));
-    Game.createDoor("ozzyapartmentdoor", "Ozzy's Apartment", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -13));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -14), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, -16), new BABYLON.Vector3(0, 90, 0));
-    Game.createDoor("landlordapartmentdoor", "Landlord's Apartment", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 0, -16), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -14));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -14));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, -14));
+    Game.createDoor("ozzyapartmentdoor", "Ozzy's Apartment", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(4, 0, -13));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -14), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, -16), new BABYLON.Vector3(0, 90, 0));
+    Game.createDoor("landlordapartmentdoor", "Landlord's Apartment", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(5, 0, -16), new BABYLON.Vector3(0, 90, 0));
         Game.getDoorController("landlordapartmentdoor").getEntity().setLocked(true);
-    Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(4, 0, -18), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -18));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(8, 0, -18));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, -18));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(12, 0, -18));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -18));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -18), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -20), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -22), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("windowframe", undefined, undefined,              new BABYLON.Vector3(14, 0, -24), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -26), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(14, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("windowframe", undefined, undefined,              new BABYLON.Vector3(12, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(10, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("windowframe", undefined, undefined,              new BABYLON.Vector3(8, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(4, 0, -18), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -18));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(8, 0, -18));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, -18));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(12, 0, -18));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -18));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -18), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -20), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -22), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "windowframe", undefined,              new BABYLON.Vector3(14, 0, -24), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -26), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(14, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "windowframe", undefined,              new BABYLON.Vector3(12, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(10, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "windowframe", undefined,              new BABYLON.Vector3(8, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -26), new BABYLON.Vector3(0, 180, 0));
     // Lobby entrance divider
-        Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(6, 0, -26), new BABYLON.Vector3(0, 270, 0));
-        Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(4, 0, -24), new BABYLON.Vector3(0, 180, 0));
-        Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(6, 0, -24), new BABYLON.Vector3(0, 270, 0));
-        Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(4, 0, -26), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(4, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(2, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -26), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -24), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -22), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -20), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -16), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined,              new BABYLON.Vector3(0, 0, -14), new BABYLON.Vector3(0, 270, 0));
+        Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(6, 0, -26), new BABYLON.Vector3(0, 270, 0));
+        Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(4, 0, -24), new BABYLON.Vector3(0, 180, 0));
+        Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(6, 0, -24), new BABYLON.Vector3(0, 270, 0));
+        Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(4, 0, -26), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(4, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(2, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -26), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -24), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -22), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -20), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -16), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -14), new BABYLON.Vector3(0, 270, 0));
     // Lobby stairwell
         Game.createCollisionRamp(new BABYLON.Vector3(0, 0, -22.5), new BABYLON.Vector3(2, 3, -17.5));
-        Game.createMesh("corner", undefined, undefined,            new BABYLON.Vector3(2, 0, -18), new BABYLON.Vector3(0, 270, 0));
-        Game.createMesh("stairWallSideRight", undefined, undefined,new BABYLON.Vector3(2, 0, -20));
-        Game.createMesh("stairWallCornerRight", undefined, undefined, new BABYLON.Vector3(2, 0, -22));
-        Game.createMesh("stairs", undefined, undefined,            new BABYLON.Vector3(0, 0, -22));
-        Game.createMesh("stairs", undefined, undefined,            new BABYLON.Vector3(0, 1.5, -20));
-        Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 180, 0));
-        Game.createDoor("packstreetApt3Basement", "Basement", undefined, "door", undefined, undefined, new BABYLON.Vector3(0, 0, -19), new BABYLON.Vector3(0, 180, 0)).setOpensInward();
-        Game.createMesh("doorway", undefined, undefined,           new BABYLON.Vector3(0, 0, -20));
-        Game.createMesh("stairWallSideLeft", undefined, undefined,new BABYLON.Vector3(0, 0, -20));
-        Game.createMesh("stairWallCornerLeft", undefined, undefined, new BABYLON.Vector3(0, 0, -22));
+        Game.createMesh(undefined, "corner", undefined,            new BABYLON.Vector3(2, 0, -18), new BABYLON.Vector3(0, 270, 0));
+        Game.createMesh(undefined, "stairWallSideRight", undefined,new BABYLON.Vector3(2, 0, -20));
+        Game.createMesh(undefined, "stairWallCornerRight", undefined, new BABYLON.Vector3(2, 0, -22));
+        Game.createMesh(undefined, "stairs", undefined,            new BABYLON.Vector3(0, 0, -22));
+        Game.createMesh(undefined, "stairs", undefined,            new BABYLON.Vector3(0, 1.5, -20));
+        Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 180, 0));
+        Game.createDoor("packstreetApt3Basement", "Basement", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(0, 0, -19), new BABYLON.Vector3(0, 180, 0)).setOpensInward();
+        Game.createMesh(undefined, "doorway", undefined,           new BABYLON.Vector3(0, 0, -20));
+        Game.createMesh(undefined, "stairWallSideLeft", undefined,new BABYLON.Vector3(0, 0, -20));
+        Game.createMesh(undefined, "stairWallCornerLeft", undefined, new BABYLON.Vector3(0, 0, -22));
 
     Game.createFurniture("commonsCouch", "Couch", "couch", "couch01", undefined, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
@@ -310,7 +310,7 @@ Game.generateApartment = function() {
 
     Game.addFurnitureMesh("lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5));
 
-    Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 0, -27));
+    Game.createDoor("apartmentbuildingdoor", "Door", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
 
@@ -332,8 +332,8 @@ Game.generateApartment = function() {
     
     Game.createCollisionRamp(new BABYLON.Vector3(0, 3, -22.5), new BABYLON.Vector3(2, 6, -17.5));
     
-    Game.createMesh("stairs", undefined, undefined,            new BABYLON.Vector3(0, 3, -22));
-    Game.createMesh("stairs", undefined, undefined,            new BABYLON.Vector3(0, 4.5, -20));
+    Game.createMesh(undefined, "stairs", undefined,            new BABYLON.Vector3(0, 3, -22));
+    Game.createMesh(undefined, "stairs", undefined,            new BABYLON.Vector3(0, 4.5, -20));
     
     var commonsFloor02a = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, Game.scene);
         commonsFloor02a.material = pinkCarpetMaterial;
@@ -348,28 +348,28 @@ Game.generateApartment = function() {
         commonsFloor02c.position.set(-1, 3, -19);
     Game.createCollisionPlane(commonsFloor02c);
 
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -14));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -14));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(4, 3, -14));
-    Game.createDoor("chartyApartmentDoor", "Charlie and Marty's Apartment", undefined, "door", undefined, undefined, new BABYLON.Vector3(4, 3, -13), new BABYLON.Vector3(0, 0, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -14), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -16), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -18), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -20), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(4, 3, -22), new BABYLON.Vector3(0, 90, 0));
-    Game.createDoor("kyleApartmentDoor", "Kyle's Apartment", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 3, -22), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -24), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -26), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -26), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -26), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -24), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -22), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -20), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -18), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -16), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -14), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -14));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -14));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(4, 3, -14));
+    Game.createDoor("chartyApartmentDoor", "Charlie and Marty's Apartment", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(4, 3, -13), new BABYLON.Vector3(0, 0, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -14), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -16), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -18), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -20), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(4, 3, -22), new BABYLON.Vector3(0, 90, 0));
+    Game.createDoor("kyleApartmentDoor", "Kyle's Apartment", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(5, 3, -22), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -24), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -26), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -26), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -26), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -24), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -22), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -20), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -18), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -16), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -14), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Apartment
     // Charty Livingroom
@@ -381,29 +381,29 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(-1, 3, -7), new BABYLON.Vector3(7, 6, -7)); // Front wall between livingroom and Charlie's bedroom
     Game.createCollisionWall(new BABYLON.Vector3(9, 3, -7), new BABYLON.Vector3(15, 6, -7)); // Front wall between livingroom and Marty's bedroom
 
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, -8));
-    Game.createMesh("corner", undefined, undefined, new BABYLON.Vector3(8, 3, -8));
-    Game.createMesh("corner", undefined, undefined, new BABYLON.Vector3(8, 3, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -8));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -8), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -10), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -12), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(4, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -12), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -12), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -10), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -8), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, -8));
+    Game.createMesh(undefined, "corner", undefined, new BABYLON.Vector3(8, 3, -8));
+    Game.createMesh(undefined, "corner", undefined, new BABYLON.Vector3(8, 3, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -8));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -8), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -10), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -12), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(4, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -12), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -12), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -10), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -8), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Hallway
     var chartyHallwayFloor = BABYLON.MeshBuilder.CreateTiledGround("chartyHallwayFloor", {xmin:0, zmin:0, xmax: 4, zmax: 2, subdivisions: {w:4, h:2}}, Game.scene);
@@ -413,15 +413,15 @@ Game.generateApartment = function() {
 
     Game.createCollisionWall(new BABYLON.Vector3(7, 3, -5), new BABYLON.Vector3(9, 6, -5)); // Front wall between hallway and bathroom
 
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(6, 3, -6));
-    Game.createDoor("chartyBathroomDoor", "Bathroom", undefined, "door", undefined, undefined, new BABYLON.Vector3(6, 3, -5));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, -6));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(8, 3, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createDoor("martyBedroomDoor", "Marty's Room", undefined, "door", undefined, undefined, new BABYLON.Vector3(9, 3, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("corner", undefined, undefined,  new BABYLON.Vector3(8, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", undefined, undefined, new BABYLON.Vector3(5, 3, -6), new BABYLON.Vector3(0, 90, 0)).setOpensInward();
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(6, 3, -6));
+    Game.createDoor("chartyBathroomDoor", "Bathroom", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(6, 3, -5));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, -6));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(8, 3, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createDoor("martyBedroomDoor", "Marty's Room", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(9, 3, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "corner", undefined,  new BABYLON.Vector3(8, 3, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(6, 3, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createDoor("charlieBedroomDoor", "Charlie's Room", undefined, "door", "woodSimple", undefined, new BABYLON.Vector3(5, 3, -6), new BABYLON.Vector3(0, 90, 0)).setOpensInward();
 
     // Charlie bedroom
     var charlieBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
@@ -432,28 +432,28 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(1, 3, -1), new BABYLON.Vector3(5, 6, -1)); // Front wall between Charlie's closet and bedroom
     Game.createCollisionWall(new BABYLON.Vector3(5, 3, 1), new BABYLON.Vector3(5, 6, -5)); // Side wall between Charlie's bedroom and bathroom
 
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(0, 3, -2));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -2));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -2));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -4), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(0, 3, -2));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -2));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -2));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -4), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, -2), new BABYLON.Vector3(0, 270, 0));
 
     // Charlie Closet
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(2, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(2, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Bathroom
     var chartyBathroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
@@ -461,16 +461,16 @@ Game.generateApartment = function() {
         chartyBathroomFloor.position.set(5, 3, -5);
     Game.createCollisionPlane(chartyBathroomFloor);
 
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(8, 3, -4), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(6, 3, -4), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, -4), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(6, 3, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(8, 3, -4), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(6, 3, -4), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, -4), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(6, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Marty bedroom
     var martyBedroomFloor = BABYLON.MeshBuilder.CreateTiledGround("martyBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, Game.scene);
@@ -481,28 +481,28 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(9, 3, -1), new BABYLON.Vector3(13, 6, -1)); // Front wall between Marty's closet and bedroom
     Game.createCollisionWall(new BABYLON.Vector3(9, 3, 1), new BABYLON.Vector3(9, 6, -5)); // Side wall between Narty's bedroom and bathroom
 
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -2));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, -2));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(14, 3, -2));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(10, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -4), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -2));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, -2));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(14, 3, -2));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(10, 3, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -4), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, -2), new BABYLON.Vector3(0, 270, 0));
 
     // Marty Closet
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(14, 3, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh("doorway", undefined, undefined, new BABYLON.Vector3(14, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(12, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh("wall", undefined, undefined, new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(14, 3, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "doorway", undefined, new BABYLON.Vector3(14, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(12, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "wall", undefined, new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacter", 30, "m", "fox", "foxM", "foxRinehart", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye", "circularEyeViolet").attachToRightEye("eye", "circularEyeViolet");
     Game.createItem("mountainChocolateBar", "mountainChocolateBar", undefined, new BABYLON.Vector3(3, 0.625, -19.8), new BABYLON.Vector3(55, 90, 0));

@@ -104,7 +104,9 @@ class Game {
             "dice":"resources/images/textures/items/dice.svg",
             "bookshelfBlackPlywood":"resources/images/textures/furniture/bookshelfBlackPlywood.svg",
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
-            "bone01":"resources/images/textures/items/bone01.svg"
+            "bone01":"resources/images/textures/items/bone01.svg",
+            "woodSimple":"resources/data/trimWood.png",
+            "wallpaperSimpleGreen":"resources/data/wall.png"
         };
         /**
          * Map of Textures per ID
@@ -225,6 +227,22 @@ class Game {
                 }
             }
         };
+        /**
+         * Map of Meshes that are waiting to be created
+         * @type {<String, <Objects...>>}
+         */
+        this.meshesToCreateCounter = 0;
+        this.meshesToCreate = {};
+        this.texturesToCreateCounter = 0;
+        this.texturesToCreate = {};
+        this.materialsToCreateCounter = 0;
+        this.materialsToCreate = {};
+        /**
+         * Map of Entities that are waiting to be created
+         * @type {<String, <entityType, ...>>}
+         */
+        this.entitiesToCreateCounter = 0;
+        this.entitiesToCreate = {};
 
         this.entityControllers = {};
         this.furnitureControllers = {};
@@ -316,6 +334,7 @@ class Game {
         this.kWeaponRangedTypes = new Set([...this.kWeaponSimpleRangedTypes, ...this.kWeaponMartialRangedTypes]);
         this.kWeaponTypes = new Set([...this.kWeaponMeleeTypes, ...this.kWeaponRangedTypes]);
 
+        // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         GameGUI.initialize();
         this.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
@@ -468,7 +487,9 @@ class Game {
         Game.loadMaterial(new BABYLON.StandardMaterial("default", Game.scene));
         Game.loadMaterial(new BABYLON.Material("collisionMaterial", Game.scene));
         Game.loadMaterial(new BABYLON.StandardMaterial("missingMaterial", Game.scene));
+        Game.loadMaterial(new BABYLON.StandardMaterial("loadingMaterial", Game.scene));
         Game.loadMaterial("missingMaterial", "missingTexture");
+        Game.loadedMaterials["loadingMaterial"].diffuseColor = new BABYLON.Color3(1, 0.85, 1);
     }
     static loadDefaultMeshes() {
         Game.loadMesh(BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
@@ -958,8 +979,10 @@ class Game {
     }
     static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
-        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _forceCreateClone);
-        if (_instance == null) {return null;}
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale, _forceCreateClone);
+        if (!(_instance instanceof BABYLON.AbstractMesh)) {
+            return null;
+        }
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -968,8 +991,10 @@ class Game {
     }
     static addFurnitureMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false, _createCollisionMesh = true) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
-        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale, _forceCreateClone);
-        if (_instance == null) {return null;}
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale, _forceCreateClone);
+        if (!(_instance instanceof BABYLON.AbstractMesh)) {
+            return null;
+        }
         if (_createCollisionMesh) {
             if (this.physicsEnabled) {
                 Game.assignBoxPhysicsToMesh(_instance, _options);
@@ -983,8 +1008,10 @@ class Game {
     static addCharacterMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = new BABYLON.Vector3(0,0,0), _scale = new BABYLON.Vector3(1,1,1)) {
         if (Game.debugEnabled) console.log("Running addCharacterMesh");
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
-        var _instance = Game.createMesh(_meshID, _texture, _id, _position, _rotation, _scale);
-        if (_instance == null) {return null;}
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale);
+        if (!(_instance instanceof BABYLON.AbstractMesh)) {
+            return null;
+        }
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
@@ -999,7 +1026,7 @@ class Game {
         }
         return _instance;
     }
-    static removeMesh(_mesh) {
+    static removeMesh(_mesh) { // TODO: Update this :v
         if (Game.debugEnabled) console.log("Running removeMesh");
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             _mesh = Game.getAbstractMesh(_mesh);
@@ -1014,44 +1041,106 @@ class Game {
         
         _mesh.dispose();
     }
+    static hasAvailableMesh(_mesh) {
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.name;
+        }
+        return this.loadedMeshes.hasOwnProperty(_mesh);
+    }
+    static hasLoadedMesh(_mesh) {
+        return Game.hasAvailableMesh(_mesh);
+    }
+    static hasMesh(_mesh) {
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.name;
+        }
+        return this.loadedMeshes.hasOwnProperty(_mesh) || this.meshLocations.hasOwnProperty(_mesh);
+    }
+    static hasAvailableTexture(_texture) {
+        if (_texture instanceof BABYLON.Texture) {
+            _texture = _texture.id;
+        }
+        return this.loadedTextures.hasOwnProperty(_texture);
+    }
+    static hasLoadedTexture(_texture) {
+        return Game.hasAvailableTexture(_texture);
+    }
+    static hasTexture(_texture) {
+        if (_texture instanceof BABYLON.Texture) {
+            _texture = _texture.id;
+        }
+        return this.loadedTextures.hasOwnProperty(_texture) || this.textureLocations.hasOwnProperty(_texture);
+    }
+    static hasAvailableMaterial(_material) {
+        if (_material instanceof BABYLON.Material) {
+            _material = _material.id;
+        }
+        return this.loadedMaterials.hasOwnProperty(_material);
+    }
+    static hasLoadedMaterial(_material) {
+        return Game.hasAvailableMaterial(_material);
+    }
+    static hasMaterial(_material) {
+        return Game.hasAvailableMaterial(_material);
+    }
     /**
      * Creates a mesh from those stored in loadedMeshes
-     * @param  {String}  _mesh             Mesh
-     * @param  {String}  _texture          Texture
-     * @param  {String}  _id               Mesh ID
+     * @param  {String}  _mesh             BABYLON.Mesh, or String ID
+     * @param  {String}  _material         BABYLON.Material, or String ID
+     * @param  {String}  _id               New ID for BABYLON.Mesh and EntityController
      * @param  {BABYLON.Vector3}  _position         Mesh position
      * @param  {BABYLON.Vector3}  _rotation         Mesh rotation
      * @param  {BABYLON.Vector3}  _scaling          Mesh scaling
      * @param  {Boolean} _forceCreateClone Forces the creation of a clone instead of an instance; workaround for highlighting and attaching to bones.
      * @return {BABYLON.Mesh, BABYLON.InstancedMesh}                    The created mesh
      */
-    static createMesh(_mesh = undefined, _texture = undefined, _id = undefined, _position = undefined, _rotation = undefined, _scaling = undefined, _forceCreateClone = false) {
+    static createMesh(_id = undefined, _mesh = undefined, _material = undefined, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running createMesh");
-        // If _mesh isn't a mesh, check loadedMeshes, else then then meshLocations, else then fail
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
-        var _loadedMesh = Game.loadMesh(_mesh);
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.name;
+        _id = Game.filterID(_id);
+        if (_id == undefined) {
+            _id = genUUIDv4();
         }
-        if (_loadedMesh.id == "loadingMesh") {
-            console.log("Using " + _loadedMesh.name + " while loading " + _mesh);
+
+        var _loadedMesh = Game.loadMesh(_mesh); // TODO: async, but needed now
+        var _loadedMaterial = Game.loadMaterial(_material); // TODO: async, but also needed now
+        if (!(_loadedMaterial instanceof BABYLON.Material)) {
+            _loadedMaterial = Game.loadedMaterials["missingMaterial"];
         }
-        var _loadedTexture = Game.loadMaterial(_texture); // async, but needed now
-        if (_loadedMesh == undefined) {
-            return null;
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
         }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(_forceCreateClone === true)) {
+            _forceCreateClone = false;
+        }
+
+        if (_loadedMesh == Game.loadedMeshes["missingMesh"]) {
+            return false;
+        }
+        else if (_loadedMesh == Game.loadedMeshes["loadingMesh"]) {
+            Game.addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone);
+            return true;
+        }
+
+        _mesh = _loadedMesh.name;
+        _material = _loadedMaterial.name;
+
         var _newMesh = null;
-        if (_loadedTexture == undefined || _loadedTexture == undefined) {
-            _loadedTexture = Game.loadMaterial("missingMaterial");
-        }
         if (_loadedMesh.skeleton instanceof BABYLON.Skeleton) {
             _newMesh = _loadedMesh.clone(_id);
             Game.addClonedMesh(_newMesh, _id);
             
-            _newMesh.material = _loadedTexture;
+            _newMesh.material = _loadedMaterial;
             _newMesh.skeleton = _loadedMesh.skeleton.clone(_id + "Skeleton");
-            Game.setLoadedMeshMaterial(_newMesh, _loadedTexture);
+            Game.setLoadedMeshMaterial(_newMesh, _loadedMaterial);
             
             _newMesh.name = _loadedMesh.name;
             _loadedMesh = _newMesh;
@@ -1060,37 +1149,26 @@ class Game {
             if (!this.loadedMeshMaterials.hasOwnProperty(_loadedMesh.name)) {
                 this.loadedMeshMaterials[_loadedMesh.name] = {};
             }
-            if (!this.loadedMeshMaterials[_loadedMesh.name].hasOwnProperty(_loadedTexture.name)) {
-                var _newMesh = _loadedMesh.clone(_loadedMesh.name + _loadedTexture.name);
-                _newMesh.material = _loadedTexture;
+            if (!this.loadedMeshMaterials[_loadedMesh.name].hasOwnProperty(_loadedMaterial.name)) {
+                var _newMesh = _loadedMesh.clone(_loadedMesh.name + _loadedMaterial.name);
+                _newMesh.material = _loadedMaterial;
                 _newMesh.name = _loadedMesh.name;
                 _newMesh.setEnabled(false);
                 _newMesh.position.set(0,-4095,0);
-                Game.setLoadedMeshMaterial(_newMesh, _loadedTexture);
+                Game.setLoadedMeshMaterial(_newMesh, _loadedMaterial);
             }
             if (_forceCreateClone === true) {
-                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedTexture.name].clone(_id);
+                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedMaterial.name].clone(_id);
                 Game.addClonedMesh(_newMesh, _id);
             }
             else {
-                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedTexture.name].createInstance(_id);
+                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedMaterial.name].createInstance(_id);
                 Game.addInstancedMesh(_newMesh);
             }
             _newMesh.name = _loadedMesh.name;
             _loadedMesh = _newMesh;
         }
         _loadedMesh.isVisible = true;
-        if (_position == undefined) {
-            _position = new BABYLON.Vector3(0, -4095, 0)
-        }
-        else {
-            _position = this.filterVector(_position);
-        }
-        _rotation = this.filterVector(_rotation);
-        _scaling = this.filterVector(_scaling);
-        if (_scaling.equals(BABYLON.Vector3.Zero())) {
-            _scaling = BABYLON.Vector3.One();
-        }
         _loadedMesh.position.copyFrom(_position);
         _loadedMesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
         _loadedMesh.scaling.copyFrom(_scaling);
@@ -1098,6 +1176,47 @@ class Game {
         _loadedMesh.isPickable = false;
         _loadedMesh.setEnabled(true);
         return _loadedMesh;
+    }
+    static addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone) {
+        if (Game.hasMeshToCreate(_id)) {
+            return true;
+        }
+        Game.meshesToCreate[_id] = {"id":_id, "mesh":_mesh, "material":_material, "position":_position, "rotation":_rotation, "scaling":_scaling, "forceCreateClone":_forceCreateClone};
+        Game.meshesToCreateCounter += 1
+        return true;
+    }
+    static removeMeshToCreate(_id) {
+        if (!Game.hasMeshToCreate(_id)) {
+            return true;
+        }
+        delete Game.meshesToCreate[_id];
+        Game.meshesToCreateCounter -= 1;
+        return true;
+    }
+    static hasMeshToCreate(_id) {
+        return Game.meshesToCreateCounter > 0 || Game.meshesToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedMeshes() {
+        if (Game.meshesToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.meshesToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.meshesToCreate[_i]["mesh"])) {
+                Game.createMesh(
+                    Game.meshesToCreate[_i]["id"],
+                    Game.meshesToCreate[_i]["mesh"],
+                    Game.meshesToCreate[_i]["material"],
+                    Game.meshesToCreate[_i]["position"],
+                    Game.meshesToCreate[_i]["rotation"],
+                    Game.meshesToCreate[_i]["scaling"],
+                    Game.meshesToCreate[_i]["forceCreateClone"]
+                );
+                Game.removeMeshToCreate(_i);
+            }
+        }
+    }
+    static addEntityToCreate() {
+        // WIP
     }
 
     static importMeshes(_sceneFilename, _meshNames = "", _callback = undefined) {
