@@ -209,7 +209,7 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -12), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "windowframe", undefined,       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "wall", undefined,              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
-    Game.addFurnitureMesh("refridgeratorInstance01", "refrigeratorComplex", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("refrideratorInstance01", "refrigeratorComplex", undefined, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
     Game.addFurnitureMesh("trashBagFullInstance02", "trashBagFull", undefined, {mass:4.0}, new BABYLON.Vector3(6.5, 0, -10.6), new BABYLON.Vector3(0, 90, 0), undefined);

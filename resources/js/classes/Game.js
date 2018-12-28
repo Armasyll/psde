@@ -52,7 +52,8 @@ class Game {
             "coffinComplex":"resources/meshes/coffinComplex.babylon",
             "refrigeratorComplex":"resources/meshes/refrigeratorComplex.babylon",
             "borb":"resources/meshes/borb.babylon",
-            "pylon":"resources/meshes/pylon.babylon"
+            "pylon":"resources/meshes/pylon.babylon",
+            "barrel":"resources/meshes/barrel.babylon"
         };
         /**
          * Map of Meshes per ID
