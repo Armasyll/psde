@@ -60,5 +60,8 @@ window.addEventListener("DOMContentLoaded", function() {
             _rbrCount++;
         }
         Game._createBackloggedMeshes();
+        Game._createBackloggedFurniture();
+        Game._createBackloggedDoors();
+        Game._createBackloggedCharacters();
     })
 });

@@ -239,11 +239,27 @@ class Game {
         this.materialsToCreateCounter = 0;
         this.materialsToCreate = {};
         /**
-         * Map of Entities that are waiting to be created
-         * @type {<String, <entityType, ...>>}
+         * Map of Furniture that are waiting to be created
+         * @type {<String, <String:id, String:name, String:type, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
          */
-        this.entitiesToCreateCounter = 0;
-        this.entitiesToCreate = {};
+        this.furnitureToCreateCounter = 0;
+        this.furnitureToCreate = {};
+        /**
+         * Map of Doors that are waiting to be created;
+         * it's basically the same as furnitureToCreate :v
+         * @type {<String, <String:id, String:name, Forgot:to, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling>}
+         */
+        this.doorsToCreateCounter = 0;
+        this.doorsToCreate = {};
+        /**
+         * Map of Characters that are waiting to be created;
+         * it's basically the same as furnitureToCreate :v
+         * @type {<String, <String:id, String:name, String:description, String:image, Number:age, Number:sex, String:species, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling>}
+         */
+        this.charactersToCreateCounter = 0;
+        this.charactersToCreate = {};
+        this.itemsToCreateCounter = 0;
+        this.itemsToCreate = {};
 
         this.entityControllers = {};
         this.furnitureControllers = {};
@@ -300,7 +316,7 @@ class Game {
         this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
         this.kPeltTypes = new Set(["skin","fur","wool","hair"]);
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
-        this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","fridge","basket"]);
+        this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","refrigerator","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
         this.kInteractionTypes = new Set(["close","consume","drop","equip","hold","look","open","release","take","talk","touch","unequip","use"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
@@ -363,7 +379,7 @@ class Game {
         this.scene.enablePhysics(this.scene.gravity, this.physicsPlugin);
         this.physicsEnabled = true;
     }
-    static initFollowCamera(_offset = new BABYLON.Vector3(0, 0, 0)) {
+    static initFollowCamera(_offset = BABYLON.Vector3.Zero()) {
         if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
         this.camera = new BABYLON.ArcRotateCamera(
             "camera",
@@ -405,7 +421,7 @@ class Game {
         }
         this.initPostProcessing();
     }
-    static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = new BABYLON.Vector3(0,0,0), _scaling = new BABYLON.Vector3(1,1,1)) {
+    static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running initPlayer");
         this.player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", "fox", "foxM", "foxRed", undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("cameraFocus");
@@ -833,7 +849,7 @@ class Game {
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
-    static createCollisionWall(_posStart = new BABYLON.Vector3(0, 0, 0), _posEnd = new BABYLON.Vector3(0, 0, 0), _rotation = 0) {
+    static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
         if (Game.debugEnabled) console.log("Running createCollisionWallX");
         if (_rotation != 0 && isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
@@ -894,7 +910,7 @@ class Game {
         }
         return _floor;
     }
-    static createCollisionRamp(_posStart = new BABYLON.Vector3(0, 0, 0), _posEnd = new BABYLON.Vector3(0, 0, 0), _rotationY = 0) {
+    static createCollisionRamp(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotationY = 0) {
         if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
             return null;
         }
@@ -978,11 +994,11 @@ class Game {
             }
         }
     }
-    static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false) {
+    static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
-        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale, _forceCreateClone);
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling, _forceCreateClone);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
-            return null;
+            return _instance;
         }
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
@@ -990,11 +1006,11 @@ class Game {
         else {}
         return _instance;
     }
-    static addFurnitureMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined, _forceCreateClone = false, _createCollisionMesh = true) {
+    static addFurnitureMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false, _createCollisionMesh = true) {
         if (Game.debugEnabled) console.log("Running addFurnitureMesh");
-        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale, _forceCreateClone);
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling, _forceCreateClone);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
-            return null;
+            return _instance;
         }
         if (_createCollisionMesh) {
             if (this.physicsEnabled) {
@@ -1006,12 +1022,12 @@ class Game {
         }
         return _instance;
     }
-    static addCharacterMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = new BABYLON.Vector3(0,0,0), _scale = new BABYLON.Vector3(1,1,1)) {
+    static addCharacterMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running addCharacterMesh");
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
-        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scale);
+        var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
-            return null;
+            return _instance;
         }
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
@@ -1022,7 +1038,7 @@ class Game {
             /*
                 Using X for Z size 'cause the tail throws my collision box size off
              */
-            _instance.ellipsoid = new BABYLON.Vector3(_boundingBox.extendSize.x * _scale.x, _boundingBox.extendSize.y * _scale.y, (_boundingBox.extendSize.x * 0.6) * _scale.z);
+            _instance.ellipsoid = new BABYLON.Vector3(_boundingBox.extendSize.x * _scaling.x, _boundingBox.extendSize.y * _scaling.y, (_boundingBox.extendSize.x * 0.6) * _scaling.z);
             _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, 0);
         }
         return _instance;
@@ -1046,10 +1062,13 @@ class Game {
         if (_mesh instanceof BABYLON.AbstractMesh) {
             _mesh = _mesh.name;
         }
-        return this.loadedMeshes.hasOwnProperty(_mesh);
+        return this.meshLocations.hasOwnProperty(_mesh);
     }
     static hasLoadedMesh(_mesh) {
-        return Game.hasAvailableMesh(_mesh);
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.name;
+        }
+        return this.loadedMeshes.hasOwnProperty(_mesh);
     }
     static hasMesh(_mesh) {
         if (_mesh instanceof BABYLON.AbstractMesh) {
@@ -1195,7 +1214,7 @@ class Game {
         return true;
     }
     static hasMeshToCreate(_id) {
-        return Game.meshesToCreateCounter > 0 || Game.meshesToCreate.hasOwnProperty(_id);
+        return Game.meshesToCreateCounter > 0 && Game.meshesToCreate.hasOwnProperty(_id);
     }
     static _createBackloggedMeshes() {
         if (Game.meshesToCreateCounter == 0) {
@@ -1216,8 +1235,167 @@ class Game {
             }
         }
     }
-    static addEntityToCreate() {
-        // WIP
+    static addFurnitureToCreate(_id, _name = "", _type = "", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
+        if (Game.hasFurnitureToCreate(_id)) {
+            return true;
+        }
+        Game.furnitureToCreate[_id] = {"id":_id, "name":_name, "type":_type, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "createCollisionMesh":_createCollisionMesh};
+        Game.furnitureToCreateCounter += 1;
+        return true;
+    }
+    static removeFurnitureToCreate(_id) {
+        if (!Game.hasFurnitureToCreate(_id)) {
+            return true;
+        }
+        delete Game.furnitureToCreate[_id];
+        Game.furnitureToCreateCounter -= 1;
+        return true;
+    }
+    static hasFurnitureToCreate(_id) {
+        return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedFurniture() {
+        if (Game.furnitureToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.furnitureToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.furnitureToCreate[_i]["mesh"])) {
+                Game.createFurniture(
+                    Game.furnitureToCreate[_i]["id"],
+                    Game.furnitureToCreate[_i]["name"],
+                    Game.furnitureToCreate[_i]["type"],
+                    Game.furnitureToCreate[_i]["mesh"],
+                    Game.furnitureToCreate[_i]["texture"],
+                    Game.furnitureToCreate[_i]["options"],
+                    Game.furnitureToCreate[_i]["position"],
+                    Game.furnitureToCreate[_i]["rotation"],
+                    Game.furnitureToCreate[_i]["scaling"],
+                    Game.furnitureToCreate[_i]["createCollisionMesh"]
+                );
+                Game.removeFurnitureToCreate(_i);
+            }
+        }
+    }
+    static addDoorsToCreate(_id, _name = "", _to = "", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (Game.hasDoorsToCreate(_id)) {
+            return true;
+        }
+        Game.doorsToCreate[_id] = {"id":_id, "name":_name, "to":_to, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
+        Game.doorsToCreateCounter += 1;
+        return true;
+    }
+    static removeDoorsToCreate(_id) {
+        if (!Game.hasDoorsToCreate(_id)) {
+            return true;
+        }
+        delete Game.doorsToCreate[_id];
+        Game.doorsToCreateCounter -= 1;
+        return true;
+    }
+    static hasDoorsToCreate(_id) {
+        return Game.doorsToCreateCounter > 0 && Game.doorsToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedDoors() {
+        if (Game.doorsToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.doorsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.doorsToCreate[_i]["mesh"])) {
+                Game.createDoors(
+                    Game.doorsToCreate[_i]["id"],
+                    Game.doorsToCreate[_i]["name"],
+                    Game.doorsToCreate[_i]["to"],
+                    Game.doorsToCreate[_i]["mesh"],
+                    Game.doorsToCreate[_i]["texture"],
+                    Game.doorsToCreate[_i]["options"],
+                    Game.doorsToCreate[_i]["position"],
+                    Game.doorsToCreate[_i]["rotation"],
+                    Game.doorsToCreate[_i]["scaling"]
+                );
+                Game.removeDoorsToCreate(_i);
+            }
+        }
+    }
+    static addCharactersToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (Game.hasCharactersToCreate(_id)) {
+            return true;
+        }
+        Game.charactersToCreate[_id] = {"id":_id, "name":_name, "description":_description, "image":_image, "age":_age, "sex":_sex, "species":_species, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
+        Game.charactersToCreateCounter += 1;
+        return true;
+    }
+    static removeCharactersToCreate(_id) {
+        if (!Game.hasCharactersToCreate(_id)) {
+            return true;
+        }
+        delete Game.charactersToCreate[_id];
+        Game.charactersToCreateCounter -= 1;
+        return true;
+    }
+    static hasCharactersToCreate(_id) {
+        return Game.charactersToCreateCounter > 0 && Game.charactersToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedCharacters() {
+        if (Game.charactersToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.charactersToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.charactersToCreate[_i]["mesh"])) {
+                Game.createCharacters(
+                    Game.charactersToCreate[_i]["id"],
+                    Game.charactersToCreate[_i]["name"],
+                    Game.charactersToCreate[_i]["description"],
+                    Game.charactersToCreate[_i]["image"],
+                    Game.charactersToCreate[_i]["age"],
+                    Game.charactersToCreate[_i]["sex"],
+                    Game.charactersToCreate[_i]["species"],
+                    Game.charactersToCreate[_i]["mesh"],
+                    Game.charactersToCreate[_i]["texture"],
+                    Game.charactersToCreate[_i]["options"],
+                    Game.charactersToCreate[_i]["position"],
+                    Game.charactersToCreate[_i]["rotation"],
+                    Game.charactersToCreate[_i]["scaling"]
+                );
+                Game.removeCharactersToCreate(_i);
+            }
+        }
+    }
+    static addItemsToCreate(_id, _entity = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (Game.hasItemsToCreate(_id)) {
+            return true;
+        }
+        Game.itemsToCreate[_id] = {"id":_id, "entity":_entity, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
+        Game.itemsToCreateCounter += 1;
+        return true;
+    }
+    static removeItemsToCreate(_id) {
+        if (!Game.hasItemsToCreate(_id)) {
+            return true;
+        }
+        delete Game.itemsToCreate[_id];
+        Game.itemsToCreateCounter -= 1;
+        return true;
+    }
+    static hasItemsToCreate(_id) {
+        return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedItems() {
+        if (Game.itemsToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.itemsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.itemsToCreate[_i]["mesh"])) {
+                Game.createItems(
+                    Game.itemsToCreate[_i]["id"],
+                    Game.itemsToCreate[_i]["entity"],
+                    Game.itemsToCreate[_i]["options"],
+                    Game.itemsToCreate[_i]["position"],
+                    Game.itemsToCreate[_i]["rotation"],
+                    Game.itemsToCreate[_i]["scaling"]
+                );
+                Game.removeItemsToCreate(_i);
+            }
+        }
     }
 
     static importMeshes(_sceneFilename, _meshNames = "", _callback = undefined) {
@@ -1248,7 +1426,7 @@ class Game {
                         _meshes[_i].skeleon = _skeletons[_i];
                     }
                     Game.loadedMeshes[_meshes[_i].id] = _meshes[_i];
-                    console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
+                    if (Game.debugEnabled) console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
                 }
                 Game._filesToLoad -= 1;
                 if (typeof _callback == "function") {
@@ -1256,10 +1434,10 @@ class Game {
                 }
             },
             function() { // onProgress
-                console.log("Importing meshes from " + _sceneFilename + "...");
+                if (Game.debugEnabled) console.log("Importing meshes from " + _sceneFilename + "...");
             },
             function() { // onError
-                console.log("Error while importing meshes from " + _sceneFilename);
+                if (Game.debugEnabled) console.log("Error while importing meshes from " + _sceneFilename);
                 Game._filesToLoad -= 1;
             }
         );
@@ -1591,65 +1769,84 @@ class Game {
      * @param  {Boolean} _sex        Sex: 0 - Male, 1 - Female, 2 - Wat
      * @param  {String} _species     Species: fox, skeleton
      * @param  {String} _mesh        String or BABYLON.Mesh: foxM, foxF, foxSkeletonN
-     * @param  {String} _texture        String or BABYLON.Texture: foxRed, foxCorsac
+     * @param  {String} _texture     String or BABYLON.Texture: foxRed, foxCorsac
      * @param  {Object} _options     Physics options: don't touch 'cause they're not used
      * @param  {BABYLON.Vector3} _position    Position
      * @param  {BABYLON.Vector3} _rotation    Rotation
-     * @param  {BABYLON.Vector3} _scale       Scale
-     * @return {CharacterController}              Character Controller
+     * @param  {BABYLON.Vector3} _scaling     Scale
+     * @return {CharacterController}          Character Controller
      */
-    static createCharacter(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
+        if (!Game.hasMesh(_mesh)) {
+            return false;
+        }
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
+        }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) {
+            Game.loadMesh(_mesh);
+            Game.addCharactersToCreate(_id, _name, _description, _image, _age, _sex, _species, _mesh, _texture, _options, _position, _rotation, _scaling);
+            return true;
+        }
         var _entity = new CharacterEntity(_id, _name, _description, _image, undefined, _age, _sex, _species);
-        _mesh = Game.getAbstractMesh(_mesh);
-        if (_mesh == undefined) {
+        var _loadedMesh = Game.getAbstractMesh(_loadedMesh);
+        if (_loadedMesh == undefined) {
             switch (_entity.species) {
                 case "fox" : {
                     if (_entity.getSex() == Game.MALE) {
-                        _mesh = "foxM";
+                        _loadedMesh = "foxM";
                     }
                     else {
-                        _mesh = "foxF";
+                        _loadedMesh = "foxF";
                     }
                     break;
                 }
                 case "skeleton" : {
-                    _mesh = "foxSkeletonN";
+                    _loadedMesh = "foxSkeletonN";
                     break;
                 }
                 case "spirit" : {
-                    _mesh = "spiritN";
+                    _loadedMesh = "spiritN";
                     break;
                 }
                 default : {
                     if (_entity.getSex() == Game.MALE) {
-                        _mesh = "foxM";
+                        _loadedMesh = "foxM";
                     }
                     else {
-                        _mesh = "foxF";
+                        _loadedMesh = "foxF";
                     }
                     break;
                 }
             }
-            _mesh = Game.addCharacterMesh(_id, _mesh, _texture, _options, _position, _rotation, _scale);
+            _loadedMesh = Game.addCharacterMesh(_id, _loadedMesh, _texture, _options, _position, _rotation, _scaling);
         }
         else {
-            _mesh = Game.addCharacterMesh(_id, _mesh.id, _texture, _options, _position, _rotation, _scale);
+            _loadedMesh = Game.addCharacterMesh(_id, _loadedMesh.id, _texture, _options, _position, _rotation, _scaling);
         }
-        var _controller = new CharacterController(_id, _mesh, _entity);
+        var _controller = new CharacterController(_id, _loadedMesh, _entity);
         if (_texture != undefined) {
             _controller.setTexture(_texture);
         }
         _entity.setController(_controller);
-        _entity.setMeshID(_mesh);
+        _entity.setMeshID(_loadedMesh);
         return _controller;
     }
-    static createCharacterFromEntity(_entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static createCharacterFromEntity(_entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         _entity = Game.getCharacterEntity(_entity);
         if (_entity == undefined) {return;}
-        var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scale);
+        var _mesh = Game.addCharacterMesh(_entity.getID(), _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling);
         var _controller = new CharacterController(_entity.getID(), _mesh, _entity);
         _controller.setTexture(_entity.getTextureID());
         _entity.setController(_controller);
@@ -1672,35 +1869,47 @@ class Game {
      * @param  {String} _name               Name
      * @param  {Object} _to                 Future movement between cells
      * @param  {String} _mesh               String ID of a Mesh
-     * @param  {String} _texture               String, Texture, or Material to be applied to the Mesh
+     * @param  {String} _texture            String, Texture, or Material to be applied to the Mesh
      * @param  {Object} _options            Physics options, if they're enabled
      * @param  {BABYLON.Vector3} _position  Position
      * @param  {BABYLON.Vector3} _rotation  Rotation
-     * @param  {BABYLON.Vector3} _scale     Scaling
+     * @param  {BABYLON.Vector3} _scaling   Scaling
      * @return {EntityController}           The created EntityController in-game
      */
-    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = undefined, _options = undefined, _position = new BABYLON.Vector3(0, 0, 0), _rotation = new BABYLON.Vector3(0, 0, 0), _scale = new BABYLON.Vector3(1, 1, 1)) {
+    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = undefined, _options = undefined, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
-        if (Game.loadedMeshes.hasOwnProperty(_mesh)) {}
-        else if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.name;
+        if (!Game.hasMesh(_mesh)) {
+            return false;
         }
-        else {
-            _mesh = "door";
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
+        }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) {
+            Game.loadMesh(_mesh);
+            Game.addDoorsToCreate(_id, _name, _to, _mesh, _texture, _options, _position, _rotation, _scaling);
+            return true;
         }
         var _entity = new DoorEntity(_id, _name);
         _entity.addAvailableAction("close");
         _entity.addAvailableAction("open");
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scale, true);
-        var _radius = Game.getAbstractMesh(_mesh.name).getBoundingInfo().boundingBox.extendSize.x * _mesh.scaling.x;
+        var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true);
+        var _radius = Game.getAbstractMesh(_loadedMesh.name).getBoundingInfo().boundingBox.extendSize.x * _loadedMesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
         var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
-        _mesh.position = _mesh.position.add(new BABYLON.Vector3(_xPos, 0, -_yPos));
-        var _controller = new DoorController(_id, _mesh, _entity);
+        _loadedMesh.position = _loadedMesh.position.add(new BABYLON.Vector3(_xPos, 0, -_yPos));
+        var _controller = new DoorController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
-        _entity.setMeshID(_mesh);
+        _entity.setMeshID(_loadedMesh);
         return _controller;
     }
     static removeDoor(_controller) {
@@ -1716,32 +1925,44 @@ class Game {
      * @param  {String}  _id                  Unique ID, randomly generated if undefined
      * @param  {String}  _name                Name
      * @param  {String}  _type                Furniture type
-     * @param  {String}  _mesh          String or Mesh
-     * @param  {String}  _texture       String or Texture
+     * @param  {String}  _mesh                String or Mesh
+     * @param  {String}  _texture             String or Texture
      * @param  {Object}  _options             Physics options
      * @param  {BABYLON.Vector3}  _position   Position
      * @param  {BABYLON.Vector3}  _rotation   Rotation
-     * @param  {BABYLON.Vector3}  _scale      Scaling       
+     * @param  {BABYLON.Vector3}  _scaling    Scaling       
      * @param  {Boolean} _createCollisionMesh Whether or not a collisionMesh will be created
      * @return {FurnitureController}          Furniture Controller
      */
-    static createFurniture(_id, _name, _type, _mesh, _texture, _options, _position, _rotation, _scale, _createCollisionMesh = true) {
+    static createFurniture(_id, _name, _type, _mesh, _texture, _options, _position, _rotation, _scaling, _createCollisionMesh = true) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
-        if (!(_position instanceof BABYLON.Vector3)) {_position = this.filterVector(_position);}
-        if (Game.loadedMeshes.hasOwnProperty(_mesh)) {}
-        else if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.name;
+        if (!Game.hasMesh(_mesh)) {
+            return false;
         }
-        else {
-            _mesh = "chair";
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
         }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) {
+            Game.loadMesh(_mesh);
+            Game.addFurnitureToCreate(_id, _name, _type, _mesh, _texture, _options, _position, _rotation, _scaling, _createCollisionMesh);
+            return true;
+        }
+        var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true, _createCollisionMesh);
+        _loadedMesh.checkCollisions = true; // _createCollisionMesh doesn't count this :v
         var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _type);
-        var _mesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scale, true, _createCollisionMesh);
-            _mesh.checkCollisions = true; // _createCollisionMesh doesn't count this :v
-        var _controller = new FurnitureController(_id, _mesh, _entity);
+        var _controller = new FurnitureController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
-        _entity.setMeshID(_mesh);
+        _entity.setMeshID(_loadedMesh);
         switch (_entity.getType()) {
             case "chair" :
             case "loveseat" :
@@ -1758,13 +1979,16 @@ class Game {
             case "cupboard" :
             case "cabinet" :
             case "bureau" :
-            case "fridge" :
+            case "refrigerator" :
             case "oven" :
             case "microwave" :
             case "toaster" :
             case "basket" : {
                 _controller.getEntity().setDefaultAction("open");
                 break;
+            }
+            default : {
+                
             }
         }
         return _controller;
@@ -1796,7 +2020,7 @@ class Game {
                 _entity = new ItemEntity(_id, _name, _description, _image);
             }
         }
-        _mesh = this.getAbstractMesh(_mesh);
+        _mesh = Game.getAbstractMesh(_mesh);
         if (_mesh != undefined) {
             _mesh = _mesh.name;
         }
@@ -1806,7 +2030,7 @@ class Game {
     }
     static updateProtoItem() {}
     static removeProtoItem() {}
-    static createItem(_id, _entity, _options = undefined, _position = undefined, _rotation = undefined, _scale = undefined) {
+    static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (_entity instanceof ItemEntity) {
@@ -1824,7 +2048,27 @@ class Game {
             return null;
         }
         _entity.addAvailableAction("take");
-        var _mesh = Game.addItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scale, true);
+        if (!Game.hasMesh(_mesh)) {
+            _mesh = Game.getAbstractMesh("missingMesh");
+        }
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
+        }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) { // Never gonna trigger this, but here it is anyway :V
+            Game.loadMesh(_mesh);
+            Game.addItemsToCreate(_id, _entity, _options, _position, _rotation, _scaling);
+            return true;
+        }
+        var _mesh = Game.addItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling, true);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
         return _controller;

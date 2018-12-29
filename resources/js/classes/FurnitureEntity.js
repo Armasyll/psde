@@ -83,7 +83,7 @@ class FurnitureEntity extends EntityWithStorage {
                 this.addAvailableAction("look");
                 break;
             }
-            case "fridge" : {
+            case "refrigerator" : {
                 this.addAvailableAction("open");
                 break;
             }
@@ -131,6 +131,9 @@ class FurnitureEntity extends EntityWithStorage {
             case "basket" : {
                 this.addAvailableAction("open");
                 break;
+            }
+            default : {
+                
             }
         }
         return this;
