@@ -9,31 +9,28 @@ window.addEventListener("DOMContentLoaded", function() {
     Game.engine.runRenderLoop(function() {
         Game.scene.render();
         if (!Game.finishedFirstLoad()) {
-            if (!Game.finishedInitializing() && Game.finishedLoadingFiles()) {
-                if (Game.debugEnabled) console.log("Finished loading assets.");
+            if (Game.finishedLoadingFiles()) {
+                if (!Game.finishedInitializing()) {
+                    if (Game.debugEnabled) console.log("Finished loading assets.");
+                    Game.importProtoItems();
+                    Game._finishedInitializing = true;
 
-                Game.loadDefaultTextures();
-                Game.loadDefaultMaterials();
-                Game.loadDefaultMeshes();
-                Game.importProtoItems();
-                Game._finishedInitializing = true;
-
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                    Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
-                }));
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                    Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
-                }));
-            }
-            else if (Game.finishedInitializing() && Game.finishedLoadingFiles()) {
-                Game._finishedFirstLoad = true;
-                Client.initialize();
-                GameGUI.resizeText();
-                GameGUI.showCharacterChoiceMenu();
+                    Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                        Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
+                    }));
+                    Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+                        Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
+                    }));
+                }
+                else if (Game.finishedInitializing()) {
+                    Game._finishedFirstLoad = true;
+                    Client.initialize();
+                    GameGUI.resizeText();
+                    GameGUI.showCharacterChoiceMenu();
+                }
             }
         }
     });
-    var _rbrCount = 0;
     Game.scene.registerBeforeRender(function() {
         if (!(Game.player instanceof CharacterController))
             return null;
@@ -47,19 +44,8 @@ window.addEventListener("DOMContentLoaded", function() {
         }
     });
     Game.scene.registerAfterRender(function() {
-        if (Game._assignBoundingBoxCollisionQueue.size > 0) {
-            Game._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
-                Game._assignBoundingBoxCollisionToMesh(_mesh);
-            });
-        }
-        if (_rbrCount >= 10) {
-            Game.castRayTarget();
-            _rbrCount = 0;
-        }
-        else {
-            _rbrCount++;
-        }
         Game._createBackloggedMeshes();
+        Game._createBackloggedBoundingCollisions();
         Game._createBackloggedFurniture();
         Game._createBackloggedDoors();
         Game._createBackloggedCharacters();

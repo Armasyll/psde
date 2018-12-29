@@ -291,6 +291,8 @@ class Game {
 
         this.keyboardControls = {};
         this.player = undefined;
+        this._castRayTargetIntervalFunction = undefined;
+        this._castRayTargetInterval = 250;
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
 
@@ -351,6 +353,9 @@ class Game {
         this.kWeaponRangedTypes = new Set([...this.kWeaponSimpleRangedTypes, ...this.kWeaponMartialRangedTypes]);
         this.kWeaponTypes = new Set([...this.kWeaponMeleeTypes, ...this.kWeaponRangedTypes]);
 
+        Game.loadDefaultTextures();
+        Game.loadDefaultMaterials();
+        Game.loadDefaultMeshes();
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         GameGUI.initialize();
         this.initFreeCamera();
@@ -434,7 +439,7 @@ class Game {
         if (this.player.hasOwnProperty("entity")) {
             GameGUI.setPlayerPortrait(this.player);
         }
-
+        Game.initCastRayInterval();
         return this.player;
     }
     static initBaseKeyboardControls() {
@@ -993,6 +998,14 @@ class Game {
                 _mesh.collisionMesh.scaling.x += _mesh.collisionMesh.scaling.x * 0.2;
             }
         }
+    }
+    static _createBackloggedBoundingCollisions() {
+        if (this._assignBoundingBoxCollisionQueue.size > 0) {
+            this._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
+                Game._assignBoundingBoxCollisionToMesh(_mesh);
+            });
+        }
+        return true;
     }
     static addItemMesh(_id = undefined, _meshID = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false) {
         if (Game.debugEnabled) console.log("Running addItemMesh");
@@ -2047,7 +2060,6 @@ class Game {
         else {
             return null;
         }
-        _entity.addAvailableAction("take");
         if (!Game.hasMesh(_mesh)) {
             _mesh = Game.getAbstractMesh("missingMesh");
         }
@@ -2181,6 +2193,17 @@ class Game {
             Game.clearPlayerTarget();
         }
     }
+    static initCastRayInterval() {
+        clearInterval(Game._castRayTargetIntervalFunction);
+        Game._castRayTargetIntervalFunction = setInterval(Game.castRayTarget, Game._castRayTargetInterval);
+    }
+    static setCastRayInterval(_interval = 250) {
+        if (_interval > 0) {
+            Game._castRayTargetInterval = _interval;
+        }
+        Game.initCastRayInterval();
+    }
+    
     static castRayFOV(_fov = 90) {
         return undefined;
     }
