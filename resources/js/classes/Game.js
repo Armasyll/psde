@@ -518,6 +518,8 @@ class Game {
         Game.loadMesh(BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
         Game.loadMesh(BABYLON.MeshBuilder.CreateSphere("loadingMesh", {diameter: 0.6}, Game.scene));
         Game.loadedMeshes["missingMesh"].material = Game.loadedMaterials["missingMaterial"];
+        Game.loadedMeshes["missingMesh"].setEnabled(false);
+        Game.loadedMeshes["loadingMesh"].setEnabled(false);
     }
     static loadTexture(_texture = "") {
         if (_texture == undefined) {

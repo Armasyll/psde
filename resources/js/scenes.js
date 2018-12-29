@@ -524,7 +524,7 @@ Game.generateApartment = function() {
     );
     Game.getDialogue("charlieTalk").addOption("charlieKiss");
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
-
+    /*
     // Create fire material
     var fire = new BABYLON.FireMaterial("fire", Game.scene);
         fire.opacityTexture = new BABYLON.Texture("resources/images/textures/effects/fireOpacity.png", Game.scene);
@@ -537,7 +537,7 @@ Game.generateApartment = function() {
         plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
         plane.material = fire;
         plane.scaling.y = 2;
-
+    */
     // Game.scene.getMeshByID("fireplane").attachToBone(Game.player.getBone("hand.r"), Game.player.mesh);
     // Game.scene.getMeshByID("fireplane").rotation.set(0, BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180));
     // Game.scene.getMeshByID("fireplane").scaling.set(0.1, 0.2, 0.1);
