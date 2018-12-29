@@ -293,6 +293,7 @@ class Game {
         this.player = undefined;
         this._castRayTargetIntervalFunction = undefined;
         this._castRayTargetInterval = 250;
+        this._pointerLockFunction = undefined;
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
 
@@ -552,7 +553,7 @@ class Game {
             return _material;
         }
         else if (typeof _material == "string") {
-            _texture = Game.loadTexture(_texture); // async, but needed now
+            _texture = Game.loadTexture(_texture);
             if (this.loadedMaterials.hasOwnProperty(_material)) {
                 return this.loadedMaterials[_material];
             }
@@ -592,7 +593,7 @@ class Game {
             if (this.loadedMeshes.hasOwnProperty(_mesh)) {
                 return this.loadedMeshes[_mesh];
             }
-            else if (this.meshLocations.hasOwnProperty(_mesh)) { // TODO: Use placeholder mesh until _mesh is loaded; throw _mesh into a loading mesh list that's checked every few moments
+            else if (this.meshLocations.hasOwnProperty(_mesh)) {
                 Game.importMeshes(this.meshLocations[_mesh]);
                 return this.loadedMeshes["loadingMesh"];
             }
@@ -1134,8 +1135,8 @@ class Game {
             _id = genUUIDv4();
         }
 
-        var _loadedMesh = Game.loadMesh(_mesh); // TODO: async, but needed now
-        var _loadedMaterial = Game.loadMaterial(_material); // TODO: async, but also needed now
+        var _loadedMesh = Game.loadMesh(_mesh);
+        var _loadedMaterial = Game.loadMaterial(_material);
         if (!(_loadedMaterial instanceof BABYLON.Material)) {
             _loadedMaterial = Game.loadedMaterials["missingMaterial"];
         }
@@ -2213,14 +2214,10 @@ class Game {
         }
         Game.canvas.requestPointerLock();
         Game.engine.isPointerLock = true;
-        setTimeout(
-            function() {
-                document.addEventListener("pointerlockchange", Game.pointerRelease);
-            },
-            121 // even would trigger if it were run synchronously; assuming we're running at 60FPS, this should run after 121 frames v:
-        );
+        Game._pointerLockFunction = setTimeout(function() {document.addEventListener("pointerlockchange", Game.pointerRelease);}, 121);
     }
     static pointerRelease(_event) {
+        clearTimeout(Game.pointerLockFunction);
         document.removeEventListener("pointerlockchange", Game.pointerRelease);
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
