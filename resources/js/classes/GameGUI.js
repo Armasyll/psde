@@ -471,9 +471,17 @@ class GameGUI {
                 portraitStatsLife.height = 0.25;
                 portraitStatsLife.width = 1.0;
                 portraitStatsLife.color = "red";
-                var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
+                /*var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
                 portraitStatsMana.text = "";
-                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;*/
+                // TextBlock end
+                var portraitStatsMana = new BABYLON.GUI.Slider();
+                portraitStatsMana.minimum = 0;
+                portraitStatsMana.maximum = 100;
+                portraitStatsMana.isVertical = false;
+                portraitStatsMana.displayThumb = false;
+                portraitStatsMana.isEnabled = false;
+                // Slider end
                 portraitStatsMana.height = 0.25;
                 portraitStatsMana.width = 1.0;
                 portraitStatsMana.color = "blue";
@@ -644,7 +652,12 @@ class GameGUI {
         GameGUI.playerPortrait.children[2].children[2].isVisible = false;
     }
     static setPlayerPortraitMana(_int = 100) {
-        GameGUI.playerPortrait.children[2].children[2].text = _int;
+        if (GameGUI.playerPortrait.children[2].children[2] instanceof BABYLON.GUI.TextBlock) {
+            GameGUI.playerPortrait.children[2].children[2].text = _int;
+        }
+        else if (GameGUI.playerPortrait.children[2].children[2] instanceof BABYLON.GUI.Slider) {
+            GameGUI.playerPortrait.children[2].children[2].value = _int;
+        }
     }
     static setTargetPortraitImage(_image = "resources/images/icons/items/genericItem.svg") {
         GameGUI.targetPortrait.children[2].children[0].domImage.setAttribute("src", _image);
