@@ -107,6 +107,8 @@ class Game {
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
             "bone01":"resources/images/textures/items/bone01.svg",
             "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
+            "pinkWallpaperPlainWood":"resources/images/textures/static/pinkWallpaperPlainWood.png",
+            "yellowWallpaperPlainWood":"resources/images/textures/static/yellowWallpaperPlainWood.png",
             "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
             "plainDoor":"resources/images/textures/static/plainDoor.svg"
         };
@@ -1172,40 +1174,43 @@ class Game {
         _mesh = _loadedMesh.name;
         _material = _loadedMaterial.name;
 
-        var _newMesh = null;
         if (_loadedMesh.skeleton instanceof BABYLON.Skeleton) {
-            _newMesh = _loadedMesh.clone(_id);
+            var _newMesh = _loadedMesh.clone(_id);
+            _newMesh.makeGeometryUnique();
             Game.addClonedMesh(_newMesh, _id);
             
             _newMesh.material = _loadedMaterial;
             _newMesh.skeleton = _loadedMesh.skeleton.clone(_id + "Skeleton");
-            Game.setLoadedMeshMaterial(_newMesh, _loadedMaterial);
+            Game.setLoadedMeshMaterial(_loadedMesh, _loadedMaterial);
             
             _newMesh.name = _loadedMesh.name;
             _loadedMesh = _newMesh;
         }
         else {
-            if (!this.loadedMeshMaterials.hasOwnProperty(_loadedMesh.name)) {
-                this.loadedMeshMaterials[_loadedMesh.name] = {};
+            if (!this.loadedMeshMaterials.hasOwnProperty(_mesh)) {
+                this.loadedMeshMaterials[_mesh] = {};
             }
-            if (!this.loadedMeshMaterials[_loadedMesh.name].hasOwnProperty(_loadedMaterial.name)) {
-                var _newMesh = _loadedMesh.clone(_loadedMesh.name + _loadedMaterial.name);
-                _newMesh.material = _loadedMaterial;
-                _newMesh.name = _loadedMesh.name;
-                _newMesh.setEnabled(false);
-                _newMesh.position.set(0,-4095,0);
-                Game.setLoadedMeshMaterial(_newMesh, _loadedMaterial);
+            if (!this.loadedMeshMaterials[_mesh].hasOwnProperty(_material)) {
+                _loadedMesh = _loadedMesh.clone(_material);
+                _loadedMesh.makeGeometryUnique();
+                if (Game.debugEnabled) console.log("Creating master clone of " + _mesh + " with " + _material);
+                _loadedMesh.material = _loadedMaterial;
+                _loadedMesh.name = _mesh;
+                _loadedMesh.setEnabled(false);
+                _loadedMesh.position.set(0,-4095,0);
+                Game.setLoadedMeshMaterial(_loadedMesh, _loadedMaterial);
             }
             if (_forceCreateClone === true) {
-                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedMaterial.name].clone(_id);
-                Game.addClonedMesh(_newMesh, _id);
+                if (Game.debugEnabled) console.log("  Creating clone...");
+                _loadedMesh = this.loadedMeshMaterials[_mesh][_material].clone(_id);
+                Game.addClonedMesh(_loadedMesh, _id);
             }
             else {
-                _newMesh = this.loadedMeshMaterials[_loadedMesh.name][_loadedMaterial.name].createInstance(_id);
-                Game.addInstancedMesh(_newMesh);
+                if (Game.debugEnabled) console.log("  Creating instance...");
+                _loadedMesh = this.loadedMeshMaterials[_mesh][_material].createInstance(_id);
+                Game.addInstancedMesh(_loadedMesh);
             }
-            _newMesh.name = _loadedMesh.name;
-            _loadedMesh = _newMesh;
+            _loadedMesh.name = _mesh;
         }
         _loadedMesh.isVisible = true;
         _loadedMesh.position.copyFrom(_position);
