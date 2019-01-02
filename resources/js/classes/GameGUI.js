@@ -465,31 +465,38 @@ class GameGUI {
                 portraitName.height = 0.25;
                 portraitName.width = 1.0;
                 portraitName.color = "white";
-                var portraitStatsLife = new BABYLON.GUI.TextBlock("portraitStatsLife");
-                portraitStatsLife.text = "Life";
-                portraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                var portraitStatsLife = new BABYLON.GUI.Slider("portraitStatsLife");
+                portraitStatsLife.minimum = 0;
+                portraitStatsLife.maximum = 100;
+                portraitStatsLife.isVertical = false;
+                portraitStatsLife.displayThumb = false;
                 portraitStatsLife.height = 0.25;
-                portraitStatsLife.width = 1.0;
+                portraitStatsLife.width = 0.85;
+                portraitStatsLife.left = "-16px";
+                portraitStatsLife.thumbWidth = 0;
+                portraitStatsLife.isEnabled = false;
                 portraitStatsLife.color = "red";
-                /*var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
-                portraitStatsMana.text = "";
-                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;*/
-                // TextBlock end
-                var portraitStatsMana = new BABYLON.GUI.Slider();
+                var portraitStatsMana = new BABYLON.GUI.Slider("portraitStatsMana");
                 portraitStatsMana.minimum = 0;
                 portraitStatsMana.maximum = 100;
                 portraitStatsMana.isVertical = false;
                 portraitStatsMana.displayThumb = false;
-                portraitStatsMana.isEnabled = false;
-                // Slider end
                 portraitStatsMana.height = 0.25;
-                portraitStatsMana.width = 1.0;
+                portraitStatsMana.width = 0.85;
+                portraitStatsMana.left = "-16px";
+                portraitStatsMana.thumbWidth = 0;
+                portraitStatsMana.isEnabled = false;
                 portraitStatsMana.color = "blue";
-                var portraitStatsStamina = new BABYLON.GUI.TextBlock("portraitStatsStamina");
-                portraitStatsStamina.text = "Stamina";
-                portraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                var portraitStatsStamina = new BABYLON.GUI.Slider("portraitStatsStamina");
+                portraitStatsStamina.minimum = 0;
+                portraitStatsStamina.maximum = 100;
+                portraitStatsStamina.isVertical = false;
+                portraitStatsStamina.displayThumb = false;
                 portraitStatsStamina.height = 0.25;
-                portraitStatsStamina.width = 1.0;
+                portraitStatsStamina.width = 0.85;
+                portraitStatsStamina.left = "-16px";
+                portraitStatsStamina.thumbWidth = 0;
+                portraitStatsStamina.isEnabled = false;
                 portraitStatsStamina.color = "green";
         portrait.addControl(portraitBackground);
         portrait.addControl(portraitAvatarContainer);
@@ -543,23 +550,41 @@ class GameGUI {
                 portraitName.height = 0.25;
                 portraitName.width = 0.8;
                 portraitName.color = "white";
-                var portraitStatsLife = new BABYLON.GUI.TextBlock("portraitStatsLife");
-                portraitStatsLife.text = "Life";
-                portraitStatsLife.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                var portraitStatsLife = new BABYLON.GUI.Slider("portraitStatsLife");
+                portraitStatsLife.minimum = 0;
+                portraitStatsLife.maximum = 100;
+                portraitStatsLife.isVertical = false;
+                portraitStatsLife.displayThumb = false;
                 portraitStatsLife.height = 0.25;
-                portraitStatsLife.width = 1.0;
+                portraitStatsLife.width = 0.85;
+                portraitStatsLife.left = "16px";
+                portraitStatsLife.thumbWidth = 0;
+                portraitStatsLife.isEnabled = false;
+                portraitStatsLife.scaleX = -1;
                 portraitStatsLife.color = "red";
-                var portraitStatsMana = new BABYLON.GUI.TextBlock("portraitStatsMana");
-                portraitStatsMana.text = "";
-                portraitStatsMana.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                var portraitStatsMana = new BABYLON.GUI.Slider("portraitStatsMana");
+                portraitStatsMana.minimum = 0;
+                portraitStatsMana.maximum = 100;
+                portraitStatsMana.isVertical = false;
+                portraitStatsMana.displayThumb = false;
                 portraitStatsMana.height = 0.25;
-                portraitStatsMana.width = 1.0;
+                portraitStatsMana.width = 0.85;
+                portraitStatsMana.left = "16px";
+                portraitStatsMana.thumbWidth = 0;
+                portraitStatsMana.isEnabled = false;
+                portraitStatsMana.scaleX = -1;
                 portraitStatsMana.color = "blue";
-                var portraitStatsStamina = new BABYLON.GUI.TextBlock("portraitStatsStamina");
-                portraitStatsStamina.text = "Stamina";
-                portraitStatsStamina.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                var portraitStatsStamina = new BABYLON.GUI.Slider("portraitStatsStamina");
+                portraitStatsStamina.minimum = 0;
+                portraitStatsStamina.maximum = 100;
+                portraitStatsStamina.isVertical = false;
+                portraitStatsStamina.displayThumb = false;
                 portraitStatsStamina.height = 0.25;
-                portraitStatsStamina.width = 1.0;
+                portraitStatsStamina.width = 0.85;
+                portraitStatsStamina.left = "16px";
+                portraitStatsStamina.thumbWidth = 0;
+                portraitStatsStamina.isEnabled = false;
+                portraitStatsStamina.scaleX = -1;
                 portraitStatsStamina.color = "green";
         portrait.addControl(portraitBackground);
         portrait.addControl(portraitStats);
@@ -583,19 +608,19 @@ class GameGUI {
     static hideTargetPortrait() {
         GameGUI.targetPortrait.isVisible = false;
     }
-    static setPlayerPortrait(_image = undefined, _name = undefined, _life = undefined, _mana = undefined, _stamina = undefined) {
+    static setPlayerPortrait(_image = Game.player, _name = "", _life = 0, _mana = 0, _stamina = 0) {
         if (_image instanceof EntityController) {
             _name = _image.getEntity().getFullName();
-            _life = _image.getEntity().getLife() + "/" + _image.getEntity().getLifeMax();
+            _life = _image.getEntity().getLife()/_image.getEntity().getLifeMax()*100;
             if (_image.getEntity().getManaMax() == 0) {
                 GameGUI.hidePlayerPortraitMana();
-                _mana = undefined;
+                _mana = 0;
             }
             else {
-                _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
+                _mana = _image.getEntity().getMana()/_image.getEntity().getManaMax()*100;
             }
-            _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
-            _image = Game.getIcon(_image.getEntity().getImage());
+            _stamina = _image.getEntity().getStamina()/_image.getEntity().getStaminaMax()*100;
+            _image = _image.getEntity().getImage();
         }
         this.setPlayerPortraitImage(_image);
         this.setPlayerPortraitName(_name);
@@ -603,27 +628,36 @@ class GameGUI {
         this.setPlayerPortraitMana(_mana);
         this.setPlayerPortraitStamina(_stamina);
     }
-    static setTargetPortrait(_image = undefined, _name = undefined, _life = "", _mana = "", _stamina = "") {
+    static setTargetPortrait(_image = undefined, _name = "", _life = 0, _mana = 0, _stamina = 0) {
         if (_image instanceof EntityController && _image.isEnabled()) {
             if (_image instanceof CharacterController) {
                 _name = _image.getEntity().getFullName();
-                _life = _image.getEntity().getLife() + "/" + _image.getEntity().getLifeMax();
+                _life = _image.getEntity().getLife()/_image.getEntity().getLifeMax()*100;
+                GameGUI.showTargetPortraitLife();
                 if (_image.getEntity().getManaMax() == 0) {
-                    GameGUI.hidePlayerPortraitMana();
-                    _mana = "";
+                    GameGUI.hideTargetPortraitMana();
+                    _mana = 0;
                 }
                 else {
-                    _mana = _image.getEntity().getMana() + "/" + _image.getEntity().getManaMax();
+                    GameGUI.showTargetPortraitMana();
+                    _mana = _image.getEntity().getMana()/_image.getEntity().getManaMax()*100;
                 }
-                _stamina = _image.getEntity().getStamina() + "/" + _image.getEntity().getStaminaMax();
-                _image = Game.getIcon(_image.getEntity().getImage());
+                _stamina = _image.getEntity().getStamina()/_image.getEntity().getStaminaMax()*100;
+                GameGUI.showTargetPortraitStamina();
+                _image = _image.getEntity().getImage();
             }
             else if (_image instanceof ItemController) {
                 _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
+                GameGUI.hideTargetPortraitLife();
+                GameGUI.hideTargetPortraitMana();
+                GameGUI.hideTargetPortraitStamina();
                 _image = Game.getIcon(_image.getEntity().getImage());
             }
             else {
                 _name = _image.getEntity().getName();
+                GameGUI.hideTargetPortraitLife();
+                GameGUI.hideTargetPortraitMana();
+                GameGUI.hideTargetPortraitStamina();
                 _image = Game.getIcon(_image.getEntity().getImage());
             }
         }
@@ -633,17 +667,18 @@ class GameGUI {
         this.setTargetPortraitMana(_mana);
         this.setTargetPortraitStamina(_stamina);
     }
-    static setPlayerPortraitImage(_image = "resources/images/icons/characters/genericCharacter.svg") {
+    static setPlayerPortraitImage(_image = "genericCharacter") {
+        _image = Game.getIcon(_image);
         GameGUI.playerPortrait.children[1].children[0].domImage.setAttribute("src", _image);
     }
     static setPlayerPortraitName(_string) {
         GameGUI.playerPortrait.children[2].children[0].text = _string;
     }
     static setPlayerPortraitLife(_int = 100) {
-        GameGUI.playerPortrait.children[2].children[1].text = _int;
+        GameGUI.playerPortrait.children[2].children[1].value = _int;
     }
     static setPlayerPortraitStamina(_int = 100) {
-        GameGUI.playerPortrait.children[2].children[3].text = _int;
+        GameGUI.playerPortrait.children[2].children[3].value = _int;
     }
     static showPlayerPortraitMana() {
         GameGUI.playerPortrait.children[2].children[2].isVisible = true;
@@ -652,24 +687,32 @@ class GameGUI {
         GameGUI.playerPortrait.children[2].children[2].isVisible = false;
     }
     static setPlayerPortraitMana(_int = 100) {
-        if (GameGUI.playerPortrait.children[2].children[2] instanceof BABYLON.GUI.TextBlock) {
-            GameGUI.playerPortrait.children[2].children[2].text = _int;
-        }
-        else if (GameGUI.playerPortrait.children[2].children[2] instanceof BABYLON.GUI.Slider) {
-            GameGUI.playerPortrait.children[2].children[2].value = _int;
-        }
+        GameGUI.playerPortrait.children[2].children[2].value = _int;
     }
-    static setTargetPortraitImage(_image = "resources/images/icons/items/genericItem.svg") {
+    static setTargetPortraitImage(_image = "genericItem") {
+        _image = Game.getIcon(_image);
         GameGUI.targetPortrait.children[2].children[0].domImage.setAttribute("src", _image);
     }
     static setTargetPortraitName(_string) {
         GameGUI.targetPortrait.children[1].children[0].text = _string;
     }
+    static showTargetPortraitLife() {
+        GameGUI.targetPortrait.children[1].children[1].isVisible = true;
+    }
+    static hideTargetPortraitLife() {
+        GameGUI.targetPortrait.children[1].children[1].isVisible = false;
+    }
     static setTargetPortraitLife(_int = 100) {
-        GameGUI.targetPortrait.children[1].children[1].text = _int;
+        GameGUI.targetPortrait.children[1].children[1].value = _int;
+    }
+    static showTargetPortraitStamina() {
+        GameGUI.targetPortrait.children[1].children[3].isVisible = true;
+    }
+    static hideTargetPortraitStamina() {
+        GameGUI.targetPortrait.children[1].children[3].isVisible = false;
     }
     static setTargetPortraitStamina(_int = 100) {
-        GameGUI.targetPortrait.children[1].children[3].text = _int;
+        GameGUI.targetPortrait.children[1].children[3].value = _int;
     }
     static showTargetPortraitMana() {
         GameGUI.targetPortrait.children[1].children[2].isVisible = true;
@@ -678,7 +721,7 @@ class GameGUI {
         GameGUI.targetPortrait.children[1].children[2].isVisible = false;
     }
     static setTargetPortraitMana(_int = 100) {
-        GameGUI.targetPortrait.children[1].children[2].text = _int;
+        GameGUI.targetPortrait.children[1].children[2].value = _int;
     }
     static chatInputFocus() {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());

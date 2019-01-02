@@ -106,7 +106,8 @@ class Game {
             "bookshelfBlackPlywood":"resources/images/textures/furniture/bookshelfBlackPlywood.svg",
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
             "bone01":"resources/images/textures/items/bone01.svg",
-            "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png"
+            "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
+            "plainDoor":"resources/images/textures/static/plainDoor.svg"
         };
         /**
          * Map of Textures per ID

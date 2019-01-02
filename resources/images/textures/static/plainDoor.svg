@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg16"
+   sodipodi:docname="door.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     id="namedview18"
+     showgrid="false"
+     inkscape:zoom="2.2560608"
+     inkscape:cx="115.9157"
+     inkscape:cy="138.57989"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16" />
+  <desc
+     id="desc2">'craftsmanWalls.blend', door, (Blender 2.79 (sub 0))</desc>
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="224.000,256.000 224.000,11.000 213.000,11.000 213.000,256.000 "
+     id="polygon4"
+     style="stroke:none;fill:#28170b" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="0.000,256.000 0.000,11.000 213.000,11.000 213.000,256.000 "
+     id="polygon6"
+     style="stroke:none;fill:#28170b" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="213.000,256.000 213.000,11.000 224.000,11.000 224.000,256.000 "
+     id="polygon8"
+     style="stroke:none;fill:#28170b" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="213.000,256.000 213.000,11.000 0.000,11.000 0.000,256.000 "
+     id="polygon10"
+     style="stroke:none;fill:#28170b" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="0.000,0.000 213.000,0.000 213.000,11.000 0.000,11.000 "
+     id="polygon12"
+     style="stroke:none;fill:#28170b" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     points="213.000,0.000 0.000,0.000 0.000,11.000 213.000,11.000 "
+     id="polygon14"
+     style="stroke:none;fill:#28170b" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4628"
+     width="75"
+     height="75"
+     x="20"
+     y="36" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4628-6"
+     width="75"
+     height="75"
+     x="118"
+     y="36" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4628-7"
+     width="75"
+     height="105"
+     x="20"
+     y="131" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4628-6-5"
+     width="75"
+     height="105"
+     x="118"
+     y="131" />
+</svg>
