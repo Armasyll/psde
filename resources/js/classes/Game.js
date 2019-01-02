@@ -107,6 +107,7 @@ class Game {
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
             "bone01":"resources/images/textures/items/bone01.svg",
             "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
+            "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
             "plainDoor":"resources/images/textures/static/plainDoor.svg"
         };
         /**
@@ -359,7 +360,8 @@ class Game {
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
-        GameGUI.initialize();
+        this.gui = GameGUI;
+        this.gui.initialize();
         this.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
@@ -439,7 +441,7 @@ class Game {
         this.player.getMesh().isPickable = false;
         Game.initFollowCamera();
         if (this.player.hasOwnProperty("entity")) {
-            GameGUI.setPlayerPortrait(this.player);
+            this.gui.setPlayerPortrait(this.player);
         }
         Game.initCastRayInterval();
         return this.player;
@@ -498,7 +500,7 @@ class Game {
         this._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
-        GameGUI.setActionTooltipLetter();
+        this.gui.setActionTooltipLetter();
     }
     static initPostProcessing() {
         this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
@@ -754,17 +756,17 @@ class Game {
                 break;
             }
             case this.chatInputFocusCode : {
-                if (!GameGUI._chatInputFocused) {
-                    GameGUI.chatInputFocus();
+                if (!this.gui.chatInputFocused) {
+                    this.gui.chatInputFocus();
                 }
-                else if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    GameGUI.chatInputSubmit();
+                else if (this.gui.chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    this.gui.chatInputSubmit();
                 }
                 break;
             }
             case this.chatInputSubmitCode : {
-                if (GameGUI._chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    GameGUI.chatInputSubmit();
+                if (this.gui.chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    this.gui.chatInputSubmit();
                 }
                 break;
             }
@@ -784,25 +786,25 @@ class Game {
                 break;
             }
             case this.showInventoryCode : {
-                if (GameGUI.inventoryVisible()) {
-                    GameGUI.hideInventory(false);
-                    GameGUI.showHUD(false);
+                if (this.gui.inventoryVisible()) {
+                    this.gui.hideInventory(false);
+                    this.gui.showHUD(false);
                 }
                 else {
-                    GameGUI.showInventory(false);
+                    this.gui.showInventory(false);
                 }
                 break;
             }
             case this.showMainMenuCode : {
-                if (GameGUI.menuVisible()) {
+                if (this.gui.menuVisible()) {
                     if (Game.debugEnabled) console.log(`\tShowing HUD`);
-                    GameGUI.hideMenu(false);
-                    GameGUI.showHUD(false);
+                    this.gui.hideMenu(false);
+                    this.gui.showHUD(false);
                 }
                 else {
                     if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
-                    GameGUI.hideHUD(false);
-                    GameGUI.showCharacterChoiceMenu(false);
+                    this.gui.hideHUD(false);
+                    this.gui.showCharacterChoiceMenu(false);
                 }
                 break;
             }
@@ -2146,10 +2148,10 @@ class Game {
         }
         this.highlightMesh(_controller.mesh);
         Game.player.setTarget(_controller);
-        GameGUI.setTargetPortrait(_controller);
-        GameGUI.showTargetPortrait();
-        GameGUI.setActionTooltip(_controller.getEntity().getDefaultAction());
-        GameGUI.showActionTooltip();
+        this.gui.setTargetPortrait(_controller);
+        this.gui.showTargetPortrait();
+        this.gui.setActionTooltip(_controller.getEntity().getDefaultAction());
+        this.gui.showActionTooltip();
     }
     static clearPlayerTarget() {
         if (!(Game.player instanceof CharacterController)) {
@@ -2160,8 +2162,8 @@ class Game {
         }
         this.clearHightlightMesh();
         Game.player.clearTarget();
-        GameGUI.hideTargetPortrait();
-        GameGUI.hideActionTooltip();
+        this.gui.hideTargetPortrait();
+        this.gui.hideActionTooltip();
     }
     static castRayTarget() {
         if (!(Game.player instanceof CharacterController)) {
@@ -2232,15 +2234,15 @@ class Game {
         }
         switch (_command) {
             case "help" : {
-                GameGUI.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
+                this.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
             }
             case "clear" : {
-                GameGUI.chatOutputClear();
+                this.gui.chatOutputClear();
                 break;
             }
             case "menu" : {
-                GameGUI.showCharacterChoiceMenu();
+                this.gui.showCharacterChoiceMenu();
                 break;
             }
             case "login" : {
@@ -2264,10 +2266,10 @@ class Game {
             case "v:" :
             case ":V" :
             case "V:" : {
-                GameGUI.chatOutputAppend("\n    :V\n");
+                this.gui.chatOutputAppend("\n    :V\n");
             }
             default : {
-                GameGUI.chatOutputAppend(`Command "${_command}" not found.\n`);
+                this.gui.chatOutputAppend(`Command "${_command}" not found.\n`);
                 return;
             }
         }
@@ -2281,7 +2283,7 @@ class Game {
                 Game.player.hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
-                GameGUI.showCrosshair();
+                this.gui.showCrosshair();
             }
         }
         else {
@@ -2289,7 +2291,7 @@ class Game {
                 Game.player.showMesh();
                 Game.camera.checkCollisions = true;
                 Game.camera.inertia = 0.9;
-                GameGUI.hideCrosshair();
+                this.gui.hideCrosshair();
             }
         }
     }
@@ -2507,10 +2509,10 @@ class Game {
         }
         var _dialogue = _entityController.getEntity().getDialogue().getDialogue();
         if (typeof _dialogue == "string") {
-            GameGUI.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
+            this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
         }
         else if (typeof _dialogue == "function") {
-            GameGUI.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
+            this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
         }
     }
 }

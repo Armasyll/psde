@@ -1,6 +1,8 @@
-window.addEventListener('resize', function(){
-    Game.engine.resize();
-    GameGUI.resizeText();
+window.addEventListener('resize', function() {
+    if (Game.initialized) {
+        Game.engine.resize();
+        Game.gui.resizeText();
+    }
 });
 window.addEventListener("DOMContentLoaded", function() {
     console.log("Initializing game.");
@@ -25,15 +27,16 @@ window.addEventListener("DOMContentLoaded", function() {
                 else if (Game.finishedInitializing()) {
                     Game._finishedFirstLoad = true;
                     Client.initialize();
-                    GameGUI.resizeText();
-                    GameGUI.showCharacterChoiceMenu();
+                    Game.gui.resizeText();
+                    Game.gui.showCharacterChoiceMenu();
                 }
             }
         }
     });
     Game.scene.registerBeforeRender(function() {
-        if (!(Game.player instanceof CharacterController))
+        if (!(Game.player instanceof CharacterController)) {
             return null;
+        }
         for (_character in Game.characterControllers) {
             if (Game.entityControllers[_character] instanceof CharacterController) {
                 Game.entityControllers[_character].moveAV();

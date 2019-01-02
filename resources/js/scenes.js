@@ -96,7 +96,7 @@ Game.generateApartment = function() {
     Game.createCollisionPlane({x:-1, z:-27}, {x:16, z:1});
 
     var ceilingMaterial = new BABYLON.StandardMaterial("ceilingMaterial", Game.scene);
-        ceilingMaterial.diffuseTexture = new BABYLON.Texture("resources/data/wall.png", Game.scene);
+        ceilingMaterial.diffuseTexture = Game.loadTexture("greenWallpaper");
         ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         ceilingMaterial.backFaceCulling = false;
     var ceilingMesh01 = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);

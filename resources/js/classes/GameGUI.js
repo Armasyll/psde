@@ -19,7 +19,7 @@ class GameGUI {
         GameGUI.inventoryMenu = undefined;
         GameGUI.initMenu();
 
-        GameGUI._chatInputFocused = false;
+        GameGUI.chatInputFocused = false;
 
         GameGUI.initialized = true;
     }
@@ -211,7 +211,7 @@ class GameGUI {
             Game.controlCharacterOnKeyDown(13); // onBlurObservable triggers before ActionManager, so we'll just send the enter key manually
         });
         chatInput.onFocusObservable.add(function() {
-            GameGUI._chatInputFocused = true;
+            GameGUI.chatInputFocused = true;
         });
         return chatBox;
     }
@@ -727,7 +727,7 @@ class GameGUI {
         GameGUI.hud.moveFocusToControl(GameGUI.getChatInput());
     }
     static chatInputSubmit() {
-        GameGUI._chatInputFocused = false;
+        GameGUI.chatInputFocused = false;
         var _text = GameGUI.getChatInput().text.trim();
         if (_text.length == 0) {
             return;
