@@ -193,6 +193,7 @@ class Game {
             "skeletonN":"resources/images/icons/characters/skeletonN.png",
             "missingIcon":"resources/images/icons/static/missingIcon.svg",
             "fire":"resources/images/icons/effects/fire.png",
+            "plainDoor":"resources/images/icons/static/plainDoor.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs
@@ -240,7 +241,7 @@ class Game {
         this.materialsToCreate = {};
         /**
          * Map of Furniture that are waiting to be created
-         * @type {<String, <String:id, String:name, String:type, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
+         * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
          */
         this.furnitureToCreateCounter = 0;
         this.furnitureToCreate = {};
@@ -1251,11 +1252,11 @@ class Game {
             }
         }
     }
-    static addFurnitureToCreate(_id, _name = "", _type = "", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
+    static addFurnitureToCreate(_id, _name = "", _mesh = undefined, _texture = undefined, _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
         if (Game.hasFurnitureToCreate(_id)) {
             return true;
         }
-        Game.furnitureToCreate[_id] = {"id":_id, "name":_name, "type":_type, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "createCollisionMesh":_createCollisionMesh};
+        Game.furnitureToCreate[_id] = {"id":_id, "name":_name, "mesh":_mesh, "texture":_texture, "type":_type, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "createCollisionMesh":_createCollisionMesh};
         Game.furnitureToCreateCounter += 1;
         return true;
     }
@@ -1279,9 +1280,9 @@ class Game {
                 Game.createFurniture(
                     Game.furnitureToCreate[_i]["id"],
                     Game.furnitureToCreate[_i]["name"],
-                    Game.furnitureToCreate[_i]["type"],
                     Game.furnitureToCreate[_i]["mesh"],
                     Game.furnitureToCreate[_i]["texture"],
+                    Game.furnitureToCreate[_i]["type"],
                     Game.furnitureToCreate[_i]["options"],
                     Game.furnitureToCreate[_i]["position"],
                     Game.furnitureToCreate[_i]["rotation"],
@@ -1892,7 +1893,7 @@ class Game {
      * @param  {BABYLON.Vector3} _scaling   Scaling
      * @return {EntityController}           The created EntityController in-game
      */
-    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = undefined, _options = undefined, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = "plainDoor", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
@@ -1915,9 +1916,7 @@ class Game {
             Game.addDoorsToCreate(_id, _name, _to, _mesh, _texture, _options, _position, _rotation, _scaling);
             return true;
         }
-        var _entity = new DoorEntity(_id, _name);
-        _entity.addAvailableAction("close");
-        _entity.addAvailableAction("open");
+        var _entity = new DoorEntity(_id, _name, undefined, _texture);
         var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true);
         var _radius = Game.getAbstractMesh(_loadedMesh.name).getBoundingInfo().boundingBox.extendSize.x * _loadedMesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
@@ -1950,7 +1949,7 @@ class Game {
      * @param  {Boolean} _createCollisionMesh Whether or not a collisionMesh will be created
      * @return {FurnitureController}          Furniture Controller
      */
-    static createFurniture(_id, _name, _type, _mesh, _texture, _options, _position, _rotation, _scaling, _createCollisionMesh = true) {
+    static createFurniture(_id, _name = "", _mesh, _texture, _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
@@ -1970,7 +1969,7 @@ class Game {
         }
         if (!(Game.hasLoadedMesh(_mesh))) {
             Game.loadMesh(_mesh);
-            Game.addFurnitureToCreate(_id, _name, _type, _mesh, _texture, _options, _position, _rotation, _scaling, _createCollisionMesh);
+            Game.addFurnitureToCreate(_id, _name, _mesh, _texture, _type, _options, _position, _rotation, _scaling, _createCollisionMesh);
             return true;
         }
         var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true, _createCollisionMesh);
@@ -2019,7 +2018,7 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id = undefined, _name = undefined, _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = "general") {
+    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = "general") {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = this.filterID(_id);
         var _entity = null;

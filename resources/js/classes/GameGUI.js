@@ -651,21 +651,21 @@ class GameGUI {
                 GameGUI.hideTargetPortraitLife();
                 GameGUI.hideTargetPortraitMana();
                 GameGUI.hideTargetPortraitStamina();
-                _image = Game.getIcon(_image.getEntity().getImage());
+                _image = _image.getEntity().getImage();
             }
             else {
                 _name = _image.getEntity().getName();
                 GameGUI.hideTargetPortraitLife();
                 GameGUI.hideTargetPortraitMana();
                 GameGUI.hideTargetPortraitStamina();
-                _image = Game.getIcon(_image.getEntity().getImage());
+                _image = _image.getEntity().getImage();
             }
         }
-        this.setTargetPortraitImage(_image);
-        this.setTargetPortraitName(_name);
-        this.setTargetPortraitLife(_life);
-        this.setTargetPortraitMana(_mana);
-        this.setTargetPortraitStamina(_stamina);
+        GameGUI.setTargetPortraitImage(_image);
+        GameGUI.setTargetPortraitName(_name);
+        GameGUI.setTargetPortraitLife(_life);
+        GameGUI.setTargetPortraitMana(_mana);
+        GameGUI.setTargetPortraitStamina(_stamina);
     }
     static setPlayerPortraitImage(_image = "genericCharacter") {
         _image = Game.getIcon(_image);

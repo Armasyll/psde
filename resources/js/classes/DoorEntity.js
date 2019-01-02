@@ -3,6 +3,8 @@ class DoorEntity extends Entity {
         super(_id, _name, _description, _image);
         this.locked = false;
         this.key = undefined;
+        this.addAvailableAction("close");
+        this.addAvailableAction("open");
 
         Game.doorEntities[this.id] = this;
 	}
