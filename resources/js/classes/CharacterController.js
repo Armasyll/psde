@@ -396,6 +396,12 @@ class CharacterController extends EntityController {
             if (this.moveVector.length() > 0.001) {
                 this.moveVector.x = Number(this.moveVector.x.toFixed(3));
                 this.moveVector.y = Number(this.moveVector.y.toFixed(3));
+                if (this.moveVector.y > 0) { // Effort to mitigate jittering; seems to work, and doesn't cause any floating when going down the stairs :v
+                    this.moveVector.y = this.moveVector.y - 0.00075;
+                }
+                else {
+                    this.moveVector.y = this.moveVector.y + 0.00075;
+                }
                 this.moveVector.z = Number(this.moveVector.z.toFixed(3));
                 this.mesh.moveWithCollisions(this.moveVector);
                 if (this.mesh.position.y > this.avStartPos.y) {
