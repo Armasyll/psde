@@ -20,7 +20,7 @@ class Game {
             this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
             this.scene.actionManager = new BABYLON.ActionManager(this.scene);
         if (this.physicsEnabled) {
-            this.initPhysics();
+            Game.initPhysics();
         }
         else {
             this.scene.collisionsEnabled = true;
@@ -291,7 +291,6 @@ class Game {
         this._finishedScene = false;
 
         this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
-        //this._collisionMaterial = new BABYLON.StandardMaterial("collisionMaterial", this.scene);
 
         this.keyboardControls = {};
         this.player = undefined;
@@ -364,14 +363,14 @@ class Game {
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         this.gui = GameGUI;
         this.gui.initialize();
-        this.initFreeCamera();
+        Game.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
         this.importMeshes("resources/data/characters.babylon");
         this.importMeshes("resources/data/items.babylon");
         this.importMeshes("resources/data/misc.babylon");
-        this.initQwertyKeyboardControls();
-        this.initPostProcessing();
+        Game.initQwertyKeyboardControls();
+        Game.initPostProcessing();
 
         this._filesToLoad -= 1;
         this.initialized = true;
@@ -391,7 +390,9 @@ class Game {
         this.physicsEnabled = true;
     }
     static initFollowCamera(_offset = BABYLON.Vector3.Zero()) {
-        if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
+        if (this.camera instanceof BABYLON.Camera) {
+            this.camera.dispose();
+        }
         this.camera = new BABYLON.ArcRotateCamera(
             "camera",
             -this.player.mesh.rotation.y-4.69,
@@ -412,11 +413,13 @@ class Game {
 
         this.camera.minZ = 0.001;
         this.camera.lockedTarget = this.player.focus;
-        this.initPostProcessing();
+        Game.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
         if (Game.debugEnabled) console.log("Running initFreeCamera");
-        if (this.camera instanceof BABYLON.Camera) this.camera.dispose();
+        if (this.camera instanceof BABYLON.Camera) {
+            this.camera.dispose();
+        }
         this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), this.scene);
         this.camera.radius = 2;
         this.camera.minZ = 0.001;
@@ -430,7 +433,7 @@ class Game {
             this.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
             this.camera.checkCollisions = true;
         }
-        this.initPostProcessing();
+        Game.initPostProcessing();
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running initPlayer");
@@ -454,7 +457,7 @@ class Game {
         this.showMainMenuCode = 27;
     }
     static initQwertyKeyboardControls() {
-        this.initBaseKeyboardControls();
+        Game.initBaseKeyboardControls();
         this.walkCode = 87;
         this.walkBackCode = 83;
         this.turnLeftCode = 0;
@@ -467,10 +470,10 @@ class Game {
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
         this.showInventoryCode = 73;
-        this._updateMenuKeyboardDisplayKeys();
+        Game._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
-        this.initBaseKeyboardControls();
+        Game.initBaseKeyboardControls();
         this.walkCode = 188;
         this.walkBackCode = 73;
         this.turnLeftCode = 0;
@@ -483,10 +486,10 @@ class Game {
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 80;
         this.showInventoryCode = 73; // IDK :v maybe 
-        this._updateMenuKeyboardDisplayKeys();
+        Game._updateMenuKeyboardDisplayKeys();
     }
     static initAzertyKeyboardControls() {
-        this.initBaseKeyboardControls();
+        Game.initBaseKeyboardControls();
         this.walkCode = 90;
         this.walkBackCode = 83;
         this.turnLeftCode = 0;
@@ -499,7 +502,7 @@ class Game {
         this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
         this.showInventoryCode = 73;
-        this._updateMenuKeyboardDisplayKeys();
+        Game._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
         this.gui.setActionTooltipLetter();
@@ -916,7 +919,7 @@ class Game {
         _floor.material = Game._collisionMaterial;
         _floor.position.set(_posX,_posY,_posZ);
         if (this.physicsEnabled) {
-            this.assignBoxPhysicsToMesh(_floor, {mass:0});
+            Game.assignBoxPhysicsToMesh(_floor, {mass:0});
         }
         else {
             _floor.checkCollisions = true;
@@ -953,7 +956,7 @@ class Game {
         _ramp.rotation.set(_angle, BABYLON.Tools.ToRadians(_rotationY), 0);
         _ramp.material = Game._collisionMaterial;
         if (this.physicsEnabled) {
-            this.assignBoxPhysicsToMesh(_ramp, {mass:0});
+            Game.assignBoxPhysicsToMesh(_ramp, {mass:0});
         }
         else {
             _ramp.checkCollisions = true;
@@ -1585,7 +1588,7 @@ class Game {
         }
     }
     static hasEntityController(_id) {
-        return this.getEntityController(_id) != undefined;
+        return Game.getEntityController(_id) != undefined;
     }
     /*static getNetworkedCharacterController(_id) {
         if (this.networkedCharacterControllers.hasOwnProperty(_id)) {
@@ -1622,7 +1625,7 @@ class Game {
         }
     }
     static hasFurnitureController(_id) {
-        return this.getFurnitureController(_id) != undefined;
+        return Game.getFurnitureController(_id) != undefined;
     }
     static getDoorController(_id) {
         if (_id == undefined) {
@@ -1642,7 +1645,7 @@ class Game {
         }
     }
     static hasDoorController(_id) {
-        return this.getDoorController(_id) != undefined;
+        return Game.getDoorController(_id) != undefined;
     }
     static getItemController(_id) {
         if (_id == undefined) {
@@ -1662,7 +1665,7 @@ class Game {
         }
     }
     static hasItemController(_id) {
-        return this.getItemController(_id) != undefined;
+        return Game.getItemController(_id) != undefined;
     }
     static getCharacterController(_id) {
         if (_id == undefined) {
@@ -1682,7 +1685,7 @@ class Game {
         }
     }
     static hasCharacterController(_id) {
-        return this.getCharacterController(_id) != undefined;
+        return Game.getCharacterController(_id) != undefined;
     }
     static getEntity(_id) {
         if (_id == undefined) {
@@ -1700,7 +1703,7 @@ class Game {
         return null;
     }
     static hasEntity(_id) {
-        return this.getEntity(_id) != undefined;
+        return Game.getEntity(_id) != undefined;
     }
     static getProtoItemEntity(_id) {
         if (_id == undefined) {
@@ -1721,7 +1724,7 @@ class Game {
         return null;
     }
     static hasProtoItemEntity(_id) {
-        return this.getProtoItemEntity(_id) != undefined;
+        return Game.getProtoItemEntity(_id) != undefined;
     }
     static getInstancedItemEntity(_id) {
         if (_id == undefined) {
@@ -1742,13 +1745,13 @@ class Game {
         return null;
     }
     static hasInstancedItemEntity(_id) {
-        return this.getInstancedItemEntity(_id) != undefined;
+        return Game.getInstancedItemEntity(_id) != undefined;
     }
     static getItemEntity(_id) {
-        return this.getInstancedItemEntity(_id);
+        return Game.getInstancedItemEntity(_id);
     }
     static hasItemEntity(_id) {
-        return this.hasInstancedItemEntity(_id);
+        return Game.hasInstancedItemEntity(_id);
     }
     static getCharacterEntity(_id) {
         if (_id == undefined) {
@@ -1766,7 +1769,7 @@ class Game {
         return null;
     }
     static hasCharacterEntity(_id) {
-        return this.getCharacterEntity(_id) != undefined;
+        return Game.getCharacterEntity(_id) != undefined;
     }
     static getDialogue(_id) {
         if (_id == undefined) {
@@ -1802,7 +1805,7 @@ class Game {
      */
     static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
+        _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
@@ -1902,7 +1905,7 @@ class Game {
      */
     static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = "plainDoor", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
+        _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
@@ -1958,7 +1961,7 @@ class Game {
      */
     static createFurniture(_id, _name = "", _mesh, _texture, _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
         if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
+        _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
@@ -2027,7 +2030,7 @@ class Game {
     }
     static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = "general") {
         if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
+        _id = Game.filterID(_id);
         var _entity = null;
         switch (_itemType) {
             case "clothing": {
@@ -2054,7 +2057,7 @@ class Game {
     static removeProtoItem() {}
     static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = this.filterID(_id);
+        _id = Game.filterID(_id);
         if (_entity instanceof ItemEntity) {
             _entity = new InstancedItemEntity(_id, _entity);
         }
@@ -2151,7 +2154,7 @@ class Game {
         if (!(_controller instanceof EntityController) || !_controller.isEnabled()) {
             return null;
         }
-        this.highlightMesh(_controller.mesh);
+        Game.highlightMesh(_controller.mesh);
         Game.player.setTarget(_controller);
         this.gui.setTargetPortrait(_controller);
         this.gui.showTargetPortrait();
@@ -2165,7 +2168,7 @@ class Game {
         if (Game.player.getTarget() == undefined) {
             return undefined;
         }
-        this.clearHightlightMesh();
+        Game.clearHightlightMesh();
         Game.player.clearTarget();
         this.gui.hideTargetPortrait();
         this.gui.hideActionTooltip();
@@ -2496,7 +2499,7 @@ class Game {
         if (!(_subEntityController instanceof CharacterController)) {
             return;
         }
-        var _seatingBoundingBox = this.getAbstractMesh(_entityController.getMesh().name).getBoundingInfo().boundingBox;
+        var _seatingBoundingBox = Game.getAbstractMesh(_entityController.getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entityController.getMesh().scaling.x);
         _subEntityController.setParent(_entityController.getMesh());
         _subEntityController.getMesh().position.set(_seatingWidth / 2, 0, 0.025);
