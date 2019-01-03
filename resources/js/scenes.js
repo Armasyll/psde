@@ -190,7 +190,7 @@ Game.generateApartment = function() {
     Game.createDoor("ozzybedroomdoor", "Bedroom", undefined, "door", "plainDoor", undefined, new BABYLON.Vector3(3, 0, -2), new BABYLON.Vector3(0, -90, 0));
     Game.createMesh(undefined, "doorway", "yellowWallpaperPlainWood",           new BABYLON.Vector3(4, 0, 0), new BABYLON.Vector3(0, -90, 0));
     Game.createDoor("ozzyhallwayclosetdoor", "Closet", undefined, "door", "plainDoor", undefined, new BABYLON.Vector3(3, 0, 0), new BABYLON.Vector3(0, -90, 0)).setOpensInward();
-    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", "bookshelfThinBlackPlywood", undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.addFurnitureMesh("bookShelfThinInstance01", "bookshelfThin", "bookshelfBlackPlywood", undefined, new BABYLON.Vector3(4.7, 0, -6), new BABYLON.Vector3(0, 90, 0));
 
     // Ozzy Livingroom
     Game.createMesh(undefined, "wall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -8));
