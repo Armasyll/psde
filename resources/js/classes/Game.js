@@ -761,17 +761,39 @@ class Game {
                 break;
             }
             case this.chatInputFocusCode : {
-                if (!this.gui.chatInputFocused) {
-                    this.gui.chatInputFocus();
+                if (!this.gui.getChatInputFocused()) {
+                    this.gui.setChatInputFocused(true);
                 }
-                else if (this.gui.chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    this.gui.chatInputSubmit();
+                else if (this.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    var _text = this.gui.getChatInput().text.trim();
+                    if (_text.length == 0) {
+                        return;
+                    }
+                    if (Client.isOnline()) {
+                        Client.sendChatMessage(_text);
+                    }
+                    else {
+                        Game.chatCommands(_text);
+                    }
+                    this.gui.setChatInputFocused(false);
+                    this.gui.chatInputClear();
                 }
                 break;
             }
             case this.chatInputSubmitCode : {
-                if (this.gui.chatInputFocused && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    this.gui.chatInputSubmit();
+                if (this.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    var _text = this.gui.getChatInput().text.trim();
+                    if (_text.length == 0) {
+                        return;
+                    }
+                    if (Client.isOnline()) {
+                        Client.sendChatMessage(_text);
+                    }
+                    else {
+                        Game.chatCommands(_text);
+                    }
+                    this.gui.setChatInputFocused(false);
+                    this.gui.chatInputClear();
                 }
                 break;
             }
@@ -791,7 +813,7 @@ class Game {
                 break;
             }
             case this.showInventoryCode : {
-                if (this.gui.inventoryVisible()) {
+                if (this.gui.getInventoryVisible()) {
                     this.gui.hideInventory(false);
                     this.gui.showHUD(false);
                 }
@@ -801,7 +823,7 @@ class Game {
                 break;
             }
             case this.showMainMenuCode : {
-                if (this.gui.menuVisible()) {
+                if (this.gui.getMenuVisible()) {
                     if (Game.debugEnabled) console.log(`\tShowing HUD`);
                     this.gui.hideMenu(false);
                     this.gui.showHUD(false);
