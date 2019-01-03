@@ -1826,6 +1826,7 @@ class Game {
             Game.addCharactersToCreate(_id, _name, _description, _image, _age, _sex, _species, _mesh, _texture, _options, _position, _rotation, _scaling);
             return true;
         }
+        _position.y = _position.y + 0.0076; // Characters start sinking into the ground sometimes
         var _entity = new CharacterEntity(_id, _name, _description, _image, undefined, _age, _sex, _species);
         var _loadedMesh = Game.getAbstractMesh(_loadedMesh);
         if (_loadedMesh == undefined) {
