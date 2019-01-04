@@ -1314,7 +1314,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.decMana(_int);
     }
     getMana() {
-        return this.getMana;
+        return this.mana;
     }
 
     setManaMax(_int) {
