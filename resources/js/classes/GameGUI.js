@@ -373,28 +373,28 @@ class GameGUI {
             if (!Game._finishedScene) {
                 Game.generateApartment();
                 Game._finishedScene = true;
+                Game.initPlayer();
+                Game.player.entity.setName(nameInput.text);
+                GameGUI.setPlayerPortrait(Game.player);
             }
-            Game.initPlayer();
-            Game.player.entity.setName(nameInput.text);
             if (!Client.isOnline()) {
                 Client.connect();
             }
             GameGUI.hideMenu();
-            GameGUI.setPlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
         submitOffline.onPointerUpObservable.add(function() {
             if (!Game._finishedScene) {
-                Game.generateApartment();
                 Game._finishedScene = true;
+                Game.generateApartment();
+                Game.initPlayer();
+                Game.player.entity.setName(nameInput.text);
+                GameGUI.setPlayerPortrait(Game.player);
             }
-            Game.initPlayer();
-            Game.player.entity.setName(nameInput.text);
             if (Client.isOnline()) {
                 Client.disconnect();
             }
             GameGUI.hideMenu();
-            GameGUI.setPlayerPortrait(Game.player);
             GameGUI.showHUD();
         });
 
@@ -476,47 +476,77 @@ class GameGUI {
                 portraitName.height = 0.25;
                 portraitName.width = 1.0;
                 portraitName.color = "white";
-                var portraitStatsLife = new BABYLON.GUI.Slider("portraitStatsLife");
-                portraitStatsLife.minimum = 0;
-                portraitStatsLife.maximum = 100;
-                portraitStatsLife.isVertical = false;
-                portraitStatsLife.displayThumb = false;
-                portraitStatsLife.height = 0.25;
-                portraitStatsLife.width = 0.85;
-                portraitStatsLife.left = "-16px";
-                portraitStatsLife.thumbWidth = 0;
-                portraitStatsLife.isEnabled = false;
-                portraitStatsLife.color = "red";
-                var portraitStatsMana = new BABYLON.GUI.Slider("portraitStatsMana");
-                portraitStatsMana.minimum = 0;
-                portraitStatsMana.maximum = 100;
-                portraitStatsMana.isVertical = false;
-                portraitStatsMana.displayThumb = false;
-                portraitStatsMana.height = 0.25;
-                portraitStatsMana.width = 0.85;
-                portraitStatsMana.left = "-16px";
-                portraitStatsMana.thumbWidth = 0;
-                portraitStatsMana.isEnabled = false;
-                portraitStatsMana.color = "blue";
-                var portraitStatsStamina = new BABYLON.GUI.Slider("portraitStatsStamina");
-                portraitStatsStamina.minimum = 0;
-                portraitStatsStamina.maximum = 100;
-                portraitStatsStamina.isVertical = false;
-                portraitStatsStamina.displayThumb = false;
-                portraitStatsStamina.height = 0.25;
-                portraitStatsStamina.width = 0.85;
-                portraitStatsStamina.left = "-16px";
-                portraitStatsStamina.thumbWidth = 0;
-                portraitStatsStamina.isEnabled = false;
-                portraitStatsStamina.color = "green";
+                var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
+                portraitStatsLifeContainer.height = 0.25;
+                portraitStatsLifeContainer.width = 0.85;
+                portraitStatsLifeContainer.thickness = 0;
+                    var portraitStatsLifeText = new BABYLON.GUI.TextBlock("portraitStatsLifeText");
+                    portraitStatsLifeText.text = "";
+                    portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsLifeText.color = "white";
+                    var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
+                    portraitStatsLifeSlider.minimum = 0;
+                    portraitStatsLifeSlider.maximum = 100;
+                    portraitStatsLifeSlider.isVertical = false;
+                    portraitStatsLifeSlider.displayThumb = false;
+                    portraitStatsLifeSlider.left = "16px";
+                    portraitStatsLifeSlider.height = 1.25;
+                    portraitStatsLifeSlider.thumbWidth = 0;
+                    portraitStatsLifeSlider.isEnabled = false;
+                    portraitStatsLifeSlider.color = "red";
+                var portraitStatsManaContainer = new BABYLON.GUI.Rectangle("portraitStatsManaContainer");
+                portraitStatsManaContainer.height = 0.25;
+                portraitStatsManaContainer.width = 0.85;
+                portraitStatsManaContainer.thickness = 0;
+                    var portraitStatsManaText = new BABYLON.GUI.TextBlock("portraitStatsManaText");
+                    portraitStatsManaText.text = "";
+                    portraitStatsManaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsManaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsManaText.color = "white";
+                    var portraitStatsManaSlider = new BABYLON.GUI.Slider("portraitStatsManaSlider");
+                    portraitStatsManaSlider.minimum = 0;
+                    portraitStatsManaSlider.maximum = 100;
+                    portraitStatsManaSlider.isVertical = false;
+                    portraitStatsManaSlider.displayThumb = false;
+                    portraitStatsManaSlider.left = "16px";
+                    portraitStatsManaSlider.height = 1.25;
+                    portraitStatsManaSlider.thumbWidth = 0;
+                    portraitStatsManaSlider.isEnabled = false;
+                    portraitStatsManaSlider.color = "blue";
+                var portraitStatsStaminaContainer = new BABYLON.GUI.Rectangle("portraitStatsStaminaContainer");
+                portraitStatsStaminaContainer.height = 0.25;
+                portraitStatsStaminaContainer.width = 0.85;
+                portraitStatsStaminaContainer.thickness = 0;
+                    var portraitStatsStaminaText = new BABYLON.GUI.TextBlock("portraitStatsStaminaText");
+                    portraitStatsStaminaText.text = "";
+                    portraitStatsStaminaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsStaminaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsStaminaText.color = "white";
+                    var portraitStatsStaminaSlider = new BABYLON.GUI.Slider("portraitStatsStaminaSlider");
+                    portraitStatsStaminaSlider.minimum = 0;
+                    portraitStatsStaminaSlider.maximum = 100;
+                    portraitStatsStaminaSlider.isVertical = false;
+                    portraitStatsStaminaSlider.displayThumb = false;
+                    portraitStatsStaminaSlider.left = "16px";
+                    portraitStatsStaminaSlider.height = 1.25;
+                    portraitStatsStaminaSlider.thumbWidth = 0;
+                    portraitStatsStaminaSlider.isEnabled = false;
+                    portraitStatsStaminaSlider.color = "green";
         portrait.addControl(portraitBackground);
         portrait.addControl(portraitAvatarContainer);
         portraitAvatarContainer.addControl(portraitAvatar);
         portrait.addControl(portraitStats);
         portraitStats.addControl(portraitName);
-        portraitStats.addControl(portraitStatsLife);
-        portraitStats.addControl(portraitStatsMana);
-        portraitStats.addControl(portraitStatsStamina);
+        portraitStatsLifeContainer.addControl(portraitStatsLifeSlider);
+        portraitStatsLifeContainer.addControl(portraitStatsLifeText);
+        portraitStats.addControl(portraitStatsLifeContainer);
+        portraitStatsManaContainer.addControl(portraitStatsManaSlider);
+        portraitStatsManaContainer.addControl(portraitStatsManaText);
+        portraitStats.addControl(portraitStatsManaContainer);
+        portraitStatsStaminaContainer.addControl(portraitStatsStaminaSlider);
+        portraitStatsStaminaContainer.addControl(portraitStatsStaminaText);
+        portraitStats.addControl(portraitStatsStaminaContainer);
         return portrait;
     }
     static _generateTargetPortrait() {
@@ -559,52 +589,82 @@ class GameGUI {
                 portraitName.text = "Your Name Here";
                 portraitName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 portraitName.height = 0.25;
-                portraitName.width = 0.8;
+                portraitName.width = 0.85;
                 portraitName.color = "white";
-                var portraitStatsLife = new BABYLON.GUI.Slider("portraitStatsLife");
-                portraitStatsLife.minimum = 0;
-                portraitStatsLife.maximum = 100;
-                portraitStatsLife.isVertical = false;
-                portraitStatsLife.displayThumb = false;
-                portraitStatsLife.height = 0.25;
-                portraitStatsLife.width = 0.85;
-                portraitStatsLife.left = "16px";
-                portraitStatsLife.thumbWidth = 0;
-                portraitStatsLife.isEnabled = false;
-                portraitStatsLife.scaleX = -1;
-                portraitStatsLife.color = "red";
-                var portraitStatsMana = new BABYLON.GUI.Slider("portraitStatsMana");
-                portraitStatsMana.minimum = 0;
-                portraitStatsMana.maximum = 100;
-                portraitStatsMana.isVertical = false;
-                portraitStatsMana.displayThumb = false;
-                portraitStatsMana.height = 0.25;
-                portraitStatsMana.width = 0.85;
-                portraitStatsMana.left = "16px";
-                portraitStatsMana.thumbWidth = 0;
-                portraitStatsMana.isEnabled = false;
-                portraitStatsMana.scaleX = -1;
-                portraitStatsMana.color = "blue";
-                var portraitStatsStamina = new BABYLON.GUI.Slider("portraitStatsStamina");
-                portraitStatsStamina.minimum = 0;
-                portraitStatsStamina.maximum = 100;
-                portraitStatsStamina.isVertical = false;
-                portraitStatsStamina.displayThumb = false;
-                portraitStatsStamina.height = 0.25;
-                portraitStatsStamina.width = 0.85;
-                portraitStatsStamina.left = "16px";
-                portraitStatsStamina.thumbWidth = 0;
-                portraitStatsStamina.isEnabled = false;
-                portraitStatsStamina.scaleX = -1;
-                portraitStatsStamina.color = "green";
+                var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
+                portraitStatsLifeContainer.height = 0.25;
+                portraitStatsLifeContainer.width = 0.85;
+                portraitStatsLifeContainer.thickness = 0;
+                    var portraitStatsLifeText = new BABYLON.GUI.TextBlock("portraitStatsLifeText");
+                    portraitStatsLifeText.text = "";
+                    portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsLifeText.color = "white";
+                    var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
+                    portraitStatsLifeSlider.minimum = 0;
+                    portraitStatsLifeSlider.maximum = 100;
+                    portraitStatsLifeSlider.isVertical = false;
+                    portraitStatsLifeSlider.displayThumb = false;
+                    portraitStatsLifeSlider.left = "16px";
+                    portraitStatsLifeSlider.height = 1.25;
+                    portraitStatsLifeSlider.thumbWidth = 0;
+                    portraitStatsLifeSlider.isEnabled = false;
+                    portraitStatsLifeSlider.scaleX = -1;
+                    portraitStatsLifeSlider.color = "red";
+                var portraitStatsManaContainer = new BABYLON.GUI.Rectangle("portraitStatsManaContainer");
+                portraitStatsManaContainer.height = 0.25;
+                portraitStatsManaContainer.width = 0.85;
+                portraitStatsManaContainer.thickness = 0;
+                    var portraitStatsManaText = new BABYLON.GUI.TextBlock("portraitStatsManaText");
+                    portraitStatsManaText.text = "";
+                    portraitStatsManaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsManaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsManaText.color = "white";
+                    var portraitStatsManaSlider = new BABYLON.GUI.Slider("portraitStatsManaSlider");
+                    portraitStatsManaSlider.minimum = 0;
+                    portraitStatsManaSlider.maximum = 100;
+                    portraitStatsManaSlider.isVertical = false;
+                    portraitStatsManaSlider.displayThumb = false;
+                    portraitStatsManaSlider.left = "16px";
+                    portraitStatsManaSlider.height = 1.25;
+                    portraitStatsManaSlider.thumbWidth = 0;
+                    portraitStatsManaSlider.isEnabled = false;
+                    portraitStatsManaSlider.scaleX = -1;
+                    portraitStatsManaSlider.color = "blue";
+                var portraitStatsStaminaContainer = new BABYLON.GUI.Rectangle("portraitStatsStaminaContainer");
+                portraitStatsStaminaContainer.height = 0.25;
+                portraitStatsStaminaContainer.width = 0.85;
+                portraitStatsStaminaContainer.thickness = 0;
+                    var portraitStatsStaminaText = new BABYLON.GUI.TextBlock("portraitStatsStaminaText");
+                    portraitStatsStaminaText.text = "";
+                    portraitStatsStaminaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsStaminaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsStaminaText.color = "white";
+                    var portraitStatsStaminaSlider = new BABYLON.GUI.Slider("portraitStatsStaminaSlider");
+                    portraitStatsStaminaSlider.minimum = 0;
+                    portraitStatsStaminaSlider.maximum = 100;
+                    portraitStatsStaminaSlider.isVertical = false;
+                    portraitStatsStaminaSlider.displayThumb = false;
+                    portraitStatsStaminaSlider.left = "16px";
+                    portraitStatsStaminaSlider.height = 1.25;
+                    portraitStatsStaminaSlider.thumbWidth = 0;
+                    portraitStatsStaminaSlider.isEnabled = false;
+                    portraitStatsStaminaSlider.scaleX = -1;
+                    portraitStatsStaminaSlider.color = "green";
         portrait.addControl(portraitBackground);
         portrait.addControl(portraitStats);
         portrait.addControl(portraitAvatarContainer);
         portraitAvatarContainer.addControl(portraitAvatar);
         portraitStats.addControl(portraitName);
-        portraitStats.addControl(portraitStatsLife);
-        portraitStats.addControl(portraitStatsMana);
-        portraitStats.addControl(portraitStatsStamina);
+        portraitStatsLifeContainer.addControl(portraitStatsLifeSlider);
+        portraitStatsLifeContainer.addControl(portraitStatsLifeText);
+        portraitStats.addControl(portraitStatsLifeContainer);
+        portraitStatsManaContainer.addControl(portraitStatsManaSlider);
+        portraitStatsManaContainer.addControl(portraitStatsManaText);
+        portraitStats.addControl(portraitStatsManaContainer);
+        portraitStatsStaminaContainer.addControl(portraitStatsStaminaSlider);
+        portraitStatsStaminaContainer.addControl(portraitStatsStaminaText);
+        portraitStats.addControl(portraitStatsStaminaContainer);
         return portrait;
     }
     static showPlayerPortrait() {
@@ -619,123 +679,138 @@ class GameGUI {
     static hideTargetPortrait() {
         GameGUI._targetPortrait.isVisible = false;
     }
-    static setPlayerPortrait(_image = Game.player, _name = "", _life = 0, _mana = 0, _stamina = 0) {
-        if (_image instanceof EntityController) {
-            _name = _image.getEntity().getFullName();
-            _life = _image.getEntity().getLife()/_image.getEntity().getLifeMax()*100;
-            if (_image.getEntity().getManaMax() == 0) {
-                GameGUI.hidePlayerPortraitMana();
-                _mana = 0;
+    static setPlayerPortrait(_entity = Game.player.getEntity()) {
+        if (!_entity.isEnabled()) {
+            return undefined;
+        }
+        if (_entity instanceof EntityController) {
+            _entity = _entity.getEntity();
+        }
+        else if (!(_entity instanceof AbstractEntity)) {
+            return undefined;
+        }
+        GameGUI._setPlayerPortraitLifeSlider(_entity.getLife()/_entity.getLifeMax()*100);
+        GameGUI._setPlayerPortraitLifeText(_entity.getLife() + "/" + _entity.getLifeMax());
+        if (_entity.getManaMax() == 0) {
+            GameGUI._hidePlayerPortraitMana();
+        }
+        else {
+            GameGUI._showPlayerPortraitMana();
+            GameGUI._setPlayerPortraitManaSlider(_entity.getMana()/_entity.getManaMax()*100);
+            GameGUI._setPlayerPortraitManaText(_entity.getMana() + "/" + _entity.getManaMax());
+        }
+        GameGUI._setPlayerPortraitStaminaSlider(_entity.getStamina()/_entity.getStaminaMax()*100);
+        GameGUI._setPlayerPortraitStaminaText(_entity.getStamina() + "/" + _entity.getStaminaMax());
+        GameGUI._setPlayerPortraitImage(_entity.getImage());
+        GameGUI._setPlayerPortraitName(_entity.getName());
+    }
+    static setTargetPortrait(_entity) {
+        if (!_entity.isEnabled()) {
+            return undefined;
+        }
+        if (_entity instanceof EntityController) {
+            _entity = _entity.getEntity();
+        }
+        else if (!(_entity instanceof AbstractEntity)) {
+            return undefined;
+        }
+        if (_entity instanceof CharacterEntity) {
+            GameGUI._setTargetPortraitLifeSlider(_entity.getLife()/_entity.getLifeMax()*100);
+            GameGUI._setTargetPortraitLifeText(_entity.getLife() + "/" + _entity.getLifeMax());
+            if (_entity.getManaMax() == 0) {
+                GameGUI._hideTargetPortraitMana();
             }
             else {
-                _mana = _image.getEntity().getMana()/_image.getEntity().getManaMax()*100;
+                GameGUI._showTargetPortraitMana();
+                GameGUI._setTargetPortraitManaSlider(_entity.getMana()/_entity.getManaMax()*100);
+                GameGUI._setTargetPortraitManaText(_entity.getMana() + "/" + _entity.getManaMax());
             }
-            _stamina = _image.getEntity().getStamina()/_image.getEntity().getStaminaMax()*100;
-            _image = _image.getEntity().getImage();
+            GameGUI._setTargetPortraitStaminaSlider(_entity.getStamina()/_entity.getStaminaMax()*100);
+            GameGUI._setTargetPortraitStaminaText(_entity.getStamina() + "/" + _entity.getStaminaMax());
+            GameGUI._showTargetPortraitLife();
+            GameGUI._showTargetPortraitStamina();
         }
-        this.setPlayerPortraitImage(_image);
-        this.setPlayerPortraitName(_name);
-        this.setPlayerPortraitLife(_life);
-        this.setPlayerPortraitMana(_mana);
-        this.setPlayerPortraitStamina(_stamina);
-    }
-    static setTargetPortrait(_image = undefined, _name = "", _life = 0, _mana = 0, _stamina = 0) {
-        if (_image instanceof EntityController && _image.isEnabled()) {
-            if (_image instanceof CharacterController) {
-                _name = _image.getEntity().getFullName();
-                _life = _image.getEntity().getLife()/_image.getEntity().getLifeMax()*100;
-                GameGUI.showTargetPortraitLife();
-                if (_image.getEntity().getManaMax() == 0) {
-                    GameGUI.hideTargetPortraitMana();
-                    _mana = 0;
-                }
-                else {
-                    GameGUI.showTargetPortraitMana();
-                    _mana = _image.getEntity().getMana()/_image.getEntity().getManaMax()*100;
-                }
-                _stamina = _image.getEntity().getStamina()/_image.getEntity().getStaminaMax()*100;
-                GameGUI.showTargetPortraitStamina();
-                _image = _image.getEntity().getImage();
-            }
-            else if (_image instanceof ItemController) {
-                _name = _image.getEntity().getEntity().getName(); // Image is an ItemController, whose Entity is an InstancedItemEntity, whose Entity is an ItemEntity
-                GameGUI.hideTargetPortraitLife();
-                GameGUI.hideTargetPortraitMana();
-                GameGUI.hideTargetPortraitStamina();
-                _image = _image.getEntity().getImage();
-            }
-            else {
-                _name = _image.getEntity().getName();
-                GameGUI.hideTargetPortraitLife();
-                GameGUI.hideTargetPortraitMana();
-                GameGUI.hideTargetPortraitStamina();
-                _image = _image.getEntity().getImage();
-            }
+        else {
+            GameGUI._hideTargetPortraitLife();
+            GameGUI._hideTargetPortraitMana();
+            GameGUI._hideTargetPortraitStamina();
         }
-        GameGUI.setTargetPortraitImage(_image);
-        GameGUI.setTargetPortraitName(_name);
-        GameGUI.setTargetPortraitLife(_life);
-        GameGUI.setTargetPortraitMana(_mana);
-        GameGUI.setTargetPortraitStamina(_stamina);
+        GameGUI._setTargetPortraitImage(_entity.getImage());
+        GameGUI._setTargetPortraitName(_entity.getName());
     }
-    static setPlayerPortraitImage(_image = "genericCharacter") {
-        _image = Game.getIcon(_image);
-        GameGUI._playerPortrait.children[1].children[0].domImage.setAttribute("src", _image);
+    static _setPlayerPortraitImage(_image = "genericCharacter") {
+        GameGUI._playerPortrait.children[1].children[0].domImage.setAttribute("src", Game.getIcon(_image));
     }
-    static setPlayerPortraitName(_string) {
+    static _setPlayerPortraitName(_string) {
         GameGUI._playerPortrait.children[2].children[0].text = _string;
     }
-    static setPlayerPortraitLife(_int = 100) {
-        GameGUI._playerPortrait.children[2].children[1].value = _int;
+    static _setPlayerPortraitLifeSlider(_int = 100) {
+        GameGUI._playerPortrait.children[2].children[1].children[0].value = _int;
     }
-    static setPlayerPortraitStamina(_int = 100) {
-        GameGUI._playerPortrait.children[2].children[3].value = _int;
+    static _setPlayerPortraitLifeText(_text = "") {
+        GameGUI._playerPortrait.children[2].children[1].children[1].text = _text;
     }
-    static showPlayerPortraitMana() {
+    static _setPlayerPortraitStaminaSlider(_int = 100) {
+        GameGUI._playerPortrait.children[2].children[3].children[0].value = _int;
+    }
+    static _setPlayerPortraitStaminaText(_text = "") {
+        GameGUI._playerPortrait.children[2].children[3].children[1].text = _text;
+    }
+    static _showPlayerPortraitMana() {
         GameGUI._playerPortrait.children[2].children[2].isVisible = true;
+        GameGUI._playerPortrait.children[2].children[2].isEnabled = true;
     }
-    static hidePlayerPortraitMana() {
+    static _hidePlayerPortraitMana() {
         GameGUI._playerPortrait.children[2].children[2].isVisible = false;
+        GameGUI._playerPortrait.children[2].children[2].isEnabled = false;
     }
-    static setPlayerPortraitMana(_int = 100) {
-        GameGUI._playerPortrait.children[2].children[2].value = _int;
+    static _setPlayerPortraitManaSlider(_int = 100) {
+        GameGUI._playerPortrait.children[2].children[2].children[0].value = _int;
     }
-    static setTargetPortraitImage(_image = "genericItem") {
-        _image = Game.getIcon(_image);
-        GameGUI._targetPortrait.children[2].children[0].domImage.setAttribute("src", _image);
+    static _setPlayerPortraitManaText(_text = "") {
+        GameGUI._playerPortrait.children[2].children[2].children[1].text = _text;
     }
-    static setTargetPortraitName(_string) {
+    static _setTargetPortraitImage(_image = "genericItem") {
+        GameGUI._targetPortrait.children[2].children[0].domImage.setAttribute("src", Game.getIcon(_image));
+    }
+    static _setTargetPortraitName(_string) {
         GameGUI._targetPortrait.children[1].children[0].text = _string;
     }
-    static showTargetPortraitLife() {
+    static _showTargetPortraitLife() {
         GameGUI._targetPortrait.children[1].children[1].isVisible = true;
     }
-    static hideTargetPortraitLife() {
+    static _hideTargetPortraitLife() {
         GameGUI._targetPortrait.children[1].children[1].isVisible = false;
     }
-    static setTargetPortraitLife(_int = 100) {
-        GameGUI._targetPortrait.children[1].children[1].value = _int;
+    static _setTargetPortraitLifeSlider(_int = 100) {
+        GameGUI._targetPortrait.children[1].children[1].children[0].value = _int;
     }
-    static showTargetPortraitStamina() {
+    static _setTargetPortraitLifeText(_text = "") {
+        GameGUI._targetPortrait.children[1].children[1].children[1].text = _text;
+    }
+    static _showTargetPortraitStamina() {
         GameGUI._targetPortrait.children[1].children[3].isVisible = true;
     }
-    static hideTargetPortraitStamina() {
+    static _hideTargetPortraitStamina() {
         GameGUI._targetPortrait.children[1].children[3].isVisible = false;
     }
-    static setTargetPortraitStamina(_int = 100) {
-        GameGUI._targetPortrait.children[1].children[3].value = _int;
+    static _setTargetPortraitStaminaSlider(_int = 100) {
+        GameGUI._targetPortrait.children[1].children[3].children[0].value = _int;
     }
-    static showTargetPortraitMana() {
+    static _setTargetPortraitStaminaText(_text = "") {
+        GameGUI._targetPortrait.children[1].children[3].children[1].text = _text;
+    }
+    static _showTargetPortraitMana() {
         GameGUI._targetPortrait.children[1].children[2].isVisible = true;
     }
-    static hideTargetPortraitMana() {
+    static _hideTargetPortraitMana() {
         GameGUI._targetPortrait.children[1].children[2].isVisible = false;
     }
-    static setTargetPortraitMana(_int = 100) {
-        GameGUI._targetPortrait.children[1].children[2].value = _int;
+    static _setTargetPortraitManaSlider(_int = 100) {
+        GameGUI._targetPortrait.children[1].children[2].children[0].value = _int;
     }
-    static chatInputFocus() {
-        GameGUI._hud.moveFocusToControl(GameGUI.getChatInput());
+    static _setTargetPortraitManaText(_text = "") {
+        GameGUI._targetPortrait.children[1].children[2].children[1].text = _text;
     }
     static chatInputClear() {
         GameGUI.getChatInput().text = "";
@@ -816,13 +891,16 @@ class GameGUI {
         return inventory;
     }
     /**
-     * Shows the inventory menu.
+     * Shows the player's inventory menu.
      */
-    static showInventory() {
+    static showPlayerInventory() {
         GameGUI._hideMenuChildren();
         GameGUI._setPlayerInventory();
         GameGUI._inventoryMenu.isVisible = true;
         GameGUI.showMenu(true);
+    }
+    static showTargetInventory() {
+        
     }
     /**
      * Hides the inventory menu.
@@ -1078,5 +1156,20 @@ class GameGUI {
     }
     static getChatInputFocused() {
         return GameGUI._chat.children[1]._isFocused;
+    }
+    static generateDialogueMenu() {
+        
+    }
+    static showDialogueMenu() {
+        
+    }
+    static hideDialogueMenu() {
+        
+    }
+    static setDialogue(_them, _dialogue) {
+        
+    }
+    static clearDialogue() {
+        
     }
 }

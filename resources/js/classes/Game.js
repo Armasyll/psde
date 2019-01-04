@@ -520,7 +520,10 @@ class Game {
         Game.loadMaterial(new BABYLON.StandardMaterial("missingMaterial", Game.scene));
         Game.loadMaterial(new BABYLON.StandardMaterial("loadingMaterial", Game.scene));
         Game.loadMaterial("missingMaterial", "missingTexture");
-        Game.loadedMaterials["loadingMaterial"].diffuseColor = new BABYLON.Color3(1, 0.85, 1);
+        Game.loadedMaterials["default"].specularColor.set(0,0,0);
+        Game.loadedMaterials["missingMaterial"].specularColor.set(0,0,0);
+        Game.loadedMaterials["loadingMaterial"].specularColor.set(0,0,0);
+        Game.loadedMaterials["loadingMaterial"].diffuseColor.set(1, 0.85, 1);
     }
     static loadDefaultMeshes() {
         Game.loadMesh(BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
@@ -818,7 +821,7 @@ class Game {
                     this.gui.showHUD(false);
                 }
                 else {
-                    this.gui.showInventory(false);
+                    this.gui.showPlayerInventory(false);
                 }
                 break;
             }
@@ -2179,7 +2182,7 @@ class Game {
         }
         Game.highlightMesh(_controller.mesh);
         Game.player.setTarget(_controller);
-        this.gui.setTargetPortrait(_controller);
+        this.gui.setTargetPortrait(_controller.getEntity());
         this.gui.showTargetPortrait();
         this.gui.setActionTooltip(_controller.getEntity().getDefaultAction());
         this.gui.showActionTooltip();

@@ -510,6 +510,7 @@ Game.generateApartment = function() {
     Game.createItem("mountainChocolateBar", "mountainChocolateBar", undefined, new BABYLON.Vector3(3, 0.625, -19.8), new BABYLON.Vector3(55, 90, 0));
     Game.createCharacter("rosie", "Rosie", undefined, "rosie", 14, "f", "fox", "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "circularEyeBlue").attachToRightEye("eye", "circularEyeBlue");
     Game.createCharacter("charlie", "Charlie", undefined, "charlie", 28, "f", "fox", "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "feralEyeBlue").attachToRightEye("eye", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
+    Game.getCharacterEntity("charlie").setManaMax("666").setMana("666").setLife("66").setStamina("66");
     new Dialogue(
         "charlieTalk",
         "Talk to Charlie",
