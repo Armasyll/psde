@@ -321,6 +321,16 @@ Game.generateApartment = function() {
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "craftsmanDoor", "plainDoor", undefined, new BABYLON.Vector3(4, 0, -27));
     Game.getDoorController("apartmentbuildingdoor").getEntity().setLocked(true);
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
+    
+    // 'outside'
+    Game.createCollisionPlane({x:5,z:-27}, {x:3,z:-29}, 0);
+    Game.createCollisionWall(new BABYLON.Vector3(5, 0, -27), new BABYLON.Vector3(5, 3, -29));
+    Game.createCollisionWall(new BABYLON.Vector3(3, 0, -27), new BABYLON.Vector3(3, 3, -29));
+    Game.createCollisionWall(new BABYLON.Vector3(3, 0, -29), new BABYLON.Vector3(5, 3, -29));
+    Game.createMesh(undefined, "stopSign", "stopSign", new BABYLON.Vector3(4, 0, -29), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "sawhorse", undefined, new BABYLON.Vector3(3.3, 0, -29), new BABYLON.Vector3(0, 33, 0));
+    Game.createMesh(undefined, "twoByFourByThree", undefined, new BABYLON.Vector3(3, 0, -29.2), new BABYLON.Vector3(30, 33, -5));
+    Game.createMesh(undefined, "twoByFourByThree", undefined, new BABYLON.Vector3(2.9, 0, -29.15), new BABYLON.Vector3(30, 33, -5));
 
     // Second Floor
     var ceilingMesh02a = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);

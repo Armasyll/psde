@@ -113,7 +113,8 @@ class Game {
             "whiteWallpaperPlainWood":"resources/images/textures/static/whiteWallpaperPlainWood.png",
             "blackWallpaperPlainWood":"resources/images/textures/static/blackWallpaperPlainWood.png",
             "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
-            "plainDoor":"resources/images/textures/static/plainDoor.svg"
+            "plainDoor":"resources/images/textures/static/plainDoor.svg",
+            "stopSign":"resources/images/textures/items/stopSign.svg"
         };
         /**
          * Map of Textures per ID
