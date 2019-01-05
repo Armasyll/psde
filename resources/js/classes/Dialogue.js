@@ -3,7 +3,7 @@ class Dialogue {
 	 * Creates a Dialogue
 	 * @param  {String}    _id       Unique ID
 	 * @param  {String}    _title    Title
-	 * @param  {String}    _dialogue String, or Function, with the parameters _them and _you, that returns a String
+	 * @param  {String}    _text     String, or Function, with the parameters _them and _you, that returns a String
 	 * @param  {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
 	 * @return {Dialogue}  Dialogue
 	 * @example new Dialogue("exampleA", "Example A", "This is a test!")
@@ -11,15 +11,15 @@ class Dialogue {
 	 * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
 	 * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
 	 */
-	constructor(_id, _title, _dialogue, ..._options) {
+	constructor(_id, _title, _text, ..._options) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         if (typeof _title != "string") {_title = "";}
-        if (typeof _dialogue != "string" && typeof _dialogue != "function") {
+        if (typeof _text != "string" && typeof _text != "function") {
         	return;
         }
         this.id = Game.filterID(_id);
         this.title = Game.filterName(_title) || "";
-        this.dialogue = _dialogue;
+        this.text = _text;
         this.options = [];
         if (_options.length > 0) {
         	for (var _i = 0; _i < _options.length; _i++) {
@@ -48,12 +48,12 @@ class Dialogue {
 	getTitle() {
 		return this.title;
 	}
-	getDialogue() {
-		if (typeof this.dialogue == "string") {
-			return this.dialogue;
+	getText() {
+		if (typeof this.text == "string") {
+			return this.text;
 		}
-		else if (typeof this.dialogue == "function") {
-			return this.dialogue;
+		else if (typeof this.text == "function") {
+			return this.text;
 		}
 		else {
 			return "";

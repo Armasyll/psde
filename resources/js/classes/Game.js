@@ -2541,7 +2541,7 @@ class Game {
         if (!(_entityController.getEntity().getDialogue() instanceof Dialogue)) {
             return;
         }
-        var _dialogue = _entityController.getEntity().getDialogue().getDialogue();
+        var _dialogue = _entityController.getEntity().getDialogue().getText();
         if (typeof _dialogue == "string") {
             this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
         }
