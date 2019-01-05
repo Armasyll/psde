@@ -109,6 +109,9 @@ class Game {
             "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
             "pinkWallpaperPlainWood":"resources/images/textures/static/pinkWallpaperPlainWood.png",
             "yellowWallpaperPlainWood":"resources/images/textures/static/yellowWallpaperPlainWood.png",
+            "blueWallpaperPlainWood":"resources/images/textures/static/blueWallpaperPlainWood.png",
+            "whiteWallpaperPlainWood":"resources/images/textures/static/whiteWallpaperPlainWood.png",
+            "blackWallpaperPlainWood":"resources/images/textures/static/blackWallpaperPlainWood.png",
             "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
             "plainDoor":"resources/images/textures/static/plainDoor.svg"
         };

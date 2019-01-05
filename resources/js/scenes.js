@@ -171,14 +171,14 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Bathroom
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(8, 0, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh(undefined, "craftsmanDoorway", "yellowWallpaperPlainWood",           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(8, 0, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanDoorway", "whiteWallpaperPlainWood",           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Ozzy Hallway
     Game.createMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(4, 0, 0));
@@ -440,28 +440,28 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(1, 3, -1), new BABYLON.Vector3(5, 6, -1)); // Front wall between Charlie's closet and bedroom
     Game.createCollisionWall(new BABYLON.Vector3(5, 3, 1), new BABYLON.Vector3(5, 6, -5)); // Side wall between Charlie's bedroom and bathroom
 
-    Game.createMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -2));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 3, -2));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, -2));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, -2), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, -4), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -4), new BABYLON.Vector3(0, 270, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -2), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanDoorway", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, -2));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(2, 3, -2));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, -2));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, -2), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, -4), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanDoorway", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(2, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, -6), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, -4), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, -2), new BABYLON.Vector3(0, 270, 0));
 
     // Charlie Closet
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 3, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 90, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 180, 0));
-    Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(2, 3, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 90, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(4, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(2, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanDoorway", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 180, 0));
+    Game.createMesh(undefined, "craftsmanWall", "blackWallpaperPlainWood", new BABYLON.Vector3(0, 3, 0), new BABYLON.Vector3(0, 270, 0));
 
     // Charty Bathroom
     var chartyBathroomFloor = BABYLON.MeshBuilder.CreateTiledGround(undefined, {xmin:0, zmin:0, xmax: 4, zmax: 6, subdivisions: {w:4, h:6}}, Game.scene);
