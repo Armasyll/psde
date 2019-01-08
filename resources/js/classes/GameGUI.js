@@ -3,16 +3,23 @@ class GameGUI {
         GameGUI.initialized = false;
     }
     static initialize() {
+        GameGUI.alpha = "0.75";
+        GameGUI.color = "white";
+        GameGUI.background = "#c3c3c3";
+        GameGUI.focusedBackground = "#3c3c3c";
         GameGUI._menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
         GameGUI._menu.rootContainer.isVisible = false;
         GameGUI._hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
         GameGUI._hud.rootContainer.isVisible = false;
 
+        GameGUI._dialogueOptionCount = 0;
+        GameGUI._dialogueOptions = {};
         GameGUI._crosshair = undefined;
         GameGUI._chat = undefined;
         GameGUI._playerPortrait = undefined;
         GameGUI._targetPortrait = undefined;
         GameGUI._actionTooltip = undefined;
+        GameGUI._dialogueMenu = undefined;
         GameGUI._initHUD();
 
         GameGUI._characterChoiceMenu = undefined;
@@ -27,11 +34,13 @@ class GameGUI {
         GameGUI._playerPortrait = GameGUI._generatePlayerPortrait();
         GameGUI._targetPortrait = GameGUI._generateTargetPortrait();
         GameGUI._actionTooltip = GameGUI._generateTargetActionTooltip();
+        GameGUI._dialogueMenu = GameGUI._generateDialogueMenu();
         GameGUI._hud.addControl(GameGUI._crosshair);
         GameGUI._hud.addControl(GameGUI._chat);
         GameGUI._hud.addControl(GameGUI._playerPortrait);
         GameGUI._hud.addControl(GameGUI._targetPortrait);
         GameGUI._hud.addControl(GameGUI._actionTooltip);
+        GameGUI._hud.addControl(GameGUI._dialogueMenu);
     }
     static _initMenu() {
         GameGUI._characterChoiceMenu = GameGUI._generateCharacterChoiceMenu()
@@ -1157,19 +1166,193 @@ class GameGUI {
     static getChatInputFocused() {
         return GameGUI._chat.children[1]._isFocused;
     }
-    static generateDialogueMenu() {
+    static _generateDialogueMenu() {
+        /*
+            [Image        Name          X]
+            [----------------------------]
+            [Dialogue                    ]
+            [spacing                     ]
+            [----------------------------]
+            [Options                     ]
+         */
+        var _container = new BABYLON.GUI.Rectangle("dialogueContainer");
+            _container.alpha = GameGUI.alpha;
+            _container.width = 0.5;
+            _container.height = 0.4;
+            _container.background = GameGUI.background;
+            _container.thickness = 0;
+            _container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        var _titleBar = new BABYLON.GUI.Rectangle("dialogueTitleBar");
+            _titleBar.width = 1.0;
+            _titleBar.height = 0.1;
+            _titleBar.thickness = 0;
+            _titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            _titleBar.background = "green";
+        var _title = new BABYLON.GUI.TextBlock("dialogueTitle");
+            _title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            _title.text = "Title :V";
+        var _closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
+            _closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            _closeButton.width = 0.05;
+        var _bodyContainer = new BABYLON.GUI.Rectangle("dialogueBodyContainer"); // TODO: Replace with ScrollViewer when it becomes available
+            _bodyContainer.width = 1.0;
+            _bodyContainer.height = 0.6;
+            _bodyContainer.thickness = 0;
+            _bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+            _bodyContainer.top = "-10%";
+            _bodyContainer.background = "blue";
+        var _body = new BABYLON.GUI.TextBlock("dialogueBody");
+            _body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            _body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _body.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            _body.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            _body.textWrapping = BABYLON.GUI.TextWrapping.WordWrap;
+            _body.resizeToFit = true;
+            _body.width = 1.0;
+            _body.height = 1.0;
+            _body.paddingTop = "8px";
+            _body.paddingRight = "8px";
+            _body.paddingBottom = "8px";
+            _body.paddingLeft = "8px";
+            _body.text = "\"Who draw dis? :v\"";
+        var _optionsContainer = new BABYLON.GUI.StackPanel("dialogueOptionsContainer");
+            _optionsContainer.isVertical = false;
+            _optionsContainer.width = 1.0;
+            _optionsContainer.height = 0.3;
+            _optionsContainer.thickness = 0;
+            _optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            _optionsContainer.background = "red";
+        var _optionsColA = new BABYLON.GUI.StackPanel();
+            _optionsColA.isVertical = true;
+            _optionsColA.width = 0.33;
+            _optionsColA.height = 1.0;
+            _optionsColA.background = "orange";
+        var _optionsColB = new BABYLON.GUI.StackPanel();
+            _optionsColB.isVertical = true;
+            _optionsColB.width = 0.341;
+            _optionsColB.height = 1.0;
+            _optionsColB.background = "yellow";
+        var _optionsColC = new BABYLON.GUI.StackPanel();
+            _optionsColC.isVertical = true;
+            _optionsColC.width = 0.33;
+            _optionsColC.height = 1.0;
+            _optionsColC.background = "pink";
         
+        _closeButton.onPointerUpObservable.add(function() {
+            GameGUI.hideDialogueMenu();
+        });
+        
+        _optionsContainer.addControl(_optionsColA);
+        _optionsContainer.addControl(_optionsColB);
+        _optionsContainer.addControl(_optionsColC);
+        _titleBar.addControl(_title);
+        _titleBar.addControl(_closeButton);
+        _bodyContainer.addControl(_body);
+        _container.addControl(_titleBar);
+        _container.addControl(_bodyContainer);
+        _container.addControl(_optionsContainer);
+        _container.isVisible = false;
+        GameGUI._dialogueOptionCount = 0;
+        return _container;
     }
     static showDialogueMenu() {
-        
+        GameGUI._dialogueMenu.isVisible = true;
     }
     static hideDialogueMenu() {
-        
+        GameGUI._dialogueMenu.isVisible = false;
     }
-    static setDialogue(_them, _dialogue) {
+    static setDialogue(_dialogue, _them, _you = Game.player.getEntity()) {
+        GameGUI.clearDialogue();
+        _dialogue = Game.getDialogue(_dialogue);
+        _them = Game.getEntity(_them);
+        _you = Game.getEntity(_you);
+        GameGUI.setDialogueTitle(_dialogue.getTitle());
+        var _text = _dialogue.getText()
+        if (typeof _text == "function") {
+            GameGUI.setDialogueBody(_text(_them, _you));
+        }
+        else {
+            GameGUI.setDialogueBody(_text);
+        }
+        if (_dialogue.hasOptions()) {
+            for (var _i = 0; _i < _dialogue.getOptions().length; _i++) {
+                if (_dialogue.getOptions()[_i].getCondition()) {
+                    GameGUI.addDialogueOption(_dialogue.getOptions()[_i], _them, _you, true);
+                }
+                else {
+                    GameGUI.addDialogueOption(_dialogue.getOptions()[_i], _them, _you, false);
+                }
+            }
+        }
+    }
+    static setDialogueTitle(_string) {
+        GameGUI._dialogueMenu.children[0].children[0].text = _string;
+    }
+    static clearDialogueTitle() {
+        GameGUI.setDialogueTitle("");
+    }
+    static setDialogueBody(_string) {
+        GameGUI._dialogueMenu.children[1].children[0].text = _string;
+    }
+    static appendDialogueBody(_string) {
+        GameGUI._dialogueMenu.children[1].children[0].text += _string;
+    }
+    static clearDialogueBody() {
+        GameGUI.setDialogueBody("");
+    }
+    static addDialogueOption(_dialogueOption, _them, _you = Game.player.getEntity(), _isEnabled = true) {
+        if (!(_dialogueOption instanceof DialogueOption)) {
+            return undefined;
+        }
+        if (GameGUI._dialogueOptionCount > 7 || GameGUI._dialogueOptions.hasOwnProperty(_dialogueOption.getDialogue().getID())) {
+            return false;
+        }
+        var _button = new BABYLON.GUI.Button.CreateSimpleButton(_dialogueOption.getDialogue().getID(), _dialogueOption.getTitle());
+        _button.width = 1.0;
+        _button.height = 0.33;
+        _button.background = "purple";
+        _button.onPointerUpObservable.add(function() {
+            GameGUI.setDialogue(_dialogueOption.getDialogue().getID(), _them.getID(), _you.getID());
+        });
+        if (!_isEnabled) {
+            _button.background = "gray";
+        }
+        GameGUI._dialogueOptionCount += 1;
+        if (GameGUI._dialogueOptionCount > 5) {
+            GameGUI._dialogueMenu.children[2].children[2].addControl(_button);
+        }
+        else if (GameGUI._dialogueOptionCount > 2) {
+            GameGUI._dialogueMenu.children[2].children[1].addControl(_button);
+        }
+        else {
+            GameGUI._dialogueMenu.children[2].children[0].addControl(_button);
+        }
+        GameGUI._dialogueOptions[_dialogueOption.getDialogue().getID()] = _dialogueOption;
+        return true;
+    }
+    static removeDialogueOptions(_dialogueOption) {
         
+        GameGUI._dialogueOptionCount -= 1;
+    }
+    static clearDialogueOptions() {
+        if (GameGUI._dialogueOptionCount > 0) {
+            var _subControl = undefined;
+            for (var _i = 2; _i >= 0; _i--) {
+                for (var _j = 2; _j >= 0; _j--) {
+                    if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Button) {
+                        _subControl = GameGUI._dialogueMenu.children[2].children[_i].children[_j];
+                        GameGUI._dialogueMenu.children[2].children[_i].removeControl(_subControl);
+                        _subControl.dispose();
+                    }
+                }
+            }
+            GameGUI._dialogueOptionCount = 0;
+            GameGUI._dialogueOptions = {};
+        }
     }
     static clearDialogue() {
-        
+        GameGUI.clearDialogueTitle();
+        GameGUI.clearDialogueBody();
+        GameGUI.clearDialogueOptions();
     }
 }

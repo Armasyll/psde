@@ -59,6 +59,9 @@ class Dialogue {
 			return "";
 		}
 	}
+	hasOptions() {
+		return this.options.length > 0;
+	}
 	getOptions() {
 		return this.options;
 	}
@@ -82,6 +85,7 @@ class Dialogue {
 }
 class DialogueOption {
 	constructor(_dialogue, _title = undefined, _condition = undefined) {
+		this.id = genUUIDv4();
 		this.dialogue = undefined;
 		this.title = undefined;
 		this.condition = undefined;

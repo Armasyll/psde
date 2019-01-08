@@ -239,8 +239,6 @@ class Game {
             "bone01":"resources/images/textures/items/bone01.svg",
             "icosphere30":"resources/images/textures/static/icosphere30.svg",
             "fireOpacity":"resources/images/textures/effects/fireOpacity.png",
-            "path4522-2-2":"resources/images/textures/effects/path4522-2-2.png",
-            "fire":"resources/images/textures/effects/fire.xcf",
             "fire":"resources/images/textures/effects/fire.png",
             "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
             "trimWood":"resources/images/textures/static/trimWood.png",
@@ -2695,12 +2693,14 @@ class Game {
         if (!(_entityController.getEntity().getDialogue() instanceof Dialogue)) {
             return;
         }
-        var _dialogue = _entityController.getEntity().getDialogue().getText();
+        Game.gui.setDialogue(_entityController.getEntity().getDialogue(), _entityController.getEntity(), _subEntityController.getEntity());
+        Game.gui.showDialogueMenu();
+        /*var _dialogue = _entityController.getEntity().getDialogue().getText();
         if (typeof _dialogue == "string") {
             this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
         }
         else if (typeof _dialogue == "function") {
             this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
-        }
+        }*/
     }
 }
