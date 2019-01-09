@@ -684,7 +684,7 @@ class Game {
         Game.loadedMeshes["missingMesh"].setEnabled(false);
         Game.loadedMeshes["loadingMesh"].setEnabled(false);
     }
-    static loadTexture(_texture = "") {
+    static loadTexture(_texture = "", _options = {}) {
         if (_texture == undefined) {
             return null;
         }
@@ -701,6 +701,9 @@ class Game {
             else if (this.textureLocations.hasOwnProperty(_texture)) {
                 var _newTexture = new BABYLON.Texture(this.textureLocations[_texture], Game.scene);
                 _newTexture.name = _texture;
+                if (_options.hasOwnProperty("hasAlpha")) {
+                    _newTexture.hasAlpha = _options["hasAlpha"] == true;
+                }
                 Game.setLoadedTexture(_texture, _newTexture);
                 return _newTexture;
             }
@@ -1622,9 +1625,7 @@ class Game {
                 for(var _i = 0; _i < _meshes.length; _i++) {
                     _meshes[_i].name = _meshes[_i].id;
                     _meshes[_i].setEnabled(false);
-                    if (!(_meshes[_i].material instanceof BABYLON.Material)) {
-                        _meshes[_i].material = Game.missingMaterial;
-                    }
+                    _meshes[_i].material = Game.loadedMaterials["default"];
                     _importedMeshes[_meshes[_i].id] = _meshes[_i];
                     if (_skeletons[_i] != undefined) {
                         _meshes[_i].skeleon = _skeletons[_i];
