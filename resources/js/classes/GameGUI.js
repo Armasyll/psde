@@ -55,18 +55,26 @@ class GameGUI {
         GameGUI._hud.rootContainer.fontSize = String(Math.floor(24 * (window.innerWidth / 1920))) + "px";
         GameGUI._menu.rootContainer.fontSize = GameGUI._hud.rootContainer.fontSize;
     }
+    static pointerLock() {
+        Game.pointerLock();
+        window.addEventListener("click", GameGUI._pointerLockEventFunction);
+    }
+    static pointerRelease() {
+        Game.pointerRelease();
+        window.removeEventListener("click", GameGUI._pointerLockEventFunction);
+    }
+    static _pointerLockEventFunction(_event) {
+        if (GameGUI._hud.rootContainer.isVisible) {
+            Game.pointerLock();
+        }
+    }
     static showHUD(_updateChild = true) {
         if (Game.debugEnabled) console.log("Running GameGUI::showHUD");
         if (_updateChild === true) {
             GameGUI.hideMenu(false);
         }
         GameGUI._hud.rootContainer.isVisible = true;
-        Game.pointerLock();
-        window.addEventListener("click", function(_event) {
-            if (GameGUI._hud.rootContainer.isVisible) {
-                Game.pointerLock();
-            }
-        });
+        GameGUI.pointerLock();
     }
     static hideHUD(_updateChild = false) {
         if (Game.debugEnabled) console.log("Running GameGUI::hideHUD");
@@ -91,7 +99,6 @@ class GameGUI {
         if (_updateChild === true) {
             GameGUI.hideHUD(false);
         }
-        Game.pointerRelease();
         GameGUI._menu.rootContainer.isVisible = true;
     }
     static hideMenu(_updateChild = false) {
@@ -442,6 +449,7 @@ class GameGUI {
         GameGUI._characterChoiceMenu.isVisible = true;
     }
     static hideCharacterChoiceMenu() {
+        GameGUI.pointerLock();
         GameGUI._characterChoiceMenu.isVisible = false;
     }
     static _generatePlayerPortrait() {
@@ -1201,7 +1209,7 @@ class GameGUI {
             _bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
             _bodyContainer.top = "-10%";
             _bodyContainer.background = "blue";
-        var _body = new BABYLON.GUI.TextBlock("dialogueBody");
+        var _body = new BABYLON.GUI.TextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
             _body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             _body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             _body.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
@@ -1256,9 +1264,11 @@ class GameGUI {
         return _container;
     }
     static showDialogueMenu() {
+        GameGUI.pointerRelease();
         GameGUI._dialogueMenu.isVisible = true;
     }
     static hideDialogueMenu() {
+        GameGUI.pointerLock();
         GameGUI._dialogueMenu.isVisible = false;
     }
     static setDialogue(_dialogue, _them, _you = Game.player.getEntity()) {
