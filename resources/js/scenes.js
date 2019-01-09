@@ -3,6 +3,8 @@ Game.generateApartment = function() {
     
     Game.loadTexture("greenWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("yellowWallpaperPlainWood", {"hasAlpha":true});
+    Game.loadTexture("whitePanelGrayStone");
+    Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
 
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);

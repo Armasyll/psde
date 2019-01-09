@@ -256,7 +256,9 @@ class Game {
             "whiteWallpaperPlainWood":"resources/images/textures/static/whiteWallpaperPlainWood.png",
             "woodenFloorDark01-BUMP":"resources/images/textures/static/woodenFloorDark01-BUMP.png",
             "woodenFloorDark01-DIFFUSE":"resources/images/textures/static/woodenFloorDark01-DIFFUSE.png",
-            "woodenFloorDark01-NORMAL":"resources/images/textures/static/woodenFloorDark01-NORMAL.png"
+            "woodenFloorDark01-NORMAL":"resources/images/textures/static/woodenFloorDark01-NORMAL.png",
+            "stripped-BUMP":"resources/images/textures/static/stripped-BUMP.png",
+            "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png"
         };
         /**
          * Map of Textures per ID
@@ -710,7 +712,7 @@ class Game {
         }
         return null;
     }
-    static loadMaterial(_material = "", _texture = undefined, _options = {}) {
+    static loadMaterial(_material = "", _diffuseTexture = undefined, _bumpTexture = undefined, _options = {}) {
         if (_material == undefined) {
             return null;
         }
@@ -721,29 +723,34 @@ class Game {
             return _material;
         }
         else if (typeof _material == "string") {
-            _texture = Game.loadTexture(_texture);
+            _diffuseTexture = Game.loadTexture(_diffuseTexture);
+            _bumpTexture = Game.loadTexture(_bumpTexture);
             if (this.loadedMaterials.hasOwnProperty(_material)) {
                 return this.loadedMaterials[_material];
             }
-            else if (!(_texture instanceof BABYLON.Texture)) {
-                _texture = Game.loadTexture(_material);
-                if (_texture instanceof BABYLON.Texture) {
-                    _material = _texture.name;
+            else if (!(_diffuseTexture instanceof BABYLON.Texture)) {
+                _diffuseTexture = Game.loadTexture(_material);
+                if (_diffuseTexture instanceof BABYLON.Texture) {
+                    _material = _diffuseTexture.name;
                 }
             }
-            if (_texture instanceof BABYLON.Texture) {
-                var _newMaterial = new BABYLON.StandardMaterial(_material)
-                _newMaterial.name = _texture.name;
-                _newMaterial.diffuseTexture = _texture;
-                _newMaterial.specularColor.set(0,0,0);
-                if (typeof _options == "object") {
-                    if (_options.hasOwnProperty("specularColor")) {
-                        _newMaterial.specularColor.set(Game.filterVector(_options["specularColor"]));
-                    }
-                }
-                Game.setLoadedMaterial(_material, _newMaterial);
-                return _newMaterial;
+            if (!(_diffuseTexture instanceof BABYLON.Texture)) {
+                return Game.loadedTextures["missingTexture"];
             }
+            var _newMaterial = new BABYLON.StandardMaterial(_material)
+            _newMaterial.name = _diffuseTexture.name;
+            _newMaterial.diffuseTexture = _diffuseTexture;
+            if (_bumpTexture instanceof BABYLON.Texture) {
+                _newMaterial.bumpTexture = _bumpTexture;
+            }
+            _newMaterial.specularColor.set(0,0,0);
+            if (typeof _options == "object") {
+                if (_options.hasOwnProperty("specularColor")) {
+                    _newMaterial.specularColor.set(Game.filterVector(_options["specularColor"]));
+                }
+            }
+            Game.setLoadedMaterial(_material, _newMaterial);
+            return _newMaterial;
         }
         return null;
     }
