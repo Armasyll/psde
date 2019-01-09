@@ -1073,7 +1073,7 @@ class Game {
         var _posY = (_posStart.y + _posEnd.y) / 2;
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _wall = BABYLON.MeshBuilder.CreateBox("wall", {height:_posEnd.y - _posStart.y, depth:0.125, width:_width}, Game.scene);
-        _wall.material = Game._collisionMaterial;
+        _wall.material = Game.loadedMaterials["collisionMaterial"];
         _wall.position.set(_posX,_posY,_posZ);
         _wall.rotation.y = _rotation;
         if (this.physicsEnabled) {
@@ -1100,10 +1100,10 @@ class Game {
         var _width = Math.abs(_posEnd.x - _posStart.x);
         var _depth = Math.abs(_posEnd.z - _posStart.z);
         var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = _posY - 0.06125;
+        var _posY = _posY - 0.125/2;
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
-        _floor.material = Game._collisionMaterial;
+        _floor.material = Game.loadedMaterials["collisionMaterial"];
         _floor.position.set(_posX,_posY,_posZ);
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_floor, {mass:0});
@@ -1139,9 +1139,9 @@ class Game {
         var _angle = Math.acos(_opp / _adj);
         var _hyp = _opp * (1/Math.cos(_angle)); // height
         var _ramp = BABYLON.MeshBuilder.CreateBox("ramp", {height:_hyp, depth:0.125, width:_width}, Game.scene);
-        _ramp.position.set((_posEnd.x + _posStart.x) / 2 - 1,(_posEnd.y + _posStart.y) / 2,(_posEnd.z + _posStart.z) / 2 - 1);
+        _ramp.position.set((_posEnd.x + _posStart.x) / 2 - 1,(_posEnd.y + _posStart.y) / 2 - 0.125/2,(_posEnd.z + _posStart.z) / 2 - 1);
         _ramp.rotation.set(_angle, BABYLON.Tools.ToRadians(_rotationY), 0);
-        _ramp.material = Game._collisionMaterial;
+        _ramp.material = Game.loadedMaterials["collisionMaterial"];
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_ramp, {mass:0});
         }
@@ -1185,7 +1185,7 @@ class Game {
         _mesh.collisionMesh.position = _boundingBox.centerWorld.clone();
         _mesh.collisionMesh.rotation = _mesh.rotation.clone();
         _mesh.collisionMesh.scaling = _mesh.scaling.clone();
-        _mesh.collisionMesh.material = Game._collisionMaterial;
+        _mesh.collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
         _mesh.collisionMesh.checkCollisions = true;
         _mesh.collisionMesh.setParent(_mesh);
         if (_mesh.controller instanceof DoorController) {
