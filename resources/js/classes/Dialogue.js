@@ -65,10 +65,10 @@ class Dialogue {
 	getOptions() {
 		return this.options;
 	}
-	addOption(_dialogueOption) {
+	addOption(_dialogueOption, _title, _condition) {
 		_dialogueOption = Game.getDialogue(_dialogueOption);
 		if (_dialogueOption instanceof Dialogue) {
-			this.options.push(new DialogueOption(_dialogueOption));
+			this.options.push(new DialogueOption(_dialogueOption, _title, _condition));
 		}
 	}
 	removeOption(_dialogueOption) {
@@ -130,9 +130,9 @@ class DialogueOption {
 		}
 		return this;
 	}
-	getCondition() {
+	getCondition(_them = undefined, _you = undefined) {
 		if (typeof this.condition == "function") {
-			return this.condition();
+			return this.condition(_them, _you);
 		}
 		else {
 			return true;

@@ -613,7 +613,6 @@ Game.generateApartment = function() {
 
     // Misc
     Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacter", 30, "m", "fox", "foxM", "foxRinehart", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye", "circularEyeViolet").attachToRightEye("eye", "circularEyeViolet");
-    Game.createItem("mountainChocolateBar", "mountainChocolateBar", undefined, new BABYLON.Vector3(3, 0.625, -19.8), new BABYLON.Vector3(55, 90, 0));
     Game.createCharacter("rosie", "Rosie", undefined, "rosie", 14, "f", "fox", "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "circularEyeBlue").attachToRightEye("eye", "circularEyeBlue");
     Game.createCharacter("charlie", "Charlie", undefined, "charlie", 28, "f", "fox", "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "feralEyeBlue").attachToRightEye("eye", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
     Game.getCharacterEntity("charlie").setManaMax("666").setMana("666").setLife("66").setStamina("66");
@@ -627,7 +626,7 @@ Game.generateApartment = function() {
     new Dialogue(
         "charlieKiss",
         "Give Charlie a Kiss",
-        function(_them, you) {
+        function(_them, _you) {
             return "You try to give Charlie a kiss on the lips, but she dodges her head aside and glares at you.";
         }
     );
@@ -639,7 +638,7 @@ Game.generateApartment = function() {
     new Dialogue(
         "rosieTalk",
         "Talk to Rosie",
-        function(_them, you) {
+        function(_them, _you) {
             switch(Math.floor((Math.random() * 5) + 1)) {
                 case 1 : return "I'm " + _them.getAge() + ", and what is this?";
                 case 2 : return "What?";
@@ -650,10 +649,48 @@ Game.generateApartment = function() {
             }
         }
     );
+    new Dialogue(
+        "rinehartTalk",
+        "Talk to Rinehart",
+        function(_them, _you) {
+            if (_them.hasItem("mountainChocolateBar")) {
+                return "Oh boy, I love this giant Toblerone.";
+            }
+            else {
+                return "Now we're just lonely people, trying to forget each other's names...";
+            }
+        }
+    );
+    new Dialogue(
+        "rinehartTakeChocolate",
+        "Steal Giant Toblerone",
+        function(_them, _you) {
+            var _item = _them.getItem("mountainChocolateBar");
+            if (_item instanceof InstancedItemEntity) {
+                _them.removeItem(_item);
+                _you.addItem(_item);
+                return "I guess I didn't deserve that giant Toblerone.";
+            }
+        }
+    );
     Game.getDialogue("charlieTalk").addOption("charlieKiss");
     Game.getDialogue("charlieTalk").addOption("charlieHug");
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
     Game.getCharacterEntity("rosie").setDialogue("rosieTalk");
+    Game.getDialogue("rinehartTalk").addOption(
+        "rinehartTakeChocolate",
+        undefined,
+        function(_them, _you) {
+            _them = Game.getCharacterEntity(_them);
+            if (_them instanceof CharacterEntity) {
+                return _them.hasItem("mountainChocolateBar");
+            }
+            return false;
+        }
+    );
+    Game.getCharacterEntity("rinehart").setDialogue("rinehartTalk");
+    Game.getCharacterEntity("rinehart").addItem(new InstancedItemEntity(undefined, "mountainChocolateBar"));
+    Game.getCharacterEntity("rinehart").hold("mountainChocolateBar");
     /*
     // Create fire material
     var fire = new BABYLON.FireMaterial("fire", Game.scene);

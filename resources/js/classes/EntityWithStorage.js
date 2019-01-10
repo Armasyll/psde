@@ -14,36 +14,45 @@ class EntityWithStorage extends Entity {
      */
     addItem(_instancedItem) {
         _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem == undefined) {return this;}
-        this.items.push(_instancedItem);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            this.items.push(_instancedItem);
+        }
         return this;
+    }
+    addProtoItem(_protoItem) {
+        _protoItem = Game.getProtoItemEntity(_protoItem);
+        if (_protoItem instanceof ItemEntity) {
+            var _instancedItem = new InstancedItemEntity(undefined, _protoItem);
+            this.items.push(_instancedItem);
+            return _instancedItem;
+        }
+        return null;
     }
     /**
      * Removes an InstancedItemEntity from this Character
-     * @param  {InstancedItemEntity} _instancedItemEntity InstancedItemEntity, or Item, to be removed
+     * @param  {_instancedItem} _instancedItem InstancedItemEntity, or Item, to be removed
      * @return {this}
      */
-    removeItem(_instancedItemEntity) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {return this;}
-        if (!this.hasItem(_instancedItemEntity)) {
-            return this;
+    removeItem(_instancedItem) {
+        var _tempItem = Game.getProtoItemEntity(_instancedItem);
+        if (_tempItem instanceof ItemEntity) {
+            _tempItem = this.getItem(_instancedItem);
+        }
+        if (!(_tempItem instanceof InstancedItemEntity)) {
+            _tempItem = Game.getInstancedItemEntity(_instancedItem);
+            if (_tempItem instanceof InstancedItemEntity) {
+                return this;
+            }
         }
         if (this instanceof CharacterEntity) {
-            if (this.isWearing(_instancedItemEntity)) {
-                this.disrobe(_instancedItemEntity);
-                if (this.isWearing(_instancedItemEntity)) {
-                    return this;
-                }
-            }
-            if (this.hasEquippedEntity(_instancedItemEntity)) {
-                this.unequipEntity(_instancedItemEntity);
-                if (this.hasEquippedEntity(_instancedItemEntity)) {
+            if (this.hasEquippedEntity(_tempItem)) {
+                this.unequipEntity(_tempItem);
+                if (this.hasEquippedEntity(_tempItem)) {
                     return this;
                 }
             }
         }
-        this.items.remove(_instancedItemEntity);
+        this.items.remove(_tempItem);
         return this;
     }
     /**

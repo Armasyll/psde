@@ -913,6 +913,7 @@ class GameGUI {
     static showPlayerInventory() {
         GameGUI._hideMenuChildren();
         GameGUI._setPlayerInventory();
+        GameGUI.pointerRelease();
         GameGUI._inventoryMenu.isVisible = true;
         GameGUI.showMenu(true);
     }
@@ -923,6 +924,7 @@ class GameGUI {
      * Hides the inventory menu.
      */
     static hideInventory() {
+        GameGUI.pointerLock();
         GameGUI._inventoryMenu.isVisible = false;
     }
     /**
@@ -1277,7 +1279,7 @@ class GameGUI {
         _them = Game.getEntity(_them);
         _you = Game.getEntity(_you);
         GameGUI.setDialogueTitle(_dialogue.getTitle());
-        var _text = _dialogue.getText()
+        var _text = _dialogue.getText();
         if (typeof _text == "function") {
             GameGUI.setDialogueBody(_text(_them, _you));
         }
@@ -1286,11 +1288,8 @@ class GameGUI {
         }
         if (_dialogue.hasOptions()) {
             for (var _i = 0; _i < _dialogue.getOptions().length; _i++) {
-                if (_dialogue.getOptions()[_i].getCondition()) {
+                if (_dialogue.getOptions()[_i].getCondition(_them, _you)) {
                     GameGUI.addDialogueOption(_dialogue.getOptions()[_i], _them, _you, true);
-                }
-                else {
-                    GameGUI.addDialogueOption(_dialogue.getOptions()[_i], _them, _you, false);
                 }
             }
         }
@@ -1302,6 +1301,9 @@ class GameGUI {
         GameGUI.setDialogueTitle("");
     }
     static setDialogueBody(_string) {
+        if (typeof _string != "string") {
+            _string = "MISSING DIALOGUE :V";
+        }
         GameGUI._dialogueMenu.children[1].children[0].text = _string;
     }
     static appendDialogueBody(_string) {

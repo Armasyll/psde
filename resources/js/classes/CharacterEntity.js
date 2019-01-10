@@ -2393,7 +2393,19 @@ class CharacterEntity extends EntityWithStorage {
             return false;
     }
 
-    hold(_instancedItemEntity, _hand = undefined) {
+    hold(_instancedItem, _hand = undefined) {
+        var _tempItem = Game.getInstancedItemEntity(_instancedItem);
+        if (!(_tempItem instanceof InstancedItemEntity)) {
+            _tempItem = Game.getProtoItemEntity(_instancedItem);
+            if (!(_tempItem instanceof ItemEntity)) {
+                return null;
+            }
+        }
+        _instancedItem = this.getItem(_tempItem);
+        if (!(_instancedItem instanceof AbstractEntity)) {
+            return false;
+        }
+        
         if (_hand != "hand.r" && _hand != "hand.l") {
             _hand = this.handedness;
             if (this.hasEquippedEntity(_hand)) {
@@ -2407,10 +2419,10 @@ class CharacterEntity extends EntityWithStorage {
         }
         if (this.hasEquippedEntity(_hand)) {
             if (!this.unequipEntity(_hand)) {
-                return this;
+                return false;
             }
         }
-        return this.equipEntity(_instancedItemEntity, _hand);
+        return this.equipEntity(_instancedItem, _hand);
     }
     lay(_entity = undefined, _dontOverride = undefined) {
         _entity = Game.getEntity(_entity);
