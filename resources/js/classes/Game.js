@@ -258,7 +258,9 @@ class Game {
             "woodenFloorDark01-DIFFUSE":"resources/images/textures/static/woodenFloorDark01-DIFFUSE.png",
             "woodenFloorDark01-NORMAL":"resources/images/textures/static/woodenFloorDark01-NORMAL.png",
             "stripped-BUMP":"resources/images/textures/static/stripped-BUMP.png",
-            "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png"
+            "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png",
+            "stoneTexture01":"resources/images/textures/static/stoneTexture01.png",
+            "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png"
         };
         /**
          * Map of Textures per ID
@@ -666,6 +668,7 @@ class Game {
         //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, this.camera); // Could be used for darkness, when using too many lights is an issue
     }
     static loadDefaultTextures() {
+        Game.loadedTextures["default"] = new BABYLON.Texture(null, Game.scene);
         Game.loadTexture("missingTexture");
     }
     static loadDefaultMaterials() {

@@ -3,7 +3,6 @@ Game.generateApartment = function() {
     
     Game.loadTexture("greenWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("yellowWallpaperPlainWood", {"hasAlpha":true});
-    Game.loadTexture("whitePanelGrayStone");
     Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
 
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
@@ -330,10 +329,16 @@ Game.generateApartment = function() {
     Game.getDoorController("apartmentbuildingdoor").getEntity().setKey("alBuildingLocationKey");
     
     // 'outside'
-    Game.createCollisionPlane({x:5,z:-27}, {x:3,z:-29}, 0);
-    Game.createCollisionWall(new BABYLON.Vector3(5, 0, -27), new BABYLON.Vector3(5, 3, -29));
-    Game.createCollisionWall(new BABYLON.Vector3(3, 0, -27), new BABYLON.Vector3(3, 3, -29));
-    Game.createCollisionWall(new BABYLON.Vector3(3, 0, -29), new BABYLON.Vector3(5, 3, -29));
+    Game.createCollisionWall(new BABYLON.Vector3(15, 0, -27), new BABYLON.Vector3(15, 3, -31));
+    Game.createCollisionWall(new BABYLON.Vector3(-1, 0, -27), new BABYLON.Vector3(-1, 3, -31));
+    Game.createCollisionWall(new BABYLON.Vector3(-1, 0, -31), new BABYLON.Vector3(15, 3, -31));
+    
+    var stoneMaterial = Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
+    var outsideFloorStone = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 4, subdivisions: {w:16, h:4}}, Game.scene);
+        outsideFloorStone.material = stoneMaterial;
+        outsideFloorStone.position.set(-1, -0.0625, -31);
+    Game.createCollisionPlane(outsideFloorStone);
+    
     Game.createMesh(undefined, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", new BABYLON.Vector3(0, 0, -28));
     Game.createMesh(undefined, "craftsmanWallNoTrim", "whitePanelGrayStone", new BABYLON.Vector3(2, 0, -28));
     Game.createMesh(undefined, "craftsmanDoorwayNoTrim", "whitePanelGrayStone", new BABYLON.Vector3(4, 0, -28));
