@@ -15,7 +15,7 @@ class InstancedEntity extends AbstractEntity {
         this.entity = undefined;
         this.setEntity(_entity);
         if (!(this.entity instanceof Entity)) {
-            return null;
+            return undefined;
         }
         this.setName(_name || this.entity.getName());
         this.setDescription(_description || this.entity.description);

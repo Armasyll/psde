@@ -314,10 +314,10 @@ Game.generateApartment = function() {
 
     Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, "couch", undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
-    Game.createItem("knife", "knife", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
-    Game.createItem("cross", "cross", undefined, new BABYLON.Vector3(10, 0.6, -22));
-    Game.addItemMesh("plateInstance01", "plate", undefined, undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));
-    Game.addItemMesh("plateInstance02", "plate", undefined, undefined, new BABYLON.Vector3(10, 0.5, -22.5));
+    Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
+    Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.6, -22));
+    Game.createItem("plateInstance01", "plate01", undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));
+    Game.createItem("plateInstance02", "plate01", undefined, new BABYLON.Vector3(10, 0.5, -22.5));
 
     Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.5, -22.75));
     Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.5, -21.25), new BABYLON.Vector3(0, 180, 0));

@@ -335,9 +335,11 @@ class AbstractEntity {
     }
     dispose() {
         this._isEnabled = false;
-        for (_action in this.availableActions) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
+        if (typeof this.availableActions == "object") {
+            for (var _action in this.availableActions) {
+                if (this.availableActions[_action] instanceof ActionData) {
+                    this.availableActions[_action].dispose();
+                }
             }
         }
         for (var _var in this) {

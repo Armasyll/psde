@@ -1,6 +1,10 @@
 class InstancedItemEntity extends InstancedEntity {
     constructor(_id = undefined, _entity = undefined) {
         super(_id, _entity);
+        if (!(this.entity instanceof Entity)) {
+            this.dispose();
+            return undefined;
+        }
 
         Game.instancedItemEntities[this.id] = this;
     }
