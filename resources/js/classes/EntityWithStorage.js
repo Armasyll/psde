@@ -14,7 +14,7 @@ class EntityWithStorage extends Entity {
      */
     addItem(_instancedItem) {
         _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem instanceof InstancedItemEntity && _instancedItem.getEntity() instanceof Entity) {
+        if (_instancedItem instanceof InstancedItemEntity && _instancedItem.getEntity() instanceof ItemEntity) {
             this.items.push(_instancedItem);
         }
         return this;
