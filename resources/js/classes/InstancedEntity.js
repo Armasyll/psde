@@ -37,7 +37,7 @@ class InstancedEntity extends AbstractEntity {
          */
         this.specialProperties = new Set(this.entity.getSpecialProperties());
 
-        Game.instancedEntities[this.id] = this;
+        Game.setInstancedEntity(this.id, this);
     }
     /**
      * Sets Entity
@@ -71,7 +71,7 @@ class InstancedEntity extends AbstractEntity {
         return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
     }
     dispose() {
-        delete Game.instancedEntities[this.id];
+        Game.removeInstancedEntity(this.id);
         this.removeEntity();
         super.dispose();
         return undefined;

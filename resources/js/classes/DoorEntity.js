@@ -6,7 +6,7 @@ class DoorEntity extends Entity {
         this.addAvailableAction("close");
         this.addAvailableAction("open");
 
-        Game.doorEntities[this.id] = this;
+        Game.setDoorEntity(this.id, this);
 	}
 	setLocked(_locked) {
 		this.locked = _locked == true;
@@ -23,7 +23,7 @@ class DoorEntity extends Entity {
 		return this.key;
 	}
 	dispose() {
-        delete Game.furnitureEntities[this.id];
+        Game.removeDoorEntity(this.id);
         super.dispose();
         for (var _var in this) {
             this[_var] = null;

@@ -653,7 +653,7 @@ class CharacterEntity extends EntityWithStorage {
         this.addAvailableAction("give");
         this.addAvailableAction("take");
 
-        Game.characterEntities[this.id] = this;
+        Game.setCharacterEntity(this.id, this);
 
         this._generateProperties();
         this.stand();
@@ -3998,7 +3998,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this == Game.player.entity) {
             return false;
         }
-        delete Game.characterEntities[this.id];
+        Game.removeCharacterEntity(this.id);
         super.dispose();
         for (var _var in this) {
             this[_var] = null;

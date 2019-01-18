@@ -8,10 +8,10 @@ class Entity extends AbstractEntity {
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
         super(_id, _name, _description, _image);
-        Game.entities[this.id] = this;
+        Game.setEntity(this.id, this);
     }
     dispose() {
-        delete Game.entities[this.id];
+        Game.removeEntity(this.id);
         super.dispose();
         return undefined;
     }

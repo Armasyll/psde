@@ -442,6 +442,8 @@ class Game {
 
         this.instancedEntities = {};
         this.instancedItemEntities = {};
+        this.instancedClothingEntities = {};
+        this.instancedWeaponEntities = {};
 
         this.dialogues = {};
 
@@ -2715,5 +2717,236 @@ class Game {
         else if (typeof _dialogue == "function") {
             this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
         }*/
+    }
+    static setEntityController(_id, _entityController) {
+        Game.entityControllers[_id] = _entityController;
+    }
+    static removeEntityController(_id) {
+        delete Game.entityControllers[_id];
+    }
+    static clearyControllers() {
+        for (var _i in Game.entityControllers) {
+            Game.entityControllers[_i].dispose();
+        }
+        Game.entityControllers = {};
+    }
+    static setCharacterController(_id, _characterController) {
+        Game.characterControllers[_id] = _characterController;
+    }
+    static removeCharacterController(_id) {
+        delete Game.characterControllers[_id];
+    }
+    static clearCharacterControllers() {
+        for (var _i in Game.characterControllers) {
+            Game.characterControllers[_i].dispose();
+        }
+        Game.characterControllers = {};
+    }
+    static setFurnitureController(_id, _furnitureController) {
+        Game.furnitureControllers[_id] = _furnitureController;
+    }
+    static removeFurnitureController(_id) {
+        delete Game.furnitureControllers[_id];
+    }
+    static clearFurnitureControllers() {
+        for (var _i in Game.furnitureControllers) {
+            Game.furnitureControllers[_i].dispose();
+        }
+        Game.furnitureControllers = {};
+    }
+    static setDoorController(_id, _doorController) {
+        Game.doorControllers[_id] = _doorController;
+    }
+    static removeDoorController(_id) {
+        delete Game.doorControllers[_id];
+    }
+    static clearDoorControllers() {
+        for (var _i in Game.doorControllers) {
+            Game.doorControllers[_i].dispose();
+        }
+        Game.doorControllers = {};
+    }
+    static setItemController(_id, _itemController) {
+        Game.itemControllers[_id] = _itemController;
+    }
+    static removeItemController(_id) {
+        delete Game.itemControllers[_id];
+    }
+    static clearItemControllers() {
+        for (var _i in Game.itemControllers) {
+            Game.itemControllers[_i].dispose();
+        }
+        Game.itemControllers = {};
+    }
+
+    static setEntity(_id, _entity) {
+        Game.entities[_id] = _entity;
+    }
+    static removeEntity(_id) {
+        delete Game.entityies[_id];
+    }
+    static clearEntities() {
+        for (var _i in Game.entityies) {
+            Game.entityies[_i].dispose();
+        }
+        Game.entityies = {};
+    }
+    static setCharacterEntity(_id, _characterEntity) {
+        Game.characterEntities[_id] = _characterEntity;
+    }
+    static removeCharacterEntity(_id) {
+        delete Game.characterEntities[_id];
+    }
+    static clearCharacterEntities() {
+        for (var _i in Game.characterEntities) {
+            Game.characterEntities[_i].dispose();
+        }
+        Game.characterEntities = {};
+    }
+    static setItemEntity(_id, _itemEntity) {
+        Game.itemEntities[_id] = _itemEntity;
+    }
+    static removeItemEntity(_id) {
+        delete Game.itemEntities[_id];
+    }
+    static clearItemEntities() {
+        for (var _i in Game.itemEntities) {
+            Game.itemEntities[_i].dispose();
+        }
+        Game.itemEntities = {};
+    }
+    static setClothingEntity(_id, _clothingEntity) {
+        Game.clothingEntities[_id] = _clothingEntity;
+    }
+    static removeClothingEntity(_id) {
+        delete Game.clothingEntities[_id];
+    }
+    static clearClothingEntities() {
+        for (var _i in Game.clothingEntities) {
+            Game.clothingEntities[_i].dispose();
+        }
+        Game.clothingEntities = {};
+    }
+    static setWeaponEntity(_id, _weaponEntity) {
+        Game.weaponEntities[_id] = _weaponEntity;
+    }
+    static removeWeaponEntity(_id) {
+        delete Game.weaponEntities[_id];
+    }
+    static clearWeaponEntities() {
+        for (var _i in Game.weaponEntities) {
+            Game.weaponEntities[_i].dispose();
+        }
+        Game.weaponEntities = {};
+    }
+    static setFurnitureEntity(_id, _furnitureEntity) {
+        Game.furnitureEntities[_id] = _furnitureEntity;
+    }
+    static removeFurnitureEntity(_id) {
+        delete Game.furnitureEntities[_id];
+    }
+    static clearFurnitureEntities() {
+        for (var _i in Game.furnitureEntities) {
+            Game.furnitureEntities[_i].dispose();
+        }
+        Game.furnitureEntities = {};
+    }
+    static setDoorEntity(_id, _doorEntity) {
+        Game.doorEntities[_id] = _doorEntity;
+    }
+    static removeDoorEntity(_id) {
+        delete Game.doorEntities[_id];
+    }
+    static clearDoorEntities() {
+        for (var _i in Game.doorEntities) {
+            Game.doorEntities[_i].dispose();
+        }
+        Game.doorEntities = {};
+    }
+    static setKeyEntity(_id, _keyEntity) {
+        Game.keyEntities[_id] = _keyEntity;
+    }
+    static removeKeyEntity(_id) {
+        delete Game.keyEntities[_id];
+    }
+    static clearKeyEntities() {
+        for (var _i in Game.keyEntities) {
+            Game.keyEntities[_i].dispose();
+        }
+        Game.keyEntities = {};
+    }
+    static setSpellEntity(_id, _spellEntity) {
+        Game.spellEntities[_id] = _spellEntity;
+    }
+    static removeSpellEntity(_id) {
+        delete Game.spellEntities[_id];
+    }
+    static clearSpellEntities() {
+        for (var _i in Game.spellEntities) {
+            Game.spellEntities[_i].dispose();
+        }
+        Game.spellEntities = {};
+    }
+
+    static setInstancedEntity(_id, _instancedEntity) {
+        Game.instancedEntities[_id] = _instancedEntity;
+    }
+    static removeInstancedEntity(_id) {
+        delete Game.instancedEntities[_id];
+    }
+    static clearInstancedEntities() {
+        for (var _i in Game.instancedEntities) {
+            Game.instancedEntities[_i].dispose();
+        }
+        Game.instancedEntities = {};
+    }
+    static setInstancedItemEntity(_id, _instancedItemEntity) {
+        Game.instancedItemEntities[_id] = _instancedItemEntity;
+    }
+    static removeInstancedItemEntity(_id) {
+        delete Game.instancedItemEntities[_id];
+    }
+    static clearInstancedItemEntities() {
+        for (var _i in Game.instancedItemEntities) {
+            Game.instancedItemEntities[_i].dispose();
+        }
+        Game.instancedItemEntities = {};
+    }
+    static setInstancedClothingEntity(_id, _instancedClothingEntity) {
+        Game.instancedClothingEntities[_id] = _instancedClothingEntity;
+    }
+    static removeInstancedClothingEntity(_id) {
+        delete Game.instancedClothingEntities[_id];
+    }
+    static clearInstancedClothingEntities() {
+        for (var _i in Game.instancedClothingEntities) {
+            Game.instancedClothingEntities[_i].dispose();
+        }
+        Game.instancedClothingEntities = {};
+    }
+    static setInstancedWeaponEntity(_id, _instancedWeaponEntity) {
+        Game.instancedWeaponEntities[_id] = _instancedWeaponEntity;
+    }
+    static removeInstancedWeaponEntity(_id) {
+        delete Game.instancedWeaponEntities[_id];
+    }
+    static clearInstancedWeaponEntities() {
+        for (var _i in Game.instancedWeaponEntities) {
+            Game.instancedWeaponEntities[_i].dispose();
+        }
+        Game.instancedWeaponEntities = {};
+    }
+
+    static setDialogue(_id, _dialogue) {
+        Game.dialogues[_id] = _dialogue;
+    }
+    static removeDialogue(_id) {
+        delete Game.dialogues[_id];
+    }
+    static clearDialogues() {
+        for (var _i in Game.dialogues) {
+            Game.dialogues[_i].dispose();
+        }
+        Game.dialogues = {};
     }
 }

@@ -1279,17 +1279,17 @@ class GameGUI {
         _them = Game.getEntity(_them);
         _you = Game.getEntity(_you);
         GameGUI.setDialogueTitle(_dialogue.getTitle());
-        var _text = _dialogue.getText();
+        var _text = _dialogue.getText(_them, _you);
         if (typeof _text == "function") {
-            GameGUI.setDialogueBody(_text(_them, _you));
+            GameGUI.setDialogueBody(_text);
         }
         else {
             GameGUI.setDialogueBody(_text);
         }
         if (_dialogue.hasOptions()) {
-            for (var _i = 0; _i < _dialogue.getOptions().length; _i++) {
-                if (_dialogue.getOptions()[_i].getCondition(_them, _you)) {
-                    GameGUI.addDialogueOption(_dialogue.getOptions()[_i], _them, _you, true);
+            for (var _option in _dialogue.getOptions()) {
+                if (_dialogue.getOptions()[_option].getCondition(_them, _you)) {
+                    GameGUI.addDialogueOption(_dialogue.getOptions()[_option], _them, _you, true);
                 }
             }
         }

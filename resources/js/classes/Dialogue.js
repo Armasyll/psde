@@ -11,8 +11,11 @@ class Dialogue {
 	 * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
 	 * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
 	 */
-	constructor(_id, _title, _text, ..._options) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
+	constructor(_id, _title, _text) {
+		_id = Game.filterID(_id);
+        if (typeof _id != "string") {
+        	_id = genUUIDv4();
+        }
         if (typeof _title != "string") {_title = "";}
         if (typeof _text != "string" && typeof _text != "function") {
         	return;
@@ -20,27 +23,11 @@ class Dialogue {
         this.id = Game.filterID(_id);
         this.title = Game.filterName(_title) || "";
         this.text = _text;
-        this.options = [];
-        if (_options.length > 0) {
-        	for (var _i = 0; _i < _options.length; _i++) {
-        		if (_options[_i] instanceof Dialogue) {
-        			this.options.push(new DialogueOption(_options[_i]));
-        		}
-        		else if (typeof _options[_i] == "string") {
-        			var _tempDialogue = Game.getDialogue(_options[_i]);
-        			if (_tempDialogue instanceof Dialogue) {
-        				this.options.push(new DialogueOption(_tempDialogue));
-        			}
-        		}
-        		else if (_options[_i] instanceof Array) {
-        			var _tempDialogueOption = DialogueOption.createFromArray(_options[_i]);
-        			if (_tempDialogueOption instanceof DialogueOption) {
-        				this.options.push(_tempDialogueOption);
-        			}
-        		}
-        	}
-        }
-        Game.dialogues[this.id] = this;
+        this.options = {};
+        this.optionsCount = 0;
+        this.parentOptions = {};
+        this.parentOptionsCount = 0;
+        Game.setDialogue(this.id, this);
 	}
 	getID() {
 		return this.id;
@@ -48,47 +35,97 @@ class Dialogue {
 	getTitle() {
 		return this.title;
 	}
-	getText() {
+	getText(_them = undefined, _you = Game.player.getEntity()) {
+        _them = Game.getEntity(_them);
+        _you = Game.getEntity(_you);
 		if (typeof this.text == "string") {
 			return this.text;
 		}
 		else if (typeof this.text == "function") {
-			return this.text;
+			return this.text(_them, _you);
 		}
 		else {
 			return "";
 		}
 	}
 	hasOptions() {
-		return this.options.length > 0;
+		return this.optionsCount > 0;
 	}
 	getOptions() {
 		return this.options;
 	}
-	addOption(_dialogueOption, _title, _condition) {
-		_dialogueOption = Game.getDialogue(_dialogueOption);
-		if (_dialogueOption instanceof Dialogue) {
-			this.options.push(new DialogueOption(_dialogueOption, _title, _condition));
+	setOption(_id = undefined, _dialogue, _title, _condition) {
+		var _dialogueOption = new DialogueOption(_id, _dialogue, _title, _condition);
+		if (!(_dialogueOption instanceof DialogueOption)) {
+			return undefined;
 		}
+		this.options[_dialogueOption.getID()] = _dialogueOption;
+		this.optionsCount += 1;
+		return _dialogueOption;
 	}
 	removeOption(_dialogueOption) {
-		_dialogueOption = Game.getDialogue(_dialogueOption);
-		if (_dialogueOption instanceof Dialogue) {
-			this.options.some(function(_option) {
-				if (_option.dialogue.id == _dialogueOption.id) {
-					this.options.splice(this.options.indexOf(_option), 1);
-					return true;
-				}
-			})
+		if (_dialogueOption instanceof DialogueOption) {
+			_dialogueOption = _dialogueOption.getID();
 		}
+		_dialogueOption = Game.filterID(_dialogueOption);
+		if (!(this.options.hasOwnProperty(_dialogueOption))) {
+			return true;
+		}
+		if (this.options[_dialogueOption].getDialogue() instanceof Dialogue) {
+			this.options[_dialogueOption].getDialogue().removeParentOption(_dialogueOption);
+		}
+		this.options[_dialogueOption].dispose();
+		delete this.options[_dialogueOption];
+		this.optionsCount -= 1;
+		return true;
+	}
+	setParentOption(_dialogueOption) {
+		if (!(_dialogueOption instanceof DialogueOption)) {
+			return undefined;
+		}
+		this.parentOptions[_dialogueOption.getID()] = _dialogueOption;
+		this.parentOptionsCount += 1;
+	}
+	removeParentOption(_dialogueOption) {
+		if (_dialogueOption instanceof DialogueOption) {
+			_dialogueOption = _dialogueOption.getID();
+		}
+		_dialogueOption = Game.filterID(_dialogueOption);
+		if (!(this.parentOptions.hasOwnProperty(_dialogueOption))) {
+			return true;
+		}
+		this.parentOptions[_dialogueOption].dispose();
+		delete this.parentOptions[_dialogueOption];
+		this.parentOptionsCount -= 1;
+		return true;
+	}
+	dispose() {
+		for (var _var in this.parentOptions) {
+			this.parentOptions[_var].dispose();
+			delete this.parentOptions[_var];
+		}
+		for (var _var in this.options) {
+			this.options[_var].dispose();
+			delete this.options[_var];
+		}
+        Game.removeDialogue(this.id);
+        for (var _var in this) {
+            this[_var] = null;
+        }
+        return undefined;
 	}
 }
 class DialogueOption {
-	constructor(_dialogue, _title = undefined, _condition = undefined) {
-		this.id = genUUIDv4();
+	constructor(_id = undefined, _dialogue, _title = undefined, _condition = undefined) {
+		_id = Game.filterID(_id);
+        if (typeof _id != "string") {
+        	_id = genUUIDv4();
+        }
+        this.id = undefined;
 		this.dialogue = undefined;
 		this.title = undefined;
 		this.condition = undefined;
+		this.setID(_id);
 		this.setDialogue(_dialogue);
 		if (typeof _title == "string") {
 			this.setTitle(_title);
@@ -97,11 +134,23 @@ class DialogueOption {
 			this.setCondition(_condition);
 		}
 	}
+	setID(_id) {
+		_id = Game.filterID(_id);
+        if (typeof _id != "string") {
+        	_id = genUUIDv4();
+        }
+        this.id = _id;
+        return this;
+	}
+	getID() {
+		return this.id;
+	}
 	setDialogue(_dialogue) {
 		_dialogue = Game.getDialogue(_dialogue);
 		if (_dialogue instanceof Dialogue) {
 			this.dialogue = _dialogue;
 			this.setTitle(this.title);
+			this.dialogue.setParentOption(this);
 		}
 		return this;
 	}
@@ -137,6 +186,11 @@ class DialogueOption {
 		else {
 			return true;
 		}
+	}
+	dispose() {
+        for (var _var in this) {
+            this[_var] = null;
+        }
 	}
 	static createFromArray(_array) {
 		if (!(_array instanceof Array)) {

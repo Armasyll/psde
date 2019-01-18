@@ -1,25 +1,23 @@
 class ItemEntity extends Entity {
-	constructor(_id = undefined, _name = undefined, _description = undefined, _image = "resources/images/icons/items/genericItem.svg", _plural = false, _specialProperties = undefined, _defaultPrice = 0, _defaultWeight = 0.001, _defaultDurability = 1) {
+    /**
+     * Creates an Item
+     * @param  {String}  _id          Unique ID
+     * @param  {String}  _name        Name
+     * @param  {String}  _description Description
+     * @param  {String}  _image       Image path or base64
+     */
+	constructor(_id = undefined, _name = undefined, _description = undefined, _image = "resources/images/icons/items/genericItem.svg") {
         super(_id, _name, _description, _image);
 
         this.addAvailableAction("drop");
         this.addAvailableAction("hold");
         this.addAvailableAction("take");
 
-        this.addSpecialProperty(_specialProperties);
-
-        if (typeof _plural != "boolean")
-            _plural = false;
-        this.plural = _plural;
-
         this.mass = 0.001;
-        this.setMass(_defaultWeight);
         this.price = 0;
-        this.setPrice(_defaultPrice);
         this.durability = 1;
-        this.setDurability(_defaultDurability);
 
-        Game.itemEntities[this.id] = this;
+        Game.setItemEntity(this.id, this);
 	}
 	getID() {
 		return this.id;
@@ -51,8 +49,15 @@ class ItemEntity extends Entity {
 	getDurability() {
 		return this.durability;
 	}
+    createInstance(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        return new InstancedItemEntity(_id, this);
+    }
 	dispose() {
-        delete Game.itemEntities[this.id];
+        Game.removeItemEntity(this.id);
         super.dispose();
         for (var _var in this) {
             this[_var] = null;

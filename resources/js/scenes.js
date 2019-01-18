@@ -633,7 +633,7 @@ Game.generateApartment = function() {
     new Dialogue(
         "charlieHug",
         "Give Charlie a Hug",
-        "You try to give Charlie a hug, but she aside aside and glares at you."
+        "You try to give Charlie a hug, but she moves aside and glares at you."
     );
     new Dialogue(
         "rosieTalk",
@@ -673,11 +673,12 @@ Game.generateApartment = function() {
             }
         }
     );
-    Game.getDialogue("charlieTalk").addOption("charlieKiss");
-    Game.getDialogue("charlieTalk").addOption("charlieHug");
+    Game.getDialogue("charlieTalk").setOption("charlieKissOption", "charlieKiss");
+    Game.getDialogue("charlieTalk").setOption("charlieHugOption", "charlieHug");
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
     Game.getCharacterEntity("rosie").setDialogue("rosieTalk");
-    Game.getDialogue("rinehartTalk").addOption(
+    Game.getDialogue("rinehartTalk").setOption(
+        "rinehartTakeChocolateOption",
         "rinehartTakeChocolate",
         undefined,
         function(_them, _you) {

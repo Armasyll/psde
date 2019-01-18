@@ -1,4 +1,4 @@
-class InstancedItemEntity extends InstancedEntity {
+class InstancedWeaponEntity extends InstancedItemEntity {
     constructor(_id = undefined, _entity = undefined) {
         super(_id, _entity);
         if (!(this.entity instanceof Entity)) {
@@ -6,17 +6,17 @@ class InstancedItemEntity extends InstancedEntity {
             return undefined;
         }
 
-        Game.setInstancedItemEntity(this.id, this);
+        Game.setInstancedWeaponEntity(this.id, this);
     }
     clone(_id) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
-        return new InstancedItemEntity(_id, this.entity);
+        return new InstancedWeaponEntity(_id, this.entity);
     }
     dispose() {
-        Game.removeInstancedItemEntity(this.id);
+        Game.removeInstancedWeaponEntity(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
