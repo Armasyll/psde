@@ -327,7 +327,7 @@ class AbstractEntity {
         return this.durabilityMax;
     }
     isEnabled() {
-        return this._isEnabled;
+        return this._isEnabled == true;
     }
     setEnabled(_isEnabled = true) {
         this._isEnabled = (_isEnabled == true);

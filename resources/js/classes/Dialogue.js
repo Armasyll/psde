@@ -16,24 +16,50 @@ class Dialogue {
         if (typeof _id != "string") {
         	_id = genUUIDv4();
         }
-        if (typeof _title != "string") {_title = "";}
         if (typeof _text != "string" && typeof _text != "function") {
-        	return;
+        	return undefined;
         }
-        this.id = Game.filterID(_id);
-        this.title = Game.filterName(_title) || "";
-        this.text = _text;
+        this.id = _id;
+        this.title = undefined;
+        this.text = undefined;
+        this.textType = 0;
         this.options = {};
         this.optionsCount = 0;
         this.parentOptions = {};
         this.parentOptionsCount = 0;
+        this._isEnabled = true;
+        this.setTitle(_title);
+        this.setText(_text);
         Game.setDialogue(this.id, this);
 	}
 	getID() {
 		return this.id;
 	}
+	setTitle(_title) {
+		_title = Game.filterName(_title);
+		if (typeof _title != "string") {
+			_title = "";
+		}
+		this.title = _title;
+		return this;
+	}
 	getTitle() {
 		return this.title;
+	}
+	setText(_blob) {
+		if (typeof _blob == "string") {
+			this.text = _blob;
+			this.textType = 0;
+		}
+		else if (typeof _blob == "function") {
+			this.text = _blob;
+			this.textType = 1;
+		}
+		else {
+			this.text = "";
+			this.textType = 0;
+		}
+		return this;
 	}
 	getText(_them = undefined, _you = Game.player.getEntity()) {
         _them = Game.getEntity(_them);
@@ -47,6 +73,13 @@ class Dialogue {
 		else {
 			return "";
 		}
+	}
+	/**
+	 * Returns a numerical value representing this dialogue's type of text.
+	 * @return {number} 0: String, 1: Function.
+	 */
+	getTextType() {
+		return this.textType || 0;
 	}
 	hasOptions() {
 		return this.optionsCount > 0;
@@ -99,7 +132,15 @@ class Dialogue {
 		this.parentOptionsCount -= 1;
 		return true;
 	}
+    isEnabled() {
+        return this._isEnabled == true;
+    }
+    setEnabled(_isEnabled = true) {
+        this._isEnabled = (_isEnabled == true);
+        return this;
+    }
 	dispose() {
+		this._isEnabled = false;
 		for (var _var in this.parentOptions) {
 			this.parentOptions[_var].dispose();
 			delete this.parentOptions[_var];
@@ -121,26 +162,21 @@ class DialogueOption {
         if (typeof _id != "string") {
         	_id = genUUIDv4();
         }
-        this.id = undefined;
+        this.id = _id;
 		this.dialogue = undefined;
 		this.title = undefined;
 		this.condition = undefined;
-		this.setID(_id);
 		this.setDialogue(_dialogue);
 		if (typeof _title == "string") {
 			this.setTitle(_title);
 		}
+		else {
+			this.setTitle(this.dialogue.getTitle());
+		}
 		if (typeof _condition == "function") {
 			this.setCondition(_condition);
 		}
-	}
-	setID(_id) {
-		_id = Game.filterID(_id);
-        if (typeof _id != "string") {
-        	_id = genUUIDv4();
-        }
-        this.id = _id;
-        return this;
+		this._isEnabled = true;
 	}
 	getID() {
 		return this.id;
@@ -149,7 +185,6 @@ class DialogueOption {
 		_dialogue = Game.getDialogue(_dialogue);
 		if (_dialogue instanceof Dialogue) {
 			this.dialogue = _dialogue;
-			this.setTitle(this.title);
 			this.dialogue.setParentOption(this);
 		}
 		return this;
@@ -158,14 +193,17 @@ class DialogueOption {
 		return this.dialogue;
 	}
 	setTitle(_title) {
-		if (!(this.dialogue instanceof Dialogue)) {
-			return this;
+		_title = Game.filterName(_title);
+		if (typeof _title == "string") {
+			this.title = _title;
 		}
-		this.title = Game.filterName(_title) || this.dialogue.getTitle();
+		else {
+			this.title = "";
+		}
 		return this;
 	}
 	getTitle() {
-		return this.title || this.dialogue.getTitle();
+		return this.title;
 	}
 	setCondition(_function) {
 		if (!(this.dialogue instanceof Dialogue)) {
@@ -187,7 +225,16 @@ class DialogueOption {
 			return true;
 		}
 	}
+    isEnabled() {
+        return this._isEnabled == true;
+    }
+    setEnabled(_isEnabled = true) {
+        this._isEnabled = (_isEnabled == true);
+        return this;
+    }
 	dispose() {
+		this._isEnabled = false;
+		delete this.condition;
         for (var _var in this) {
             this[_var] = null;
         }

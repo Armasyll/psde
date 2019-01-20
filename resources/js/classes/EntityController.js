@@ -176,7 +176,7 @@ class EntityController {
         return this;
     }
     isEnabled() {
-        return this._isEnabled;
+        return this._isEnabled == true;
     }
     setEnabled(_isEnabled = true) {
         this._isEnabled = (_isEnabled == true);
