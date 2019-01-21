@@ -4,9 +4,11 @@ class GameGUI {
     }
     static initialize() {
         GameGUI.alpha = "0.75";
-        GameGUI.color = "white";
-        GameGUI.background = "#c3c3c3";
+        GameGUI.color = "#c3c3c3";
+        GameGUI.background = "#0c0c0c";
+        GameGUI.backgroundDisabled = "#030c0c";
         GameGUI.focusedBackground = "#3c3c3c";
+        GameGUI.focusedBackgroundDisabled = "#0c3c3c";
         GameGUI._menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
         GameGUI._menu.rootContainer.isVisible = false;
         GameGUI._hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
@@ -214,7 +216,7 @@ class GameGUI {
             chatOutputContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             chatOutputContainer.height = 0.8;
             chatOutputContainer.width = 1.0;
-            chatOutputContainer.background = "black";
+            chatOutputContainer.background = GameGUI.background;
             chatOutputContainer.thickness = 0;
             chatOutputContainer.alpha = 0.75;
                 var chatOutput = new BABYLON.GUI.TextBlock("chatOutput");
@@ -222,15 +224,15 @@ class GameGUI {
                 chatOutput.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                 chatOutput.height = 1.0;
                 chatOutput.width = 1.0;
-                chatOutput.color = "white";
+                chatOutput.color = GameGUI.color;
                 chatOutput.textWrapping = true;
             var chatInput = new BABYLON.GUI.InputText("chatInput");
             chatInput.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             chatInput.height = 0.2;
             chatInput.width = 1.0;
-            chatInput.background = "black";
-            chatInput.focusedBackground = "grey";
-            chatInput.color = "white";
+            chatInput.background = GameGUI.background;
+            chatInput.focusedBackground = GameGUI.focusedBackground;
+            chatInput.color = GameGUI.color;
             chatInput.text = "";
             chatInput.thickness = 1;
             chatInput.alpha = 0.75;
@@ -291,7 +293,7 @@ class GameGUI {
         characterChoiceMenuContainer.zIndex = 90;
         characterChoiceMenuContainer.height = 0.6
         characterChoiceMenuContainer.width = 0.5;
-        characterChoiceMenuContainer.background = "black";
+        characterChoiceMenuContainer.background = GameGUI.background;
         characterChoiceMenuContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
 
@@ -299,81 +301,81 @@ class GameGUI {
             nameLabel.text = "Name: ";
             nameLabel.width = 0.3;
             nameLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            nameLabel.color = "white";
+            nameLabel.color = GameGUI.color;
 
             nameInput.width = 0.7;
-            nameInput.color = "white";
-            nameInput.background = "grey";
+            nameInput.color = GameGUI.color;
+            nameInput.background = GameGUI.focusedBackground;
             nameInput.text = "Remmy Cormo";
 
         ageContainer.height = 0.05;
             ageLabel.text = "Age: ";
             ageLabel.width = 0.3;
             ageLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            ageLabel.color = "white";
+            ageLabel.color = GameGUI.color;
 
             ageInput.width = 0.7;
-            ageInput.color = "white";
-            ageInput.background = "grey";
+            ageInput.color = GameGUI.color;
+            ageInput.background = GameGUI.focusedBackground;
             ageInput.text = "18";
 
         speciesContainer.height = 0.10;
             speciesLabel.text = "Species: ";
             speciesLabel.width = 0.3;
             speciesLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            speciesLabel.color = "white";
+            speciesLabel.color = GameGUI.color;
 
             speciesOptions.width = 0.7;
                 speciesFox.height = 0.5;
-                speciesFox.background = "grey";
-                speciesFox.color = "white";
+                speciesFox.background = GameGUI.focusedBackground;
+                speciesFox.color = GameGUI.color;
                 speciesSkeleton.height = 0.5;
-                speciesSkeleton.background = "grey";
-                speciesSkeleton.color = "white";
+                speciesSkeleton.background = GameGUI.focusedBackground;
+                speciesSkeleton.color = GameGUI.color;
 
         genderContainer.height = 0.15;
             genderLabel.text = "Gender: ";
             genderLabel.width = 0.3;
             genderLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            genderLabel.color = "white";
+            genderLabel.color = GameGUI.color;
 
             genderOptions.width = 0.7;
                 genderMale.height = 0.3;
-                genderMale.background = "grey";
-                genderMale.color = "white";
+                genderMale.background = GameGUI.focusedBackground;
+                genderMale.color = GameGUI.color;
                 genderFemale.height = 0.3;
-                genderFemale.background = "grey";
-                genderFemale.color = "white";
+                genderFemale.background = GameGUI.focusedBackground;
+                genderFemale.color = GameGUI.color;
                 genderNone.height = 0.3;
-                genderNone.background = "grey";
-                genderNone.color = "white";
+                genderNone.background = GameGUI.focusedBackground;
+                genderNone.color = GameGUI.color;
 
         buttonKBLayoutContainer.height = 0.15;
             buttonKBLayoutLabel.text = "Keyboard Layout: ";
             buttonKBLayoutLabel.width = 0.3;
             buttonKBLayoutLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            buttonKBLayoutLabel.color = "white";
+            buttonKBLayoutLabel.color = GameGUI.color;
 
             buttonKBLayoutOptions.width = 0.7;
                 buttonKBLayoutQwerty.height = 0.3;
-                buttonKBLayoutQwerty.background = "grey";
-                buttonKBLayoutQwerty.color = "white";
+                buttonKBLayoutQwerty.background = GameGUI.focusedBackground;
+                buttonKBLayoutQwerty.color = GameGUI.color;
                 buttonKBLayoutDvorak.height = 0.3;
-                buttonKBLayoutDvorak.background = "grey";
-                buttonKBLayoutDvorak.color = "white";
+                buttonKBLayoutDvorak.background = GameGUI.focusedBackground;
+                buttonKBLayoutDvorak.color = GameGUI.color;
                 buttonKBLayoutAzerty.height = 0.3;
-                buttonKBLayoutAzerty.background = "grey";
-                buttonKBLayoutAzerty.color = "white";
+                buttonKBLayoutAzerty.background = GameGUI.focusedBackground;
+                buttonKBLayoutAzerty.color = GameGUI.color;
 
         submitContainer.height = 0.05;
             submitOffline.width = 0.5;
-            submitOffline.color = "white";
-            submitOffline.background = "grey";
+            submitOffline.color = GameGUI.color;
+            submitOffline.background = GameGUI.focusedBackground;
             submitOffline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
 
             submitOnline.width = 0.5;
-            submitOnline.color = "white";
-            submitOnline.background = "grey";
+            submitOnline.color = GameGUI.color;
+            submitOnline.background = GameGUI.focusedBackground;
             submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
 
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
@@ -469,7 +471,7 @@ class GameGUI {
             portraitBackground.top = 0;
             portraitBackground.left = 0;
             portraitBackground.thickness = 0;
-            portraitBackground.background = "black";
+            portraitBackground.background = GameGUI.background;
             portraitBackground.alpha = 0.5;
             var portraitAvatarContainer = new BABYLON.GUI.Rectangle();
             portraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
@@ -492,7 +494,7 @@ class GameGUI {
                 portraitName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 portraitName.height = 0.25;
                 portraitName.width = 1.0;
-                portraitName.color = "white";
+                portraitName.color = GameGUI.color;
                 var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
                 portraitStatsLifeContainer.height = 0.25;
                 portraitStatsLifeContainer.width = 0.85;
@@ -501,7 +503,7 @@ class GameGUI {
                     portraitStatsLifeText.text = "";
                     portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.color = "white";
+                    portraitStatsLifeText.color = GameGUI.color;
                     var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
                     portraitStatsLifeSlider.minimum = 0;
                     portraitStatsLifeSlider.maximum = 100;
@@ -520,7 +522,7 @@ class GameGUI {
                     portraitStatsManaText.text = "";
                     portraitStatsManaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsManaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsManaText.color = "white";
+                    portraitStatsManaText.color = GameGUI.color;
                     var portraitStatsManaSlider = new BABYLON.GUI.Slider("portraitStatsManaSlider");
                     portraitStatsManaSlider.minimum = 0;
                     portraitStatsManaSlider.maximum = 100;
@@ -539,7 +541,7 @@ class GameGUI {
                     portraitStatsStaminaText.text = "";
                     portraitStatsStaminaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsStaminaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsStaminaText.color = "white";
+                    portraitStatsStaminaText.color = GameGUI.color;
                     var portraitStatsStaminaSlider = new BABYLON.GUI.Slider("portraitStatsStaminaSlider");
                     portraitStatsStaminaSlider.minimum = 0;
                     portraitStatsStaminaSlider.maximum = 100;
@@ -584,7 +586,7 @@ class GameGUI {
             portraitBackground.top = 0;
             portraitBackground.left = 0;
             portraitBackground.thickness = 0;
-            portraitBackground.background = "black";
+            portraitBackground.background = GameGUI.background;
             portraitBackground.alpha = 0.5;
             var portraitAvatarContainer = new BABYLON.GUI.Rectangle();
             portraitAvatarContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
@@ -607,7 +609,7 @@ class GameGUI {
                 portraitName.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 portraitName.height = 0.25;
                 portraitName.width = 0.85;
-                portraitName.color = "white";
+                portraitName.color = GameGUI.color;
                 var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
                 portraitStatsLifeContainer.height = 0.25;
                 portraitStatsLifeContainer.width = 0.85;
@@ -616,7 +618,7 @@ class GameGUI {
                     portraitStatsLifeText.text = "";
                     portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.color = "white";
+                    portraitStatsLifeText.color = GameGUI.color;
                     var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
                     portraitStatsLifeSlider.minimum = 0;
                     portraitStatsLifeSlider.maximum = 100;
@@ -636,7 +638,7 @@ class GameGUI {
                     portraitStatsManaText.text = "";
                     portraitStatsManaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsManaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsManaText.color = "white";
+                    portraitStatsManaText.color = GameGUI.color;
                     var portraitStatsManaSlider = new BABYLON.GUI.Slider("portraitStatsManaSlider");
                     portraitStatsManaSlider.minimum = 0;
                     portraitStatsManaSlider.maximum = 100;
@@ -656,7 +658,7 @@ class GameGUI {
                     portraitStatsStaminaText.text = "";
                     portraitStatsStaminaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
                     portraitStatsStaminaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsStaminaText.color = "white";
+                    portraitStatsStaminaText.color = GameGUI.color;
                     var portraitStatsStaminaSlider = new BABYLON.GUI.Slider("portraitStatsStaminaSlider");
                     portraitStatsStaminaSlider.minimum = 0;
                     portraitStatsStaminaSlider.maximum = 100;
@@ -846,7 +848,7 @@ class GameGUI {
         var inventory = new BABYLON.GUI.Rectangle("inventory");
             inventory.height = 1.0;
             inventory.width = 0.6;
-            inventory.background = "black";
+            inventory.background = GameGUI.background;
         var items = new BABYLON.GUI.StackPanel("items");
             items.height = 1.0;
             items.width = 0.475;
@@ -872,7 +874,7 @@ class GameGUI {
                 selectedName.height = 0.1;
                 selectedName.top = "-45%";
                 selectedName.left = 0;
-                selectedName.color = "white";
+                selectedName.color = GameGUI.color;
                 summary.addControl(selectedName);
             var selectedImage = new BABYLON.GUI.Image("selectedImage", "resources/images/blank.svg");
                 selectedImage.width = 1.0;
@@ -889,14 +891,14 @@ class GameGUI {
                 selectedDescription.paddingLeft = 0.1;
                 selectedDescription.paddingRight = 0.1;
                 selectedDescription.textWrapping = true;
-                selectedDescription.color = "white";
+                selectedDescription.color = GameGUI.color;
                 summary.addControl(selectedDescription);
             var selectedDetails = new BABYLON.GUI.TextBlock("selectedDetails");
                 selectedDetails.width = 1.0;
                 selectedDetails.height = 0.2;
                 selectedDetails.top = "45%";
                 selectedDetails.left = 0;
-                selectedDetails.color = "white";
+                selectedDetails.color = GameGUI.color;
                 summary.addControl(selectedDetails);
         var actions = new BABYLON.GUI.Rectangle("actions");
             actions.height = 0.4;
@@ -1066,7 +1068,7 @@ class GameGUI {
             _buttonText.top = "5%";
             _buttonText.left = "10%";
             _buttonText.text = _title;
-            _buttonText.color = "white";
+            _buttonText.color = GameGUI.color;
             _button.addControl(_buttonText);
         return _button;
     }
@@ -1079,7 +1081,7 @@ class GameGUI {
             tooltip.height = 0.075;
             tooltip.top = "3.75%";
             tooltip.left = "6.25%";
-            tooltip.background = "black";
+            tooltip.background = GameGUI.background;
             tooltip.alpha = 0.5;
             tooltip.isVertical = false;
         var keyName = new BABYLON.GUI.TextBlock();
@@ -1087,19 +1089,19 @@ class GameGUI {
             keyName.top = 0;
             keyName.left = "10%";
             keyName.textHorizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-            keyName.color = "white";
+            keyName.color = GameGUI.color;
         var actionPanelActionName = new BABYLON.GUI.TextBlock();
             actionPanelActionName.text = "";
             actionPanelActionName.height = 0.5;
             //actionPanelActionName.top = "-25%";
             actionPanelActionName.left = "25%";
-            actionPanelActionName.color = "white";
+            actionPanelActionName.color = GameGUI.color;
         var actionPanelTargetName = new BABYLON.GUI.TextBlock();
             actionPanelTargetName.text = "";
             actionPanelTargetName.height = 0.5;
             actionPanelTargetName.top = "25%";
             actionPanelTargetName.left = "25%";
-            actionPanelTargetName.color = "white";
+            actionPanelTargetName.color = GameGUI.color;
         tooltip.addControl(keyName);
         tooltip.addControl(actionPanelActionName);
         tooltip.addControl(actionPanelTargetName);
@@ -1186,7 +1188,6 @@ class GameGUI {
             [Options                     ]
          */
         var _container = new BABYLON.GUI.Rectangle("dialogueContainer");
-            _container.alpha = GameGUI.alpha;
             _container.width = 0.5;
             _container.height = 0.4;
             _container.background = GameGUI.background;
@@ -1197,12 +1198,13 @@ class GameGUI {
             _titleBar.height = 0.1;
             _titleBar.thickness = 0;
             _titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            _titleBar.background = "green";
         var _title = new BABYLON.GUI.TextBlock("dialogueTitle");
             _title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            _title.color = GameGUI.color;
             _title.text = "Title :V";
         var _closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
             _closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            _closeButton.color = GameGUI.color;
             _closeButton.width = 0.05;
         var _bodyContainer = new BABYLON.GUI.Rectangle("dialogueBodyContainer"); // TODO: Replace with ScrollViewer when it becomes available
             _bodyContainer.width = 1.0;
@@ -1210,7 +1212,6 @@ class GameGUI {
             _bodyContainer.thickness = 0;
             _bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
             _bodyContainer.top = "-10%";
-            _bodyContainer.background = "blue";
         var _body = new BABYLON.GUI.TextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
             _body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             _body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1220,6 +1221,7 @@ class GameGUI {
             _body.resizeToFit = true;
             _body.width = 1.0;
             _body.height = 1.0;
+            _body.color = GameGUI.color;
             _body.paddingTop = "8px";
             _body.paddingRight = "8px";
             _body.paddingBottom = "8px";
@@ -1231,22 +1233,18 @@ class GameGUI {
             _optionsContainer.height = 0.3;
             _optionsContainer.thickness = 0;
             _optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            _optionsContainer.background = "red";
         var _optionsColA = new BABYLON.GUI.StackPanel();
             _optionsColA.isVertical = true;
             _optionsColA.width = 0.33;
             _optionsColA.height = 1.0;
-            _optionsColA.background = "orange";
         var _optionsColB = new BABYLON.GUI.StackPanel();
             _optionsColB.isVertical = true;
             _optionsColB.width = 0.341;
             _optionsColB.height = 1.0;
-            _optionsColB.background = "yellow";
         var _optionsColC = new BABYLON.GUI.StackPanel();
             _optionsColC.isVertical = true;
             _optionsColC.width = 0.33;
             _optionsColC.height = 1.0;
-            _optionsColC.background = "pink";
         
         _closeButton.onPointerUpObservable.add(function() {
             GameGUI.hideDialogueMenu();
@@ -1320,14 +1318,14 @@ class GameGUI {
             return false;
         }
         var _button = new BABYLON.GUI.Button.CreateSimpleButton(_dialogueOption.getDialogue().getID(), _dialogueOption.getTitle());
+        _button.color = GameGUI.color;
         _button.width = 1.0;
         _button.height = 0.33;
-        _button.background = "purple";
         _button.onPointerUpObservable.add(function() {
             GameGUI.setDialogue(_dialogueOption.getDialogue().getID(), _them.getID(), _you.getID());
         });
         if (!_isEnabled) {
-            _button.background = "gray";
+            _button.background = GameGUI.focusedBackgroundDisabled;
         }
         GameGUI._dialogueOptionCount += 1;
         if (GameGUI._dialogueOptionCount > 5) {
@@ -1343,7 +1341,7 @@ class GameGUI {
         return true;
     }
     static removeDialogueOptions(_dialogueOption) {
-        
+        //TODO: this :v
         GameGUI._dialogueOptionCount -= 1;
     }
     static clearDialogueOptions() {
