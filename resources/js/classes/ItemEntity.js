@@ -15,12 +15,8 @@ class ItemEntity extends Entity {
 
         this.mass = 0.001;
         this.price = 0;
-        this.durability = 1;
 
         Game.setItemEntity(this.id, this);
-	}
-	getID() {
-		return this.id;
 	}
 	setMass(_float) {
 		if (isNaN(_float)) {
@@ -39,15 +35,6 @@ class ItemEntity extends Entity {
 	}
 	getPrice() {
 		return this.price;
-	}
-	setDurability(_int) {
-		if (isNaN(_int)) {
-			return;
-		}
-		this.durability = _int;
-	}
-	getDurability() {
-		return this.durability;
 	}
     createInstance(_id = undefined) {
         _id = Game.filterID(_id);

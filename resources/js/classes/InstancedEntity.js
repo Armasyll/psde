@@ -22,8 +22,8 @@ class InstancedEntity extends AbstractEntity {
         this.setOwner(_owner);
         this.setPrice(_price || this.entity.getPrice() || 0);
         this.setMass(_mass || this.entity.getMass() || 0.001);
-        this.setDurability(_durability || this.entity.getDurability() || 1);
-        this.setDurabilityMax(_durabilityMax || this.entity.getDurabilityMax() || this.durability);
+        this.durability.set(_durability || this.entity.durability.get() || 1);
+        this.durability.setMax(_durabilityMax || this.entity.durability.getMax() || this.durability.get());
 
         for (var _action in this.entity.getAvailableActions()) {
             var _availableAction = this.entity.getAvailableAction(_action);
@@ -68,7 +68,7 @@ class InstancedEntity extends AbstractEntity {
     }
 
     clone(_id) {
-        return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability, this.durabilityMax);
+        return new InstancedEntity(_id, this.entity, this.name, this.description, this.owner, this.price, this.mass, this.durability.get(), this.durability.getMax());
     }
     dispose() {
         Game.removeInstancedEntity(this.id);

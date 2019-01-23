@@ -1679,6 +1679,25 @@ class Game {
         }
         return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
     }
+    static filterFloat(_int) {
+        _int = Number.parseFloat(_int);
+        if (isNaN(_int)) {
+            return 1;
+        }
+        else if (_int > Number.MAX_SAFE_INTEGER) {
+            _int = Number.MAX_SAFE_INTEGER;
+        }
+        else if (_int < Number.MIN_SAFE_INTEGER) {
+            _int = Number.MIN_SAFE_INTEGER;
+        }
+        return Number(_int.toFixed(4));
+    }
+    static filterInt(_int) {
+        return Math.round(Game.filterValue(_int));
+    }
+    static filterNumber(_int) {
+        return Game.filterFloat(_int);
+    }
     static filterVector(..._vector) {
         if (_vector == undefined || _vector[0] == undefined) {
             return BABYLON.Vector3.Zero();

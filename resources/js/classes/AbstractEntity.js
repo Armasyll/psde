@@ -57,8 +57,7 @@ class AbstractEntity {
          * @type {Number} 0.001 to Number.MAX_SAFE_INTEGER
          */
         this.mass = 0.001;
-        this.durability = 1;
-        this.durabilityMax = 1;
+        this.durability = new StatNumber(1);
 
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");
@@ -255,7 +254,7 @@ class AbstractEntity {
             _int = 0;
         else if (_int > Number.MAX_SAFE_INTEGER)
             _int = Number.MAX_SAFE_INTEGER;
-        this.durability = _int;
+        this.price = _int;
         return this;
     }
     getPrice() {
@@ -281,51 +280,6 @@ class AbstractEntity {
         return (this.mass || this.entity.mass);
     }
 
-    /**
-     * Sets Durability
-     * @param {Number} _int Integer
-     */
-    setDurability(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 0)
-            _int = 1;
-        else if (_int > this.durabilityMax)
-            _int = this.durabilityMax;
-        this.durability = _int;
-        return this;
-    }
-    /**
-     * Returns Durability
-     * @return {Number} Integer
-     */
-    getDurability() {
-        return this.durability;
-    }
-
-    /**
-     * Sets Max Durability
-     * @param {Number} _int Integer
-     */
-    setDurabilityMax(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 0)
-            _int = 1;
-        else if (_int > Number.MAX_SAFE_INTEGER)
-            _int = Number.MAX_SAFE_INTEGER;
-        this.durabilityMax = _int;
-        return this;
-    }
-    /**
-     * Returns Max Durability
-     * @return {Number} Integer
-     */
-    getDurabilityMax() {
-        return this.durabilityMax;
-    }
     isEnabled() {
         return this._isEnabled == true;
     }

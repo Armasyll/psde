@@ -180,16 +180,7 @@ class CharacterEntity extends EntityWithStorage {
         this.charisma = 10;
         this.experiencePoints = 0;
         this.level = 1;
-        /**
-         * Max life; should never drop below 1
-         * @type {Number} 1 to Number.MAX_SAFE_INTEGER
-         */
-        this.lifeMax = 100;
-        /**
-         * Life; should this drop to 0, u ded
-         * @type {Number} 0 to Number.MAX_SAFE_INTEGER
-         */
-        this.life = 100;
+        this.durability.set(100, 0, 100);
         /**
          * Max mana
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
@@ -1214,73 +1205,43 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setLife(_int) {
-        if (isNaN(_int))
-            _int = 0;
-        else if (_int < 0)
-            _int = 0;
-        else if (_int > this.lifeMax)
-            _int = this.lifeMax;
-        this.life = _int;
+        this.durability.set(_int);
         return this;
     }
     incLife(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setLife(this.life + Number.parseInt(_int));
+        return this.durability.inc(_int);
     }
     addLife(_int) {
         return this.incLife(_int);
     }
     decLife(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setLife(this.life - Number.parseInt(_int));
+        return this.durability.dec(_int);
     }
     subLife(_int) {
         return this.decLife(_int);
     }
     getLife() {
-        return this.life;
+        return this.durability.get();
     }
 
     setLifeMax(_int) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        else if (_int > 100)
-            _int = 100;
-        if (this.life > this.lifeMax)
-            this.life = this._int;
-        this.lifeMax = _int;
+        this.durability.setMax(_int);
         return this;
     }
     incLifeMax(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setLifeMax(this.lifeMax + Number.parseInt(_int));
+        return this.durability.incMax(_int);
     }
     addLifeMax(_int) {
         return this.incLifeMax(_int);
     }
     decLifeMax(_int = 1) {
-        if (isNaN(_int))
-            _int = 1;
-        else if (_int < 1)
-            _int = 1;
-        return this.setLifeMax(this.lifeMax - Number.parseInt(_int));
+        return this.durability.decMax(_int);
     }
     subLifeMax(_int) {
         return this.decLifeMax(_int);
     }
     getLifeMax() {
-        return this.lifeMax;
+        return this.durability.getMax();
     }
 
     setMana(_int) {

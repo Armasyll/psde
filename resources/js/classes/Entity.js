@@ -10,6 +10,13 @@ class Entity extends AbstractEntity {
         super(_id, _name, _description, _image);
         Game.setEntity(this.id, this);
     }
+    createInstance(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        return new InstancedEntity(_id, this);
+    }
     dispose() {
         Game.removeEntity(this.id);
         super.dispose();
