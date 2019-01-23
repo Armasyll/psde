@@ -26,7 +26,7 @@ Game.createProtoItem("trumpet01", "Trumpet", "A simple trumpet.", "trumpet01", "
 Game.createProtoItem("axe03", "Cheap Axe", "", "axe03", "axe03", undefined, "weapon");
 Game.createProtoItem("axe01", "Axe", "", "axe01", "axe01", undefined, "weapon");
 Game.createProtoItem("axe02", "Curved Axe", "", "axe02", "axe02", undefined, "weapon");
-Game.createProtoItem("battleAxe04", "Double-headed Axe", "", "battleAxe04", "battleAxe04", undefined, "weapon");
+Game.createProtoItem("battleAxe01", "Double-headed Axe", "", "battleAxe01", "battleAxe01", undefined, "weapon");
 Game.createProtoItem("cross01", "Cross", "A metal-capped cross.", "cross01", "cross01", "cross01", "weapon");
 Game.createProtoItem("cudgel01", "Cudgel", "A chunk of metal attached to a stick.", "cudgel01", "cudgel01", undefined, "weapon");
 Game.createProtoItem("forgeHammer01", "Blacksmith's Hammer", "", "forgeHammer01", "forgeHammer01", undefined, "weapon");
