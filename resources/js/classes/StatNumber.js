@@ -10,7 +10,6 @@ class StatNumber {
         this._value = 1;
         this._min = 0;
         this._max = 100;
-        this._incremental = 1;
         this.setValue(_val);
         this.setMin(_min);
         this.setMax(_max);
