@@ -172,7 +172,7 @@ class CharacterEntity extends EntityWithStorage {
          * Perception and insight
          * @type {Number}
          */
-        this.wisdom = 3;
+        this.wisdom = 10;
         /**
          * Force of personality
          * @type {Number}
