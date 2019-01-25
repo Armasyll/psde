@@ -27,10 +27,10 @@ class StatNumber {
         if (isNaN(_int)) {
             return this;
         }
-        if (_int - this._val < this._min) {
+        if (_int < this._min) {
             _int = this._min;
         }
-        else if (_int + this._val > this._max) {
+        else if (_int > this._max) {
             _int = this._max;
         }
         this._val = _int;
