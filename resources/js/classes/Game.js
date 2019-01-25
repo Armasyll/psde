@@ -476,6 +476,7 @@ class Game {
         this.highlightedColorNeutral = "white";
 
         this.MALE = 0, this.FEMALE = 1;
+        this.kCharacterStances = new Array("lay", "sit", "crouch", "stand", "fly");
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
@@ -483,7 +484,6 @@ class Game {
         this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
         this.kPeltTypes = new Set(["skin","fur","wool","hair"]);
         this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
-        this.kFurnitureTypes = new Set(["chair","loveseat","couch","table","shelf","refrigerator","basket"]);
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
         this.kInteractionTypes = new Set(["close","consume","drop","equip","hold","look","open","release","take","talk","touch","unequip","use"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
@@ -618,18 +618,18 @@ class Game {
     }
     static initQwertyKeyboardControls() {
         Game.initBaseKeyboardControls();
-        this.walkCode = 87;
-        this.walkBackCode = 83;
+        this.walkCode = 87; // W
+        this.walkBackCode = 83; // S
         this.turnLeftCode = 0;
         this.turnRightCode = 0;
-        this.strafeLeftCode = 65;
-        this.strafeRightCode = 68;
-        this.jumpCode = 32;
-        this.interfaceTargetedEntityCode = 70;
-        this.useTargetedEntityCode = 69;
+        this.strafeLeftCode = 65; // A
+        this.strafeRightCode = 68; // D
+        this.jumpCode = 32; // Space
+        this.interfaceTargetedEntityCode = 70; // F
+        this.useTargetedEntityCode = 69; // E
         this.interfaceSelectedItemCode = 0;
-        this.useSelectedItemCode = 82;
-        this.showInventoryCode = 73;
+        this.useSelectedItemCode = 82; // R
+        this.showInventoryCode = 73; // I
         Game._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
@@ -970,15 +970,6 @@ class Game {
                 break;
             }
             case this.useTargetedEntityCode : {
-                if (!(this.player.targetController instanceof EntityController)) {
-                    return;
-                }
-                if (this.player.targetController.getEntity() instanceof InstancedEntity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
-                }
-                else if (this.player.targetController.getEntity() instanceof Entity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
-                }
                 break;
             }
             case this.interfaceTargetedEntityCode : {
@@ -1048,6 +1039,18 @@ class Game {
             }
             case this.strafeRightCode : {
                 this.player.keyStrafeRight(false);
+                break;
+            }
+            case this.useTargetedEntityCode : {
+                if (!(this.player.targetController instanceof EntityController)) {
+                    return;
+                }
+                if (this.player.targetController.getEntity() instanceof InstancedEntity) {
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
+                }
+                else if (this.player.targetController.getEntity() instanceof Entity) {
+                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
+                }
                 break;
             }
             default : {
@@ -2967,5 +2970,160 @@ class Game {
             Game.dialogues[_i].dispose();
         }
         Game.dialogues = {};
+    }
+    static calculateLevel(_int) {
+        _int = Game.filterInt(_int);
+        if (_int >= Game.XP_MAX) {
+            return 20;
+        }
+        else if (_int >= 305000) {
+            return 19;
+        }
+        else if (_int >= 265000) {
+            return 18;
+        }
+        else if (_int >= 225000) {
+            return 17;
+        }
+        else if (_int >= 195000) {
+            return 16;
+        }
+        else if (_int >= 165000) {
+            return 15;
+        }
+        else if (_int >= 140000) {
+            return 14;
+        }
+        else if (_int >= 120000) {
+            return 13;
+        }
+        else if (_int >= 100000) {
+            return 12;
+        }
+        else if (_int >= 85000) {
+            return 11;
+        }
+        else if (_int >= 64000) {
+            return 10;
+        }
+        else if (_int >= 48000) {
+            return 9;
+        }
+        else if (_int >= 34000) {
+            return 8;
+        }
+        else if (_int >= 23000) {
+            return 7;
+        }
+        else if (_int >= 14000) {
+            return 6;
+        }
+        else if (_int >= 6500) {
+            return 5;
+        }
+        else if (_int >= 2700) {
+            return 4;
+        }
+        else if (_int >= 900) {
+            return 3;
+        }
+        else if (_int >= 300) {
+            return 2;
+        }
+        else if (_int >= 0) {
+            return 1;
+        }
+        return 0;
+    }
+    static calculateXP(_int) {
+        _int = Game.filterInt(_int);
+        switch (_int) {
+            case (20) : {
+                return Game.XP_MAX;
+                break;
+            }
+            case (19) : {
+                return 305000;
+                break;
+            }
+            case (18) : {
+                return 265000;
+                break;
+            }
+            case (17) : {
+                return 225000;
+                break;
+            }
+            case (16) : {
+                return 195000;
+                break;
+            }
+            case (15) : {
+                return 165000;
+                break;
+            }
+            case (14) : {
+                return 140000;
+                break;
+            }
+            case (13) : {
+                return 120000;
+                break;
+            }
+            case (12) : {
+                return 100000;
+                break;
+            }
+            case (11) : {
+                return 85000;
+                break;
+            }
+            case (10) : {
+                return 64000;
+                break;
+            }
+            case (9) : {
+                return 48000;
+                break;
+            }
+            case (8) : {
+                return 34000;
+                break;
+            }
+            case (7) : {
+                return 23000;
+                break;
+            }
+            case (6) : {
+                return 14000;
+                break;
+            }
+            case (5) : {
+                return 6500;
+                break;
+            }
+            case (4) : {
+                return 2700;
+                break;
+            }
+            case (3) : {
+                return 900;
+                break;
+            }
+            case (2) : {
+                return 300;
+                break;
+            }
+            case (1) : {
+                return 0;
+                break;
+            }
+            default : {
+                return 0;
+            }
+        }
+    }
+    static tgm() {
+        Game.player.getEntity().toggleGodMode();
     }
 }

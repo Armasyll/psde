@@ -18,11 +18,7 @@ class FurnitureEntity extends EntityWithStorage {
     }
 
     setType(_type) {
-        if (Game.kFurnitureTypes.has(_type))
-            this.type = _type;
-        else
-            this.type = "chair";
-
+        _type = Game.filterID(_type);
         switch(this.type) {
             case "bed" : {
                 this.addAvailableAction("open");

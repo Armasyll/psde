@@ -708,18 +708,18 @@ class GameGUI {
         else if (!(_entity instanceof AbstractEntity)) {
             return undefined;
         }
-        GameGUI._setPlayerPortraitLifeSlider(_entity.getLife()/_entity.getLifeMax()*100);
-        GameGUI._setPlayerPortraitLifeText(_entity.getLife() + "/" + _entity.getLifeMax());
-        if (_entity.getManaMax() == 0) {
+        GameGUI._setPlayerPortraitLifeSlider(_entity.getLife()/_entity.getMaxLife()*100);
+        GameGUI._setPlayerPortraitLifeText(_entity.getLife() + "/" + _entity.getMaxLife());
+        if (_entity.getMaxMana() == 0) {
             GameGUI._hidePlayerPortraitMana();
         }
         else {
             GameGUI._showPlayerPortraitMana();
-            GameGUI._setPlayerPortraitManaSlider(_entity.getMana()/_entity.getManaMax()*100);
-            GameGUI._setPlayerPortraitManaText(_entity.getMana() + "/" + _entity.getManaMax());
+            GameGUI._setPlayerPortraitManaSlider(_entity.getMana()/_entity.getMaxMana()*100);
+            GameGUI._setPlayerPortraitManaText(_entity.getMana() + "/" + _entity.getMaxMana());
         }
-        GameGUI._setPlayerPortraitStaminaSlider(_entity.getStamina()/_entity.getStaminaMax()*100);
-        GameGUI._setPlayerPortraitStaminaText(_entity.getStamina() + "/" + _entity.getStaminaMax());
+        GameGUI._setPlayerPortraitStaminaSlider(_entity.getStamina()/_entity.getMaxStamina()*100);
+        GameGUI._setPlayerPortraitStaminaText(_entity.getStamina() + "/" + _entity.getMaxStamina());
         GameGUI._setPlayerPortraitImage(_entity.getImage());
         GameGUI._setPlayerPortraitName(_entity.getName());
     }
@@ -734,18 +734,18 @@ class GameGUI {
             return undefined;
         }
         if (_entity instanceof CharacterEntity) {
-            GameGUI._setTargetPortraitLifeSlider(_entity.getLife()/_entity.getLifeMax()*100);
-            GameGUI._setTargetPortraitLifeText(_entity.getLife() + "/" + _entity.getLifeMax());
-            if (_entity.getManaMax() == 0) {
+            GameGUI._setTargetPortraitLifeSlider(_entity.getLife()/_entity.getMaxLife()*100);
+            GameGUI._setTargetPortraitLifeText(_entity.getLife() + "/" + _entity.getMaxLife());
+            if (_entity.getMaxMana() == 0) {
                 GameGUI._hideTargetPortraitMana();
             }
             else {
                 GameGUI._showTargetPortraitMana();
-                GameGUI._setTargetPortraitManaSlider(_entity.getMana()/_entity.getManaMax()*100);
-                GameGUI._setTargetPortraitManaText(_entity.getMana() + "/" + _entity.getManaMax());
+                GameGUI._setTargetPortraitManaSlider(_entity.getMana()/_entity.getMaxMana()*100);
+                GameGUI._setTargetPortraitManaText(_entity.getMana() + "/" + _entity.getMaxMana());
             }
-            GameGUI._setTargetPortraitStaminaSlider(_entity.getStamina()/_entity.getStaminaMax()*100);
-            GameGUI._setTargetPortraitStaminaText(_entity.getStamina() + "/" + _entity.getStaminaMax());
+            GameGUI._setTargetPortraitStaminaSlider(_entity.getStamina()/_entity.getMaxStamina()*100);
+            GameGUI._setTargetPortraitStaminaText(_entity.getStamina() + "/" + _entity.getMaxStamina());
             GameGUI._showTargetPortraitLife();
             GameGUI._showTargetPortraitStamina();
         }

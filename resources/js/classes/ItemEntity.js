@@ -18,15 +18,6 @@ class ItemEntity extends Entity {
 
         Game.setItemEntity(this.id, this);
 	}
-	setMass(_float) {
-		if (isNaN(_float)) {
-			return;
-		}
-		this.mass = _float;
-	}
-	getMass() {
-		return this.mass;
-	}
 	setPrice(_int) {
 		if (isNaN(_int)) {
 			return;
