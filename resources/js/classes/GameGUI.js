@@ -708,6 +708,20 @@ class GameGUI {
         else if (!(_entity instanceof AbstractEntity)) {
             return undefined;
         }
+        GameGUI.updatePlayerPortraitStats(_entity);
+        GameGUI._setPlayerPortraitImage(_entity.getImage());
+        GameGUI._setPlayerPortraitName(_entity.getName());
+    }
+    static updatePlayerPortraitStats(_entity = Game.player.getEntity()) {
+        if (!_entity.isEnabled()) {
+            return undefined;
+        }
+        if (_entity instanceof EntityController) {
+            _entity = _entity.getEntity();
+        }
+        else if (!(_entity instanceof AbstractEntity)) {
+            return undefined;
+        }
         GameGUI._setPlayerPortraitLifeSlider(_entity.getLife()/_entity.getMaxLife()*100);
         GameGUI._setPlayerPortraitLifeText(_entity.getLife() + "/" + _entity.getMaxLife());
         if (_entity.getMaxMana() == 0) {
@@ -720,8 +734,6 @@ class GameGUI {
         }
         GameGUI._setPlayerPortraitStaminaSlider(_entity.getStamina()/_entity.getMaxStamina()*100);
         GameGUI._setPlayerPortraitStaminaText(_entity.getStamina() + "/" + _entity.getMaxStamina());
-        GameGUI._setPlayerPortraitImage(_entity.getImage());
-        GameGUI._setPlayerPortraitName(_entity.getName());
     }
     static setTargetPortrait(_entity) {
         if (!_entity.isEnabled()) {

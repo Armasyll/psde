@@ -460,6 +460,8 @@ class Game {
         this._pointerLockFunction = undefined;
         this.previousSelectedMesh = undefined;
         this.currentSelectedMesh = undefined;
+        this._playerPortraitStatsUpdateIntervalFunction = undefined;
+        this._playerPortraitStatsUpdateInterval = 100;
 
         this.enableFirstPerson = true;
         this.enableCameraAvatarRotation = true;
@@ -609,6 +611,7 @@ class Game {
             this.gui.setPlayerPortrait(this.player);
         }
         Game.initCastRayInterval();
+        Game.initPlayerPortraitStatsUpdateInterval();
         return this.player;
     }
     static initBaseKeyboardControls() {
@@ -2429,6 +2432,16 @@ class Game {
             Game._castRayTargetInterval = _interval;
         }
         Game.initCastRayInterval();
+    }
+    static initPlayerPortraitStatsUpdateInterval() {
+        clearInterval(Game._playerPortraitStatsUpdateIntervalFunction);
+        Game._playerPortraitStatsUpdateIntervalFunction = setInterval(Game.gui.updatePlayerPortraitStats, Game._playerPortraitStatsUpdateInterval);
+    }
+    static setPlayerPortraitStatsUpdateInterval(_interval = 100) {
+        if (_interval > 0) {
+            Game._playerPortraitStatsUpdateInterval = _interval;
+        }
+        Game.initPlayerPortraitStatsUpdateInterval();
     }
     
     static castRayFOV(_fov = 90) {
