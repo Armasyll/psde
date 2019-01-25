@@ -18,10 +18,10 @@ window.addEventListener("DOMContentLoaded", function() {
                     Game._finishedInitializing = true;
 
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                        Game.controlCharacterOnKeyDown(evt.sourceEvent.keyCode);
+                        Game.functionControlOnKeyDown(evt.sourceEvent.keyCode);
                     }));
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                        Game.controlCharacterOnKeyUp(evt.sourceEvent.keyCode);
+                        Game.functionControlOnKeyUp(evt.sourceEvent.keyCode);
                     }));
                 }
                 else if (Game.finishedInitializing()) {

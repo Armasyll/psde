@@ -523,6 +523,12 @@ class Game {
         Game.loadDefaultTextures();
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
+        /*
+            Which function handles the function of the key presses;
+            controlerCharacter, controlMenu
+         */
+        this.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
+        this.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         this.gui = GameGUI;
         this.gui.initialize();
@@ -900,8 +906,21 @@ class Game {
     static importProtoItems() {
         Game.importScript("resources/js/items.js");
     }
-    static controlCharacterOnKeyDown(event) { // TODO: Rename or rewrite this to something like controlerCharacterOnKeyDown and controlMenuOnKeyDown; errors are present when attempting these before the scene is init'd
+    static controlMenuOnKeyDown(event) {
+        if (!this.initialized) {
+            return undefined;
+        }
+    }
+    static controlMenuOnKeyUp(event) {
+        if (!this.initialized) {
+            return undefined;
+        }
+    }
+    static controlCharacterOnKeyDown(event) { // TODO: Rename or rewrite this to something like controlCharacterOnKeyDown and controlMenuOnKeyDown; errors are present when attempting these before the scene is init'd
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
+        if (!this.initialized) {
+            return undefined;
+        }
         switch (event) {
             case this.jumpCode : {
                 this.player.keyJump(true);
@@ -1005,12 +1024,17 @@ class Game {
             }
         }
         this.player.move = this.player.anyMovement();
-        if (Client.online && !this.player.key.equals(this.player.prevKey)) {
-            Client.updateLocRotScaleSelf();
+        if (!this.player.key.equals(this.player.prevKey)) {
+            if (Client.online) {
+                Client.updateLocRotScaleSelf();
+            }
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
     static controlCharacterOnKeyUp(event) {
+        if (!this.initialized) {
+            return undefined;
+        }
         switch (event) {
             case this.jumpCode : {
                 this.player.keyJump(false);
@@ -1060,8 +1084,10 @@ class Game {
             }
         }
         this.player.move = this.player.anyMovement();
-        if (Client.online) {
-            Client.updateLocRotScaleSelf();
+        if (!this.player.key.equals(this.player.prevKey)) {
+            if (Client.online) {
+                Client.updateLocRotScaleSelf();
+            }
             this.player.prevKey.copyFrom(this.player.key);
         }
     }
