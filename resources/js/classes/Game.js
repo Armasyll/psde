@@ -900,7 +900,7 @@ class Game {
     static importProtoItems() {
         Game.importScript("resources/js/items.js");
     }
-    static controlCharacterOnKeyDown(event) {
+    static controlCharacterOnKeyDown(event) { // TODO: Rename or rewrite this to something like controlerCharacterOnKeyDown and controlMenuOnKeyDown; errors are present when attempting these before the scene is init'd
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         switch (event) {
             case this.jumpCode : {
