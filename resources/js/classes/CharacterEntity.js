@@ -833,8 +833,21 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this;
     }
-    detachCosmetic(_cosmetic, _bone) {
-        // TODO: this :v
+    detachCosmetic(_cosmetic, _bone = undefined) {
+        _cosmetic = Game.getCosmetic(_cosmetic);
+        if (_cosmetic == undefined) {
+            return this;
+        }
+        if (_bone instanceof BABYLON.Bone) {
+            _bone = _bone.id;
+        }
+        if (!this.attachedCosmetics.hasOwnProperty(_bone)) {
+            return this;
+        }
+        if (this.hasController()) {
+            this.controller.detachMeshFromBone(_cosmetic.getMeshID());
+        }
+        return this;
     }
 
     clean() {
@@ -1058,7 +1071,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.durability._max;
     }
 
-    setMana(_int) { // TODO: fix all these for StatNumber
+    setMana(_int) {
         this.mana.set(_int);
         return this;
     }

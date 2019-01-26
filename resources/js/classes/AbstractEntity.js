@@ -7,10 +7,11 @@ class AbstractEntity {
      * @param  {String}  _image      Image path or base64
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _type = undefined) {
+        _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
-        this.id = Game.filterID(_id);
+        this.id = _id;
         /**
          * Name
          * @type {String} Can be undefined

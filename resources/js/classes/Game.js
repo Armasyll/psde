@@ -423,6 +423,8 @@ class Game {
         this.charactersToCreate = {};
         this.itemsToCreateCounter = 0;
         this.itemsToCreate = {};
+        this.attachmentsToCreateCounter = 0;
+        this.attachmentsToCreate = {};
 
         this.entityControllers = {};
         this.furnitureControllers = {};
@@ -920,7 +922,7 @@ class Game {
             return undefined;
         }
     }
-    static controlCharacterOnKeyDown(event) { // TODO: Rename or rewrite this to something like controlCharacterOnKeyDown and controlMenuOnKeyDown; errors are present when attempting these before the scene is init'd
+    static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         if (!this.initialized) {
             return undefined;
@@ -1581,23 +1583,23 @@ class Game {
             }
         }
     }
-    static addCharactersToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasCharactersToCreate(_id)) {
+    static addCharacterToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (Game.hasCharacterToCreate(_id)) {
             return true;
         }
         Game.charactersToCreate[_id] = {"id":_id, "name":_name, "description":_description, "image":_image, "age":_age, "sex":_sex, "species":_species, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.charactersToCreateCounter += 1;
         return true;
     }
-    static removeCharactersToCreate(_id) {
-        if (!Game.hasCharactersToCreate(_id)) {
+    static removeCharacterToCreate(_id) {
+        if (!Game.hasCharacterToCreate(_id)) {
             return true;
         }
         delete Game.charactersToCreate[_id];
         Game.charactersToCreateCounter -= 1;
         return true;
     }
-    static hasCharactersToCreate(_id) {
+    static hasCharacterToCreate(_id) {
         return Game.charactersToCreateCounter > 0 && Game.charactersToCreate.hasOwnProperty(_id);
     }
     static _createBackloggedCharacters() {
@@ -1621,27 +1623,27 @@ class Game {
                     Game.charactersToCreate[_i]["rotation"],
                     Game.charactersToCreate[_i]["scaling"]
                 );
-                Game.removeCharactersToCreate(_i);
+                Game.removeCharacterToCreate(_i);
             }
         }
     }
-    static addItemsToCreate(_id, _entity = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasItemsToCreate(_id)) {
+    static addItemToCreate(_id, _entity = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (Game.hasItemToCreate(_id)) {
             return true;
         }
         Game.itemsToCreate[_id] = {"id":_id, "entity":_entity, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.itemsToCreateCounter += 1;
         return true;
     }
-    static removeItemsToCreate(_id) {
-        if (!Game.hasItemsToCreate(_id)) {
+    static removeItemToCreate(_id) {
+        if (!Game.hasItemToCreate(_id)) {
             return true;
         }
         delete Game.itemsToCreate[_id];
         Game.itemsToCreateCounter -= 1;
         return true;
     }
-    static hasItemsToCreate(_id) {
+    static hasItemToCreate(_id) {
         return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(_id);
     }
     static _createBackloggedItems() {
@@ -1650,7 +1652,7 @@ class Game {
         }
         for (var _i in Game.itemsToCreate) {
             if (Game.loadedMeshes.hasOwnProperty(Game.itemsToCreate[_i]["mesh"])) {
-                Game.createItems(
+                Game.createItem(
                     Game.itemsToCreate[_i]["id"],
                     Game.itemsToCreate[_i]["entity"],
                     Game.itemsToCreate[_i]["options"],
@@ -1658,7 +1660,47 @@ class Game {
                     Game.itemsToCreate[_i]["rotation"],
                     Game.itemsToCreate[_i]["scaling"]
                 );
-                Game.removeItemsToCreate(_i);
+                Game.removeItemToCreate(_i);
+            }
+        }
+    }
+    static addAttachmentToCreate(_id, _attachToController, _mesh, _texture, _bone, _position, _rotation, _scaling) {
+        if (Game.hasAttachmentToCreate(_id)) {
+            return true;
+        }
+        Game.attachmentsToCreate[_id] = {"id":_id, "attachToController":_attachToController, "mesh":_mesh, "texture":_texture, "bone":_bone, "position":_position, "rotation":_rotation, "scaling":_scaling};
+        Game.attachmentsToCreateCounter += 1;
+        return true;
+    }
+    static removeAttachmentToCreate(_id) {
+        if (!Game.hasAttachmentToCreate(_id)) {
+            return true;
+        }
+        delete Game.attachmentsToCreate[_id];
+        Game.attachmentsToCreateCounter -= 1;
+        return true;
+    }
+    static hasAttachmentToCreate(_id) {
+        return Game.attachmentsToCreateCounter > 0 && Game.attachmentsToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedAttachments() {
+        if (Game.attachmentsToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.attachmentsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.attachmentsToCreate[_i]["mesh"])) {
+                Game.attachmentsToCreate[_i]["attachToController"] = Game.getEntityController(Game.attachmentsToCreate[_i]["attachToController"]);
+                if (Game.attachmentsToCreate[_i]["attachToController"] instanceof CharacterController) {
+                    Game.attachmentsToCreate[_i]["attachToController"].attachToBone(
+                        Game.attachmentsToCreate[_i]["mesh"],
+                        Game.attachmentsToCreate[_i]["texture"],
+                        Game.attachmentsToCreate[_i]["bone"],
+                        Game.attachmentsToCreate[_i]["position"],
+                        Game.attachmentsToCreate[_i]["rotation"],
+                        Game.attachmentsToCreate[_i]["scaling"]
+                    );
+                }
+                Game.removeAttachmentToCreate(_i);
             }
         }
     }
@@ -2078,7 +2120,7 @@ class Game {
         }
         if (!(Game.hasLoadedMesh(_mesh))) {
             Game.loadMesh(_mesh);
-            Game.addCharactersToCreate(_id, _name, _description, _image, _age, _sex, _species, _mesh, _texture, _options, _position, _rotation, _scaling);
+            Game.addCharacterToCreate(_id, _name, _description, _image, _age, _sex, _species, _mesh, _texture, _options, _position, _rotation, _scaling);
             return true;
         }
         _position.y = _position.y + 0.0076; // Characters start sinking into the ground sometimes
@@ -2345,7 +2387,7 @@ class Game {
         }
         if (!(Game.hasLoadedMesh(_mesh))) { // Never gonna trigger this, but here it is anyway :V
             Game.loadMesh(_mesh);
-            Game.addItemsToCreate(_id, _entity, _options, _position, _rotation, _scaling);
+            Game.addItemToCreate(_id, _entity, _options, _position, _rotation, _scaling);
             return true;
         }
         var _mesh = Game.addItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling, true);

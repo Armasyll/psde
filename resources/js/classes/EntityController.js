@@ -1,9 +1,9 @@
 class EntityController {
     constructor(_id, _mesh, _entity) {
+        _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
-        _id = Game.filterID(_id);
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             return null;
         }

@@ -729,25 +729,40 @@ class CharacterController extends EntityController {
      * @param  {String} _bone               Bone name
      * @param  {BABYLON.Vector3} _position           Mesh position
      * @param  {BABYLON.Vector3} _rotation           Mesh rotation
-     * @param  {BABYLON.Vector3} _scale              Mesh scaling
-     * @param  {Number} _scalingDeterminant Only to be used when attaching a mesh directly; -1 to fix inverted normals, otherwise null.
+     * @param  {BABYLON.Vector3} _scaling              Mesh scaling
      * @return {CharacterController}                     This character controller.
      */
-    attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scale = BABYLON.Vector3.One()) {
-        // TODO: add a new ToCreate for the mesh 'cause it needs to be attached
+    attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
-        _mesh = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scale);
-        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            return null;
+        if (!Game.hasMesh(_mesh)) {
+            return this;
         }
         _bone = this.getBone(_bone);
         if (_bone == null) {
             return this;
         }
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
+        }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) {
+            Game.loadMesh(_mesh);
+            Game.addAttachmentToCreate((this.id + _bone + _mesh), this, _mesh, _texture, _bone, _position, _rotation, _scaling);
+            return this;
+        }
+        _mesh = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
         _mesh.attachToBone(_bone, this.mesh);
         _mesh.position.copyFrom(_position);
         _mesh.rotation.copyFrom(_rotation);
-        if (!(_scale instanceof BABYLON.Vector3)) {
+        if (!(_scaling instanceof BABYLON.Vector3)) {
             _mesh.scaling.copyFrom(this.mesh.scaling);
         }
         if (this.prevAnim == undefined) {
@@ -795,7 +810,7 @@ class CharacterController extends EntityController {
         delete this._meshesAttachedToBones[_bone.id];
         return this;
     }
-    detachMeshFromBone(_mesh) {
+    detachMeshFromBone(_mesh, _bone = undefined) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v
         _mesh = Game.getMesh(_mesh);
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             return this;
@@ -803,9 +818,15 @@ class CharacterController extends EntityController {
         if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
             return this;
         }
-        for (var _bone in this._bonesAttachedToMeshes[_mesh.id]) {
-            if (this._bonesAttachedToMeshes[_mesh.id][_bone] instanceof BABYLON.Bone) {
-                delete this._meshesAttachedToBones[_bone][_mesh.id];
+        _bone = this.getBone(_bone);
+        if (_bone instanceof BABYLON.Bone) {
+            delete this._meshesAttachedToBones[_bone.id][_mesh.id];
+        }
+        else {
+            for (var _boneWithAttachment in this._bonesAttachedToMeshes[_mesh.id]) {
+                if (this._bonesAttachedToMeshes[_mesh.id][_boneWithAttachment] instanceof BABYLON.Bone) {
+                    delete this._meshesAttachedToBones[_boneWithAttachment][_mesh.id];
+                }
             }
         }
         delete this._bonesAttachedToMeshes[_mesh.id];
