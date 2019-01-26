@@ -14,6 +14,8 @@ class ClothingEntity extends ItemEntity {
         this.addAvailableAction("unequip");
         this.setType(_type);
 
+        this.itemType = Game.ITEM_CLOTHING;
+
         Game.setClothingEntity(this.id, this);
     }
     setType(_type) {

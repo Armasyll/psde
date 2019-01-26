@@ -16,6 +16,8 @@ class ItemEntity extends Entity {
         this.mass = 0.001;
         this.price = 0;
 
+        this.itemType = Game.ITEM_GENERAL;
+
         Game.setItemEntity(this.id, this);
 	}
 	setPrice(_int) {

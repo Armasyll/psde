@@ -480,8 +480,21 @@ class Game {
         this.highlightedColorFriend = "green";
         this.highlightedColorNeutral = "white";
 
-        this.MALE = 0, this.FEMALE = 1;
-        this.kCharacterStances = new Array("lay", "sit", "crouch", "stand", "fly");
+        this.MALE = 0;
+        this.FEMALE = 1;
+        this.STANCE_LAY = 0;
+        this.STANCE_SIT = 1;
+        this.STANCE_CROUCH = 2;
+        this.STANCE_STAND = 3;
+        this.STANCE_FLY = 4;
+        this.STANCE_FALL = 5;
+        this.STANCE_SWIM = 6;
+        this.ITEM_GENERAL = 0;
+        this.ITEM_CLOTHING = 1;
+        this.ITEM_KEY = 2;
+        this.ITEM_WEAPON = 3;
+        this.ITEM_CONSUMABLE = 4;
+        this.ITEM_BOOK = 5;
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
@@ -2326,19 +2339,33 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = "general") {
+    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = Game.ITEM_GENERAL) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         var _entity = null;
         switch (_itemType) {
-            case "clothing": {
+            case Game.ITEM_GENERAL : {
+                _entity = new ItemEntity(_id, _name, _description, _image);
+                break;
+            }
+            case Game.ITEM_CLOTHING: {
                 _entity = new ClothingEntity(_id, _name, _description, _image);
                 break;
             }
-            case "key":{
-                _entity = new KeyEntity(_id, _name, _description, _image);
+            case Game.ITEM_WEAPON : {
+                _entity = new WeaponEntity(_id, _name, _description, _image);
+                break;
             }
-            case "general": {}
+            case Game.ITEM_KEY : {
+                _entity = new KeyEntity(_id, _name, _description, _image);
+                break;
+            }
+            case Game.ITEM_BOOK : {
+                //_entity = new BookEntity(_id, _name, _description, _image); // TODO: this :v
+            }
+            case Game.ITEM_CONSUMABLE : {
+                //_entity = new ConsumableEntity(_id, _name, _description, _image); // TODO: this :v
+            }
             default: {
                 _entity = new ItemEntity(_id, _name, _description, _image);
             }
@@ -2354,24 +2381,21 @@ class Game {
     static updateProtoItem() {}
     static removeProtoItem() {}
     static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
         _id = Game.filterID(_id);
         if (_entity instanceof ItemEntity) {
-            _entity = new InstancedItemEntity(_id, _entity);
+            _entity = _entity.createInstance(_id);
         }
-        else if (_entity instanceof InstancedItemEntity) {}
-        else if (_id instanceof InstancedItemEntity) {
-            _entity = _id;
-            _id = _entity.getID();
+        else if (_entity instanceof InstancedItemEntity) {
+            _entity = _entity.clone(_id);
         }
         else if (typeof _entity == "string" && Game.hasProtoItemEntity(_entity)) {
-            _entity = new InstancedItemEntity(_id, Game.getProtoItemEntity(_entity));
+            _entity = Game.getProtoItemEntity(_entity).createInstance(_id);
         }
         else {
             return null;
-        }
-        if (!Game.hasMesh(_mesh)) {
-            _mesh = Game.getAbstractMesh("missingMesh");
         }
         if (!(_position instanceof BABYLON.Vector3)) {
             _position = Game.filterVector(_position);
@@ -2385,12 +2409,12 @@ class Game {
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(_mesh))) { // Never gonna trigger this, but here it is anyway :V
-            Game.loadMesh(_mesh);
+        if (!(Game.hasLoadedMesh(_entity.getMeshID()))) { // Never gonna trigger this, but here it is anyway :V
+            Game.loadMesh(_entity.getMeshID());
             Game.addItemToCreate(_id, _entity, _options, _position, _rotation, _scaling);
             return true;
         }
-        var _mesh = Game.addItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling, true);
+        var _mesh = Game.addItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling);
         var _controller = new ItemController(_id, _mesh, _entity);
         _entity.setController(_controller);
         return _controller;

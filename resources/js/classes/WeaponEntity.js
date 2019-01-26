@@ -14,6 +14,8 @@ class WeaponEntity extends ItemEntity {
         this.addAvailableAction("unequip");
         this.setType(_type);
 
+        this.itemType = Game.ITEM_WEAPON;
+
         Game.setWeaponEntity(this.id, this);
     }
     setType(_type) {
