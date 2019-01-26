@@ -446,6 +446,7 @@ class Game {
         this.instancedWeaponEntities = {};
 
         this.dialogues = {};
+        this.cosmetics = {};
 
         this._finishedInitializing = false;
         this._finishedFirstLoad = false;
@@ -906,6 +907,9 @@ class Game {
     static importProtoItems() {
         Game.importScript("resources/js/items.js");
     }
+    static importCosmetics() {
+        Game.importScript("resources/js/cosmetics.js");
+    }
     static controlMenuOnKeyDown(event) {
         if (!this.initialized) {
             return undefined;
@@ -992,6 +996,17 @@ class Game {
                 break;
             }
             case this.useTargetedEntityCode : {
+                /*
+                    TODO: on press (which it's being right now) begin a timeout for 1.5 (or w/e) seconds that opens a radial for additional interfacing;
+                        if the key is released before then, which should be handled in controlCharacterOnKeyDown's useTargetedEntityCode, delete the timeout function
+                        if the key isn't released before then, run the function, which deletes the timeout function, and opens the radial for additional interface
+                        
+                        _radialBeginInterval() {
+                            Game.setInterval(Game.castRayTarget, Game._radianIntervalFunction);
+                        }
+                        _radialEndInterval() {}
+                        _radianIntervalFunction() {}
+                 */
                 break;
             }
             case this.interfaceTargetedEntityCode : {
@@ -1072,10 +1087,7 @@ class Game {
                 if (!(this.player.targetController instanceof EntityController)) {
                     return;
                 }
-                if (this.player.targetController.getEntity() instanceof InstancedEntity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
-                }
-                else if (this.player.targetController.getEntity() instanceof Entity) {
+                if (this.player.targetController.getEntity() instanceof AbstractEntity) {
                     this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
                 }
                 break;
@@ -2356,6 +2368,21 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
+    static createCosmetic(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined) {
+        return new Cosmetic(_id, _name, _description, _image, _mesh, _texture);
+    }
+    static getCosmetic(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof Cosmetic) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.cosmetics.hasOwnProperty(_id)) {
+            return Game.cosmetics[_id];
+        }
+        return null;
+    }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh)) {
             return;
@@ -2568,14 +2595,17 @@ class Game {
             else if (_action == "sit" && _entity instanceof FurnitureEntity) {
                 Game.actionSitFunction(_entity.getController(), _subEntity.getController());
             }
-            else if (_action == "open" && _entity instanceof DoorEntity) {
+            else if (_action == "open" && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
                 Game.actionOpenFunction(_entity.getController(), _subEntity.getController());
             }
-            else if (_action == "close" && _entity instanceof DoorEntity) {
+            else if (_action == "close" && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
                 Game.actionCloseFunction(_entity.getController(), _subEntity.getController());
             }
             else if (_action == "talk" && _entity instanceof CharacterEntity) {
                 Game.actionTalkFunction(_entity.getController(), _subEntity.getController());
+            }
+            else if (_action == "steal" && _entity instanceof EntityWithStorage) {
+                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
             }
             return;
         }
@@ -3010,6 +3040,20 @@ class Game {
         }
         Game.dialogues = {};
     }
+
+    static setCosmetic(_id, _cosmetic) {
+        Game.cosmetics[_id] = _cosmetic;
+    }
+    static removeCosmetic(_id) {
+        delete Game.cosmetics[_id];
+    }
+    static clearCosmetics() {
+        for (var _i in Game.cosmetics) {
+            Game.cosmetics[_i].dispose();
+        }
+        Game.cosmetics = {};
+    }
+
     static calculateLevel(_int) {
         _int = Game.filterInt(_int);
         if (_int >= Game.XP_MAX) {

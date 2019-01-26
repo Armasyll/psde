@@ -10,7 +10,7 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "resources/images/icons/characters/genericCharacter.svg", _class = "classless", _age = 33, _sex = 0, _species = "fox") {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacter", _class = "classless", _age = 33, _sex = 0, _species = "fox") {
         super(_id);
         /**
          * Surname
@@ -70,24 +70,30 @@ class CharacterEntity extends EntityWithStorage {
          */
         this.handedness = "hand.r";
         /**
-         * Entities this CharacterEntity has equiped
-         * @type {<String, AbstractEntity>} Bone ID and AbstractEntity
+         * Mesh IDs this CharacterEntity has attached; they're really just meshes :l
+         * @type {<String, <String, BABYLON.InstancedMesh>>} Bone ID and Mesh ID, and BABYLON.InstancedMesh
          */
-        this.attachedEntities = { // TODO: allow for multiple attached meshes... which wouldn't be here, i guess :v idk; hair cosmetic + helmet v:
-            "ROOT":null,
-            "FOCUS":null,
-            "head":null,
+        this.attachedCosmetics = {
+            "ROOT":{},
+            "FOCUS":{},
+            "head":{},
+            "ear.l":{},
+            "ear.r":{},
+            "eye.l":{},
+            "eye.r":{},
+            "neck":{}
+        };
+        /**
+         * Entities this CharacterEntity has equipped
+         * @type {<String, InstancedEntity>} Bone ID and InstancedEntity
+         */
+        this.equippedEntities = {
             "ear.l":null,
             "ear.r":null,
-            "eye.l":null,
-            "eye.r":null,
-            "neck":null,
-            "shoulder.l":null,
-            "shoulder.r":null,
             "hand.l":null,
             "hand.r":null,
-            "foot.l":null,
-            "foot.r":null
+            "head":null,
+            "neck":null
         };
         /**
          * Current Phone this CharacterEntity is using
@@ -711,7 +717,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     getEquipment() {
-        return this.attachedEntities;
+        return this.equippedEntities;
     }
     equipEntity(_entity, _bone = undefined) {
         if (_bone instanceof BABYLON.Bone) {
@@ -721,10 +727,10 @@ class CharacterEntity extends EntityWithStorage {
         if (!(_entity instanceof AbstractEntity)) {
             return this;
         }
-        if (!(this.attachedEntities.hasOwnProperty(_bone))) {
+        if (!(this.equippedEntities.hasOwnProperty(_bone))) {
             
         }
-        this.attachedEntities[_bone] = _entity;
+        this.equippedEntities[_bone] = _entity;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
             switch (_bone) {
                 case "head": {
@@ -746,7 +752,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     unequipEntity(_blob) {
-        if (_blob instanceof BABYLON.Bone || this.attachedEntities.hasOwnProperty(_blob)) {
+        if (_blob instanceof BABYLON.Bone || this.equippedEntities.hasOwnProperty(_blob)) {
             return this.unequipByBone(_blob);
         }
         else {
@@ -757,9 +763,9 @@ class CharacterEntity extends EntityWithStorage {
         _entity = Game.getEntity(_entity);
         var _bone = null;
         if (_entity instanceof AbstractEntity) {
-            for (var _i in this.attachedEntities) {
-                if (this.attachedEntities[_i] == _entity) {
-                    this.attachedEntities[_i] = null;
+            for (var _i in this.equippedEntities) {
+                if (this.equippedEntities[_i] == _entity) {
+                    this.equippedEntities[_i] = null;
                     _bone = _i;
                 }
             }
@@ -773,7 +779,7 @@ class CharacterEntity extends EntityWithStorage {
         if (_bone instanceof BABYLON.Bone) {
             _bone = _bone.id;
         }
-        this.attachedEntities[_bone] = null;
+        this.equippedEntities[_bone] = null;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
             this.controller.detachFromBone(_bone);
         }
@@ -783,23 +789,53 @@ class CharacterEntity extends EntityWithStorage {
         if (_blob instanceof BABYLON.Bone) {
             _blob = _blob.id;
         }
-        if (this.attachedEntities.hasOwnProperty(_blob)) {
-            return this.attachedEntities[_blob] != null;
+        if (this.equippedEntities.hasOwnProperty(_blob)) {
+            return this.equippedEntities[_blob] != null;
         }
         _blob = Game.getEntity(_blob);
         if (!(_blob instanceof AbstractEntity)) {
             return false;
         }
-        for (var _bone in this.attachedEntities) {
-            if (this.attachedEntities[_bone] instanceof AbstractEntity) {
-                if (this.attachedEntities[_bone].id == _blob.id) {
+        for (var _bone in this.equippedEntities) {
+            if (this.equippedEntities[_bone] instanceof AbstractEntity) {
+                if (this.equippedEntities[_bone].id == _blob.id) {
                     return true;
                 }
             }
         }
         return false;
     }
-    
+    getAttachedCosmetics(_bone = undefined) {
+        if (_bone instanceof BABYLON.Bone) {
+            _bone = _bone.id;
+        }
+        if (this.attachedCosmetics.has(_bone)) {
+            return this.attachedCosmetics[_bone];
+        }
+        return this.attachedCosmetics;
+    }
+    attachCosmetic(_cosmetic, _bone) {
+        _cosmetic = Game.getCosmetic(_cosmetic);
+        if (_cosmetic == undefined) {
+            return this;
+        }
+        if (_bone instanceof BABYLON.Bone) {
+            _bone = _bone.id;
+        }
+        if (!this.attachedCosmetics.hasOwnProperty(_bone)) {
+            return this;
+        }
+        this.attachedCosmetics[_bone][_cosmetic.id] = _cosmetic;
+        if (this.hasController()) {
+            if (_bone == "head") {
+                this.controller.attachToHead(_cosmetic.getMeshID(), _cosmetic.getMaterialID());
+            }
+        }
+        return this;
+    }
+    detachCosmetic(_cosmetic, _bone) {
+        // TODO: this :v
+    }
 
     clean() {
         this.cleanliness = 100;

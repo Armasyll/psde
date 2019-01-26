@@ -6,7 +6,7 @@ class AbstractEntity {
      * @param  {String} _description Description
      * @param  {String}  _image      Image path or base64
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = undefined) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _type = undefined) {
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
@@ -96,9 +96,22 @@ class AbstractEntity {
         return this.image;
     }
     setMeshID(_mesh) {
-        _mesh = Game.loadMesh(_mesh);
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            this.meshID = _mesh.name;
+        var _loadedMesh = Game.loadMesh(_mesh);
+        if (_loadedMesh instanceof BABYLON.AbstractMesh) {
+            if (_loadedMesh.id == "loadingMesh") {
+                if (_mesh instanceof BABYLON.AbstractMesh) {
+                    this.meshID = _mesh.id;
+                }
+                else {
+                    this.meshID = _mesh;
+                }
+            }
+            else if (_loadedMesh.id == "missingMesh") {
+                this.meshID = "missingMesh";
+            }
+            else {
+                this.meshID = _loadedMesh.name;
+            }
         }
         else {
             this.meshID = "missingMesh";
