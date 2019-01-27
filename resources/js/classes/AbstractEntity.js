@@ -58,7 +58,7 @@ class AbstractEntity {
          * @type {Number} 0.001 to Number.MAX_SAFE_INTEGER
          */
         this.mass = 0.001;
-        this.durability = new StatNumber(1);
+        this.durability = new BoundedNumber(100, 0, 100);
 
         this.addAvailableAction("look");
         this.addSpecialProperty("exists");

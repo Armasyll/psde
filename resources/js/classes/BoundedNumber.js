@@ -1,4 +1,4 @@
-class StatNumber {
+class BoundedNumber {
     /**
      * Creates a wrapper for safely incrementing and decrementing a number, with minimum and maximum values.
      * @param  {Number} _val Value, default is 1
@@ -132,7 +132,7 @@ class StatNumber {
         return this;
     }
     clone() {
-        return new StatNumber(this._val, this._min, this._max, this._lockValue);
+        return new BoundedNumber(this._val, this._min, this._max, this._lockValue);
     }
     toString() {
         if (isNaN(this._val)) {
@@ -143,6 +143,6 @@ class StatNumber {
         }
     }
     toSource() {
-        return "new StatNumber(" + uneval(this._val) + "," + uneval(this._min) + "," + (this._max) + ", " + uneval(this._lockedValue) + ")";
+        return "new BoundedNumber(" + uneval(this._val) + "," + uneval(this._min) + "," + (this._max) + ", " + uneval(this._lockedValue) + ")";
     }
 }

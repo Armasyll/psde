@@ -32,17 +32,17 @@ class CharacterEntity extends EntityWithStorage {
          * Age
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.age = new StatNumber(0, 0, Number.MAX_SAFE_INTEGER);
+        this.age = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         /**
          * Physical sexual identity
          * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
          */
-        this._sex = new StatNumber(0, 0, 2);
+        this._sex = new BoundedNumber(0, 0, 2);
         /**
          * Personal sexual identity
          * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
          */
-        this.gender = new StatNumber(0, 0, 2);
+        this.gender = new BoundedNumber(0, 0, 2);
         /**
          * Intraactions this CharacterEntity is currently performing
          * @type {Map} <Game.kIntraactionTypes>
@@ -53,7 +53,7 @@ class CharacterEntity extends EntityWithStorage {
          * 0 - Lay, 1 - Sit, 2 - Crouch, 3 - Stand, 4 - Fly
          * @type {Number}
          */
-        this.stance = new StatNumber(3, 0, 4);
+        this.stance = new BoundedNumber(3, 0, 4);
         /**
          * Locations known by this Character
          * @type {Set} <Location>
@@ -111,112 +111,112 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Number}  Hate
          */
         this.defaultDisposition = {
-            passion:new StatNumber(0, 0, 100),
-            friendship:new StatNumber(0, 0, 100),
-            playfulness:new StatNumber(0, 0, 100),
-            soulmate:new StatNumber(0, 0, 100),
-            familial:new StatNumber(0, 0, 100),
-            obsession:new StatNumber(0, 0, 100),
-            hate:new StatNumber(0, 0, 100)
+            passion:new BoundedNumber(0, 0, 100),
+            friendship:new BoundedNumber(0, 0, 100),
+            playfulness:new BoundedNumber(0, 0, 100),
+            soulmate:new BoundedNumber(0, 0, 100),
+            familial:new BoundedNumber(0, 0, 100),
+            obsession:new BoundedNumber(0, 0, 100),
+            hate:new BoundedNumber(0, 0, 100)
         };
         /**
          * This Character's love for themself
          * @type {Number} 0 to 100
          */
-        this.philautia = new StatNumber(50, 0, 100);
+        this.philautia = new BoundedNumber(50, 0, 100);
         /**
          * This Character's love for others
          * @type {Number} 0 to 100
          */
-        this.agape = new StatNumber(50, 0, 100);
+        this.agape = new BoundedNumber(50, 0, 100);
         /**
          * Optimism, carefree attitude, pleasure-seeking; may compliment philautia
          * @type {Number} 0 to 100
          */
-        this.sanguine = new StatNumber(0, 0, 100);
+        this.sanguine = new BoundedNumber(0, 0, 100);
         /**
          * Caring, preservation, helpfulness; may compliment agape
          * @type {Number} 0 to 100
          */
-        this.phlegmatic = new StatNumber(0, 0, 100);
+        this.phlegmatic = new BoundedNumber(0, 0, 100);
         /**
          * Practical, logical, asocial
          * @type {Number} 0 to 100
          */
-        this.choleric = new StatNumber(0, 0, 100);
+        this.choleric = new BoundedNumber(0, 0, 100);
         /**
          * Tradition, stability, order
          * @type {Number} 0 to 100
          */
-        this.melancholic = new StatNumber(0, 0, 100);
+        this.melancholic = new BoundedNumber(0, 0, 100);
         /**
          * Hunger; may affect health, stamina, and mana regeneration
          * @type {Number} 0 to 100
          */
-        this.hunger = new StatNumber(0, 0, 100);
+        this.hunger = new BoundedNumber(0, 0, 100);
         /**
          * Physical power
          * @type {Number}
          */
-        this.strength = new StatNumber(10, 1, 30);
+        this.strength = new BoundedNumber(10, 1, 30);
         /**
          * Agility
          * @type {Number}
          */
-        this.dexterity = new StatNumber(10, 1, 30);
+        this.dexterity = new BoundedNumber(10, 1, 30);
         /**
          * Endurance
          * @type {Number}
          */
-        this.constitution = new StatNumber(10, 1, 30);
+        this.constitution = new BoundedNumber(10, 1, 30);
         /**
          * Reasoning and memory
          * @type {Number}
          */
-        this.intelligence = new StatNumber(10, 1, 30);
+        this.intelligence = new BoundedNumber(10, 1, 30);
         /**
          * Perception and insight
          * @type {Number}
          */
-        this.wisdom = new StatNumber(10, 1, 30);
+        this.wisdom = new BoundedNumber(10, 1, 30);
         /**
          * Force of personality
          * @type {Number}
          */
-        this.charisma = new StatNumber(10, 1, 30);
-        this.experiencePoints = new StatNumber(0, Game.XP_MIN, Game.XP_MAX);
-        this.level = new StatNumber(1, Game.LEVEL_MIN, Game.LEVEL_MAX);
+        this.charisma = new BoundedNumber(10, 1, 30);
+        this.experiencePoints = new BoundedNumber(0, Game.XP_MIN, Game.XP_MAX);
+        this.level = new BoundedNumber(1, Game.LEVEL_MIN, Game.LEVEL_MAX);
         this.durability.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.mana = new StatNumber(0, 0, 0);
+        this.mana = new BoundedNumber(0, 0, 0);
         /**
          * Mana cost offset percentage when casting spells
          * @type {Number} -100 to 100
          */
-        this.manaCostOffsetPercent = new StatNumber(0, -100, 100);
+        this.manaCostOffsetPercent = new BoundedNumber(0, -100, 100);
         /**
          * Stamina; should this drop to 0, u unconscious
          * @type {Number} 0 to 100
          */
-        this.stamina = new StatNumber(100, 0, 100);
+        this.stamina = new BoundedNumber(100, 0, 100);
         /**
          * Money
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.money = new StatNumber(0, 0, Number.MAX_SAFE_INTEGER);
+        this.money = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         /**
          * Sanity; may affect mana regeneration, mana, and manaCostOffsetPercent
          * @type {Number} 0 to 100
          */
-        this.sanity = new StatNumber(100, 0, 100);
+        this.sanity = new BoundedNumber(100, 0, 100);
         /**
          * Lust
          * @type {Number} 0 to 100
          */
-        this.lust = new StatNumber(25, 0, 100);
+        this.lust = new BoundedNumber(25, 0, 100);
         /**
          * Whether or not this CharacterEntity is in rut
          * @type {Boolean} True - yes, false - no
@@ -564,7 +564,7 @@ class CharacterEntity extends EntityWithStorage {
          * Sexual orientation
          * @type {Number} 0 - straight, 1 - gay, 2 - bi
          */
-        this.sexualOrientation = new StatNumber(0, 0, 2);
+        this.sexualOrientation = new BoundedNumber(0, 0, 2);
         /**
          * Preferred penis size in males
          * @type {Number}
@@ -604,27 +604,27 @@ class CharacterEntity extends EntityWithStorage {
          * Preference for public sex
          * @type {Number} 0 to 100
          */
-        this.exhibitionism = new StatNumber(0, 0, 100);
+        this.exhibitionism = new BoundedNumber(0, 0, 100);
         /**
          * Preference for sleep sex
          * @type {Number} 0 to 100
          */
-        this.somnophilia = new StatNumber(0, 0, 100);
+        this.somnophilia = new BoundedNumber(0, 0, 100);
         /**
          * Drunkenness
          * @type {Number} 0 to 100
          */
-        this.intoxication = new StatNumber(0, 0, 100);
+        this.intoxication = new BoundedNumber(0, 0, 100);
         /**
          * Alcohol tolerance
          * @type {Number} 0 to 100
          */
-        this.alcoholTolerance = new StatNumber(0, 0, 100);
+        this.alcoholTolerance = new BoundedNumber(0, 0, 100);
         /**
          * Preference for incest
          * @type {Number} 0 to 100
          */
-        this.incestual = new StatNumber(0, 0, 100);
+        this.incestual = new BoundedNumber(0, 0, 100);
 
         /**
          * Initial dialogue
@@ -833,7 +833,7 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this;
     }
-    detachCosmetic(_cosmetic, _bone = undefined) {
+    detachCosmetic(_cosmetic, _bone = undefined) { // TODO: this, still :v
         _cosmetic = Game.getCosmetic(_cosmetic);
         if (_cosmetic == undefined) {
             return this;
