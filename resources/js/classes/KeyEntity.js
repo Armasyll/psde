@@ -2,6 +2,8 @@ class KeyEntity extends ItemEntity {
 	constructor(_id, _name, _description, _image) {
 		super(_id, _name, _description, _image);
 
+        this.itemType = Game.ItemEnum.KEY;
+
 		Game.setKeyEntity(this.id, this);
 	}
 	dispose() {

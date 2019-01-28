@@ -480,21 +480,101 @@ class Game {
         this.highlightedColorFriend = "green";
         this.highlightedColorNeutral = "white";
 
-        this.MALE = 0;
-        this.FEMALE = 1;
-        this.STANCE_LAY = 0;
-        this.STANCE_SIT = 1;
-        this.STANCE_CROUCH = 2;
-        this.STANCE_STAND = 3;
-        this.STANCE_FLY = 4;
-        this.STANCE_FALL = 5;
-        this.STANCE_SWIM = 6;
-        this.ITEM_GENERAL = 0;
-        this.ITEM_CLOTHING = 1;
-        this.ITEM_KEY = 2;
-        this.ITEM_WEAPON = 3;
-        this.ITEM_CONSUMABLE = 4;
-        this.ITEM_BOOK = 5;
+        this.SexEnum = {
+            MALE: 0,
+            FEMALE: 1,
+            properties: {
+                0: {
+                    name: "Male",
+                    value: 0
+                },
+                1: {
+                    name: "Female",
+                    value: 1
+                }
+            }
+        }
+        this.StanceEnum = {
+            LAY: 0,
+            SIT: 1,
+            CROUCH: 2,
+            STAND: 3,
+            FLY: 4,
+            FALL: 5,
+            SWIM: 6,
+            properties: {
+                0: {
+                    name: "Lay",
+                    value: 0
+                },
+                1: {
+                    name: "Sit",
+                    value: 1
+                },
+                2: {
+                    name: "Crouch",
+                    value: 2
+                },
+                3: {
+                    name: "Stand",
+                    value: 3
+                },
+                4: {
+                    name: "Fly",
+                    value: 4
+                },
+                5: {
+                    name: "Fall",
+                    value: 5
+                },
+                6: {
+                    name: "Swim",
+                    value: 6
+                }
+            }
+        };
+        this.ItemEnum = {
+            GENERAL: 0,
+            CLOTHING: 1,
+            KEY: 2,
+            WEAPON: 3,
+            CONSUMABLE: 4,
+            BOOK: 5,
+            TRASH: 6,
+            properties: {
+                0: {
+                    name: "General",
+                    value: 0,
+                },
+                1: {
+                    name: "Clothing",
+                    value: 1,
+                },
+                2: {
+                    name: "Key",
+                    value: 2,
+                },
+                3: {
+                    name: "Weapon",
+                    value: 3,
+                },
+                4: {
+                    name: "Consumable",
+                    value: 4,
+                },
+                5: {
+                    name: "Book",
+                    value: 5,
+                },
+                6: {
+                    name: "Trash",
+                    value: 7
+                }
+            }
+        };
+        this.ClothingEnum = {
+            
+        }
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
         this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
@@ -1596,7 +1676,7 @@ class Game {
             }
         }
     }
-    static addCharacterToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static addCharacterToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.hasCharacterToCreate(_id)) {
             return true;
         }
@@ -2113,7 +2193,7 @@ class Game {
      * @param  {BABYLON.Vector3} _scaling     Scale
      * @return {CharacterController}          Character Controller
      */
-    static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
@@ -2142,7 +2222,7 @@ class Game {
         if (_loadedMesh == undefined) {
             switch (_entity.species) {
                 case "fox" : {
-                    if (_entity.getSex() == Game.MALE) {
+                    if (_entity.getSex() == Game.SexEnum.MALE) {
                         _loadedMesh = "foxM";
                     }
                     else {
@@ -2159,7 +2239,7 @@ class Game {
                     break;
                 }
                 default : {
-                    if (_entity.getSex() == Game.MALE) {
+                    if (_entity.getSex() == Game.SexEnum.MALE) {
                         _loadedMesh = "foxM";
                     }
                     else {
@@ -2339,31 +2419,31 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = Game.ITEM_GENERAL) {
+    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = Game.ItemEnum.GENERAL, _itemSubType = 0) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         var _entity = null;
         switch (_itemType) {
-            case Game.ITEM_GENERAL : {
+            case Game.ItemEnum.GENERAL : {
                 _entity = new ItemEntity(_id, _name, _description, _image);
                 break;
             }
-            case Game.ITEM_CLOTHING: {
+            case Game.ItemEnum.CLOTHING: {
                 _entity = new ClothingEntity(_id, _name, _description, _image);
                 break;
             }
-            case Game.ITEM_WEAPON : {
+            case Game.ItemEnum.WEAPON : {
                 _entity = new WeaponEntity(_id, _name, _description, _image);
                 break;
             }
-            case Game.ITEM_KEY : {
+            case Game.ItemEnum.KEY : {
                 _entity = new KeyEntity(_id, _name, _description, _image);
                 break;
             }
-            case Game.ITEM_BOOK : {
+            case Game.ItemEnum.BOOK : {
                 //_entity = new BookEntity(_id, _name, _description, _image); // TODO: this :v
             }
-            case Game.ITEM_CONSUMABLE : {
+            case Game.ItemEnum.CONSUMABLE : {
                 //_entity = new ConsumableEntity(_id, _name, _description, _image); // TODO: this :v
             }
             default: {

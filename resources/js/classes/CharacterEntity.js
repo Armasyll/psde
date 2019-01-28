@@ -2223,7 +2223,7 @@ class CharacterEntity extends EntityWithStorage {
         this.muscle = 0.5;
         this.fat = 0.25;
         if (this.species == "fox") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 36;
@@ -2245,7 +2245,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "wolf") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
                 _baseMass = 72;
@@ -2267,7 +2267,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "aardwolf") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 32;
@@ -2289,7 +2289,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "hyena") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
                 _baseMass = 58;
@@ -2311,7 +2311,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "sheep") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 19;
                 this.penisGirth = 11;
                 _baseMass = 34;
@@ -2333,7 +2333,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("wool");
         }
         else if (this.species == "stoat") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 8;
                 this.penisGirth = 7;
                 _baseMass = 10;
@@ -2355,7 +2355,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "deer") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
                 _baseMass = 78;
@@ -2377,7 +2377,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("wool");
         }
         else if (this.species == "rabbit") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 12;
                 this.penisGirth = 8;
                 _baseMass = 22;
@@ -2399,7 +2399,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "jackal") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 18;
                 this.penisGirth = 12;
                 _baseMass = 55;
@@ -2421,7 +2421,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "coyote") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 36;
@@ -2443,7 +2443,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "tiger") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 28;
                 this.penisGirth = 15;
                 _baseMass = 88;
@@ -2464,7 +2464,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("fur");
         }
         else if (this.species == "antelope") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
                 _baseMass = 68;
@@ -2486,7 +2486,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("hair");
         }
         else if (this.species == "pig") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 46;
@@ -2508,7 +2508,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("skin");
         }
         else if (this.species == "horse") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 this.penisSize = 45;
                 this.penisGirth = 25;
                 _baseMass = 82;
@@ -2530,7 +2530,7 @@ class CharacterEntity extends EntityWithStorage {
             this.setFur("hair");
         }
         else if (this.species == "mouse") {
-            if (this.getSex() == Game.MALE) {
+            if (this.getSex() == Game.SexEnum.MALE) {
                 _baseMass = 0.4;
                 _baseHeight = 0.16;
                 _baseWidth = 0.05;
