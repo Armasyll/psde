@@ -56,7 +56,7 @@ class Game {
             "coffinClosed01":"resources/data/furniture.babylon",
             "bedMattressFrame01":"resources/data/furniture.babylon",
             "bedFrame01":"resources/data/furniture.babylon",
-            "mattressSingle":"resources/data/furniture.babylon",
+            "mattress01":"resources/data/furniture.babylon",
             "bookshelfThin":"resources/data/furniture.babylon",
             "couch02":"resources/data/furniture.babylon",
             "nightstandDoubleDrawer":"resources/data/furniture.babylon",

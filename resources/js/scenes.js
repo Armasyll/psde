@@ -173,7 +173,7 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("ozzyBed", "Bed", "bedMattressFrame01", undefined, Game.FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(2, 2, 2));
+    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, Game.FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(2, 2, 2));
 
     // Ozzy Bathroom
     Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
