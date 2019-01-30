@@ -153,6 +153,11 @@ class Game {
             "cudgel01":"resources/data/items.babylon",
             "morningstar01":"resources/data/items.babylon",
             "glass01":"resources/data/items.babylon",
+            "gem03":"resources/data/items.babylon",
+            "gem04":"resources/data/items.babylon",
+            "gem05":"resources/data/items.babylon",
+            "gem06":"resources/data/items.babylon",
+            "gem08":"resources/data/items.babylon",
             "plate01":"resources/data/items.babylon",
             "greatSword01":"resources/data/items.babylon",
             "katana01":"resources/data/items.babylon",
@@ -579,6 +584,110 @@ class Game {
         };
         this.ClothingEnum = {
             
+        }
+        this.FurnitureEnum = {
+            CHAIR: 0,
+            LOVESEAT: 1,
+            COUCH: 2,
+            BED: 3,
+            DESK: 4,
+            SHELF: 5,
+            CUPBOARD: 6,
+            CABINET: 7,
+            BUREAU: 8,
+            TELEVISION: 9,
+            REFRIGERATOR: 10,
+            OVEN: 11,
+            MICROWAVE: 12,
+            TOASTER: 13,
+            TUB: 14,
+            SHOWER: 15,
+            SINK: 16,
+            TOILET: 17,
+            MIRROR: 18,
+            BASKET: 19,
+            properties: {
+                0: {
+                    name: "Chair",
+                    value: 0
+                },
+                1: {
+                    name: "Loveseat",
+                    value: 1
+                },
+                2: {
+                    name: "Couch",
+                    value: 2
+                },
+                3: {
+                    name: "Bed",
+                    value: 3
+                },
+                4: {
+                    name: "Desk",
+                    value: 4
+                },
+                5: {
+                    name: "Shelf",
+                    value: 5
+                },
+                6: {
+                    name: "Cupboard",
+                    value: 6
+                },
+                7: {
+                    name: "Cabinet",
+                    value: 7
+                },
+                8: {
+                    name: "Bureau",
+                    value: 8
+                },
+                9: {
+                    name: "Television",
+                    value: 9
+                },
+                10: {
+                    name: "Refrigerator",
+                    value: 10
+                },
+                11: {
+                    name: "Oven",
+                    value: 11
+                },
+                12: {
+                    name: "Microwave",
+                    value: 12
+                },
+                13: {
+                    name: "Toaster",
+                    value: 13
+                },
+                14: {
+                    name: "Tub",
+                    value: 14
+                },
+                15: {
+                    name: "Shower",
+                    value: 15
+                },
+                16: {
+                    name: "Sink",
+                    value: 16
+                },
+                17: {
+                    name: "Toilet",
+                    value: 17
+                },
+                18: {
+                    name: "Mirror",
+                    value: 18
+                },
+                19: {
+                    name: "Basket",
+                    value: 19
+                }
+            }
         }
         this.kSpeciesTypes = new Set(["fox", "skeleton"]);
         this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
@@ -2345,7 +2454,7 @@ class Game {
      * Created a FurnitureController, FurnitureEntity, and BABYLON.InstancedMesh
      * @param  {String}  _id                  Unique ID, randomly generated if undefined
      * @param  {String}  _name                Name
-     * @param  {String}  _type                Furniture type
+     * @param  {Number}  _type                Furniture type
      * @param  {String}  _mesh                String or Mesh
      * @param  {String}  _texture             String or Texture
      * @param  {Object}  _options             Physics options
@@ -2384,34 +2493,6 @@ class Game {
         var _controller = new FurnitureController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
         _entity.setMeshID(_loadedMesh);
-        switch (_entity.getType()) {
-            case "chair" :
-            case "loveseat" :
-            case "couch" : {
-                _controller.getEntity().setDefaultAction("sit");
-                break;
-            }
-            case "bed" : {
-                _controller.getEntity().setDefaultAction("lay");
-                break;
-            }
-            case "desk" :
-            case "shelf" :
-            case "cupboard" :
-            case "cabinet" :
-            case "bureau" :
-            case "refrigerator" :
-            case "oven" :
-            case "microwave" :
-            case "toaster" :
-            case "basket" : {
-                _controller.getEntity().setDefaultAction("open");
-                break;
-            }
-            default : {
-                
-            }
-        }
         return _controller;
     }
     static removeFurniture(_controller) {

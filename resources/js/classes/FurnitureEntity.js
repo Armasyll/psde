@@ -4,132 +4,153 @@ class FurnitureEntity extends EntityWithStorage {
      * @param  {String}  _id            Unique ID
      * @param  {String}  _name          Name
      * @param  {String}  _description   Description
-     * @param  {String}  _type          furnitureType
+     * @param  {Number}  _type          furnitureType
      * @param  {Number}  _seatingSpace  Seating Space
      * @param  {Number}  _storageSpace  Storage Space
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = "chair") {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = Game.FurnitureEnum.CHAIR) {
         super(_id, _name, _description, _image);
 
-        this.type = undefined;
+        this.type = 0;
         this.setType(_type);
 
         Game.furnitureEntities[this.id] = this;
     }
 
     setType(_type) {
-        _type = Game.filterID(_type);
+        this.type = Game.filterNumber(_type);
         switch(this.type) {
-            case "bed" : {
+            case Game.FurnitureEnum.BED: {
                 this.addAvailableAction("open");
                 this.addAvailableAction("sleep");
                 this.addAvailableAction("lay");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("lay");
                 break;
             }
-            case "chair" : {
+            case Game.FurnitureEnum.CHAIR: {
                 this.addAvailableAction("sit");
                 this.addAvailableAction("sleep");
+                this.setDefaultAction("sit");
                 break;
             }
-            case "loveseat" : {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
-                break;
-            }
-            case "couch" : {
+            case Game.FurnitureEnum.LOVESEAT: {
                 this.addAvailableAction("open");
                 this.addAvailableAction("sleep");
                 this.addAvailableAction("lay");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("sit");
                 break;
             }
-            case "table" : {
+            case Game.FurnitureEnum.COUCH: {
+                this.addAvailableAction("open");
+                this.addAvailableAction("sleep");
+                this.addAvailableAction("lay");
+                this.addAvailableAction("sit");
+                this.setDefaultAction("sit");
+                break;
+            }
+            case Game.FurnitureEnum.TABLE: {
                 this.addAvailableAction("open");
                 this.addAvailableAction("sleep");
                 this.addAvailableAction("sit");
                 break;
             }
-            case "desk" : {
+            case Game.FurnitureEnum.DESK: {
                 this.addAvailableAction("open");
                 this.addAvailableAction("sleep");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("open");
                 break;
             }
-            case "shelf" : {
+            case Game.FurnitureEnum.SHELF: {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "cupboard" : {
+            case Game.FurnitureEnum.CUPBOARD: {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "cabinet" : {
+            case Game.FurnitureEnum.CABINET: {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "bureau" : {
+            case Game.FurnitureEnum.BUREAU: {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "tv" : {
+            case Game.FurnitureEnum.TELEVISION : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("look");
+                this.setDefaultAction("use");
                 break;
             }
-            case "refrigerator" : {
+            case Game.FurnitureEnum.REFRIGERATOR : {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "oven" : {
+            case Game.FurnitureEnum.OVEN : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "microwave" : {
+            case Game.FurnitureEnum.MICROWAVE : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "toaster" : {
+            case Game.FurnitureEnum.TOASTER : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
-            case "tub" : {
+            case Game.FurnitureEnum.TUB : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("sleep");
                 this.addAvailableAction("lay");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("use");
                 break;
             }
-            case "shower" : {
+            case Game.FurnitureEnum.SHOWER : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("use");
                 break;
             }
-            case "sink" : {
+            case Game.FurnitureEnum.SINK : {
                 this.addAvailableAction("use");
+                this.setDefaultAction("use");
                 break;
             }
-            case "toilet" : {
+            case Game.FurnitureEnum.TOILET : {
                 this.addAvailableAction("use");
                 this.addAvailableAction("sit");
+                this.setDefaultAction("use");
                 break;
             }
-            case "mirror" : {
+            case Game.FurnitureEnum.MIRROR : {
                 this.addAvailableAction("look");
                 this.addAvailableAction("use");
+                this.setDefaultAction("look");
                 break;
             }
-            case "basket" : {
+            case Game.FurnitureEnum.BASKET : {
                 this.addAvailableAction("open");
+                this.setDefaultAction("open");
                 break;
             }
             default : {
-                
+                this.addAvailableAction("look");
+                this.setDefaultAction("look");
             }
         }
         return this;
