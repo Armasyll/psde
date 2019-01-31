@@ -102,6 +102,10 @@ class CharacterController extends EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
+
+        this.sitGround = new AnimData("sitGround");
+        this.setAnim(this.sitGround, "91_sitGround01", 1, false);
+
         Game.characterControllers[this.id] = this;
     }
 
@@ -218,6 +222,7 @@ class CharacterController extends EntityController {
         }
         if (this.getParent() != undefined) {
             this.removeParent();
+            this.setIdleAnim("90_idle01", 1, true);
         }
         this.avStartPos.copyFrom(this.mesh.position);
         var anim = null;

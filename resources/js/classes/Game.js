@@ -3542,9 +3542,10 @@ class Game {
         var _seatingBoundingBox = Game.getAbstractMesh(_entityController.getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entityController.getMesh().scaling.x);
         _subEntityController.setParent(_entityController.getMesh());
-        _subEntityController.getMesh().position.set(_seatingWidth / 2, 0, 0.25);
+        _subEntityController.getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
         _subEntityController.getMesh().rotation.set(0,0,0);
-        // sit here :v
+        _subEntityController._isLocked = true; // TESTING
+        _subEntityController.beginAnimation(_subEntityController.sitGround); // TESTING
     }
     static actionTalkFunction(_entityController, _subEntityController = Game.player) {
         if (!(_entityController instanceof CharacterController)) {
