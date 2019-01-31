@@ -510,7 +510,7 @@ class CharacterController extends EntityController {
         if (this._stopAnim) {
             return false;
         }
-        else if (_animData = null) {
+        else if (_animData == null) {
             return false;
         }
         else if (this.skeleton == null) {
