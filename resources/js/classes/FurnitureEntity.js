@@ -11,7 +11,8 @@ class FurnitureEntity extends EntityWithStorage {
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = Game.FurnitureEnum.CHAIR) {
         super(_id, _name, _description, _image);
 
-        this.type = 0;
+        this.entityType = Game.EntityEnum.FURNITURE;
+        this.furnitureType = 0;
         this.setType(_type);
 
         Game.furnitureEntities[this.id] = this;

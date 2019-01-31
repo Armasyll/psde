@@ -5,28 +5,37 @@ class ClothingEntity extends ItemEntity {
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
      * @param  {String}  _image       Image path or base64
-     * @param  {String}  _type        clothingType
+     * @param  {String}  _equipmentSlot        Equipment slot enum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = "shirt") {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _equipmentSlot = Game.EquipmentSlotEnum.HEAD) {
         super(_id, _name, _description, _image);
+        this.itemType = Game.ItemEnum.CLOTHING;
+
+        this.equipmentSlot = Game.EquipmentSlotEnum.HEAD;
 
         this.addAvailableAction("equip");
         this.addAvailableAction("unequip");
-        this.setType(_type);
-
-        this.itemType = Game.ItemEnum.CLOTHING;
+        this.setEquipmentSlot(_equipmentSlot);
 
         Game.setClothingEntity(this.id, this);
     }
-    setType(_type) {
-        if (Game.kClothingTypes.has(_type)) {
-            this.type = _type;
+
+    setEquipmentSlot(_type) {
+        if (isNaN(_type)) {
+            return this;
+        }
+        if (Game.EquipmentSlotEnum.properties.hasOwnProperty(_type)) {
+            this.equipmentSlot = _type;
         }
         else {
-            this.type = "shirt";
+            this.equipmentSlot = Game.EquipmentSlotEnum.HEAD;
         }
         return this;
     }
+    getEquipmentSlot() {
+        return this.equipmentType;
+    }
+
     /**
      * Overrides ItemEntity.createInstance
      * @param  {[type]} _id [description]

@@ -9,15 +9,17 @@ class WeaponEntity extends ItemEntity {
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = "club") {
         super(_id, _name, _description, _image);
+        this.itemType = Game.ItemEnum.WEAPON;
+
+        this.equipmentSlot = Game.EquipmentSlotEnum.HANDS;
 
         this.addAvailableAction("equip");
         this.addAvailableAction("unequip");
         this.setType(_type);
 
-        this.itemType = Game.ItemEnum.WEAPON;
-
         Game.setWeaponEntity(this.id, this);
     }
+
     setType(_type) {
         if (Game.kWeaponTypes.has(_type)) {
             this.type = _type;
@@ -27,6 +29,7 @@ class WeaponEntity extends ItemEntity {
         }
         return this;
     }
+
     /**
      * Overrides ItemEntity.createInstance
      * @param  {[type]} _id [description]

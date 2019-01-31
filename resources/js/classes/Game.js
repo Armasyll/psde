@@ -490,9 +490,49 @@ class Game {
         this.highlightedColorFriend = "green";
         this.highlightedColorNeutral = "white";
 
+        this.EntityEnum = {
+            ABSTRACT: 0,
+            ENTIY: 1,
+            CHARACTER: 2,
+            ITEM: 3,
+            FURNITURE: 4,
+            DOOR: 5,
+            SPELL: 6,
+            properties: {
+                0: {
+                    name: "Abstract",
+                    value: 0
+                },
+                1: {
+                    name: "Entity",
+                    value: 1
+                },
+                2: {
+                    name: "Character",
+                    value: 2
+                },
+                3: {
+                    name: "Item",
+                    value: 3
+                },
+                4: {
+                    name: "Furniture",
+                    value: 4
+                },
+                5: {
+                    name: "Door",
+                    value: 5
+                },
+                6: {
+                    name: "Spell",
+                    value: 6
+                }
+            }
+        }
         this.SexEnum = {
             MALE: 0,
             FEMALE: 1,
+            NONE: 2,
             properties: {
                 0: {
                     name: "Male",
@@ -501,6 +541,10 @@ class Game {
                 1: {
                     name: "Female",
                     value: 1
+                },
+                2: {
+                    name: "None",
+                    value: 2
                 }
             }
         }
@@ -582,9 +626,6 @@ class Game {
                 }
             }
         };
-        this.ClothingEnum = {
-            
-        }
         this.FurnitureEnum = {
             CHAIR: 0,
             LOVESEAT: 1,
@@ -688,22 +729,396 @@ class Game {
                     value: 19
                 }
             }
-        }
-        this.kSpeciesTypes = new Set(["fox", "skeleton"]);
-        this.kClothingTypes = new Set(["hat","mask","glasses","earPiercingLeft","earPiercingRight","nosePiercing","lipPiercing","tonguePiercing","neckwear","shirt","gloves","underwear","pants","shoes"]);
-        this.kHandTypes = new Set(["fur","pad","hoof","skin"]);
-        this.kFeetTypes = this.kHandTypes;
-        this.kEyeTypes = new Set(["circle","slit","rectangle","none"]);
-        this.kPeltTypes = new Set(["skin","fur","wool","hair"]);
-        this.kRoomTypes = new Set(["hallway","lobby","bedroom","livingroom","bathroom","kitchen","diningroom","closet","basement"]);
+        };
+        this.SpeciesEnum = {
+            FOX: 0,
+            SHEEP: 1,
+            AARDWOLF: 2,
+            properties: {
+                0: {
+                    name: "Fox",
+                    value: 0
+                },
+                1: {
+                    name: "Sheep",
+                    value: 1
+                },
+                2: {
+                    name: "Aardwolf",
+                    value: 2
+                }
+            }
+        };
+        this.EquipmentSlotEnum = {
+            HEAD: 0,
+            EAR_L: 1,
+            EAR_R: 2,
+            NECK: 3,
+            SHOULDER_L: 4,
+            SHOULDER_R: 5,
+            SHOULDERS: 6,
+            CHEST: 7,
+            HAND_L: 8,
+            HAND_R: 9,
+            HANDS: 10,
+            PELVIS: 11,
+            LEG_L: 12,
+            LEG_R: 13,
+            LEGS: 14,
+            FOOT_L: 15,
+            FOOT_R: 16,
+            FEET: 17,
+            HAND_THUMB_L: 40,
+            HAND_INDEX_L: 41,
+            HAND_MIDDLE_L: 42,
+            HAND_PINKIE_L: 43,
+            HAND_THUMB_R: 50,
+            HAND_INDEX_R: 51,
+            HAND_MIDDLE_R: 52,
+            HAND_PINKIE_R: 53,
+            properties: {
+                0: {
+                    name: "Head",
+                    value: 0
+                },
+                1: {
+                    name: "Left Ear",
+                    value: 1
+                },
+                2: {
+                    name: "Right Ear",
+                    value: 2
+                },
+                3: {
+                    name: "Neck",
+                    value: 3
+                },
+                4: {
+                    name: "Left Shoulder",
+                    value: 4
+                },
+                5: {
+                    name: "Right Shoulder",
+                    value: 5
+                },
+                6: {
+                    name: "Shoulders",
+                    value: 6
+                },
+                7: {
+                    name: "Chest",
+                    value: 7
+                },
+                8: {
+                    name: "Left Hand",
+                    value: 8
+                },
+                9: {
+                    name: "Right Hand",
+                    value: 9
+                },
+                10: {
+                    name: "Hands",
+                    value: 10
+                },
+                11: {
+                    name: "Pelvis",
+                    value: 11
+                },
+                12: {
+                    name: "Left Leg",
+                    value: 12
+                },
+                13: {
+                    name: "Right Leg",
+                    value: 13
+                },
+                14: {
+                    name: "Legs",
+                    value: 14
+                },
+                15: {
+                    name: "Left Foot",
+                    value: 15
+                },
+                16: {
+                    name: "Right Foot",
+                    value: 16
+                },
+                17: {
+                    name: "Feet",
+                    value: 17
+                },
+                40: {
+                    name: "Left Thumb",
+                    value: 40
+                },
+                41: {
+                    name: "Left Index Finger",
+                    value: 41
+                },
+                42: {
+                    name: "Left Middle Finger",
+                    value: 42
+                },
+                43: {
+                    name: "Left Pinkie Finger",
+                    value: 43
+                },
+                50: {
+                    name: "Right Thumb",
+                    value: 50
+                },
+                51: {
+                    name: "Right Index Finger",
+                    value: 51
+                },
+                52: {
+                    name: "Right Middle Finger",
+                    value: 52
+                },
+                53: {
+                    name: "Right Pinkie Finger",
+                    value: 53
+                },
+            }
+        };
+        this.PawEnum = {
+            FUR: 0,
+            PAD: 1,
+            HOOF: 2,
+            SKIN: 3,
+            properties: {
+                0: {
+                    name: "Fur",
+                    value: 0
+                },
+                1: {
+                    name: "Pad",
+                    value: 1
+                },
+                2: {
+                    name: "Hoof",
+                    value: 2
+                },
+                3: {
+                    name: "Skin",
+                    value: 3
+                }
+            }
+        };
+        this.EyeEnum = {
+            CIRCLE: 0,
+            SLIT: 1,
+            OBLONG: 2,
+            NONE: 3,
+            properties: {
+                0: {
+                    name: "Circle",
+                    value: 0
+                },
+                1: {
+                    name: "Slit",
+                    value: 1
+                },
+                2: {
+                    name: "Oblong",
+                    value: 2
+                },
+                3: {
+                    name: "None",
+                    value: 3
+                }
+            }
+        };
+        this.PeltEnum = {
+            SKIN: 0,
+            FUR: 1,
+            WOOL: 2,
+            HAIR: 3,
+            properties: {
+                0: {
+                    name: "Skin",
+                    value: 0
+                },
+                1: {
+                    name: "Fur",
+                    value: 1
+                },
+                2: {
+                    name: "Wool",
+                    value: 2
+                },
+                3: {
+                    name: "Hair",
+                    value: 3
+                }
+            }
+        };
         this.kIntraactionTypes = new Set(["lay","sit","crouch","stand","fly","sleep","move"]);
         this.kInteractionTypes = new Set(["close","consume","drop","equip","hold","look","open","release","take","talk","touch","unequip","use"]);
         this.kActionTypes = new Set([...this.kIntraactionTypes, ...this.kInteractionTypes]);
-        this.kConsumableTypes = new Set(["food","drink","medicine","other"]);
-        this.kSpecialProperties = new Set(["exists","living","dead","mirror","water","earth","metal","broken","wood","magic","nature","container","charm","bone","jagged","smooth","cursed","blessed","bludgeoning","slashing","piercing","acid","cold","fire","lightning","necrotic","poison"]);
-
-        this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
+        this.ConsumableEnum = {
+            FOOD: 0,
+            DRINK: 1,
+            MEDICINE: 2,
+            properties: {
+                0: {
+                    name: "Food",
+                    value: 0
+                },
+                1: {
+                    name: "Drink",
+                    value: 1
+                },
+                2: {
+                    name: "Medicine",
+                    value: 2
+                }
+            }
+        };
+        this.SpecialPropertyEnum = {
+            EXISTS: 0,
+            LIVING: 1,
+            DEAD: 2,
+            MIRROR: 3,
+            WATER: 4,
+            EARTH: 5,
+            METAL: 6,
+            BROKEN: 7,
+            WOOD: 8,
+            MAGIC: 9,
+            NATURE: 10,
+            CONTAINER: 11,
+            CHARM: 12,
+            BONE: 13,
+            JAGGED: 14,
+            SMOOTH: 15,
+            CURSED: 16,
+            BLESSED: 17,
+            BLUDGEONING: 18,
+            SLASHING: 19,
+            PIERCING: 20,
+            ACID: 21,
+            COLD: 22,
+            FIRE: 23,
+            LIGHTNING: 24,
+            NECROTIC: 25,
+            POISON: 26,
+            properties: {
+                0: {
+                    name: "Exists",
+                    value: 0
+                },
+                1: {
+                    name: "Living",
+                    value: 1
+                },
+                2: {
+                    name: "Dead",
+                    value: 2
+                },
+                3: {
+                    name: "Mirror",
+                    value: 3
+                },
+                4: {
+                    name: "Water",
+                    value: 4
+                },
+                5: {
+                    name: "Earth",
+                    value: 5
+                },
+                6: {
+                    name: "Metal",
+                    value: 6
+                },
+                7: {
+                    name: "Broken",
+                    value: 7
+                },
+                8: {
+                    name: "Wood",
+                    value: 8
+                },
+                9: {
+                    name: "Magic",
+                    value: 9
+                },
+                10: {
+                    name: "Nature",
+                    value: 10
+                },
+                11: {
+                    name: "Container",
+                    value: 11
+                },
+                12: {
+                    name: "Charm",
+                    value: 12
+                },
+                13: {
+                    name: "Bone",
+                    value: 13
+                },
+                14: {
+                    name: "Jagged",
+                    value: 14
+                },
+                15: {
+                    name: "Smooth",
+                    value: 15
+                },
+                16: {
+                    name: "Cursed",
+                    value: 16
+                },
+                17: {
+                    name: "Blessed",
+                    value: 17
+                },
+                18: {
+                    name: "Bludgeoning",
+                    value: 18
+                },
+                19: {
+                    name: "Slashing",
+                    value: 19
+                },
+                20: {
+                    name: "Piercing",
+                    value: 20
+                },
+                21: {
+                    name: "Acid",
+                    value: 21
+                },
+                22: {
+                    name: "Cold",
+                    value: 22
+                },
+                23: {
+                    name: "Fire",
+                    value: 23
+                },
+                24: {
+                    name: "Lightning",
+                    value: 24
+                },
+                25: {
+                    name: "Necrotic",
+                    value: 25
+                },
+                26: {
+                    name: "Poison",
+                    value: 26
+                }
+            }
+        };
+        this.actionLay = new ActionData("lay", Game.actionLayFunction, false);
         this.actionSit = new ActionData("sit", Game.actionSitFunction, false);
+        this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
         this.actionOpen = new ActionData("open", Game.actionOpenFunction, false);
         this.actionClose = new ActionData("close", Game.actionCloseFunction, false);
         this.actionTalk = new ActionData("talk", Game.actionTalkFunction, false);
@@ -718,9 +1133,119 @@ class Game {
          * Classless should be a broad description for commoner, expert, and noble; it shouldn't be used, unless I'm lazy.
          * @type {Set}
          */
-        this.kCharacterClasses = new Set(["bard","cleric","druid","paladin","ranger","sorcerer","warlock","wizard","classless","commoner","expert","noble"]);
-
-        this.kSpellSchools = new Set(["abjuration","conjuration","divination","enchantment","evocation","illusion","necromancy","transmutation","universal"]);
+        this.CharacterClassEnum = {
+            BARD: 0,
+            CLERIC: 1,
+            DRUID: 2,
+            PALADIN: 3,
+            RANGER: 4,
+            SORCERER: 5,
+            WARLOCK: 6,
+            WIZARD: 7,
+            CLASSLESS: 8,
+            COMMONER: 9,
+            EXPERT: 10,
+            NOBLE: 11,
+            properties: {
+                0: {
+                    name: "Bard",
+                    value: 0
+                },
+                1: {
+                    name: "Cleric",
+                    value: 1
+                },
+                2: {
+                    name: "Druid",
+                    value: 2
+                },
+                3: {
+                    name: "Paladin",
+                    value: 3
+                },
+                4: {
+                    name: "Ranger",
+                    value: 4
+                },
+                5: {
+                    name: "Sorcerer",
+                    value: 5
+                },
+                6: {
+                    name: "Warlock",
+                    value: 6
+                },
+                7: {
+                    name: "Wizard",
+                    value: 7
+                },
+                8: {
+                    name: "Classless",
+                    value: 8
+                },
+                9: {
+                    name: "Commoner",
+                    value: 9
+                },
+                10: {
+                    name: "Expert:",
+                    value: 10
+                },
+                11: {
+                    name: "Noble:",
+                    value: 11
+                }
+            }
+        };
+        this.SpellSchoolEnum = {
+            ABJURATION: 0,
+            CONJURATION: 1,
+            DIVINATION: 2,
+            ENCHANTMENT: 3,
+            EVOCATION: 4,
+            ILLUSION: 5,
+            NECROMANCY: 6,
+            TRANSMUTATION: 7,
+            UNIVERSAL: 8,
+            properties: {
+                0: {
+                    name: "Abjuration",
+                    value: 0
+                },
+                1: {
+                    name: "Conjuration",
+                    value: 1
+                },
+                2: {
+                    name: "Divination",
+                    value: 2
+                },
+                3: {
+                    name: "Enchantment",
+                    value: 3
+                },
+                4: {
+                    name: "Evocation",
+                    value: 4
+                },
+                5: {
+                    name: "Illusion",
+                    value: 5
+                },
+                6: {
+                    name: "Necromancy",
+                    value: 6
+                },
+                7: {
+                    name: "Transmutation",
+                    value: 7
+                },
+                8: {
+                    name: "Universal",
+                    value: 8
+                }
+            }
+        }
 
         this.kWeaponSimpleMeleeTypes = new Set(["club","dagger","greatclub","handaxe","javelin","lighthammer","mace","quarterstaff","sickle","spear"]);
         this.kWeaponSimpleRangedTypes = new Set(["lightcrossbow","dart","shortbow","sling"]);
@@ -816,7 +1341,7 @@ class Game {
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", "fox", "foxM", "foxRed", undefined, _position, _rotation, _scaling);
+        this.player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", Game.SpeciesEnum.FOX, "foxM", "foxRed", undefined, _position, _rotation, _scaling);
         this.player.attachToFOCUS("cameraFocus");
         this.player.attachToLeftEye("eye", "feralEyeGreen");
         this.player.attachToRightEye("eye", "feralEyeGreen");
@@ -1790,7 +2315,7 @@ class Game {
             }
         }
     }
-    static addCharacterToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static addCharacterToCreate(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = Game.SpeciesEnum.FOX, _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.hasCharacterToCreate(_id)) {
             return true;
         }
@@ -2307,7 +2832,7 @@ class Game {
      * @param  {BABYLON.Vector3} _scaling     Scale
      * @return {CharacterController}          Character Controller
      */
-    static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = "fox", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = Game.SexEnum.MALE, _species = Game.SpeciesEnum.FOX, _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
@@ -2335,7 +2860,7 @@ class Game {
         var _loadedMesh = Game.getAbstractMesh(_loadedMesh);
         if (_loadedMesh == undefined) {
             switch (_entity.species) {
-                case "fox" : {
+                case Game.SpeciesEnum.FOX: {
                     if (_entity.getSex() == Game.SexEnum.MALE) {
                         _loadedMesh = "foxM";
                     }
@@ -2344,21 +2869,17 @@ class Game {
                     }
                     break;
                 }
-                case "skeleton" : {
-                    _loadedMesh = "foxSkeletonN";
-                    break;
-                }
-                case "spirit" : {
-                    _loadedMesh = "spiritN";
+                case Game.SpeciesEnum.SHEEP: {
+                    if (_entity.getSex() == Game.SexEnum.MALE) {
+                        _loadedMesh = "sheepM";
+                    }
+                    else {
+                        _loadedMesh = "sheepF";
+                    }
                     break;
                 }
                 default : {
-                    if (_entity.getSex() == Game.SexEnum.MALE) {
-                        _loadedMesh = "foxM";
-                    }
-                    else {
-                        _loadedMesh = "foxF";
-                    }
+                    _loadedMesh = "foxSkeletonN";
                     break;
                 }
             }
@@ -2515,11 +3036,11 @@ class Game {
                 break;
             }
             case Game.ItemEnum.CLOTHING: {
-                _entity = new ClothingEntity(_id, _name, _description, _image);
+                _entity = new ClothingEntity(_id, _name, _description, _image, _itemSubType);
                 break;
             }
             case Game.ItemEnum.WEAPON : {
-                _entity = new WeaponEntity(_id, _name, _description, _image);
+                _entity = new WeaponEntity(_id, _name, _description, _image, _itemSubType);
                 break;
             }
             case Game.ItemEnum.KEY : {
@@ -2530,7 +3051,7 @@ class Game {
                 //_entity = new BookEntity(_id, _name, _description, _image); // TODO: this :v
             }
             case Game.ItemEnum.CONSUMABLE : {
-                //_entity = new ConsumableEntity(_id, _name, _description, _image); // TODO: this :v
+                //_entity = new ConsumableEntity(_id, _name, _description, _image, _itemSubType); // TODO: this :v
             }
             default: {
                 _entity = new ItemEntity(_id, _name, _description, _image);
@@ -2600,8 +3121,8 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
-    static createCosmetic(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined) {
-        return new Cosmetic(_id, _name, _description, _image, _mesh, _texture);
+    static createCosmetic(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _equipmentSlot = Game.EquipmentSlotEnum.HEAD) {
+        return new Cosmetic(_id, _name, _description, _image, _mesh, _texture, _equipmentSlot);
     }
     static getCosmetic(_id) {
         if (_id == undefined) {
@@ -2821,11 +3342,14 @@ class Game {
             return;
         }
         if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
-            if (_action == "take" && _entity instanceof InstancedItemEntity) {
-                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
+            if (_action == "lay") {
+                Game.actionLayFunction(_entity.getController(), _subEntity.getController());
             }
-            else if (_action == "sit" && _entity instanceof FurnitureEntity) {
+            else if (_action == "sit") {
                 Game.actionSitFunction(_entity.getController(), _subEntity.getController());
+            }
+            else if (_action == "take" && _entity instanceof InstancedItemEntity) {
+                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
             }
             else if (_action == "open" && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
                 Game.actionOpenFunction(_entity.getController(), _subEntity.getController());
@@ -3018,8 +3542,9 @@ class Game {
         var _seatingBoundingBox = Game.getAbstractMesh(_entityController.getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entityController.getMesh().scaling.x);
         _subEntityController.setParent(_entityController.getMesh());
-        _subEntityController.getMesh().position.set(_seatingWidth / 2, 0, 0.025);
+        _subEntityController.getMesh().position.set(_seatingWidth / 2, 0, 0.25);
         _subEntityController.getMesh().rotation.set(0,0,0);
+        // sit here :v
     }
     static actionTalkFunction(_entityController, _subEntityController = Game.player) {
         if (!(_entityController instanceof CharacterController)) {

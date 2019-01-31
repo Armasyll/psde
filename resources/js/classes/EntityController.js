@@ -10,6 +10,7 @@ class EntityController {
         if (!(_entity instanceof AbstractEntity)) {
             return null;
         }
+
         this.id = _id;
         this.entity = undefined;
         this.setEntity(_entity);
@@ -18,12 +19,9 @@ class EntityController {
         this.mesh = undefined;
         this.setMesh(_mesh);
         this.networkID = null;
-
         this.propertiesChanged = true;
-
         this.targetController = null;
         this.targetedByControllers = new Set();
-
         this._isEnabled = true;
 
         Game.entityControllers[this.id] = this;

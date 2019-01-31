@@ -1,7 +1,7 @@
 class InstancedWeaponEntity extends InstancedItemEntity {
     constructor(_id = undefined, _entity = undefined) {
         super(_id, _entity);
-        if (!(this.entity instanceof Entity)) {
+        if (!(this.entity instanceof WeaponEntity)) {
             this.dispose();
             return undefined;
         }

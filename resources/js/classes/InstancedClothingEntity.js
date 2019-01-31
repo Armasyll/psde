@@ -1,13 +1,18 @@
 class InstancedClothingEntity extends InstancedItemEntity {
     constructor(_id = undefined, _entity = undefined) {
         super(_id, _entity);
-        if (!(this.entity instanceof Entity)) {
+        if (!(this.entity instanceof ClothingEntity)) {
             this.dispose();
             return undefined;
         }
 
         Game.setInstancedClothingEntity(this.id, this);
     }
+
+    getEquipmentSlot() {
+        return this.entity.getEquipmentSlot();
+    }
+
     clone(_id) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {

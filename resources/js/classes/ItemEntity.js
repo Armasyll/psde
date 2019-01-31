@@ -6,29 +6,39 @@ class ItemEntity extends Entity {
      * @param  {String}  _description Description
      * @param  {String}  _image       Image path or base64
      */
-	constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
         super(_id, _name, _description, _image);
+
+        this.price = 0;
+        this.entityType = Game.EntityEnum.ITEM;
+        this.itemType = Game.ItemEnum.GENERAL;
 
         this.addAvailableAction("drop");
         this.addAvailableAction("hold");
         this.addAvailableAction("take");
 
-        this.mass = 0.001;
-        this.price = 0;
-
-        this.itemType = Game.ItemEnum.GENERAL;
-
         Game.setItemEntity(this.id, this);
-	}
-	setPrice(_int) {
-		if (isNaN(_int)) {
-			return;
-		}
-		this.price = _int;
-	}
-	getPrice() {
-		return this.price;
-	}
+    }
+
+    /**
+     * Sets Price
+     * @param {Number} _int Integer
+     */
+    setPrice(_int) {
+        _int = Number.parseInt(_int);
+        if (isNaN(_int))
+            _int = 0;
+        else if (_int < 0)
+            _int = 0;
+        else if (_int > Number.MAX_SAFE_INTEGER)
+            _int = Number.MAX_SAFE_INTEGER;
+        this.price = _int;
+        return this;
+    }
+    getPrice() {
+        return this.price;
+    }
+
     createInstance(_id = undefined) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
@@ -36,7 +46,7 @@ class ItemEntity extends Entity {
         }
         return new InstancedItemEntity(_id, this);
     }
-	dispose() {
+    dispose() {
         Game.removeItemEntity(this.id);
         super.dispose();
         for (var _var in this) {

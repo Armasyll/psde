@@ -78,6 +78,9 @@ class CharacterController extends EntityController {
         var _this = this;
         this.renderer = function () { _this.moveAV(); };
 
+        this._isEnabled = true;
+        this._isLocked = false;
+
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
@@ -210,6 +213,9 @@ class CharacterController extends EntityController {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
+        if (this._isLocked) {
+            return this;
+        }
         if (this.getParent() != undefined) {
             this.removeParent();
         }
@@ -229,28 +235,7 @@ class CharacterController extends EntityController {
         else if (!this.inFreeFall) {
             anim = this.doIdle(dt);
         }
-        if (!this._stopAnim) {
-            if (anim != null) {
-                if (this.skeleton !== null) {
-                    if (this.prevAnim !== anim) {
-                        if (anim.exist) {
-                            if (this.bonesInUse.length > 0) {
-                                /*
-                                Have to cycle through all the bones just so I don't have to animate a handful :L
-                                 */
-                                this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
-                                    Game.scene.beginAnimation(_bone, anim.from, anim.to, anim.loop, anim.rate);
-                                });
-                            }
-                            else {
-                                this.skeleton.beginAnimation(anim.name, anim.loop, anim.rate);
-                            }
-                            this.prevAnim = anim;
-                        }
-                    }
-                }
-            }
-        }
+        this.beginAnimation(anim);
         Game.updateTargetValue();
     }
     doJump(dt) {
@@ -520,6 +505,26 @@ class CharacterController extends EntityController {
     }
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
+    }
+    beginAnimation(_animData) {
+        if (this._stopAnim) {
+            return false;
+        }
+        else if (_animData = null) {
+            return false;
+        }
+        else if (this.skeleton == null) {
+            return false;
+        }
+        else if (this.prevAnim == _animData) {
+            return false;
+        }
+        else if (!_animData.exist) {
+            return false;
+        }
+        this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
+        this.prevAnim = _animData;
+        return true;
     }
 
     getMovementKey() {
