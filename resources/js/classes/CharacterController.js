@@ -104,7 +104,7 @@ class CharacterController extends EntityController {
         this._bonesAttachedToMeshes = {};
 
         this.sitGround = new AnimData("sitGround");
-        this.setAnim(this.sitGround, "91_sitGround01", 1, false);
+        this.setAnim(this.sitGround, "91_sitGround01", 1, true);
 
         Game.characterControllers[this.id] = this;
     }
@@ -217,9 +217,6 @@ class CharacterController extends EntityController {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
-        if (this._isLocked) {
-            return this;
-        }
         if (this.getParent() != undefined) {
             this.removeParent();
             this.setIdleAnim("90_idle01", 1, true);
@@ -233,12 +230,16 @@ class CharacterController extends EntityController {
             anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.inFreeFall) {
+            this._isLocked = false;
             this.grounded = false;
             this.idleFallTime = 0;
             anim = this.doMove(dt);
         }
         else if (!this.inFreeFall) {
             anim = this.doIdle(dt);
+        }
+        if (this._isLocked) {
+            return this;
         }
         this.beginAnimation(anim);
         Game.updateTargetValue();
