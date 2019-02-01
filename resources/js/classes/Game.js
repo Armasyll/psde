@@ -3546,6 +3546,7 @@ class Game {
         _subEntityController.getMesh().rotation.set(0,0,0);
         _subEntityController._isLocked = true; // TESTING
         _subEntityController.beginAnimation(_subEntityController.sitGround); // TESTING
+        // the eyes floating outside the skull is due to no animation being played :l
     }
     static actionTalkFunction(_entityController, _subEntityController = Game.player) {
         if (!(_entityController instanceof CharacterController)) {
