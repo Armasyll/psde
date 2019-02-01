@@ -248,6 +248,7 @@ class Game {
             "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
             "missingTexture":"resources/images/textures/static/missingTexture.svg",
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
+            "cheeseWheel":"resources/images/textures/items/cheeseWheel.svg",
             "bone01":"resources/images/textures/items/bone01.svg",
             "icosphere30":"resources/images/textures/static/icosphere30.svg",
             "fireOpacity":"resources/images/textures/effects/fireOpacity.png",
@@ -369,7 +370,10 @@ class Game {
             "greenWallpaperPlainWood.craftsmanWall01":"resources/images/icons/static/greenWallpaperPlainWood.craftsmanWall01.png",
             "pinkWallpaperPlainWood.craftsmanWall01":"resources/images/icons/static/pinkWallpaperPlainWood.craftsmanWall01.png",
             "stopSign":"resources/images/icons/items/stopSign.png",
-            "frigerator":"resources/images/icons/items/frigerator.png"
+            "frigerator":"resources/images/icons/items/frigerator.png",
+            "cheeseWheel":"resources/images/icons/items/cheeseWheel.png",
+            "cheeseWheelSansWedge":"resources/images/icons/items/cheeseWheelSansWedge.png",
+            "cheeseWedge":"resources/images/icons/items/cheeseWedge.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs

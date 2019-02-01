@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<svg width="199.99999999999997" height="220" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g>
+  <title>Layer 1</title>
+  <use x="2.863691" y="0" transform="rotate(-180 100.33333587646484,110.23603820800781) matrix(1.0475991084456169,0,0,1.0475991084456169,-7.42657775876944,-4.999860547828234) " xlink:href="#svg_9" id="svg_10"/>
+ </g>
+ <defs>
+  <symbol id="svg_9" height="220" width="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <g transform="translate(100,110)">
+    <path id="svg_8" d="m0,-100l86.602539,150l-86.602539,-50l62.460411,25.85787l-62.460411,-105.85787l-62.460411,105.85787l62.460411,-25.85787l-86.602539,50l86.602539,-150z"/>
+    <use transform="scale(-1)" xlink:href="#svg_8"/>
+    <path id="svg_7" d="m0,0c0,0 15,19 0,19c-15,0 0,-19 0,-19"/>
+    <use transform="rotate(72)" xlink:href="#svg_7"/>
+    <use transform="rotate(-72)" xlink:href="#svg_7"/>
+    <use transform="rotate(144)" xlink:href="#svg_7"/>
+    <use transform="rotate(216)" xlink:href="#svg_7"/>
+   </g>
+  </symbol>
+ </defs>
+</svg>

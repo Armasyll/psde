@@ -11,6 +11,9 @@ Game.createProtoItem("bottle04RedSarcophagusJuice", "Red Sarcophagus Juice", "A 
 Game.createProtoItem("bottle05RedSarcophagusJuice", "Red Sarcophagus Juice", "A bottle of some red liquid from the bottom of an obsidian sarcophagus.", "bottle05RedSarcophagusJuice", "bottle05", "bottle03RedSarcophagusJuice", Game.ItemEnum.CONSUMABLE);
 Game.createProtoItem("mountainChocolateWrapper", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "mountainChocolate01", "mountainChocolateWrapper01", "vChocolateV", Game.ItemEnum.CONSUMABLE);
 Game.createProtoItem("mountainChocolateBar", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "mountainChocolate01", "mountainChocolateBar01", "vChocolateV", Game.ItemEnum.CONSUMABLE);
+Game.createProtoItem("cheeseWheel", "Cheese Wheel", "A wheel of cheese.", "cheeseWheel", "cheeseWheel", "cheeseWheel", Game.ItemEnum.CONSUMABLE, Game.ConsumableEnum.FOOD);
+Game.createProtoItem("cheeseWheelSansWedge", "Partial Cheese Wheel", "A partially cut wheel of cheese.", "cheeseWheelSansWedge", "cheeseWheelSansWedge", "cheeseWheel", Game.ItemEnum.CONSUMABLE, Game.ConsumableEnum.FOOD);
+Game.createProtoItem("cheeseWedge", "Cheese Wedge", "A wedge of cheese.", "cheeseWedge", "cheeseWedge", "cheeseWheel", Game.ItemEnum.CONSUMABLE, Game.ConsumableEnum.FOOD);
 
 Game.createProtoItem("barbute01", "Barbute", "", "barbute01", "barbute01", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);
 Game.createProtoItem("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01", "barbuteHorned01", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);

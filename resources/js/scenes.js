@@ -318,6 +318,7 @@ Game.generateApartment = function() {
     Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
     Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.6, -22));
     Game.createItem("plateInstance01", "plate01", undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));
+    Game.createItem("cheeseWedgeInstance01", "cheeseWedge", undefined, new BABYLON.Vector3(9.7, 0.525, -21.5));
     Game.createItem("plateInstance02", "plate01", undefined, new BABYLON.Vector3(10, 0.5, -22.5));
 
     Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.5, -22.75));
