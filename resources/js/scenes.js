@@ -523,6 +523,9 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(12, 3, 0), new BABYLON.Vector3(0, 180, 0));
     Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 180, 0));
     Game.createMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(10, 3, 0), new BABYLON.Vector3(0, 270, 0));
+    
+    // Kyle's Apartment
+    Game.createCollisionPlane({x:5, z:-27}, {x:15, z:-13}, 3);
 
     // Third Floor Hallway
     Game.createCollisionWall(new BABYLON.Vector3(-1, 6, -13), new BABYLON.Vector3(3, 9, -13)); // Front hallway wall
