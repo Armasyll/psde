@@ -24,7 +24,7 @@ class EntityController {
         this.targetedByControllers = new Set();
         this._isEnabled = true;
 
-        Game.entityControllers[this.id] = this;
+        Game.setEntityController(this.id, this);
     }
     setID(_id) {
         this.id = _id;
@@ -186,12 +186,12 @@ class EntityController {
             Game.clearPlayerTarget()
         }
         this.clearTargetedBy();
-        delete Game.entityControllers[this.id];
         this.entity.removeController();
         for (var _var in this) {
             this[_var] = null;
         }
         this.propertiesChanged = false;
+        Game.removeEntityController(this.id);
         return null;
     }
 }

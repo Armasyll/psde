@@ -9,6 +9,7 @@ class DoorEntity extends Entity {
 
         Game.setDoorEntity(this.id, this);
 	}
+
 	setLocked(_locked) {
 		this.locked = _locked == true;
 	}
@@ -23,6 +24,7 @@ class DoorEntity extends Entity {
 	getKey() {
 		return this.key;
 	}
+
 	dispose() {
         Game.removeDoorEntity(this.id);
         super.dispose();

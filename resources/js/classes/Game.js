@@ -426,6 +426,13 @@ class Game {
         this.furnitureToCreateCounter = 0;
         this.furnitureToCreate = {};
         /**
+         * Map of Lighting that are waiting to be created;
+         * it's basically the same as furnitureToCreate :v
+         * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
+         */
+        this.lightingToCreateCounter = 0;
+        this.lightingToCreate = {};
+        /**
          * Map of Doors that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
          * @type {<String, <String:id, String:name, Forgot:to, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling>}
@@ -446,12 +453,14 @@ class Game {
 
         this.entityControllers = {};
         this.furnitureControllers = {};
+        this.lightingControllers = {};
         this.doorControllers = {};
         this.characterControllers = {};
         this.itemControllers = {};
 
         this.entities = {};
         this.furnitureEntities = {};
+        this.lightingEntities = {};
         this.doorEntities = {};
         this.characterEntities = {};
         this.itemEntities = {};
@@ -655,6 +664,7 @@ class Game {
             TOILET: 17,
             MIRROR: 18,
             BASKET: 19,
+            Lamp: 20,
             properties: {
                 0: {
                     name: "Chair",
@@ -735,6 +745,10 @@ class Game {
                 19: {
                     name: "Basket",
                     value: 19
+                },
+                20: {
+                    name: "Lamp",
+                    value: 20
                 }
             }
         };
@@ -1124,6 +1138,7 @@ class Game {
                 }
             }
         };
+        this.actionUse = new ActionData("use", Game.actionUseFunction, false);
         this.actionLay = new ActionData("lay", Game.actionLayFunction, false);
         this.actionSit = new ActionData("sit", Game.actionSitFunction, false);
         this.actionTake = new ActionData("take", Game.actionTakeFunction, false);
@@ -2283,6 +2298,48 @@ class Game {
             }
         }
     }
+    static addLightingToCreate(_id, _name = "", _mesh = undefined, _texture = undefined, _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _lightingPositionOffset = BABYLON.Vector3.Zero(), _createCollisionMesh = true) {
+        if (Game.hasLightingToCreate(_id)) {
+            return true;
+        }
+        Game.lightingToCreate[_id] = {"id":_id, "name":_name, "mesh":_mesh, "texture":_texture, "type":_type, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "lightingPositionOffset":_lightingPositionOffset, "createCollisionMesh":_createCollisionMesh};
+        Game.lightingToCreateCounter += 1;
+        return true;
+    }
+    static removeLightingToCreate(_id) {
+        if (!Game.hasLightingToCreate(_id)) {
+            return true;
+        }
+        delete Game.lightingToCreate[_id];
+        Game.lightingToCreateCounter -= 1;
+        return true;
+    }
+    static hasLightingToCreate(_id) {
+        return Game.lightingToCreateCounter > 0 && Game.lightingToCreate.hasOwnProperty(_id);
+    }
+    static _createBackloggedLighting() {
+        if (Game.lightingToCreateCounter == 0) {
+            return true;
+        }
+        for (var _i in Game.lightingToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.lightingToCreate[_i]["mesh"])) {
+                Game.createLighting(
+                    Game.lightingToCreate[_i]["id"],
+                    Game.lightingToCreate[_i]["name"],
+                    Game.lightingToCreate[_i]["mesh"],
+                    Game.lightingToCreate[_i]["texture"],
+                    Game.lightingToCreate[_i]["type"],
+                    Game.lightingToCreate[_i]["options"],
+                    Game.lightingToCreate[_i]["position"],
+                    Game.lightingToCreate[_i]["rotation"],
+                    Game.lightingToCreate[_i]["scaling"],
+                    Game.lightingToCreate[_i]["lightingPositionOffset"],
+                    Game.lightingToCreate[_i]["createCollisionMesh"]
+                );
+                Game.removeLightingToCreate(_i);
+            }
+        }
+    }
     static addDoorsToCreate(_id, _name = "", _to = "", _mesh = undefined, _texture = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.hasDoorsToCreate(_id)) {
             return true;
@@ -2664,6 +2721,26 @@ class Game {
     static hasFurnitureController(_id) {
         return Game.getFurnitureController(_id) != undefined;
     }
+    static getLightingController(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof LightingController) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.lightingControllers.hasOwnProperty(_id)) {
+            return Game.lightingControllers[_id];
+        }
+        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof LightingController) {
+            return _id.controller;
+        }
+        else {
+            return undefined;
+        }
+    }
+    static hasLightingController(_id) {
+        return Game.getLightingController(_id) != undefined;
+    }
     static getDoorController(_id) {
         if (_id == undefined) {
             return;
@@ -3034,6 +3111,50 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
+    static createLighting(_id, _name = "", _mesh, _texture, _type, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _lightingPositionOffset = BABYLON.Vector3.Zero(), _createCollisionMesh = true) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = Game.filterID(_id);
+        if (!Game.hasMesh(_mesh)) {
+            return false;
+        }
+        if (!(_position instanceof BABYLON.Vector3)) {
+            _position = Game.filterVector(_position);
+        }
+        if (!(_rotation instanceof BABYLON.Vector3)) {
+            _rotation = Game.filterVector(_rotation);
+        }
+        if (!(_scaling instanceof BABYLON.Vector3)) {
+            _scaling = Game.filterVector(_scaling);
+        }
+        if (_scaling.equals(BABYLON.Vector3.Zero())) {
+            _scaling = BABYLON.Vector3.One();
+        }
+        if (!(_lightingPositionOffset instanceof BABYLON.Vector3)) {
+            _lightingPositionOffset = Game.filterVector(_scaling);
+        }
+        if (!(Game.hasLoadedMesh(_mesh))) {
+            Game.loadMesh(_mesh);
+            Game.addLightingToCreate(_id, _name, _mesh, _texture, _type, _options, _position, _rotation, _scaling, _lightingPositionOffset, _createCollisionMesh);
+            return true;
+        }
+        var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true, _createCollisionMesh);
+        _loadedMesh.checkCollisions = true; // _createCollisionMesh doesn't count this :v
+        var _entity = new LightingEntity(_id, _name, undefined, undefined, _type);
+        var _controller = new LightingController(_id, _loadedMesh, _entity, _type, _lightingPositionOffset);
+        _entity.setController(_controller);
+        _entity.setMeshID(_loadedMesh);
+        return _controller;
+    }
+    static removeLighting(_controller) {
+        _controller = Game.getLightingController(_controller);
+        if (_controller == undefined) {return;}
+        if (_controller == this.player) {return;}
+        var _mesh = _controller.getMesh();
+        _controller.entity.dispose();
+        _controller.dispose();
+        _mesh.material.dispose();
+        Game.removeMesh(_mesh);
+    }
     static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _itemType = Game.ItemEnum.GENERAL, _itemSubType = 0) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
@@ -3350,7 +3471,12 @@ class Game {
             return;
         }
         if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
-            if (_action == "lay") {
+            if (_action == "use") {
+                if (_entity instanceof LightingEntity) {
+                    _entity.toggle();
+                }
+            }
+            else if (_action == "lay") {
                 Game.actionLayFunction(_entity.getController(), _subEntity.getController());
             }
             else if (_action == "sit") {
@@ -3534,6 +3660,17 @@ class Game {
         }
         _entityController.doOpen(true);
     }
+    static actionUseFunction(_entityController, _subEntityController = Game.player) {
+        if (!(_entityController instanceof EntityController)) {
+            return;
+        }
+        if (!(_subEntityController instanceof CharacterController)) {
+            return;
+        }
+        if (_entityController instanceof LightingController) {
+            _entityController.getEntity().toggle();
+        }
+    }
     /**
      * Places the subEntity near the Entity, and sets its parent to the Entity
      * TODO: Add actual placement of Characters based on their width
@@ -3611,6 +3748,18 @@ class Game {
             Game.furnitureControllers[_i].dispose();
         }
         Game.furnitureControllers = {};
+    }
+    static setLightingController(_id, _lightController) {
+        Game.lightingControllers[_id] = _lightController;
+    }
+    static removeLightingController(_id) {
+        delete Game.lightingControllers[_id];
+    }
+    static clearLightingControllers() {
+        for (var _i in Game.lightingControllers) {
+            Game.lightingControllers[_i].dispose();
+        }
+        Game.lightingControllers = {};
     }
     static setDoorController(_id, _doorController) {
         Game.doorControllers[_id] = _doorController;
@@ -3708,6 +3857,18 @@ class Game {
             Game.furnitureEntities[_i].dispose();
         }
         Game.furnitureEntities = {};
+    }
+    static setLightingEntity(_id, _lightEntity) {
+        Game.lightingEntities[_id] = _lightEntity;
+    }
+    static removeLightingEntity(_id) {
+        delete Game.lightingEntities[_id];
+    }
+    static clearLightEntities() {
+        for (var _i in Game.lightingEntities) {
+            Game.lightingEntities[_i].dispose();
+        }
+        Game.lightingEntities = {};
     }
     static setDoorEntity(_id, _doorEntity) {
         Game.doorEntities[_id] = _doorEntity;

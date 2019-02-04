@@ -106,7 +106,7 @@ class CharacterController extends EntityController {
         this.sitGround = new AnimData("sitGround");
         this.setAnim(this.sitGround, "91_sitGround01", 1, true);
 
-        Game.characterControllers[this.id] = this;
+        Game.setCharacterController(this.id, this);
     }
 
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
@@ -899,11 +899,11 @@ class CharacterController extends EntityController {
         }
         this.detachFromAllBones();
         this.mesh.controller = null;
-        delete Game.characterControllers[this.id];
         super.dispose();
         for (var _var in this) {
             this[_var] = null;
         }
+        Game.removeCharacterController(this.id);
         return undefined;
     }
 }

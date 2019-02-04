@@ -39,6 +39,15 @@ class ItemEntity extends Entity {
         return this.price;
     }
 
+    clone(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        var _itemEntity = new ItemEntity(_id, this.name, this.description, this.image);
+        _itemEntity.price = this.price;
+        return _itemEntity;
+    }
     createInstance(_id = undefined) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {

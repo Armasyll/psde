@@ -51,6 +51,7 @@ window.addEventListener("DOMContentLoaded", function() {
         Game._createBackloggedMeshes();
         Game._createBackloggedBoundingCollisions();
         Game._createBackloggedFurniture();
+        Game._createBackloggedLighting();
         Game._createBackloggedDoors();
         Game._createBackloggedItems();
         Game._createBackloggedCharacters();

@@ -15,7 +15,7 @@ class FurnitureEntity extends EntityWithStorage {
         this.furnitureType = 0;
         this.setType(_type);
 
-        Game.furnitureEntities[this.id] = this;
+        Game.setFurnitureEntity(this.id, this);
     }
 
     setType(_type) {
@@ -149,6 +149,11 @@ class FurnitureEntity extends EntityWithStorage {
                 this.setDefaultAction("open");
                 break;
             }
+            case Game.FurnitureEnum.LAMP : {
+                this.addAvailableAction("use");
+                this.setDefaultAction("use");
+                break;
+            }
             default : {
                 this.addAvailableAction("look");
                 this.setDefaultAction("look");
@@ -159,8 +164,16 @@ class FurnitureEntity extends EntityWithStorage {
     getType() {
         return this.type;
     }
+
+    clone(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        return new FurnitureEntity(_id, this.name, this.description, this.image, this.furnitureType);
+    }
     dispose() {
-        delete Game.furnitureEntities[this.id];
+        Game.removeFurnitureEntity(this.id);
         super.dispose();
         for (var _var in this) {
             this[_var] = null;
