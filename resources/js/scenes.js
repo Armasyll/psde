@@ -325,7 +325,7 @@ Game.generateApartment = function() {
     Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.5, -21.25), new BABYLON.Vector3(0, 180, 0));
 
     var lampLight = new BABYLON.PointLight("commonsLampLight", new BABYLON.Vector3(-0.5, 0, -26.5), Game.scene);
-    Game.addFurnitureMesh("commonsLamp", "lamp01", undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5));
+    Game.addFurnitureMesh("commonsLamp", "lamp01", undefined, undefined, new BABYLON.Vector3(-0.5, 1.2, -26.5));
     Game.getAbstractMesh("commonsLamp").light = lampLight;
 
     Game.createDoor("apartmentbuildingdoor", "Door", undefined, "craftsmanDoor", "plainDoor", undefined, new BABYLON.Vector3(4, 0, -27));
