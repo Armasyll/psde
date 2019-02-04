@@ -17,6 +17,9 @@ class LightingEntity extends FurnitureEntity {
     }
 
     on() {
+        if (this._isLocked) {
+            return this.lightOn;
+        }
         this.lightOn = true;
         if (this.hasController()) {
             if (this.controller.hasLight()) {
@@ -25,6 +28,9 @@ class LightingEntity extends FurnitureEntity {
         }
     }
     off() {
+        if (this._isLocked) {
+            return this.lightOn;
+        }
         this.lightOn = false;
         if (this.hasController()) {
             if (this.controller.hasLight()) {
@@ -33,6 +39,9 @@ class LightingEntity extends FurnitureEntity {
         }
     }
     toggle() {
+        if (this._isLocked) {
+            return this.lightOn;
+        }
         if (this.lightOn) {
             this.off();
             return false;

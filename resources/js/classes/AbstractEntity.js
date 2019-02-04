@@ -39,6 +39,7 @@ class AbstractEntity {
         this.owner = null;
 
         this._isEnabled = true;
+        this._isLocked = false;
     }
 
     getID() {
@@ -74,6 +75,14 @@ class AbstractEntity {
     }
     setEnabled(_isEnabled = true) {
         this._isEnabled = (_isEnabled == true);
+        return this;
+    }
+
+    isLocked() {
+        return this._isLocked == true;
+    }
+    setLocked(_isLocked = true) {
+        this._isLocked = (_isLocked == true);
         return this;
     }
 
