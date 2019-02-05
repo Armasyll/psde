@@ -143,6 +143,6 @@ class BoundedNumber {
         }
     }
     toSource() {
-        return "new BoundedNumber(" + uneval(this._val) + "," + uneval(this._min) + "," + (this._max) + ", " + uneval(this._lockedValue) + ")";
+        return "new BoundedNumber(" + this._val + ", " + this._min + ", " + this._max + ", " + (this._lockedValue ? "true" : "false") + ")";
     }
 }
