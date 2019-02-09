@@ -90,6 +90,7 @@ class Game {
             "cheeseWheel":"resources/data/items.babylon",
             "cheeseWheelSansWedge":"resources/data/items.babylon",
             "cheeseWedge":"resources/data/items.babylon",
+            "stick01":"resources/data/items.babylon",
             "glaive01":"resources/data/items.babylon",
             "forgeHammer01":"resources/data/items.babylon",
             "warHammer01":"resources/data/items.babylon",
@@ -249,6 +250,7 @@ class Game {
             "missingTexture":"resources/images/textures/static/missingTexture.svg",
             "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
             "cheeseWheel":"resources/images/textures/items/cheeseWheel.svg",
+            "stick":"resources/images/textures/items/stick.svg",
             "bone01":"resources/images/textures/items/bone01.svg",
             "icosphere30":"resources/images/textures/static/icosphere30.svg",
             "fireOpacity":"resources/images/textures/effects/fireOpacity.png",
@@ -373,7 +375,8 @@ class Game {
             "frigerator":"resources/images/icons/items/frigerator.png",
             "cheeseWheel":"resources/images/icons/items/cheeseWheel.png",
             "cheeseWheelSansWedge":"resources/images/icons/items/cheeseWheelSansWedge.png",
-            "cheeseWedge":"resources/images/icons/items/cheeseWedge.png"
+            "cheeseWedge":"resources/images/icons/items/cheeseWedge.png",
+            "stick01":"resources/images/icons/items/stick01.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs
