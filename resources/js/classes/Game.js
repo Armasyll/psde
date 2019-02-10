@@ -667,7 +667,7 @@ class Game {
             TOILET: 17,
             MIRROR: 18,
             BASKET: 19,
-            Lamp: 20,
+            LAMP: 20,
             properties: {
                 0: {
                     name: "Chair",
