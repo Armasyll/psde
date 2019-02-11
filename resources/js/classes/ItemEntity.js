@@ -10,12 +10,12 @@ class ItemEntity extends Entity {
         super(_id, _name, _description, _image);
 
         this.price = 0;
-        this.entityType = Game.EntityEnum.ITEM;
-        this.itemType = Game.ItemEnum.GENERAL;
+        this.entityType = EntityEnum.ITEM;
+        this.itemType = ItemEnum.GENERAL;
 
-        this.addAvailableAction("drop");
-        this.addAvailableAction("hold");
-        this.addAvailableAction("take");
+        this.addAvailableAction(ActionEnum.DROP);
+        this.addAvailableAction(ActionEnum.HOLD);
+        this.addAvailableAction(ActionEnum.TAKE);
 
         Game.setItemEntity(this.id, this);
     }

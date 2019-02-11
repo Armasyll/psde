@@ -7,14 +7,14 @@ class ClothingEntity extends ItemEntity {
      * @param  {String}  _image       Image path or base64
      * @param  {String}  _equipmentSlot        Equipment slot enum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _equipmentSlot = Game.ApparelSlotEnum.HEAD) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
         super(_id, _name, _description, _image);
-        this.itemType = Game.ItemEnum.APPAREL;
+        this.itemType = ItemEnum.APPAREL;
 
-        this.equipmentSlot = Game.ApparelSlotEnum.HEAD;
+        this.equipmentSlot = ApparelSlotEnum.HEAD;
 
-        this.addAvailableAction("equip");
-        this.addAvailableAction("unequip");
+        this.addAvailableAction(ActionEnum.EQUIP);
+        this.addAvailableAction(ActionEnum.UNEQUIP);
         this.setApparelSlot(_equipmentSlot);
 
         Game.setClothingEntity(this.id, this);
@@ -24,11 +24,11 @@ class ClothingEntity extends ItemEntity {
         if (isNaN(_type)) {
             return this;
         }
-        if (Game.ApparelSlotEnum.properties.hasOwnProperty(_type)) {
+        if (ApparelSlotEnum.properties.hasOwnProperty(_type)) {
             this.equipmentSlot = _type;
         }
         else {
-            this.equipmentSlot = Game.ApparelSlotEnum.HEAD;
+            this.equipmentSlot = ApparelSlotEnum.HEAD;
         }
         return this;
     }

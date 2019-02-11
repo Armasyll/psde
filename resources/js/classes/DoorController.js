@@ -7,7 +7,7 @@ class DoorController extends EntityController {
         
         this.mesh.checkCollisions = true;
 
-        this.entity.setDefaultAction("open");
+        this.entity.setDefaultAction(ActionEnum.OPEN);
 
         this.opensInward = false;
         this.avStartRot = this.mesh.rotation.clone();

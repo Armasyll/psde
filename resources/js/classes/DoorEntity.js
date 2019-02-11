@@ -1,11 +1,11 @@
 class DoorEntity extends Entity {
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "plainDoor", _key = undefined) {
         super(_id, _name, _description, _image);
-        this.entityType = Game.EntityEnum.DOOR;
+        this.entityType = EntityEnum.DOOR;
         this.locked = false;
         this.key = undefined;
-        this.addAvailableAction("close");
-        this.addAvailableAction("open");
+        this.addAvailableAction(ActionEnum.CLOSE);
+        this.addAvailableAction(ActionEnum.OPEN);
 
         Game.setDoorEntity(this.id, this);
 	}

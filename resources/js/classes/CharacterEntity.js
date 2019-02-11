@@ -10,9 +10,9 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacter", _characterClass = Game.CharacterClassEnum.CLASSLESS, _age = 33, _sex = 0, _species = Game.SpeciesEnum.FOX) {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacter", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
         super(_id);
-        this.entityType = Game.EntityEnum.CHARACTER;
+        this.entityType = EntityEnum.CHARACTER;
         /**
          * Surname
          * @type {String} Cannot be undefined!
@@ -28,7 +28,7 @@ class CharacterEntity extends EntityWithStorage {
          * Class title
          * @type {String}
          */
-        this.characterClass = Game.CharacterClassEnum.CLASSLESS;
+        this.characterClass = CharacterClassEnum.CLASSLESS;
         /**
          * Age
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
@@ -36,17 +36,17 @@ class CharacterEntity extends EntityWithStorage {
         this.age = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         /**
          * Physical sexual identity
-         * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
+         * @type {Number} 0 - none, 1 - male, 2 - female
          */
         this._sex = new BoundedNumber(0, 0, 2);
         /**
          * Personal sexual identity
-         * @type {Number} 0 - male, 1 - female, 2 - hermaphrodite
+         * @type {Number} 0 - none, 1 - male, 2 - female
          */
         this.gender = new BoundedNumber(0, 0, 2);
         /**
          * Intraactions this CharacterEntity is currently performing
-         * @type {Map} <Game.kIntraactionTypes>
+         * @type {Map} <ActionEnum>
          */
         this.currentActions = {};
         /**
@@ -285,9 +285,9 @@ class CharacterEntity extends EntityWithStorage {
         this.predator = false;
         /**
          * Paw type
-         * @type {Number} (Game.PawEnum)
+         * @type {Number} (PawEnum)
          */
-        this.pawType = Game.PawEnum.PAD;
+        this.pawType = PawEnum.PAD;
         /**
          * Relatives
          * @type {Array} <Character>
@@ -302,7 +302,7 @@ class CharacterEntity extends EntityWithStorage {
          * Eye type
          * @type {String} (Game.kEyeTypes)
          */
-        this.eyeType = Game.EyeEnum.CIRCLE;
+        this.eyeType = EyeEnum.CIRCLE;
         /**
          * Eye colour
          * @type {String}
@@ -310,9 +310,9 @@ class CharacterEntity extends EntityWithStorage {
         this.eyeColour = "green";
         /**
          * Pelt type
-         * @type {String} (Game.PeltEnum)
+         * @type {String} (PeltEnum)
          */
-        this.peltType = Game.PeltEnum.FUR;
+        this.peltType = PeltEnum.FUR;
         /**
          * Pelt trimmed
          * @type {Number} 0 to 100
@@ -636,11 +636,11 @@ class CharacterEntity extends EntityWithStorage {
         this.setSex(_sex);
         this.setGender(_sex);
         this.setSpecies(_species);
-        this.addAvailableAction("attack");
-        this.addAvailableAction("hold");
-        this.addAvailableAction("open"); // inventory... maybe :v
-        this.addAvailableAction("give");
-        this.addAvailableAction("take");
+        this.addAvailableAction(ActionEnum.ATTACK);
+        this.addAvailableAction(ActionEnum.HOLD);
+        this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
+        this.addAvailableAction(ActionEnum.GIVE);
+        this.addAvailableAction(ActionEnum.TAKE);
 
         Game.setCharacterEntity(this.id, this);
 
@@ -684,11 +684,11 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_characterClass)) {
             return this;
         }
-        if (Game.CharacterClassEnum.properties.hasOwnProperty(_characterClass)) {
+        if (CharacterClassEnum.properties.hasOwnProperty(_characterClass)) {
             this.characterClass = _characterClass;
         }
         else {
-            this.characterClass = Game.CharacterClassEnum.CLASSLESS
+            this.characterClass = CharacterClassEnum.CLASSLESS
         }
         return this;
     }
@@ -861,12 +861,12 @@ class CharacterEntity extends EntityWithStorage {
     setAge(_int) {
         this.age.set(_int);
         if (this.age.val >= 18) {
-            this.addAvailableAction("sex");
-            this.addAvailableAction("masturbate");
+            this.addAvailableAction(ActionEnum.SEX);
+            this.addAvailableAction(ActionEnum.MASTURBATE);
         }
         else {
-            this.removeAvailableAction("sex");
-            this.removeAvailableAction("masturbate");
+            this.removeAvailableAction(ActionEnum.SEX);
+            this.removeAvailableAction(ActionEnum.MASTURBATE);
         }
         return this;
     }
@@ -1449,14 +1449,10 @@ class CharacterEntity extends EntityWithStorage {
         else if (isNaN(_int)) {
             switch (_int.slice(0, 1)) {
                 case "m" : {
-                    _int = 0;
-                    break;
-                }
-                case "f" : {
                     _int = 1;
                     break;
                 }
-                case "h" : {
+                case "f" : {
                     _int = 2;
                     break;
                 }
@@ -1779,44 +1775,68 @@ class CharacterEntity extends EntityWithStorage {
         return typeof this.furColourA != 'undefined';
     }
 
-    addCurrentAction(_actionType, _entity = undefined) {
-        if (!Game.kActionTypes.has(_actionType))
-            return undefined;
-        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity))
+    addCurrentAction(_action, _entity = undefined) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return this;
+        }
+        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity)) {
             _entity = Game.hasEntity(_entity) ? Game.getEntity(_entity) : undefined;
+        }
 
-        this.currentActions[_actionType] = _entity;
+        this.currentActions[_action] = _entity;
         return this;
     }
-    removeCurrentAction(_actionType, _entity = undefined) {
-        if (!Game.kActionTypes.has(_actionType))
-            return undefined;
-        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity))
+    removeCurrentAction(_action, _entity = undefined) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return this;
+        }
+        if (!(_entity instanceof Entity) && !(_entity instanceof InstancedEntity)) {
             _entity = Game.hasEntity(_entity) ? Game.getEntity(_entity) : undefined;
+        }
 
-        delete this.currentActions[_actionType];
+        delete this.currentActions[_action];
         return this;
     }
-    hasCurrentAction(_actionType) {
-        if (!Game.kActionTypes.has(_actionType))
+    hasCurrentAction(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
             return undefined;
-        return this.currentActions.hasOwnProperty(_actionType);
+        }
+        return this.currentActions.hasOwnProperty(_action);
     }
     getCurrentActions() {
         var _currentActions = Object.assign({}, this.currentActions);
         _currentActions[this.getStance()] = this.furniture;
         return _currentActions;
     }
-    getCurrentAction(_actionType) {
-        if (!Game.kActionTypes.has(_actionType))
+    getCurrentAction(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
             return undefined;
-        else if (!this.hasCurrentAction(_actionType))
+        }
+        if (!this.hasCurrentAction(_action)) {
             return undefined;
-        else
-            return this.currentActions[_actionType];
+        }
+        else {
+            return this.currentActions[_action];
+        }
     }
-    hasCurrentAction(_actionType) {
-        return this.currentActions.hasOwnProperty(_actionType);
+    hasCurrentAction(_action) {
+        return this.currentActions.hasOwnProperty(_action);
     }
     getStance() {
     	return this.stance.val;
@@ -1843,11 +1863,15 @@ class CharacterEntity extends EntityWithStorage {
     getStancePresentParticiple() {
         return this.positionPresentTense();
     }
-    hasStance(_actionType) {
-        if (Game.kIntraactionTypes.has(_actionType))
-            return this.hasCurrentAction(_actionType);
-        else
-            return false;
+    hasStance(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return undefined;
+        }
+        return this.hasCurrentAction(_action);
     }
 
     hold(_instancedItem, _hand = undefined) {
@@ -1894,7 +1918,7 @@ class CharacterEntity extends EntityWithStorage {
             _dontOverride = undefined;
         }
 
-        this.removeCurrentAction("move");
+        this.removeCurrentAction(ActionEnum.MOVE);
         this.stance.set(0);
         if (_entity instanceof Furniture) {
             this.furniture = _entity;
@@ -1915,7 +1939,7 @@ class CharacterEntity extends EntityWithStorage {
             _dontOverride = undefined;
         }
 
-        this.removeCurrentAction("move");
+        this.removeCurrentAction(ActionEnum.MOVE);
         this.stance.set(1);
         if (_entity instanceof Furniture) {
             this.furniture = _entity;
@@ -1951,9 +1975,9 @@ class CharacterEntity extends EntityWithStorage {
             _dontOverride = undefined;
         }
 
-        this.removeCurrentAction("move");
-        /*if (_dontOverride.contains("masturbate")) this.removeCurrentAction("masturbate");
-        if (_dontOverride.contains("sex")) this.removeCurrentAction("sex");*/
+        this.removeCurrentAction(ActionEnum.MOVE);
+        /*if (_dontOverride.contains("masturbate")) this.removeCurrentAction(ActionEnum.MASTURBATE);
+        if (_dontOverride.contains("sex")) this.removeCurrentAction(ActionEnum.SEX);*/
         this.stance.set(3);
         this.furniture = undefined;
 
@@ -1979,7 +2003,7 @@ class CharacterEntity extends EntityWithStorage {
         _entity = Game.getEntity(_entity);
         if (_entity == undefined) {return;}
 
-        this.addCurrentAction("look", _entity);
+        this.addCurrentAction(ActionEnum.LOOK, _entity);
 
         return true;
     }
@@ -1995,7 +2019,7 @@ class CharacterEntity extends EntityWithStorage {
     talk(_entity) {
         _entity = Game.getEntity(_entity);
 
-        this.addCurrentAction("talk", _entity);
+        this.addCurrentAction(ActionEnum.TALK, _entity);
 
         return true;
     }
@@ -2020,10 +2044,10 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     isCharmed() {
-        return this.hasCurrentAction("charmed");
+        return this.hasCurrentAction(ActionEnum.CHARM);
     }
     isFucking() {
-        return this.hasCurrentAction("sex");
+        return this.hasCurrentAction(ActionEnum.SEX);
     }
     isCrouching() {
         return this.stance.val == 2;
@@ -2032,7 +2056,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.stance.val == 0;
     }
     isMasturbating() {
-        return this.hasCurrentAction("masturbate");
+        return this.hasCurrentAction(ActionEnum.MASTURBATE);
     }
     isSleeping() {
         return this.sleeping;
@@ -2083,39 +2107,39 @@ class CharacterEntity extends EntityWithStorage {
     }
     grammaticalGender() {
         switch (this.species) {
-            case Game.SpeciesEnum.FOX: {
+            case SpeciesEnum.FOX: {
                 return this.gender.val == 0 ? "tod" : "vixen";
             }
-            case Game.SpeciesEnum.WOLF: {
+            case SpeciesEnum.WOLF: {
                 return this.gender.val == 0 ? "wolf" : "wolfen";
             }
-            case Game.SpeciesEnum.AARDWOLF:
-            case Game.SpeciesEnum.HYENA: {
+            case SpeciesEnum.AARDWOLF:
+            case SpeciesEnum.HYENA: {
                 return this.gender.val == 0 ? "brute" : "fae";
             }
-            case Game.SpeciesEnum.SHEEP: {
+            case SpeciesEnum.SHEEP: {
                 return this.gender.val == 0 ? "ram" : "ewe";
             }
-            case Game.SpeciesEnum.STOAT: {
+            case SpeciesEnum.STOAT: {
                 return this.gender.val == 0 ? "jack" : "jill";
             }
-            case Game.SpeciesEnum.MOUSE:
-            case Game.SpeciesEnum.DEER:
-            case Game.SpeciesEnum.RABBIT:
-            case Game.SpeciesEnum.ANTELOPE: {
+            case SpeciesEnum.MOUSE:
+            case SpeciesEnum.DEER:
+            case SpeciesEnum.RABBIT:
+            case SpeciesEnum.ANTELOPE: {
                 return this.gender.val == 0 ? "buck" : "doe";
             }
-            case Game.SpeciesEnum.JACKAL:
-            case Game.SpeciesEnum.COYOTE: {
+            case SpeciesEnum.JACKAL:
+            case SpeciesEnum.COYOTE: {
                 return this.gender.val == 0 ? "dog" : "bitch";
             }
-            case Game.SpeciesEnum.TIGER: {
+            case SpeciesEnum.TIGER: {
                 return this.gender.val == 0 ? "tiger" : "tigress";
             }
-            case Game.SpeciesEnum.PIG: {
+            case SpeciesEnum.PIG: {
                 return this.gender.val == 0 ? "boar" : "sow";
             }
-            case Game.SpeciesEnum.HORSE: {
+            case SpeciesEnum.HORSE: {
                 return this.gender.val == 0 ? "stallion" : "mare";
             }
         }
@@ -2125,11 +2149,11 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_type)) {
             return this;
         }
-        if (Game.PawEnum.properties.hasOwnProperty(_type)) {
+        if (PawEnum.properties.hasOwnProperty(_type)) {
             this.pawType = _type;
         }
         else {
-            this.pawType = Game.PawEnum.PAD;
+            this.pawType = PawEnum.PAD;
         }
         return this;
     }
@@ -2138,11 +2162,11 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_type)) {
             return this;
         }
-        if (Game.EyeEnum.properties.hasOwnProperty(_type)) {
+        if (EyeEnum.properties.hasOwnProperty(_type)) {
             this.eyeType = _type;
         }
         else {
-            this.eyeType = Game.EyeEnum.CIRCLE;
+            this.eyeType = EyeEnum.CIRCLE;
         }
         return this;
     }
@@ -2160,11 +2184,11 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_type)) {
             return this;
         }
-        if (Game.PeltEnum.properties.hasOwnProperty(_type)) {
+        if (PeltEnum.properties.hasOwnProperty(_type)) {
             this.peltType = _type;
         }
         else {
-            this.peltType = Game.PeltEnum.FUR;
+            this.peltType = PeltEnum.FUR;
         }
         return this;
     }
@@ -2206,11 +2230,11 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_species)) {
             return this;
         }
-        if (Game.SpeciesEnum.properties.hasOwnProperty(_species)) {
+        if (SpeciesEnum.properties.hasOwnProperty(_species)) {
             this.species = _species;
         }
         else {
-            this.species = Game.SpeciesEnum.FOX;
+            this.species = SpeciesEnum.FOX;
         }
         return this;
     }
@@ -2220,8 +2244,8 @@ class CharacterEntity extends EntityWithStorage {
         var _baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
         this.muscle = 0.5;
         this.fat = 0.25;
-        if (this.species == Game.SpeciesEnum.FOX) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        if (this.species == SpeciesEnum.FOX) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 36;
@@ -2237,12 +2261,12 @@ class CharacterEntity extends EntityWithStorage {
             }
 
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.SHEEP) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.SHEEP) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 19;
                 this.penisGirth = 11;
                 _baseMass = 34;
@@ -2258,12 +2282,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.HOOF);
-            this.setEyes(Game.EyeEnum.OBLONG);
-            this.setPelt(Game.PeltEnum.WOOL);
+            this.setPaws(PawEnum.HOOF);
+            this.setEyes(EyeEnum.OBLONG);
+            this.setPelt(PeltEnum.WOOL);
         }
-        else if (this.species == Game.SpeciesEnum.WOLF) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.WOLF) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
                 _baseMass = 72;
@@ -2279,12 +2303,12 @@ class CharacterEntity extends EntityWithStorage {
             }
 
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.AARDWOLF) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.AARDWOLF) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 32;
@@ -2300,12 +2324,12 @@ class CharacterEntity extends EntityWithStorage {
             }
 
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.HYENA) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.HYENA) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 25;
                 this.penisGirth = 16;
                 _baseMass = 58;
@@ -2321,12 +2345,12 @@ class CharacterEntity extends EntityWithStorage {
             }
 
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.STOAT) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.STOAT) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 8;
                 this.penisGirth = 7;
                 _baseMass = 10;
@@ -2342,12 +2366,12 @@ class CharacterEntity extends EntityWithStorage {
             }
 
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.DEER) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.DEER) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
                 _baseMass = 78;
@@ -2363,12 +2387,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.HOOF);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.WOOL);
+            this.setPaws(PawEnum.HOOF);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.WOOL);
         }
-        else if (this.species == Game.SpeciesEnum.RABBIT) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.RABBIT) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 12;
                 this.penisGirth = 8;
                 _baseMass = 22;
@@ -2384,12 +2408,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.FUR);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.FUR);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.JACKAL) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.JACKAL) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 18;
                 this.penisGirth = 12;
                 _baseMass = 55;
@@ -2405,12 +2429,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.COYOTE) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.COYOTE) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 36;
@@ -2426,12 +2450,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.TIGER) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.TIGER) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 28;
                 this.penisGirth = 15;
                 _baseMass = 88;
@@ -2447,12 +2471,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = true;
-            this.setPaws(Game.PawEnum.PAD);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.PAD);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
-        else if (this.species == Game.SpeciesEnum.ANTELOPE) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.ANTELOPE) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 22;
                 this.penisGirth = 12;
                 _baseMass = 68;
@@ -2468,12 +2492,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.HOOF);
-            this.setEyes(Game.EyeEnum.OBLONG);
-            this.setPelt(Game.PeltEnum.HAIR);
+            this.setPaws(PawEnum.HOOF);
+            this.setEyes(EyeEnum.OBLONG);
+            this.setPelt(PeltEnum.HAIR);
         }
-        else if (this.species == Game.SpeciesEnum.PIG) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.PIG) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 15;
                 this.penisGirth = 10;
                 _baseMass = 46;
@@ -2489,12 +2513,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.HOOF);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.SKIN);
+            this.setPaws(PawEnum.HOOF);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.SKIN);
         }
-        else if (this.species == Game.SpeciesEnum.HORSE) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.HORSE) {
+            if (this.getSex() == SexEnum.MALE) {
                 this.penisSize = 45;
                 this.penisGirth = 25;
                 _baseMass = 82;
@@ -2510,12 +2534,12 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.HOOF);
-            this.setEyes(Game.EyeEnum.OBLONG);
-            this.setPelt(Game.PeltEnum.HAIR);
+            this.setPaws(PawEnum.HOOF);
+            this.setEyes(EyeEnum.OBLONG);
+            this.setPelt(PeltEnum.HAIR);
         }
-        else if (this.species == Game.SpeciesEnum.MOUSE) {
-            if (this.getSex() == Game.SexEnum.MALE) {
+        else if (this.species == SpeciesEnum.MOUSE) {
+            if (this.getSex() == SexEnum.MALE) {
                 _baseMass = 0.4;
                 _baseHeight = 0.16;
                 _baseWidth = 0.05;
@@ -2531,9 +2555,9 @@ class CharacterEntity extends EntityWithStorage {
             }
             
             this.predator = false;
-            this.setPaws(Game.PawEnum.SKIN);
-            this.setEyes(Game.EyeEnum.CIRCLE);
-            this.setPelt(Game.PeltEnum.FUR);
+            this.setPaws(PawEnum.SKIN);
+            this.setEyes(EyeEnum.CIRCLE);
+            this.setPelt(PeltEnum.FUR);
         }
         if (this.age.val > 25) {
             this.height = _baseHeight;
@@ -3269,7 +3293,7 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_species)) {
             return this;
         }
-        if (Game.SpeciesEnum.properties.hasOwnProperty(_species)) {
+        if (SpeciesEnum.properties.hasOwnProperty(_species)) {
             this.prefersSpecies.add(_species);
         }
         return this;
@@ -3279,7 +3303,7 @@ class CharacterEntity extends EntityWithStorage {
         if (isNaN(_species)) {
             return this;
         }
-        if (Game.SpeciesEnum.properties.hasOwnProperty(_species)) {
+        if (SpeciesEnum.properties.hasOwnProperty(_species)) {
             this.avoidsSpecies.add(_species);
         }
         return this;
@@ -3423,15 +3447,15 @@ class CharacterEntity extends EntityWithStorage {
         _dialogue = Game.getDialogue(_dialogue);
         if (_dialogue instanceof Dialogue) {
             this.dialogue = _dialogue;
-            this.addAvailableAction("talk");
-            this.setDefaultAction("talk");
+            this.addAvailableAction(ActionEnum.TALK);
+            this.setDefaultAction(ActionEnum.TALK);
         }
         return this;
     }
     removeDialogue() {
         this.dialogue = undefined;
-        this.removeAvailableAction("talk");
-        this.setDefaultAction("look");
+        this.removeAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.LOOK);
         return this;
     }
     getDialogue() {

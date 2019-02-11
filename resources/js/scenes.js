@@ -173,7 +173,7 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, Game.FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(2, 2, 2));
+    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(2, 2, 2));
 
     // Ozzy Bathroom
     Game.createMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
@@ -219,7 +219,7 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh(undefined, "craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("refrideratorOzzy", "Refrigerator", "refrigeratorComplex", undefined, Game.FurnitureEnum.REFRIGERATOR, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("refrideratorOzzy", "Refrigerator", "refrigeratorComplex", undefined, FurnitureEnum.REFRIGERATOR, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
     Game.addFurnitureMesh("trashBagFullInstance02", "trashBagFull", undefined, {mass:4.0}, new BABYLON.Vector3(6.5, 0, -10.6), new BABYLON.Vector3(0, 90, 0), undefined);
@@ -313,7 +313,7 @@ Game.generateApartment = function() {
         Game.createMesh(undefined, "craftsmanStairWallSideLeft", "greenWallpaperPlainWood",new BABYLON.Vector3(0, 0, -20));
         Game.createMesh(undefined, "craftsmanStairWallCornerLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
 
-    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, Game.FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
+    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
     Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
     Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
     Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.6, -22));
@@ -617,9 +617,9 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "twoByFourByThree", undefined, new BABYLON.Vector3(2.9, 0, -29.15), new BABYLON.Vector3(30, 33, -5));
 
     // Misc
-    Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacter", 30, Game.SexEnum.MALE, Game.SpeciesEnum.FOX, "foxM", "foxRinehart", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye", "circularEyeViolet").attachToRightEye("eye", "circularEyeViolet");
-    Game.createCharacter("rosie", "Rosie", undefined, "rosie", 14, Game.SexEnum.FEMALE, Game.SpeciesEnum.FOX, "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "circularEyeBlue").attachToRightEye("eye", "circularEyeBlue");
-    Game.createCharacter("charlie", "Charlie", undefined, "charlie", 28, Game.SexEnum.FEMALE, Game.SpeciesEnum.FOX, "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "feralEyeBlue").attachToRightEye("eye", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
+    Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacter", 30, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRinehart", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye", "circularEyeViolet").attachToRightEye("eye", "circularEyeViolet");
+    Game.createCharacter("rosie", "Rosie", undefined, "rosie", 14, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye", "circularEyeBlue").attachToRightEye("eye", "circularEyeBlue");
+    Game.createCharacter("charlie", "Charlie", undefined, "charlie", 28, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye", "feralEyeBlue").attachToRightEye("eye", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
     Game.getCharacterController("charlie").setIdleAnim("90_idleSquint01", 1, true);
     Game.getCharacterController("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);
     Game.getCharacterEntity("charlie").setMaxMana("666").setMana("666").setLife("66").setStamina("66");

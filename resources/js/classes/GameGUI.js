@@ -1006,41 +1006,42 @@ class GameGUI {
             _actions.removeControl(_actions.children[_i]);
         }
         for (var _action in _instancedItemEntity.getAvailableActions()) {
+            _action = Game.filterInt(_action);
             var _actionButton = undefined;
             switch (_action) {
-                case "drop" : {
-                    _actionButton = GameGUI._generateButton(undefined, "Drop");
+                case ActionEnum.DROP : {
+                    _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
                     _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI._setPlayerInventory);});
                     break;
                 }
-                case "hold" : {
+                case ActionEnum.HOLD : {
                     if (Game.player.hasEquippedEntity(_instancedItemEntity)) {
-                        _actionButton = GameGUI._generateButton(undefined, "Release");
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
                         _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
                     }
                     else {
-                        _actionButton = GameGUI._generateButton(undefined, "Hold");
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
                         _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
                     }
                     break;
                 }
-                case "look" : {
-                    _actionButton = GameGUI._generateButton(undefined, "Look");
+                case ActionEnum.LOOK : {
+                    _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
                     break;
                 }
-                case "put" : {
+                case ActionEnum.PUT : {
                     if (_playerEntity != Game.player) {
                         break;
                     }
                     else if (_targetEntity instanceof EntityWithStorage) {
-                        _actionButton = GameGUI._generateButton(undefined, "Put");
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
                     }
                     break;
                 }
-                case "take" : {
+                case ActionEnum.TAKE : {
                     if (_playerEntity == Game.player) {}
                     else {
-                        _actionButton = GameGUI._generateButton(undefined, "Take");
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
                     }
                     break;
                 }

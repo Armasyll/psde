@@ -24,7 +24,7 @@ class InstancedEntity extends AbstractEntity {
 
         this.availableActions = {};
         this._useOwnAvailableActions = false;
-        this.defaultAction = null;
+        this.defaultAction = this.entity.getDefaultAction();
         this._usesOwnDefaultAction = false;
         this.specialProperties = new Set();
         this._useOwnSpecialProperties = false;
@@ -106,12 +106,17 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnAvailableActions = true;
     }
     addAvailableAction(_action, _function = undefined, _runOnce = false) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return this;
+        }
         if (!this._useOwnAvailableActions) {
             this._createOwnAvailableActions();
         }
-        if (Game.kActionTypes.has(_action)) {
-            this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
-        }
+        this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
         return this;
     }
     removeAvailableAction(_action) {
@@ -154,8 +159,8 @@ class InstancedEntity extends AbstractEntity {
     }
 
     setDefaultAction(_action) {
-        this._usesOwnDefaultAction = true;
         if (this.hasAvailableAction(_action)) {
+            this._usesOwnDefaultAction = true;
             this.defaultAction = _action;
         }
     }

@@ -10,15 +10,15 @@ class Spell extends Entity {
      * @param  {Number} _lifeCost    Cost of Spell in Life
      * @param  {Number} _staminaCost Cost of Spell in Stamina
      */
-    constructor(_id, _name = "", _description = undefined, _image = undefined, _school = Game.SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _lifeCost = 0, _staminaCost = 0) {
+    constructor(_id, _name = "", _description = undefined, _image = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _lifeCost = 0, _staminaCost = 0) {
         super(_id, _name, _description, _image);
-        this.entityType = Game.EntityEnum.SPELL;
+        this.entityType = EntityEnum.SPELL;
 
-        if (Game.Game.SpellSchoolEnum.has(_school)) {
+        if (SpellSchoolEnum.has(_school)) {
             this.school = _school;
         }
         else {
-            this.school = Game.SpellSchoolEnum.UNIVERSAL;
+            this.school = SpellSchoolEnum.UNIVERSAL;
         }
 
         if (isNaN(_manaCost)) {

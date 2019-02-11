@@ -9,12 +9,12 @@ class WeaponEntity extends ItemEntity {
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = "club") {
         super(_id, _name, _description, _image);
-        this.itemType = Game.ItemEnum.WEAPON;
+        this.itemType = ItemEnum.WEAPON;
 
-        this.equipmentSlot = Game.ApparelSlotEnum.HANDS;
+        this.equipmentSlot = ApparelSlotEnum.HANDS;
 
-        this.addAvailableAction("equip");
-        this.addAvailableAction("unequip");
+        this.addAvailableAction(ActionEnum.EQUIP);
+        this.addAvailableAction(ActionEnum.UNEQUIP);
         this.setType(_type);
 
         Game.setWeaponEntity(this.id, this);

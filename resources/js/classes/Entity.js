@@ -8,7 +8,7 @@ class Entity extends AbstractEntity {
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
         super(_id, _name, _description, _image);
-        this.entityType = Game.EntityEnum.ENTITY;
+        this.entityType = EntityEnum.ENTITY;
         /**
          * Mass in kilograms
          * @type {Number} 0.001 to Number.MAX_SAFE_INTEGER
@@ -21,20 +21,20 @@ class Entity extends AbstractEntity {
 
         /**
          * Actions available to this Entity
-         * @type {Set} <Game.kActionTypes>
+         * @type {Set} <ActionEnum>
          */
         this.availableActions = {};
         /**
          * Special Properties
-         * @type {Set} <Game.SpecialPropertyEnum>
+         * @type {Set} <SpecialPropertyEnum>
          */
         this.specialProperties = new Set();
 
-        this.addAvailableAction("look");
-        this.addSpecialProperty("exists");
+        this.addAvailableAction(ActionEnum.LOOK);
+        this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
 
         this.defaultAction = null;
-        this.setDefaultAction("look");
+        this.setDefaultAction(ActionEnum.LOOK);
 
         Game.setEntity(this.id, this);
     }
@@ -141,20 +141,32 @@ class Entity extends AbstractEntity {
 
     /**
      * Adds an available Action when interacting with this Entity
-     * @param {String} _action (Game.kActionTypes)
+     * @param {String} _action (ActionEnum)
      */
     addAvailableAction(_action, _function = undefined, _runOnce = false) {
-        if (Game.kActionTypes.has(_action)) {
-            this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
         }
+        else {
+            return this;
+        }
+        this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
         return this;
     }
     /**
      * Removes an available Action when interacting with this Entity
-     * @param  {String} _action (Game.kActionTypes)
+     * @param  {String} _action (ActionEnum)
      * @return {Booealn}          Whether or not the Action was removed
      */
     removeAvailableAction(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return this;
+        }
         if (this.availableActions.hasOwnProperty(_action)) {
             if (this.availableActions[_action] instanceof ActionData) {
                 this.availableActions[_action].dispose();
@@ -164,6 +176,13 @@ class Entity extends AbstractEntity {
         return this;
     }
     getAvailableAction(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return undefined;
+        }
         if (this.availableActions.hasOwnProperty(_action)) {
             return this.availableActions[_action];
         }
@@ -172,6 +191,13 @@ class Entity extends AbstractEntity {
         return this.availableActions;
     }
     hasAvailableAction(_action) {
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+            _action = ActionEnum.properties[_action].value;
+        }
+        else {
+            return undefined;
+        }
         return this.availableActions.hasOwnProperty(_action);
     }
 
@@ -199,15 +225,15 @@ class Entity extends AbstractEntity {
     }
     /**
      * Returns this Entity's special properties
-     * @return {Set} <Number (Game.SpecialPropertyEnum)>
+     * @return {Set} <Number (SpecialPropertyEnum)>
      */
     getSpecialProperties() {
         return this.specialProperties;
     }
     /**
      * Returns whether or not this Entity has the specific special property
-     * @param  {Number}  _specialProperty (Game.SpecialPropertyEnum)
-     * @return {Boolean} Whether or not this Entity has the specific Game.SpecialPropertyEnum
+     * @param  {Number}  _specialProperty (SpecialPropertyEnum)
+     * @return {Boolean} Whether or not this Entity has the specific SpecialPropertyEnum
      */
     hasSpecialProperty(_specialProperty) {
         if (isNaN(_specialProperty)) {

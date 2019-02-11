@@ -6,12 +6,12 @@ class LightingEntity extends FurnitureEntity {
      * @param  {String}  _description   Description
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _lightType) {
-        super(_id, _name, _description, _image, Game.FurnitureEnum.LAMP);
+        super(_id, _name, _description, _image, FurnitureEnum.LAMP);
 
         this.lightOn = true;
 
-        this.addAvailableAction("use");
-        this.setDefaultAction("use");
+        this.addAvailableAction(ActionEnum.USE);
+        this.setDefaultAction(ActionEnum.USE);
 
         Game.setLightingEntity(this.id, this);
     }

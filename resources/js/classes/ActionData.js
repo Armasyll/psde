@@ -18,9 +18,14 @@ class ActionData {
 		this.runBeforeParent = _runBeforeParent == true;
 	}
 	setAction(_action) {
-        if (Game.kActionTypes.has(_action)) {
-            this.action = _action;
+        if (ActionEnum.hasOwnProperty(_action)) {}
+        else if (ActionEnum.properties.hasOwnProperty(_action)) {
+        	_action = ActionEnum.properties[_action].value;
         }
+        else {
+        	_action = 0;
+        }
+        this.action = _action;
 	}
 	getAction() {
 		return this.action;

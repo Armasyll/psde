@@ -8,10 +8,10 @@ class FurnitureEntity extends EntityWithStorage {
      * @param  {Number}  _seatingSpace  Seating Space
      * @param  {Number}  _storageSpace  Storage Space
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = Game.FurnitureEnum.CHAIR) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = FurnitureEnum.CHAIR) {
         super(_id, _name, _description, _image);
 
-        this.entityType = Game.EntityEnum.FURNITURE;
+        this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = 0;
         this.setType(_type);
 
@@ -21,142 +21,142 @@ class FurnitureEntity extends EntityWithStorage {
     setType(_type) {
         this.type = Game.filterNumber(_type);
         switch(this.type) {
-            case Game.FurnitureEnum.BED: {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("lay");
+            case FurnitureEnum.BED: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.LAY);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.LAY);
                 break;
             }
-            case Game.FurnitureEnum.CHAIR: {
-                this.addAvailableAction("sit");
-                this.addAvailableAction("sleep");
-                this.setDefaultAction("sit");
+            case FurnitureEnum.CHAIR: {
+                this.addAvailableAction(ActionEnum.SIT);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.setDefaultAction(ActionEnum.SIT);
                 break;
             }
-            case Game.FurnitureEnum.LOVESEAT: {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("sit");
+            case FurnitureEnum.LOVESEAT: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.LAY);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.SIT);
                 break;
             }
-            case Game.FurnitureEnum.COUCH: {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("sit");
+            case FurnitureEnum.COUCH: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.LAY);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.SIT);
                 break;
             }
-            case Game.FurnitureEnum.TABLE: {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("sit");
+            case FurnitureEnum.TABLE: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.SIT);
                 break;
             }
-            case Game.FurnitureEnum.DESK: {
-                this.addAvailableAction("open");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("open");
+            case FurnitureEnum.DESK: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.SHELF: {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.SHELF: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.CUPBOARD: {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.CUPBOARD: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.CABINET: {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.CABINET: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.BUREAU: {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.BUREAU: {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.TELEVISION : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("look");
-                this.setDefaultAction("use");
+            case FurnitureEnum.TELEVISION : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.LOOK);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
-            case Game.FurnitureEnum.REFRIGERATOR : {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.REFRIGERATOR : {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.OVEN : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.OVEN : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.MICROWAVE : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.MICROWAVE : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.TOASTER : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.TOASTER : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.TUB : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("sleep");
-                this.addAvailableAction("lay");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("use");
+            case FurnitureEnum.TUB : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.SLEEP);
+                this.addAvailableAction(ActionEnum.LAY);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
-            case Game.FurnitureEnum.SHOWER : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("use");
+            case FurnitureEnum.SHOWER : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
-            case Game.FurnitureEnum.SINK : {
-                this.addAvailableAction("use");
-                this.setDefaultAction("use");
+            case FurnitureEnum.SINK : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
-            case Game.FurnitureEnum.TOILET : {
-                this.addAvailableAction("use");
-                this.addAvailableAction("sit");
-                this.setDefaultAction("use");
+            case FurnitureEnum.TOILET : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.SIT);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
-            case Game.FurnitureEnum.MIRROR : {
-                this.addAvailableAction("look");
-                this.addAvailableAction("use");
-                this.setDefaultAction("look");
+            case FurnitureEnum.MIRROR : {
+                this.addAvailableAction(ActionEnum.LOOK);
+                this.addAvailableAction(ActionEnum.USE);
+                this.setDefaultAction(ActionEnum.LOOK);
                 break;
             }
-            case Game.FurnitureEnum.BASKET : {
-                this.addAvailableAction("open");
-                this.setDefaultAction("open");
+            case FurnitureEnum.BASKET : {
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
-            case Game.FurnitureEnum.LAMP : {
-                this.addAvailableAction("use");
-                this.setDefaultAction("use");
+            case FurnitureEnum.LAMP : {
+                this.addAvailableAction(ActionEnum.USE);
+                this.setDefaultAction(ActionEnum.USE);
                 break;
             }
             default : {
-                this.addAvailableAction("look");
-                this.setDefaultAction("look");
+                this.addAvailableAction(ActionEnum.LOOK);
+                this.setDefaultAction(ActionEnum.LOOK);
             }
         }
         return this;

@@ -12,7 +12,7 @@ class AbstractEntity {
             _id = genUUIDv4();
         }
         this.id = _id;
-        this.entityType = Game.EntityEnum.ABSTRACT;
+        this.entityType = EntityEnum.ABSTRACT;
         /**
          * Name
          * @type {String} Can be undefined

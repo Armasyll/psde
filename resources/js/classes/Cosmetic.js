@@ -1,5 +1,5 @@
 class Cosmetic {
-    constructor(_id, _name = "", _description = "", _image = "genericItem", _mesh = "", _material = undefined, _equipmentSlot = Game.ApparelSlotEnum.HEAD) {
+    constructor(_id, _name = "", _description = "", _image = "genericItem", _mesh = "", _material = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
@@ -10,7 +10,7 @@ class Cosmetic {
         this.image = "";
         this.meshID = "";
         this.materialID = "";
-        this.equipmentSlot = Game.ApparelSlotEnum.HEAD;
+        this.equipmentSlot = ApparelSlotEnum.HEAD;
 
         this.setName(_name);
         this.setDescription(_description);
@@ -92,11 +92,11 @@ class Cosmetic {
         if (isNaN(_type)) {
             return this;
         }
-        if (Game.ApparelSlotEnum.properties.hasOwnProperty(_type)) {
+        if (ApparelSlotEnum.properties.hasOwnProperty(_type)) {
             this.equipmentSlot = _type;
         }
         else {
-            this.equipmentSlot = Game.ApparelSlotEnum.HEAD;
+            this.equipmentSlot = ApparelSlotEnum.HEAD;
         }
         return this;
     }
