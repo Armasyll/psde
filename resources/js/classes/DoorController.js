@@ -29,11 +29,11 @@ class DoorController extends EntityController {
     }
     doOpen() {
         this.mesh.rotation = this.avEndRot;
-        this.entity.setDefaultAction("close");
+        this.entity.setDefaultAction(ActionEnum.CLOSE);
     }
     doClose() {
         this.mesh.rotation = this.avStartRot;
-        this.entity.setDefaultAction("open");
+        this.entity.setDefaultAction(ActionEnum.OPEN);
     }
     dispose() {
         delete Game.doorControllers[this.id];
