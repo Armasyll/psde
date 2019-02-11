@@ -793,6 +793,9 @@ class Game {
             FOOT_L: 15,
             FOOT_R: 16,
             FEET: 17,
+            WRIST_L: 18,
+            WRIST_R: 19,
+            WRISTS: 20,
             THUMB_L: 40,
             INDEX_L: 41,
             MIDDLE_L: 42,
@@ -801,6 +804,7 @@ class Game {
             INDEX_R: 51,
             MIDDLE_R: 52,
             PINKIE_R: 53,
+            FINGERS: 60,
             properties: {
                 0: {
                     name: "Head",
@@ -874,6 +878,18 @@ class Game {
                     name: "Feet",
                     value: 17
                 },
+                18: {
+                    name: "Left Wrist",
+                    value: 18
+                },
+                19: {
+                    name: "Right Wrist",
+                    value: 19
+                },
+                20: {
+                    name: "Wrists",
+                    value: 20
+                },
                 40: {
                     name: "Left Thumb",
                     value: 40
@@ -905,6 +921,10 @@ class Game {
                 53: {
                     name: "Right Pinkie Finger",
                     value: 53
+                },
+                60: {
+                    name: "Fingers",
+                    value: 60
                 },
             }
         };
