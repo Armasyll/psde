@@ -9,8 +9,8 @@ class InstancedClothingEntity extends InstancedItemEntity {
         Game.setInstancedClothingEntity(this.id, this);
     }
 
-    getEquipmentSlot() {
-        return this.entity.getEquipmentSlot();
+    getApparelSlot() {
+        return this.entity.getApparelSlot();
     }
 
     clone(_id) {

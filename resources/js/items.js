@@ -15,10 +15,10 @@ Game.createProtoItem("cheeseWheel", "Cheese Wheel", "A wheel of cheese.", "chees
 Game.createProtoItem("cheeseWheelSansWedge", "Partial Cheese Wheel", "A partially cut wheel of cheese.", "cheeseWheelSansWedge", "cheeseWheelSansWedge", "cheeseWheel", Game.ItemEnum.CONSUMABLE, Game.ConsumableEnum.FOOD);
 Game.createProtoItem("cheeseWedge", "Cheese Wedge", "A wedge of cheese.", "cheeseWedge", "cheeseWedge", "cheeseWheel", Game.ItemEnum.CONSUMABLE, Game.ConsumableEnum.FOOD);
 
-Game.createProtoItem("barbute01", "Barbute", "", "barbute01", "barbute01", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);
-Game.createProtoItem("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01", "barbuteHorned01", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);
-Game.createProtoItem("birdMask01", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01", "birdMask01", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);
-Game.createProtoItem("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02", "wizardHat02", undefined, Game.ItemEnum.CLOTHING, Game.EquipmentSlotEnum.HEAD);
+Game.createProtoItem("barbute01", "Barbute", "", "barbute01", "barbute01", undefined, Game.ItemEnum.APPAREL, Game.ApparelSlotEnum.HEAD);
+Game.createProtoItem("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01", "barbuteHorned01", undefined, Game.ItemEnum.APPAREL, Game.ApparelSlotEnum.HEAD);
+Game.createProtoItem("birdMask01", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01", "birdMask01", undefined, Game.ItemEnum.APPAREL, Game.ApparelSlotEnum.HEAD);
+Game.createProtoItem("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02", "wizardHat02", undefined, Game.ItemEnum.APPAREL, Game.ApparelSlotEnum.HEAD);
 
 Game.createProtoItem("bottle01", "Bottle", "A simple bottle.", "bottle01", "bottle01", undefined, Game.ItemEnum.GENERAL);
 Game.createProtoItem("cup01", "Cup", "A simple cup.", "cup01", "cup01", undefined, Game.ItemEnum.GENERAL);

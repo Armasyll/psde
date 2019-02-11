@@ -11,7 +11,7 @@ class WeaponEntity extends ItemEntity {
         super(_id, _name, _description, _image);
         this.itemType = Game.ItemEnum.WEAPON;
 
-        this.equipmentSlot = Game.EquipmentSlotEnum.HANDS;
+        this.equipmentSlot = Game.ApparelSlotEnum.HANDS;
 
         this.addAvailableAction("equip");
         this.addAvailableAction("unequip");

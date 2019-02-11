@@ -592,7 +592,7 @@ class Game {
         };
         this.ItemEnum = {
             GENERAL: 0,
-            CLOTHING: 1,
+            APPAREL: 1,
             KEY: 2,
             WEAPON: 3,
             CONSUMABLE: 4,
@@ -757,7 +757,7 @@ class Game {
                 }
             }
         };
-        this.EquipmentSlotEnum = {
+        this.ApparelSlotEnum = {
             HEAD: 0,
             EAR_L: 1,
             EAR_R: 2,
@@ -3187,7 +3187,7 @@ class Game {
                 _entity = new ItemEntity(_id, _name, _description, _image);
                 break;
             }
-            case Game.ItemEnum.CLOTHING: {
+            case Game.ItemEnum.APPAREL: {
                 _entity = new ClothingEntity(_id, _name, _description, _image, _itemSubType);
                 break;
             }
@@ -3273,7 +3273,7 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
-    static createCosmetic(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _equipmentSlot = Game.EquipmentSlotEnum.HEAD) {
+    static createCosmetic(_id, _name = "", _description = "", _image = "", _mesh = undefined, _texture = undefined, _equipmentSlot = Game.ApparelSlotEnum.HEAD) {
         return new Cosmetic(_id, _name, _description, _image, _mesh, _texture, _equipmentSlot);
     }
     static getCosmetic(_id) {
