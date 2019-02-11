@@ -182,7 +182,7 @@ class EntityController {
     }
     dispose() {
         this._isEnabled = false;
-        if (Game.player.targetController == this) {
+        if (Game.player.getController().targetController == this) {
             Game.clearPlayerTarget()
         }
         this.clearTargetedBy();

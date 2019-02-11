@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", function() {
         }
     });
     Game.scene.registerBeforeRender(function() {
-        if (!(Game.player instanceof CharacterController)) {
+        if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return null;
         }
         for (_character in Game.characterControllers) {

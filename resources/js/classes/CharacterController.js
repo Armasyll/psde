@@ -255,7 +255,7 @@ class CharacterController extends EntityController {
         this.jumpTime = this.jumpTime + dt;
         var forwardDist = 0;
         var disp;
-        if (this == Game.player && Game.enableCameraAvatarRotation) {
+        if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
             this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
         if (this.wasSprinting || this.wasRunning || this.wasWalking) {
@@ -358,7 +358,7 @@ class CharacterController extends EntityController {
             else {
                 if (this.key.turnLeft) {
                     this.mesh.addRotation(0, -0.022, 0);
-                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                    if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
                         Game.camera.alpha = -this.mesh.rotation.y - 4.69;
                     }
                     if (!moving) {
@@ -367,7 +367,7 @@ class CharacterController extends EntityController {
                 }
                 else if (this.key.turnRight) {
                     this.mesh.addRotation(0, 0.022, 0);
-                    if (this == Game.player && Game.enableCameraAvatarRotation) {
+                    if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
                         Game.camera.alpha = -this.mesh.rotation.y - 4.69;
                     }
                     if (!moving) {
@@ -381,7 +381,7 @@ class CharacterController extends EntityController {
          *  Jittering in the Y direction caused by moveVector
          */
         if (moving) {
-            if (this == Game.player && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
+            if (this == Game.player.getController() && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
                 this.mesh.rotation.y = -4.69 - Game.camera.alpha;
             }
             if (this.moveVector.length() > 0.001) {
@@ -894,7 +894,7 @@ class CharacterController extends EntityController {
     }
 
     dispose() {
-        if (this == Game.player) {
+        if (this == Game.player.getController()) {
             return false;
         }
         this.detachFromAllBones();

@@ -392,7 +392,7 @@ class GameGUI {
                 Game.generateApartment();
                 Game._finishedScene = true;
                 Game.initPlayer();
-                Game.player.entity.setName(nameInput.text);
+                Game.player.setName(nameInput.text);
                 GameGUI.setPlayerPortrait(Game.player);
             }
             if (!Client.isOnline()) {
@@ -406,7 +406,7 @@ class GameGUI {
                 Game._finishedScene = true;
                 Game.generateApartment();
                 Game.initPlayer();
-                Game.player.entity.setName(nameInput.text);
+                Game.player.setName(nameInput.text);
                 GameGUI.setPlayerPortrait(Game.player);
             }
             if (Client.isOnline()) {
@@ -698,7 +698,7 @@ class GameGUI {
     static hideTargetPortrait() {
         GameGUI._targetPortrait.isVisible = false;
     }
-    static setPlayerPortrait(_entity = Game.player.getEntity()) {
+    static setPlayerPortrait(_entity = Game.player) {
         if (!_entity.isEnabled()) {
             return undefined;
         }
@@ -712,7 +712,7 @@ class GameGUI {
         GameGUI._setPlayerPortraitImage(_entity.getImage());
         GameGUI._setPlayerPortraitName(_entity.getName());
     }
-    static updatePlayerPortraitStats(_entity = Game.player.getEntity()) {
+    static updatePlayerPortraitStats(_entity = Game.player) {
         if (!_entity.isEnabled()) {
             return undefined;
         }
@@ -960,7 +960,7 @@ class GameGUI {
      * Sets the inventory menu's content using an entity's inventory.
      * @param {Entity} _entity The Entity with the inventory.
      */
-    static _setPlayerInventory(_entity = Game.player.getEntity()) {
+    static _setPlayerInventory(_entity = Game.player) {
         var _inventory = GameGUI._inventoryMenu.getChildByName("items").children;
         for (var _i = _inventory.length - 1; _i > -1; _i--) {
             GameGUI._inventoryMenu.getChildByName("items").removeControl(_inventory[_i]);
@@ -982,12 +982,12 @@ class GameGUI {
      * @param {Entity} _targetEntity        The Entity storing the InstancedItemEntity
      * @param {Entity} _playerEntity        The Entity viewing the item; the player.
      */
-    static _setInventorySelectedItem(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player.getEntity()) {
+    static _setInventorySelectedItem(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player) {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {GameGUI._clearInventorySelectedItem; return;}
         _targetEntity = Game.getEntity(_targetEntity);
         _playerEntity = Game.getEntity(_playerEntity);
-        if (_playerEntity == undefined) {_playerEntity = Game.player.getEntity();}
+        if (_playerEntity == undefined) {_playerEntity = Game.player;}
 
         var _summary = GameGUI._inventoryMenu.getChildByName("summary");
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
@@ -1010,17 +1010,17 @@ class GameGUI {
             switch (_action) {
                 case "drop" : {
                     _actionButton = GameGUI._generateButton(undefined, "Drop");
-                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI._setPlayerInventory);});
+                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI._setPlayerInventory);});
                     break;
                 }
                 case "hold" : {
-                    if (Game.player.getEntity().hasEquippedEntity(_instancedItemEntity)) {
+                    if (Game.player.hasEquippedEntity(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, "Release");
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI._setInventorySelectedItem);});
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
                     }
                     else {
                         _actionButton = GameGUI._generateButton(undefined, "Hold");
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity.getController(), GameGUI._setInventorySelectedItem);});
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
                     }
                     break;
                 }
@@ -1029,7 +1029,7 @@ class GameGUI {
                     break;
                 }
                 case "put" : {
-                    if (_playerEntity != Game.player.getEntity()) {
+                    if (_playerEntity != Game.player) {
                         break;
                     }
                     else if (_targetEntity instanceof EntityWithStorage) {
@@ -1038,7 +1038,7 @@ class GameGUI {
                     break;
                 }
                 case "take" : {
-                    if (_playerEntity == Game.player.getEntity()) {}
+                    if (_playerEntity == Game.player) {}
                     else {
                         _actionButton = GameGUI._generateButton(undefined, "Take");
                     }
@@ -1283,7 +1283,7 @@ class GameGUI {
         GameGUI.pointerLock();
         GameGUI._dialogueMenu.isVisible = false;
     }
-    static setDialogue(_dialogue, _them, _you = Game.player.getEntity()) {
+    static setDialogue(_dialogue, _them, _you = Game.player) {
         GameGUI.clearDialogue();
         _dialogue = Game.getDialogue(_dialogue);
         _them = Game.getEntity(_them);
@@ -1322,7 +1322,7 @@ class GameGUI {
     static clearDialogueBody() {
         GameGUI.setDialogueBody("");
     }
-    static addDialogueOption(_dialogueOption, _them, _you = Game.player.getEntity(), _isEnabled = true) {
+    static addDialogueOption(_dialogueOption, _them, _you = Game.player, _isEnabled = true) {
         if (!(_dialogueOption instanceof DialogueOption)) {
             return undefined;
         }

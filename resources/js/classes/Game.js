@@ -1,10 +1,11 @@
 class Game {
     constructor() {
-        Game.initialized = false;
-        Game.debugEnabled = false
+        this.initialized = false;
+        Game.debugEnabled = false;
     }
     static initialize() {
-        this.debugEnabled = false;
+        this.initialized = false;
+        Game.debugEnabled = false;
         this.physicsEnabled = false;
 
         if (Game.debugEnabled) console.log("Running initialize");
@@ -14,17 +15,17 @@ class Game {
         this.engine = new BABYLON.Engine(this.canvas, false, null, false);
             this.engine.enableOfflineSupport = false; // Disables .manifest file errors
             this.engine.isPointerLock = false;
-        this.scene = new BABYLON.Scene(this.engine);
-            this.scene.autoClear = false;
-            this.scene.autoClearDepthAndStencil = false;
-            this.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
-            this.scene.actionManager = new BABYLON.ActionManager(this.scene);
+        Game.scene = new BABYLON.Scene(this.engine);
+            Game.scene.autoClear = false;
+            Game.scene.autoClearDepthAndStencil = false;
+            Game.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
+            Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
         if (this.physicsEnabled) {
             Game.initPhysics();
         }
         else {
-            this.scene.collisionsEnabled = true;
-            this.scene.workerCollisions = false;
+            Game.scene.collisionsEnabled = true;
+            Game.scene.workerCollisions = false;
         }
 
         this._assignBoundingBoxCollisionQueue = new Set();
@@ -394,24 +395,6 @@ class Game {
          * @type {<String, BABYLON.Mesh>}
          */
         this.clonedMeshes = {};
-        this.meshAttachToBoneModifications = {
-            "bookHardcoverClosed01":{
-                "hand.r":{
-                    "position":{
-                        "x":0,
-                        "y":0,
-                        "z":0.125
-                    }
-                },
-                "hand.l":{
-                    "position":{
-                        "x":0,
-                        "y":0,
-                        "z":0.125
-                    }
-                }
-            }
-        };
         /**
          * Map of Meshes that are waiting to be created
          * @type {<String, <Objects...>>}
@@ -484,10 +467,10 @@ class Game {
         this._finishedFirstLoad = false;
         this._finishedScene = false;
 
-        this._collisionMaterial = new BABYLON.Material("collisionMaterial", this.scene);
+        this._collisionMaterial = new BABYLON.Material("collisionMaterial", Game.scene);
 
         this.keyboardControls = {};
-        this.player = undefined;
+        Game.player = undefined;
         this._castRayTargetIntervalFunction = undefined;
         this._castRayTargetInterval = 250;
         this._pointerLockFunction = undefined;
@@ -502,7 +485,7 @@ class Game {
         this.postProcess = {};
 
         this.highlightEnabled = true;
-        this.highlightLayer = new BABYLON.HighlightLayer("hl1", this.scene);
+        this.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
         this.highlightLayer.outerGlow = true;
         this.highlightLayer.innerGlow = false;
         this.highlightedMesh = undefined;
@@ -548,7 +531,7 @@ class Game {
                     value: 6
                 }
             }
-        }
+        };
         this.SexEnum = {
             MALE: 0,
             FEMALE: 1,
@@ -567,7 +550,7 @@ class Game {
                     value: 2
                 }
             }
-        }
+        };
         this.StanceEnum = {
             LAY: 0,
             SIT: 1,
@@ -1291,7 +1274,7 @@ class Game {
                     value: 8
                 }
             }
-        }
+        };
 
         this.kWeaponSimpleMeleeTypes = new Set(["club","dagger","greatclub","handaxe","javelin","lighthammer","mace","quarterstaff","sickle","spear"]);
         this.kWeaponSimpleRangedTypes = new Set(["lightcrossbow","dart","shortbow","sling"]);
@@ -1311,8 +1294,8 @@ class Game {
         this.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
         this.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
-        this.gui = GameGUI;
-        this.gui.initialize();
+        Game.gui = GameGUI;
+        Game.gui.initialize();
         Game.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
@@ -1336,70 +1319,69 @@ class Game {
     }
     static initPhysics() {
         this.physicsPlugin = new BABYLON.CannonJSPlugin();
-        this.scene.enablePhysics(this.scene.gravity, this.physicsPlugin);
+        Game.scene.enablePhysics(Game.scene.gravity, this.physicsPlugin);
         this.physicsEnabled = true;
     }
     static initFollowCamera(_offset = BABYLON.Vector3.Zero()) {
-        if (this.camera instanceof BABYLON.Camera) {
-            this.camera.dispose();
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.camera.dispose();
         }
-        this.camera = new BABYLON.ArcRotateCamera(
+        Game.camera = new BABYLON.ArcRotateCamera(
             "camera",
-            -this.player.mesh.rotation.y-4.69,
+            -Game.player.getController().getMesh().rotation.y-4.69,
             Math.PI/2.5,
             3,
-            Game.player.getBoneByName("FOCUS").getAbsolutePosition(Game.player.getMesh()),
-            this.scene);
-        this.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
-        this.camera.checkCollisions = true;
-        this.camera.wheelPrecision = 100;
-        this.camera.upperRadiusLimit = 2;
-        this.camera.lowerRadiusLimit = 0.1;
-        this.camera.keysLeft=[];
-        this.camera.keysRight=[];
-        this.camera.keysUp=[];
-        this.camera.keysDown=[];
-        this.camera.attachControl(this.canvas, false);
+            Game.player.getController().getBoneByName("FOCUS").getAbsolutePosition(Game.player.getController().getMesh()),
+            Game.scene);
+        Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
+        Game.camera.checkCollisions = true;
+        Game.camera.wheelPrecision = 100;
+        Game.camera.upperRadiusLimit = 2;
+        Game.camera.lowerRadiusLimit = 0.1;
+        Game.camera.keysLeft=[];
+        Game.camera.keysRight=[];
+        Game.camera.keysUp=[];
+        Game.camera.keysDown=[];
+        Game.camera.attachControl(this.canvas, false);
 
-        this.camera.minZ = 0.001;
-        this.camera.lockedTarget = this.player.focus;
+        Game.camera.minZ = 0.001;
+        Game.camera.lockedTarget = Game.player.getController().focus;
         Game.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
         if (Game.debugEnabled) console.log("Running initFreeCamera");
-        if (this.camera instanceof BABYLON.Camera) {
-            this.camera.dispose();
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.camera.dispose();
         }
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), this.scene);
-        this.camera.radius = 2;
-        this.camera.minZ = 0.001;
-        this.camera.heightOffset = 1;
-        this.camera.rotationOffset = 0;
-        this.camera.speed = 0.25;
-        this.camera.attachControl(this.canvas, true);
+        Game.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), Game.scene);
+        Game.camera.radius = 2;
+        Game.camera.minZ = 0.001;
+        Game.camera.heightOffset = 1;
+        Game.camera.rotationOffset = 0;
+        Game.camera.speed = 0.25;
+        Game.camera.attachControl(this.canvas, true);
         if (this.physicsEnabled) {}
         else {
-            this.camera.applyGravity = _applyGravity;
-            this.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
-            this.camera.checkCollisions = true;
+            Game.camera.applyGravity = _applyGravity;
+            Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
+            Game.camera.checkCollisions = true;
         }
         Game.initPostProcessing();
     }
     static initPlayer(_position = new BABYLON.Vector3(3, 0, -17), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running initPlayer");
-        this.player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", Game.SpeciesEnum.FOX, "foxM", "foxRed", undefined, _position, _rotation, _scaling);
-        this.player.attachToFOCUS("cameraFocus");
-        this.player.attachToLeftEye("eye", "feralEyeGreen");
-        this.player.attachToRightEye("eye", "feralEyeGreen");
-        this.player.getEntity().addItem(new InstancedItemEntity(undefined, "woodenMallet"));
-        this.player.getMesh().isPickable = false;
+        var _player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, "male", Game.SpeciesEnum.FOX, "foxM", "foxRed", undefined, _position, _rotation, _scaling);
+        _player.attachToFOCUS("cameraFocus");
+        _player.attachToLeftEye("eye", "feralEyeGreen");
+        _player.attachToRightEye("eye", "feralEyeGreen");
+        _player.getMesh().isPickable = false;
+        Game.player = _player.entity;
+        Game.player.addItem(new InstancedItemEntity(undefined, "woodenMallet"));
+        Game.gui.setPlayerPortrait(Game.player);
         Game.initFollowCamera();
-        if (this.player.hasOwnProperty("entity")) {
-            this.gui.setPlayerPortrait(this.player);
-        }
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
-        return this.player;
+        return Game.player;
     }
     static initBaseKeyboardControls() {
         this.chatInputFocusCode = 13;
@@ -1455,11 +1437,11 @@ class Game {
         Game._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
-        this.gui.setActionTooltipLetter();
+        Game.gui.setActionTooltipLetter();
     }
     static initPostProcessing() {
-        this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, this.camera);
-        //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, this.camera); // Could be used for darkness, when using too many lights is an issue
+        this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, Game.camera);
+        //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, Game.camera); // Could be used for darkness, when using too many lights is an issue
     }
     static loadDefaultTextures() {
         Game.loadedTextures["default"] = new BABYLON.Texture(null, Game.scene);
@@ -1707,43 +1689,43 @@ class Game {
         }
         switch (event) {
             case this.jumpCode : {
-                this.player.keyJump(true);
+                Game.player.getController().keyJump(true);
                 break;
             }
             case 16 : {
-                this.player.keyShift(true);
+                Game.player.getController().keyShift(true);
                 break;
             }
             case this.walkCode : {
-                this.player.keyMoveForward(true);
+                Game.player.getController().keyMoveForward(true);
                 break;
             }
             case this.turnLeftCode : {
-                this.player.keyTurnLeft(true);
+                Game.player.getController().keyTurnLeft(true);
                 break;
             }
             case this.turnRightCode : {
-                this.player.keyTurnRight(true);
+                Game.player.getController().keyTurnRight(true);
                 break;
             }
             case this.walkBackCode : {
-                this.player.keyMoveBackward(true);
+                Game.player.getController().keyMoveBackward(true);
                 break;
             }
             case this.strafeLeftCode : {
-                this.player.keyStrafeLeft(true);
+                Game.player.getController().keyStrafeLeft(true);
                 break;
             }
             case this.strafeRightCode : {
-                this.player.keyStrafeRight(true);
+                Game.player.getController().keyStrafeRight(true);
                 break;
             }
             case this.chatInputFocusCode : {
-                if (!this.gui.getChatInputFocused()) {
-                    this.gui.setChatInputFocused(true);
+                if (!Game.gui.getChatInputFocused()) {
+                    Game.gui.setChatInputFocused(true);
                 }
-                else if (this.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    var _text = this.gui.getChatInput().text.trim();
+                else if (Game.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    var _text = Game.gui.getChatInput().text.trim();
                     if (_text.length == 0) {
                         return;
                     }
@@ -1753,14 +1735,14 @@ class Game {
                     else {
                         Game.chatCommands(_text);
                     }
-                    this.gui.setChatInputFocused(false);
-                    this.gui.chatInputClear();
+                    Game.gui.setChatInputFocused(false);
+                    Game.gui.chatInputClear();
                 }
                 break;
             }
             case this.chatInputSubmitCode : {
-                if (this.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    var _text = this.gui.getChatInput().text.trim();
+                if (Game.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
+                    var _text = Game.gui.getChatInput().text.trim();
                     if (_text.length == 0) {
                         return;
                     }
@@ -1770,8 +1752,8 @@ class Game {
                     else {
                         Game.chatCommands(_text);
                     }
-                    this.gui.setChatInputFocused(false);
-                    this.gui.chatInputClear();
+                    Game.gui.setChatInputFocused(false);
+                    Game.gui.chatInputClear();
                 }
                 break;
             }
@@ -1793,37 +1775,37 @@ class Game {
                 break;
             }
             case this.showInventoryCode : {
-                if (this.gui.getInventoryVisible()) {
-                    this.gui.hideInventory(false);
-                    this.gui.showHUD(false);
+                if (Game.gui.getInventoryVisible()) {
+                    Game.gui.hideInventory(false);
+                    Game.gui.showHUD(false);
                 }
                 else {
-                    this.gui.showPlayerInventory(false);
+                    Game.gui.showPlayerInventory(false);
                 }
                 break;
             }
             case this.showMainMenuCode : {
-                if (this.gui.getMenuVisible()) {
+                if (Game.gui.getMenuVisible()) {
                     if (Game.debugEnabled) console.log(`\tShowing HUD`);
-                    this.gui.hideMenu(false);
-                    this.gui.showHUD(false);
+                    Game.gui.hideMenu(false);
+                    Game.gui.showHUD(false);
                 }
                 else {
                     if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
-                    this.gui.hideHUD(false);
-                    this.gui.showCharacterChoiceMenu(false);
+                    Game.gui.hideHUD(false);
+                    Game.gui.showCharacterChoiceMenu(false);
                 }
                 break;
             }
             default : {
             }
         }
-        this.player.move = this.player.anyMovement();
-        if (!this.player.key.equals(this.player.prevKey)) {
+        Game.player.getController().move = Game.player.getController().anyMovement();
+        if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
             if (Client.online) {
                 Client.updateLocRotScaleSelf();
             }
-            this.player.prevKey.copyFrom(this.player.key);
+            Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
         }
     }
     static controlCharacterOnKeyUp(event) {
@@ -1832,55 +1814,55 @@ class Game {
         }
         switch (event) {
             case this.jumpCode : {
-                this.player.keyJump(false);
+                Game.player.getController().keyJump(false);
                 break;
             }
             case 16 : {
-                this.player.keyShift(false);
+                Game.player.getController().keyShift(false);
                 break;
             }
             case this.walkCode : {
-                this.player.keyMoveForward(false);
+                Game.player.getController().keyMoveForward(false);
                 break;
             }
             case this.turnLeftCode : {
-                this.player.keyTurnLeft(false);
+                Game.player.getController().keyTurnLeft(false);
                 break;
             }
             case this.turnRightCode : {
-                this.player.keyTurnRight(false);
+                Game.player.getController().keyTurnRight(false);
                 break;
             }
             case this.walkBackCode : {
-                this.player.keyMoveBackward(false);
+                Game.player.getController().keyMoveBackward(false);
                 break;
             }
             case this.strafeLeftCode : {
-                this.player.keyStrafeLeft(false);
+                Game.player.getController().keyStrafeLeft(false);
                 break;
             }
             case this.strafeRightCode : {
-                this.player.keyStrafeRight(false);
+                Game.player.getController().keyStrafeRight(false);
                 break;
             }
             case this.useTargetedEntityCode : {
-                if (!(this.player.targetController instanceof EntityController)) {
+                if (!(Game.player.getController().targetController instanceof EntityController)) {
                     return;
                 }
-                if (this.player.targetController.getEntity() instanceof AbstractEntity) {
-                    this.doEntityAction(this.player.targetController.getEntity(), this.player.getEntity(), this.player.targetController.getEntity().getDefaultAction());
+                if (Game.player.getController().targetController.getEntity() instanceof AbstractEntity) {
+                    this.doEntityAction(Game.player.getController().targetController.getEntity(), Game.player, Game.player.getController().targetController.getEntity().getDefaultAction());
                 }
                 break;
             }
             default : {
             }
         }
-        this.player.move = this.player.anyMovement();
-        if (!this.player.key.equals(this.player.prevKey)) {
+        Game.player.getController().move = Game.player.getController().anyMovement();
+        if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
             if (Client.online) {
                 Client.updateLocRotScaleSelf();
             }
-            this.player.prevKey.copyFrom(this.player.key);
+            Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
         }
     }
     static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
@@ -2694,6 +2676,9 @@ class Game {
         else if (_id instanceof EntityController) {
             return _id;
         }
+        else if (_id instanceof AbstractEntity) {
+            return _id.getController();
+        }
         else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
             return Game.entityControllers[_id];
         }
@@ -2731,6 +2716,9 @@ class Game {
         else if (_id instanceof FurnitureController) {
             return _id;
         }
+        else if (_id instanceof FurnitureEntity) {
+            return _id.getController();
+        }
         else if (typeof _id == "string" && Game.furnitureControllers.hasOwnProperty(_id)) {
             return Game.furnitureControllers[_id];
         }
@@ -2750,6 +2738,9 @@ class Game {
         }
         else if (_id instanceof LightingController) {
             return _id;
+        }
+        else if (_id instanceof LightingEntity) {
+            return _id.getController();
         }
         else if (typeof _id == "string" && Game.lightingControllers.hasOwnProperty(_id)) {
             return Game.lightingControllers[_id];
@@ -2771,6 +2762,9 @@ class Game {
         else if (_id instanceof DoorController) {
             return _id;
         }
+        else if (_id instanceof DoorEntity) {
+            return _id.getController();
+        }
         else if (typeof _id == "string" && Game.doorControllers.hasOwnProperty(_id)) {
             return Game.doorControllers[_id];
         }
@@ -2791,6 +2785,9 @@ class Game {
         else if (_id instanceof ItemController) {
             return _id;
         }
+        else if (_id instanceof InstancedItemEntity) {
+            return _id.getController();
+        }
         else if (typeof _id == "string" && Game.itemControllers.hasOwnProperty(_id)) {
             return Game.itemControllers[_id];
         }
@@ -2810,6 +2807,9 @@ class Game {
         }
         else if (_id instanceof CharacterController) {
             return _id;
+        }
+        else if (_id instanceof CharacterEntity) {
+            return _id.getController();
         }
         else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
             return Game.entityControllers[_id];
@@ -3017,7 +3017,7 @@ class Game {
     static removeCharacter(_controller) {
         _controller = Game.getCharacterController(_controller);
         if (_controller == undefined) {return;}
-        if (_controller == this.player) {return;}
+        if (_controller == Game.player.getController()) {return;}
         var _mesh = _controller.getMesh();
         _controller.entity.dispose();
         _controller.dispose();
@@ -3127,7 +3127,7 @@ class Game {
     static removeFurniture(_controller) {
         _controller = Game.getFurnitureController(_controller);
         if (_controller == undefined) {return;}
-        if (_controller == this.player) {return;}
+        if (_controller == Game.player.getController()) {return;}
         var _mesh = _controller.getMesh();
         _controller.entity.dispose();
         _controller.dispose();
@@ -3171,7 +3171,7 @@ class Game {
     static removeLighting(_controller) {
         _controller = Game.getLightingController(_controller);
         if (_controller == undefined) {return;}
-        if (_controller == this.player) {return;}
+        if (_controller == Game.player.getController()) {return;}
         var _mesh = _controller.getMesh();
         _controller.entity.dispose();
         _controller.dispose();
@@ -3303,7 +3303,7 @@ class Game {
             _color = BABYLON.Color3.White();
         }
         else if (_mesh.controller.getEntity() instanceof InstancedItemEntity) {
-            if (_mesh.controller.getEntity().getOwner() != this.player.getEntity()) {
+            if (_mesh.controller.getEntity().getOwner() != Game.player) {
                 _color = BABYLON.Color3.Red();
             }
             else {
@@ -3321,55 +3321,55 @@ class Game {
         this.highlightedMesh = null;
     }
     static setPlayerTarget(_controller) {
-        if (!(Game.player instanceof CharacterController)) {
+        if (!(Game.player.getController() instanceof CharacterController)) {
             return false;
         }
-        if (_controller == Game.player.getTarget()) {
+        if (_controller == Game.player.getController().getTarget()) {
             return null;
         }
         if (!(_controller instanceof EntityController) || !_controller.isEnabled()) {
             return null;
         }
         Game.highlightMesh(_controller.mesh);
-        Game.player.setTarget(_controller);
-        this.gui.setTargetPortrait(_controller.getEntity());
-        this.gui.showTargetPortrait();
-        this.gui.setActionTooltip(_controller.getEntity().getDefaultAction());
-        this.gui.showActionTooltip();
+        Game.player.getController().setTarget(_controller);
+        Game.gui.setTargetPortrait(_controller.getEntity());
+        Game.gui.showTargetPortrait();
+        Game.gui.setActionTooltip(_controller.getEntity().getDefaultAction());
+        Game.gui.showActionTooltip();
     }
     static clearPlayerTarget() {
-        if (!(Game.player instanceof CharacterController)) {
+        if (!(Game.player.getController() instanceof CharacterController)) {
             return false;
         }
-        if (Game.player.getTarget() == undefined) {
+        if (Game.player.getController().getTarget() == undefined) {
             return undefined;
         }
         Game.clearHightlightMesh();
-        Game.player.clearTarget();
-        this.gui.hideTargetPortrait();
-        this.gui.hideActionTooltip();
+        Game.player.getController().clearTarget();
+        Game.gui.hideTargetPortrait();
+        Game.gui.hideActionTooltip();
     }
     static castRayTarget() {
-        if (!(Game.player instanceof CharacterController)) {
+        if (!(Game.player.getController() instanceof CharacterController)) {
             return false;
         }
-        var _ray = Game.camera.getForwardRay(2 * Game.player.getMesh().scaling.y, Game.camera.getWorldMatrix(), Game.player.focus.getAbsolutePosition())
-        if (Game.player.targetRay == undefined) {
-            Game.player.targetRay = _ray;
+        var _ray = Game.camera.getForwardRay(2 * Game.player.getController().getMesh().scaling.y, Game.camera.getWorldMatrix(), Game.player.getController().focus.getAbsolutePosition())
+        if (Game.player.getController().targetRay == undefined) {
+            Game.player.getController().targetRay = _ray;
         }
         else {
-            Game.player.targetRay.origin = _ray.origin;
-            Game.player.targetRay.direction = _ray.direction;
+            Game.player.getController().targetRay.origin = _ray.origin;
+            Game.player.getController().targetRay.direction = _ray.direction;
         }
         if (Game.debugEnabled) {
-            if (Game.player.targetRayHelper != undefined) {
-                Game.player.targetRayHelper.dispose();
+            if (Game.player.getController().targetRayHelper != undefined) {
+                Game.player.getController().targetRayHelper.dispose();
             }
-            Game.player.targetRayHelper = new BABYLON.RayHelper(Game.player.targetRay);
-            Game.player.targetRayHelper.show(Game.scene);
+            Game.player.getController().targetRayHelper = new BABYLON.RayHelper(Game.player.getController().targetRay);
+            Game.player.getController().targetRayHelper.show(Game.scene);
         }
-        var _hit = Game.scene.pickWithRay(Game.player.targetRay, function(_mesh) {
-            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.mesh) {
+        var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay, function(_mesh) {
+            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.getController().getMesh()) {
                 return true;
             }
             return false;
@@ -3428,15 +3428,15 @@ class Game {
         }
         switch (_command) {
             case "help" : {
-                this.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
+                Game.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
             }
             case "clear" : {
-                this.gui.chatOutputClear();
+                Game.gui.chatOutputClear();
                 break;
             }
             case "menu" : {
-                this.gui.showCharacterChoiceMenu();
+                Game.gui.showCharacterChoiceMenu();
                 break;
             }
             case "login" : {
@@ -3460,32 +3460,32 @@ class Game {
             case "v:" :
             case ":V" :
             case "V:" : {
-                this.gui.chatOutputAppend("\n    :V\n");
+                Game.gui.chatOutputAppend("\n    :V\n");
             }
             default : {
-                this.gui.chatOutputAppend(`Command "${_command}" not found.\n`);
+                Game.gui.chatOutputAppend(`Command "${_command}" not found.\n`);
                 return;
             }
         }
     }
     static updateTargetValue() {
-        if (!Game.player.hasMesh()) {
+        if (!Game.player.getController().hasMesh()) {
             return null;
         }
         if (Game.camera.radius <= 0.5) {
-            if (Game.enableFirstPerson && Game.player.mesh.isVisible) {
-                Game.player.hideMesh();
+            if (this.enableFirstPerson && Game.player.getController().getMesh().isVisible) {
+                Game.player.getController().hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
-                this.gui.showCrosshair();
+                Game.gui.showCrosshair();
             }
         }
         else {
-            if (!Game.player.mesh.isVisible) {
-                Game.player.showMesh();
+            if (!Game.player.getController().getMesh().isVisible) {
+                Game.player.getController().showMesh();
                 Game.camera.checkCollisions = true;
                 Game.camera.inertia = 0.9;
-                this.gui.hideCrosshair();
+                Game.gui.hideCrosshair();
             }
         }
     }
@@ -3500,25 +3500,25 @@ class Game {
                 }
             }
             else if (_action == "lay") {
-                Game.actionLayFunction(_entity.getController(), _subEntity.getController());
+                Game.actionLayFunction(_entity, _subEntity);
             }
             else if (_action == "sit") {
-                Game.actionSitFunction(_entity.getController(), _subEntity.getController());
+                Game.actionSitFunction(_entity, _subEntity);
             }
             else if (_action == "take" && _entity instanceof InstancedItemEntity) {
-                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
+                Game.actionTakeFunction(_entity, _subEntity);
             }
             else if (_action == "open" && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
-                Game.actionOpenFunction(_entity.getController(), _subEntity.getController());
+                Game.actionOpenFunction(_entity, _subEntity);
             }
             else if (_action == "close" && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
-                Game.actionCloseFunction(_entity.getController(), _subEntity.getController());
+                Game.actionCloseFunction(_entity, _subEntity);
             }
             else if (_action == "talk" && _entity instanceof CharacterEntity) {
-                Game.actionTalkFunction(_entity.getController(), _subEntity.getController());
+                Game.actionTalkFunction(_entity, _subEntity);
             }
             else if (_action == "steal" && _entity instanceof EntityWithStorage) {
-                Game.actionTakeFunction(_entity.getController(), _subEntity.getController());
+                Game.actionTakeFunction(_entity, _subEntity);
             }
             return;
         }
@@ -3528,10 +3528,10 @@ class Game {
             }
             else if (_entity.getAvailableAction(_action).runBeforeParent) {
                 _entity.getAvailableAction(_action).execute();
-                _entity.getEntity().getAvailableAction(_action).execute();
+                _entity.getAvailableAction(_action).execute();
             }
             else {
-                _entity.getEntity().getAvailableAction(_action).execute();
+                _entity.getAvailableAction(_action).execute();
                 _entity.getAvailableAction(_action).execute();
             }
         }
@@ -3541,199 +3541,199 @@ class Game {
             }
         }
     }
-    static actionTakeFunction(_itemController, _subEntityController = Game.player) {
-        if (!(_itemController instanceof ItemController)) {
+    static actionTakeFunction(_instancedItemEntity, _subEntity = Game.player) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) && !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        Game.player.getEntity().addItem(_itemController.getEntity());
-        Game.removeItemInSpace(_itemController);
+        _subEntity.addItem(_instancedItemEntity);
+        Game.removeItemInSpace(_instancedItemEntity);
     }
-    static actionDropFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+    static actionDropFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+        if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
             return;
         }
-        if (_subEntityController instanceof CharacterController) {
-            _subEntityController.getEntity().unequipEntity(_instancedItemEntity);
+        if (_subEntity instanceof CharacterController) {
+            _subEntity.unequipEntity(_instancedItemEntity);
         }
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
             _instancedItemEntity.setParent(null);
-            _instancedItemEntity.position = _subEntityController.getMesh().position.clone.add(
-                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getEntity().getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+            _instancedItemEntity.position = _subEntity.getController().getMesh().position.clone.add(
+                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
             );
         }
         else {
-            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntityController.getMesh().position.add(
-                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getEntity().getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.add(
+                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
             ));
         }
-        _subEntityController.getEntity().removeItem(_instancedItemEntity);
+        _subEntity.removeItem(_instancedItemEntity);
         if (typeof _callback == "function") {
             _callback();
         }
     }
-    static actionCloseFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof DoorController)) {
+    static actionCloseFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
             return;
         }
-        if (!(_subEntityController instanceof CharacterController)) {
+        if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        _entityController.doClose(false);
+        _entity.getController().doClose(false);
     }
-    static actionHoldFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+    static actionHoldFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+        if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
             return;
         }
-        _subEntityController.getEntity().hold(_instancedItemEntity);
+        _subEntity.hold(_instancedItemEntity);
         if (typeof _callback == "function") {
-            _callback(_instancedItemEntity, undefined, _subEntityController);
+            _callback(_instancedItemEntity, undefined, _subEntity);
         }
     }
-    static actionEquipFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+    static actionEquipFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+        if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
             return;
         }
-        if (_subEntityController instanceof CharacterController) {
-            _subEntityController.getEntity().equipEntity(_instancedItemEntity);
+        if (_subEntity instanceof CharacterEntity) {
+            _subEntity.equipEntity(_instancedItemEntity);
         }
         if (typeof _callback == "function") {
-            _callback(_instancedItemEntity, undefined, _subEntityController);
+            _callback(_instancedItemEntity, undefined, _subEntity);
         }
     }
-    static actionUnequipFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+    static actionUnequipFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+        if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
             return;
         }
-        if (_subEntityController instanceof CharacterController) {
-            _subEntityController.getEntity().unequip(_instancedItemEntity);
+        if (_subEntity instanceof CharacterEntity) {
+            _subEntity.unequip(_instancedItemEntity);
         }
         if (typeof _callback == "function") {
-            _callback(_instancedItemEntity, undefined, _subEntityController);
+            _callback(_instancedItemEntity, undefined, _subEntity);
         }
     }
-    static actionReleaseFunction(_instancedItemEntity, _subEntityController = Game.player, _callback = undefined) {
-        if (!(_instancedItemEntity instanceof InstancedItemEntity)) {
+    static actionReleaseFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof EntityController) || !(_subEntityController.getEntity() instanceof EntityWithStorage)) {
+        if (!(_subEntity instanceof EntityWithStorage)) {
             return;
         }
-        if (!_subEntityController.getEntity().hasItem(_instancedItemEntity)) {
+        if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
             return;
         }
-        _subEntityController.getEntity().unequipEntity(_instancedItemEntity);
+        _subEntity.unequipEntity(_instancedItemEntity);
         if (typeof _callback == "function") {
-            _callback(_instancedItemEntity, undefined, _subEntityController);
+            _callback(_instancedItemEntity, undefined, _subEntity);
         }
     }
-    static actionOpenFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof DoorController)) {
+    static actionOpenFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof DoorEntity) || !(_entity.getController() instanceof DoorController)) {
             return;
         }
-        if (!(_subEntityController instanceof CharacterController)) {
+        if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        if (_entityController.getEntity().getLocked()) {
-            if (!_subEntityController.getEntity().hasItem(_entityController.getEntity().getKey())) {
+        if (_entity.getLocked()) {
+            if (!_subEntity.hasItem(_entity.getKey())) {
                 return;
             }
-            _entityController.getEntity().setLocked(false);
+            _entity.setLocked(false);
         }
-        _entityController.doOpen(true);
+        _entity.getController().doOpen(true);
     }
-    static actionUseFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof EntityController)) {
+    static actionUseFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
             return;
         }
-        if (!(_subEntityController instanceof CharacterController)) {
+        if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        if (_entityController instanceof LightingController) {
-            _entityController.getEntity().toggle();
+        if (_entity.getController() instanceof LightingController) {
+            _entity.getController().toggle();
         }
     }
     /**
      * Places the subEntity near the Entity, and sets its parent to the Entity
      * TODO: Add actual placement of Characters based on their width
-     * @param  {FurnitureController} _entityController    Furniture
-     * @param  {EntityController} _subEntityController    Entity to be placed
+     * @param  {FurnitureEntity} _entity    Furniture
+     * @param  {EntityController} _subEntity    Entity to be placed
      */
-    static actionSitFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof FurnitureController)) {
+    static actionSitFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof FurnitureEntity) || !(_entity.getController() instanceof FurnitureController)) {
             return;
         }
-        if (!(_subEntityController instanceof CharacterController)) {
+        if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
             return;
         }
-        var _seatingBoundingBox = Game.getAbstractMesh(_entityController.getMesh().name).getBoundingInfo().boundingBox;
-        var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entityController.getMesh().scaling.x);
-        _subEntityController.setParent(_entityController.getMesh());
-        _subEntityController.getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
-        _subEntityController.getMesh().rotation.set(0,0,0);
-        _subEntityController._isLocked = true; // TESTING
-        _subEntityController.beginAnimation(_subEntityController.sitGround); // TESTING
+        var _seatingBoundingBox = Game.getAbstractMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+        var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entity.getController().getMesh().scaling.x);
+        _subEntity.getController().setParent(_entity.getController().getMesh());
+        _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
+        _subEntity.getController().getMesh().rotation.set(0,0,0);
+        _subEntity.getController()._isLocked = true; // TESTING
+        _subEntity.getController().beginAnimation(_subEntity.getController().sitGround); // TESTING
         // the eyes floating outside the skull is due to no animation being played :l
     }
-    static actionTalkFunction(_entityController, _subEntityController = Game.player) {
-        if (!(_entityController instanceof CharacterController)) {
+    static actionTalkFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof CharacterEntity)) {
             return;
         }
-        if (!(_subEntityController instanceof CharacterController)) {
+        if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        if (!(_entityController.getEntity().getDialogue() instanceof Dialogue)) {
+        if (!(_entity.getDialogue() instanceof Dialogue)) {
             return;
         }
-        Game.gui.setDialogue(_entityController.getEntity().getDialogue(), _entityController.getEntity(), _subEntityController.getEntity());
+        Game.gui.setDialogue(_entity.getDialogue(), _entity, _subEntity);
         Game.gui.showDialogueMenu();
-        /*var _dialogue = _entityController.getEntity().getDialogue().getText();
+        /*var _dialogue = _entity.getDialogue().getText();
         if (typeof _dialogue == "string") {
-            this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue);
+            Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue);
         }
         else if (typeof _dialogue == "function") {
-            this.gui.chatOutputAppend(_entityController.getEntity().getFullName() + ": " + _dialogue(_entityController.getEntity(), _subEntityController.getEntity()));
+            Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue(_entity, _subEntity));
         }*/
     }
     static setEntityController(_id, _entityController) {
@@ -4158,6 +4158,6 @@ class Game {
         }
     }
     static tgm() {
-        Game.player.getEntity().toggleGodMode();
+        Game.player.toggleGodMode();
     }
 }
