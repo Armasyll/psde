@@ -20,6 +20,13 @@ Game.createProtoItem("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01",
 Game.createProtoItem("birdMask01", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01", "birdMask01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createProtoItem("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02", "wizardHat02", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 
+Game.createProtoItem("ring01Silver", "Silver Ring", "A simple silver ring.", "ring01Silver", "ring01", "ring02Silver", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createProtoItem("ring01Gold", "Gold Ring", "A simple gold ring.", "ring01Gold", "ring01", "ring02Gold", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createProtoItem("ring02SilverRuby", "Silver Ruby Ring", "A silver ring with an inset ruby.", "ring02Silver", "ring02", "ring02Silver", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createProtoItem("ring02GoldRuby", "Gold Ruby Ring", "A gold ring with an inset ruby.", "ring02Gold", "ring02", "ring02Gold", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createProtoItem("ring03SilverDRuby", "Damaged Silver Ruby Ring", "A silver ring with a damaged inset ruby.", "ring03SilverDRuby", "ring03", "ring02SilverBrokenRuby", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createProtoItem("ring03GoldDRuby", "Damaged Gold Ruby Ring", "A gold ring with a damaged inset ruby.", "ring03GoldDRuby", "ring03", "ring02GoldBrokenRuby", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+
 Game.createProtoItem("bottle01", "Bottle", "A simple bottle.", "bottle01", "bottle01", undefined, ItemEnum.GENERAL);
 Game.createProtoItem("cup01", "Cup", "A simple cup.", "cup01", "cup01", undefined, ItemEnum.GENERAL);
 Game.createProtoItem("glass01", "Glass", "A simple glass.", "glass01", "glass01", undefined, ItemEnum.GENERAL);
@@ -54,8 +61,8 @@ Game.createProtoItem("warhammer01", "Warhammer", "A dangerous looking, spiked ha
 Game.createProtoItem("woodenMallet", "Wooden Mallet", "A mallet made from unrefined wood.", "mallet01", "mallet01", "woodenMallet", ItemEnum.WEAPON);
 Game.createProtoItem("sticc", "Stick", "A stick.", "stick01", "stick01", "stick", ItemEnum.WEAPON);
 
-Game.createProtoItem("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03", undefined, "gem03Icon", ItemEnum.GENERAL);
-Game.createProtoItem("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04", undefined, "gem04Icon", ItemEnum.GENERAL);
-Game.createProtoItem("exceptionalGem", "Exceptional Grey Gem", "An exceptional, grey-coloured gem.", "gem05", undefined, "gem05Icon", ItemEnum.GENERAL);
-Game.createProtoItem("flawlessGem", "Flawless Grey Gem", "A flawless grey gem.", "gem06", undefined, "gem06Icon", ItemEnum.GENERAL);
-Game.createProtoItem("perfectGem", "Perfect Grey Gem", "A grey gem of perfect quality.", "gem08", undefined, "gem08Icon", ItemEnum.GENERAL);
+Game.createProtoItem("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03Icon", "gem03", undefined, ItemEnum.GENERAL);
+Game.createProtoItem("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04Icon", "gem04", undefined, ItemEnum.GENERAL);
+Game.createProtoItem("exceptionalGem", "Exceptional Grey Gem", "An exceptional, grey-coloured gem.", "gem05Icon", "gem05", undefined, ItemEnum.GENERAL);
+Game.createProtoItem("flawlessGem", "Flawless Grey Gem", "A flawless grey gem.", "gem06Icon", "gem06", undefined, ItemEnum.GENERAL);
+Game.createProtoItem("perfectGem", "Perfect Grey Gem", "A grey gem of perfect quality.", "gem08Icon", "gem08", undefined, ItemEnum.GENERAL);

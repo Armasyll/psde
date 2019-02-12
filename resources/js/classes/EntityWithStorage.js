@@ -13,9 +13,12 @@ class EntityWithStorage extends Entity {
      * @return {this}
      */
     addItem(_instancedItem) {
-        _instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (_instancedItem instanceof InstancedItemEntity && _instancedItem.getEntity() instanceof ItemEntity) {
-            this.items.push(_instancedItem);
+        var __instancedItem = Game.getInstancedItemEntity(_instancedItem);
+        if (__instancedItem instanceof InstancedItemEntity && __instancedItem.getEntity() instanceof ItemEntity) {
+            this.items.push(__instancedItem);
+        }
+        else {
+            this.addProtoItem(_instancedItem);
         }
         return this;
     }

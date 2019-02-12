@@ -124,7 +124,7 @@ ItemEnum = {
             value: 1
         },
         2: {
-            name: "Clothing",
+            name: "Apparel",
             value: 2
         },
         3: {
