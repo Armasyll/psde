@@ -15,7 +15,10 @@
    height="512"
    viewBox="0 0 1024 512"
    sodipodi:docname="oblongEye.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/items/circularEyeBlue.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -24,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -40,16 +43,20 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1027"
+     inkscape:window-height="1056"
      id="namedview4"
-     showgrid="false"
-     inkscape:zoom="0.85466507"
-     inkscape:cx="418.13385"
-     inkscape:cy="90.861869"
-     inkscape:window-x="-8"
-     inkscape:window-y="22"
+     showgrid="true"
+     inkscape:zoom="1.0267567"
+     inkscape:cx="448.85673"
+     inkscape:cy="200.50283"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="svg2">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815" />
+  </sodipodi:namedview>
   <rect
      y="-2.6412093e-14"
      x="0"
@@ -57,18 +64,17 @@
      width="1024"
      id="sclera"
      style="opacity:1;vector-effect:none;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:5.33000612px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     inkscape:label="#sclera" />
-  <ellipse
-     cy="255.48283"
-     cx="215.57895"
+     inkscape:label="sclera" />
+  <circle
+     cy="256"
+     cx="240"
      id="iris"
-     style="opacity:1;fill:#666666;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.96665764px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     rx="114.9639"
-     ry="129.29292"
-     inkscape:label="#iris" />
+     style="opacity:1;fill:#666666;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.88851976px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     inkscape:label="iris"
+     r="120" />
   <path
      style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:9.68866539px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 215.57895,232.55532 c 28.73879,-2e-5 81.87198,-17.34675 81.872,23.03463 2e-5,39.76088 -53.13326,23.03438 -81.87205,23.03437 -28.73879,-2e-5 -81.87195,16.72649 -81.87195,-23.03437 0,-40.38615 53.13321,-23.03462 81.872,-23.03463 z"
+     d="m 240,233.07249 c 28.73879,-2e-5 81.87198,-17.34675 81.872,23.03463 2e-5,39.76088 -53.13326,23.03438 -81.87205,23.03437 -28.73879,-2e-5 -81.87195,16.72649 -81.87195,-23.03437 0,-40.38615 53.13321,-23.03462 81.872,-23.03463 z"
      id="pupil"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cscsc" />

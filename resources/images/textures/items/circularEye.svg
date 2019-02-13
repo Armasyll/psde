@@ -14,7 +14,7 @@
    width="1024"
    height="512"
    viewBox="0 0 1024 512"
-   sodipodi:docname="feralEyeBlue.svg"
+   sodipodi:docname="circularEye.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/items/circularEyeBlue.png"
    inkscape:export-xdpi="96"
@@ -69,14 +69,14 @@
      cy="256"
      cx="240"
      id="iris"
-     style="opacity:1;fill:#70c1ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.88851976px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="opacity:1;fill:#666666;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.88851976px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:label="iris"
      r="120" />
   <path
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5.02004623px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 257.14832,256 c 0,35.70325 -12.66953,64.64646 -17.14832,64.64646 -4.52121,0 -17.14833,-28.9432 -17.14833,-64.64646 0,-35.70326 12.62712,-64.64646 17.14833,-64.64646 4.47879,0 17.14832,28.94321 17.14832,64.64646 z"
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.52320051px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 270,256 c 0,16.56854 -14.52752,30 -29.99999,30 C 224.52754,286 210,272.56854 210,256 210,240.10981 224.52754,226 240.00001,226 255.47248,226 270,239.43146 270,256 Z"
      id="pupil"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="sssss"
+     sodipodi:nodetypes="sasas"
      inkscape:label="pupil" />
 </svg>

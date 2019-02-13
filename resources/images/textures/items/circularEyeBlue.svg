@@ -14,8 +14,11 @@
    width="1024"
    height="512"
    viewBox="0 0 1024 512"
-   sodipodi:docname="circularEyeViolet.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   sodipodi:docname="circularEyeBlue.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/items/circularEyeBlue.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -24,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -43,9 +46,9 @@
      inkscape:window-height="1056"
      id="namedview4"
      showgrid="true"
-     inkscape:zoom="4.4288119"
-     inkscape:cx="206.22371"
-     inkscape:cy="260.1463"
+     inkscape:zoom="1.0267567"
+     inkscape:cx="435.70854"
+     inkscape:cy="200.50283"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -62,17 +65,16 @@
      id="sclera"
      style="opacity:1;vector-effect:none;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:5.33000612px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      inkscape:label="sclera" />
-  <ellipse
-     cy="255.48283"
-     cx="215.57895"
+  <circle
+     cy="256"
+     cx="240"
      id="iris"
-     style="opacity:1;fill:#70c1ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.96665764px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     rx="114.9639"
-     ry="129.29292"
-     inkscape:label="iris" />
+     style="opacity:1;fill:#70c1ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.88851976px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     inkscape:label="iris"
+     r="120" />
   <path
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.81998444px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 245,255.483 c 0,19.18438 -14.24714,34.73639 -29.42099,34.73639 -15.17385,0 -29.42101,-15.55201 -29.42101,-34.73639 0,-18.39893 14.24716,-34.73639 29.42101,-34.73639 15.17385,0 29.42099,15.55201 29.42099,34.73639 z"
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.52320051px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 270,256 c 0,16.56854 -14.52752,30 -29.99999,30 C 224.52754,286 210,272.56854 210,256 210,240.10981 224.52754,226 240.00001,226 255.47248,226 270,239.43146 270,256 Z"
      id="pupil"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="sasas"

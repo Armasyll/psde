@@ -167,7 +167,8 @@ class Game {
             "plate01":"resources/data/items.babylon",
             "greatSword01":"resources/data/items.babylon",
             "katana01":"resources/data/items.babylon",
-            "eye":"resources/data/items.babylon",
+            "eye01":"resources/data/items.babylon",
+            "eye02":"resources/data/items.babylon",
             "knife01":"resources/data/items.babylon",
             "_cD":"resources/data/items.babylon",
             "foxhead02":"resources/data/items.babylon",
@@ -606,8 +607,8 @@ class Game {
         if (Game.debugEnabled) console.log("Running initPlayer");
         var _player = Game.createCharacter(undefined, "Player", undefined, "genericCharacter", 18, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", undefined, _position, _rotation, _scaling);
         _player.attachToFOCUS("cameraFocus");
-        _player.attachToLeftEye("eye", "feralEyeGreen");
-        _player.attachToRightEye("eye", "feralEyeGreen");
+        _player.attachToLeftEye("eye01", "feralEyeGreen");
+        _player.attachToRightEye("eye01", "feralEyeGreen");
         _player.getMesh().isPickable = false;
         Game.player = _player.entity;
         Game.player.addItem(new InstancedItemEntity(undefined, "woodenMallet"));
