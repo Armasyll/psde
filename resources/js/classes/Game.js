@@ -1364,9 +1364,9 @@ class Game {
     }
     /**
      * Creates a mesh from those stored in loadedMeshes
-     * @param  {String}  _mesh             BABYLON.Mesh, or String ID
-     * @param  {String}  _material         BABYLON.Material, or String ID
      * @param  {String}  _id               New ID for BABYLON.Mesh and EntityController
+     * @param  {String}  _mesh             String ID of Mesh to create
+     * @param  {String}  _material         String ID of Material to apply to Mesh
      * @param  {BABYLON.Vector3}  _position         Mesh position
      * @param  {BABYLON.Vector3}  _rotation         Mesh rotation
      * @param  {BABYLON.Vector3}  _scaling          Mesh scaling
