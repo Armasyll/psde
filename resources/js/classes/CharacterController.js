@@ -743,7 +743,7 @@ class CharacterController extends EntityController {
      * @param  {BABYLON.Vector3} _scaling              Mesh scaling
      * @return {CharacterController}                     This character controller.
      */
-    attachToBone(_mesh, _texture, _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    attachToBone(_mesh = "missingMesh", _texture = "missingTexture", _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugEnabled) console.log("Running attachToBone");
         if (!Game.hasMesh(_mesh)) {
             return this;
@@ -769,34 +769,43 @@ class CharacterController extends EntityController {
             Game.addAttachmentToCreate((this.id + _bone + _mesh), this, _mesh, _texture, _bone, _position, _rotation, _scaling);
             return this;
         }
-        _mesh = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
-        _mesh.attachToBone(_bone, this.mesh);
-        _mesh.position.copyFrom(_position);
-        _mesh.rotation.copyFrom(_rotation);
+        var _instance = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
+        if (!(_instance instanceof BABYLON.AbstractMesh)) {
+            if (_mesh instanceof BABYLON.AbstractMesh) {
+                console.log("Error creating mesh `" + _mesh.id + "` for Controller `" + this.id + "`");
+            }
+            else {
+                console.log("Error creating mesh `" + _mesh + "` for Controller `" + this.id + "`");
+            }
+            return this;
+        }
+        _instance.attachToBone(_bone, this.mesh);
+        _instance.position.copyFrom(_position);
+        _instance.rotation.copyFrom(_rotation);
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _mesh.scaling.copyFrom(this.mesh.scaling);
+            _instance.scaling.copyFrom(this.mesh.scaling);
         }
         if (this.prevAnim == undefined) {
             /*
             Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
              */
-            _mesh.scalingDeterminant = -1;
+            _instance.scalingDeterminant = -1;
         }
         if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
             this._meshesAttachedToBones[_bone.id] = {};
         }
-        this._meshesAttachedToBones[_bone.id][_mesh.id] = _mesh;
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
-            this._bonesAttachedToMeshes[_mesh.id] = {};
+        this._meshesAttachedToBones[_bone.id][_instance.id] = _instance;
+        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_instance.id))) {
+            this._bonesAttachedToMeshes[_instance.id] = {};
         }
-        this._bonesAttachedToMeshes[_mesh.id][_bone.id] = _bone;
+        this._bonesAttachedToMeshes[_instance.id][_bone.id] = _bone;
         if (_bone.id == "FOCUS") {
-            this.focus = _mesh;
-            _mesh.isVisible = false;
+            this.focus = _instance;
+            _instance.isVisible = false;
         }
         else if (_bone.id == "ROOT") {
-            this.root = _mesh;
-            _mesh.isVisible = false;
+            this.root = _instance;
+            _instance.isVisible = false;
         }
         return this;
     }
