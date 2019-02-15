@@ -59,7 +59,8 @@ Game.createProtoItem("wand02", "Wand", "A fine Sword.", "wand02", "wand02", unde
 Game.createProtoItem("wand03", "Gnarled Wand", "A gnarled wand.", "wand03", "wand03", undefined, ItemEnum.WEAPON);
 Game.createProtoItem("warhammer01", "Warhammer", "A dangerous looking, spiked hammer.", "warhammer01", "warhammer01", undefined, ItemEnum.WEAPON);
 Game.createProtoItem("woodenMallet", "Wooden Mallet", "A mallet made from unrefined wood.", "mallet01", "mallet01", "woodenMallet", ItemEnum.WEAPON);
-Game.createProtoItem("sticc", "Stick", "A stick.", "stick01", "stick01", "stick", ItemEnum.WEAPON);
+Game.createProtoItem("sticc", "Stick", "A stick.", "stick01", "stick01", "stick01", ItemEnum.WEAPON);
+Game.createProtoItem("rocc", "Rock", "A rock.", "rock01", "rock01", "rock01", ItemEnum.WEAPON);
 
 Game.createProtoItem("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03Icon", "gem03", undefined, ItemEnum.GENERAL);
 Game.createProtoItem("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04Icon", "gem04", undefined, ItemEnum.GENERAL);
