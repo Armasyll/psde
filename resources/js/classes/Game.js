@@ -92,6 +92,8 @@ class Game {
             "cheeseWheelSansWedge":"resources/data/items.babylon",
             "cheeseWedge":"resources/data/items.babylon",
             "stick01":"resources/data/items.babylon",
+            "stick03":"resources/data/items.babylon",
+            "stick04":"resources/data/items.babylon",
             "rock01":"resources/data/items.babylon",
             "glaive01":"resources/data/items.babylon",
             "forgeHammer01":"resources/data/items.babylon",
