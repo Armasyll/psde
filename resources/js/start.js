@@ -38,23 +38,35 @@ window.addEventListener("DOMContentLoaded", function() {
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return null;
         }
-        for (_character in Game.characterControllers) {
-            if (Game.entityControllers[_character] instanceof CharacterController) {
-                Game.entityControllers[_character].moveAV();
+        for (_entity in Game.characterControllers) {
+            if (!Game.entityControllers[_entity]._isAnimated) {
+                return null;
             }
-            if (_character.propertiesChanged) {
-                _character.updateProperties();
+            Game.entityControllers[_entity].moveAV();
+            if (Game.entityControllers[_entity].propertiesChanged) {
+                Game.entityControllers[_entity].updateProperties();
             }
+        }
+        for (_entity in Game.furnitureControllers) {
+            if (!Game.entityControllers[_entity]._isAnimated) {
+                return null;
+            }
+            Game.entityControllers[_entity].moveAV();
         }
     });
     Game.scene.registerAfterRender(function() {
-        Game._createBackloggedMeshes();
-        Game._createBackloggedBoundingCollisions();
-        Game._createBackloggedFurniture();
-        Game._createBackloggedLighting();
-        Game._createBackloggedDoors();
-        Game._createBackloggedItems();
-        Game._createBackloggedCharacters();
-        Game._createBackloggedAttachments();
-    })
+        if (Game.hasBackloggedEntities) {
+            Game._createBackloggedMeshes();
+            Game._createBackloggedBoundingCollisions();
+            Game._createBackloggedFurniture();
+            Game._createBackloggedLighting();
+            Game._createBackloggedDoors();
+            Game._createBackloggedItems();
+            Game._createBackloggedCharacters();
+            Game._createBackloggedAttachments();
+            if (!Game._filesToLoad) {
+                Game.hasBackloggedEntities = false;
+            }
+        }
+    });
 });

@@ -22,6 +22,16 @@ class EntityController {
         this.propertiesChanged = true;
         this.targetController = null;
         this.targetedByControllers = new Set();
+
+        this.animations = new Array();
+
+        this.started = false;
+        this._stopAnim = false;
+        this.currAnim = null;
+        this.prevAnim = null;
+
+        this.skeleton = this.mesh.skeleton;
+
         this._isEnabled = true;
 
         Game.setEntityController(this.id, this);
@@ -153,8 +163,7 @@ class EntityController {
     updateProperties() {
         if (this.entity instanceof Entity && this.mesh instanceof BABYLON.AbstractMesh) {
             this.entity.setMeshID(this.mesh);
-            this.entity.setTexture(this.texture);
-            this.entity.setMeshScaling(this.mesh.scaling);
+            this.entity.setTextureID(this.texture);
         }
         this.propertiesChanged = false;
         return this;
@@ -173,11 +182,86 @@ class EntityController {
         this.getMesh().setParent(null);
         return this;
     }
+
+    setAnim(_anim, _rangeName, _rate, _loop) {
+        if (this.skeleton == null)
+            return null;
+        _anim.name = _rangeName;
+        _anim.rate = _rate;
+        _anim.loop = _loop;
+        if (this.skeleton.getAnimationRange(_anim.name) != null) {
+            _anim.exist = true;
+            this.skeleton.getAnimationRange(_rangeName).from += 1;
+            _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
+            _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
+        }
+        else {
+            _anim.exist = false;
+        }
+    }
+    checkAnims(_skel) {
+        for (var _i = 0; _i < this.animations.length; _i++) {
+            var anim = this.animations[_i];
+            if (_skel.getAnimationRange(anim.name) != null) {
+                anim.exist = true;
+            }
+        }
+    }
+    beginAnimation(_animData) {
+        if (this._stopAnim) {
+            return false;
+        }
+        else if (!(_animData instanceof AnimData)) {
+            return false;
+        }
+        else if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return false;
+        }
+        else if (this.prevAnim == _animData) {
+            return false;
+        }
+        else if (!_animData.exist) {
+            return false;
+        }
+        this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
+        this.prevAnim = _animData;
+        return true;
+    }
+    pauseAnim() {
+        this._stopAnim = true;
+    }
+    resumeAnim() {
+        this._stopAnim = false;
+    }
+    start() {
+        if (this.started) {
+            return;
+        }
+        this.started = true;
+    }
+    stop() {
+        if (!this.started) {
+            return;
+        }
+        this.started = false;
+        this.prevAnim = null;
+    }
+    moveAV() {
+        return this;
+    }
+
     isEnabled() {
         return this._isEnabled == true;
     }
     setEnabled(_isEnabled = true) {
         this._isEnabled = (_isEnabled == true);
+        return this;
+    }
+    isAnimated() {
+        return this._isAnimated == true;
+    }
+    setAnimated(_isAnimated = true) {
+        this._isAnimated = (_isAnimated == true);
         return this;
     }
     dispose() {

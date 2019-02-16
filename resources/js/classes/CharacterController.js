@@ -18,11 +18,6 @@ class CharacterController extends EntityController {
         this.targetRayHelper = undefined;
 
         // Hard values calculated using the distance between the front heel and rear toe during the furthest stride in 24-frames per second, multiplied by the character's height. (then thrown out the window 'cause they were too damn slow)
-        this.walkSpeed = 0.68 * this.mesh.scaling.z;
-        this.runSpeed = this.walkSpeed * 5;
-        this.sprintSpeed = this.walkSpeed * 2;
-        this.backSpeed = this.walkSpeed * 0.5;
-        this.jumpSpeed = this.mesh.scaling.y * 4;
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = 30;
         this.maxSlopeLimit = 50;
@@ -31,24 +26,12 @@ class CharacterController extends EntityController {
         this._stepOffset = 0.25;
         this._vMoveTot = 0;
         this._vMovStartPos = new BABYLON.Vector3(0, 0, 0);
-        this.walk = new AnimData("walk");
-        this.walkBack = new AnimData("walkBack");
-        this.idle = new AnimData("idle");
-        this.idleJump = new AnimData("idleJump");
-        this.run = new AnimData("run");
-        this.runJump = new AnimData("runJump");
-        this.fall = new AnimData("fall");
-        this.turnLeft = new AnimData("turnLeft");
-        this.turnRight = new AnimData("turnRight");
-        this.strafeLeft = new AnimData("strafeLeft");
-        this.strafeRight = new AnimData("strafeRight");
-        this.slideBack = new AnimData("slideBack");
-        this.animations = [this.walk, this.walkBack, this.idle, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack];
+        this.walkSpeed = 0.68 * this.mesh.scaling.z;
+        this.runSpeed = this.walkSpeed * 5;
+        this.sprintSpeed = this.walkSpeed * 2;
+        this.backSpeed = this.walkSpeed * 0.5;
+        this.jumpSpeed = this.mesh.scaling.y * 4;
 
-        this._ellipsoid = this.mesh.ellipsoid.clone();
-        this.started = false;
-        this._stopAnim = false;
-        this.prevAnim = null;
         this.moveVector = new BABYLON.Vector3();
         this.avStartPos = new BABYLON.Vector3(0, 0, 0);
         this.grounded = false;
@@ -66,20 +49,19 @@ class CharacterController extends EntityController {
         this.groundFrameCount = 0;
         this.groundFrameMax = 10;
 
-        this.skip = 0;
-        this.move = false;
-        this.skeleton = this.mesh.skeleton;
-        if (this.skeleton != null) {
-            this.checkAnims(this.skeleton);
-        }
-        this.bonesInUse = [];
-        this.key = new ControllerMovementKey();
-        this.prevKey = this.key.clone();
-        var _this = this;
-        this.renderer = function () { _this.moveAV(); };
-
-        this._isEnabled = true;
-        this._isLocked = false;
+        this.walk = new AnimData("walk");
+        this.walkBack = new AnimData("walkBack");
+        this.idle = new AnimData("idle");
+        this.idleJump = new AnimData("idleJump");
+        this.fall = new AnimData("fall");
+        this.run = new AnimData("run");
+        this.runJump = new AnimData("runJump");
+        this.turnLeft = new AnimData("turnLeft");
+        this.turnRight = new AnimData("turnRight");
+        this.strafeLeft = new AnimData("strafeLeft");
+        this.strafeRight = new AnimData("strafeRight");
+        this.slideBack = new AnimData("slideBack");
+        this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
@@ -89,6 +71,23 @@ class CharacterController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
+
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            this.checkAnims(this.skeleton);
+            this._isAnimated = true;
+        }
+        else {
+            this._isAnimated = false;
+        }
+
+        this.key = new ControllerMovementKey();
+        this.prevKey = this.key.clone();
+        var _this = this;
+        this.renderer = function () { _this.moveAV(); };
+
+        this._isEnabled = true;
+        this._isLocked = false;
+        this._isAnimated = true;
 
         this._showHelmet = true;
 
@@ -102,9 +101,6 @@ class CharacterController extends EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
-
-        this.sitGround = new AnimData("sitGround");
-        this.setAnim(this.sitGround, "91_sitGround01", 1, true);
 
         Game.setCharacterController(this.id, this);
     }
@@ -132,22 +128,6 @@ class CharacterController extends EntityController {
     }
     setGravity(_n) {
         this.gravity = _n;
-    }
-    setAnim(_anim, _rangeName, _rate, _loop) {
-        if (this.skeleton == null)
-            return null;
-        _anim.name = _rangeName;
-        _anim.rate = _rate;
-        _anim.loop = _loop;
-        if (this.skeleton.getAnimationRange(_anim.name) != null) {
-            _anim.exist = true;
-            this.skeleton.getAnimationRange(_rangeName).from += 1;
-            _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
-            _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
-        }
-        else {
-            _anim.exist = false;
-        }
     }
     setWalkAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.walk, _rangeName, _rate, _loop);
@@ -185,13 +165,6 @@ class CharacterController extends EntityController {
     setFallAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.fall, _rangeName, _rate, _loop);
     }
-    checkAnims(_skel) {
-        for (var _i = 0; _i < this.animations.length; _i++) {
-            var anim = this.animations[_i];
-            if (_skel.getAnimationRange(anim.name) != null)
-                anim.exist = true;
-        }
-    }
     start() {
         if (this.started)
             return;
@@ -201,25 +174,15 @@ class CharacterController extends EntityController {
         this.idleFallTime = 0.001;
         this.grounded = false;
     }
-    stop() {
-        if (!this.started)
-            return;
-        this.started = false;
-        this.prevAnim = null;
-    }
-    pauseAnim() {
-        this._stopAnim = true;
-    }
-    resumeAnim() {
-        this._stopAnim = false;
-    }
     moveAV() {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
+        if (this._isLocked) {
+            return this;
+        }
         if (this.getParent() != undefined) {
             this.removeParent();
-            this.setIdleAnim("90_idle01", 1, true);
         }
         this.avStartPos.copyFrom(this.mesh.position);
         var anim = null;
@@ -230,7 +193,6 @@ class CharacterController extends EntityController {
             anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.inFreeFall) {
-            this._isLocked = false;
             this.grounded = false;
             this.idleFallTime = 0;
             anim = this.doMove(dt);
@@ -238,11 +200,11 @@ class CharacterController extends EntityController {
         else if (!this.inFreeFall) {
             anim = this.doIdle(dt);
         }
-        if (this._isLocked) {
-            return this;
-        }
         this.beginAnimation(anim);
-        Game.updateTargetValue();
+        if (Game.player == this.entity) {
+            Game.updateTargetValue();
+        }
+        return this;
     }
     doJump(dt) {
         var anim = null;
@@ -285,8 +247,8 @@ class CharacterController extends EntityController {
             }
             else if (this.mesh.position.y < this.jumpStartPosY) {
                 var actDisp = this.mesh.position.subtract(this.avStartPos);
-                if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
-                    if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                if (!(Game.areVectorsEqual(actDisp, disp, 0.001))) {
+                    if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                         this.endJump();
                     }
                 }
@@ -300,15 +262,6 @@ class CharacterController extends EntityController {
         this.wasWalking = false;
         this.wasRunning = false;
         this.wasSprinting = false;
-    }
-    areVectorsEqual(v1, v2, p) {
-        return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
-    }
-    arePointsEqual(p1, p2, p) {
-        return Math.abs(p1 - p2) < p;
-    }
-    verticalSlope(v) {
-        return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
     doMove(dt) {
         var u = this.movFallTime * this.gravity;
@@ -397,7 +350,7 @@ class CharacterController extends EntityController {
                 this.mesh.moveWithCollisions(this.moveVector);
                 if (this.mesh.position.y > this.avStartPos.y) {
                     var actDisp = this.mesh.position.subtract(this.avStartPos);
-                    var _sl = this.verticalSlope(actDisp);
+                    var _sl = Game.verticalSlope(actDisp);
                     if (_sl >= this.maxSlopeLimitRads) {
                         if (this._stepOffset > 0) {
                             if (this._vMoveTot == 0) {
@@ -428,8 +381,8 @@ class CharacterController extends EntityController {
                 }
                 else if ((this.mesh.position.y) < this.avStartPos.y) {
                     var actDisp = this.mesh.position.subtract(this.avStartPos);
-                    if (!(this.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
-                        if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                    if (!(Game.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                        if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                             this.endFreeFall();
                         }
                         else {
@@ -485,8 +438,8 @@ class CharacterController extends EntityController {
         }
         else if (this.mesh.position.y < this.avStartPos.y) {
             var actDisp = this.mesh.position.subtract(this.avStartPos);
-            if (!(this.areVectorsEqual(actDisp, disp, 0.001))) {
-                if (this.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+            if (!(Game.areVectorsEqual(actDisp, disp, 0.001))) {
+                if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                     this.groundIt();
                     this.mesh.position.copyFrom(this.avStartPos);
                 }
@@ -512,27 +465,6 @@ class CharacterController extends EntityController {
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
-    beginAnimation(_animData) {
-        if (this._stopAnim) {
-            return false;
-        }
-        else if (_animData == null) {
-            return false;
-        }
-        else if (this.skeleton == null) {
-            return false;
-        }
-        else if (this.prevAnim == _animData) {
-            return false;
-        }
-        else if (!_animData.exist) {
-            return false;
-        }
-        this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
-        this.prevAnim = _animData;
-        return true;
-    }
-
     getMovementKey() {
         return this.key;
     }

@@ -447,6 +447,8 @@ class Game {
         this.itemsToCreate = {};
         this.attachmentsToCreateCounter = 0;
         this.attachmentsToCreate = {};
+        
+        this.hasBackloggedEntities = false;
 
         this.entityControllers = {};
         this.furnitureControllers = {};
@@ -1479,7 +1481,8 @@ class Game {
             return true;
         }
         Game.meshesToCreate[_id] = {"id":_id, "mesh":_mesh, "material":_material, "position":_position, "rotation":_rotation, "scaling":_scaling, "forceCreateClone":_forceCreateClone};
-        Game.meshesToCreateCounter += 1
+        Game.meshesToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeMeshToCreate(_id) {
@@ -1518,6 +1521,7 @@ class Game {
         }
         Game.furnitureToCreate[_id] = {"id":_id, "name":_name, "mesh":_mesh, "texture":_texture, "type":_type, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "createCollisionMesh":_createCollisionMesh};
         Game.furnitureToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeFurnitureToCreate(_id) {
@@ -1559,6 +1563,7 @@ class Game {
         }
         Game.lightingToCreate[_id] = {"id":_id, "name":_name, "mesh":_mesh, "texture":_texture, "type":_type, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "lightingPositionOffset":_lightingPositionOffset, "createCollisionMesh":_createCollisionMesh};
         Game.lightingToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeLightingToCreate(_id) {
@@ -1601,6 +1606,7 @@ class Game {
         }
         Game.doorsToCreate[_id] = {"id":_id, "name":_name, "to":_to, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.doorsToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeDoorsToCreate(_id) {
@@ -1641,6 +1647,7 @@ class Game {
         }
         Game.charactersToCreate[_id] = {"id":_id, "name":_name, "description":_description, "image":_image, "age":_age, "sex":_sex, "species":_species, "mesh":_mesh, "texture":_texture, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.charactersToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeCharacterToCreate(_id) {
@@ -1685,6 +1692,7 @@ class Game {
         }
         Game.itemsToCreate[_id] = {"id":_id, "entity":_entity, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.itemsToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeItemToCreate(_id) {
@@ -1722,6 +1730,7 @@ class Game {
         }
         Game.attachmentsToCreate[_id] = {"id":_id, "attachToController":_attachToController, "mesh":_mesh, "texture":_texture, "bone":_bone, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.attachmentsToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
         return true;
     }
     static removeAttachmentToCreate(_id) {
@@ -2576,9 +2585,10 @@ class Game {
         if (!(Game.player.getController() instanceof CharacterController)) {
             return false;
         }
-        if (_controller == Game.player.getController().getTarget()) {
+        // Commented out for updating the 'dynamic' action tooltip
+        /*if (_controller == Game.player.getController().getTarget()) {
             return null;
-        }
+        }*/
         if (!(_controller instanceof EntityController) || !_controller.isEnabled()) {
             return null;
         }
@@ -2842,7 +2852,14 @@ class Game {
         if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        _entity.getController().doClose(false);
+        if (_entity.getController() instanceof FurnitureController) {
+            _entity.getController().currAnim = _entity.getController().closed;
+            _entity.getController().beginAnimation(_entity.getController().close);
+            _entity.setDefaultAction(ActionEnum.OPEN);
+        }
+        else if (_entity.getController() instanceof DoorController) {
+            _entity.getController().doClose();
+        }
     }
     static actionHoldFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
@@ -2921,19 +2938,26 @@ class Game {
         }
     }
     static actionOpenFunction(_entity, _subEntity = Game.player) {
-        if (!(_entity instanceof DoorEntity) || !(_entity.getController() instanceof DoorController)) {
+        if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
             return;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        if (_entity.getLocked()) {
-            if (!_subEntity.hasItem(_entity.getKey())) {
-                return;
-            }
-            _entity.setLocked(false);
+        if (_entity.getController() instanceof FurnitureController) {
+            _entity.getController().currAnim = _entity.getController().opened;
+            _entity.getController().beginAnimation(_entity.getController().open);
+            _entity.setDefaultAction(ActionEnum.CLOSE);
         }
-        _entity.getController().doOpen(true);
+        else if (_entity.getController() instanceof DoorController) {
+            if (_entity.getLocked()) {
+                if (!_subEntity.hasItem(_entity.getKey())) {
+                    return;
+                }
+                _entity.setLocked(false);
+            }
+            _entity.getController().doOpen();
+        }
     }
     static actionUseFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
@@ -2964,9 +2988,6 @@ class Game {
         _subEntity.getController().setParent(_entity.getController().getMesh());
         _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
         _subEntity.getController().getMesh().rotation.set(0,0,0);
-        _subEntity.getController()._isLocked = true; // TESTING
-        _subEntity.getController().beginAnimation(_subEntity.getController().sitGround); // TESTING
-        // the eyes floating outside the skull is due to no animation being played :l
     }
     static actionTalkFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof CharacterEntity)) {
@@ -3411,5 +3432,15 @@ class Game {
     }
     static tgm() {
         Game.player.toggleGodMode();
+    }
+
+    static areVectorsEqual(v1, v2, p) {
+        return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
+    }
+    static arePointsEqual(p1, p2, p) {
+        return Math.abs(p1 - p2) < p;
+    }
+    static verticalSlope(v) {
+        return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
 }

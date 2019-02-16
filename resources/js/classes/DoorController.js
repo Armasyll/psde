@@ -14,6 +14,8 @@ class DoorController extends EntityController {
         this.avEndRot = undefined;
         this.setOpensOutward();
 
+        this._isAnimated = true;
+
         Game.doorControllers[this.id] = this;
     }
     getOpen() {

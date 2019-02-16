@@ -22,7 +22,6 @@ class FurnitureEntity extends EntityWithStorage {
         this.type = Game.filterNumber(_type);
         switch(this.type) {
             case FurnitureEnum.BED: {
-                this.addAvailableAction(ActionEnum.OPEN);
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.LAY);
                 this.addAvailableAction(ActionEnum.SIT);
@@ -36,7 +35,6 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             case FurnitureEnum.LOVESEAT: {
-                this.addAvailableAction(ActionEnum.OPEN);
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.LAY);
                 this.addAvailableAction(ActionEnum.SIT);
@@ -52,13 +50,13 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             case FurnitureEnum.TABLE: {
-                this.addAvailableAction(ActionEnum.OPEN);
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.SIT);
                 break;
             }
             case FurnitureEnum.DESK: {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.SIT);
                 this.setDefaultAction(ActionEnum.OPEN);
@@ -66,21 +64,25 @@ class FurnitureEntity extends EntityWithStorage {
             }
             case FurnitureEnum.SHELF: {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.CUPBOARD: {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.CABINET: {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.BUREAU: {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
@@ -92,24 +94,28 @@ class FurnitureEntity extends EntityWithStorage {
             }
             case FurnitureEnum.REFRIGERATOR : {
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.OVEN : {
                 this.addAvailableAction(ActionEnum.USE);
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.MICROWAVE : {
                 this.addAvailableAction(ActionEnum.USE);
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.TOASTER : {
                 this.addAvailableAction(ActionEnum.USE);
                 this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
