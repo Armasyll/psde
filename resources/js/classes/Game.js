@@ -384,6 +384,8 @@ class Game {
             "cheeseWheelSansWedge":"resources/images/icons/items/cheeseWheelSansWedge.png",
             "cheeseWedge":"resources/images/icons/items/cheeseWedge.png",
             "stick01":"resources/images/icons/items/stick01.png",
+            "stick03":"resources/images/icons/items/stick03.png",
+            "stick04":"resources/images/icons/items/stick04.png",
             "rock01":"resources/images/icons/items/rock01.png"
         };
         /**
