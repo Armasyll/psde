@@ -1,4 +1,4 @@
-{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"furniture.babylon"},
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"furniture.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[],
 "multiMaterials":[],

@@ -10,7 +10,7 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacter", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacterIcon", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
         super(_id);
         this.entityType = EntityEnum.CHARACTER;
         /**

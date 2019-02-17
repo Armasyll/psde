@@ -6,7 +6,7 @@ class ItemEntity extends Entity {
      * @param  {String}  _description Description
      * @param  {String}  _image       Image path or base64
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItemIcon") {
         super(_id, _name, _description, _image);
 
         this.price = 0;

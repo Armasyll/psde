@@ -1,5 +1,5 @@
 class Cosmetic {
-    constructor(_id, _name = "", _description = "", _image = "genericItem", _mesh = "", _material = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
+    constructor(_id, _name = "", _description = "", _image = "genericItemIcon", _mesh = "", _material = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
