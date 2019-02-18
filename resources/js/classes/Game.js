@@ -933,6 +933,9 @@ class Game {
         if (!this.initialized) {
             return undefined;
         }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController()) {
+            return undefined;
+        }
         switch (event) {
             case this.jumpCode : {
                 Game.player.getController().keyJump(true);
@@ -967,40 +970,39 @@ class Game {
                 break;
             }
             case this.chatInputFocusCode : {
-                if (!Game.gui.getChatInputFocused()) {
-                    Game.gui.setChatInputFocused(true);
-                }
-                else if (Game.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    var _text = Game.gui.getChatInput().text.trim();
-                    if (_text.length == 0) {
-                        return;
-                    }
-                    if (Client.isOnline()) {
-                        Client.sendChatMessage(_text);
+                if (Game.gui.getHudVisible()) {
+                    if (!Game.gui.getChatInputFocused()) {
+                        Game.gui.setChatInputFocused(true);
                     }
                     else {
-                        Game.chatCommands(_text);
+                        var _text = Game.gui.getChatInput().text.trim();
+                        if (_text.length == 0) {
+                            return;
+                        }
+                        if (Client.isOnline()) {
+                            Client.sendChatMessage(_text);
+                        }
+                        else {
+                            Game.chatCommands(_text);
+                        }
+                        Game.gui.chatInputClear();
                     }
-                    Game.gui.setChatInputFocused(false);
-                    Game.gui.chatInputClear();
                 }
                 break;
             }
             case this.chatInputSubmitCode : {
-                if (Game.gui.getChatInputFocused() && (this.chatInputFocusCode == this.chatInputSubmitCode)) {
-                    var _text = Game.gui.getChatInput().text.trim();
-                    if (_text.length == 0) {
-                        return;
-                    }
-                    if (Client.isOnline()) {
-                        Client.sendChatMessage(_text);
-                    }
-                    else {
-                        Game.chatCommands(_text);
-                    }
-                    Game.gui.setChatInputFocused(false);
-                    Game.gui.chatInputClear();
+                var _text = Game.gui.getChatInput().text.trim();
+                if (_text.length == 0) {
+                    return;
                 }
+                if (Client.isOnline()) {
+                    Client.sendChatMessage(_text);
+                }
+                else {
+                    Game.chatCommands(_text);
+                }
+                Game.gui.chatInputClear();
+                Game.gui.setChatInputFocused(false);
                 break;
             }
             case this.useTargetedEntityCode : {

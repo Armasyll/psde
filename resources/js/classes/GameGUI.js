@@ -28,6 +28,8 @@ class GameGUI {
         GameGUI._inventoryMenu = undefined;
         GameGUI._initMenu();
 
+        GameGUI._chatWasFocused = false;
+
         GameGUI.initialized = true;
     }
     static _initHUD() {
@@ -239,8 +241,11 @@ class GameGUI {
         chatOutputContainer.addControl(chatOutput);
         chatBox.addControl(chatOutputContainer);
         chatBox.addControl(chatInput);
+        // TODO: replace with onKeyboardEventProcessedObservable when it becomes available; until then, out-of-focus enters
+        // TODO: add support for escape key; until then, you can only enter :v
         chatInput.onBlurObservable.add(function() {
-            Game.controlCharacterOnKeyDown(13); // onBlurObservable triggers before ActionManager, so we'll just send the enter key manually
+            GameGUI._chatWasFocused = false;
+            Game.controlCharacterOnKeyDown(Game.chatInputSubmitCode);
         });
         return chatBox;
     }
@@ -1181,15 +1186,19 @@ class GameGUI {
         return;
     }
     static setChatInputFocused(_boolean) {
+        GameGUI._chatWasFocused = false;
         if (_boolean === true) {
             GameGUI._hud.moveFocusToControl(GameGUI._chat.children[1]);
         }
         else {
-            GameGUI._chat.children[1]._isFocused = false;
+            GameGUI._hud.moveFocusToControl(null);
         }
     }
     static getChatInputFocused() {
-        return GameGUI._chat.children[1]._isFocused;
+        if (GameGUI._chatWasFocused) {
+            return true;
+        }
+        return GameGUI._hud.focusedControl == GameGUI._chat.children[1];
     }
     static _generateDialogueMenu() {
         /*
