@@ -61,7 +61,10 @@ class CharacterController extends EntityController {
         this.strafeLeft = new AnimData("strafeLeft");
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
+        this.punch = new AnimData("punch");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
+
+        this.punch.standalone = false;
 
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
@@ -71,6 +74,7 @@ class CharacterController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
+        this.setPunchAnim("71_punch01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.checkAnims(this.skeleton);
@@ -164,6 +168,9 @@ class CharacterController extends EntityController {
     }
     setFallAnim(_rangeName, _rate, _loop) {
         this.setAnim(this.fall, _rangeName, _rate, _loop);
+    }
+    setPunchAnim(_rangeName, _rate, _loop) {
+        this.setAnim(this.punch, _rangeName, _rate, _loop);
     }
     start() {
         if (this.started)
