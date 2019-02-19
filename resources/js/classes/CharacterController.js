@@ -473,7 +473,9 @@ class CharacterController extends EntityController {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
     doPunch(dt) {
-        
+        for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
+            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
+        }
     }
     getMovementKey() {
         return this.key;

@@ -478,7 +478,48 @@ class Game {
         this.dialogues = {};
         this.cosmetics = {};
 
-        this.entityAnimationBones = {};
+        this.entityAnimationBones = {
+            "71_punch01":[
+                "shoulder.r",
+                "upperArm.r",
+                "forearm.r",
+                "IK.hand.r",
+                "wrist.r",
+                "fingersMetacarpal.r",
+                "fingersProximinalPhalanx.r",
+                "fingersMiddlePhalanx.r",
+                "fingersDistalPhalanx.r",
+                "thumbMetacarpal.r",
+                "thumbProximinalPhalanx.r",
+                "thumbDistalPhalanx.r",
+                "fingersPinkieMetacarpal.r",
+                "fingersPinkieProximinalPhalanx.r",
+                "fingersPinkieMiddlePhalanx.r",
+                "fingersPinkieDistalPhalanx.r",
+                "fingersIndexMetacarpal.r",
+                "fingersIndexProximinalPhalanx.r",
+                "fingersIndexMiddlePhalanx.r",
+                "fingersIndexDistalPhalanx.r",
+                "POLE.elbow.r"
+            ],
+            "10_hand.r.grip":[
+                "fingersMetacarpal.r",
+                "fingersProximinalPhalanx.r",
+                "fingersMiddlePhalanx.r",
+                "fingersDistalPhalanx.r",
+                "thumbMetacarpal.r",
+                "thumbProximinalPhalanx.r",
+                "thumbDistalPhalanx.r",
+                "fingersPinkieMetacarpal.r",
+                "fingersPinkieProximinalPhalanx.r",
+                "fingersPinkieMiddlePhalanx.r",
+                "fingersPinkieDistalPhalanx.r",
+                "fingersIndexMetacarpal.r",
+                "fingersIndexProximinalPhalanx.r",
+                "fingersIndexMiddlePhalanx.r",
+                "fingersIndexDistalPhalanx.r",
+            ]
+        }
 
         this._finishedInitializing = false;
         this._finishedFirstLoad = false;
@@ -918,8 +959,11 @@ class Game {
     static importCosmetics() {
         Game.importScript("resources/js/cosmetics.js");
     }
-    static importCharacterMeshAnimationBones() {
-        Game.importScript("resources/js/characterMeshAnimationBones.js");
+    /**
+     * Specific bones used for animations
+     */
+    static importEntityAnimationBones() {
+        Game.importScript("resources/js/entityAnimationBones.js");
     }
     static controlMenuOnKeyDown(event) {
         if (!this.initialized) {

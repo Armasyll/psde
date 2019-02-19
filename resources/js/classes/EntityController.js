@@ -200,6 +200,12 @@ class EntityController {
             this.skeleton.getAnimationRange(_rangeName).from += 1;
             _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
             _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
+            if (Game.entityAnimationBones.hasOwnProperty(_rangeName)) {
+                this.animationBones[_rangeName] = new Array();
+                for (var _i = 0; _i < Game.entityAnimationBones[_rangeName].length; _i++) {
+                    this.animationBones[_rangeName].push(this.skeleton.getBoneIndexByName(Game.entityAnimationBones[_rangeName][_i]));
+                }
+            }
         }
         else {
             _anim.exist = false;
