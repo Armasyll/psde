@@ -478,14 +478,14 @@ class Game {
         this.dialogues = {};
         this.cosmetics = {};
 
+        this.entityAnimationBones = {};
+
         this._finishedInitializing = false;
         this._finishedFirstLoad = false;
         this._finishedScene = false;
 
-        this._collisionMaterial = new BABYLON.Material("collisionMaterial", Game.scene);
-
         this.keyboardControls = {};
-        Game.player = undefined;
+        this.player = undefined;
         this._castRayTargetIntervalFunction = undefined;
         this._castRayTargetInterval = 250;
         this._pointerLockFunction = undefined;
@@ -530,9 +530,9 @@ class Game {
         this.kWeaponRangedTypes = new Set([...this.kWeaponSimpleRangedTypes, ...this.kWeaponMartialRangedTypes]);
         this.kWeaponTypes = new Set([...this.kWeaponMeleeTypes, ...this.kWeaponRangedTypes]);
 
-        Game.loadDefaultTextures();
-        Game.loadDefaultMaterials();
-        Game.loadDefaultMeshes();
+        this.loadDefaultTextures();
+        this.loadDefaultMaterials();
+        this.loadDefaultMeshes();
         /*
             Which function handles the function of the key presses;
             controlerCharacter, controlMenu
@@ -540,16 +540,16 @@ class Game {
         this.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
         this.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
-        Game.gui = GameGUI;
-        Game.gui.initialize();
-        Game.initFreeCamera();
+        this.gui = GameGUI;
+        this.gui.initialize();
+        this.initFreeCamera();
         this.importMeshes("resources/data/furniture.babylon");
         this.importMeshes("resources/data/craftsmanWalls.babylon");
         this.importMeshes("resources/data/characters.babylon");
         this.importMeshes("resources/data/items.babylon");
         this.importMeshes("resources/data/misc.babylon");
-        Game.initQwertyKeyboardControls();
-        Game.initPostProcessing();
+        this.initQwertyKeyboardControls();
+        this.initPostProcessing();
 
         this._filesToLoad -= 1;
         this.initialized = true;
@@ -917,6 +917,9 @@ class Game {
     }
     static importCosmetics() {
         Game.importScript("resources/js/cosmetics.js");
+    }
+    static importCharacterMeshAnimationBones() {
+        Game.importScript("resources/js/characterMeshAnimationBones.js");
     }
     static controlMenuOnKeyDown(event) {
         if (!this.initialized) {

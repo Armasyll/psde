@@ -1,4 +1,4 @@
-Game.prototype.characterMeshAnimationBones = {
+Game.prototype.entityAnimationBones = {
     "99_default":[
         "pelvis",
         "spine",
