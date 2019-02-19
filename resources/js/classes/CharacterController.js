@@ -472,6 +472,9 @@ class CharacterController extends EntityController {
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
+    doPunch(dt) {
+        
+    }
     getMovementKey() {
         return this.key;
     }

@@ -31,6 +31,12 @@ class EntityController {
         this.prevAnim = null;
 
         this.skeleton = this.mesh.skeleton;
+        this.bonesInUse = [];
+        /**
+         * Array of bones per animation
+         * @type {Object} <String:Array>
+         */
+        this.animationBones = {};
 
         this._isEnabled = true;
 
@@ -223,7 +229,17 @@ class EntityController {
         else if (!_animData.exist) {
             return false;
         }
-        this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
+        if (this.bonesInUse.length > 0) {
+            /*
+            Have to cycle through all the bones just so I don't have to animate a handful :L
+             */
+            this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
+                Game.scene.beginAnimation(_bone, _animData.from, _animData.to, _animData.loop, _animData.rate);
+            });
+        }
+        else {
+            this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
+        }
         this.prevAnim = _animData;
         return true;
     }

@@ -1,5 +1,5 @@
-{
-    "default":[
+Game.prototype.characterMeshAnimationBones = {
+    "99_default":[
         "pelvis",
         "spine",
         "chest",
