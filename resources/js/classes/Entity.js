@@ -69,7 +69,7 @@ class Entity extends AbstractEntity {
         return this.durability.dec(_int);
     }
     getDurability() {
-        return this.durability.val;
+        return this.durability.value;
     }
 
     setMaxDurability(_int) {

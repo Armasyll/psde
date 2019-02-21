@@ -860,7 +860,7 @@ class CharacterEntity extends EntityWithStorage {
 
     setAge(_int) {
         this.age.set(_int);
-        if (this.age.val >= 18) {
+        if (this.age.getValue() >= 18) {
             this.addAvailableAction(ActionEnum.SEX);
             this.addAvailableAction(ActionEnum.MASTURBATE);
         }
@@ -874,7 +874,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.age.inc(_int);
     }
     getAge() {
-        return this.age.val;
+        return this.age.getValue();
     }
 
     setHunger(_int) {
@@ -888,7 +888,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.hunger.dec(_int);
     }
     getHunger() {
-        return this.hunger.val;
+        return this.hunger.getValue();
     }
 
     setStrength(_int) {
@@ -905,7 +905,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.strength.val;
+        return this.strength.getValue();
     }
     setDexterity(_int) {
         this.dexterity.set(_int);
@@ -921,7 +921,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.dexterity.val;
+        return this.dexterity.getValue();
     }
     setConstitution(_int) {
         this.constitution.set(_int);
@@ -937,7 +937,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.constitution.val;
+        return this.constitution.getValue();
     }
     setIntelligence(_int) {
         this.intelligence.set(_int);
@@ -953,7 +953,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.intelligence.val;
+        return this.intelligence.getValue();
     }
     setWisdom(_int) {
         this.wisdom.set(_int);
@@ -969,7 +969,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.wisdom.val;
+        return this.wisdom.getValue();
     }
     setCharisma(_int) {
         this.charisma.set(_int);
@@ -985,7 +985,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.charisma.val;
+        return this.charisma.getValue();
     }
     /**
      * Sets CharacterEntity attributes
@@ -1006,7 +1006,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getAttributes() {
-        return {strength: this.strength.val, dexterity: this.dexterity.val, constitution: this.constitution.val, intelligence: this.intelligence.val, wisdom: this.wisdom.val, charisma: this.charisma.val};
+        return {strength: this.strength.getValue(), dexterity: this.dexterity.getValue(), constitution: this.constitution.getValue(), intelligence: this.intelligence.getValue(), wisdom: this.wisdom.getValue(), charisma: this.charisma.getValue()};
     }
 
     setLevel(_int = 0) {
@@ -1016,9 +1016,9 @@ class CharacterEntity extends EntityWithStorage {
     }
     getLevel() {
         if (this._godMode) {
-            return this.level._max;
+            return this.level.getMax();
         }
-        return this.level.val;
+        return this.level.getValue();
     }
     setXP(_int = 0) {
         this.experiencePoints.set(_int);
@@ -1033,9 +1033,9 @@ class CharacterEntity extends EntityWithStorage {
     }
     getXP() {
         if (this._godMode) {
-            return this.experiencePoints._max;
+            return this.experiencePoints.getMax();
         }
-        return this.experiencePoints.val;
+        return this.experiencePoints.getValue();
     }
 
     setLife(_int) {
@@ -1052,7 +1052,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.durability.val;
+        return this.durability.getValue();
     }
 
     setMaxLife(_int) {
@@ -1069,7 +1069,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.durability._max;
+        return this.durability.getMax();
     }
 
     setMana(_int) {
@@ -1086,7 +1086,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.mana.val;
+        return this.mana.getValue();
     }
 
     setMaxMana(_int) {
@@ -1103,7 +1103,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.mana._max;
+        return this.mana.getMax();
     }
 
     setManaCostOffsetPercent(_int) {
@@ -1118,9 +1118,9 @@ class CharacterEntity extends EntityWithStorage {
     }
     getManaCostOffsetPercent() {
         if (this._godMode) {
-            return this.manaCostOffsetPercent._max;
+            return this.manaCostOffsetPercent.getMax();
         }
-        return this.manaCostOffsetPercent.val;
+        return this.manaCostOffsetPercent.getValue();
     }
 
     setStamina(_int) {
@@ -1137,7 +1137,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.stamina.val;
+        return this.stamina.getValue();
     }
 
     setMaxStamina(_int) {
@@ -1154,7 +1154,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.stamina._max;
+        return this.stamina.getMax();
     }
 
     setMoney(_int) {
@@ -1171,13 +1171,13 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.money.val;
+        return this.money.getValue();
     }
     getMaxMoney() {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.money._max;
+        return this.money.getMax();
     }
 
     setSanity(_int) {
@@ -1191,7 +1191,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.sanity.dec(_int);
     }
     getSanity() {
-        return this.sanity.val;
+        return this.sanity.getValue();
     }
 
     setPhilautia(_int) {
@@ -1205,7 +1205,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.philautia.dec(_int);
     }
     getPhilautia() {
-        return this.philautia.val;
+        return this.philautia.getValue();
     }
 
     setAgape(_int) {
@@ -1219,7 +1219,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.agape.dec(_int);
     }
     getAgape() {
-        return this.agape.val;
+        return this.agape.getValue();
     }
 
     setSanguine(_int) {
@@ -1233,7 +1233,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.sanguine.dec(_int);
     }
     getSanguine() {
-        return this.sanguine.val;
+        return this.sanguine.getValue();
     }
 
     setPhlegmatic(_int) {
@@ -1247,7 +1247,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.phlegmatic.dec(_int);
     }
     getPhlegmatic() {
-        return this.phlegmatic.val;
+        return this.phlegmatic.getValue();
     }
 
     setCholeric(_int) {
@@ -1261,7 +1261,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.choleric.dec(_int);
     }
     getCholeric() {
-        return this.choleric.val;
+        return this.choleric.getValue();
     }
 
     setMelancholic(_int) {
@@ -1275,7 +1275,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.melancholic.dec(_int);
     }
     getMelancholic() {
-        return this.melancholic.val;
+        return this.melancholic.getValue();
     }
 
     setLust(_int) {
@@ -1289,7 +1289,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.lust.dec(_int);
     }
     getLust() {
-        return this.lust.val;
+        return this.lust.getValue();
     }
 
     setExhibitionism(_int) {
@@ -1303,7 +1303,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.exhibitionism.dec(_int);
     }
     getExhibitionism() {
-        return this.exhibitionlism.val;
+        return this.exhibitionlism.getValue();
     }
 
     setSomnophilia(_int) {
@@ -1317,7 +1317,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.somnophilia.dec(_int);
     }
     getSomnophilia() {
-        return this.somnophilia.val;
+        return this.somnophilia.getValue();
     }
 
     setIntoxication(_int) {
@@ -1331,7 +1331,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.intoxication.dec(_int);
     }
     getIntoxication() {
-        return this.intoxication.val;
+        return this.intoxication.getValue();
     }
 
     setIncestual(_int) {
@@ -1345,7 +1345,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.incestual.dec(_int);
     }
     getIncestual() {
-        return this.incestual.val;
+        return this.incestual.getValue();
     }
 
     setRut(_bool) {
@@ -1439,7 +1439,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getSexualOrientation() {
-        return this.sexualOrientation.val
+        return this.sexualOrientation.getValue();
     }
 
     setSex(_int) {
@@ -1465,7 +1465,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getSex() {
-        return this._sex.val;
+        return this._sex.getValue();
     }
 
     setGender(_int) {
@@ -1495,7 +1495,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getGender() {
-        return this.gender.val;
+        return this.gender.getValue();
     }
 
     getSexualCompatibility(_character) {
@@ -1503,15 +1503,15 @@ class CharacterEntity extends EntityWithStorage {
         if (_character == undefined) {
             return false;
         }
-        if (this.sexualOrientation.val == 2) {
+        if (this.sexualOrientation.getValue() == 2) {
             // If you're bi
             return true;
         }
-        else if (this.getSex() != _character._sex.val && this.sexualOrientation.val == 0) {
+        else if (this.getSex() != _character._sex.getValue() && this.sexualOrientation.getValue() == 0) {
             // else if you're both opposite sex, and you're straight
             return true;
         }
-        else if (this.getSex() == _character._sex.val && this.sexualOrientation.val == 1) {
+        else if (this.getSex() == _character._sex.getValue() && this.sexualOrientation.getValue() == 1) {
             // else if you're both same sex, and you're gay
             return true;
         }
@@ -1839,10 +1839,10 @@ class CharacterEntity extends EntityWithStorage {
         return this.currentActions.hasOwnProperty(_action);
     }
     getStance() {
-    	return this.stance.val;
+    	return this.stance.getValue();
     }
     getStancePresentTense() {
-    	switch (this.stance.val) {
+    	switch (this.stance.getValue()) {
     		case 0 : {
     			return "lying";
     		}
@@ -2050,10 +2050,10 @@ class CharacterEntity extends EntityWithStorage {
         return this.hasCurrentAction(ActionEnum.SEX);
     }
     isCrouching() {
-        return this.stance.val == 2;
+        return this.stance.getValue() == 2;
     }
     isLying() {
-        return this.stance.val == 0;
+        return this.stance.getValue() == 0;
     }
     isMasturbating() {
         return this.hasCurrentAction(ActionEnum.MASTURBATE);
@@ -2062,13 +2062,13 @@ class CharacterEntity extends EntityWithStorage {
         return this.sleeping;
     }
     isSitting() {
-        return this.stance.val == 1;
+        return this.stance.getValue() == 1;
     }
     isStanding() {
-        return this.stance.val == 3;
+        return this.stance.getValue() == 3;
     }
     isFlying() {
-        return this.stance.val == 4;
+        return this.stance.getValue() == 4;
     }
 
     hasKey(_room) {
@@ -2085,19 +2085,19 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     subjectPronoun() {
-        return this.gender.val == 0 ? "he" : "she";
+        return this.gender.getValue() == 0 ? "he" : "she";
     }
     objectPronoun() {
-        return this.gender.val == 0 ? "him" : "her";
+        return this.gender.getValue() == 0 ? "him" : "her";
     }
     possessivePronoun() {
-        return this.gender.val == 0 ? "his" : "hers";
+        return this.gender.getValue() == 0 ? "his" : "hers";
     }
     possessiveAdjective() {
-        return this.gender.val == 0 ? "his" : "her";
+        return this.gender.getValue() == 0 ? "his" : "her";
     }
     reflexivePronoun() {
-        return this.gender.val == 0 ? "himself" : "herself";
+        return this.gender.getValue() == 0 ? "himself" : "herself";
     }
     singularPossessiveName() {
         if (this.name.slice(-1) == 's' || this.name.slice(-1) == 'z')
@@ -2108,39 +2108,39 @@ class CharacterEntity extends EntityWithStorage {
     grammaticalGender() {
         switch (this.species) {
             case SpeciesEnum.FOX: {
-                return this.gender.val == 0 ? "tod" : "vixen";
+                return this.gender.getValue() == 0 ? "tod" : "vixen";
             }
             case SpeciesEnum.WOLF: {
-                return this.gender.val == 0 ? "wolf" : "wolfen";
+                return this.gender.getValue() == 0 ? "wolf" : "wolfen";
             }
             case SpeciesEnum.AARDWOLF:
             case SpeciesEnum.HYENA: {
-                return this.gender.val == 0 ? "brute" : "fae";
+                return this.gender.getValue() == 0 ? "brute" : "fae";
             }
             case SpeciesEnum.SHEEP: {
-                return this.gender.val == 0 ? "ram" : "ewe";
+                return this.gender.getValue() == 0 ? "ram" : "ewe";
             }
             case SpeciesEnum.STOAT: {
-                return this.gender.val == 0 ? "jack" : "jill";
+                return this.gender.getValue() == 0 ? "jack" : "jill";
             }
             case SpeciesEnum.MOUSE:
             case SpeciesEnum.DEER:
             case SpeciesEnum.RABBIT:
             case SpeciesEnum.ANTELOPE: {
-                return this.gender.val == 0 ? "buck" : "doe";
+                return this.gender.getValue() == 0 ? "buck" : "doe";
             }
             case SpeciesEnum.JACKAL:
             case SpeciesEnum.COYOTE: {
-                return this.gender.val == 0 ? "dog" : "bitch";
+                return this.gender.getValue() == 0 ? "dog" : "bitch";
             }
             case SpeciesEnum.TIGER: {
-                return this.gender.val == 0 ? "tiger" : "tigress";
+                return this.gender.getValue() == 0 ? "tiger" : "tigress";
             }
             case SpeciesEnum.PIG: {
-                return this.gender.val == 0 ? "boar" : "sow";
+                return this.gender.getValue() == 0 ? "boar" : "sow";
             }
             case SpeciesEnum.HORSE: {
-                return this.gender.val == 0 ? "stallion" : "mare";
+                return this.gender.getValue() == 0 ? "stallion" : "mare";
             }
         }
     }
@@ -2559,14 +2559,14 @@ class CharacterEntity extends EntityWithStorage {
             this.setEyes(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
-        if (this.age.val > 25) {
+        if (this.age.getValue() > 25) {
             this.height = _baseHeight;
         }
-        else if (this.age.val < 0) {
+        else if (this.age.getValue() < 0) {
             this.height = _baseHeight / 20;
         }
         else {
-            this.height = _baseHeight / (1 + (_baseHeight / 20) + Math.E^(-0.35 * (this.age.val - 16)));
+            this.height = _baseHeight / (1 + (_baseHeight / 20) + Math.E^(-0.35 * (this.age.getValue() - 16)));
         }
         this.width = this.height / 2.4;
         return this;
@@ -3379,18 +3379,18 @@ class CharacterEntity extends EntityWithStorage {
 
         if (!_ignoreLustAndRut) {
                 // Rut and Lust
-                if (_character.rut && _character.lust.val > 98)
-                    chance += (_character.rut ? _character.lust.val/1.5 : _character.lust.val/2);
-                else if (_character.lust.val > 89)
-                    chance += (_character.rut ? _character.lust.val/2 : _character.lust.val/4);
-                else if (_character.lust.val > 74)
-                    chance += (_character.rut ? _character.lust.val/4 : _character.lust.val/8);
-                else if (_character.lust.val > 59)
-                    chance += (_character.rut ? _character.lust.val/8 : _character.lust.val/12);
-                else if (_character.lust.val > 49)
-                    chance += (_character.rut ? _character.lust.val/12 : _character.lust.val/16);
+                if (_character.rut && _character.lust.getValue() > 98)
+                    chance += (_character.rut ? _character.lust.getValue()/1.5 : _character.lust.getValue()/2);
+                else if (_character.lust.getValue() > 89)
+                    chance += (_character.rut ? _character.lust.getValue()/2 : _character.lust.getValue()/4);
+                else if (_character.lust.getValue() > 74)
+                    chance += (_character.rut ? _character.lust.getValue()/4 : _character.lust.getValue()/8);
+                else if (_character.lust.getValue() > 59)
+                    chance += (_character.rut ? _character.lust.getValue()/8 : _character.lust.getValue()/12);
+                else if (_character.lust.getValue() > 49)
+                    chance += (_character.rut ? _character.lust.getValue()/12 : _character.lust.getValue()/16);
                 else
-                    chance += (_character.rut ? _character.lust.val/16 : _character.lust.val/20);
+                    chance += (_character.rut ? _character.lust.getValue()/16 : _character.lust.getValue()/20);
         
                 if (Game.enableDebug) console.log("\tAfter rut and lust check: " + Math.ceil(chance));
         }
