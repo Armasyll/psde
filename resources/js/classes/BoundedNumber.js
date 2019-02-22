@@ -125,17 +125,22 @@ class BoundedNumber {
      * @param  {bool}   _lockValue Whether or not the value is locked in place
      */
     set(_value = undefined, _minimum = undefined, _maximum = undefined, _lockValue = undefined) {
-        if (_lockValue == false) {
+        if (_lockValue == false) { // Unlock then set
             this.unlockValue();
             this.setValue(_value);
             this.setMin(_minimum);
             this.setMax(_maximum);
         }
-        else if (_lockValue == true) {
+        else if (_lockValue == true) { // Set then lock
             this.setValue(_value);
             this.setMin(_minimum);
             this.setMax(_maximum);
             this.lockValue();
+        }
+        else { // Set
+            this.setValue(_value);
+            this.setMin(_minimum);
+            this.setMax(_maximum);
         }
         return this;
     }

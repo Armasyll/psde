@@ -7,10 +7,10 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {String} _image   Image path
      * @param  {String} _class   Role
      * @param  {Number} _age     Age
-     * @param  {Number} _sex     Sex (0 Male, 1 Female, 2 Herm)
+     * @param  {Number} sex     Sex (0 Male, 1 Female, 2 Herm)
      * @param  {String} _species Species
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacterIcon", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
+    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacterIcon", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
         super(_id);
         this.entityType = EntityEnum.CHARACTER;
         /**
@@ -38,7 +38,7 @@ class CharacterEntity extends EntityWithStorage {
          * Physical sexual identity
          * @type {Number} 0 - none, 1 - male, 2 - female
          */
-        this._sex = new BoundedNumber(0, 0, 2);
+        this.sex = new BoundedNumber(0, 0, 2);
         /**
          * Personal sexual identity
          * @type {Number} 0 - none, 1 - male, 2 - female
@@ -633,8 +633,8 @@ class CharacterEntity extends EntityWithStorage {
         this.setImage(_image);
         this.setClass(_characterClass);
         this.setAge(_age);
-        this.setSex(_sex);
-        this.setGender(_sex);
+        this.setSex(sex);
+        this.setGender(sex);
         this.setSpecies(_species);
         this.addAvailableAction(ActionEnum.ATTACK);
         this.addAvailableAction(ActionEnum.HOLD);
@@ -1461,11 +1461,11 @@ class CharacterEntity extends EntityWithStorage {
                 }
             }
         }
-        this._sex.set(_int);
+        this.sex.set(_int);
         return this;
     }
     getSex() {
-        return this._sex.getValue();
+        return this.sex.getValue();
     }
 
     setGender(_int) {
@@ -1507,11 +1507,11 @@ class CharacterEntity extends EntityWithStorage {
             // If you're bi
             return true;
         }
-        else if (this.getSex() != _character._sex.getValue() && this.sexualOrientation.getValue() == 0) {
+        else if (this.getSex() != _character.sex.getValue() && this.sexualOrientation.getValue() == 0) {
             // else if you're both opposite sex, and you're straight
             return true;
         }
-        else if (this.getSex() == _character._sex.getValue() && this.sexualOrientation.getValue() == 1) {
+        else if (this.getSex() == _character.sex.getValue() && this.sexualOrientation.getValue() == 1) {
             // else if you're both same sex, and you're gay
             return true;
         }
