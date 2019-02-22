@@ -4,7 +4,7 @@ class BoundedNumber {
      * @param  {Number} _value Value, default is 1
      * @param  {Number} _minimum Minimum value; default is 0
      * @param  {Number} _maximum Maximum value, default is 100
-     * @param  {bool}   _lockValue Whether or no the value is locked in place
+     * @param  {Boolean}   _lockValue Whether or no the value is locked in place
      */
     constructor(_value = 1, _minimum = 0, _maximum = 100, _lockValue = false) {
         this._value = 1;
@@ -114,7 +114,7 @@ class BoundedNumber {
         this.setMax(this._maximum - _int);
         return this._maximum;
     }
-    getMax() {
+    getMax(_bool = true) {
         return this._maximum;
     }
     /**
@@ -122,7 +122,7 @@ class BoundedNumber {
      * @param  {Number} _value Value, default is 1
      * @param  {Number} _minimum Optional minimum value
      * @param  {Number} _maximum Optional maximum value
-     * @param  {bool}   _lockValue Whether or not the value is locked in place
+     * @param  {Boolean}   _lockValue Whether or not the value is locked in place
      */
     set(_value = undefined, _minimum = undefined, _maximum = undefined, _lockValue = undefined) {
         if (_lockValue == false) { // Unlock then set
