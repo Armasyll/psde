@@ -659,8 +659,6 @@ class Game {
         if (Game.debugEnabled) console.log("Running initPlayer");
         var _player = Game.createCharacter(undefined, "Player", undefined, "genericCharacterIcon", 18, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", undefined, _position, _rotation, _scaling);
         _player.attachToFOCUS("cameraFocus");
-        _player.attachToLeftEye("eye01", "feralEyeGreen");
-        _player.attachToRightEye("eye01", "feralEyeGreen");
         _player.getMesh().isPickable = false;
         Game.player = _player.entity;
         Game.player.addItem(new InstancedItemEntity(undefined, "woodenMallet"));
@@ -2295,6 +2293,9 @@ class Game {
                         _loadedMesh = "sheepF";
                     }
                     break;
+                }
+                case SpeciesEnum.FOXSKELETON: {
+                    _loadedMesh = "foxSkeletonN";
                 }
                 default : {
                     _loadedMesh = "foxSkeletonN";

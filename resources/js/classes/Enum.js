@@ -268,6 +268,7 @@ SpeciesEnum = {
     FOX: 1,
     SHEEP: 2,
     AARDWOLF: 3,
+    FOXSKELETON: 61,
     properties: {
         0: {
             name: "None",
@@ -284,6 +285,10 @@ SpeciesEnum = {
         3: {
             name: "Aardwolf",
             value: 3
+        },
+        61: {
+            name: "Fox Skeleton",
+            value: 61
         }
     }
 };
