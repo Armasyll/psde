@@ -144,7 +144,6 @@ class Game {
             "boneRib01":"resources/data/items.babylon",
             "bone02":"resources/data/items.babylon",
             "bone01":"resources/data/items.babylon",
-            "bookHardcoverComplex01":"resources/data/items.babylon",
             "bookHardcoverClosed01":"resources/data/items.babylon",
             "roundShield":"resources/data/items.babylon",
             "parmaShield":"resources/data/items.babylon",
@@ -196,12 +195,12 @@ class Game {
             "foxF":"resources/data/characters.babylon",
             "foxSkeletonN":"resources/data/characters.babylon",
             "foxM":"resources/data/characters.babylon",
-            "refrigeratorComplex":"resources/meshes/refrigeratorComplex.babylon",
             "spider":"resources/data/arachnids.babylon",
-            "coffinComplex":"resources/meshes/coffinComplex.babylon",
             "borb":"resources/meshes/borb.babylon",
-            "pylon":"resources/meshes/pylon.babylon",
-            "barrel":"resources/meshes/barrel.babylon"
+            "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
+            "animatedRefrigerator01":"resources/meshes/animatedRefrigerator01.babylon",
+            "animatedCoffin01":"resources/meshes/animatedCoffin01.babylon",
+            "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon"
         };
         /**
          * Map of Meshes per ID

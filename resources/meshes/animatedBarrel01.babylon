@@ -1,4 +1,4 @@
-{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"barrel.babylon"},
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"animatedBarrel01.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[],
 "multiMaterials":[],
@@ -66,7 +66,7 @@
 {"frame":60,"values":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0.3,1]},
 {"frame":62,"values":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0.3,1]}],"loopBehavior":1,"name":"anim","property":"_matrix"}}]
 ,"ranges":[{"name":"10_closed01","from":0,"to":2},{"name":"10_opened01","from":10,"to":12},{"name":"80_closed01","from":20,"to":34},{"name":"80_open01","from":40,"to":54},{"name":"99_default","from":60,"to":62}]}],
-"meshes":[{"name":"barrel","id":"barrel","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":"","skeletonId":0,"numBoneInfluencers":1
+"meshes":[{"name":"animatedBarrel01","id":"animatedBarrel01","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":"","skeletonId":0,"numBoneInfluencers":1
 ,"positions":[0,0.6,0.2048,0.1556,0.54,0.1556,0,0.54,0.22,0.1556,0.54,0.1556,0.2048,0.6,0,0.22,0.54,0,0.2048,0.6,0,0.1556,0.54,-0.1556,0.22,0.54,0,0.1448,0.6,-0.1448,0,0.54,-0.22,0.1556,0.54,-0.1556,0.1556,0.54,-0.1556,0,0.42,-0.23,0.1626,0.42,-0.1626,0.23,0.42,0,0.1626,0.42,-0.1626
 ,0.1556,0.54,0.1556,0.23,0.42,0,0.1626,0.42,0.1626,0.1626,0.42,0.1626,0,0.42,0.23,0,0,0.2048,0.1556,0.06,0.1556,0.1448,0,0.1448,0.1556,0.06,0.1556,0.2048,0,0,0.1448,0,0.1448,0.2048,0,0,0.1556,0.06,-0.1556,0.1448,0,-0.1448,0.1556,0.06,-0.1556,0,0,-0.2048,0.1448,0,-0.1448
 ,0,0.18,0.23,0,0.06,0.22,0.1626,0.18,0.1626,0.22,0.06,0,0.1556,0.06,0.1556,0.23,0.18,0,0.22,0.06,0,0.1626,0.18,-0.1626,0,0.06,-0.22,0.1556,0.06,-0.1556,0.1626,0.18,0.1626,0.23,0.18,0,0.1626,0.18,-0.1626,0,0.18,-0.23,0.1159,0.5846,-0.1159,0,0.0312,-0.1638,0,0.5846,-0.1638
@@ -176,6 +176,37 @@
 ,324,325,166,326,327,328,329,330,331,332,333,109,334,335,336,177,337,178,180,338,339,183,340,341,186,342,343,189,344,190,345,346,193,347,348,196,349,350,351,352,353,354,355,356,357,358,359,360,206,361
 ,362,363,364,365]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":366,"indexStart":0,"indexCount":504}]
+,"animations":[{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[0,0,0]},
+{"frame":2,"values":[0,0,0]},
+{"frame":10,"values":[0,0,0]},
+{"frame":12,"values":[0,0,0]},
+{"frame":20,"values":[0,0,0]},
+{"frame":34,"values":[0,0,0]},
+{"frame":40,"values":[0,0,0]},
+{"frame":54,"values":[0,0,0]},
+{"frame":60,"values":[0,0,0]},
+{"frame":62,"values":[0,0,0]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[0,0,0]},
+{"frame":2,"values":[0,0,0]},
+{"frame":10,"values":[0,0,0]},
+{"frame":12,"values":[0,0,0]},
+{"frame":20,"values":[0,0,0]},
+{"frame":34,"values":[0,0,0]},
+{"frame":40,"values":[0,0,0]},
+{"frame":54,"values":[0,0,0]},
+{"frame":60,"values":[0,0,0]},
+{"frame":62,"values":[0,0,0]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":24,"keys":[
+{"frame":0,"values":[1,1,1]},
+{"frame":2,"values":[1,1,1]},
+{"frame":10,"values":[1,1,1]},
+{"frame":12,"values":[1,1,1]},
+{"frame":20,"values":[1,1,1]},
+{"frame":34,"values":[1,1,1]},
+{"frame":40,"values":[1,1,1]},
+{"frame":54,"values":[1,1,1]},
+{"frame":60,"values":[1,1,1]},
+{"frame":62,"values":[1,1,1]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"10_closed01","from":0,"to":2},{"name":"10_opened01","from":10,"to":12},{"name":"80_closed01","from":20,"to":34},{"name":"80_open01","from":40,"to":54},{"name":"99_default","from":60,"to":62}]
 ,"instances":[]}
 ],
 "morphTargetManagers":[],

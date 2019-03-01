@@ -1,4 +1,4 @@
-{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"refrigeratorComplex.babylon"},
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"animatedRefrigerator01.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[],
 "multiMaterials":[],
@@ -276,7 +276,7 @@
 {"frame":221,"values":[0,-1,0,0,-1,0,0,0,0,0,-1,0,0.5054,0.5,-0.6781,1]},
 {"frame":223,"values":[0,-1,0,0,-1,0,0,0,0,0,-1,0,0.5054,0.5,-0.6781,1]}],"loopBehavior":1,"name":"anim","property":"_matrix"}}]
 ,"ranges":[{"name":"10_closed01","from":0,"to":3},{"name":"10_opened01","from":10,"to":13},{"name":"10_openedFreezerDoor01","from":20,"to":23},{"name":"10_openedRefrigeratorDoor01","from":30,"to":33},{"name":"80_close01","from":40,"to":64},{"name":"80_closeFreezerDoor01","from":70,"to":94},{"name":"80_closeRefrigeratorDoor01","from":100,"to":124},{"name":"80_open01","from":130,"to":154},{"name":"80_openFreezerDoor01","from":160,"to":184},{"name":"80_openRefrigeratorDoor01","from":190,"to":214},{"name":"99_default","from":220,"to":223}]}],
-"meshes":[{"name":"refrigeratorComplex","id":"refrigeratorComplex","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":false,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":"","skeletonId":0,"numBoneInfluencers":1
+"meshes":[{"name":"refrigeratorArmature.001","id":"refrigeratorArmature.001","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":false,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":"","skeletonId":0,"numBoneInfluencers":1
 ,"positions":[-0.5193,2.2437,-0.4614,-0.5193,0,0.4614,-0.5193,0,-0.4614,-0.5193,2.2437,0.4614,0.5193,0,0.4614,0.5193,2.2437,0.4614,0.5193,0,-0.4614,0.5193,2.2437,-0.4614,0.4616,1.437,-0.4614,0.4616,1.3864,-0.4614,-0.4616,1.437,-0.4614,-0.4616,2.1555,0.3164,-0.4616,2.1555,-0.4614,-0.4616,0.0505,-0.4614,-0.4616,1.3864,0.3164,-0.4616,1.3864,-0.4614,0.4616,1.437,0.3164
 ,0.4616,2.1555,-0.4614,-0.4616,1.437,0.3164,0.4616,0.0505,0.3164,0.4616,1.3864,0.3164,-0.4616,0.0505,0.3164,0.4616,2.1555,0.3164,0.4616,0.6726,-0.3507,-0.4616,0.622,-0.3507,0.4616,0.622,-0.3507,0.4616,0.0505,-0.4614,-0.4669,1.3954,-0.4906,-0.4669,0.0406,-0.4614,-0.4669,0.0406,-0.4906,0.451,1.3682,-0.4906,-0.451,1.3683,-0.462,0.451,1.3683,-0.462,0.4669,1.3954,-0.4614
 ,0.4669,0.0406,-0.4906,0.4669,0.0406,-0.4614,-0.451,0.0677,-0.4906,0.451,0.0677,-0.462,-0.451,0.0677,-0.462,-0.4669,1.3954,-0.4614,0.4669,1.3954,-0.4906,-0.4669,1.4292,-0.4906,-0.4669,2.1608,-0.4614,-0.4669,1.4292,-0.4614,0.4669,2.1608,-0.4614,0.4669,1.4292,-0.4906,0.4669,1.4292,-0.4614,-0.451,1.3682,-0.4906,0.4669,2.1608,-0.4906,-0.4616,0.622,0.3164,0.4616,0.6726,0.3164
