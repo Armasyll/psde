@@ -141,7 +141,9 @@ class FurnitureEntity extends EntityWithStorage {
             case FurnitureEnum.TOILET : {
                 this.addAvailableAction(ActionEnum.USE);
                 this.addAvailableAction(ActionEnum.SIT);
-                this.setDefaultAction(ActionEnum.USE);
+                this.addAvailableAction(ActionEnum.OPEN);
+                this.addAvailableAction(ActionEnum.CLOSE);
+                this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }
             case FurnitureEnum.MIRROR : {

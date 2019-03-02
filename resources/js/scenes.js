@@ -173,7 +173,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(2, 2, 2));
+    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(1.35,1.35,1.35));
 
     // Ozzy Bathroom
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
@@ -184,6 +184,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanDoorway", "whiteWallpaperPlainWood",           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
+    Game.createFurniture("ozzyToilet", "Toilet", "animatedToilet01", undefined, FurnitureEnum.TOILET, undefined, new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
 
     // Ozzy Hallway
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(4, 0, 0));
@@ -313,16 +314,16 @@ Game.generateApartment = function() {
         Game.createMesh("craftsmanStairWallSideLeft", "greenWallpaperPlainWood",new BABYLON.Vector3(0, 0, -20));
         Game.createMesh("craftsmanStairWallCornerLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
 
-    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0), new BABYLON.Vector3(1.5, 1.5, 1.5), false);
-    Game.addFurnitureMesh("tableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
-    Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.625, -22.5), new BABYLON.Vector3(180, 0, 0));
-    Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.6, -22));
-    Game.createItem("plateInstance01", "plate01", undefined, new BABYLON.Vector3(9.7, 0.5, -21.5));
-    Game.createItem("cheeseWedgeInstance01", "cheeseWedge", undefined, new BABYLON.Vector3(9.7, 0.525, -21.5));
-    Game.createItem("plateInstance02", "plate01", undefined, new BABYLON.Vector3(10, 0.5, -22.5));
+    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0));
+    Game.createFurniture("commonsTable", "Table", "diningTable", undefined, FurnitureEnum.TABLE, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
+    Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
+    Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.85, -22));
+    Game.createItem("plateInstance01", "plate01", undefined, new BABYLON.Vector3(9.7, 0.75, -21.5));
+    Game.createItem("cheeseWedgeInstance01", "cheeseWedge", undefined, new BABYLON.Vector3(9.7, 0.775, -21.5));
+    Game.createItem("plateInstance02", "plate01", undefined, new BABYLON.Vector3(10, 0.75, -22.5));
 
-    Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.5, -22.75));
-    Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.5, -21.25), new BABYLON.Vector3(0, 180, 0));
+    Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.75, -22.75));
+    Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.75, -21.25), new BABYLON.Vector3(0, 180, 0));
 
     Game.createLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5), undefined, undefined, new BABYLON.Vector3(0, 1.2, 0));
 
