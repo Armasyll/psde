@@ -1,4 +1,4 @@
-{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"arachnids.babylon"},
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"arachnids.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[{"name":"arachnids.Material","id":"arachnids.Material","ambient":[0.8,0.8,0.8],"diffuse":[0.64,0.64,0.64],"specular":[0,0,0],"emissive":[0,0,0],"specularPower":50,"alpha":1,"backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4}],
 "multiMaterials":[],
@@ -600,7 +600,7 @@
 {"frame":17,"values":[1,0,0,0,0,1,0,0,0,0,1,0,0,0.5,1,1]},
 {"frame":30,"values":[1,0,0,0,0,1,0,0,0,0,1,0,0,0.5,1,1]},
 {"frame":31,"values":[1,0,0,0,0,1,0,0,0,0,1,0,0,0.5,1,1]}],"loopBehavior":1,"name":"anim","property":"_matrix"}}]
-,"ranges":[{"name":"93_walk","from":0,"to":17},{"name":"99_Default","from":30,"to":31}]}],
+,"ranges":[{"name":"93_walk","from":0,"to":17},{"name":"99_default","from":30,"to":31}]}],
 "meshes":[{"name":"spider","id":"spider","materialId":"arachnids.Material","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":"","skeletonId":0,"numBoneInfluencers":8
 ,"positions":[0,0.4161,-0.75,-0.2834,0.5563,-0.9322,-0.5617,0.4594,-0.75,0,0.9906,-0.8347,-0.2064,0.8957,-0.9475,0,0.9055,-0.9475,0.4003,0.8976,-0.8347,0.32,0.8295,-0.9959,0.4989,0.8054,-0.8557,0,0.8334,-0.9959,-0.32,0.8295,-0.9959,-0.7754,0.8295,0.6215,-0.5457,1.3742,1.147,-0.7566,0.8295,1.2668,0,0.2562,1.147,-0.2507,0.5537,1.5434,0,0.4668,1.5434
 ,-0.6228,0.9265,-0.2813,-0.6071,0.8437,-0.009,-0.6244,0.8413,-0.2913,0.4835,0.9823,0.25,0.6071,0.8437,-0.009,0.4957,0.7998,0.2732,-0.4835,0.9823,0.25,0,1.0712,0,0,1.0542,0.25,0,0.393,0,-0.5456,0.4915,0.25,0,0.4223,0.25,0,0.2717,0.5661,-0.5532,0.3715,1.147,0,1.5277,0.5661,0,1.5081,1.147,0.5457,1.3742,1.147
@@ -737,7 +737,7 @@
 {"frame":16,"values":[1,1,1]},
 {"frame":17,"values":[1,1,1]},
 {"frame":30,"values":[1,1,1]},
-{"frame":31,"values":[1,1,1]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"93_walk","from":0,"to":17},{"name":"99_Default","from":30,"to":31}]
+{"frame":31,"values":[1,1,1]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"93_walk","from":0,"to":17},{"name":"99_default","from":30,"to":31}]
 ,"instances":[]}
 ],
 "morphTargetManagers":[],
