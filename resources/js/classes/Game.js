@@ -200,7 +200,8 @@ class Game {
             "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
             "animatedRefrigerator01":"resources/meshes/animatedRefrigerator01.babylon",
             "animatedCoffin01":"resources/meshes/animatedCoffin01.babylon",
-            "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon"
+            "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon",
+            "animatedToilet01":"resources/meshes/animatedToilet01.babylon"
         };
         /**
          * Map of Meshes per ID
