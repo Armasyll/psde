@@ -219,7 +219,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("refrideratorOzzy", "Refrigerator", "animatedRefrigerator01", undefined, FurnitureEnum.REFRIGERATOR, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("refrigeratorOzzy", "Refrigerator", "animatedRefrigerator01", undefined, FurnitureEnum.REFRIGERATOR, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
     Game.addFurnitureMesh("trashBagFullInstance02", "trashBagFull", undefined, {mass:4.0}, new BABYLON.Vector3(6.5, 0, -10.6), new BABYLON.Vector3(0, 90, 0), undefined);
