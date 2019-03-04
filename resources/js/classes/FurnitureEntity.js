@@ -51,7 +51,6 @@ class FurnitureEntity extends EntityWithStorage {
             }
             case FurnitureEnum.TABLE: {
                 this.addAvailableAction(ActionEnum.SLEEP);
-                this.addAvailableAction(ActionEnum.SIT);
                 break;
             }
             case FurnitureEnum.DESK: {
