@@ -22,11 +22,9 @@ class InstancedEntity extends AbstractEntity {
         this.setImage(_image || this.entity.getImage());
         this.durability = this.entity.durability.clone();
 
-        this.availableActions = {};
         this._useOwnAvailableActions = false;
         this.defaultAction = this.entity.getDefaultAction();
         this._usesOwnDefaultAction = false;
-        this.specialProperties = new Set();
         this._useOwnSpecialProperties = false;
 
         Game.setInstancedEntity(this.id, this);
@@ -180,6 +178,11 @@ class InstancedEntity extends AbstractEntity {
         return _instancedEntity;
     }
     dispose() {
+        for (var _action in this.availableActions) {
+            if (this.availableActions[_action] instanceof ActionData) {
+                this.availableActions[_action].dispose();
+            }
+        }
         Game.removeInstancedEntity(this.id);
         super.dispose();
         return undefined;

@@ -14,13 +14,14 @@ class GameGUI {
         GameGUI._hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
         GameGUI._hud.rootContainer.isVisible = false;
 
-        GameGUI._dialogueOptionCount = 0;
-        GameGUI._dialogueOptions = {};
+        GameGUI._dialogueOptions = new Array();
         GameGUI._crosshair = undefined;
         GameGUI._chat = undefined;
         GameGUI._playerPortrait = undefined;
         GameGUI._targetPortrait = undefined;
         GameGUI._actionTooltip = undefined;
+        GameGUI._actionsMenu = undefined;
+        GameGUI._actionsMenuOptions = new Array();
         GameGUI._dialogueMenu = undefined;
         GameGUI._initHUD();
 
@@ -38,11 +39,13 @@ class GameGUI {
         GameGUI._playerPortrait = GameGUI._generatePlayerPortrait();
         GameGUI._targetPortrait = GameGUI._generateTargetPortrait();
         GameGUI._actionTooltip = GameGUI._generateTargetActionTooltip();
+        GameGUI._actionsMenu = GameGUI._generateActionsRadialMenu();
         GameGUI._dialogueMenu = GameGUI._generateDialogueMenu();
         GameGUI._hud.addControl(GameGUI._crosshair);
         GameGUI._hud.addControl(GameGUI._chat);
         GameGUI._hud.addControl(GameGUI._playerPortrait);
         GameGUI._hud.addControl(GameGUI._targetPortrait);
+        GameGUI._hud.addControl(GameGUI._actionsMenu);
         GameGUI._hud.addControl(GameGUI._actionTooltip);
         GameGUI._hud.addControl(GameGUI._dialogueMenu);
     }
@@ -392,7 +395,7 @@ class GameGUI {
         buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
             Game.initAzertyKeyboardControls();
         });
-        submitOnline.onPointerUpObservable.add(function() {
+        submitOnline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game.generateApartment();
                 Game._finishedScene = true;
@@ -406,7 +409,7 @@ class GameGUI {
             GameGUI.hideMenu();
             GameGUI.showHUD();
         });
-        submitOffline.onPointerUpObservable.add(function() {
+        submitOffline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game._finishedScene = true;
                 Game.generateApartment();
@@ -1137,8 +1140,8 @@ class GameGUI {
      * Sets the action tooltip's top right text.
      * @param {String} _string Top right text.
      */
-    static setActionTooltipAction(_string = "Use") {
-        if (Game.debugEnabled) console.log("Running GameGUI::setActionTooltipAction");
+    static setActionTooltipString(_string = "Use") {
+        if (Game.debugEnabled) console.log("Running GameGUI::setActionTooltipString");
         if (typeof _string != "string") {
             _string = "Use";
         }
@@ -1164,7 +1167,7 @@ class GameGUI {
      * @param {String} _target Bottom text.
      */
     static setActionTooltip(_action, _target = "") {
-        GameGUI.setActionTooltipAction(_action);
+        GameGUI.setActionTooltipString(_action);
         GameGUI.setActionTooltipTarget(_target);
     }
     /**
@@ -1179,11 +1182,134 @@ class GameGUI {
     static hideActionTooltip() {
         GameGUI._actionTooltip.isVisible = false;
     }
-    static _generateTargetAvailableActionsRadialMenu() {
-        return;
+    /**
+     * A group of circular buttons arranged in a circle.
+     * @return {BABYLON.GUI.Container} Circular container of buttons.
+     */
+    static _generateActionsRadialMenu() {
+        if (Game.debugEnabled) console.log("Running GameGUI::_generateActionsRadialMenu");
+        var _aRM = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
+        _aRM.width = String(Game.engine.getRenderWidth() / 4) + "px";
+        _aRM.height = _aRM.width;
+        _aRM.background = GameGUI.background;
+        _aRM.color = GameGUI.color;
+        _aRM.alpha = GameGUI.alpha;
+        _aRM.isVisible = false;
+        return _aRM;
     }
-    static _generateTargetAvailableActionsMenu() {
-        return;
+    static populateActionsMenuWith(_controller) {
+        _controller = Game.getEntityController(_controller);
+        if (!(_controller instanceof EntityController)) {
+            return;
+        }
+        GameGUI._actionsMenuOptions.clear();
+        var _actions = _controller.getEntity().getAvailableActions();
+        for (var _action in _actions) {
+            GameGUI.addActionsMenuOption(_actions[_action].action, _controller);
+        }
+        return true;
+    }
+    static populateActionsMenuWithTarget() {
+        return GameGUI.populateActionsMenuWith(Game.player.getController().getTarget());
+    }
+    static addActionsMenuOption(_action, _targetController = Game.player.getController().getTarget()) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (!ActionEnum.properties.hasOwnProperty(_action)) {
+            return;
+        }
+        if (!(_targetController instanceof EntityController)) {
+            _targetController = Game.getEntityController(_targetController);
+        }
+        GameGUI._actionsMenuOptions.push({"action":_action,"target":_targetController});
+        if (GameGUI._actionsMenu.isVisible) {
+            GameGUI.updateActionsMenu();
+        }
+        return true;
+    }
+    static removeActionsMenuOption(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
+            if (GameGUI._actionsMenuOptions[_i].action == _action) {
+                GameGUI._actionsMenuOptions.splice(_i, 1);
+                _i = _actionsMenuOptions.length;
+            }
+        }
+        if (GameGUI._actionsMenu.isVisible) {
+            GameGUI.updateActionsMenu();
+        }
+        return true;
+    }
+    static clearActionsMenu() {
+        GameGUI._actionsMenu.children.forEach(
+            function(_child) {
+                _child.dispose();
+            }
+        );
+        GameGUI._actionsMenuOptions.clear();
+        return true;
+    }
+    static showActionsMenu(_updateChild = true) {
+        GameGUI.updateActionsMenu();
+        if (_updateChild) {
+            GameGUI.hideActionTooltip();
+        }
+        GameGUI._actionsMenu.isVisible = true;
+    }
+    static hideActionsMenu(_updateChild = true) {
+        GameGUI._actionsMenu.isVisible = false;
+        if (_updateChild) {
+            GameGUI.showActionTooltip();
+        }
+    }
+    static updateActionsMenu() {
+        GameGUI._actionsMenu.children.forEach(
+            function(_child){
+                _child.dispose();
+            }
+        );
+        if (GameGUI._actionsMenuOptions.length > 0) {
+            var _x = 0;
+            var _y = 0;
+            var _button = undefined;
+            for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
+                _x = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
+                _y = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
+                _button = new BABYLON.GUI.Button.CreateSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[_i].action].name);
+                _button.width = "96px";
+                _button.height = "24px";
+                _button.color = GameGUI.color;
+                _button.background = GameGUI.background;
+                _button._moveToProjectedPosition(new BABYLON.Vector2(_x, _y));
+                switch(GameGUI._actionsMenuOptions[_i].action) {
+                    case 0: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 0);GameGUI.hideActionsMenu();});break;
+                    case 1: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 1);GameGUI.hideActionsMenu();});break;
+                    case 2: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 2);GameGUI.hideActionsMenu();});break;
+                    case 3: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 3);GameGUI.hideActionsMenu();});break;
+                    case 4: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 4);GameGUI.hideActionsMenu();});break;
+                    case 5: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 5);GameGUI.hideActionsMenu();});break;
+                    case 6: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 6);GameGUI.hideActionsMenu();});break;
+                    case 7: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 7);GameGUI.hideActionsMenu();});break;
+                    case 8: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 8);GameGUI.hideActionsMenu();});break;
+                    case 9: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 9);GameGUI.hideActionsMenu();});break;
+                    case 10: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 10);GameGUI.hideActionsMenu();});break;
+                    case 11: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 11);GameGUI.hideActionsMenu();});break;
+                    case 12: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 12);GameGUI.hideActionsMenu();});break;
+                    case 13: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 13);GameGUI.hideActionsMenu();});break;
+                    case 14: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 14);GameGUI.hideActionsMenu();});break;
+                    case 15: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 15);GameGUI.hideActionsMenu();});break;
+                    case 16: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 16);GameGUI.hideActionsMenu();});break;
+                    case 17: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 17);GameGUI.hideActionsMenu();});break;
+                    case 18: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 18);GameGUI.hideActionsMenu();});break;
+                    case 19: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 19);GameGUI.hideActionsMenu();});break;
+                    case 20: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 20);GameGUI.hideActionsMenu();});break;
+                }
+                GameGUI._actionsMenu.addControl(_button);
+            }
+        }
     }
     static setChatInputFocused(_boolean) {
         GameGUI._chatWasFocused = false;
@@ -1269,6 +1395,7 @@ class GameGUI {
             _optionsColC.height = 1.0;
         
         _closeButton.onPointerUpObservable.add(function() {
+            GameGUI.clearDialogueOptions();
             GameGUI.hideDialogueMenu();
         });
         
@@ -1282,7 +1409,6 @@ class GameGUI {
         _container.addControl(_bodyContainer);
         _container.addControl(_optionsContainer);
         _container.isVisible = false;
-        GameGUI._dialogueOptionCount = 0;
         return _container;
     }
     static showDialogueMenu() {
@@ -1332,11 +1458,11 @@ class GameGUI {
     static clearDialogueBody() {
         GameGUI.setDialogueBody("");
     }
-    static addDialogueOption(_dialogueOption, _them, _you = Game.player, _isEnabled = true) {
+    static addDialogueOption(_dialogueOption, _them, _you = Game.player) {
         if (!(_dialogueOption instanceof DialogueOption)) {
             return undefined;
         }
-        if (GameGUI._dialogueOptionCount > 7 || GameGUI._dialogueOptions.hasOwnProperty(_dialogueOption.getDialogue().getID())) {
+        if (GameGUI._dialogueOptions.length > 7 || GameGUI._dialogueOptions.hasOwnProperty(_dialogueOption.getDialogue().getID())) {
             return false;
         }
         var _button = new BABYLON.GUI.Button.CreateSimpleButton(_dialogueOption.getDialogue().getID(), _dialogueOption.getTitle());
@@ -1346,41 +1472,44 @@ class GameGUI {
         _button.onPointerUpObservable.add(function() {
             GameGUI.setDialogue(_dialogueOption.getDialogue().getID(), _them.getID(), _you.getID());
         });
-        if (!_isEnabled) {
-            _button.background = GameGUI.focusedBackgroundDisabled;
-        }
-        GameGUI._dialogueOptionCount += 1;
-        if (GameGUI._dialogueOptionCount > 5) {
+        if (GameGUI._dialogueOptions.length > 5) {
             GameGUI._dialogueMenu.children[2].children[2].addControl(_button);
         }
-        else if (GameGUI._dialogueOptionCount > 2) {
+        else if (GameGUI._dialogueOptions.length > 2) {
             GameGUI._dialogueMenu.children[2].children[1].addControl(_button);
         }
         else {
             GameGUI._dialogueMenu.children[2].children[0].addControl(_button);
         }
-        GameGUI._dialogueOptions[_dialogueOption.getDialogue().getID()] = _dialogueOption;
+        GameGUI._dialogueOptions.push(_dialogueOption);
         return true;
     }
-    static removeDialogueOptions(_dialogueOption) {
-        //TODO: this :v
-        GameGUI._dialogueOptionCount -= 1;
-    }
-    static clearDialogueOptions() {
-        if (GameGUI._dialogueOptionCount > 0) {
-            var _subControl = undefined;
-            for (var _i = 2; _i >= 0; _i--) {
-                for (var _j = 2; _j >= 0; _j--) {
-                    if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Button) {
-                        _subControl = GameGUI._dialogueMenu.children[2].children[_i].children[_j];
-                        GameGUI._dialogueMenu.children[2].children[_i].removeControl(_subControl);
-                        _subControl.dispose();
+    static removeDialogueOption(_dialogueOption) {
+        if (!(_dialogueOption instanceof DialogueOption)) {
+            return false;
+        }
+        for (var _i = 0; _i < GameGUI._dialogueMenu.children[2].children.length; _i++) {
+            for (var _j = GameGUI._dialogueMenu.children[2].children[_i].children.length; _j >= 0; _j--) {
+                if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Container) {
+                    if (GameGUI._dialogueMenu.children[2].children[_i].children[_j].id == _dialogueOption.getID()) {
+                        GameGUI._dialogueMenu.children[2].children[_i].children[_j].dispose();
                     }
                 }
             }
-            GameGUI._dialogueOptionCount = 0;
-            GameGUI._dialogueOptions = {};
         }
+        if (GameGUI._dialogueOptions.indexOf(_dialogueOption) > -1) {
+            GameGUI._dialogueOptions.remove(_dialogueOption);
+        }
+    }
+    static clearDialogueOptions() {
+        for (var _i = 0; _i < GameGUI._dialogueMenu.children[2].children.length; _i++) {
+            for (var _j = GameGUI._dialogueMenu.children[2].children[_i].children.length; _j >= 0; _j--) {
+                if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Container) {
+                    GameGUI._dialogueMenu.children[2].children[_i].children[_j].dispose();
+                }
+            }
+        }
+        GameGUI._dialogueOptions.clear();
     }
     static clearDialogue() {
         GameGUI.clearDialogueTitle();

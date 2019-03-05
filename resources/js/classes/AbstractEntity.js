@@ -36,7 +36,24 @@ class AbstractEntity {
          * @type {CharacterController}
          */
         this.controller = null;
+
         this.owner = null;
+
+        /**
+         * Actions available to this Entity
+         * @type {Object} <ActionEnum>
+         */
+        this.availableActions = {};
+        /**
+         * Special Properties
+         * @type {Set} <SpecialPropertyEnum>
+         */
+        this.specialProperties = new Set();
+        /**
+         * Default Action
+         * @type {ActionData} <ActionEnum>
+         */
+        this.defaultAction = null;
 
         this._isEnabled = true;
         this._isLocked = false;
@@ -115,11 +132,9 @@ class AbstractEntity {
 
     dispose() {
         this._isEnabled = false;
-        if (typeof this.availableActions == "object") {
-            for (var _action in this.availableActions) {
-                if (this.availableActions[_action] instanceof ActionData) {
-                    this.availableActions[_action].dispose();
-                }
+        for (var _action in this.availableActions) {
+            if (this.availableActions[_action] instanceof ActionData) {
+                this.availableActions[_action].dispose();
             }
         }
         for (var _var in this) {

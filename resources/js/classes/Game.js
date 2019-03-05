@@ -2690,7 +2690,9 @@ class Game {
             return false;
         });
         if (_hit.hit) {
-            Game.setPlayerTarget(_hit.pickedMesh.controller);
+            if (_hit.pickedMesh.controller != Game.player.getController().getTarget()) {
+                Game.setPlayerTarget(_hit.pickedMesh.controller);
+            }
         }
         else {
             Game.clearPlayerTarget();
@@ -2804,7 +2806,9 @@ class Game {
             }
         }
     }
-    static doEntityAction(_entity, _subEntity, _action) {
+    static doEntityAction(_entity, _subEntity = Game.player, _action) {
+        _entity = Game.getEntity(_entity) || Game.getInstancedItemEntity(_entity);
+        _subEntity = Game.getEntity(_subEntity) || Game.getInstancedItemEntity(_subEntity);
         if (!_entity.hasAvailableAction(_action)) {
             return;
         }

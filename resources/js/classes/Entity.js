@@ -19,21 +19,9 @@ class Entity extends AbstractEntity {
         this.textureID = null;
         this.materialID = null;
 
-        /**
-         * Actions available to this Entity
-         * @type {Set} <ActionEnum>
-         */
-        this.availableActions = {};
-        /**
-         * Special Properties
-         * @type {Set} <SpecialPropertyEnum>
-         */
-        this.specialProperties = new Set();
-
         this.addAvailableAction(ActionEnum.LOOK);
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
 
-        this.defaultAction = null;
         this.setDefaultAction(ActionEnum.LOOK);
 
         Game.setEntity(this.id, this);

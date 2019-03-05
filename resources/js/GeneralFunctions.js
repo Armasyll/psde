@@ -55,6 +55,9 @@ Array.prototype.remove = function() {
     }
     return this;
 }
+Array.prototype.clear = function() {
+    this.splice(0, this.length);
+}
 Array.prototype.contains = function() {
     var a = arguments;
     if (a.length == 0 || this.length == 0)
