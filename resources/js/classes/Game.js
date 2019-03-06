@@ -2693,12 +2693,7 @@ class Game {
             Game.player.getController().targetRayHelper = new BABYLON.RayHelper(Game.player.getController().targetRay);
             Game.player.getController().targetRayHelper.show(Game.scene);
         }
-        var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay, function(_mesh) {
-            if (_mesh.hasOwnProperty("controller") && _mesh != Game.player.getController().getMesh()) {
-                return true;
-            }
-            return false;
-        });
+        var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay);
         if (_hit.hit) {
             if (_hit.pickedMesh.controller != Game.player.getController().getTarget()) {
                 Game.setPlayerTarget(_hit.pickedMesh.controller);
