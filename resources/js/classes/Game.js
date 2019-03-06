@@ -1341,7 +1341,8 @@ class Game {
                 Game.assignBoxPhysicsToMesh(_instance, _options);
             }
             else {
-                Game.assignBoxCollisionToMesh(_instance);
+                //Game.assignBoxCollisionToMesh(_instance);
+                _instance.checkCollisions = true;
             }
         }
         return _instance;
