@@ -1069,7 +1069,7 @@ class GameGUI {
         _summary.getChildByName("selectedImage").source = "";
         _summary.getChildByName("selectedDescription").text = "";
         var _actions = GameGUI._inventoryMenu.getChildByName("actions");
-        for (var _i = _actions.children.length - 1; _i > -1; _i--) {
+        for (var _i = _actions.children.length - 1; _i >= 0; _i--) {
             _actions.removeControl(_actions.children[_i]);
         }
     }
@@ -1244,37 +1244,45 @@ class GameGUI {
         return true;
     }
     static clearActionsMenu() {
-        GameGUI._actionsMenu.children.forEach(
-            function(_child) {
-                _child.dispose();
-            }
-        );
+        for (var _i = GameGUI._actionsMenu.children.length - 1; _i >= 0; _i--) {
+            GameGUI._actionsMenu.children[_i].dispose();
+        }
         GameGUI._actionsMenuOptions.clear();
         return true;
     }
-    static showActionsMenu(_updateChild = true) {
-        GameGUI.updateActionsMenu();
+    static showActionsMenu(_pointerRelease = true, _updateChild = true) {
         if (_updateChild) {
             GameGUI.hideActionTooltip();
         }
         GameGUI._actionsMenu.isVisible = true;
+        if (_pointerRelease) {
+            GameGUI.pointerRelease();
+        }
     }
-    static hideActionsMenu(_updateChild = true) {
+    static hideActionsMenu(_pointerLock = true, _updateChild = true) {
         GameGUI._actionsMenu.isVisible = false;
         if (_updateChild) {
             GameGUI.showActionTooltip();
         }
+        if (_pointerLock) {
+            GameGUI.pointerLock();
+        }
     }
     static updateActionsMenu() {
-        GameGUI._actionsMenu.children.forEach(
-            function(_child){
-                _child.dispose();
-            }
-        );
+        for (var _i = GameGUI._actionsMenu.children.length - 1; _i >= 0; _i--) {
+            GameGUI._actionsMenu.children[_i].dispose();
+        }
+        var _x = 0;
+        var _y = 0;
+        var _button = new BABYLON.GUI.Button.CreateSimpleButton("closeRadialMenu", "X");
+        _button.width = "24px";
+        _button.height = "24px";
+        _button.color = GameGUI.color;
+        _button.background = GameGUI.background;
+        _button.onPointerClickObservable.add(function() {GameGUI.hideActionsMenu();GameGUI.pointerLock();});
+        _button._moveToProjectedPosition(new BABYLON.Vector2(_x, _y));
+        GameGUI._actionsMenu.addControl(_button);
         if (GameGUI._actionsMenuOptions.length > 0) {
-            var _x = 0;
-            var _y = 0;
-            var _button = undefined;
             for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
                 _x = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
                 _y = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
@@ -1285,27 +1293,195 @@ class GameGUI {
                 _button.background = GameGUI.background;
                 _button._moveToProjectedPosition(new BABYLON.Vector2(_x, _y));
                 switch(GameGUI._actionsMenuOptions[_i].action) {
-                    case 0: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 0);GameGUI.hideActionsMenu();});break;
-                    case 1: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 1);GameGUI.hideActionsMenu();});break;
-                    case 2: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 2);GameGUI.hideActionsMenu();});break;
-                    case 3: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 3);GameGUI.hideActionsMenu();});break;
-                    case 4: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 4);GameGUI.hideActionsMenu();});break;
-                    case 5: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 5);GameGUI.hideActionsMenu();});break;
-                    case 6: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 6);GameGUI.hideActionsMenu();});break;
-                    case 7: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 7);GameGUI.hideActionsMenu();});break;
-                    case 8: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 8);GameGUI.hideActionsMenu();});break;
-                    case 9: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 9);GameGUI.hideActionsMenu();});break;
-                    case 10: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 10);GameGUI.hideActionsMenu();});break;
-                    case 11: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 11);GameGUI.hideActionsMenu();});break;
-                    case 12: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 12);GameGUI.hideActionsMenu();});break;
-                    case 13: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 13);GameGUI.hideActionsMenu();});break;
-                    case 14: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 14);GameGUI.hideActionsMenu();});break;
-                    case 15: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 15);GameGUI.hideActionsMenu();});break;
-                    case 16: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 16);GameGUI.hideActionsMenu();});break;
-                    case 17: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 17);GameGUI.hideActionsMenu();});break;
-                    case 18: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 18);GameGUI.hideActionsMenu();});break;
-                    case 19: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 19);GameGUI.hideActionsMenu();});break;
-                    case 20: _button.onPointerClickObservable.add(function() {Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, 20);GameGUI.hideActionsMenu();});break;
+                    case ActionEnum.NONE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.NONE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.LAY: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.LAY);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.SIT: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.SIT);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.CROUCH: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CROUCH);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.STAND: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.STAND);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.FLY: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.FLY);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.SLEEP: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.SLEEP);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.MOVE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.MOVE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.CLOSE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CLOSE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.CONSUME: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CONSUME);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.DROP: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.DROP);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.EQUIP: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.EQUIP);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.HOLD: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.HOLD);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.LOOK: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.LOOK);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.OPEN: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.OPEN);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.RELEASE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.RELEASE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.TAKE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TAKE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.TALK: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TALK);
+                                GameGUI.hideActionsMenu(false);
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.TOUCH: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TOUCH);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.UNEQUIP: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.UNEQUIP);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
+                    case ActionEnum.USE: {
+                        _button.onPointerClickObservable.add(
+                            function() {
+                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.USE);
+                                GameGUI.hideActionsMenu();
+                            }
+                        );
+                        break;
+                    }
                 }
                 GameGUI._actionsMenu.addControl(_button);
             }

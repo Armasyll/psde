@@ -1066,6 +1066,12 @@ class Game {
                 break;
             }
             case this.interfaceTargetedEntityCode : {
+                if (Game.player.getController().getTarget() instanceof EntityController) {
+                    Game.gui.clearActionsMenu();
+                    Game.gui.populateActionsMenuWithTarget();
+                    Game.gui.updateActionsMenu();
+                    Game.gui.showActionsMenu();
+                }
                 break;
             }
             case this.showInventoryCode : {
