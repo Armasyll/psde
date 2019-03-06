@@ -41,9 +41,14 @@ class AbstractEntity {
 
         /**
          * Actions available to this Entity
-         * @type {Object} <ActionEnum>
+         * @type {Object} <ActionEnum:ActionData>
          */
         this.availableActions = {};
+        /**
+         * Hidden actions available to this Entity
+         * @type {Object} <ActionEnum:ActionData>
+         */
+        this.hiddenAvailableActions = {};
         /**
          * Special Properties
          * @type {Set} <SpecialPropertyEnum>

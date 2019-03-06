@@ -23,6 +23,7 @@ class InstancedEntity extends AbstractEntity {
         this.durability = this.entity.durability.clone();
 
         this._useOwnAvailableActions = false;
+        this._useOwnHiddenAvailableActions = false;
         this.defaultAction = this.entity.getDefaultAction();
         this._usesOwnDefaultAction = false;
         this._useOwnSpecialProperties = false;
@@ -153,6 +154,83 @@ class InstancedEntity extends AbstractEntity {
         }
         else {
             return this.entity.hasAvailableAction(_action);
+        }
+    }
+
+    _createOwnHiddenAvailableActions() {
+        for (var _action in this.entity.getHiddenAvailableActions()) {
+            var _availableAction = this.entity.getHiddenAvailableAction(_action);
+            if (_availableAction instanceof ActionData) {
+                this.hiddenAvailableActions[_action] = this.entity.getHiddenAvailableAction(_action).clone();
+            }
+        }
+        this._useOwnHiddenAvailableActions = true;
+    }
+    /**
+     * Adds a hidden available Action when interacting with this Entity
+     * @param {String} _action (ActionEnum)
+     */
+    addHiddenAvailableAction(_action, _function = undefined, _runOnce = false) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (!this._useOwnHiddenAvailableActions) {
+            this._createOwnHiddenAvailableActions();
+        }
+        _action = this.getAvailableAction(_action);
+        if (_action instanceof ActionData) {
+            this.hiddenAvailableActions[_action.action] = _action;
+        }
+        return this;
+    }
+    /**
+     * Removes a hidden available Action when interacting with this Entity
+     * @param  {String} _action (ActionEnum)
+     * @return {Booealn}          Whether or not the Action was removed
+     */
+    removeHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (!this._useOwnHiddenAvailableActions) {
+            this._createOwnHiddenAvailableActions();
+        }
+        if (this.hasHiddenAvailableAction(_action)) {
+            delete this.hiddenAvailableActions[_action];
+        }
+        return this;
+    }
+    getHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            if (this.hiddenAvailableActions.hasOwnProperty(_action)) {
+                return this.hiddenAvailableActions[_action];
+            }
+        }
+        else {
+            return this.entity.getHiddenAvailableAction(_action);
+        }
+        return null;
+    }
+    getHiddenAvailableActions() {
+        if (this._useOwnHiddenAvailableActions) {
+            return this.hiddenAvailableActions;
+        }
+        else {
+            return this.entity.getHiddenAvailableActions();
+        }
+    }
+    hasHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            return this.hiddenAvailableActions.hasOwnProperty(_action);
+        }
+        else {
+            return this.entity.hasHiddenAvailableAction(_action);
         }
     }
 

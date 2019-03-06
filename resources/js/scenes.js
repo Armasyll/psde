@@ -314,7 +314,7 @@ Game.generateApartment = function() {
         Game.createMesh("craftsmanStairWallSideLeft", "greenWallpaperPlainWood",new BABYLON.Vector3(0, 0, -20));
         Game.createMesh("craftsmanStairWallCornerLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
 
-    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.5, 0, -22), new BABYLON.Vector3(0, -90, 0));
+    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.25, 0, -22), new BABYLON.Vector3(0, -90, 0));
     Game.createFurniture("commonsTable", "Table", "diningTable", undefined, FurnitureEnum.TABLE, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
     Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
     Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.85, -22));

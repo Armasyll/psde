@@ -1150,7 +1150,7 @@ class Game {
                     return;
                 }
                 if (Game.player.getController().targetController.getEntity() instanceof AbstractEntity) {
-                    this.doEntityAction(Game.player.getController().targetController.getEntity(), Game.player, Game.player.getController().targetController.getEntity().getDefaultAction());
+                    Game.doEntityAction(Game.player.getController().targetController.getEntity(), Game.player, Game.player.getController().targetController.getEntity().getDefaultAction());
                 }
                 break;
             }
@@ -2440,6 +2440,9 @@ class Game {
         var _controller = new FurnitureController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
         _entity.setMeshID(_loadedMesh);
+        if (_entity.hasAvailableAction(ActionEnum.OPEN)) {
+            _entity.addHiddenAvailableAction(ActionEnum.CLOSE);
+        }
         return _controller;
     }
     static removeFurniture(_controller) {
@@ -2813,8 +2816,12 @@ class Game {
         }
     }
     static doEntityAction(_entity, _subEntity = Game.player, _action) {
-        _entity = Game.getEntity(_entity) || Game.getInstancedItemEntity(_entity);
-        _subEntity = Game.getEntity(_subEntity) || Game.getInstancedItemEntity(_subEntity);
+        _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
+        _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
+        _action = _entity.getAvailableAction(_action);
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
         if (!_entity.hasAvailableAction(_action)) {
             return;
         }
@@ -2845,9 +2852,8 @@ class Game {
             else if (_action == ActionEnum.STEAL && _entity instanceof EntityWithStorage) {
                 Game.actionTakeFunction(_entity, _subEntity);
             }
-            return;
         }
-        if (_entity instanceof InstancedEntity) {
+        else if (_entity instanceof InstancedEntity) {
             if (_entity.getAvailableAction(_action).overrideParent) {
                 _entity.getAvailableAction(_action).execute();
             }
@@ -2919,6 +2925,8 @@ class Game {
             _entity.getController().currAnim = _entity.getController().closed;
             _entity.getController().beginAnimation(_entity.getController().close);
             _entity.setDefaultAction(ActionEnum.OPEN);
+            _entity.addHiddenAvailableAction(ActionEnum.CLOSE);
+            _entity.removeHiddenAvailableAction(ActionEnum.OPEN);
         }
         else if (_entity.getController() instanceof DoorController) {
             _entity.getController().doClose();
@@ -3011,6 +3019,8 @@ class Game {
             _entity.getController().currAnim = _entity.getController().opened;
             _entity.getController().beginAnimation(_entity.getController().open);
             _entity.setDefaultAction(ActionEnum.CLOSE);
+            _entity.addHiddenAvailableAction(ActionEnum.OPEN);
+            _entity.removeHiddenAvailableAction(ActionEnum.CLOSE);
         }
         else if (_entity.getController() instanceof DoorController) {
             if (_entity.getLocked()) {

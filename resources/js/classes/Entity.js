@@ -132,11 +132,10 @@ class Entity extends AbstractEntity {
      * @param {String} _action (ActionEnum)
      */
     addAvailableAction(_action, _function = undefined, _runOnce = false) {
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-            _action = ActionEnum.properties[_action].value;
+        if (_action instanceof ActionData) {
+            _action = _action.action;
         }
-        else {
+        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
             return this;
         }
         this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
@@ -148,11 +147,10 @@ class Entity extends AbstractEntity {
      * @return {Booealn}          Whether or not the Action was removed
      */
     removeAvailableAction(_action) {
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-            _action = ActionEnum.properties[_action].value;
+        if (_action instanceof ActionData) {
+            _action = _action.action;
         }
-        else {
+        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
             return this;
         }
         if (this.availableActions.hasOwnProperty(_action)) {
@@ -164,12 +162,11 @@ class Entity extends AbstractEntity {
         return this;
     }
     getAvailableAction(_action) {
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-            _action = ActionEnum.properties[_action].value;
+        if (_action instanceof ActionData) {
+            _action = _action.action;
         }
-        else {
-            return undefined;
+        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+            return null;
         }
         if (this.availableActions.hasOwnProperty(_action)) {
             return this.availableActions[_action];
@@ -179,14 +176,59 @@ class Entity extends AbstractEntity {
         return this.availableActions;
     }
     hasAvailableAction(_action) {
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-            _action = ActionEnum.properties[_action].value;
+        if (_action instanceof ActionData) {
+            _action = _action.action;
         }
-        else {
-            return undefined;
+        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+            return false;
         }
         return this.availableActions.hasOwnProperty(_action);
+    }
+
+    /**
+     * Adds a Hidden Available Action when interacting with this Entity
+     * @param {String} _action (ActionEnum)
+     */
+    addHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        _action = this.getAvailableAction(_action);
+        if (_action instanceof ActionData) {
+            this.hiddenAvailableActions[_action.action] = _action;
+        }
+        return this;
+    }
+    /**
+     * Removes a Hidden Available Action when interacting with this Entity
+     * @param  {String} _action (ActionEnum)
+     * @return {Booealn}          Whether or not the Action was removed
+     */
+    removeHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (this.hasHiddenAvailableAction(_action)) {
+            delete this.hiddenAvailableActions[_action];
+        }
+        return this;
+    }
+    getHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        if (this.hiddenAvailableActions.hasOwnProperty(_action)) {
+            return this.hiddenAvailableActions[_action];
+        }
+    }
+    getHiddenAvailableActions() {
+        return this.hiddenAvailableActions;
+    }
+    hasHiddenAvailableAction(_action) {
+        if (_action instanceof ActionData) {
+            _action = _action.action;
+        }
+        return this.hiddenAvailableActions.hasOwnProperty(_action);
     }
 
     /**

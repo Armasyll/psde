@@ -1205,7 +1205,9 @@ class GameGUI {
         GameGUI._actionsMenuOptions.clear();
         var _actions = _controller.getEntity().getAvailableActions();
         for (var _action in _actions) {
-            GameGUI.addActionsMenuOption(_actions[_action].action, _controller);
+            if (!_controller.getEntity().hasHiddenAvailableAction(_action)) {
+                GameGUI.addActionsMenuOption(_actions[_action].action, _controller);
+            }
         }
         return true;
     }
