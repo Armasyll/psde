@@ -1682,7 +1682,7 @@ class Game {
         }
         for (var _i in Game.doorsToCreate) {
             if (Game.loadedMeshes.hasOwnProperty(Game.doorsToCreate[_i]["mesh"])) {
-                Game.createDoors(
+                Game.createDoor(
                     Game.doorsToCreate[_i]["id"],
                     Game.doorsToCreate[_i]["name"],
                     Game.doorsToCreate[_i]["to"],
