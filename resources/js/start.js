@@ -38,6 +38,10 @@ window.addEventListener("DOMContentLoaded", function() {
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return null;
         }
+        Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
+        if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
+            Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
+        }
         for (_entity in Game.characterControllers) {
             if (!Game.entityControllers[_entity]._isAnimated) {
                 return null;

@@ -1211,20 +1211,21 @@ class GameGUI {
         }
         return true;
     }
-    static populateActionsMenuWithTarget() {
+    static populateActionsMenuWithTarget () {
         return GameGUI.populateActionsMenuWith(Game.player.getController().getTarget());
     }
-    static addActionsMenuOption(_action, _targetController = Game.player.getController().getTarget()) {
+    static addActionsMenuOption(_action, _entity) {
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
         if (!ActionEnum.properties.hasOwnProperty(_action)) {
             return;
         }
-        if (!(_targetController instanceof EntityController)) {
-            _targetController = Game.getEntityController(_targetController);
+        _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+        if (!(_entity instanceof AbstractEntity)) {
+            return;
         }
-        GameGUI._actionsMenuOptions.push({"action":_action,"target":_targetController});
+        GameGUI._actionsMenuOptions.push({"action":_action,"target":_entity});
         if (GameGUI._actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
@@ -1298,7 +1299,7 @@ class GameGUI {
                     case ActionEnum.NONE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.NONE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.NONE);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1307,7 +1308,7 @@ class GameGUI {
                     case ActionEnum.LAY: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.LAY);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.LAY);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1316,7 +1317,7 @@ class GameGUI {
                     case ActionEnum.SIT: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.SIT);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.SIT);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1325,7 +1326,7 @@ class GameGUI {
                     case ActionEnum.CROUCH: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CROUCH);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.CROUCH);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1334,7 +1335,7 @@ class GameGUI {
                     case ActionEnum.STAND: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.STAND);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.STAND);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1343,7 +1344,7 @@ class GameGUI {
                     case ActionEnum.FLY: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.FLY);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.FLY);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1352,7 +1353,7 @@ class GameGUI {
                     case ActionEnum.SLEEP: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.SLEEP);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.SLEEP);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1361,7 +1362,7 @@ class GameGUI {
                     case ActionEnum.MOVE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.MOVE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.MOVE);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1370,7 +1371,7 @@ class GameGUI {
                     case ActionEnum.CLOSE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CLOSE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.CLOSE);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1379,7 +1380,7 @@ class GameGUI {
                     case ActionEnum.CONSUME: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.CONSUME);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.CONSUME);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1388,7 +1389,7 @@ class GameGUI {
                     case ActionEnum.DROP: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.DROP);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.DROP);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1397,7 +1398,7 @@ class GameGUI {
                     case ActionEnum.EQUIP: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.EQUIP);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.EQUIP);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1406,7 +1407,7 @@ class GameGUI {
                     case ActionEnum.HOLD: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.HOLD);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.HOLD);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1415,7 +1416,7 @@ class GameGUI {
                     case ActionEnum.LOOK: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.LOOK);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.LOOK);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1424,7 +1425,7 @@ class GameGUI {
                     case ActionEnum.OPEN: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.OPEN);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.OPEN);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1433,7 +1434,7 @@ class GameGUI {
                     case ActionEnum.RELEASE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.RELEASE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.RELEASE);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1442,7 +1443,7 @@ class GameGUI {
                     case ActionEnum.TAKE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TAKE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.TAKE);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1451,7 +1452,7 @@ class GameGUI {
                     case ActionEnum.TALK: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TALK);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.TALK);
                                 GameGUI.hideActionsMenu(false);
                             }
                         );
@@ -1460,7 +1461,7 @@ class GameGUI {
                     case ActionEnum.TOUCH: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.TOUCH);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.TOUCH);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1469,7 +1470,7 @@ class GameGUI {
                     case ActionEnum.UNEQUIP: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.UNEQUIP);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.UNEQUIP);
                                 GameGUI.hideActionsMenu();
                             }
                         );
@@ -1478,7 +1479,7 @@ class GameGUI {
                     case ActionEnum.USE: {
                         _button.onPointerClickObservable.add(
                             function() {
-                                Game.doEntityAction(Game.player.getController().getTarget().getEntity(), Game.player, ActionEnum.USE);
+                                Game.doEntityAction(Game.player.getTarget(), Game.player, ActionEnum.USE);
                                 GameGUI.hideActionsMenu();
                             }
                         );

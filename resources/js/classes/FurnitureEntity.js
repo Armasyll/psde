@@ -42,7 +42,6 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             case FurnitureEnum.COUCH: {
-                this.addAvailableAction(ActionEnum.OPEN);
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.LAY);
                 this.addAvailableAction(ActionEnum.SIT);
@@ -50,14 +49,11 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             case FurnitureEnum.TABLE: {
-                this.addAvailableAction(ActionEnum.SLEEP);
                 break;
             }
             case FurnitureEnum.DESK: {
                 this.addAvailableAction(ActionEnum.OPEN);
                 this.addAvailableAction(ActionEnum.CLOSE);
-                this.addAvailableAction(ActionEnum.SLEEP);
-                this.addAvailableAction(ActionEnum.SIT);
                 this.setDefaultAction(ActionEnum.OPEN);
                 break;
             }

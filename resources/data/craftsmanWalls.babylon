@@ -1,9 +1,9 @@
-{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.3","file":"craftsmanWalls.babylon"},
+{"producer":{"name":"Blender","version":"2.79 (sub 0)","exporter_version":"5.6.4","file":"craftsmanWalls.babylon"},
 "autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"ambientColor":[0,0,0],"gravity":[0,-9.81,0],
 "materials":[],
 "multiMaterials":[],
 "skeletons":[],
-"meshes":[{"name":"craftsmanDoorwayNoTrim","id":"craftsmanDoorwayNoTrim","billboardMode":0,"position":[9,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+"meshes":[{"name":"craftsmanDoorwayNoTrim","id":"craftsmanDoorwayNoTrim","billboardMode":0,"position":[9,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[1,2.765,0.9475,-1,2.95,0.9475,-1,2.765,0.9475,0.882,2.2725,0.9275,0.882,2.15,0.9475,0.882,2.2725,0.9475,0.72,2.2725,0.9475,0.72,2.2725,0.9275,-0.882,2.15,0.9475,-0.882,2.2725,0.9275,-0.882,2.2725,0.9475,0.72,0.1367,1,0.72,0,0.9275,0.72,0.1368,0.9275,0.882,0.1367,0.9275,0.882,2.15,0.9275,-0.882,0.1367,0.9475
 ,-0.882,2.15,0.9275,-0.72,0.1367,0.9275,-0.72,0,1,-0.72,0.1367,1,-0.72,2.15,0.9275,-0.882,2.2725,0.9275,-0.882,2.15,0.9275,-0.72,2.15,0.9275,0.72,2.15,1,0.72,2.15,0.9275,-0.882,2.2725,0.9475,-1,0.1367,0.9475,-0.882,0.1367,0.9475,1,0.1367,0.9475,0.882,2.2725,0.9475,0.882,0.1367,0.9475,-0.72,0.1367,0.9275
 ,-0.882,2.15,0.9275,-0.882,0.1367,0.9275,0.72,0,0.9275,0.882,0.1367,0.9275,0.72,0.1368,0.9275,-0.72,0.1367,0.9275,-0.72,2.15,1,-0.72,2.15,0.9275,-0.72,0.1367,0.9275,-0.882,0,0.9275,-0.72,0,0.9275,0.72,0.1367,1,0.72,2.15,0.9275,0.72,2.15,1,0.72,0.1368,0.9275,0.882,2.15,0.9275,0.72,2.15,0.9275
@@ -32,7 +32,7 @@
 ,102,103,104,105,106,107,7,6,51,52,51,10,108,109,26,110,111,112,113,114,59,61,115,116,28,117,64,32,118,65,66,119,120,121,122,70,72,82,73,75,78,123,78,70,124,125,71,82]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":126,"indexStart":0,"indexCount":198}]
 ,"instances":[]}
-,{"name":"craftsmanWindowframeNoTrim","id":"craftsmanWindowframeNoTrim","billboardMode":0,"position":[9,0,-6],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWindowframeNoTrim","id":"craftsmanWindowframeNoTrim","billboardMode":0,"position":[9,0,-6],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.682,2.4725,0.9275,0.682,2.35,0.9475,0.682,2.4725,0.9475,-0.682,2.4725,0.9475,-0.682,2.4725,0.9275,-0.682,2.35,0.9475,-0.52,0.85,0.9275,-0.682,2.35,0.9275,-0.682,0.85,0.9275,-0.682,2.4725,0.9275,-0.52,2.35,0.9275,0.52,2.35,0.9275,-0.52,2.35,0.9275,0.52,2.35,1,0.52,2.35,0.9275,-1,2.765,0.9475,-0.682,0.7275,0.9475
 ,-0.682,2.4725,0.9475,1,2.765,0.9475,0.682,0.7275,0.9475,1,0.1368,0.9475,-1,0.1367,0.9475,-0.52,0.85,0.9275,-0.52,2.35,1,-0.52,2.35,0.9275,0.52,0.85,1,0.52,2.35,0.9275,0.682,2.4725,0.9475,0.682,0.7275,0.9275,0.682,0.85,0.9475,0.682,0.85,0.9275,0.682,0.7275,0.9475,-0.682,0.7275,0.9275,-0.682,0.7275,0.9475
 ,-0.682,0.85,0.9275,-0.682,0.85,0.9475,-0.682,0.85,0.9475,-0.682,2.35,0.9275,0.52,0.85,0.9275,-0.52,0.85,1,-0.52,0.85,0.9275,0.682,2.35,0.9275,0.52,0.85,0.9275,0.682,2.35,0.9275,0.52,2.35,0.9275,0.682,0.7275,0.9275,0.682,0.85,0.9275,0.52,0.85,0.9275,-1,2.95,0.9475,1,-0.0499,0.9475,-0.682,2.35,0.9275
@@ -52,7 +52,7 @@
 ,39,23,25,38,60,27,18,15,28,31,29,31,28,32,33,32,34,36,61,62,38,25,39,30,29,1,63,64,65,66,67,68,69,70,71,72,73,74,18,75,48,21,76,49]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":77,"indexStart":0,"indexCount":144}]
 ,"instances":[]}
-,{"name":"craftsmanFloorRailingLeft","id":"craftsmanFloorRailingLeft","billboardMode":0,"position":[-4,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanFloorRailingLeft","id":"craftsmanFloorRailingLeft","billboardMode":0,"position":[-4,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.084,0.8,-1,0.084,0.662,-1.084,0.084,0.662,-1,-0.1586,0.8,-1.084,0.084,0.662,-1.084,0.084,0.8,-1.084,-0.1586,0.8,-1,0.084,0.8,-1,-0.1586,0.8,-1.084,0.084,0.8,-1,-0.1586,0.8,-1,0.084,0.662,-1,-0.1586,0.662,-1.084,-0.1586,0.662,-1,-0.1586,0.8,-1,-0.0746,0.662,0,-0.0746,0.8,1
 ,-0.0746,0.8,0,-0.1586,0.8,1,-0.1586,0.662,0,-0.1586,0.8,0,-0.1586,0.8,0,-0.1586,0.662,1,-0.0746,0.662,0,-0.1586,0.662,0,-0.1586,0.662,0,-0.0746,0.662,-1,-0.1586,0.662,-1,-0.0746,0.8,0,-0.1586,0.8,-1,-0.0746,0.8,-1,-0.1586,0.8,0,-0.1586,0.662,-1,-0.1586,0.8,-1
 ,-0.0746,0.662,-1,-0.0746,0.8,0,0.084,0.8,-1.084,-0.1586,0.662,-1.084,0.084,0.662,-1.084,-0.1586,0.662,-1,-0.1586,0.8,-1.084,0.084,0.8,-1.084,0.084,0.8,-1,0.084,0.662,-1,0.084,0.662,-1.084,-0.1586,0.8,-1.084,-0.1586,0.8,-1,-0.0746,0.662,1,-0.1586,0.662,1,-0.1586,0.8,1,-0.1586,0.8,0
@@ -68,7 +68,7 @@
 ,6,40,41,42,43,44,12,12,45,46,15,47,16,18,48,19,16,49,50,22,51,52,53,54,26,55,56,29,57,58,59,60,61,62]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":63,"indexStart":0,"indexCount":84}]
 ,"instances":[]}
-,{"name":"craftsmanFloorRailingRight","id":"craftsmanFloorRailingRight","billboardMode":0,"position":[-2,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanFloorRailingRight","id":"craftsmanFloorRailingRight","billboardMode":0,"position":[-2,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.084,0.662,-1.084,-0.084,0.8,-1,-0.084,0.662,-1,0.1586,0.8,-1.084,-0.084,0.662,-1.084,0.1586,0.662,-1.084,0.1586,0.8,-1,0.1586,0.662,-1,-0.084,0.8,-1,0.1586,0.8,-1.084,0.1586,0.8,-1,0.1586,0.662,-1.084,-0.084,0.662,-1,0.1586,0.662,-1,0.1586,0.662,-1.084,0.1586,0.8,-1,0.1586,0.8,-1.084
 ,0.0746,0.662,0,0.0746,0.8,1,0.0746,0.662,1,0.1586,0.662,0,0.1586,0.8,1,0.1586,0.8,0,0.1586,0.8,0,0.0746,0.8,0,0.0746,0.662,0,0.1586,0.662,1,0.1586,0.662,0,0.0746,0.662,-1,0.1586,0.662,0,0.1586,0.662,-1,0.1586,0.8,-1,0.0746,0.8,0,0.0746,0.8,-1
 ,0.1586,0.662,-1,0.1586,0.8,0,0.1586,0.8,-1,0.0746,0.662,-1,0.0746,0.8,0,0.0746,0.662,0,-0.084,0.8,-1.084,-0.084,0.8,-1.084,-0.084,0.662,-1.084,-0.084,0.8,-1,-0.084,0.8,-1,-0.084,0.8,-1.084,0.1586,0.8,-1.084,0.1586,0.662,-1.084,-0.084,0.662,-1.084,-0.084,0.662,-1,0.1586,0.662,-1.084
@@ -84,7 +84,7 @@
 ,6,44,45,46,47,48,49,50,51,52,17,24,18,20,53,21,54,55,18,56,57,26,28,58,59,31,60,61,62,63,64,65,33,66]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":67,"indexStart":0,"indexCount":84}]
 ,"instances":[]}
-,{"name":"craftsmanWindow","id":"craftsmanWindow","billboardMode":0,"position":[0,0,-10],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWindow","id":"craftsmanWindow","billboardMode":0,"position":[0,0,-10],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.52,0.85,0.95,-0.52,0.85,0.975,0.52,0.85,0.975,0.52,2.35,0.975,0.52,1.6,0.95,0.52,1.6,0.975,-0.52,1.6,0.95,-0.52,2.35,0.975,-0.52,1.6,0.975,-0.52,2.35,0.975,0.52,2.35,0.95,0.52,2.35,0.975,-0.48,0.89,0.975,0.48,0.89,0.95,0.48,0.89,0.975,0.48,1.6,0.95,0.48,2.31,0.975
 ,0.48,1.6,0.975,-0.48,2.31,0.975,-0.48,1.6,0.95,-0.48,1.6,0.975,0.48,2.31,0.95,-0.48,2.31,0.975,0.48,2.31,0.975,-0.48,2.31,0.95,-0.52,2.35,0.95,-0.48,2.31,0.95,-0.52,2.35,0.95,-0.52,1.6,0.975,-0.48,0.89,0.975,-0.52,0.85,0.975,0.48,2.31,0.975,-0.52,2.35,0.975,0.52,2.35,0.975
 ,-0.48,0.89,0.95,-0.52,0.85,0.95,0.52,1.6,0.95,0.48,0.89,0.95,0.52,0.85,0.95,-0.48,1.6,0.96,0.48,0.89,0.96,0.48,1.6,0.96,0.48,0.89,0.965,-0.48,1.6,0.965,0.48,1.6,0.965,-0.48,0.89,0.95,-0.52,1.6,0.95,-0.52,0.85,0.95,-0.48,1.6,0.975,-0.48,0.89,0.95,-0.48,0.89,0.975
@@ -110,7 +110,7 @@
 ,98,15,4,99,100,101,102,103,104,105,106,107,65,108,109,110,111,69]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":112,"indexStart":0,"indexCount":168}]
 ,"instances":[]}
-,{"name":"craftsmanWindowDouble","id":"craftsmanWindowDouble","billboardMode":0,"position":[0,0,-8],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWindowDouble","id":"craftsmanWindowDouble","billboardMode":0,"position":[0,0,-8],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.52,0.85,0.95,-0.52,0.85,0.975,0.52,0.85,0.975,0.52,1.62,0.975,0.52,0.85,0.95,0.52,0.85,0.975,-0.52,0.85,0.95,-0.52,1.62,0.975,-0.52,0.85,0.975,-0.52,1.62,0.975,0.52,1.62,0.95,0.52,1.62,0.975,-0.48,0.89,0.975,0.48,0.89,0.95,0.48,0.89,0.975,0.48,0.89,0.95,0.48,1.58,0.975
 ,0.48,0.89,0.975,-0.48,1.58,0.975,-0.48,0.89,0.95,-0.48,0.89,0.975,0.48,1.58,0.95,-0.48,1.58,0.975,0.48,1.58,0.975,0.48,0.89,0.975,0.52,0.85,0.975,-0.52,1.62,0.95,-0.48,1.58,0.95,-0.52,1.62,0.95,-0.48,0.89,0.975,-0.52,0.85,0.975,0.48,1.58,0.975,-0.52,1.62,0.975,0.52,1.62,0.975
 ,-0.48,0.89,0.95,-0.52,0.85,0.95,0.52,1.62,0.95,0.48,0.89,0.95,0.52,0.85,0.95,0.52,1.58,0.975,-0.52,1.58,1,0.52,1.58,1,0.52,2.35,1,0.52,1.58,0.975,0.52,1.58,1,-0.52,1.58,0.975,-0.52,2.35,1,-0.52,1.58,1,-0.52,2.35,1,0.52,2.35,0.975,0.52,2.35,1
@@ -140,28 +140,28 @@
 ,129,40,51,53,78,130,79,81,131,82,84,132,85,87,133,88]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":134,"indexStart":0,"indexCount":216}]
 ,"instances":[]}
-,{"name":"craftsmanWallNoTrim","id":"craftsmanWallNoTrim","billboardMode":0,"position":[9,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWallNoTrim","id":"craftsmanWallNoTrim","billboardMode":0,"position":[9,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1,0.1367,0.9475,1,-0.05,0.9475,1,0.1367,0.9475,1,2.765,0.9475,-1,2.95,0.9475,-1,2.765,0.9475,-1,-0.05,0.9475,1,2.95,0.9475]
 ,"normals":[0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1]
 ,"uvs":[0.502,0.033,0.846,0.002,0.846,0.033,0.846,0.467,0.502,0.498,0.502,0.467,0.502,0.002,0.846,0.498]
 ,"indices":[0,1,2,3,4,5,3,0,2,0,6,1,3,7,4,3,5,0]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":8,"indexStart":0,"indexCount":18}]
 ,"instances":[]}
-,{"name":"craftsmanWallNoCrown","id":"craftsmanWallNoCrown","billboardMode":0,"position":[6,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWallNoCrown","id":"craftsmanWallNoCrown","billboardMode":0,"position":[6,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1,0.1367,0.9475,1,0.1367,0.9275,1,0.1367,0.9475,-1,0,0.9275,1,0.1367,0.9275,-1,0.1367,0.9275,1,2.765,0.9475,-1,2.95,0.9475,-1,2.765,0.9475,-1,0.1367,0.9475,1,0.1367,0.9475,-1,0.1367,0.9275,1,0,0.9275,1,0.1367,0.9275,1,2.95,0.9475]
 ,"normals":[0,1,0,0,0.707,-0.707,0,1,0,0,0,-1,0,0.707,-0.707,0,0.707,-0.707,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0.707,-0.707,0,0,-1,0,0.707,-0.707,0,0,-1]
 ,"uvs":[0.002,0.049,0.361,0.041,0.361,0.049,0.002,0.002,0.361,0.025,0.002,0.025,0.846,0.467,0.502,0.498,0.502,0.467,0.502,0.033,0.846,0.033,0.002,0.041,0.361,0.002,0.361,0.025,0.846,0.498]
 ,"indices":[0,1,2,3,4,5,6,7,8,6,9,10,0,11,1,3,12,13,6,14,7,6,8,9]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":15,"indexStart":0,"indexCount":24}]
 ,"instances":[]}
-,{"name":"craftsmanWallNoBaseboard","id":"craftsmanWallNoBaseboard","billboardMode":0,"position":[3,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWallNoBaseboard","id":"craftsmanWallNoBaseboard","billboardMode":0,"position":[3,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1,2.765,0.9475,1,2.765,0.9275,-1,2.765,0.9275,1,2.9,0.9275,-1,2.765,0.9275,1,2.765,0.9275,1,2.765,0.9475,-1,0.1367,0.9475,1,0.1367,0.9475,1,-0.05,0.9475,1,2.765,0.9475,-1,2.9,0.9275,-1,2.765,0.9275,-1,2.765,0.9475,-1,-0.05,0.9475]
 ,"normals":[0,-1,0,0,-0.707,-0.707,0,-0.707,-0.707,0,0,-1,0,-0.707,-0.707,0,-0.707,-0.707,0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,-1,0,0,0,-1,0,-0.707,-0.707,0,0,-1,0,0,-1]
 ,"uvs":[0.361,0.041,0.002,0.049,0.361,0.049,0.361,0.002,0.002,0.025,0.361,0.025,0.846,0.467,0.502,0.033,0.846,0.033,0.846,0.002,0.002,0.041,0.002,0.002,0.002,0.025,0.502,0.467,0.502,0.002]
 ,"indices":[0,1,2,3,4,5,6,7,8,7,9,8,0,10,1,3,11,12,6,13,7,7,14,9]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":15,"indexStart":0,"indexCount":24}]
 ,"instances":[]}
-,{"name":"craftsmanStairWallCornerRight","id":"craftsmanStairWallCornerRight","billboardMode":0,"position":[-1,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanStairWallCornerRight","id":"craftsmanStairWallCornerRight","billboardMode":0,"position":[-1,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.9275,0.1367,-0.6384,-0.9475,0.1367,1,-0.9475,0.1367,-0.6384,-0.9275,0.1367,-0.8177,-0.9275,0,-1,-0.9275,0,-0.8177,-0.9475,1.3655,1,-0.9275,0.1367,-0.6384,-0.9475,0.1367,-0.6384,-0.9275,0.1367,-0.6384,-0.9275,1.5,1,-0.9275,0.1367,-0.8177,-0.9475,0.1368,-0.6384,-0.9475,0.1367,1,-0.9475,1.3655,1,-1,0.1367,-0.8177,-0.9275,0,-1
 ,-0.9275,0.1367,-0.8177,-0.9275,0,1,-0.9275,0.1367,1,-1,1.5,1,-0.9275,0.1367,1,-0.9275,1.3655,1,-0.9275,0.1367,-0.6384,-0.9275,0.1367,-0.6384,-0.9275,1.3655,1,-1,0,-1,-0.9275,0.1367,-0.8177]
 ,"normals":[0.929,0.117,0.351,0,1,0,0,0.316,0.949,1,0,0,1,0,0,1,0,0,0,-0.8,0.6,0.929,0.117,0.351,0,0.316,0.949,0.929,0.117,0.351,0.508,0.689,-0.517,0.201,0.784,-0.588,1,0,0,1,0,0,1,0,0,0,0.8,-0.6,0,0.8,-0.6
@@ -171,7 +171,7 @@
 ,"indices":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,3,18,19,15,10,20,0,21,1,6,22,23,24,25,10,15,26,16,3,5,18,15,27,10]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":28,"indexStart":0,"indexCount":42}]
 ,"instances":[]}
-,{"name":"craftsmanStairWallSideRight","id":"craftsmanStairWallSideRight","billboardMode":0,"position":[-1,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanStairWallSideRight","id":"craftsmanStairWallSideRight","billboardMode":0,"position":[-1,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.9475,0.1367,-1,-0.9275,0.1367,1,-0.9475,0.1367,1,-0.9275,0.1367,-1,-0.9275,0,1,-0.9275,0.1367,1,-0.9275,2.765,1,-0.9475,2.765,0.866,-0.9475,2.765,1,-0.9475,0.1367,1,-0.9475,1.3655,-1,-0.9475,0.1367,-1,-0.9275,2.9,1,-1,2.9,0.8662,-0.9275,2.9,0.8659,-0.9275,1.5,-1,-0.9275,2.765,0.8659
 ,-0.9275,1.3655,-1,-0.9475,2.765,0.866,-0.9275,2.765,0.8659,-0.9275,2.765,1,-0.9275,2.765,0.8659,-1,1.5,-1,-0.9275,0.1367,-1,-0.9275,0,-1,-0.9275,2.765,0.8659,-0.9475,2.8655,1,-1,2.9,1,-0.9275,1.3655,-1,-0.9475,1.3655,-1,-0.9475,2.765,0.866,-0.9275,2.765,1]
 ,"normals":[0,1,0,0.707,0.707,0,0,1,0,0.707,0.707,0,1,0,0,0.707,0.707,0,0.707,-0.707,0,0,-0.949,0.316,0,-1,0,1,0,0,1,0,0,1,0,0,0.707,0.707,0,-0.001,0.949,-0.316,0.642,0.727,-0.243,0.816,0.463,-0.347,0.786,-0.587,0.196
@@ -182,7 +182,7 @@
 ,14,22,15,14]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":32,"indexStart":0,"indexCount":54}]
 ,"instances":[]}
-,{"name":"craftsmanWindowframe","id":"craftsmanWindowframe","billboardMode":0,"position":[0,0,-6],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWindowframe","id":"craftsmanWindowframe","billboardMode":0,"position":[0,0,-6],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[1,2.765,0.9475,-1,2.765,0.9275,-1,2.765,0.9475,1,2.9,0.9275,-1,2.765,0.9275,1,2.765,0.9275,0.682,2.4725,0.9275,0.682,2.35,0.9475,0.682,2.4725,0.9475,-0.682,2.4725,0.9475,-0.682,2.4725,0.9275,-0.682,2.35,0.9475,-0.52,0.85,0.9275,-0.682,2.35,0.9275,-0.682,0.85,0.9275,-0.682,2.4725,0.9275,-0.52,2.35,0.9275
 ,0.52,2.35,0.9275,-0.52,2.35,0.9275,0.52,2.35,1,0.52,2.35,0.9275,-1,2.765,0.9475,-0.682,0.7275,0.9475,-0.682,2.4725,0.9475,1,2.765,0.9475,0.682,0.7275,0.9475,1,0.1368,0.9475,-1,0.1367,0.9475,-0.52,0.85,0.9275,-0.52,2.35,1,-0.52,2.35,0.9275,0.52,0.85,1,0.52,2.35,0.9275,0.682,2.4725,0.9475
 ,0.682,0.7275,0.9275,0.682,0.85,0.9475,0.682,0.85,0.9275,0.682,0.7275,0.9475,-0.682,0.7275,0.9275,-0.682,0.7275,0.9475,-0.682,0.85,0.9275,-0.682,0.85,0.9475,-0.682,0.85,0.9475,-0.682,2.35,0.9275,0.52,0.85,0.9275,-0.52,0.85,1,-0.52,0.85,0.9275,0.682,2.35,0.9275,0.52,0.85,0.9275,0.682,2.35,0.9275,0.52,2.35,0.9275
@@ -205,7 +205,7 @@
 ,54,88,55,57,89,90]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":91,"indexStart":0,"indexCount":156}]
 ,"instances":[]}
-,{"name":"craftsmanStairWallSideLeft","id":"craftsmanStairWallSideLeft","billboardMode":0,"position":[-5,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanStairWallSideLeft","id":"craftsmanStairWallSideLeft","billboardMode":0,"position":[-5,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.9475,0.1367,-1,0.9275,0.1367,1,0.9275,0.1367,-1,0.9275,0,1,0.9275,0.1367,-1,0.9275,0.1367,1,0.9475,2.765,0.866,0.9275,2.765,1,0.9475,2.765,1,0.9475,1.3655,-1,0.9475,0.1367,1,0.9475,0.1367,-1,0.9275,2.9,1,1,2.9,0.8662,1,2.9,1,0.9275,1.5,-1,0.9275,2.765,0.8659
 ,0.9275,1.3655,-1,0.9475,2.765,0.866,0.9275,1.3655,-1,0.9275,2.765,0.8659,0.9275,2.9,0.8659,0.9275,2.765,1,0.9275,2.765,0.8659,1,1.5,-1,0.9475,0.1367,1,0.9275,0,-1,0.9275,0.1367,-1,0.9275,2.765,0.8659,0.9475,2.8655,1,0.9475,2.765,0.866,0.9475,1.3655,-1,0.9275,1.3655,-1,0.9275,2.765,1
 ]
@@ -218,7 +218,7 @@
 ,33,21,15,24]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":34,"indexStart":0,"indexCount":54}]
 ,"instances":[]}
-,{"name":"craftsmanStairWallCornerLeft","id":"craftsmanStairWallCornerLeft","billboardMode":0,"position":[-5,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanStairWallCornerLeft","id":"craftsmanStairWallCornerLeft","billboardMode":0,"position":[-5,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.9475,0.1367,1,0.9275,0.1367,-0.6384,0.9475,0.1367,-0.6384,0.9275,0.1367,-0.8177,0.9275,0,-0.8177,0.9275,0,-1,0.9475,1.3655,1,0.9275,0.1367,-0.6384,0.9275,1.3655,1,0.9275,0.1367,-0.6384,0.9275,1.5,1,0.9275,1.3655,1,0.9475,0.1368,-0.6384,0.9475,1.3655,1,0.9475,0.1367,1,0.9275,0.1367,-0.8177,1,0,-1
 ,1,0.1367,-0.8177,0.9275,0,1,0.9275,0.1367,1,1,1.5,1,0.9275,0.1367,1,0.9475,0.1367,-0.6384,0.9275,0.1367,-0.6384,0.9275,0.1367,-0.6384,0.9275,0.1367,-0.8177,0.9275,0,-1]
 ,"normals":[0,1,0,-0.929,0.117,0.351,0,0.316,0.949,-1,0,0,-1,0,0,-1,0,0,0,-0.8,0.6,-0.929,0.117,0.351,-0.816,-0.463,0.347,-0.929,0.117,0.351,-0.508,0.689,-0.517,-0.816,-0.463,0.347,-1,0,0,-1,0,0,-1,0,0,-0.201,0.784,-0.588,0,0.8,-0.6
@@ -325,7 +325,7 @@
 ,302,478,479,480,307,481,308,310,482,311,483,484,314,485,486,487,319,488,320,322,489,323,490,491,326,492,493,494]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":495,"indexStart":0,"indexCount":678}]
 ,"instances":[]}
-,{"name":"craftsmanWall","id":"craftsmanWall","billboardMode":0,"position":[0,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanWall","id":"craftsmanWall","billboardMode":0,"position":[0,0,-4],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1,0.1367,0.9475,1,0.1367,0.9275,1,0.1367,0.9475,-1,0,0.9275,1,0.1367,0.9275,-1,0.1367,0.9275,-1,2.765,0.9475,1,2.765,0.9275,-1,2.765,0.9275,1,2.9,0.9275,-1,2.765,0.9275,1,2.765,0.9275,1,2.765,0.9475,-1,0.1367,0.9475,1,0.1367,0.9475,-1,0.1367,0.9275,1,0,0.9275
 ,1,0.1367,0.9275,1,2.765,0.9475,-1,2.9,0.9275,-1,2.765,0.9275,-1,2.765,0.9475]
 ,"normals":[0,1,0,0,0.707,-0.707,0,1,0,0,0,-1,0,0.707,-0.707,0,0.707,-0.707,0,-1,0,0,-0.707,-0.707,0,-0.707,-0.707,0,0,-1,0,-0.707,-0.707,0,-0.707,-0.707,0,0,-1,0,0,-1,0,0,-1,0,0.707,-0.707,0,0,-1
@@ -334,7 +334,7 @@
 ,"indices":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,0,15,1,3,16,17,6,18,7,9,19,20,12,21,13]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":22,"indexStart":0,"indexCount":30}]
 ,"instances":[]}
-,{"name":"craftsmanCorner","id":"craftsmanCorner","billboardMode":0,"position":[0,0,-5],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanCorner","id":"craftsmanCorner","billboardMode":0,"position":[0,0,-5],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.9527,0.1367,0.9475,-1,0.1367,0.9275,-0.9347,0.1367,0.9275,-0.9285,0,0.9285,-0.9347,0.1367,0.9275,-0.9348,0,0.9275,-0.9275,0,0.9347,-0.9285,0.1367,0.9285,-0.9275,2.9,0.9348,-0.9285,2.765,0.9285,-0.9275,2.765,0.9348,-0.9347,2.9,0.9275,-0.9348,2.765,0.9275,-1,2.765,0.9275,-0.9528,2.765,0.9475,-0.9348,2.765,0.9275,-0.9528,2.765,0.9475
 ,-1,0.1367,0.9475,-0.9527,0.1367,0.9475,-0.9475,0.1367,0.9527,-0.9475,2.765,1,-0.9475,2.765,0.9528,-0.9485,0.1367,0.9485,-0.9275,0.1367,0.9348,-0.9475,0.1367,0.9528,-0.9275,2.765,0.9348,-0.9485,2.765,0.9485,-0.9475,2.765,0.9528,-1,0.1367,0.9275,-1,0,0.9275,-0.9285,0.1367,0.9285,-0.9275,0.1367,1,-0.9475,0.1367,1,-0.9275,0,1
 ,-0.9275,0.1367,0.9348,-0.9348,2.765,0.9275,-0.9285,2.765,0.9285,-1,2.9,0.9275,-1,2.765,0.9275,-0.9275,2.765,1,-0.9475,2.765,1,-0.9275,2.9,1,-0.9275,2.765,1,-0.9485,0.1367,0.9485,-0.9485,2.765,0.9485,-1,0.1367,0.9475,-0.9347,0.1367,0.9275,-0.9275,0.1367,0.9348,-0.9285,2.9,0.9285,-1,2.765,0.9475,-1,2.765,0.9475
@@ -351,7 +351,7 @@
 ,57,58,59,14,26,12,11,37,39,60,27,41,8,10,43,19,21,44,16,18]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":61,"indexStart":0,"indexCount":120}]
 ,"instances":[]}
-,{"name":"craftsmanDoorway","id":"craftsmanDoorway","billboardMode":0,"position":[0,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanDoorway","id":"craftsmanDoorway","billboardMode":0,"position":[0,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[1,2.765,0.9475,-1,2.765,0.9275,-1,2.765,0.9475,1,2.9,0.9275,-1,2.765,0.9275,1,2.765,0.9275,0.882,0.1367,0.9475,1,0.1367,0.9275,1,0.1367,0.9475,0.882,2.2725,0.9275,0.882,2.15,0.9475,0.882,2.2725,0.9475,0.72,2.2725,0.9475,0.72,2.2725,0.9275,-0.882,2.15,0.9475,-0.882,2.2725,0.9275,-0.882,2.2725,0.9475
 ,0.882,0,0.9275,1,0.1367,0.9275,0.882,0.1367,0.9275,-1,0.1367,0.9275,-0.882,0.1367,0.9475,-1,0.1367,0.9475,-0.882,0.1367,0.9275,-1,0,0.9275,-0.882,0,0.9275,0.72,0.1367,1,0.72,0,0.9275,0.72,0.1368,0.9275,0.882,0.1367,0.9275,0.882,2.15,0.9275,-0.882,0.1367,0.9475,-0.882,2.15,0.9275,-0.72,0.1367,0.9275
 ,-0.72,0,1,-0.72,0.1367,1,-0.72,2.15,0.9275,-0.882,2.2725,0.9275,-0.882,2.15,0.9275,-0.72,2.15,0.9275,0.72,2.15,1,0.72,2.15,0.9275,-0.882,2.2725,0.9475,-1,0.1367,0.9475,-0.882,0.1367,0.9475,1,0.1367,0.9475,0.882,2.2725,0.9475,0.882,0.1367,0.9475,1,2.765,0.9475,-0.72,0.1367,0.9275,-0.882,2.15,0.9275
@@ -377,7 +377,7 @@
 ,104,105,106,107,108,109,13,12,67,68,67,16,110,111,41,112,113,114]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":115,"indexStart":0,"indexCount":168}]
 ,"instances":[]}
-,{"name":"craftsmanDoor","id":"craftsmanDoor","billboardMode":0,"position":[1,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanDoor","id":"craftsmanDoor","billboardMode":0,"position":[1,0,-1],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1.44,2.15,-0.0525,-1.44,0,0.0525,-1.44,0,-0.0525,-1.44,2.15,0.0525,0,0,0.0525,-1.44,0,0.0525,0,2.15,0.0525,0,0,-0.0525,0,2.15,-0.0525,-1.44,0,-0.0525,0,0,-0.0525,0,0,0.0525,-1.44,0,-0.0525,-1.44,0,0.0525,-1.44,2.15,0.0525,0,2.15,0.0525,-1.44,2.15,0.0525
 ,0,2.15,-0.0525,-1.44,2.15,-0.0525,-1.44,0,-0.0525,0,0,0.0525,0,0,-0.0525,-1.44,0,-0.0525,-1.44,2.15,0.0525,-1.44,2.15,-0.0525]
 ,"normals":[-0.577,0.577,-0.577,-0.577,-0.577,0.577,-0.577,-0.577,-0.577,-0.577,0.577,0.577,0.577,-0.577,0.577,-0.577,-0.577,0.577,0.577,0.577,0.577,0.577,-0.577,-0.577,0.577,0.577,-0.577,-0.577,-0.577,-0.577,0.577,-0.577,-0.577,0.577,-0.577,0.577,-0.577,-0.577,-0.577,-0.577,-0.577,0.577,-0.577,0.577,0.577,0.577,0.577,0.577,-0.577,0.577,0.577

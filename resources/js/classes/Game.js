@@ -7,6 +7,8 @@ class Game {
         this.initialized = false;
         Game.debugEnabled = false;
         this.physicsEnabled = false;
+        this.Tools = Tools;
+        this.Tools.initialize();
 
         if (Game.debugEnabled) console.log("Running initialize");
         this.canvas = document.getElementById("canvas");
@@ -202,6 +204,7 @@ class Game {
             "animatedCoffin01":"resources/meshes/animatedCoffin01.babylon",
             "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon",
             "animatedToilet01":"resources/meshes/animatedToilet01.babylon",
+            "animatedSink01":"resources/meshes/animatedSink01.babylon",
             "animatedDoor01":"resources/meshes/animatedDoor01.babylon"
         };
         /**
@@ -581,6 +584,8 @@ class Game {
          */
         this.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
         this.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
+        this.functionControlOnClick = Game.controlCharacterOnClick;
+        this.functionControlOnContext = Game.controlCharacterOnContext;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         this.gui = GameGUI;
         this.gui.initialize();
@@ -592,6 +597,8 @@ class Game {
         this.importMeshes("resources/data/misc.babylon");
         this.initQwertyKeyboardControls();
         this.initPostProcessing();
+        window.addEventListener("click", Game.functionControlOnClick);
+        window.addEventListener("contextmenu", Game.functionControlOnContext);
 
         this._filesToLoad -= 1;
         this.initialized = true;
@@ -964,16 +971,6 @@ class Game {
     static importEntityAnimationBones() {
         Game.importScript("resources/js/entityAnimationBones.js");
     }
-    static controlMenuOnKeyDown(event) {
-        if (!this.initialized) {
-            return undefined;
-        }
-    }
-    static controlMenuOnKeyUp(event) {
-        if (!this.initialized) {
-            return undefined;
-        }
-    }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         if (!this.initialized) {
@@ -1163,6 +1160,24 @@ class Game {
                 Client.updateLocRotScaleSelf();
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
+        }
+    }
+    static controlCharacterOnClick(event) {
+        if (event.button == 1) {
+            // nothing for middle click :v
+            return true;
+        }
+        else if (event.button == 2) {
+            return Game.controlCharacterOnContext(event);
+        }
+        Game.player.getController().doPunch();
+    }
+    static controlCharacterOnContext(_event) {
+        if (Game.initialized && Game.player instanceof CharacterEntity && Game.player.getTarget() instanceof AbstractEntity) {
+            Game.gui.clearActionsMenu();
+            Game.gui.populateActionsMenuWithTarget();
+            Game.gui.updateActionsMenu();
+            Game.gui.showActionsMenu();
         }
     }
     static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
@@ -2156,7 +2171,25 @@ class Game {
         return null;
     }
     static hasEntity(_id) {
-        return Game.getEntity(_id) != undefined;
+        return Game.getEntity(_id) != null;
+    }
+    static getInstancedEntity(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof InstancedEntity) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.instancedEntities.hasOwnProperty(_id)) {
+            return Game.entities[_id];
+        }
+        else if (_id.hasOwnProperty("entity") && _id.entity instanceof InstancedEntity) {
+            return _id.entity;
+        }
+        return null;
+    }
+    static hasInstancedEntity(_id) {
+        return Game.getInstancedEntity(_id) != null;
     }
     static getProtoItemEntity(_id) {
         if (_id == undefined) {
@@ -2736,7 +2769,7 @@ class Game {
         Game._pointerLockFunction = setTimeout(function() {document.addEventListener("pointerlockchange", Game.pointerRelease);}, 121);
     }
     static pointerRelease(_event) {
-        clearTimeout(Game.pointerLockFunction);
+        clearTimeout(Game._pointerLockFunction);
         document.removeEventListener("pointerlockchange", Game.pointerRelease);
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
@@ -2814,13 +2847,16 @@ class Game {
     static doEntityAction(_entity, _subEntity = Game.player, _action) {
         _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
         _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
-        _action = _entity.getAvailableAction(_action);
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
-        if (!_entity.hasAvailableAction(_action)) {
+        if (!(_entity instanceof AbstractEntity)) {
             return;
         }
+        if (!(_subEntity instanceof AbstractEntity)) {
+            return;
+        }
+        _action = _entity.getAvailableAction(_action);
         if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
             if (_action == ActionEnum.USE) {
                 if (_entity instanceof LightingEntity) {

@@ -38,6 +38,8 @@ class AbstractEntity {
         this.controller = null;
 
         this.owner = null;
+        
+        this.target = null;
 
         /**
          * Actions available to this Entity
@@ -125,14 +127,48 @@ class AbstractEntity {
 
     /**
      * Sets Owner
-     * @param {Character} _character Character, or undefined
+     * @param {Character} _entity Character, or undefined
      */
-    setOwner(_character) {
-        this.owner = Game.getCharacterEntity(_character);
+    setOwner(_entity) {
+        if (!(_entity instanceof AbstractEntity)) {
+            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+        }
+        this.owner = Game.getCharacterEntity(_entity);
         return this;
     }
     getOwner() {
         return this.owner;
+    }
+    hasOwner() {
+        return this.owner instanceof AbstractEntity;
+    }
+    removeOwner() {
+        this.owner = null;
+        return this;
+    }
+    clearOwner() {
+        return this.removeOwner();
+    }
+
+    setTarget(_entity) {
+        if (!(_entity instanceof AbstractEntity)) {
+            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+        }
+        this.target = _entity;
+        return this;
+    }
+    getTarget() {
+        return this.target;
+    }
+    hasTarget() {
+        return this.target instanceof AbstractEntity;
+    }
+    removeTarget() {
+        this.target = null;
+        return this;
+    }
+    clearTarget() {
+        return this.removeTarget();
     }
 
     dispose() {

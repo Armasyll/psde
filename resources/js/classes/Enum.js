@@ -172,6 +172,7 @@ FurnitureEnum = {
     MIRROR: 19,
     BASKET: 20,
     LAMP: 21,
+    TABLE: 22,
     properties: {
         0: {
             name: "None",
@@ -260,6 +261,10 @@ FurnitureEnum = {
         21: {
             name: "Lamp",
             value: 21
+        },
+        22: {
+            name: "Table",
+            value: 22
         }
     }
 };

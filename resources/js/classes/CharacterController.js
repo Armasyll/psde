@@ -307,12 +307,12 @@ class CharacterController extends EntityController {
             }
             if (this.key.strafeLeft) {
                 anim = this.strafeLeft;
-                xDist = -(this.walkSpeed * dt);
+                xDist = -this.runSpeed * dt;
                 moving = true;
             }
             else if (this.key.strafeRight) {
                 anim = this.strafeRight;
-                xDist = this.walkSpeed * dt;
+                xDist = this.runSpeed * dt;
                 moving = true;
             }
             else {
@@ -580,6 +580,7 @@ class CharacterController extends EntityController {
         if (_updateChild) {
             _controller.addTargetedBy(this, false);
         }
+        this.entity.setTarget(_controller.getEntity());
         return this;
     }
     removeTarget(_updateChild = true) {
@@ -587,6 +588,7 @@ class CharacterController extends EntityController {
             this.targetController.removeTargetedBy(this, false);
         }
         this.targetController = null;
+        this.entity.removeTarget();
         return this;
     }
     clearTarget(_updateChild = true) {

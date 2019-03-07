@@ -185,6 +185,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanDoorway", "whiteWallpaperPlainWood",           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
     Game.createFurniture("ozzyToilet", "Toilet", "animatedToilet01", undefined, FurnitureEnum.TOILET, undefined, new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("ozzySink", "Sink", "animatedSink01", undefined, FurnitureEnum.SINK, undefined, new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
 
     // Ozzy Hallway
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(4, 0, 0));
