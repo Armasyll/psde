@@ -1072,12 +1072,16 @@ class Game {
                 break;
             }
             case this.showInventoryCode : {
-                if (Game.gui.getInventoryVisible()) {
-                    Game.gui.hideInventory(false);
-                    Game.gui.showHUD(false);
+                if (Game.gui.getInventoryMenuVisible()) {
+                    Game.gui.hideInventoryMenu();
+                    Game.gui.hideMenu(true);
+                    Game.gui.pointerLock();
                 }
                 else {
-                    Game.gui.showPlayerInventory(false);
+                    Game.gui.updateInventoryMenuWith(Game.player);
+                    Game.gui.showMenu(true);
+                    Game.gui.showInventoryMenu();
+                    Game.gui.pointerRelease();
                 }
                 break;
             }

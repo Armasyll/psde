@@ -11,8 +11,10 @@ class GameGUI {
         GameGUI.focusedBackgroundDisabled = "#0c3c3c";
         GameGUI._menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
         GameGUI._menu.rootContainer.isVisible = false;
+        GameGUI._menu.rootContainer.zIndex = 5;
         GameGUI._hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
         GameGUI._hud.rootContainer.isVisible = false;
+        GameGUI._hud.rootContainer.zIndex = 3;
 
         GameGUI._dialogueOptions = new Array();
         GameGUI._crosshair = undefined;
@@ -140,6 +142,7 @@ class GameGUI {
         crosshair.color = "black";
         crosshair.alpha = 0.5;
         crosshair.isVisible = false;
+        crosshair.zIndex = 10;
         return crosshair;
     }
     static showCrosshair() {
@@ -250,6 +253,7 @@ class GameGUI {
             GameGUI._chatWasFocused = false;
             Game.controlCharacterOnKeyDown(Game.chatInputSubmitCode);
         });
+        chatBox.zIndex = 90;
         return chatBox;
     }
     static getChatOutput() {
@@ -406,6 +410,7 @@ class GameGUI {
             if (!Client.isOnline()) {
                 Client.connect();
             }
+            GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
         });
@@ -420,6 +425,7 @@ class GameGUI {
             if (Client.isOnline()) {
                 Client.disconnect();
             }
+            GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
         });
@@ -451,6 +457,7 @@ class GameGUI {
             submitContainer.addControl(submitOffline);
             submitContainer.addControl(submitOnline);
         characterChoiceMenuContainer.isVisible = false;
+        characterChoiceMenuContainer.zIndex = 90;
         return characterChoiceMenuContainer;
     }
     static showCharacterChoiceMenu() {
@@ -574,6 +581,7 @@ class GameGUI {
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaSlider);
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaText);
         portraitStats.addControl(portraitStatsStaminaContainer);
+        portrait.zIndex = 10;
         return portrait;
     }
     static _generateTargetPortrait() {
@@ -692,6 +700,7 @@ class GameGUI {
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaSlider);
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaText);
         portraitStats.addControl(portraitStatsStaminaContainer);
+        portrait.zIndex = 10;
         return portrait;
     }
     static showPlayerPortrait() {
@@ -927,48 +936,27 @@ class GameGUI {
             actions.left = "25%";
             inventory.addControl(actions);
         inventory.isVisible = false;
+        inventory.zIndex = 50;
         return inventory;
-    }
-    /**
-     * Shows the player's inventory menu.
-     */
-    static showPlayerInventory() {
-        GameGUI._hideMenuChildren();
-        GameGUI._setPlayerInventory();
-        GameGUI.pointerRelease();
-        GameGUI._inventoryMenu.isVisible = true;
-        GameGUI.showMenu(true);
-    }
-    static showTargetInventory() {
-        
-    }
-    /**
-     * Hides the inventory menu.
-     */
-    static hideInventory() {
-        GameGUI.pointerLock();
-        GameGUI._inventoryMenu.isVisible = false;
     }
     /**
      * Returns whether or not the inventory menu is visible.
      * @return {Boolean} Whether or not the inventory menu is visible.
      */
-    static getInventoryVisible() {
+    static getInventoryMenuVisible() {
         return GameGUI._inventoryMenu.isVisible;
     }
-    static setInventoryVisible(_boolean) {
-        if (_boolean === true) {
-            GameGUI._inventoryMenu.isVisible = true;
-        }
-        else {
-            GameGUI._inventoryMenu.isVisible = false;
-        }
+    static showInventoryMenu() {
+        GameGUI._inventoryMenu.isVisible = true;
+    }
+    static hideInventoryMenu() {
+        GameGUI._inventoryMenu.isVisible = false;
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
      * @param {Entity} _entity The Entity with the inventory.
      */
-    static _setPlayerInventory(_entity = Game.player) {
+    static updateInventoryMenuWith(_entity = Game.player) {
         var _inventory = GameGUI._inventoryMenu.getChildByName("items").children;
         for (var _i = _inventory.length - 1; _i > -1; _i--) {
             GameGUI._inventoryMenu.getChildByName("items").removeControl(_inventory[_i]);
@@ -978,7 +966,7 @@ class GameGUI {
                 _button.width = 1.0;
                 _button.height = 0.1;
             _button.onPointerUpObservable.add(function() {
-                GameGUI._setInventorySelectedItem(_instancedItemEntity.getID(), _entity);
+                GameGUI.updateInventoryMenuSelected(_instancedItemEntity.getID(), _entity);
             });
             GameGUI._inventoryMenu.getChildByName("items").addControl(_button);
         });
@@ -990,7 +978,7 @@ class GameGUI {
      * @param {Entity} _targetEntity        The Entity storing the InstancedItemEntity
      * @param {Entity} _playerEntity        The Entity viewing the item; the player.
      */
-    static _setInventorySelectedItem(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player) {
+    static updateInventoryMenuSelected(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player) {
         _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
         if (_instancedItemEntity == undefined) {GameGUI._clearInventorySelectedItem; return;}
         _targetEntity = Game.getEntity(_targetEntity);
@@ -1019,17 +1007,17 @@ class GameGUI {
             switch (_action) {
                 case ActionEnum.DROP : {
                     _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
-                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI._setPlayerInventory);});
+                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenu);});
                     break;
                 }
                 case ActionEnum.HOLD : {
                     if (Game.player.hasEquippedEntity(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
                     }
                     else {
                         _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI._setInventorySelectedItem);});
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
                     }
                     break;
                 }
@@ -1093,8 +1081,6 @@ class GameGUI {
             _button.addControl(_buttonText);
         return _button;
     }
-    static _setTargetInventory(_entity) {
-    }
     static _generateTargetActionTooltip() {
         if (Game.debugEnabled) console.log("Running GameGUI::_generateTargetActionTooltip");
         var tooltip = new BABYLON.GUI.Rectangle("targetActionTooltip");
@@ -1127,6 +1113,7 @@ class GameGUI {
         tooltip.addControl(actionPanelActionName);
         tooltip.addControl(actionPanelTargetName);
         tooltip.isVisible = false;
+        tooltip.zIndex = 12;
         return tooltip;
     }
     /**
@@ -1195,6 +1182,7 @@ class GameGUI {
         _aRM.color = GameGUI.color;
         _aRM.alpha = GameGUI.alpha;
         _aRM.isVisible = false;
+        _aRM.zIndex = 12;
         return _aRM;
     }
     static populateActionsMenuWith(_controller) {
@@ -1588,6 +1576,7 @@ class GameGUI {
         _container.addControl(_bodyContainer);
         _container.addControl(_optionsContainer);
         _container.isVisible = false;
+        _container.zIndex = 15;
         return _container;
     }
     static showDialogueMenu() {
