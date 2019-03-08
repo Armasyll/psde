@@ -1106,7 +1106,11 @@ class Game {
         }
     }
     static controlCharacterOnKeyUp(event) {
+        if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyUp(${event})`);
         if (!this.initialized) {
+            return undefined;
+        }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController()) {
             return undefined;
         }
         switch (event) {
@@ -1143,11 +1147,11 @@ class Game {
                 break;
             }
             case this.useTargetedEntityCode : {
-                if (!(Game.player.getController().targetController instanceof EntityController)) {
+                if (!(Game.player.getTarget() instanceof AbstractEntity)) {
                     return;
                 }
-                if (Game.player.getController().targetController.getEntity() instanceof AbstractEntity) {
-                    Game.doEntityAction(Game.player.getController().targetController.getEntity(), Game.player, Game.player.getController().targetController.getEntity().getDefaultAction());
+                if (Game.player.getTarget() instanceof AbstractEntity) {
+                    Game.doEntityAction(Game.player.getTarget(), Game.player, Game.player.getTarget().getDefaultAction());
                 }
                 break;
             }
@@ -2856,8 +2860,11 @@ class Game {
         if (!(_subEntity instanceof AbstractEntity)) {
             return;
         }
-        _action = _entity.getAvailableAction(_action);
-        if (!(_entity.getAvailableAction(_action) instanceof ActionData) || !_entity.getAvailableAction(_action).hasFunction()) {
+        if (Game.debugEnabled) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
+        /*
+        If the entity doesn't have the action, or they have the action but it doesn't have a function assigned to it
+         */
+        if (!(_entity.hasAvailableAction(_action)) || !_entity.getAvailableAction(_action).hasFunction()) {
             if (_action == ActionEnum.USE) {
                 if (_entity instanceof LightingEntity) {
                     _entity.toggle();
