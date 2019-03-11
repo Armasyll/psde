@@ -2853,16 +2853,20 @@ class Game {
         }
     }
     static doEntityAction(_entity, _subEntity = Game.player, _action) {
-        _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
-        _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
-        if (_action instanceof ActionData) {
-            _action = _action.action;
-        }
         if (!(_entity instanceof AbstractEntity)) {
-            return;
+            _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
+            if (!(_entity instanceof AbstractEntity)) {
+                return;
+            }
         }
         if (!(_subEntity instanceof AbstractEntity)) {
-            return;
+            _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
+            if (!(_subEntity instanceof AbstractEntity)) {
+                return;
+            }
+        }
+        if (_action instanceof ActionData || _action.hasOwnProperty("action")) {
+            _action = _action.action;
         }
         if (Game.debugEnabled) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
         /*
@@ -2902,10 +2906,8 @@ class Game {
             }
             else if (_entity.getAvailableAction(_action).runBeforeParent) {
                 _entity.getAvailableAction(_action).execute();
-                _entity.getAvailableAction(_action).execute();
             }
             else {
-                _entity.getAvailableAction(_action).execute();
                 _entity.getAvailableAction(_action).execute();
             }
         }
@@ -3106,6 +3108,7 @@ class Game {
         _subEntity.getController().getMesh().rotation.set(0,0,0);
     }
     static actionTalkFunction(_entity, _subEntity = Game.player) {
+        if (Game.debugEnabled) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);
         if (!(_entity instanceof CharacterEntity)) {
             return;
         }
