@@ -394,6 +394,7 @@ class Game {
             "stick01Icon":"resources/images/icons/items/stick01.png",
             "stick03Icon":"resources/images/icons/items/stick03.png",
             "stick04Icon":"resources/images/icons/items/stick04.png",
+            "stick02Icon":"resources/images/icons/items/stick02.png",
             "rock01Icon":"resources/images/icons/items/rock01.png"
         };
         /**

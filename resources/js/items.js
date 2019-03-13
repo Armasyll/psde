@@ -63,6 +63,7 @@ Game.createProtoItem("pickaxe01", "Pickaxe", "A pickaxe.", "pickaxe01Icon", "pic
 Game.createProtoItem("stick01", "Short Stick", "A short stick.", "stick01Icon", "stick01", "stick01", ItemEnum.WEAPON);
 Game.createProtoItem("stick03", "Stick", "A stick.", "stick03Icon", "stick03", "stick01", ItemEnum.WEAPON);
 Game.createProtoItem("stick04", "Long Stick", "A long stick.", "stick04Icon", "stick04", "stick01", ItemEnum.WEAPON);
+Game.createProtoItem("stick02", "Broad Stick", "A broad stick.", "stick02Icon", "stick02", "woodenMallet", ItemEnum.WEAPON);
 Game.createProtoItem("sticc", "Stick", "A stick.", "stick01Icon", "stick01", "stick01", ItemEnum.WEAPON);
 Game.createProtoItem("rocc", "Rock", "A rock.", "rock01Icon", "rock01", "rock01", ItemEnum.WEAPON);
 
