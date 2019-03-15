@@ -270,30 +270,20 @@ FurnitureEnum = {
 };
 SpeciesEnum = {
     NONE: 0,
-    FOX: 1,
-    SHEEP: 2,
-    AARDWOLF: 3,
-    FOXSKELETON: 61,
+    SKELETON: 1,
+    SPIDER: 2,
     properties: {
         0: {
             name: "None",
             value: 0
         },
         1: {
-            name: "Fox",
+            name: "Skeleton",
             value: 1
         },
         2: {
-            name: "Sheep",
+            name: "Spider",
             value: 2
-        },
-        3: {
-            name: "Aardwolf",
-            value: 3
-        },
-        61: {
-            name: "Fox Skeleton",
-            value: 61
         }
     }
 };

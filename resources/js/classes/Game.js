@@ -479,6 +479,7 @@ class Game {
         this.instancedItemEntities = {};
         this.instancedClothingEntities = {};
         this.instancedWeaponEntities = {};
+        this.instancedFurnitureEntities = {};
 
         this.dialogues = {};
         this.cosmetics = {};
@@ -912,7 +913,7 @@ class Game {
         }
         this.instancedMeshes[_id] = _mesh;
     }
-    static getAbstractMesh(_mesh) {
+    static getMesh(_mesh) {
         if (_mesh == undefined) {
             return null;
         }
@@ -931,9 +932,6 @@ class Game {
             }
         }
         return null;
-    }
-    static hasAbstractMesh(_mesh) {
-        return Game.getAbstractMesh(_mesh) != undefined;
     }
     static hasIcon(_icon) {
         return this.iconLocations.hasOwnProperty(_icon);
@@ -1395,7 +1393,7 @@ class Game {
     static removeMesh(_mesh) { // TODO: Update this :v
         if (Game.debugEnabled) console.log("Running removeMesh");
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            _mesh = Game.getAbstractMesh(_mesh);
+            _mesh = Game.getMesh(_mesh);
             if (!(_mesh instanceof CharacterController)) {
                 return undefined;
             }
@@ -1748,7 +1746,7 @@ class Game {
         }
         for (var _i in Game.charactersToCreate) {
             if (Game.loadedMeshes.hasOwnProperty(Game.charactersToCreate[_i]["mesh"])) {
-                Game.createCharacters(
+                Game.createCharacter(
                     Game.charactersToCreate[_i]["id"],
                     Game.charactersToCreate[_i]["name"],
                     Game.charactersToCreate[_i]["description"],
@@ -1984,11 +1982,11 @@ class Game {
             return null;
         }
         var _temp = undefined;
-        _temp = Game.getAbstractMesh(_currentID);
+        _temp = Game.getMesh(_currentID);
         _temp.id = _newID;
         Game.instancedMeshes[_newID] = _temp;
         delete Game.instancedMeshes[_currentID];
-        if (Game.hasAbstractMesh(_currentID)) {
+        if (Game.hasMesh(_currentID)) {
             Game.instancedMeshes[_newID] = _temp;
             delete Game.instancedMeshes[_currentID];
         }
@@ -2200,7 +2198,7 @@ class Game {
     static hasInstancedEntity(_id) {
         return Game.getInstancedEntity(_id) != null;
     }
-    static getProtoItemEntity(_id) {
+    static getItemEntity(_id) {
         if (_id == undefined) {
             return;
         }
@@ -2218,8 +2216,8 @@ class Game {
         }
         return null;
     }
-    static hasProtoItemEntity(_id) {
-        return Game.getProtoItemEntity(_id) != undefined;
+    static hasItemEntity(_id) {
+        return Game.getItemEntity(_id) != undefined;
     }
     static getInstancedItemEntity(_id) {
         if (_id == undefined) {
@@ -2242,12 +2240,6 @@ class Game {
     static hasInstancedItemEntity(_id) {
         return Game.getInstancedItemEntity(_id) != undefined;
     }
-    static getItemEntity(_id) {
-        return Game.getInstancedItemEntity(_id);
-    }
-    static hasItemEntity(_id) {
-        return Game.hasInstancedItemEntity(_id);
-    }
     static getCharacterEntity(_id) {
         if (_id == undefined) {
             return;
@@ -2265,6 +2257,48 @@ class Game {
     }
     static hasCharacterEntity(_id) {
         return Game.getCharacterEntity(_id) != undefined;
+    }
+    static getFurnitureEntity(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof FurnitureEntity) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.furnitureEntities.hasOwnProperty(_id)) {
+            return Game.furnitureEntities[_id];
+        }
+        else if (_id instanceof InstancedFurnitureEntity) {
+            return _id.getEntity();
+        }
+        else if (_id instanceof FurnitureController && _id.getEntity() instanceof InstancedFurnitureEntity) {
+            return _id.getEntity().getEntity();
+        }
+        return null;
+    }
+    static hasFurnitureEntity(_id) {
+        return Game.getFurnitureEntity(_id) != undefined;
+    }
+    static getInstancedFurnitureEntity(_id) {
+        if (_id == undefined) {
+            return;
+        }
+        else if (_id instanceof InstancedFurnitureEntity) {
+            return _id;
+        }
+        else if (typeof _id == "string" && Game.instancedFurnitureEntities.hasOwnProperty(_id)) {
+            return Game.instancedFurnitureEntities[_id];
+        }
+        else if (_id instanceof FurnitureController && _id.entity instanceof InstancedFurnitureEntity) {
+            return _id.entity;
+        }
+        else if ((_id instanceof BABYLON.AbstractMesh) && _id.hasOwnProperty("controller") && _id.controller instanceof FurnitureController) {
+            return _id.controller.entity;
+        }
+        return null;
+    }
+    static hasInstancedFurnitureEntity(_id) {
+        return Game.getInstancedFurnitureEntity(_id) != undefined;
     }
     static getDialogue(_id) {
         if (_id == undefined) {
@@ -2323,7 +2357,7 @@ class Game {
         }
         _position.y = _position.y + 0.0076; // Characters start sinking into the ground sometimes
         var _entity = new CharacterEntity(_id, _name, _description, _image, undefined, _age, _sex, _species);
-        var _loadedMesh = Game.getAbstractMesh(_loadedMesh);
+        var _loadedMesh = Game.getMesh(_mesh);
         if (_loadedMesh == undefined) {
             switch (_entity.species) {
                 case SpeciesEnum.FOX: {
@@ -2423,7 +2457,7 @@ class Game {
         }
         var _entity = new DoorEntity(_id, _name, undefined, undefined);
         var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true);
-        var _radius = Game.getAbstractMesh(_loadedMesh.name).getBoundingInfo().boundingBox.extendSize.x * _loadedMesh.scaling.x;
+        var _radius = Game.getMesh(_loadedMesh.name).getBoundingInfo().boundingBox.extendSize.x * _loadedMesh.scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
         var _yPos = _radius * (Math.sin(_rotation.y * Math.PI / 180) | 0);
         _loadedMesh.position = _loadedMesh.position.add(new BABYLON.Vector3(_xPos, 0, -_yPos));
@@ -2439,6 +2473,22 @@ class Game {
         _controller.entity.dispose();
         _controller.dispose();
         Game.removeMesh(_mesh);
+    }
+    static createFurnitureEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = FurnitureEnum.NONE) {
+        if (typeof _id != "string") {_id = genUUIDv4();}
+        _id = Game.filterID(_id);
+        var _entity = null;
+        _entity = new FurnitureEntity(_id, _name, _description, _image, _type);
+        _mesh = Game.getMesh(_mesh);
+        if (_mesh != undefined) {
+            _mesh = _mesh.name;
+        }
+        else {
+            _mesh = "missingMesh";
+        }
+        _entity.setMeshID(_mesh);
+        _entity.setTextureID(_texture);
+        return _entity;
     }
     /**
      * Created a FurnitureController, FurnitureEntity, and BABYLON.InstancedMesh
@@ -2544,21 +2594,21 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createProtoItem(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _itemType = ItemEnum.GENERAL, _itemSubType = 0) {
+    static createItemEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = ItemEnum.GENERAL, _subType = 0) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         var _entity = null;
-        switch (_itemType) {
+        switch (_type) {
             case ItemEnum.GENERAL : {
                 _entity = new ItemEntity(_id, _name, _description, _image);
                 break;
             }
             case ItemEnum.APPAREL: {
-                _entity = new ClothingEntity(_id, _name, _description, _image, _itemSubType);
+                _entity = new ClothingEntity(_id, _name, _description, _image, _subType);
                 break;
             }
             case ItemEnum.WEAPON : {
-                _entity = new WeaponEntity(_id, _name, _description, _image, _itemSubType);
+                _entity = new WeaponEntity(_id, _name, _description, _image, _subType);
                 break;
             }
             case ItemEnum.KEY : {
@@ -2569,13 +2619,13 @@ class Game {
                 //_entity = new BookEntity(_id, _name, _description, _image); // TODO: this :v
             }
             case ItemEnum.CONSUMABLE : {
-                //_entity = new ConsumableEntity(_id, _name, _description, _image, _itemSubType); // TODO: this :v
+                //_entity = new ConsumableEntity(_id, _name, _description, _image, _subType); // TODO: this :v
             }
             default: {
                 _entity = new ItemEntity(_id, _name, _description, _image);
             }
         }
-        _mesh = Game.getAbstractMesh(_mesh);
+        _mesh = Game.getMesh(_mesh);
         if (_mesh != undefined) {
             _mesh = _mesh.name;
         }
@@ -2583,8 +2633,6 @@ class Game {
         _entity.setTextureID(_texture);
         return _entity;
     }
-    static updateProtoItem() {}
-    static removeProtoItem() {}
     static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {
             _id = genUUIDv4();
@@ -2596,8 +2644,8 @@ class Game {
         else if (_entity instanceof InstancedItemEntity) {
             _entity = _entity.clone(_id);
         }
-        else if (typeof _entity == "string" && Game.hasProtoItemEntity(_entity)) {
-            _entity = Game.getProtoItemEntity(_entity).createInstance(_id);
+        else if (typeof _entity == "string" && Game.hasItemEntity(_entity)) {
+            _entity = Game.getItemEntity(_entity).createInstance(_id);
         }
         else {
             return null;
@@ -2947,12 +2995,12 @@ class Game {
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
             _instancedItemEntity.setParent(null);
             _instancedItemEntity.position = _subEntity.getController().getMesh().position.clone.add(
-                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
             );
         }
         else {
             var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.add(
-                new BABYLON.Vector3(0, Game.getAbstractMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
             ));
         }
         _subEntity.removeItem(_instancedItemEntity);
@@ -3061,14 +3109,7 @@ class Game {
         if (!(_subEntity instanceof CharacterEntity)) {
             return;
         }
-        if (_entity.getController() instanceof FurnitureController) {
-            _entity.getController().currAnim = _entity.getController().opened;
-            _entity.getController().beginAnimation(_entity.getController().open);
-            _entity.setDefaultAction(ActionEnum.CLOSE);
-            _entity.addHiddenAvailableAction(ActionEnum.OPEN);
-            _entity.removeHiddenAvailableAction(ActionEnum.CLOSE);
-        }
-        else if (_entity.getController() instanceof DoorController) {
+        if (_entity.getController() instanceof DoorController) {
             if (_entity.getLocked()) {
                 if (!_subEntity.hasItem(_entity.getKey())) {
                     return;
@@ -3076,6 +3117,13 @@ class Game {
                 _entity.setLocked(false);
             }
             _entity.getController().doOpen();
+        }
+        else if (_entity.getController() instanceof FurnitureController) {
+            _entity.getController().currAnim = _entity.getController().opened;
+            _entity.getController().beginAnimation(_entity.getController().open);
+            _entity.setDefaultAction(ActionEnum.CLOSE);
+            _entity.addHiddenAvailableAction(ActionEnum.OPEN);
+            _entity.removeHiddenAvailableAction(ActionEnum.CLOSE);
         }
     }
     static actionUseFunction(_entity, _subEntity = Game.player) {
@@ -3102,7 +3150,7 @@ class Game {
         if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
             return;
         }
-        var _seatingBoundingBox = Game.getAbstractMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+        var _seatingBoundingBox = Game.getMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entity.getController().getMesh().scaling.x);
         _subEntity.getController().setParent(_entity.getController().getMesh());
         _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
@@ -3370,6 +3418,18 @@ class Game {
             Game.instancedWeaponEntities[_i].dispose();
         }
         Game.instancedWeaponEntities = {};
+    }
+    static setInstancedFurnitureEntity(_id, _instancedFurnitureEntity) {
+        Game.instancedFurnitureEntities[_id] = _instancedFurnitureEntity;
+    }
+    static removeInstancedFurnitureEntity(_id) {
+        delete Game.instancedFurnitureEntities[_id];
+    }
+    static clearInstancedFurnitureEntities() {
+        for (var _i in Game.instancedFurnitureEntities) {
+            Game.instancedFurnitureEntities[_i].dispose();
+        }
+        Game.instancedFurnitureEntities = {};
     }
 
     static setDialogue(_id, _dialogue) {

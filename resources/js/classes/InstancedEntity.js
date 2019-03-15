@@ -25,7 +25,7 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnAvailableActions = false;
         this._useOwnHiddenAvailableActions = false;
         this.defaultAction = this.entity.getDefaultAction();
-        this._usesOwnDefaultAction = false;
+        this._useOwnDefaultAction = false;
         this._useOwnSpecialProperties = false;
 
         Game.setInstancedEntity(this.id, this);
@@ -44,6 +44,10 @@ class InstancedEntity extends AbstractEntity {
     }
     getMass() {
         return this.entity.getMass();
+    }
+
+    getPrice() {
+        return this.entity.getPrice();
     }
 
     _createOwnSpecialProperties() {
@@ -236,12 +240,12 @@ class InstancedEntity extends AbstractEntity {
 
     setDefaultAction(_action) {
         if (this.hasAvailableAction(_action)) {
-            this._usesOwnDefaultAction = true;
+            this._useOwnDefaultAction = true;
             this.defaultAction = _action;
         }
     }
     getDefaultAction() {
-        if (this._usesOwnDefaultAction) {
+        if (this._useOwnDefaultAction) {
             return this.defaultAction;
         }
         else {

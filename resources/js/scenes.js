@@ -323,8 +323,8 @@ Game.generateApartment = function() {
     Game.createItem("cheeseWedgeInstance01", "cheeseWedge", undefined, new BABYLON.Vector3(9.7, 0.775, -21.5));
     Game.createItem("plateInstance02", "plate01", undefined, new BABYLON.Vector3(10, 0.75, -22.5));
 
-    Game.createItem("alBuildingLocationKey", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.75, -22.75));
-    Game.createItem("packstreet23StrangeNewDay", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.75, -21.25), new BABYLON.Vector3(0, 180, 0));
+    Game.createItem("alBuildingLocationKeyInstance", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.75, -22.75));
+    Game.createItem("packstreet23StrangeNewDayInstance", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.75, -21.25), new BABYLON.Vector3(0, 180, 0));
 
     Game.createLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5), undefined, undefined, new BABYLON.Vector3(0, 1.2, 0));
 

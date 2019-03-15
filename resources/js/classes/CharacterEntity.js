@@ -851,6 +851,30 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
 
+    /**
+     * Removes an InstancedItemEntity from this entity's Item array
+     * @override super.removeItem
+     * @param  {InstancedItemEntity} _abstractEntity InstancedItemEntity, or ItemEntity, to be removed
+     * @return {this}
+     */
+    removeItem(_abstractEntity) {
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            this.unequipByEntity(_abstractEntity);
+            this.items.remove(_abstractEntity);
+            return this;
+        }
+        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            return this.removeItem(_instancedItem);
+        }
+        _instancedItem = Game.getItemEntity(_abstractEntity);
+        if (_instancedItem instanceof ItemEntity) {
+            return this.removeItem(_instancedItem.createInstance());
+        }
+        if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
+        return this;
+    }
+
     clean() {
         this.cleanliness = 100;
         this.odorSex = 0;
@@ -1877,7 +1901,7 @@ class CharacterEntity extends EntityWithStorage {
     hold(_instancedItem, _hand = undefined) {
         var _tempItem = Game.getInstancedItemEntity(_instancedItem);
         if (!(_tempItem instanceof InstancedItemEntity)) {
-            _tempItem = Game.getProtoItemEntity(_instancedItem);
+            _tempItem = Game.getItemEntity(_instancedItem);
             if (!(_tempItem instanceof ItemEntity)) {
                 return null;
             }

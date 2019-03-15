@@ -83,7 +83,7 @@ class EntityController {
         return this.material;
     }
     setMesh(_mesh) {
-        _mesh = Game.getAbstractMesh(_mesh);
+        _mesh = Game.getMesh(_mesh);
         if (_mesh instanceof BABYLON.AbstractMesh) {
             this.mesh = _mesh;
             if (this.mesh.material instanceof BABYLON.Material) {
@@ -176,7 +176,7 @@ class EntityController {
     }
     setParent(_mesh) {
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            _mesh = Game.getAbstractMesh(_mesh);
+            _mesh = Game.getMesh(_mesh);
         }
         this.getMesh().setParent(_mesh);
         return this;

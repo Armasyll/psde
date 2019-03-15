@@ -8,93 +8,90 @@ class EntityWithStorage extends Entity {
         this.items = new Array();
     }
     /**
-     * Adds _instancedItem; creates an InstancedItemEntity if an Item is passed
-     * @param  {Entity} _entity       _entity to take the _instancedItem from
+     * Adds the InstancedItemEntity to this entity's Item array
+     * @param  {InstancedItemEntity} _abstractEntity       InstancedItemEntity, or ItemEntity, to be added
      * @return {this}
      */
-    addItem(_instancedItem) {
-        var __instancedItem = Game.getInstancedItemEntity(_instancedItem);
-        if (__instancedItem instanceof InstancedItemEntity && __instancedItem.getEntity() instanceof ItemEntity) {
-            this.items.push(__instancedItem);
+    addItem(_abstractEntity) {
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            this.items.push(_abstractEntity);
+            return this;
         }
-        else {
-            this.addProtoItem(_instancedItem);
+        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            this.items.push(_instancedItem);
+            return this;
         }
+        _instancedItem = Game.getItemEntity(_abstractEntity);
+        if (_instancedItem instanceof ItemEntity) {
+            this.items.push(_instancedItem.createInstance());
+            return this;
+        }
+        if (Game.debugEnabled) console.log(`Failed to add item ${_abstractEntity} to ${this.id}`);
         return this;
     }
-    addProtoItem(_protoItem) {
-        _protoItem = Game.getProtoItemEntity(_protoItem);
-        if (_protoItem instanceof ItemEntity) {
-            var _instancedItem = new InstancedItemEntity(undefined, _protoItem);
-            this.items.push(_instancedItem);
-            return _instancedItem;
+    /**
+     * Removes an InstancedItemEntity from this entity's Item array
+     * @param  {InstancedItemEntity} _abstractEntity InstancedItemEntity, or ItemEntity, to be removed
+     * @return {this}
+     */
+    removeItem(_abstractEntity) {
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            this.items.remove(_abstractEntity);
+            return this;
+        }
+        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            return this.removeItem(_instancedItem);
+        }
+        _instancedItem = Game.getItemEntity(_abstractEntity);
+        if (_instancedItem instanceof ItemEntity) {
+            return this.removeItem(_instancedItem.createInstance());
+        }
+        if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
+        return this;
+    }
+    /**
+     * Returns the InstancedItemEntity of a passed ItemInstance or InstancedItemEntity if this entity has it in their Item array
+     * @param  {InstancedItemEntity} _abstractEntity The ItemInstance or InstancedItemEntity to search for
+     * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or null if it isn't
+     */
+    getItem(_abstractEntity) {
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            for (let _i = 0; _i < this.items.length; _i++) {
+                if (this.items[_i] == _abstractEntity) {
+                    return this.items[_i];
+                }
+            }
+            return null;
+        }
+        /*
+        If the abstract entity wasn't an InstancedItemEntity,
+        but was instead a string of the ID of an InstancedItemEntity,
+        find that InstancedItemEntity and re-run
+        */
+        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            return this.getItem(_instancedItem);
+        }
+        /*
+        If the abstract entity was neither and InstancedItemEntity nor its ID,
+        check if it was an ItemEntity, and check the .items for an
+        instanced entity whose entity equals that of _abstractEntity
+        */
+        _instancedItem = Game.getItemEntity(_abstractEntity);
+        if (_instancedItem instanceof ItemEntity) {
+            for (let _i = 0; _i < this.items.length; _i++) {
+                if (this.items[_i].getEntity().getID() === _instancedItem.getID()) {
+                    return this.items[_i];
+                }
+            }
         }
         return null;
     }
-    /**
-     * Removes an InstancedItemEntity from this Character
-     * @param  {_instancedItem} _instancedItem InstancedItemEntity, or Item, to be removed
-     * @return {this}
-     */
-    removeItem(_instancedItem) {
-        var _tempItem = Game.getProtoItemEntity(_instancedItem);
-        if (_tempItem instanceof ItemEntity) {
-            _tempItem = this.getItem(_instancedItem);
-        }
-        if (!(_tempItem instanceof InstancedItemEntity)) {
-            _tempItem = Game.getInstancedItemEntity(_instancedItem);
-            if (_tempItem instanceof InstancedItemEntity) {
-                return this;
-            }
-        }
-        if (this instanceof CharacterEntity) {
-            if (this.hasEquippedEntity(_tempItem)) {
-                this.unequipEntity(_tempItem);
-                if (this.hasEquippedEntity(_tempItem)) {
-                    return this;
-                }
-            }
-        }
-        this.items.remove(_tempItem);
-        return this;
-    }
-    /**
-     * Returns the InstancedItemEntity of a passed ItemInstance or InstancedItemEntity if this Character has it
-     * @param  {InstancedItemEntity} _item The ItemInstance or InstancedItemEntity to search for
-     * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or null if it isn't
-     */
-    getItem(_item) {
-        var _foundItem = false;
-        var _tempItem = Game.getInstancedItemEntity(_item);
-        if (_tempItem == undefined) {
-            _item = Game.getProtoItemEntity(_item);
-            if (_item == undefined) {return null;}
-            this.items.some(function(__instancedItem) {
-                if (__instancedItem.getEntity().getID() == _item.getID()) {
-                    _item = __instancedItem;
-                    _foundItem = true;
-                    return true;
-                }
-            }, this);
-        }
-        else {
-            _item = _tempItem;
-            this.items.some(function(__instancedItem) {
-                if (__instancedItem.id == _item.id) {
-                    _foundItem = true;
-                    return true;
-                }
-            }, this);
-        }
 
-        if (_foundItem)
-            return _item;
-        else
-            return null;
-    }
-
-    hasItem(_item) {
-        return this.getItem(_item) != null;
+    hasItem(_abstractEntity) {
+        return this.getItem(_abstractEntity) instanceof InstancedItemEntity;
     }
     getItems() {
         return this.items;
@@ -106,10 +103,11 @@ class EntityWithStorage extends Entity {
         if (this == Game.player.entity) {
             return false;
         }
-        super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
+        for (let _i = this.items.length; _i > 0; _i--) {
+            this.items[_i].dispose();
         }
+        delete this.items;
+        super.dispose();
         return undefined;
     }
 }

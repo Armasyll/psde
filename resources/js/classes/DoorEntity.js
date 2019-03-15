@@ -17,7 +17,7 @@ class DoorEntity extends Entity {
 		return this.locked;
 	}
 	setKey(_itemEntity) {
-		_itemEntity = Game.getProtoItemEntity(_itemEntity);
+		_itemEntity = Game.getItemEntity(_itemEntity);
 		if (_itemEntity == undefined) {return;}
 		this.key = _itemEntity;
 	}
