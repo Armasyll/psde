@@ -4,6 +4,7 @@ class FurnitureEntity extends EntityWithStorage {
      * @param  {String}  _id            Unique ID
      * @param  {String}  _name          Name
      * @param  {String}  _description   Description
+     * @param  {String}  _image         Image ID
      * @param  {Number}  _type          furnitureType
      * @param  {Number}  _seatingSpace  Seating Space
      * @param  {Number}  _storageSpace  Storage Space
@@ -19,8 +20,8 @@ class FurnitureEntity extends EntityWithStorage {
     }
 
     setType(_type) {
-        this.type = Game.filterNumber(_type);
-        switch(this.type) {
+        _type = Game.filterNumber(_type);
+        switch(_type) {
             case FurnitureEnum.BED: {
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.LAY);
@@ -158,10 +159,10 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             default : {
-                this.addAvailableAction(ActionEnum.LOOK);
-                this.setDefaultAction(ActionEnum.LOOK);
+                _type = FurnitureEnum.NONE;
             }
         }
+        this.type = _type;
         return this;
     }
     getType() {
@@ -174,6 +175,13 @@ class FurnitureEntity extends EntityWithStorage {
             _id = genUUIDv4();
         }
         return new FurnitureEntity(_id, this.name, this.description, this.image, this.furnitureType);
+    }
+    createInstance(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        return new InstancedFurnitureEntity(_id, this);
     }
     dispose() {
         Game.removeFurnitureEntity(this.id);

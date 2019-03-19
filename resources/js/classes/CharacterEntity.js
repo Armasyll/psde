@@ -1,14 +1,14 @@
 class CharacterEntity extends EntityWithStorage {
     /**
      * Creates a CharacterEntity
-     * @param  {String} _id      Unique ID
-     * @param  {String} _name    Name
-     * @param  {String} _description Description
-     * @param  {String} _image   Image path
-     * @param  {String} _class   Role
-     * @param  {Number} _age     Age
-     * @param  {Number} sex     Sex (0 Male, 1 Female, 2 Herm)
-     * @param  {String} _species Species
+     * @param  {String} _id           Unique ID
+     * @param  {String} _name         Name
+     * @param  {String} _description  Description
+     * @param  {String}  _image       Image ID
+     * @param  {String} _class        Role
+     * @param  {Number} _age          Age
+     * @param  {Number} sex           Sex (0 Male, 1 Female, 2 Herm)
+     * @param  {String} _species      Species
      */
     constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacterIcon", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
         super(_id);

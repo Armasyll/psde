@@ -4,14 +4,13 @@ class ItemEntity extends Entity {
      * @param  {String}  _id          Unique ID
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
-     * @param  {String}  _image       Image path or base64
+     * @param  {String}  _image       Image ID
+     * @param  {ItemEnum} _itemType   ItemEnum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItemIcon") {
-        super(_id, _name, _description, _image);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItemIcon", _itemType = ItemEnum.GENERAL) {
+        super(_id, _name, _description, _image, EntityEnum.ITEM);
 
-        this.price = 0;
-        this.entityType = EntityEnum.ITEM;
-        this.itemType = ItemEnum.GENERAL;
+        this.itemType = _itemType;
 
         this.addAvailableAction(ActionEnum.DROP);
         this.addAvailableAction(ActionEnum.HOLD);
@@ -20,32 +19,21 @@ class ItemEntity extends Entity {
         Game.setItemEntity(this.id, this);
     }
 
-    /**
-     * Sets Price
-     * @param {Number} _int Integer
-     */
-    setPrice(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int))
-            _int = 0;
-        else if (_int < 0)
-            _int = 0;
-        else if (_int > Number.MAX_SAFE_INTEGER)
-            _int = Number.MAX_SAFE_INTEGER;
-        this.price = _int;
-        return this;
-    }
-    getPrice() {
-        return this.price;
-    }
-
     clone(_id = undefined) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
-        var _itemEntity = new ItemEntity(_id, this.name, this.description, this.image);
-        _itemEntity.price = this.price;
+        var _itemEntity = new ItemEntity(_id, this.name, this.description, this.image, this.itemType);
+        // variables from AbstractEntity
+        _itemEntity.availableActions = Object.assign({}, this.availableActions);
+        _itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        _itemEntity.specialProperties = new Set(this.specialProperties);
+        _itemEntity.defaultAction = this.defaultAction;
+        // variables from Entity
+        _itemEntity.mass.copyFrom(this.mass);
+        _itemEntity.price.copyFrom(this.price);
+        _itemEntity.durability.copyFrom(this.durability);
         return _itemEntity;
     }
     createInstance(_id = undefined) {

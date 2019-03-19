@@ -173,7 +173,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -4), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -2), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("ozzyBed", "Mattress", "mattress01", undefined, FurnitureEnum.BED, undefined, new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(1.35,1.35,1.35));
+    Game.createFurniture("ozzyBed", "mattress01", new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(1.35,1.35,1.35));
 
     // Ozzy Bathroom
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, 0));
@@ -184,8 +184,8 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
     Game.createMesh("craftsmanWall", "whiteWallpaperPlainWood",              new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanDoorway", "whiteWallpaperPlainWood",           new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("ozzyToilet", "Toilet", "animatedToilet01", undefined, FurnitureEnum.TOILET, undefined, new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
-    Game.createFurniture("ozzySink", "Sink", "animatedSink01", undefined, FurnitureEnum.SINK, undefined, new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("ozzyToilet", "animatedToilet01", new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("ozzySink", "animatedSink01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
 
     // Ozzy Hallway
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(4, 0, 0));
@@ -221,7 +221,7 @@ Game.generateApartment = function() {
     Game.createMesh("craftsmanWindowframe", "yellowWallpaperPlainWood",       new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWindowDouble", "yellowWallpaperPlainWood",      new BABYLON.Vector3(0, 0, -10), new BABYLON.Vector3(0, 270, 0));
     Game.createMesh("craftsmanWall", "yellowWallpaperPlainWood",              new BABYLON.Vector3(0, 0, -8), new BABYLON.Vector3(0, 270, 0));
-    Game.createFurniture("refrigeratorOzzy", "Refrigerator", "animatedRefrigerator01", undefined, FurnitureEnum.REFRIGERATOR, undefined, new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
+    Game.createFurniture("refrigeratorOzzy", "animatedRefrigerator01",        new BABYLON.Vector3(6.35, 0, -7.75), new BABYLON.Vector3(0, 90, 0));
     Game.addFurnitureMesh("trashBagFullInstance01", "trashBagFull", undefined, {mass:4.5}, new BABYLON.Vector3(6.4, 0, -9.8), undefined, undefined);
     Game.addFurnitureMesh("trashCanInstance01", "trashCan", undefined, {mass:4.0}, new BABYLON.Vector3(5.8, 0, -10.2), undefined, undefined);
     Game.addFurnitureMesh("trashBagFullInstance02", "trashBagFull", undefined, {mass:4.0}, new BABYLON.Vector3(6.5, 0, -10.6), new BABYLON.Vector3(0, 90, 0), undefined);
@@ -315,8 +315,8 @@ Game.generateApartment = function() {
         Game.createMesh("craftsmanStairWallSideLeft", "greenWallpaperPlainWood",new BABYLON.Vector3(0, 0, -20));
         Game.createMesh("craftsmanStairWallCornerLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
 
-    Game.createFurniture("commonsCouch", "Couch", "couch01", undefined, FurnitureEnum.COUCH, undefined, new BABYLON.Vector3(8.25, 0, -22), new BABYLON.Vector3(0, -90, 0));
-    Game.createFurniture("commonsTable", "Table", "diningTable", undefined, FurnitureEnum.TABLE, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
+    Game.createFurniture("commonsCouch", "couch01", new BABYLON.Vector3(8.25, 0, -22), new BABYLON.Vector3(0, -90, 0));
+    Game.addFurnitureMesh("commonsTableInstance01", "diningTable", undefined, {mass:25,restitution:0.1}, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
     Game.createItem("knife", "knife01", undefined, new BABYLON.Vector3(9.7, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
     Game.createItem("cross", "cross01", undefined, new BABYLON.Vector3(10, 0.85, -22));
     Game.createItem("plateInstance01", "plate01", undefined, new BABYLON.Vector3(9.7, 0.75, -21.5));

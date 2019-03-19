@@ -1,19 +1,21 @@
 class Entity extends AbstractEntity {
     /**
      * Creates an Entity
-     * @param  {String} _id          Unique ID
-     * @param  {String} _name        Name
-     * @param  {String} _description Description
-     * @param  {String}  _image      Image path or base64
+     * @param  {String} _id           Unique ID
+     * @param  {String} _name         Name
+     * @param  {String} _description  Description
+     * @param  {String}  _image       Image ID
+     * @param  {EntityEnum} _itemType EntityEnum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _entityType = EntityEnum.ENTITY) {
         super(_id, _name, _description, _image);
-        this.entityType = EntityEnum.ENTITY;
+        this.entityType = _entityType;;
         /**
          * Mass in kilograms
-         * @type {Number} 0.001 to Number.MAX_SAFE_INTEGER
+         * @type {BoundedNumber} 1 to Number.MAX_SAFE_INTEGER
          */
-        this.mass = 0.001;
+        this.mass = new BoundedNumber(1, 0, Number.MAX_SAFE_INTEGER);
+        this.price = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         this.durability = new BoundedNumber(100, 0, 100);
         this.meshID = null;
         this.textureID = null;
@@ -27,23 +29,20 @@ class Entity extends AbstractEntity {
         Game.setEntity(this.id, this);
     }
 
-    /**
-     * Sets Mass
-     * @param {Number} _float Float
-     */
-    setMass(_float) {
-        _float = Number.parseFloat(_float);
-        if (isNaN(_float))
-            _float = 0.001;
-        else if (_float < 0)
-            _float = 0.001;
-        else if (_float > Number.MAX_SAFE_INTEGER)
-            _float = Number.MAX_SAFE_INTEGER;
-        this.mass = _float;
+    setMass(_int) {
+        this.mass.set(_int);
         return this;
     }
     getMass() {
-        return (this.mass || this.entity.mass);
+        return this.mass.getValue();
+    }
+
+    setPrice(_int) {
+        this.price.set(_int);
+        return this;
+    }
+    getPrice() {
+        return this.price.getValue();
     }
 
     setDurability(_int) {
@@ -75,22 +74,11 @@ class Entity extends AbstractEntity {
     }
 
     setMeshID(_mesh) {
-        var _loadedMesh = Game.loadMesh(_mesh);
-        if (_loadedMesh instanceof BABYLON.AbstractMesh) {
-            if (_loadedMesh.id == "loadingMesh") {
-                if (_mesh instanceof BABYLON.AbstractMesh) {
-                    this.meshID = _mesh.id;
-                }
-                else {
-                    this.meshID = _mesh;
-                }
+        if (Game.hasMesh(_mesh)) {
+            if (_mesh instanceof BABYLON.AbstractMesh) {
+                _mesh = _mesh.name;
             }
-            else if (_loadedMesh.id == "missingMesh") {
-                this.meshID = "missingMesh";
-            }
-            else {
-                this.meshID = _loadedMesh.name;
-            }
+            this.meshID = _mesh;
         }
         else {
             this.meshID = "missingMesh";
@@ -281,6 +269,23 @@ class Entity extends AbstractEntity {
         return this.defaultAction;
     }
 
+    clone(_id = undefined) {
+        _id = Game.filterID(_id);
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
+        var _entity = new Entity(_id, this.name, this.description, this.image, this.entityType);
+        // variables from AbstractEntity
+        _entity.availableActions = Object.assign({}, this.availableActions);
+        _entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        _entity.specialProperties = new Set(this.specialProperties);
+        _entity.defaultAction = this.defaultAction;
+        // variables from Entity
+        _entity.mass.copyFrom(this.mass);
+        _entity.price.copyFrom(this.price);
+        _entity.durability.copyFrom(this.durability);
+        return _entity;
+    }
     createInstance(_id = undefined) {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {

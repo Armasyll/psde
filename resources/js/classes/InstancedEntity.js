@@ -20,6 +20,7 @@ class InstancedEntity extends AbstractEntity {
         this.setName(_name || this.entity.getName());
         this.setDescription(_description || this.entity.getDescription());
         this.setImage(_image || this.entity.getImage());
+        this.entityType = _entity.entityType;
         this.durability = this.entity.durability.clone();
 
         this._useOwnAvailableActions = false;

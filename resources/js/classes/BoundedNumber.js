@@ -183,4 +183,15 @@ class BoundedNumber {
     toSource() {
         return "new BoundedNumber(" + this._value + ", " + this._minimum + ", " + this._maximum + ", " + (this._lockedValue ? "true" : "false") + ")";
     }
+    copyFrom(b) {
+        if (b instanceof BoundedNumber) {
+            this._value = b._value;
+            this._minimum = b._minimum;
+            this._maximum = b._maximum;
+            this._lockedValue = b._lockedValue;
+            this.value = b.value;
+            this.minimum = b.minimum;
+            this.maximum = b.maximum;
+        }
+    }
 }

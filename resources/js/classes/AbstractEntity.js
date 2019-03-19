@@ -1,10 +1,10 @@
 class AbstractEntity {
     /**
      * Creates an AbstractEntity
-     * @param  {String} _id          Unique ID
-     * @param  {String} _name        Name
-     * @param  {String} _description Description
-     * @param  {String}  _image      Image path or base64
+     * @param  {String} _id           Unique ID
+     * @param  {String} _name         Name
+     * @param  {String} _description  Description
+     * @param  {String}  _image       Image ID
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _type = undefined) {
         _id = Game.filterID(_id);

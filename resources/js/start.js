@@ -14,8 +14,9 @@ window.addEventListener("DOMContentLoaded", function() {
             if (Game.finishedLoadingFiles()) {
                 if (!Game.finishedInitializing()) {
                     if (Game.debugEnabled) console.log("Finished loading assets.");
-                    Game.importProtoItems();
+                    Game.importItems();
                     Game.importCosmetics();
+                    Game.importFurniture();
                     Game._finishedInitializing = true;
 
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {

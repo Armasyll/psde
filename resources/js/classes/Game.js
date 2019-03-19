@@ -205,7 +205,9 @@ class Game {
             "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon",
             "animatedToilet01":"resources/meshes/animatedToilet01.babylon",
             "animatedSink01":"resources/meshes/animatedSink01.babylon",
-            "animatedDoor01":"resources/meshes/animatedDoor01.babylon"
+            "animatedDoor01":"resources/meshes/animatedDoor01.babylon",
+            "chair02":"resources/meshes/furniture.babylon",
+            "chair03":"resources/meshes/furniture.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -395,7 +397,15 @@ class Game {
             "stick03Icon":"resources/images/icons/items/stick03.png",
             "stick04Icon":"resources/images/icons/items/stick04.png",
             "stick02Icon":"resources/images/icons/items/stick02.png",
-            "rock01Icon":"resources/images/icons/items/rock01.png"
+            "rock01Icon":"resources/images/icons/items/rock01.png",
+            "sink01Icon":"resources/images/icons/items/sink01.png",
+            "toilet01Icon":"resources/images/icons/items/toilet01.png",
+            "mattress01Icon":"resources/images/icons/items/mattress01.png",
+            "couch01Icon":"resources/images/icons/items/couch01.png",
+            "loveseat01Icon":"resources/images/icons/items/loveseat01.png",
+            "chair01Icon":"resources/images/icons/items/chair01.png",
+            "chair02Icon":"resources/images/icons/items/chair02.png",
+            "chair03Icon":"resources/images/icons/items/chair03.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs
@@ -958,17 +968,14 @@ class Game {
         };
         document.body.appendChild(script);
     }
-    static importProtoItems() {
+    static importItems() {
         Game.importScript("resources/js/items.js");
     }
     static importCosmetics() {
         Game.importScript("resources/js/cosmetics.js");
     }
-    /**
-     * Specific bones used for animations
-     */
-    static importEntityAnimationBones() {
-        Game.importScript("resources/js/entityAnimationBones.js");
+    static importFurniture() {
+        Game.importScript("resources/js/furniture.js");
     }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
@@ -1594,11 +1601,11 @@ class Game {
             }
         }
     }
-    static addFurnitureToCreate(_id, _name = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
+    static addFurnitureToCreate(_id, _entity = "", _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.hasFurnitureToCreate(_id)) {
             return true;
         }
-        Game.furnitureToCreate[_id] = {"id":_id, "name":_name, "mesh":_mesh, "texture":_texture, "type":_type, "options":_options, "position":_position, "rotation":_rotation, "scaling":_scaling, "createCollisionMesh":_createCollisionMesh};
+        Game.furnitureToCreate[_id] = {"id":_id, "entity":_entity, "position":_position, "rotation":_rotation, "scaling":_scaling};
         Game.furnitureToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
@@ -1619,18 +1626,13 @@ class Game {
             return true;
         }
         for (var _i in Game.furnitureToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.furnitureToCreate[_i]["mesh"])) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.getInstancedFurnitureEntity(Game.furnitureToCreate[_i]["entity"]).getMeshID())) {
                 Game.createFurniture(
                     Game.furnitureToCreate[_i]["id"],
-                    Game.furnitureToCreate[_i]["name"],
-                    Game.furnitureToCreate[_i]["mesh"],
-                    Game.furnitureToCreate[_i]["texture"],
-                    Game.furnitureToCreate[_i]["type"],
-                    Game.furnitureToCreate[_i]["options"],
+                    Game.furnitureToCreate[_i]["entity"],
                     Game.furnitureToCreate[_i]["position"],
                     Game.furnitureToCreate[_i]["rotation"],
-                    Game.furnitureToCreate[_i]["scaling"],
-                    Game.furnitureToCreate[_i]["createCollisionMesh"]
+                    Game.furnitureToCreate[_i]["scaling"]
                 );
                 Game.removeFurnitureToCreate(_i);
             }
@@ -2054,7 +2056,7 @@ class Game {
         else if (_id instanceof FurnitureController) {
             return _id;
         }
-        else if (_id instanceof FurnitureEntity) {
+        else if (_id instanceof FurnitureEntity || _id instanceof InstancedFurnitureEntity) {
             return _id.getController();
         }
         else if (typeof _id == "string" && Game.furnitureControllers.hasOwnProperty(_id)) {
@@ -2262,7 +2264,7 @@ class Game {
         if (_id == undefined) {
             return;
         }
-        else if (_id instanceof FurnitureEntity) {
+        else if (_id instanceof FurnitureEntity || _id instanceof InstancedFurnitureEntity) {
             return _id;
         }
         else if (typeof _id == "string" && Game.furnitureEntities.hasOwnProperty(_id)) {
@@ -2474,41 +2476,45 @@ class Game {
         _controller.dispose();
         Game.removeMesh(_mesh);
     }
-    static createFurnitureEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = FurnitureEnum.NONE) {
+    static createFurnitureEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = FurnitureEnum.NONE, _weight = 1, _price = 1) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         var _entity = null;
         _entity = new FurnitureEntity(_id, _name, _description, _image, _type);
-        _mesh = Game.getMesh(_mesh);
-        if (_mesh != undefined) {
-            _mesh = _mesh.name;
-        }
-        else {
-            _mesh = "missingMesh";
-        }
         _entity.setMeshID(_mesh);
         _entity.setTextureID(_texture);
+        _entity.setPrice(_price);
+        _entity.setMass(_weight);
         return _entity;
     }
     /**
      * Created a FurnitureController, FurnitureEntity, and BABYLON.InstancedMesh
      * @param  {String}  _id                  Unique ID, randomly generated if undefined
-     * @param  {String}  _name                Name
-     * @param  {Number}  _type                Furniture type
-     * @param  {String}  _mesh                String or Mesh
-     * @param  {String}  _texture             String or Texture
-     * @param  {Object}  _options             Physics options
+     * @param  {FurnitureEntity}  _entity     Furniture entity
      * @param  {BABYLON.Vector3}  _position   Position
      * @param  {BABYLON.Vector3}  _rotation   Rotation
      * @param  {BABYLON.Vector3}  _scaling    Scaling       
-     * @param  {Boolean} _createCollisionMesh Whether or not a collisionMesh will be created
      * @return {FurnitureController}          Furniture Controller
      */
-    static createFurniture(_id, _name = "", _mesh, _texture, _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _createCollisionMesh = true) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
+    static createFurniture(_id, _entity, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
         _id = Game.filterID(_id);
-        if (!Game.hasMesh(_mesh)) {
-            return false;
+        if (_entity instanceof FurnitureEntity) {
+            _entity = _entity.createInstance(_id);
+        }
+        else if (_entity instanceof InstancedFurnitureEntity) {
+            _entity = _entity.clone(_id);
+        }
+        else if (typeof _entity == "string" && Game.hasFurnitureEntity(_entity)) {
+            _entity = Game.getFurnitureEntity(_entity).createInstance(_id);
+        }
+        else if (typeof _entity == "string" && Game.hasInstancedFurnitureEntity(_entity)) {
+            _entity = Game.getInstancedFurnitureEntity(_entity).clone(_id);
+        }
+        else {
+            return null;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
             _position = Game.filterVector(_position);
@@ -2522,19 +2528,18 @@ class Game {
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(_mesh))) {
-            Game.loadMesh(_mesh);
-            Game.addFurnitureToCreate(_id, _name, _mesh, _texture, _type, _options, _position, _rotation, _scaling, _createCollisionMesh);
+        if (!(Game.hasLoadedMesh(_entity.getMeshID()))) {
+            Game.loadMesh(_entity.getMeshID());
+            Game.addFurnitureToCreate(_id, _entity.getID(), _position, _rotation, _scaling);
             return true;
         }
-        var _loadedMesh = Game.addFurnitureMesh(_id, _mesh, _texture, _options, _position, _rotation, _scaling, true, _createCollisionMesh);
-        _loadedMesh.checkCollisions = true; // _createCollisionMesh doesn't count this :v
-        var _entity = new FurnitureEntity(_id, _name, undefined, undefined, _type);
+        var _loadedMesh = Game.addFurnitureMesh(_id, _entity.getMeshID(), _entity.getTextureID(), {mass:_entity.getMass()}, _position, _rotation, _scaling, true, true);
         var _controller = new FurnitureController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
-        _entity.setMeshID(_loadedMesh);
         if (_entity.hasAvailableAction(ActionEnum.OPEN)) {
-            _entity.addHiddenAvailableAction(ActionEnum.CLOSE);
+            if (_entity.hasAvailableAction(ActionEnum.CLOSE)) {
+                _entity.addHiddenAvailableAction(ActionEnum.CLOSE);
+            }
         }
         return _controller;
     }
@@ -2594,7 +2599,7 @@ class Game {
         _mesh.material.dispose();
         Game.removeMesh(_mesh);
     }
-    static createItemEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = ItemEnum.GENERAL, _subType = 0) {
+    static createItemEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = ItemEnum.GENERAL, _subType = 0, _weight = 1, _price = 0) {
         if (typeof _id != "string") {_id = genUUIDv4();}
         _id = Game.filterID(_id);
         var _entity = null;
@@ -2885,7 +2890,7 @@ class Game {
             return null;
         }
         if (Game.camera.radius <= 0.5) {
-            if (this.enableFirstPerson && Game.player.getController().getMesh().isVisible) {
+            if (Game.enableFirstPerson && Game.player.getController().getMesh().isVisible) {
                 Game.player.getController().hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
@@ -2936,10 +2941,10 @@ class Game {
             else if (_action == ActionEnum.TAKE && _entity instanceof InstancedItemEntity) {
                 Game.actionTakeFunction(_entity, _subEntity);
             }
-            else if (_action == ActionEnum.OPEN && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
+            else if (_action == ActionEnum.OPEN && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity)) {
                 Game.actionOpenFunction(_entity, _subEntity);
             }
-            else if (_action == ActionEnum.CLOSE && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity)) {
+            else if (_action == ActionEnum.CLOSE && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity)) {
                 Game.actionCloseFunction(_entity, _subEntity);
             }
             else if (_action == ActionEnum.TALK && _entity instanceof CharacterEntity) {
@@ -3137,14 +3142,8 @@ class Game {
             _entity.getController().toggle();
         }
     }
-    /**
-     * Places the subEntity near the Entity, and sets its parent to the Entity
-     * TODO: Add actual placement of Characters based on their width
-     * @param  {FurnitureEntity} _entity    Furniture
-     * @param  {EntityController} _subEntity    Entity to be placed
-     */
-    static actionSitFunction(_entity, _subEntity = Game.player) {
-        if (!(_entity instanceof FurnitureEntity) || !(_entity.getController() instanceof FurnitureController)) {
+    static actionLayFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
             return;
         }
         if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
@@ -3155,6 +3154,28 @@ class Game {
         _subEntity.getController().setParent(_entity.getController().getMesh());
         _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
         _subEntity.getController().getMesh().rotation.set(0,0,0);
+    }
+    /**
+     * Places the subEntity near the Entity, and sets its parent to the Entity
+     * TODO: Add actual placement of Characters based on their width
+     * @param  {FurnitureEntity} _entity    Furniture
+     * @param  {EntityController} _subEntity    Entity to be placed
+     */
+    static actionSitFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof FurnitureController)) {
+            return;
+        }
+        if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
+            return;
+        }
+        var _seatingBoundingBox = Game.getMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+        var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entity.getController().getMesh().scaling.x);
+        _subEntity.getController().setParent(_entity.getController().getMesh());
+        _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
+        _subEntity.getController().getMesh().rotation.set(0,0,0);
+        if (_subEntity == Game.player && Game.camera.radius <= 0.5 && Game.enableFirstPerson) {
+            Game.camera.alpha = _entity.getController().getMesh().rotation.y - BABYLON.Tools.ToRadians(90);
+        }
     }
     static actionTalkFunction(_entity, _subEntity = Game.player) {
         if (Game.debugEnabled) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);

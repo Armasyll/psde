@@ -4,7 +4,7 @@ class WeaponEntity extends ItemEntity {
      * @param  {String}  _id          Unique ID
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
-     * @param  {String}  _image       Image path or base64
+     * @param  {String}  _image       Image ID
      * @param  {String}  _type        weaponType
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = "club") {

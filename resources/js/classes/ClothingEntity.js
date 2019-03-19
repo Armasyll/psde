@@ -4,10 +4,10 @@ class ClothingEntity extends ItemEntity {
      * @param  {String}  _id          Unique ID
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
-     * @param  {String}  _image       Image path or base64
-     * @param  {String}  _equipmentSlot        Equipment slot enum
+     * @param  {String}  _image       Image ID
+     * @param  {String}  _slot        Equipment slot enum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _slot = ApparelSlotEnum.HEAD) {
         super(_id, _name, _description, _image);
         this.itemType = ItemEnum.APPAREL;
 
@@ -15,7 +15,7 @@ class ClothingEntity extends ItemEntity {
 
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);
-        this.setApparelSlot(_equipmentSlot);
+        this.setApparelSlot(_slot);
 
         Game.setClothingEntity(this.id, this);
     }

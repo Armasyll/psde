@@ -6,6 +6,41 @@ class EntityWithStorage extends Entity {
          * @type {Array} <InstancedItemEntity>
          */
         this.items = new Array();
+        this.storageSlots = new Map();
+        this.totalStorageMass = 10;
+        this.totalStorageSlots = 9;
+        this.usedStorageMass = 0;
+    }
+    setTotalStorageMass(_int) {
+        this.totalStorageMass = Game.filterNumber(_int);
+        return this;
+    }
+    getTotalStorageMass() {
+        return this.totalStorageMass;
+    }
+    setTotalStorageSlots(_int) {
+        this.totalStorageSlots = Game.filterInt(_int);
+        return this;
+    }
+    getTotalStorageSlots() {
+        return this.totalStorageSlots;
+    }
+    getAvailableStorageSlots() {
+        return this.totalStorageSlots - this.items.length;
+    }
+    calculateUsedStorageMass() {
+        let _mass = 0;
+        for (_i = 0; _i < this.items.length; _i++) {
+            _mass += this.items[_i].getMass();
+        }
+        this._usedStorageMass = _mass;
+        return _mass;
+    }
+    getUsedStorageMass() {
+        return this.usedStorageMass;
+    }
+    getUsedStorageSlots() {
+        return this.items.length;
     }
     /**
      * Adds the InstancedItemEntity to this entity's Item array
@@ -15,16 +50,17 @@ class EntityWithStorage extends Entity {
     addItem(_abstractEntity) {
         if (_abstractEntity instanceof InstancedItemEntity) {
             this.items.push(_abstractEntity);
+            this.usedStorageMass += _abstractEntity.getMass();
             return this;
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
         if (_instancedItem instanceof InstancedItemEntity) {
-            this.items.push(_instancedItem);
+            this.addItem(_instancedItem);
             return this;
         }
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
-            this.items.push(_instancedItem.createInstance());
+            this.addItem(_instancedItem.createInstance());
             return this;
         }
         if (Game.debugEnabled) console.log(`Failed to add item ${_abstractEntity} to ${this.id}`);
@@ -38,6 +74,7 @@ class EntityWithStorage extends Entity {
     removeItem(_abstractEntity) {
         if (_abstractEntity instanceof InstancedItemEntity) {
             this.items.remove(_abstractEntity);
+            this.usedStorageMass -= _abstractEntity.getMass();
             return this;
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
@@ -103,10 +140,15 @@ class EntityWithStorage extends Entity {
         if (this == Game.player.entity) {
             return false;
         }
-        for (let _i = this.items.length; _i > 0; _i--) {
-            this.items[_i].dispose();
-        }
+        this.items.forEach(function(_item) {
+            _item.dispose();
+        });
         delete this.items;
+        this.storageSlots.clear();
+        delete this.storageSlots;
+        delete this.totalStorageMass;
+        delete this.totalStorageSlots;
+        delete this.usedStorageMass;
         super.dispose();
         return undefined;
     }
