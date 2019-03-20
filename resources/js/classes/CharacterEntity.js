@@ -860,7 +860,7 @@ class CharacterEntity extends EntityWithStorage {
     removeItem(_abstractEntity) {
         if (_abstractEntity instanceof InstancedItemEntity) {
             this.unequipByEntity(_abstractEntity);
-            this.items.remove(_abstractEntity);
+            super.removeItem(_abstractEntity);
             return this;
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);

@@ -1,46 +1,51 @@
 class EntityWithStorage extends Entity {
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
         super(_id, _name, _description, _image);
-        /**
-         * Item(s) this Character has
-         * @type {Array} <InstancedItemEntity>
+        /*
+        Map of integers, related to item slots, and InstancedItemEntities
          */
-        this.items = new Array();
-        this.storageSlots = new Map();
-        this.totalStorageMass = 10;
-        this.totalStorageSlots = 9;
-        this.usedStorageMass = 0;
+        this.items = new Map();
+        this.storageMass = new BoundedNumber(0, 0, 10);
+        this.maxStorageSlots = 9;
     }
-    setTotalStorageMass(_int) {
-        this.totalStorageMass = Game.filterNumber(_int);
+    setMaxStorageMass(_int) {
+        this.storageMass.setMax(_int);
         return this;
     }
-    getTotalStorageMass() {
-        return this.totalStorageMass;
+    getMaxStorageMass() {
+        return this.storageMass.getMax();
     }
-    setTotalStorageSlots(_int) {
-        this.totalStorageSlots = Game.filterInt(_int);
+    setMaxStorageSlots(_int) {
+        this.maxStorageSlots = Game.filterInt(_int);
         return this;
     }
-    getTotalStorageSlots() {
-        return this.totalStorageSlots;
+    getMaxStorageSlots() {
+        return this.maxStorageSlots;
     }
-    getAvailableStorageSlots() {
-        return this.totalStorageSlots - this.items.length;
+    getAvailableSlots() {
+        return this.maxStorageSlots - this.items.size;
     }
     calculateUsedStorageMass() {
         let _mass = 0;
-        for (_i = 0; _i < this.items.length; _i++) {
-            _mass += this.items[_i].getMass();
-        }
-        this._usedStorageMass = _mass;
+        this.items.forEach(function(_item) {
+            _mass += _item.getMass();
+        }, this);
+        this.storageMass.setValue(_mass);
         return _mass;
     }
     getUsedStorageMass() {
-        return this.usedStorageMass;
+        return this.storageMass.getValue();
     }
     getUsedStorageSlots() {
-        return this.items.length;
+        return this.items.size;
+    }
+    getAvailableSlot() {
+        for (let _i = 0; _i < this.maxStorageSlots; _i++) {
+            if (this.items.get(_i) == undefined) {
+                return _i;
+            }
+        }
+        return -1;
     }
     /**
      * Adds the InstancedItemEntity to this entity's Item array
@@ -48,23 +53,25 @@ class EntityWithStorage extends Entity {
      * @return {this}
      */
     addItem(_abstractEntity) {
+        let _slot = this.getAvailableSlot();
+        if (_slot == -1) {
+            return 2;
+        }
         if (_abstractEntity instanceof InstancedItemEntity) {
-            this.items.push(_abstractEntity);
-            this.usedStorageMass += _abstractEntity.getMass();
-            return this;
+            this.items.set(_slot, _abstractEntity);
+            this.storageMass.inc(_abstractEntity.getMass());
+            return 0;
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
         if (_instancedItem instanceof InstancedItemEntity) {
-            this.addItem(_instancedItem);
-            return this;
+            return this.addItem(_instancedItem);
         }
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
-            this.addItem(_instancedItem.createInstance());
-            return this;
+            return this.addItem(_instancedItem.createInstance());
         }
         if (Game.debugEnabled) console.log(`Failed to add item ${_abstractEntity} to ${this.id}`);
-        return this;
+        return 1;
     }
     /**
      * Removes an InstancedItemEntity from this entity's Item array
@@ -72,11 +79,38 @@ class EntityWithStorage extends Entity {
      * @return {this}
      */
     removeItem(_abstractEntity) {
-        if (_abstractEntity instanceof InstancedItemEntity) {
-            this.items.remove(_abstractEntity);
-            this.usedStorageMass -= _abstractEntity.getMass();
-            return this;
+        if (_abstractEntity == undefined) {
+            return 1;
         }
+        /*
+        If the parameter is a number, and is a key in this.storage
+         */
+        if (typeof _abstractEntity == "number" && _abstractEntity >= 0 && this.items.has(_abstractEntity)) {
+            let _slot = _abstractEntity;
+            _abstractEntity = this.items.get(_abstractEntity);
+            if (_abstractEntity instanceof InstancedItemEntity) {
+                this.storageMass.dec(_abstractEntity.getMass());
+                this.items.delete(_slot);
+            }
+            return 0;
+            
+        }
+        /*
+        else if the parameter is an InstancedItemEntity
+         */
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            for (let _i of this.items.keys()) {
+                if (this.items.get(_i) == _abstractEntity) {
+                    this.storageMass.dec(_abstractEntity.getMass());
+                    this.items.delete(_i);
+                    return 0;
+                }
+            }
+            return 1;
+        }
+        /*
+        else, we have to go hunting
+         */
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
         if (_instancedItem instanceof InstancedItemEntity) {
             return this.removeItem(_instancedItem);
@@ -86,7 +120,30 @@ class EntityWithStorage extends Entity {
             return this.removeItem(_instancedItem.createInstance());
         }
         if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
-        return this;
+        return 1;
+    }
+    getSlot(_abstractEntity) {
+        if (_abstractEntity instanceof InstancedItemEntity) {
+            for (let _i of this.items.keys()) {
+                if (this.items.get(_i) == _abstractEntity) {
+                    return _i;
+                }
+            }
+            return -1;
+        }
+        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        if (_instancedItem instanceof InstancedItemEntity) {
+            return this.getSlot(_instancedItem);
+        }
+        _instancedItem = Game.getItemEntity(_abstractEntity);
+        if (_instancedItem instanceof ItemEntity) {
+            for (let _i of this.items.keys()) {
+                if (this.items.get(_i).getEntity().getID() == _abstractEntity.getID()) {
+                    return _i;
+                }
+            }
+        }
+        return -1;
     }
     /**
      * Returns the InstancedItemEntity of a passed ItemInstance or InstancedItemEntity if this entity has it in their Item array
@@ -94,10 +151,13 @@ class EntityWithStorage extends Entity {
      * @return {InstancedItemEntity}               The InstancedItemEntity that is found, or null if it isn't
      */
     getItem(_abstractEntity) {
+        if (typeof _abstractEntity == "number" && _abstractEntity >= 0) {
+            return this.items.get(_abstractEntity);
+        }
         if (_abstractEntity instanceof InstancedItemEntity) {
-            for (let _i = 0; _i < this.items.length; _i++) {
-                if (this.items[_i] == _abstractEntity) {
-                    return this.items[_i];
+            for (let _i of this.items.keys()) {
+                if (this.items.get(_i) == _abstractEntity) {
+                    return this.items.get(_i);
                 }
             }
             return null;
@@ -118,9 +178,9 @@ class EntityWithStorage extends Entity {
         */
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
-            for (let _i = 0; _i < this.items.length; _i++) {
-                if (this.items[_i].getEntity().getID() === _instancedItem.getID()) {
-                    return this.items[_i];
+            for (let _i of this.items.keys()) {
+                if (this.items.get(_i).getEntity().getID() == _abstractEntity.getID()) {
+                    return this.items.get(_i);
                 }
             }
         }
@@ -132,9 +192,6 @@ class EntityWithStorage extends Entity {
     }
     getItems() {
         return this.items;
-    }
-    getNumberOfItems() {
-        return this.items.length;
     }
     dispose() {
         if (this == Game.player.entity) {

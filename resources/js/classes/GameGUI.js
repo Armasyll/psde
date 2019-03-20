@@ -961,15 +961,16 @@ class GameGUI {
         for (var _i = _inventory.length - 1; _i > -1; _i--) {
             GameGUI._inventoryMenu.getChildByName("items").removeControl(_inventory[_i]);
         }
-        _entity.items.forEach(function(_instancedItemEntity) {
+        for (let _key of _entity.getItems().keys()) {
+            let _instancedItemEntity = _entity.getItems().get(_key);
             var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, Game.getIcon(_instancedItemEntity.getImage()));
-                _button.width = 1.0;
-                _button.height = 0.1;
+            _button.width = 1.0;
+            _button.height = 0.1;
             _button.onPointerUpObservable.add(function() {
                 GameGUI.updateInventoryMenuSelected(_instancedItemEntity.getID(), _entity);
             });
             GameGUI._inventoryMenu.getChildByName("items").addControl(_button);
-        });
+        };
         GameGUI._clearInventorySelectedItem();
     }
     /**
