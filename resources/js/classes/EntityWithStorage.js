@@ -179,7 +179,7 @@ class EntityWithStorage extends Entity {
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
             for (let _i of this.items.keys()) {
-                if (this.items.get(_i).getEntity().getID() == _abstractEntity.getID()) {
+                if (this.items.get(_i).getEntity().getID() == _instancedItem.getID()) {
                     return this.items.get(_i);
                 }
             }
