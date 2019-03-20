@@ -40,95 +40,41 @@
      inkscape:window-height="1056"
      id="namedview18"
      showgrid="false"
-     inkscape:zoom="0.79763794"
-     inkscape:cx="528.61489"
-     inkscape:cy="411.40677"
+     inkscape:zoom="0.69014377"
+     inkscape:cx="480.51161"
+     inkscape:cy="582.36857"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg16" />
   <desc
      id="desc2">'items.blend', Cube, (Blender 2.79 (sub 0))</desc>
-  <polygon
-     points="256.000,512.000 256.000,768.000 512.000,768.000 512.000,512.000 "
-     id="two"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
-  <polygon
-     points="512.000,256.000 512.000,512.000 768.000,512.000 768.000,256.000 "
-     id="four"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
-  <polygon
-     points="768.000,512.000 768.000,768.000 1024.000,768.000 1024.000,512.000 "
-     id="five"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
-  <polygon
-     points="768.000,1024.000 768.000,768.000 512.000,768.000 512.000,1024.000 "
-     id="three"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
-  <polygon
-     points="0.000,512.000 0.000,768.000 256.000,768.000 256.000,512.000 "
-     id="six"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
-  <polygon
-     points="768.000,512.000 512.000,512.000 512.000,768.000 768.000,768.000 "
-     id="one"
-     style="stroke:none;fill:#f4f4e4;fill-opacity:1"
-     stroke-width="1"
-     stroke="black"
-     fill-opacity="0.25"
-     fill="grey" />
   <g
-     id="g4753"
-     style="fill:#111106;fill-opacity:1">
+     id="g4595"
+     transform="matrix(1.328125,0,0,1.328125,-680,-336)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="one"
+       points="768,768 768,512 512,512 512,768 " />
     <circle
        r="32"
        cy="640"
        cx="640"
        id="path4532"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <circle
-       r="32"
-       cy="640"
-       cx="896"
-       id="path4532-3"
-       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <circle
-       r="32"
-       cy="896"
-       cx="640"
-       id="path4532-6"
-       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     id="g4583"
+     transform="matrix(1.328125,0,0,1.328125,-680,-336)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="four"
+       points="768,256 512,256 512,512 768,512 " />
     <circle
        r="32"
        cy="448"
        cx="576"
        id="path4532-5"
-       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <circle
-       r="32"
-       cy="704"
-       cx="960"
-       id="path4532-5-3"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <circle
        r="32"
@@ -144,15 +90,35 @@
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <circle
        r="32"
-       cy="704"
-       cx="832"
-       id="path4532-5-2"
-       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <circle
-       r="32"
        cy="448"
        cx="704"
        id="path4532-5-3-9"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     id="g4591"
+     transform="matrix(0,-1.328125,1.328125,0,-340,1364)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="five"
+       points="768,512 768,768 1024,768 1024,512 " />
+    <circle
+       r="32"
+       cy="640"
+       cx="896"
+       id="path4532-3"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="960"
+       id="path4532-5-3"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle
+       r="32"
+       cy="704"
+       cx="832"
+       id="path4532-5-2"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <circle
        r="32"
@@ -166,6 +132,20 @@
        cx="960"
        id="path4532-5-3-6-2"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     id="g4601"
+     transform="matrix(1.328125,0,0,1.328125,-680,-336)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="three"
+       points="512,1024 768,1024 768,768 512,768 " />
+    <circle
+       r="32"
+       cy="896"
+       cx="640"
+       id="path4532-6"
+       style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <circle
        r="32"
        cy="960"
@@ -178,6 +158,14 @@
        cx="704"
        id="path4532-5-3-6-0"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     id="g4576"
+     transform="matrix(0,-1.328125,1.328125,0,-340,1364)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="two"
+       points="256,512 256,768 512,768 512,512 " />
     <circle
        r="32"
        cy="704"
@@ -190,6 +178,14 @@
        cx="448"
        id="path4532-5-3-6-2-2"
        style="fill:#111106;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.94599777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     id="g4571"
+     transform="matrix(0,-1.328125,1.328125,0,-340,684)">
+    <polygon
+       style="fill:#f4f4e4;fill-opacity:1;stroke:none;stroke-width:1"
+       id="six"
+       points="0,768 256,768 256,512 0,512 " />
     <circle
        r="32"
        cy="704"

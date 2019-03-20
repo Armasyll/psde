@@ -107,7 +107,7 @@ class Game {
             "staff05":"resources/data/items.babylon",
             "wizardHat02":"resources/data/items.babylon",
             "ingot01":"resources/data/items.babylon",
-            "dice01":"resources/data/items.babylon",
+            "cube":"resources/data/items.babylon",
             "staff04":"resources/data/items.babylon",
             "staff03":"resources/data/items.babylon",
             "staff02":"resources/data/items.babylon",
@@ -288,7 +288,8 @@ class Game {
             "stripped-BUMP":"resources/images/textures/static/stripped-BUMP.png",
             "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png",
             "stoneTexture01":"resources/images/textures/static/stoneTexture01.png",
-            "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png"
+            "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png",
+            "dice01Texture":"resources/images/textures/items/dice01.svg"
         };
         /**
          * Map of Textures per ID
@@ -405,7 +406,8 @@ class Game {
             "loveseat01Icon":"resources/images/icons/items/loveseat01.png",
             "chair01Icon":"resources/images/icons/items/chair01.png",
             "chair02Icon":"resources/images/icons/items/chair02.png",
-            "chair03Icon":"resources/images/icons/items/chair03.png"
+            "chair03Icon":"resources/images/icons/items/chair03.png",
+            "dice01Icon":"resources/images/icons/items/dice01.png"
         };
         /**
          * Map of Meshes per Texture IDs per Mesh IDs

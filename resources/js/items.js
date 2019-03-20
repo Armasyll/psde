@@ -32,6 +32,7 @@ Game.createItemEntity("cup01", "Cup", "A simple cup.", "cup01Icon", "cup01", und
 Game.createItemEntity("glass01", "Glass", "A simple glass.", "glass01Icon", "glass01", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("plate01", "Plate", "A simple plate.", "plate01Icon", "plate01", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("trumpet01", "Trumpet", "A simple trumpet.", "trumpet01Icon", "trumpet01", undefined, ItemEnum.GENERAL);
+Game.createItemEntity("dice01", "Die", "A beige die.", "dice01Icon", "cube", "dice01Texture", ItemEnum.GENERAL);
 
 Game.createItemEntity("axe03", "Cheap Axe", "", "axe03Icon", "axe03", undefined, ItemEnum.WEAPON);
 Game.createItemEntity("axe01", "Axe", "", "axe01Icon", "axe01", undefined, ItemEnum.WEAPON);
