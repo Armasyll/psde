@@ -39,7 +39,15 @@ window.addEventListener("DOMContentLoaded", function() {
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return null;
         }
-        Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
+            if (Game.camera.beta < 0.087) {
+                Game.camera.beta = 0.087;
+            }
+            else if (Game.camera.beta > 3.054) {
+                Game.camera.beta = 3.054;
+            }
+        }
         if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
             Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
         }

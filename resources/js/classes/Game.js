@@ -647,6 +647,8 @@ class Game {
         Game.camera.wheelPrecision = 100;
         Game.camera.upperRadiusLimit = 2;
         Game.camera.lowerRadiusLimit = 0.1;
+        Game.camera.angularSensibilityX = 3500;
+        Game.camera.angularSensibilityY = 3500;
         Game.camera.keysLeft=[];
         Game.camera.keysRight=[];
         Game.camera.keysUp=[];
