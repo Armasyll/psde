@@ -3011,6 +3011,12 @@ class Game {
             ));
         }
         _subEntity.removeItem(_instancedItemEntity);
+        if (_subEntity == Game.player) {
+            Game.gui.updateInventoryMenuWith(_subEntity);
+        }
+        else if (_entity == Game.player) {
+            Game.gui.updateInventoryMenuWith(_entity);
+        }
         if (typeof _callback == "function") {
             _callback();
         }
