@@ -1214,7 +1214,7 @@ class GameGUI {
         if (!(_entity instanceof AbstractEntity)) {
             return;
         }
-        GameGUI._actionsMenuOptions.push({"action":_action,"target":_entity});
+        GameGUI._actionsMenuOptions.push({action:_action,target:_entity});
         if (GameGUI._actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
@@ -1287,7 +1287,7 @@ class GameGUI {
                 _button.onPointerClickObservable.add(
                     function() {
                         GameGUI.hideActionsMenu();
-                        Game.doEntityAction(Game.player.getTarget(), Game.player, GameGUI._actionsMenuOptions[_i]);
+                        Game.doEntityAction(GameGUI._actionsMenuOptions[_i].target, Game.player, GameGUI._actionsMenuOptions[_i].action);
                     }
                 );
                 GameGUI._actionsMenu.addControl(_button);

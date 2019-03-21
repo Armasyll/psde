@@ -209,7 +209,7 @@ class CharacterController extends EntityController {
         }
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
-            Game.updateTargetValue();
+            Game.updateCameraTarget();
         }
         return this;
     }

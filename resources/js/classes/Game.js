@@ -2889,25 +2889,26 @@ class Game {
             }
         }
     }
-    static updateTargetValue() {
-        if (!Game.player.getController().hasMesh()) {
+    static updateCameraTarget() {
+        if (!(Game.camera instanceof BABYLON.ArcRotateCamera)) {
             return null;
         }
-        if (Game.camera.radius <= 0.5) {
-            if (Game.enableFirstPerson && Game.player.getController().getMesh().isVisible) {
+        if (!Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return null;
+        }
+        if (Game.enableFirstPerson && Game.camera.radius <= 0.5) {
+            if (Game.player.getController().getMesh().isVisible) {
                 Game.player.getController().hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
                 Game.gui.showCrosshair();
             }
         }
-        else {
-            if (!Game.player.getController().getMesh().isVisible) {
-                Game.player.getController().showMesh();
-                Game.camera.checkCollisions = true;
-                Game.camera.inertia = 0.9;
-                Game.gui.hideCrosshair();
-            }
+        else if (!Game.player.getController().getMesh().isVisible) {
+            Game.player.getController().showMesh();
+            Game.camera.checkCollisions = true;
+            Game.camera.inertia = 0.9;
+            Game.gui.hideCrosshair();
         }
     }
     static doEntityAction(_entity, _subEntity = Game.player, _action) {
