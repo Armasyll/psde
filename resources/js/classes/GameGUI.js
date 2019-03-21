@@ -267,20 +267,6 @@ class GameGUI {
             var nameContainer = new BABYLON.GUI.StackPanel();
                 var nameLabel = new BABYLON.GUI.TextBlock();
                 var nameInput = new BABYLON.GUI.InputText();
-            var ageContainer = new BABYLON.GUI.StackPanel();
-                var ageLabel = new BABYLON.GUI.TextBlock();
-                var ageInput = new BABYLON.GUI.InputText();
-            var speciesContainer = new BABYLON.GUI.StackPanel();
-                var speciesLabel = new BABYLON.GUI.TextBlock();
-                var speciesOptions = new BABYLON.GUI.StackPanel();
-                    var speciesFox = BABYLON.GUI.Button.CreateSimpleButton("speciesFox", "Fox");
-                    var speciesSkeleton = BABYLON.GUI.Button.CreateSimpleButton("speciesSkeleton", "Skeleton");
-            var genderContainer = new BABYLON.GUI.StackPanel();
-                var genderLabel = new BABYLON.GUI.TextBlock();
-                var genderOptions = new BABYLON.GUI.StackPanel();
-                    var genderMale = BABYLON.GUI.Button.CreateSimpleButton("genderMale", "Male");
-                    var genderFemale = BABYLON.GUI.Button.CreateSimpleButton("genderFemale", "Female");
-                    var genderNone = BABYLON.GUI.Button.CreateSimpleButton("genderNone", "None");
             var buttonKBLayoutContainer = new BABYLON.GUI.StackPanel();
                 var buttonKBLayoutLabel = new BABYLON.GUI.TextBlock();
                 var buttonKBLayoutOptions = new BABYLON.GUI.StackPanel();
@@ -293,11 +279,6 @@ class GameGUI {
         
         characterChoiceMenuContainer.isVertical = true;
         nameContainer.isVertical = false;
-        ageContainer.isVertical = false;
-        speciesContainer.isVertical = false;
-            speciesOptions.isVertical = true;
-        genderContainer.isVertical = false;
-            genderOptions.isVertical = true;
         buttonKBLayoutContainer.isVertical = false;
             buttonKBLayoutOptions.isVertical = true;
         submitContainer.isVertical = false;
@@ -318,49 +299,7 @@ class GameGUI {
             nameInput.width = 0.7;
             nameInput.color = GameGUI.color;
             nameInput.background = GameGUI.focusedBackground;
-            nameInput.text = "Remmy Cormo";
-
-        ageContainer.height = 0.05;
-            ageLabel.text = "Age: ";
-            ageLabel.width = 0.3;
-            ageLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            ageLabel.color = GameGUI.color;
-
-            ageInput.width = 0.7;
-            ageInput.color = GameGUI.color;
-            ageInput.background = GameGUI.focusedBackground;
-            ageInput.text = "18";
-
-        speciesContainer.height = 0.10;
-            speciesLabel.text = "Species: ";
-            speciesLabel.width = 0.3;
-            speciesLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            speciesLabel.color = GameGUI.color;
-
-            speciesOptions.width = 0.7;
-                speciesFox.height = 0.5;
-                speciesFox.background = GameGUI.focusedBackground;
-                speciesFox.color = GameGUI.color;
-                speciesSkeleton.height = 0.5;
-                speciesSkeleton.background = GameGUI.focusedBackground;
-                speciesSkeleton.color = GameGUI.color;
-
-        genderContainer.height = 0.15;
-            genderLabel.text = "Gender: ";
-            genderLabel.width = 0.3;
-            genderLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            genderLabel.color = GameGUI.color;
-
-            genderOptions.width = 0.7;
-                genderMale.height = 0.3;
-                genderMale.background = GameGUI.focusedBackground;
-                genderMale.color = GameGUI.color;
-                genderFemale.height = 0.3;
-                genderFemale.background = GameGUI.focusedBackground;
-                genderFemale.color = GameGUI.color;
-                genderNone.height = 0.3;
-                genderNone.background = GameGUI.focusedBackground;
-                genderNone.color = GameGUI.color;
+            nameInput.text = "Player";
 
         buttonKBLayoutContainer.height = 0.15;
             buttonKBLayoutLabel.text = "Keyboard Layout: ";
@@ -400,7 +339,7 @@ class GameGUI {
         buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
             Game.initAzertyKeyboardControls();
         });
-        /*submitOnline.onPointerClickObservable.add(function() {
+        submitOnline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game.generateApartment();
                 Game._finishedScene = true;
@@ -408,13 +347,15 @@ class GameGUI {
                 Game.player.setName(nameInput.text);
                 GameGUI.setPlayerPortrait(Game.player);
             }
+            console.log("Online functionality hasn't been updated in months, sorry :V no multiplayer 4 u");
+            /*
             if (!Client.isOnline()) {
                 Client.connect();
-            }
+            }*/
             GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
-        });*/
+        });
         submitOffline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game._finishedScene = true;
@@ -429,25 +370,14 @@ class GameGUI {
             GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
+            console.log("Player Entity:\n\tGame.player");
+            console.log("Player 3D Controller:\n\tGame.player.getController()");
+            console.log("Player 3D Mesh:\n\tGame.player.getController().getMesh()");
         });
 
         characterChoiceMenuContainer.addControl(nameContainer);
             nameContainer.addControl(nameLabel);
             nameContainer.addControl(nameInput);
-        characterChoiceMenuContainer.addControl(ageContainer);
-            ageContainer.addControl(ageLabel);
-            ageContainer.addControl(ageInput);
-        characterChoiceMenuContainer.addControl(speciesContainer);
-            speciesContainer.addControl(speciesLabel);
-            speciesContainer.addControl(speciesOptions);
-                speciesOptions.addControl(speciesFox);
-                speciesOptions.addControl(speciesSkeleton);
-        characterChoiceMenuContainer.addControl(genderContainer);
-            genderContainer.addControl(genderLabel);
-            genderContainer.addControl(genderOptions);
-                genderOptions.addControl(genderMale);
-                genderOptions.addControl(genderFemale);
-                genderOptions.addControl(genderNone);
         characterChoiceMenuContainer.addControl(buttonKBLayoutContainer);
             buttonKBLayoutContainer.addControl(buttonKBLayoutLabel);
             buttonKBLayoutContainer.addControl(buttonKBLayoutOptions);
