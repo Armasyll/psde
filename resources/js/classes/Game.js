@@ -983,7 +983,7 @@ class Game {
     }
     static controlCharacterOnKeyDown(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
-        if (!this.initialized) {
+        if (!Game.initialized) {
             return undefined;
         }
         if (event == undefined) {
@@ -1124,7 +1124,7 @@ class Game {
     }
     static controlCharacterOnKeyUp(event) {
         if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyUp(${event})`);
-        if (!this.initialized) {
+        if (!Game.initialized) {
             return undefined;
         }
         if (event == undefined) {
@@ -1187,7 +1187,7 @@ class Game {
         }
     }
     static controlCharacterOnClick(event) {
-        if (!this.initialized) {
+        if (!Game.initialized) {
             return undefined;
         }
         if (event == undefined) {
@@ -1206,7 +1206,7 @@ class Game {
         Game.player.getController().doPunch();
     }
     static controlCharacterOnContext(event) {
-        if (!this.initialized) {
+        if (!Game.initialized) {
             return undefined;
         }
         if (event == undefined) {
