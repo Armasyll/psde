@@ -9,6 +9,8 @@ All visual assets (images, videos, models) used with permission from their respe
 
 No money is made from this game, yo.
 
+Zootopia belongs to Disney, Pack Street (name, setting, specific characters) belongs to TG_Weaver, and I'm sure I'm missing a few other notes.
+
 ## About the game
 
 It's a browser-based 3d game.
