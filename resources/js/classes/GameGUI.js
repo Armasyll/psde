@@ -389,6 +389,7 @@ class GameGUI {
             submitOnline.color = GameGUI.color;
             submitOnline.background = GameGUI.focusedBackground;
             submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            submitOnline.isEnabled = false;
 
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
             Game.initQwertyKeyboardControls();
@@ -399,7 +400,7 @@ class GameGUI {
         buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
             Game.initAzertyKeyboardControls();
         });
-        submitOnline.onPointerClickObservable.add(function() {
+        /*submitOnline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game.generateApartment();
                 Game._finishedScene = true;
@@ -413,7 +414,7 @@ class GameGUI {
             GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
-        });
+        });*/
         submitOffline.onPointerClickObservable.add(function() {
             if (!Game._finishedScene) {
                 Game._finishedScene = true;

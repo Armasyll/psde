@@ -986,7 +986,10 @@ class Game {
         if (!this.initialized) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController()) {
+        if (event == undefined) {
+            return undefined;
+        }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         switch (event) {
@@ -1124,7 +1127,10 @@ class Game {
         if (!this.initialized) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController()) {
+        if (event == undefined) {
+            return undefined;
+        }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         switch (event) {
@@ -1181,6 +1187,15 @@ class Game {
         }
     }
     static controlCharacterOnClick(event) {
+        if (!this.initialized) {
+            return undefined;
+        }
+        if (event == undefined) {
+            return undefined;
+        }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return undefined;
+        }
         if (event.button == 1) {
             // nothing for middle click :v
             return true;
@@ -1190,7 +1205,16 @@ class Game {
         }
         Game.player.getController().doPunch();
     }
-    static controlCharacterOnContext(_event) {
+    static controlCharacterOnContext(event) {
+        if (!this.initialized) {
+            return undefined;
+        }
+        if (event == undefined) {
+            return undefined;
+        }
+        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return undefined;
+        }
         if (Game.initialized && Game.player instanceof CharacterEntity && Game.player.getTarget() instanceof AbstractEntity) {
             Game.gui.clearActionsMenu();
             Game.gui.populateActionsMenuWithTarget();
