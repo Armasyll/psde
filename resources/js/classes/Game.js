@@ -207,7 +207,9 @@ class Game {
             "animatedSink01":"resources/meshes/animatedSink01.babylon",
             "animatedDoor01":"resources/meshes/animatedDoor01.babylon",
             "chair02":"resources/meshes/furniture.babylon",
-            "chair03":"resources/meshes/furniture.babylon"
+            "chair03":"resources/meshes/furniture.babylon",
+            "grass01":"resources/meshes/nature.babylon",
+            "mushroom01":"resources/meshes/nature.babylon"
         };
         /**
          * Map of Meshes per ID
