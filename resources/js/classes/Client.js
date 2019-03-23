@@ -4,7 +4,7 @@ class Client {
          * Map of Network IDs to CharacterControllers
          * @type {String: CharacterController}
          */
-        this.networkCharacterMap = {};
+        this.networkEntityMap = {};
         this.online = false;
         this.initialized = true;
         this.sendCount = 1;
@@ -31,21 +31,23 @@ class Client {
 	}
     static setPlayerEntry(_networkID) {
     	console.log("Client::setPlayerEntry(" + _networkID + ")");
-        this.setEntry(Game.player, _networkID);
+        this.setEntry(Game.player.controller, _networkID);
     }
     static setEntry(_character, _networkID) {
-    	console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
         if (!(_character instanceof CharacterController)) {
-        	_character = Game.getCharacterController(_character);
-        	if (!(_character instanceof CharacterController)) {return undefined;}
+        	_character = Game.getCharacterController(_character.controller);
+        	if (!(_character instanceof CharacterController)) {
+                return undefined;
+            }
         }
+        console.log("Client::setEntry(" + _character.id + ", " + _networkID + ")");
 
         this.removeEntry(_character);
         
-        this.networkCharacterMap[_networkID] = _character;
-        _character.setNetworkID(_networkID);
+        this.networkEntityMap[_networkID] = _character;
+        _character.controller.setNetworkID(_networkID);
     }
-    static getNetworkID(_character = Game.player) {
+    static getNetworkID(_character = Game.player.controller) {
     	if (_character instanceof CharacterController) {
     		return _character.networkID;
     	}
@@ -67,20 +69,22 @@ class Client {
     		return undefined;
     	}
     }
-    static getCharacterController(_id) {
+    static getController(_id) {
     	if (isInt(_id)) {
-    		return Client.networkCharacterMap[_id];
+    		return Client.networkEntityMap[_id];
     	}
     	else {
-    		return Game.getCharacterController(_id);
+    		return Game.getEntityController(_id);
     	}
     }
     static removeEntry(_character) {
         if (!(_character instanceof CharacterController)) {
-        	_character = Client.getCharacterController(_character);
-        	if (!(_character instanceof CharacterController)) {return undefined;}
+        	_character = Client.getController(_character);
+        	if (!(_character instanceof CharacterController)) {
+                return undefined;
+            }
         }
-        delete this.networkCharacterMap[_character.networkID];
+        delete this.networkEntityMap[_character.networkID];
         _character.networkID = undefined;
     }
     static getState() {
@@ -146,19 +150,20 @@ class Client {
         }
         Client.sendMessage({
             type: "P_INIT_SELF",
-            content: {
-            	id:Game.player.id,
-                name:Game.player.entity.getName(),
-                age:Game.player.entity.getAge(),
-                sex:Game.player.entity.getSex(),
-                species:Game.player.entity.getSpecies(),
-                skin:Game.player.textureID,
-                mesh:Game.player.meshID,
-                position:Game.player.mesh.position,
-                rotation:Game.player.mesh.rotation,
-                scaling:Game.player.mesh.scaling,
-            	movementKeys:Game.player.key
-			}
+            content: [
+            	Game.player.getName(),
+                Game.player.getAge(),
+                Game.player.getSex(),
+                Game.player.getSpecies(),
+                Game.player.controller.textureID,
+                Game.player.controller.meshID,
+                Game.player.controller.mesh.position.x,
+                Game.player.controller.mesh.position.y,
+                Game.player.controller.mesh.position.z,
+                Game.player.controller.mesh.rotation.y,
+                Game.player.controller.mesh.scaling.x,
+            	Game.player.controller.key.toNumber()
+			]
         });
     }
     static updateLocRotScaleSelf() {
@@ -168,10 +173,11 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-                Game.player.mesh.position,
-                Game.player.mesh.rotation,
-                Game.player.mesh.scaling,
-                Game.player.key
+                Game.player.controller.mesh.position.x,
+                Game.player.controller.mesh.position.y,
+                Game.player.controller.mesh.position.z,
+                Game.player.controller.mesh.rotation.y,
+                Game.player.controller.key.toNumber()
             ]
         });
     }
@@ -182,7 +188,7 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_MOVEMENTKEYS_SELF",
             content: [
-                Game.player.key
+                Game.player.controller.key.toNumber()
             ]
         });
     }
@@ -204,8 +210,8 @@ class Client {
         });
     }
     static removeAllPlayers() {
-        for (var _networkID in this.networkCharacterMap) {
-            if (_networkID != Game.player.networkID) {
+        for (var _networkID in this.networkEntityMap) {
+            if (_networkID != Game.player.controller.networkID) {
                 Client.removeEntry(_data.content);
                 Game.removeCharacter(_data.content);
             }

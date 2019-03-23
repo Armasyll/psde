@@ -685,7 +685,7 @@ class Game {
         _player.attachToFOCUS("cameraFocus");
         _player.getMesh().isPickable = false;
         Game.player = _player.entity;
-        Game.player.addItem(new InstancedItemEntity(undefined, "woodenMallet"));
+        Game.player.addItem(new InstancedItemEntity(undefined, "stick01"));
         Game.gui.setPlayerPortrait(Game.player);
         Game.initFollowCamera();
         Game.initCastRayInterval();
@@ -1405,7 +1405,7 @@ class Game {
         return _instance;
     }
     static addCharacterMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.debugEnabled) console.log("Running addCharacterMesh");
+        if (Game.debugEnabled) console.log(`Running addCharacterMesh(${_id}, ${_meshID}, ${_texture})`);
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
         var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
@@ -1497,7 +1497,6 @@ class Game {
      * @return {BABYLON.Mesh, BABYLON.InstancedMesh}                    The created mesh
      */
     static createMesh(..._blob) {
-        if (Game.debugEnabled) console.log("Running createMesh");
         var _id = undefined;
         var _mesh = undefined;
         var _material = undefined;
@@ -1510,85 +1509,151 @@ class Game {
             if (_id == undefined) {
                 _id = genUUIDv4();
             }
-            _mesh = _blob[1] instanceof BABYLON.AbstractMesh ? _blob[1].name : (typeof _blob[1] == "string" ? _blob[1] : "missingMesh");
-            _material = _blob[2] instanceof BABYLON.Material ? _blob[2].id : (typeof _blob[2] == "string" ? _blob[2] : "missingMaterial");
-            _position = _blob[3] instanceof BABYLON.Vector3 ? _blob[3] : BABYLON.Vector3.Zero();
-            _rotation = _blob[4] instanceof BABYLON.Vector3 ? _blob[4] : BABYLON.Vector3.Zero();
-            _scaling = _blob[5] instanceof BABYLON.Vector3 ? _blob[5] : BABYLON.Vector3.One();
-            _forceCreateClone = _blob[6] == true;
+            if (_blob[1] instanceof BABYLON.AbstractMesh) {
+                _mesh = _blob[1].name;
+            }
+            else if (typeof _blob[1] == "string") {
+                _mesh = _blob[1];
+            }
+            else {
+                _mesh = "missingMesh";
+            }
+            if (_blob[2] instanceof BABYLON.Material) {
+                _material = _blob[2].name;
+            }
+            else if (typeof _blob[2] == "string") {
+                _material = _blob[2];
+            }
+            else {
+                _material = "missingMaterial";
+            }
+            if (_blob[3] instanceof BABYLON.Vector3) {
+                _position = _blob[3];
+            }
+            else {
+                _position = BABYLON.Vector3.Zero();
+            }
+            if (_blob[4] instanceof BABYLON.Vector3) {
+                _rotation = _blob[4];
+            }
+            else {
+                _rotation = BABYLON.Vector3.Zero();
+            }
+            if (_blob[5] instanceof BABYLON.Vector3) {
+                _scaling = _blob[5];
+            }
+            else {
+                _scaling = BABYLON.Vector3.One();
+            }
+            if (_blob[6]) {
+                _forceCreateClone = true;
+            }
         }
         else if ((typeof _blob[1] == "string" || _blob[1] == undefined) && _blob[2] instanceof BABYLON.Vector3) {
             _id = genUUIDv4();
-            _mesh = _blob[0] instanceof BABYLON.AbstractMesh ? _blob[0].name : (typeof _blob[0] == "string" ? _blob[0] : "missingMesh");
-            _material = _blob[1] instanceof BABYLON.Material ? _blob[1].name : (typeof _blob[1] == "string" ? _blob[1] : "missingMaterial");
-            _position = _blob[2] instanceof BABYLON.Vector3 ? _blob[2] : BABYLON.Vector3.Zero();
-            _rotation = _blob[3] instanceof BABYLON.Vector3 ? _blob[3] : BABYLON.Vector3.Zero();
-            _scaling = _blob[4] instanceof BABYLON.Vector3 ? _blob[4] : BABYLON.Vector3.One();
-            _forceCreateClone = _blob[5] == true;
+            if (_blob[0] instanceof BABYLON.AbstractMesh) {
+                _mesh = _blob[0].name;
+            }
+            else if (typeof _blob[0] == "string") {
+                _mesh = _blob[0];
+            }
+            else {
+                _mesh = "missingMesh";
+            }
+            if (_blob[1] instanceof BABYLON.Material) {
+                _material = _blob[1].name;
+            }
+            else if (typeof _blob[1] == "string") {
+                _material = _blob[1];
+            }
+            else {
+                _material = "missingMaterial";
+            }
+            if (_blob[2] instanceof BABYLON.Vector3) {
+                _position = _blob[2];
+            }
+            else {
+                _position = BABYLON.Vector3.Zero();
+            }
+            if (_blob[3] instanceof BABYLON.Vector3) {
+                _rotation = _blob[3];
+            }
+            else {
+                _rotation = BABYLON.Vector3.Zero();
+            }
+            if (_blob[4] instanceof BABYLON.Vector3) {
+                _scaling = _blob[4];
+            }
+            else {
+                _scaling = BABYLON.Vector3.One();
+            }
+            if (_blob[5]) {
+                _forceCreateClone = true;
+            }
         }
         else {
             return null;
         }
+        if (Game.debugEnabled) console.log(`Running createMesh(${_id}, ${_mesh}, ${_material})`);
 
-        var _loadedMesh = Game.loadMesh(_mesh);
-        var _loadedMaterial = Game.loadMaterial(_material);
-        if (_loadedMesh == Game.loadedMeshes["missingMesh"]) {
-            return false;
+        if (!(_material instanceof BABYLON.Material) || !(_material instanceof BABYLON.Texture)) {
+            _material = Game.loadMaterial(_material);
         }
-        else if (_loadedMesh == Game.loadedMeshes["loadingMesh"]) {
-            Game.addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone);
-            return true;
+        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+            _mesh = Game.loadMesh(_mesh);
+            if (_mesh == Game.loadedMeshes["missingMesh"]) {
+                return false;
+            }
+            else if (_mesh == Game.loadedMeshes["loadingMesh"]) {
+                Game.addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone);
+                return true;
+            }
         }
 
-        _mesh = _loadedMesh.name;
-        _material = _loadedMaterial.name;
-
-        if (_loadedMesh.skeleton instanceof BABYLON.Skeleton) {
-            var _newMesh = _loadedMesh.clone(_id);
-            _newMesh.makeGeometryUnique();
-            Game.addClonedMesh(_newMesh, _id);
-            
-            _newMesh.material = _loadedMaterial;
-            _newMesh.skeleton = _loadedMesh.skeleton.clone(_id + "Skeleton");
-            Game.setLoadedMeshMaterial(_loadedMesh, _loadedMaterial);
-            
-            _newMesh.name = _loadedMesh.name;
-            _loadedMesh = _newMesh;
+        if (_mesh.skeleton instanceof BABYLON.Skeleton) {
+            let _skeleton = _mesh.skeleton.clone(_id + "Skeleton");
+            _mesh = _mesh.clone(_mesh.name);
+            _mesh.makeGeometryUnique();
+            _mesh.id = _id;
+            _mesh.material = _material;
+            _mesh.skeleton = _skeleton;
+            Game.addClonedMesh(_mesh, _id);
+            Game.setLoadedMeshMaterial(_mesh, _material);
         }
         else {
-            if (!this.loadedMeshMaterials.hasOwnProperty(_mesh)) {
-                this.loadedMeshMaterials[_mesh] = {};
+            if (!this.loadedMeshMaterials.hasOwnProperty(_mesh.name)) {
+                this.loadedMeshMaterials[_mesh.name] = {};
             }
-            if (!this.loadedMeshMaterials[_mesh].hasOwnProperty(_material)) {
-                _loadedMesh = _loadedMesh.clone(_material);
-                _loadedMesh.makeGeometryUnique();
-                if (Game.debugEnabled) console.log("Creating master clone of " + _mesh + " with " + _material);
-                _loadedMesh.material = _loadedMaterial;
-                _loadedMesh.name = _mesh;
-                _loadedMesh.setEnabled(false);
-                _loadedMesh.position.set(0,-4095,0);
-                Game.setLoadedMeshMaterial(_loadedMesh, _loadedMaterial);
+            if (!this.loadedMeshMaterials[_mesh.name].hasOwnProperty(_material.name)) {
+                _mesh = _mesh.clone(_mesh.name + _material.name);
+                _mesh.makeGeometryUnique();
+                if (Game.debugEnabled) console.log("Creating master clone of " + _mesh.name + " with " + _material.name);
+                _mesh.name = _mesh.name;
+                _mesh.material = _material;
+                _mesh.setEnabled(false);
+                _mesh.position.set(0,-4095,0);
+                Game.setLoadedMeshMaterial(_mesh, _material);
             }
             if (_forceCreateClone === true) {
                 if (Game.debugEnabled) console.log("  Creating clone...");
-                _loadedMesh = this.loadedMeshMaterials[_mesh][_material].clone(_id);
-                Game.addClonedMesh(_loadedMesh, _id);
+                _mesh = this.loadedMeshMaterials[_mesh.name][_material.name].clone(_id);
+                Game.addClonedMesh(_mesh, _id);
             }
             else {
                 if (Game.debugEnabled) console.log("  Creating instance...");
-                _loadedMesh = this.loadedMeshMaterials[_mesh][_material].createInstance(_id);
-                Game.addInstancedMesh(_loadedMesh);
+                _mesh = this.loadedMeshMaterials[_mesh.name][_material.name].createInstance(_id);
+                Game.addInstancedMesh(_mesh, _id);
             }
-            _loadedMesh.name = _mesh;
         }
-        _loadedMesh.isVisible = true;
-        _loadedMesh.position.copyFrom(_position);
-        _loadedMesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
-        _loadedMesh.scaling.copyFrom(_scaling);
-        _loadedMesh.collisionMesh = undefined;
-        _loadedMesh.isPickable = false;
-        _loadedMesh.setEnabled(true);
-        return _loadedMesh;
+        _mesh.id = _id;
+        _mesh.isVisible = true;
+        _mesh.position.copyFrom(_position);
+        _mesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(_rotation.x), BABYLON.Tools.ToRadians(_rotation.y), BABYLON.Tools.ToRadians(_rotation.z));
+        _mesh.scaling.copyFrom(_scaling);
+        _mesh.collisionMesh = undefined;
+        _mesh.isPickable = false;
+        _mesh.setEnabled(true);
+        return _mesh;
     }
     static addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone) {
         if (Game.hasMeshToCreate(_id)) {
@@ -2363,7 +2428,9 @@ class Game {
      * @return {CharacterController}          Character Controller
      */
     static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX, _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
+        if (typeof _id != "string") {
+            _id = genUUIDv4();
+        }
         _id = Game.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
@@ -2372,10 +2439,20 @@ class Game {
             _position = Game.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            if (typeof _rotation == "number") {
+                _rotation = new BABYLON.Vector3(0, _rotation, 0);
+            }
+            else {
+                _rotation = Game.filterVector(_rotation);
+            }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            if (typeof _scaling == "number") {
+                _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
+            }
+            else {
+                _scaling = Game.filterVector(_scaling);
+            }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
@@ -2472,10 +2549,20 @@ class Game {
             _position = Game.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            if (typeof _rotation == "number") {
+                _rotation = new BABYLON.Vector3(0, _rotation, 0);
+            }
+            else {
+                _rotation = Game.filterVector(_rotation);
+            }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            if (typeof _scaling == "number") {
+                _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
+            }
+            else {
+                _scaling = Game.filterVector(_scaling);
+            }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
@@ -2548,10 +2635,20 @@ class Game {
             _position = Game.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            if (typeof _rotation == "number") {
+                _rotation = new BABYLON.Vector3(0, _rotation, 0);
+            }
+            else {
+                _rotation = Game.filterVector(_rotation);
+            }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            if (typeof _scaling == "number") {
+                _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
+            }
+            else {
+                _scaling = Game.filterVector(_scaling);
+            }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
@@ -2591,10 +2688,20 @@ class Game {
             _position = Game.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            if (typeof _rotation == "number") {
+                _rotation = new BABYLON.Vector3(0, _rotation, 0);
+            }
+            else {
+                _rotation = Game.filterVector(_rotation);
+            }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            if (typeof _scaling == "number") {
+                _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
+            }
+            else {
+                _scaling = Game.filterVector(_scaling);
+            }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
@@ -2687,10 +2794,20 @@ class Game {
             _position = Game.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            if (typeof _rotation == "number") {
+                _rotation = new BABYLON.Vector3(0, _rotation, 0);
+            }
+            else {
+                _rotation = Game.filterVector(_rotation);
+            }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            if (typeof _scaling == "number") {
+                _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
+            }
+            else {
+                _scaling = Game.filterVector(_scaling);
+            }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();

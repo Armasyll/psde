@@ -169,20 +169,6 @@ class BoundedNumber {
         this._lockValue = false;
         return this;
     }
-    clone() {
-        return new BoundedNumber(this._value, this._minimum, this._maximum, this._lockValue);
-    }
-    toString() {
-        if (isNaN(this._value)) {
-            return "";
-        }
-        else {
-            return this._value.toString();
-        }
-    }
-    toSource() {
-        return "new BoundedNumber(" + this._value + ", " + this._minimum + ", " + this._maximum + ", " + (this._lockedValue ? "true" : "false") + ")";
-    }
     copyFrom(b) {
         if (b instanceof BoundedNumber) {
             this._value = b._value;
@@ -193,5 +179,28 @@ class BoundedNumber {
             this.minimum = b.minimum;
             this.maximum = b.maximum;
         }
+    }
+    clone() {
+        return new BoundedNumber(this._value, this._minimum, this._maximum, this._lockValue);
+    }
+    equals(b) {
+        if (b instanceof BoundedNumber) {
+            return this._value == b._value;
+        }
+        else if (typeof b == "number") {
+            return this._value == b;
+        }
+        return false;
+    }
+    toString() {
+        if (isNaN(this._value)) {
+            return "";
+        }
+        else {
+            return this._value.toString();
+        }
+    }
+    toSource() {
+        return `new BoundedNumber(${this._value}, ${this._minimum}, ${this._maximum}, ${this._lockedValue ? "true" : "false"})`;
     }
 }
