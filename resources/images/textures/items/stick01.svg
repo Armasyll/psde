@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1024"
@@ -12,7 +13,7 @@
    viewBox="0 0 1024 1024"
    version="1.1"
    id="svg248"
-   sodipodi:docname="stick.svg"
+   sodipodi:docname="stick01.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata254">
@@ -150,6 +151,203 @@
          result="result2"
          id="feComposite5270" />
     </filter>
+    <filter
+       y="-0.15000001"
+       height="1.3"
+       x="-0.15000001"
+       width="1.3"
+       inkscape:menu-tooltip="Aquarelle paper effect which can be used for pictures as for objects"
+       inkscape:menu="Textures"
+       inkscape:label="Rough Paper"
+       style="color-interpolation-filters:sRGB"
+       id="filter1306">
+      <feTurbulence
+         type="fractalNoise"
+         baseFrequency="0.04"
+         numOctaves="5"
+         seed="0"
+         result="result4"
+         id="feTurbulence1292" />
+      <feDisplacementMap
+         in="SourceGraphic"
+         in2="result4"
+         yChannelSelector="G"
+         xChannelSelector="R"
+         scale="10"
+         result="result3"
+         id="feDisplacementMap1294" />
+      <feDiffuseLighting
+         lighting-color="#e9e6d7"
+         diffuseConstant="1"
+         surfaceScale="2"
+         result="result1"
+         in="result4"
+         id="feDiffuseLighting1298">
+        <feDistantLight
+           azimuth="235"
+           elevation="40"
+           id="feDistantLight1296" />
+      </feDiffuseLighting>
+      <feComposite
+         operator="in"
+         in="result3"
+         in2="result1"
+         result="result2"
+         id="feComposite1300" />
+      <feComposite
+         k4="0"
+         k3="0"
+         k2="0"
+         in2="result1"
+         result="result5"
+         operator="arithmetic"
+         k1="1.7"
+         id="feComposite1302" />
+      <feBlend
+         in="result5"
+         in2="result3"
+         mode="normal"
+         id="feBlend1304" />
+    </filter>
+    <filter
+       y="-0.15000001"
+       height="1.3"
+       x="-0.15000001"
+       width="1.3"
+       inkscape:menu-tooltip="Aquarelle paper effect which can be used for pictures as for objects"
+       inkscape:menu="Textures"
+       inkscape:label="Rough Paper"
+       style="color-interpolation-filters:sRGB"
+       id="filter1322">
+      <feTurbulence
+         type="fractalNoise"
+         baseFrequency="0.04"
+         numOctaves="5"
+         seed="0"
+         result="result4"
+         id="feTurbulence1308" />
+      <feDisplacementMap
+         in="SourceGraphic"
+         in2="result4"
+         yChannelSelector="G"
+         xChannelSelector="R"
+         scale="10"
+         result="result3"
+         id="feDisplacementMap1310" />
+      <feDiffuseLighting
+         lighting-color="#e9e6d7"
+         diffuseConstant="1"
+         surfaceScale="2"
+         result="result1"
+         in="result4"
+         id="feDiffuseLighting1314">
+        <feDistantLight
+           azimuth="235"
+           elevation="40"
+           id="feDistantLight1312" />
+      </feDiffuseLighting>
+      <feComposite
+         operator="in"
+         in="result3"
+         in2="result1"
+         result="result2"
+         id="feComposite1316" />
+      <feComposite
+         k4="0"
+         k3="0"
+         k2="0"
+         in2="result1"
+         result="result5"
+         operator="arithmetic"
+         k1="1.7"
+         id="feComposite1318" />
+      <feBlend
+         in="result5"
+         in2="result3"
+         mode="normal"
+         id="feBlend1320" />
+    </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1271"
+       id="radialGradient1273"
+       cx="659.52942"
+       cy="126.31297"
+       fx="659.52942"
+       fy="126.31297"
+       r="59.206905"
+       gradientTransform="matrix(0.69051985,-1.0458941e-7,1.0966319e-7,0.72401798,204.11125,34.860183)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1271">
+      <stop
+         style="stop-color:#cd7846;stop-opacity:1"
+         offset="0"
+         id="stop1267" />
+      <stop
+         style="stop-color:#723f1e;stop-opacity:1"
+         offset="1"
+         id="stop1269" />
+    </linearGradient>
+    <filter
+       y="-0.15000001"
+       height="1.3"
+       x="-0.15000001"
+       width="1.3"
+       inkscape:menu-tooltip="Aquarelle paper effect which can be used for pictures as for objects"
+       inkscape:menu="Textures"
+       inkscape:label="Rough Paper"
+       style="color-interpolation-filters:sRGB"
+       id="filter1289">
+      <feTurbulence
+         type="fractalNoise"
+         baseFrequency="0.04"
+         numOctaves="5"
+         seed="0"
+         result="result4"
+         id="feTurbulence1275" />
+      <feDisplacementMap
+         in="SourceGraphic"
+         in2="result4"
+         yChannelSelector="G"
+         xChannelSelector="R"
+         scale="10"
+         result="result3"
+         id="feDisplacementMap1277" />
+      <feDiffuseLighting
+         lighting-color="#e9e6d7"
+         diffuseConstant="1"
+         surfaceScale="2"
+         result="result1"
+         in="result4"
+         id="feDiffuseLighting1281">
+        <feDistantLight
+           azimuth="235"
+           elevation="40"
+           id="feDistantLight1279" />
+      </feDiffuseLighting>
+      <feComposite
+         operator="in"
+         in="result3"
+         in2="result1"
+         result="result2"
+         id="feComposite1283" />
+      <feComposite
+         k4="0"
+         k3="0"
+         k2="0"
+         in2="result1"
+         result="result5"
+         operator="arithmetic"
+         k1="1.7"
+         id="feComposite1285" />
+      <feBlend
+         in="result5"
+         in2="result3"
+         mode="normal"
+         id="feBlend1287" />
+    </filter>
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -164,19 +362,15 @@
      inkscape:window-height="1056"
      id="namedview250"
      showgrid="false"
-     inkscape:zoom="0.63931565"
-     inkscape:cx="297.02458"
-     inkscape:cy="449.96273"
+     inkscape:zoom="2.2126315"
+     inkscape:cx="344.1662"
+     inkscape:cy="252.86007"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg248" />
   <desc
      id="desc2">items.blend, (Blender 2.80 (sub 43))</desc>
-  <path
-     style="fill:#ac612f;fill-opacity:1;stroke:#ac612f;stroke-width:1;stroke-opacity:1"
-     d="M 308.39844 760.98242 L 296.0625 834.14648 L 300.07617 886.30859 L 319.24219 871.43555 L 341.55078 861.06445 L 338.21289 834.5625 L 341.55078 808.91016 L 308.39844 760.98242 z "
-     id="polygon134" />
   <path
      style="fill:#734120;fill-opacity:1;stroke:#734120;stroke-width:1;stroke-opacity:1"
      d="M 258.52344 760.2207 L 254.39258 773.73438 L 246.93359 792.6582 L 251.50391 875.08789 L 221.9668 936.02734 L 210.08203 1003.4824 L 243.12109 1022.5859 L 286.93164 1015.3613 L 267.32617 947.98828 L 286.93164 885.88867 L 269.5918 789.08203 L 269.42773 772.9082 L 274.25586 761.88086 L 265.75195 763.02344 L 258.52344 760.2207 z "
@@ -202,4 +396,40 @@
      height="152"
      x="192"
      y="598" />
+  <g
+     id="g5557">
+    <ellipse
+       transform="matrix(1.03881,0,0,1.03881,-328.91876,697.40879)"
+       ry="62.466007"
+       rx="59.206905"
+       cy="126.31297"
+       cx="659.52942"
+       id="path1075"
+       style="fill:url(#radialGradient1273);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.81542873px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter1289)" />
+    <path
+       d="m 355.3284,829.45642 c 2.78094,0.34762 0.90344,3.92016 -0.57777,4.62211 -4.01396,1.90225 -7.97419,-2.05405 -8.66645,-5.77764 -1.2383,-6.66063 4.70734,-12.17813 10.97751,-12.7108 9.20174,-0.78171 16.46054,7.37996 16.75515,16.17739 0.39267,11.7256 -10.05725,20.7736 -21.37727,20.79949 -14.24508,0.0326 -25.10196,-12.73623 -24.84383,-26.57714 0.31262,-16.7632 15.41606,-29.43909 31.77702,-28.88818 19.28081,0.64922 33.78168,18.09641 32.93252,36.97689 -0.98038,21.79827 -20.77709,38.12795 -42.17677,36.97688 -24.31567,-1.30792 -42.47676,-23.45803 -41.02122,-47.37665 1.6329,-26.83308 26.13914,-46.82745 52.57653,-45.06557 29.3505,1.95603 51.17953,28.8204 49.10991,57.7764"
+       sodipodi:t0="0"
+       sodipodi:argument="-18.725201"
+       sodipodi:radius="55.896973"
+       sodipodi:revolution="3"
+       sodipodi:expansion="1"
+       sodipodi:cy="829.45642"
+       sodipodi:cx="355.3284"
+       id="path1242"
+       style="fill:none;fill-rule:evenodd;stroke:#3f2311;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter1322)"
+       sodipodi:type="spiral" />
+    <path
+       transform="rotate(-150,601.08145,518.93841)"
+       d="m 658.65082,127.14541 c 2.78094,0.34762 0.90343,3.92016 -0.57777,4.62211 -4.01396,1.90225 -7.97419,-2.05405 -8.66645,-5.77764 -1.2383,-6.66063 4.70734,-12.17813 10.97751,-12.7108 9.20174,-0.78172 16.46054,7.37996 16.75515,16.17739 0.39267,11.72559 -10.05725,20.7736 -21.37727,20.79949 -14.24509,0.0326 -25.10196,-12.73623 -24.84384,-26.57714 0.31263,-16.7632 15.41607,-29.439089 31.77702,-28.888186 19.28082,0.64922 33.78169,18.096406 32.93253,36.976896 -0.98038,21.79827 -20.77709,38.12794 -42.17677,36.97687 -24.31567,-1.30792 -42.47676,-23.45802 -41.02122,-47.37664 1.6329,-26.833082 26.13914,-46.827452 52.57652,-45.065568 29.35051,1.956024 51.17954,28.820388 49.10992,57.776398"
+       sodipodi:t0="0"
+       sodipodi:argument="-18.725201"
+       sodipodi:radius="55.896973"
+       sodipodi:revolution="3"
+       sodipodi:expansion="1"
+       sodipodi:cy="127.14541"
+       sodipodi:cx="658.65082"
+       id="path1242-3"
+       style="fill:none;fill-rule:evenodd;stroke:#3f2311;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter1306)"
+       sodipodi:type="spiral" />
+  </g>
 </svg>
