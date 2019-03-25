@@ -222,7 +222,7 @@ class Game {
             "graveyardFencePike01":"resources/meshes/graveyard.babylon",
             "graveyardFenceWithPillar01":"resources/meshes/graveyard.babylon",
             "graveyardFenceWithPillarShort01":"resources/meshes/graveyard.babylon",
-            "graveyardFencePillar01":"resources/meshes/graveyard.babylon",
+            "graveyardFencePillar01":"resources/meshes/graveyard.babylon"
         };
         /**
          * Map of Meshes per ID
