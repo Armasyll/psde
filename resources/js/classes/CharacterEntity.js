@@ -1534,21 +1534,21 @@ class CharacterEntity extends EntityWithStorage {
             this.setEyes(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
-        if (this.age.getValue() > 24) {
+        if (this.age.getValue() > 19) {
             this.height = this._baseHeight;
         }
         else {
             let _addition = 0;
-            if (this.age.getValue() > 21) {
+            if (this.age.getValue() > 17) {
                 _addition = .45;
             }
-            else if (this.age.getValue() > 18) {
-                _addition = .4;
-            }
             else if (this.age.getValue() > 15) {
+                _addition = .35;
+            }
+            else if (this.age.getValue() > 13) {
                 _addition = .25;
             }
-            else if (this.age.getValue() > 10) {
+            else if (this.age.getValue() > 11) {
                 _addition = .15;
             }
             let _tempHeight = this._baseHeight*(this.age.getValue()/25);
@@ -1557,7 +1557,7 @@ class CharacterEntity extends EntityWithStorage {
                 this.height = this._baseHeight/6;
             }
             else if (_tempHeight > this._baseHeight) {
-                this.height = _baseHeight;
+                this.height = this._baseHeight;
             }
             else {
                 this.height = _tempHeight;
