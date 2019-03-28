@@ -1064,7 +1064,7 @@ class Game {
                             Client.sendChatMessage(_text);
                         }
                         else {
-                            Game.chatCommands(_text);
+                            Game.chatParse(_text);
                         }
                         Game.gui.chatInputClear();
                     }
@@ -1080,7 +1080,7 @@ class Game {
                     Client.sendChatMessage(_text);
                 }
                 else {
-                    Game.chatCommands(_text);
+                    Game.chatParse(_text);
                 }
                 Game.gui.chatInputClear();
                 Game.gui.setChatInputFocused(false);
@@ -3004,6 +3004,14 @@ class Game {
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
     }
+    static chatParse(_string) {
+        if (_string.slice(0, 1) == "/") {
+            return Game.chatCommands(_string.slice(1));
+        }
+        else {
+            return Game.gui.chatOutputAppend(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.player.name}: ${_string}`);
+        }
+    }
     static chatCommands(_command, ..._param) {
         if (_command == undefined || typeof _command != "string") {
             return undefined;
@@ -3046,6 +3054,7 @@ class Game {
             case ":V" :
             case "V:" : {
                 Game.gui.chatOutputAppend("\n    :V\n");
+                break;
             }
             default : {
                 Game.gui.chatOutputAppend(`Command "${_command}" not found.\n`);
