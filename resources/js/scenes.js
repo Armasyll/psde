@@ -620,7 +620,7 @@ Game.generateApartment = function() {
 
     // Misc
     Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacterIcon", 30, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRinehart", undefined, new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0)).attachToLeftEye("eye01", "circularEyeViolet").attachToRightEye("eye01", "circularEyeViolet");
-    Game.createCharacter("rosie", "Rosie", undefined, "rosieIcon", 14, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5), undefined, new BABYLON.Vector3(0.7, 0.7, 0.7)).attachToLeftEye("eye01", "circularEyeBlue").attachToRightEye("eye01", "circularEyeBlue");
+    Game.createCharacter("rosie", "Rosie", undefined, "rosieIcon", 14, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxRed", undefined, new BABYLON.Vector3(2, 0, -4.5)).attachToLeftEye("eye01", "circularEyeBlue").attachToRightEye("eye01", "circularEyeBlue");
     Game.createCharacter("charlie", "Charlie", undefined, "charlieIcon", 28, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye01", "feralEyeBlue").attachToRightEye("eye01", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
     Game.getCharacterController("charlie").setIdleAnim("90_idleSquint01", 1, true);
     Game.getCharacterController("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);

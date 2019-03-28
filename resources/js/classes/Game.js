@@ -2519,6 +2519,8 @@ class Game {
         }
         _entity.setController(_controller);
         _entity.setMeshID(_loadedMesh);
+        let __scaling = _entity.height/_entity._baseHeight;
+        _loadedMesh.scaling.set(__scaling,__scaling,__scaling);
         return _controller;
     }
     static createCharacterFromEntity(_entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {

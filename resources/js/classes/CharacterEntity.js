@@ -223,6 +223,13 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Number}
          */
         this.bodySize = 0.5;
+        this.height = 1.2;
+        this.width = 0.34;
+        this._baseMass = 36; // Average mass, in kilograms, of NW at the age of 26
+        this._baseHeight = 1.20; // Average height, in metres, of NW at the age of 26
+        this._baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
+        this.muscle = 0.5;
+        this.fat = 0.25;
         /**
          * Whether or not this CharacterEntity is a predator
          * @type {Boolean} True - predator, false - prey
@@ -1273,21 +1280,16 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     _generateProperties() {
-        var _baseMass = 36; // Average mass, in kilograms, of NW at the age of 26
-        var _baseHeight = 1.20; // Average height, in metres, of NW at the age of 26
-        var _baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
-        this.muscle = 0.5;
-        this.fat = 0.25;
         if (this.species == SpeciesEnum.FOX) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 36;
-                _baseHeight = 1.20;
-                _baseWidth = 0.4;
+                this._baseMass = 36;
+                this._baseHeight = 1.20;
+                this._baseWidth = 0.4;
             }
             else {
-                _baseMass = 32;
-                _baseHeight = 1.12;
-                _baseWidth = 0.37;
+                this._baseMass = 32;
+                this._baseHeight = 1.12;
+                this._baseWidth = 0.37;
             }
 
             this.predator = true;
@@ -1297,14 +1299,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.SHEEP) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 34;
-                _baseHeight = 1.35;
-                _baseWidth = 0.45;
+                this._baseMass = 34;
+                this._baseHeight = 1.35;
+                this._baseWidth = 0.45;
             }
             else {
-                _baseMass = 28;
-                _baseHeight = 1.0;
-                _baseWidth = 0.33;
+                this._baseMass = 28;
+                this._baseHeight = 1.0;
+                this._baseWidth = 0.33;
             }
             
             this.predator = false;
@@ -1314,13 +1316,13 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.WOLF) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseHeight = 1.9;
-                _baseWidth = 0.63;
+                this._baseHeight = 1.9;
+                this._baseWidth = 0.63;
             }
             else {
-                _baseMass = 66;
-                _baseHeight = 1.8;
-                _baseWidth = 0.6;
+                this._baseMass = 66;
+                this._baseHeight = 1.8;
+                this._baseWidth = 0.6;
             }
 
             this.predator = true;
@@ -1330,14 +1332,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.AARDWOLF) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 32;
-                _baseHeight = 1.10;
-                _baseWidth = 0.36;
+                this._baseMass = 32;
+                this._baseHeight = 1.10;
+                this._baseWidth = 0.36;
             }
             else {
-                _baseMass = 28;
-                _baseHeight = 1.02;
-                _baseWidth = 0.34;
+                this._baseMass = 28;
+                this._baseHeight = 1.02;
+                this._baseWidth = 0.34;
             }
 
             this.predator = true;
@@ -1347,14 +1349,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HYENA) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 58;
-                _baseHeight = 1.6;
-                _baseWidth = 0.53;
+                this._baseMass = 58;
+                this._baseHeight = 1.6;
+                this._baseWidth = 0.53;
             }
             else {
-                _baseMass = 62;
-                _baseHeight = 1.75;
-                _baseWidth = 0.58;
+                this._baseMass = 62;
+                this._baseHeight = 1.75;
+                this._baseWidth = 0.58;
             }
 
             this.predator = true;
@@ -1364,14 +1366,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.STOAT) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 10;
-                _baseHeight = 0.6;
-                _baseWidth = 0.2;
+                this._baseMass = 10;
+                this._baseHeight = 0.6;
+                this._baseWidth = 0.2;
             }
             else {
-                _baseMass = 8;
-                _baseHeight = 0.5;
-                _baseWidth = 0.16;
+                this._baseMass = 8;
+                this._baseHeight = 0.5;
+                this._baseWidth = 0.16;
             }
 
             this.predator = true;
@@ -1381,14 +1383,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.DEER) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 78;
-                _baseHeight = 2.2;
-                _baseWidth = 0.7;
+                this._baseMass = 78;
+                this._baseHeight = 2.2;
+                this._baseWidth = 0.7;
             }
             else {
-                _baseMass = 60;
-                _baseHeight = 1.9;
-                _baseWidth = 0.6;
+                this._baseMass = 60;
+                this._baseHeight = 1.9;
+                this._baseWidth = 0.6;
             }
             
             this.predator = false;
@@ -1398,14 +1400,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.RABBIT) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 22;
-                _baseHeight = 0.95;
-                _baseWidth = 0.34;
+                this._baseMass = 22;
+                this._baseHeight = 0.95;
+                this._baseWidth = 0.34;
             }
             else {
-                _baseMass = 14.9;
-                _baseHeight = 0.81;
-                _baseWidth = 0.3;
+                this._baseMass = 14.9;
+                this._baseHeight = 0.81;
+                this._baseWidth = 0.3;
             }
             
             this.predator = false;
@@ -1415,14 +1417,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.JACKAL) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 55;
-                _baseHeight = 1.6;
-                _baseWidth = 0.53;
+                this._baseMass = 55;
+                this._baseHeight = 1.6;
+                this._baseWidth = 0.53;
             }
             else {
-                _baseMass = 51;
-                _baseHeight = 1.55;
-                _baseWidth = 0.5;
+                this._baseMass = 51;
+                this._baseHeight = 1.55;
+                this._baseWidth = 0.5;
             }
             
             this.predator = true;
@@ -1432,14 +1434,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.COYOTE) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 36;
-                _baseHeight = 1.20;
-                _baseWidth = 0.4;
+                this._baseMass = 36;
+                this._baseHeight = 1.20;
+                this._baseWidth = 0.4;
             }
             else {
-                _baseMass = 32;
-                _baseHeight = 1.12;
-                _baseWidth = 0.37;
+                this._baseMass = 32;
+                this._baseHeight = 1.12;
+                this._baseWidth = 0.37;
             }
             
             this.predator = true;
@@ -1449,14 +1451,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.TIGER) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 88;
-                _baseHeight = 2.2;
-                _baseWidth = 0.73;
+                this._baseMass = 88;
+                this._baseHeight = 2.2;
+                this._baseWidth = 0.73;
             }
             else {
-                _baseMass = 82;
-                _baseHeight = 2.0;
-                _baseWidth = 0.66;
+                this._baseMass = 82;
+                this._baseHeight = 2.0;
+                this._baseWidth = 0.66;
             }
             
             this.predator = true;
@@ -1466,14 +1468,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.ANTELOPE) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 68;
-                _baseHeight = 2.0;
-                _baseWidth = 0.66;
+                this._baseMass = 68;
+                this._baseHeight = 2.0;
+                this._baseWidth = 0.66;
             }
             else {
-                _baseMass = 60;
-                _baseHeight = 1.9;
-                _baseWidth = 0.63;
+                this._baseMass = 60;
+                this._baseHeight = 1.9;
+                this._baseWidth = 0.63;
             }
             
             this.predator = false;
@@ -1483,14 +1485,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.PIG) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 46;
-                _baseHeight = 1.3;
-                _baseWidth = 0.54;
+                this._baseMass = 46;
+                this._baseHeight = 1.3;
+                this._baseWidth = 0.54;
             }
             else {
-                _baseMass = 44;
-                _baseHeight = 1.2;
-                _baseWidth = 0.5;
+                this._baseMass = 44;
+                this._baseHeight = 1.2;
+                this._baseWidth = 0.5;
             }
             
             this.predator = false;
@@ -1500,14 +1502,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HORSE) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 82;
-                _baseHeight = 2.0;
-                _baseWidth = 0.66;
+                this._baseMass = 82;
+                this._baseHeight = 2.0;
+                this._baseWidth = 0.66;
             }
             else {
-                _baseMass = 78;
-                _baseHeight = 1.9;
-                _baseWidth = 0.63;
+                this._baseMass = 78;
+                this._baseHeight = 1.9;
+                this._baseWidth = 0.63;
             }
             
             this.predator = false;
@@ -1517,14 +1519,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.MOUSE) {
             if (this.getSex() == SexEnum.MALE) {
-                _baseMass = 0.4;
-                _baseHeight = 0.16;
-                _baseWidth = 0.05;
+                this._baseMass = 0.4;
+                this._baseHeight = 0.16;
+                this._baseWidth = 0.05;
             }
             else {
-                _baseMass = 0.4;
-                _baseHeight = 0.15;
-                _baseWidth = 0.05;
+                this._baseMass = 0.4;
+                this._baseHeight = 0.15;
+                this._baseWidth = 0.05;
             }
             
             this.predator = false;
@@ -1532,14 +1534,34 @@ class CharacterEntity extends EntityWithStorage {
             this.setEyes(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
-        if (this.age.getValue() > 25) {
-            this.height = _baseHeight;
-        }
-        else if (this.age.getValue() < 0) {
-            this.height = _baseHeight / 20;
+        if (this.age.getValue() > 24) {
+            this.height = this._baseHeight;
         }
         else {
-            this.height = _baseHeight / (1 + (_baseHeight / 20) + Math.E^(-0.35 * (this.age.getValue() - 16)));
+            let _addition = 0;
+            if (this.age.getValue() > 21) {
+                _addition = .45;
+            }
+            else if (this.age.getValue() > 18) {
+                _addition = .4;
+            }
+            else if (this.age.getValue() > 15) {
+                _addition = .25;
+            }
+            else if (this.age.getValue() > 10) {
+                _addition = .15;
+            }
+            let _tempHeight = this._baseHeight*(this.age.getValue()/25);
+            _tempHeight = _tempHeight + (_tempHeight * _addition);
+            if (_tempHeight < this._baseHeight/6) {
+                this.height = this._baseHeight/6;
+            }
+            else if (_tempHeight > this._baseHeight) {
+                this.height = _baseHeight;
+            }
+            else {
+                this.height = _tempHeight;
+            }
         }
         this.width = this.height / 2.4;
         return this;
