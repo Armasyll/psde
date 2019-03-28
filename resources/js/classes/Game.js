@@ -944,6 +944,14 @@ class Game {
         }
         this.instancedMeshes[_id] = _mesh;
     }
+    static getMeshLocation(_mesh) {
+        if (Game.meshLocations.hasOwnProperty(_mesh)) {
+            return Game.meshLocations[_mesh];
+        }
+        else {
+            return null;
+        }
+    }
     static getMesh(_mesh) {
         if (_mesh == undefined) {
             return null;
@@ -1897,12 +1905,12 @@ class Game {
     static hasItemToCreate(_id) {
         return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(_id);
     }
-    static _createBackloggedItems() {
+    static _createBackloggedItems() { // It's InstancedItemEntities :v
         if (Game.itemsToCreateCounter == 0) {
             return true;
         }
         for (var _i in Game.itemsToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.itemsToCreate[_i]["mesh"])) {
+            if (Game.hasLoadedMesh(Game.itemsToCreate[_i]["entity"].getEntity().getMeshID())) {
                 Game.createItem(
                     Game.itemsToCreate[_i]["id"],
                     Game.itemsToCreate[_i]["entity"],
@@ -2784,10 +2792,6 @@ class Game {
                 _entity = new ItemEntity(_id, _name, _description, _image);
             }
         }
-        _mesh = Game.getMesh(_mesh);
-        if (_mesh != undefined) {
-            _mesh = _mesh.name;
-        }
         _entity.setMeshID(_mesh);
         _entity.setTextureID(_texture);
         return _entity;
@@ -2831,7 +2835,7 @@ class Game {
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(_entity.getMeshID()))) { // Never gonna trigger this, but here it is anyway :V
+        if (!(Game.hasLoadedMesh(_entity.getMeshID()))) {
             Game.loadMesh(_entity.getMeshID());
             Game.addItemToCreate(_id, _entity, _options, _position, _rotation, _scaling);
             return true;
