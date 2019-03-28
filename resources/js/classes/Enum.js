@@ -315,6 +315,9 @@ ApparelSlotEnum = {
     WRIST_L: 24,
     WRIST_R: 25,
     WRISTS: 26,
+    FOREARM_L: 27,
+    FOREARM_R:28,
+    FOREARMS:29,
     THUMB_L: 40,
     INDEX_L: 41,
     MIDDLE_L: 42,
@@ -432,6 +435,18 @@ ApparelSlotEnum = {
         26: {
             name: "Wrists",
             value: 26
+        },
+        27: {
+            name: "Left Forearm",
+            value: 27
+        },
+        28: {
+            name: "Right Forearm",
+            value: 28
+        },
+        29: {
+            name: "Forearms",
+            value: 29
         },
         40: {
             name: "Left Thumb",
