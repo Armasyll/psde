@@ -340,9 +340,9 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerClickObservable.add(function() {
-            if (!Game._finishedScene) {
+            if (!Game._finishedConfiguring) {
                 Game.generateApartment();
-                Game._finishedScene = true;
+                Game._finishedConfiguring = true;
                 Game.initPlayer();
                 Game.player.setName(nameInput.text);
                 GameGUI.setPlayerPortrait(Game.player);
@@ -357,8 +357,8 @@ class GameGUI {
             GameGUI.showHUD();
         });
         submitOffline.onPointerClickObservable.add(function() {
-            if (!Game._finishedScene) {
-                Game._finishedScene = true;
+            if (!Game._finishedConfiguring) {
+                Game._finishedConfiguring = true;
                 Game.generateApartment();
                 Game.initPlayer();
                 Game.player.setName(nameInput.text);

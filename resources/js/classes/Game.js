@@ -557,8 +557,8 @@ class Game {
         }
 
         this._finishedInitializing = false;
-        this._finishedFirstLoad = false;
-        this._finishedScene = false;
+        this._finishedConfiguring = false;
+        this._finishedConfiguring = false;
 
         this.keyboardControls = {};
         this.player = undefined;
@@ -634,14 +634,87 @@ class Game {
         this._filesToLoad -= 1;
         this.initialized = true;
     }
+    static renderLoopFunction() {
+        Game.scene.render();
+        if (!Game.finishedConfiguring()) {
+            if (Game.finishedLoadingFiles()) {
+                if (!Game.finishedInitializing()) {
+                    if (Game.debugEnabled) console.log("Finished loading assets.");
+                    Game.importItems();
+                    Game.importCosmetics();
+                    Game.importFurniture();
+                    Game._finishedInitializing = true;
+
+                    Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                        Game.functionControlOnKeyDown(evt.sourceEvent.keyCode);
+                    }));
+                    Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+                        Game.functionControlOnKeyUp(evt.sourceEvent.keyCode);
+                    }));
+                }
+                else if (Game.finishedInitializing()) {
+                    Client.initialize();
+                    Game.gui.resizeText();
+                    Game.gui.showCharacterChoiceMenu();
+                }
+            }
+        }
+    }
+    static beforeRenderFunction() {
+        if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
+            return null;
+        }
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
+            if (Game.camera.beta < 0.087) {
+                Game.camera.beta = 0.087;
+            }
+            else if (Game.camera.beta > 3.054) {
+                Game.camera.beta = 3.054;
+            }
+        }
+        if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
+            Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
+        }
+        for (let _entity in Game.characterControllers) {
+            if (!Game.entityControllers[_entity]._isAnimated) {
+                return null;
+            }
+            Game.entityControllers[_entity].moveAV();
+            if (Game.entityControllers[_entity].propertiesChanged) {
+                Game.entityControllers[_entity].updateProperties();
+            }
+        }
+        for (let _entity in Game.furnitureControllers) {
+            if (!Game.entityControllers[_entity]._isAnimated) {
+                return null;
+            }
+            Game.entityControllers[_entity].moveAV();
+        }
+    }
+    static afterRenderFunction() {
+        if (Game.hasBackloggedEntities) {
+            Game._createBackloggedMeshes();
+            Game._createBackloggedBoundingCollisions();
+            Game._createBackloggedFurniture();
+            Game._createBackloggedLighting();
+            Game._createBackloggedDoors();
+            Game._createBackloggedItems();
+            Game._createBackloggedCharacters();
+            Game._createBackloggedAttachments();
+            if (!Game._filesToLoad) {
+                Game.hasBackloggedEntities = false;
+            }
+        }
+    }
     static finishedInitializing() {
         return this._finishedInitializing;
     }
-    static finishedFirstLoad() {
-        return this._finishedFirstLoad;
-    }
     static finishedLoadingFiles() {
         return this._filesToLoad == 0;
+    }
+    static finishedConfiguring() {
+        return this._finishedConfiguring;
     }
     static initPhysics() {
         this.physicsPlugin = new BABYLON.CannonJSPlugin();
