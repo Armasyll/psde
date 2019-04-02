@@ -14,3 +14,27 @@ Zootopia belongs to Disney, Pack Street (name, setting, specific characters) bel
 ## About the game
 
 It's a browser-based 3d game.
+
+```
+# Entity hierarchy
+->AbstractEntity
+|-->Entity
+| |--->EntityWithStorage
+| |  |---->CharacterEntity
+| |  |---->FurnitureEntity
+| |
+| |--->ItemEntity
+| |  |---->ConsumableEntity
+| |  |---->KeyEntity
+| |  |---->EquipmentEntity
+| |      |----->ClothingEntity
+| |      |----->WeaponEntity
+| |
+| |--->SpellEntity
+|
+|-->InstancedEntity
+  |--->InstancedFurnitureEntity
+  |--->InstancedItemEntity
+     |---->InstancedEquipmentEntity
+         |----->InstancedClothingEntity
+         |----->InstancedWeaponEntity```
