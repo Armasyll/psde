@@ -624,7 +624,7 @@ Game.generateApartment = function() {
     Game.createCharacter("charlie", "Charlie", undefined, "charlieIcon", 28, SexEnum.FEMALE, SpeciesEnum.FOX, "foxF", "foxCorsac", undefined, new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9)).attachToLeftEye("eye01", "feralEyeBlue").attachToRightEye("eye01", "feralEyeBlue").attachToRightHand("wand02").attachToBone("ring01", "ring02Gold", "thumbProximinalPhalanx.l").attachToBone("ring02", "ring02GoldBrokenRuby", "fingersIndexProximinalPhalanx.l").attachToBone("ring01", "ring02Silver", "fingersPinkieProximinalPhalanx.l").attachToHead("hornsCurved04", "bone01");
     Game.getCharacterController("charlie").setIdleAnim("90_idleSquint01", 1, true);
     Game.getCharacterController("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);
-    Game.getCharacterEntity("charlie").setMaxMana("666").setMana("666").setLife("66").setStamina("66");
+    Game.getCharacterEntity("charlie").setMaxMana("666").setMana("666").setHealth("66").setStamina("66");
     new Dialogue(
         "charlieTalk",
         "Talk to Charlie",

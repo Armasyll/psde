@@ -598,14 +598,6 @@ class Game {
         this.LEVEL_MIN = 0;
         this.LEVEL_MAX = 20;
 
-        this.kWeaponSimpleMeleeTypes = new Set(["club","dagger","greatclub","handaxe","javelin","lighthammer","mace","quarterstaff","sickle","spear"]);
-        this.kWeaponSimpleRangedTypes = new Set(["lightcrossbow","dart","shortbow","sling"]);
-        this.kWeaponMartialMeleeTypes = new Set(["battleaxe","flail","glaive","greataxe","greatsword","halberd","lance","longsword","maul","morningstar","pike","rapier","scimitar","shortsword","trident","warpick","warhammer","whip"]);
-        this.kWeaponMartialRangedTypes = new Set(["blowgun","handcrossbow","heavycrossbow","longbow","net"]);
-        this.kWeaponMeleeTypes = new Set([...this.kWeaponSimpleMeleeTypes, ...this.kWeaponMartialMeleeTypes]);
-        this.kWeaponRangedTypes = new Set([...this.kWeaponSimpleRangedTypes, ...this.kWeaponMartialRangedTypes]);
-        this.kWeaponTypes = new Set([...this.kWeaponMeleeTypes, ...this.kWeaponRangedTypes]);
-
         this.loadDefaultTextures();
         this.loadDefaultMaterials();
         this.loadDefaultMeshes();
@@ -677,19 +669,17 @@ class Game {
             Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
         }
         for (let _entity in Game.characterControllers) {
-            if (!Game.entityControllers[_entity]._isAnimated) {
-                return null;
-            }
-            Game.entityControllers[_entity].moveAV();
-            if (Game.entityControllers[_entity].propertiesChanged) {
-                Game.entityControllers[_entity].updateProperties();
+            if (Game.characterControllers[_entity]._isAnimated) {
+                Game.characterControllers[_entity].moveAV();
+                if (Game.characterControllers[_entity].propertiesChanged) {
+                    Game.characterControllers[_entity].updateProperties();
+                }
             }
         }
         for (let _entity in Game.furnitureControllers) {
-            if (!Game.entityControllers[_entity]._isAnimated) {
-                return null;
+            if (Game.furnitureControllers[_entity]._isAnimated) {
+                Game.furnitureControllers[_entity].moveAV();
             }
-            Game.entityControllers[_entity].moveAV();
         }
     }
     static afterRenderFunction() {
@@ -2699,7 +2689,7 @@ class Game {
         _entity.setMeshID(_mesh);
         _entity.setTextureID(_texture);
         _entity.setPrice(_price);
-        _entity.setMass(_weight);
+        _entity.setWeight(_weight);
         return _entity;
     }
     /**
@@ -2758,7 +2748,7 @@ class Game {
             Game.addFurnitureToCreate(_id, _entity.getID(), _position, _rotation, _scaling);
             return true;
         }
-        var _loadedMesh = Game.addFurnitureMesh(_id, _entity.getMeshID(), _entity.getTextureID(), {mass:_entity.getMass()}, _position, _rotation, _scaling, true, true);
+        var _loadedMesh = Game.addFurnitureMesh(_id, _entity.getMeshID(), _entity.getTextureID(), {mass:_entity.getWeight()}, _position, _rotation, _scaling, true, true);
         var _controller = new FurnitureController(_id, _loadedMesh, _entity);
         _entity.setController(_controller);
         if (_entity.hasAvailableAction(ActionEnum.OPEN)) {
@@ -3246,7 +3236,7 @@ class Game {
             return;
         }
         if (_subEntity instanceof CharacterController) {
-            _subEntity.unequipEntity(_instancedItemEntity);
+            _subEntity.unequip(_instancedItemEntity);
         }
         if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
             _instancedItemEntity.setParent(null);
@@ -3359,7 +3349,7 @@ class Game {
             }
             return;
         }
-        _subEntity.unequipEntity(_instancedItemEntity);
+        _subEntity.unequip(_instancedItemEntity);
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);
         }

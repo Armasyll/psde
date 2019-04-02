@@ -24,10 +24,10 @@ class FurnitureController extends EntityController {
     }
 
     moveAV() { // animate it :V
-        var anim = null;
+        /*var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
         anim = this.doIdle(dt);
-        this.beginAnimation(anim);
+        this.beginAnimation(anim);*/
         return this;
     }
 

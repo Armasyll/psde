@@ -14,12 +14,12 @@ class FurnitureEntity extends EntityWithStorage {
 
         this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = 0;
-        this.setType(_type);
+        this.setFurnitureType(_type);
 
         Game.setFurnitureEntity(this.id, this);
     }
 
-    setType(_type) {
+    setFurnitureType(_type) {
         _type = Game.filterNumber(_type);
         switch(_type) {
             case FurnitureEnum.BED: {
@@ -165,7 +165,7 @@ class FurnitureEntity extends EntityWithStorage {
         this.type = _type;
         return this;
     }
-    getType() {
+    getFurnitureType() {
         return this.type;
     }
 

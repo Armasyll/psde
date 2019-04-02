@@ -1,16 +1,21 @@
-class InstancedClothingEntity extends InstancedItemEntity {
-    constructor(_id = undefined, _entity = undefined) {
+class InstancedClothingEntity extends InstancedEquipmentEntity {
+    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
         super(_id, _entity);
         if (!(this.entity instanceof ClothingEntity)) {
             this.dispose();
             return undefined;
         }
 
+        this.setOwner(_owner);
+
         Game.setInstancedClothingEntity(this.id, this);
     }
 
-    getApparelSlot() {
-        return this.entity.getApparelSlot();
+    getPhysicalProtection() {
+        return this.entity.getPhysicalProtection();
+    }
+    getMagickProtection() {
+        return this.entity.getMagickProtection();
     }
 
     clone(_id) {

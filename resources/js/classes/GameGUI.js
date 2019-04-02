@@ -441,25 +441,25 @@ class GameGUI {
                 portraitName.height = 0.25;
                 portraitName.width = 1.0;
                 portraitName.color = GameGUI.color;
-                var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
-                portraitStatsLifeContainer.height = 0.25;
-                portraitStatsLifeContainer.width = 0.85;
-                portraitStatsLifeContainer.thickness = 0;
-                    var portraitStatsLifeText = new BABYLON.GUI.TextBlock("portraitStatsLifeText");
-                    portraitStatsLifeText.text = "";
-                    portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.color = GameGUI.color;
-                    var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
-                    portraitStatsLifeSlider.minimum = 0;
-                    portraitStatsLifeSlider.maximum = 100;
-                    portraitStatsLifeSlider.isVertical = false;
-                    portraitStatsLifeSlider.displayThumb = false;
-                    portraitStatsLifeSlider.left = "16px";
-                    portraitStatsLifeSlider.height = 1.25;
-                    portraitStatsLifeSlider.thumbWidth = 0;
-                    portraitStatsLifeSlider.isEnabled = false;
-                    portraitStatsLifeSlider.color = "red";
+                var portraitStatsHealthContainer = new BABYLON.GUI.Rectangle("portraitStatsHealthContainer");
+                portraitStatsHealthContainer.height = 0.25;
+                portraitStatsHealthContainer.width = 0.85;
+                portraitStatsHealthContainer.thickness = 0;
+                    var portraitStatsHealthText = new BABYLON.GUI.TextBlock("portraitStatsHealthText");
+                    portraitStatsHealthText.text = "";
+                    portraitStatsHealthText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsHealthText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsHealthText.color = GameGUI.color;
+                    var portraitStatsHealthSlider = new BABYLON.GUI.Slider("portraitStatsHealth");
+                    portraitStatsHealthSlider.minimum = 0;
+                    portraitStatsHealthSlider.maximum = 100;
+                    portraitStatsHealthSlider.isVertical = false;
+                    portraitStatsHealthSlider.displayThumb = false;
+                    portraitStatsHealthSlider.left = "16px";
+                    portraitStatsHealthSlider.height = 1.25;
+                    portraitStatsHealthSlider.thumbWidth = 0;
+                    portraitStatsHealthSlider.isEnabled = false;
+                    portraitStatsHealthSlider.color = "red";
                 var portraitStatsManaContainer = new BABYLON.GUI.Rectangle("portraitStatsManaContainer");
                 portraitStatsManaContainer.height = 0.25;
                 portraitStatsManaContainer.width = 0.85;
@@ -503,9 +503,9 @@ class GameGUI {
         portraitAvatarContainer.addControl(portraitAvatar);
         portrait.addControl(portraitStats);
         portraitStats.addControl(portraitName);
-        portraitStatsLifeContainer.addControl(portraitStatsLifeSlider);
-        portraitStatsLifeContainer.addControl(portraitStatsLifeText);
-        portraitStats.addControl(portraitStatsLifeContainer);
+        portraitStatsHealthContainer.addControl(portraitStatsHealthSlider);
+        portraitStatsHealthContainer.addControl(portraitStatsHealthText);
+        portraitStats.addControl(portraitStatsHealthContainer);
         portraitStatsManaContainer.addControl(portraitStatsManaSlider);
         portraitStatsManaContainer.addControl(portraitStatsManaText);
         portraitStats.addControl(portraitStatsManaContainer);
@@ -557,26 +557,26 @@ class GameGUI {
                 portraitName.height = 0.25;
                 portraitName.width = 0.85;
                 portraitName.color = GameGUI.color;
-                var portraitStatsLifeContainer = new BABYLON.GUI.Rectangle("portraitStatsLifeContainer");
-                portraitStatsLifeContainer.height = 0.25;
-                portraitStatsLifeContainer.width = 0.85;
-                portraitStatsLifeContainer.thickness = 0;
-                    var portraitStatsLifeText = new BABYLON.GUI.TextBlock("portraitStatsLifeText");
-                    portraitStatsLifeText.text = "";
-                    portraitStatsLifeText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsLifeText.color = GameGUI.color;
-                    var portraitStatsLifeSlider = new BABYLON.GUI.Slider("portraitStatsLife");
-                    portraitStatsLifeSlider.minimum = 0;
-                    portraitStatsLifeSlider.maximum = 100;
-                    portraitStatsLifeSlider.isVertical = false;
-                    portraitStatsLifeSlider.displayThumb = false;
-                    portraitStatsLifeSlider.left = "16px";
-                    portraitStatsLifeSlider.height = 1.25;
-                    portraitStatsLifeSlider.thumbWidth = 0;
-                    portraitStatsLifeSlider.isEnabled = false;
-                    portraitStatsLifeSlider.scaleX = -1;
-                    portraitStatsLifeSlider.color = "red";
+                var portraitStatsHealthContainer = new BABYLON.GUI.Rectangle("portraitStatsHealthContainer");
+                portraitStatsHealthContainer.height = 0.25;
+                portraitStatsHealthContainer.width = 0.85;
+                portraitStatsHealthContainer.thickness = 0;
+                    var portraitStatsHealthText = new BABYLON.GUI.TextBlock("portraitStatsHealthText");
+                    portraitStatsHealthText.text = "";
+                    portraitStatsHealthText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+                    portraitStatsHealthText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    portraitStatsHealthText.color = GameGUI.color;
+                    var portraitStatsHealthSlider = new BABYLON.GUI.Slider("portraitStatsHealth");
+                    portraitStatsHealthSlider.minimum = 0;
+                    portraitStatsHealthSlider.maximum = 100;
+                    portraitStatsHealthSlider.isVertical = false;
+                    portraitStatsHealthSlider.displayThumb = false;
+                    portraitStatsHealthSlider.left = "16px";
+                    portraitStatsHealthSlider.height = 1.25;
+                    portraitStatsHealthSlider.thumbWidth = 0;
+                    portraitStatsHealthSlider.isEnabled = false;
+                    portraitStatsHealthSlider.scaleX = -1;
+                    portraitStatsHealthSlider.color = "red";
                 var portraitStatsManaContainer = new BABYLON.GUI.Rectangle("portraitStatsManaContainer");
                 portraitStatsManaContainer.height = 0.25;
                 portraitStatsManaContainer.width = 0.85;
@@ -622,9 +622,9 @@ class GameGUI {
         portrait.addControl(portraitAvatarContainer);
         portraitAvatarContainer.addControl(portraitAvatar);
         portraitStats.addControl(portraitName);
-        portraitStatsLifeContainer.addControl(portraitStatsLifeSlider);
-        portraitStatsLifeContainer.addControl(portraitStatsLifeText);
-        portraitStats.addControl(portraitStatsLifeContainer);
+        portraitStatsHealthContainer.addControl(portraitStatsHealthSlider);
+        portraitStatsHealthContainer.addControl(portraitStatsHealthText);
+        portraitStats.addControl(portraitStatsHealthContainer);
         portraitStatsManaContainer.addControl(portraitStatsManaSlider);
         portraitStatsManaContainer.addControl(portraitStatsManaText);
         portraitStats.addControl(portraitStatsManaContainer);
@@ -670,8 +670,8 @@ class GameGUI {
         else if (!(_entity instanceof AbstractEntity)) {
             return undefined;
         }
-        GameGUI._setPlayerPortraitLifeSlider(_entity.getLife()/_entity.getMaxLife()*100);
-        GameGUI._setPlayerPortraitLifeText(_entity.getLife() + "/" + _entity.getMaxLife());
+        GameGUI._setPlayerPortraitHealthSlider(_entity.getHealth()/_entity.getMaxHealth()*100);
+        GameGUI._setPlayerPortraitHealthText(_entity.getHealth() + "/" + _entity.getMaxHealth());
         if (_entity.getMaxMana() == 0) {
             GameGUI._hidePlayerPortraitMana();
         }
@@ -694,8 +694,8 @@ class GameGUI {
             return undefined;
         }
         if (_entity instanceof CharacterEntity) {
-            GameGUI._setTargetPortraitLifeSlider(_entity.getLife()/_entity.getMaxLife()*100);
-            GameGUI._setTargetPortraitLifeText(_entity.getLife() + "/" + _entity.getMaxLife());
+            GameGUI._setTargetPortraitHealthSlider(_entity.getHealth()/_entity.getMaxHealth()*100);
+            GameGUI._setTargetPortraitHealthText(_entity.getHealth() + "/" + _entity.getMaxHealth());
             if (_entity.getMaxMana() == 0) {
                 GameGUI._hideTargetPortraitMana();
             }
@@ -706,11 +706,11 @@ class GameGUI {
             }
             GameGUI._setTargetPortraitStaminaSlider(_entity.getStamina()/_entity.getMaxStamina()*100);
             GameGUI._setTargetPortraitStaminaText(_entity.getStamina() + "/" + _entity.getMaxStamina());
-            GameGUI._showTargetPortraitLife();
+            GameGUI._showTargetPortraitHealth();
             GameGUI._showTargetPortraitStamina();
         }
         else {
-            GameGUI._hideTargetPortraitLife();
+            GameGUI._hideTargetPortraitHealth();
             GameGUI._hideTargetPortraitMana();
             GameGUI._hideTargetPortraitStamina();
         }
@@ -723,10 +723,10 @@ class GameGUI {
     static _setPlayerPortraitName(_string) {
         GameGUI._playerPortrait.children[2].children[0].text = _string;
     }
-    static _setPlayerPortraitLifeSlider(_int = 100) {
+    static _setPlayerPortraitHealthSlider(_int = 100) {
         GameGUI._playerPortrait.children[2].children[1].children[0].value = _int;
     }
-    static _setPlayerPortraitLifeText(_text = "") {
+    static _setPlayerPortraitHealthText(_text = "") {
         GameGUI._playerPortrait.children[2].children[1].children[1].text = _text;
     }
     static _setPlayerPortraitStaminaSlider(_int = 100) {
@@ -755,16 +755,16 @@ class GameGUI {
     static _setTargetPortraitName(_string) {
         GameGUI._targetPortrait.children[1].children[0].text = _string;
     }
-    static _showTargetPortraitLife() {
+    static _showTargetPortraitHealth() {
         GameGUI._targetPortrait.children[1].children[1].isVisible = true;
     }
-    static _hideTargetPortraitLife() {
+    static _hideTargetPortraitHealth() {
         GameGUI._targetPortrait.children[1].children[1].isVisible = false;
     }
-    static _setTargetPortraitLifeSlider(_int = 100) {
+    static _setTargetPortraitHealthSlider(_int = 100) {
         GameGUI._targetPortrait.children[1].children[1].children[0].value = _int;
     }
-    static _setTargetPortraitLifeText(_text = "") {
+    static _setTargetPortraitHealthText(_text = "") {
         GameGUI._targetPortrait.children[1].children[1].children[1].text = _text;
     }
     static _showTargetPortraitStamina() {
@@ -921,14 +921,14 @@ class GameGUI {
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
         _summary.getChildByName("selectedImage").source = Game.getIcon(_instancedItemEntity.getImage());
         _summary.getChildByName("selectedDescription").text = _instancedItemEntity.getDescription();
-        var _massString = undefined;
-        if (_instancedItemEntity.getMass() < 1) {
-            _massString = String(_instancedItemEntity.getMass() * 1000) + "g";
+        var _weightString = undefined;
+        if (_instancedItemEntity.getWeight() < 1) {
+            _weightString = String(_instancedItemEntity.getWeight() * 1000) + "g";
         }
         else {
-            _massString = String(_instancedItemEntity.getMass()) + "kg";
+            _weightString = String(_instancedItemEntity.getWeight()) + "kg";
         }
-        _summary.getChildByName("selectedDetails").text = `Price: $${_instancedItemEntity.getPrice()}, Weight: ${_massString}`;
+        _summary.getChildByName("selectedDetails").text = `Price: $${_instancedItemEntity.getPrice()}, Weight: ${_weightString}`;
         var _actions = GameGUI._inventoryMenu.getChildByName("actions");
         for (var _i = _actions.children.length - 1; _i > -1; _i--) {
             _actions.removeControl(_actions.children[_i]);

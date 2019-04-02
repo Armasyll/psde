@@ -7,10 +7,10 @@ class Spell extends Entity {
      * @param  {String} _image       Image path of base64
      * @param  {String} _school      PSDE.kSpellSchools
      * @param  {Number} _manaCost    Cost of Spell in Mana
-     * @param  {Number} _lifeCost    Cost of Spell in Life
+     * @param  {Number} _healthCost  Cost of Spell in Health
      * @param  {Number} _staminaCost Cost of Spell in Stamina
      */
-    constructor(_id, _name = "", _description = undefined, _image = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _lifeCost = 0, _staminaCost = 0) {
+    constructor(_id, _name = "", _description = undefined, _image = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _healthCost = 0, _staminaCost = 0) {
         super(_id, _name, _description, _image);
         this.entityType = EntityEnum.SPELL;
 
@@ -28,11 +28,11 @@ class Spell extends Entity {
             this.manaCost = Number.parseInt(_manaCost);
         }
 
-        if (isNaN(_lifeCost)) {
-            this.lifeCost = 0;
+        if (isNaN(_healthCost)) {
+            this.healthCost = 0;
         }
         else {
-            this.lifeCost = Number.parseInt(_lifeCost);
+            this.healthCost = Number.parseInt(_healthCost);
         }
 
         if (isNaN(_staminaCost)) {

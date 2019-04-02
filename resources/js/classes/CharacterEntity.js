@@ -66,31 +66,48 @@ class CharacterEntity extends EntityWithStorage {
          */
         this.handedness = "hand.r";
         /**
-         * Mesh IDs this CharacterEntity has attached; they're really just meshes :l
-         * @type {<String, <String, BABYLON.InstancedMesh>>} Bone ID and Mesh ID, and BABYLON.InstancedMesh
+         * Attached cosmetics
+         * @type {<String, [Cosmetics]>} Bone ID and Cosmetic
          */
         this.attachedCosmetics = {
-            "ROOT":{},
-            "FOCUS":{},
-            "head":{},
-            "ear.l":{},
-            "ear.r":{},
-            "eye.l":{},
-            "eye.r":{},
-            "neck":{}
+            HEAD:[],
+            EAR_L:[],
+            EAR_R:[],
+            NECK:[],
+            SHOULDER_L:[],
+            SHOULDER_R:[],
+            FOREARM_L:[],
+            FOREARM_R:[],
+            HAND_L:[],
+            HAND_R:[],
+            CHEST:[],
+            PELVIS:[],
+            LEGS:[],
+            FOOT_L:[],
+            FOOT_R:[]
         };
         /**
-         * Entities this CharacterEntity has equipped
-         * @type {<String, InstancedEntity>} Bone ID and InstancedEntity
+         * Equipment
+         * @type {<String, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
          */
-        this.equippedEntities = {
-            "ear.l":null,
-            "ear.r":null,
-            "hand.l":null,
-            "hand.r":null,
-            "head":null,
-            "neck":null
+        this.equipment = {
+            HEAD:null,
+            EAR_L:null,
+            EAR_R:null,
+            NECK:null,
+            SHOULDER_L:null,
+            SHOULDER_R:null,
+            FOREARM_L:null,
+            FOREARM_R:null,
+            HAND_L:null,
+            HAND_R:null,
+            CHEST:null,
+            PELVIS:null,
+            LEGS:null,
+            FOOT_L:null,
+            FOOT_R:null
         };
+        this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * Base disposition this CharacterEntity has for others
          * @type {Number}  Passion
@@ -175,9 +192,13 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Number}
          */
         this.charisma = new BoundedNumber(10, 1, 30);
+        this.physicalMultiplier = new BoundedNumber(0, 1, 10);
+        this.magickMultiplier = new BoundedNumber(0, 0, 10);
+        this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+        this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.experiencePoints = new BoundedNumber(0, Game.XP_MIN, Game.XP_MAX);
         this.level = new BoundedNumber(1, Game.LEVEL_MIN, Game.LEVEL_MAX);
-        this.durability.set(100, 0, 100);
+        this.health.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
@@ -218,18 +239,11 @@ class CharacterEntity extends EntityWithStorage {
          * @type {[type]}
          */
         this.furColourBHex = undefined;
-        /**
-         * Size in reference to a tundra wolf
-         * @type {Number}
-         */
-        this.bodySize = 0.5;
-        this.height = 1.2;
-        this.width = 0.34;
-        this._baseMass = 36; // Average mass, in kilograms, of NW at the age of 26
+        this._baseWeight = 36; // Average weight, in kilograms, of NW at the age of 26
         this._baseHeight = 1.20; // Average height, in metres, of NW at the age of 26
         this._baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
-        this.muscle = 0.5;
-        this.fat = 0.25;
+        this.height = 1.2;
+        this.width = 0.34;
         /**
          * Whether or not this CharacterEntity is a predator
          * @type {Boolean} True - predator, false - prey
@@ -345,71 +359,232 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     getEquipment() {
-        return this.equippedEntities;
+        return this.equipment;
     }
-    equipEntity(_entity, _bone = undefined) {
-        if (_bone instanceof BABYLON.Bone) {
-            _bone = _bone.id;
-        }
-        _entity = Game.getEntity(_entity);
+    equip(_entity, _equipmentSlot = undefined) {
+        /*
+        Get an instanced entity out of whatever _entity is, otherwise fail
+        */
         if (!(_entity instanceof AbstractEntity)) {
+            let _tempEntity = Game.getInstancedItemEntity(_entity);
+            if (!(_tempEntity instanceof InstancedItemEntity)) {
+                _tempEntity = Game.getItemEntity(_entity);
+                if (!(_tempEntity instanceof ItemEntity)) {
+                    return this;
+                }
+                _tempEntity = _entity.createInstance();
+            }
+            _entity = _tempEntity;
+        }
+        /*
+        Get an apparel slot out of whatever _equipmentSlot is, otherwise fail
+         */
+        if (_equipmentSlot == undefined && _entity instanceof InstancedItemEntity) {
+            _equipmentSlot = _entity.getEquipmentSlot();
+        }
+        else if (typeof _equipmentSlot == "string") {
+            _equipmentSlot = _equipmentSlot.toUpperCase();
+            if (!ApparelSlotEnum.hasOwnProperty(_equipmentSlot)) {
+                return this;
+            }
+        }
+        else {
+            if (ApparelSlotEnum.properties.hasOwnProperty(_equipmentSlot)) {
+                _equipmentSlot = ApparelSlotEnum.properties[_equipmentSlot].key;
+            }
+            else {
+                return this;
+            }
+        }
+        /*
+        If the apparel slot isn't an equipment slot, fail
+         */
+        if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
             return this;
         }
-        if (!(this.equippedEntities.hasOwnProperty(_bone))) {
-            
+        /*
+        Clear out the equipment slot if it's in use, and set its value to _entity
+         */
+        if (this.equipment[_equipmentSlot] == _entity) {}
+        else if (this.equipment[_equipmentSlot] instanceof AbstractEntity) {
+            this.unequipByEntity(_equipmentSlot);
         }
-        this.equippedEntities[_bone] = _entity;
+        else {
+            this.equipment[_equipmentSlot] = _entity;
+        }
+        /*
+        If we've got a controller in the world, and it's got an active mesh, attach _entity's mesh to it
+         */
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
-            switch (_bone) {
-                case "head": {
+            switch (_equipmentSlot) {
+                case "HEAD": {
                     this.controller.attachToHead(_entity.getMeshID(), _entity.getTextureID());
                 }
-                case "hand.r": {
-                    this.controller.attachToRightHand(_entity.getMeshID(), _entity.getTextureID());
+                case "NECK": {
+                    this.controller.attachToNeck(_entity.getMeshID(), _entity.getTextureID());
                     break;
                 }
-                case "hand.l": {
+                case "SHOULDER_L": {
+                    this.controller.attachToLeftShoulder(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "SHOULDER_R": {
+                    this.controller.attachToRightShoulder(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOREARM_L": {
+                    this.controller.attachToLeftForearm(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOREARM_R": {
+                    this.controller.attachToRightForearm(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "HAND_L": {
                     this.controller.attachToLeftHand(_entity.getMeshID(), _entity.getTextureID());
                     break;
                 }
-                default: {
-                    this.controller.attachToBone(_entity.getMeshID(), _entity.getTextureID(), _bone);
+                case "HAND_R": {
+                    this.controller.attachToRightHand(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "CHEST": {
+                    this.controller.attachToChest(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "PELVIS": {
+                    this.controller.attachToPelvis(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "LEGS": {
+                    this.controller.attachToLegs(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOOT_L": {
+                    this.controller.attachToLeftFoot(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOOT_R": {
+                    this.controller.attachToRightFoot(_entity.getMeshID(), _entity.getTextureID());
+                    break;
                 }
             }
         }
         return this;
     }
-    unequipEntity(_blob) {
-        if (_blob instanceof BABYLON.Bone || this.equippedEntities.hasOwnProperty(_blob)) {
-            return this.unequipByBone(_blob);
+    unequip(_blob) {
+        if (ApparelSlotEnum.hasOwnProperty(_blob) || ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
+            return this.unequipBySlot(_blob);
+        }
+        else if (_blob instanceof InstancedItemEntity) {
+            return this.unequipBySlot(_blob.getEquipmentSlot());
         }
         else {
             return this.unequipByEntity(_blob);
         }
     }
     unequipByEntity(_entity) {
-        _entity = Game.getEntity(_entity);
-        var _bone = null;
-        if (_entity instanceof AbstractEntity) {
-            for (var _i in this.equippedEntities) {
-                if (this.equippedEntities[_i] == _entity) {
-                    this.equippedEntities[_i] = null;
-                    _bone = _i;
+        if (!(_entity instanceof AbstractEntity)) {
+            let _tempEntity = Game.getInstancedItemEntity(_entity);
+            if (!(_tempEntity instanceof InstancedItemEntity)) {
+                _tempEntity = Game.getItemEntity(_entity);
+                if (!(_tempEntity instanceof ItemEntity)) {
+                    return this;
+                }
+            }
+            _entity = _tempEntity;
+        }
+        let _equipmentSlot = null;
+        if (_entity instanceof InstancedItemEntity) {
+            for (let _i in this.equipment) {
+                if (this.equipment[_i] == _entity) {
+                    _equipmentSlot = _i;
                 }
             }
         }
-        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
-            this.controller.detachFromBone(_bone);
+        else {
+            for (let _i in this.equipment) {
+                if (this.equipment[_i].getEntity() == _entity) {
+                    _equipmentSlot = _i;
+                }
+            }
         }
+        this.unequipBySlot(_equipmentSlot);
         return this;
     }
-    unequipByBone(_bone) {
-        if (_bone instanceof BABYLON.Bone) {
-            _bone = _bone.id;
+    unequipBySlot(_equipmentSlot) {
+        if (typeof _equipmentSlot == "string") {
+            _equipmentSlot = _equipmentSlot.toUpperCase();
+            if (!ApparelSlotEnum.hasOwnProperty(_equipmentSlot)) {
+                return this;
+            }
         }
-        this.equippedEntities[_bone] = null;
+        else {
+            if (ApparelSlotEnum.properties.hasOwnProperty(_equipmentSlot)) {
+                _equipmentSlot = ApparelSlotEnum.properties[_equipmentSlot].key;
+            }
+            else {
+                return this;
+            }
+        }
+        if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
+            return this;
+        }
+        this.equipment[_equipmentSlot] = null;
         if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
-            this.controller.detachFromBone(_bone);
+            switch (_equipmentSlot) {
+                case "HEAD": {
+                    this.controller.detachFromHead(_entity.getMeshID(), _entity.getTextureID());
+                }
+                case "NECK": {
+                    this.controller.detachFromNeck(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "SHOULDER_L": {
+                    this.controller.detachFromLeftShoulder(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "SHOULDER_R": {
+                    this.controller.detachFromRightShoulder(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOREARM_L": {
+                    this.controller.detachFromLeftForearm(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOREARM_R": {
+                    this.controller.detachFromRightForearm(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "HAND_L": {
+                    this.controller.detachFromLeftHand(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "HAND_R": {
+                    this.controller.detachFromRightHand(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "CHEST": {
+                    this.controller.detachFromChest(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "PELVIS": {
+                    this.controller.detachFromPelvis(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "LEGS": {
+                    this.controller.detachFromLegs(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOOT_L": {
+                    this.controller.detachFromLeftFoot(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+                case "FOOT_R": {
+                    this.controller.detachFromRightFoot(_entity.getMeshID(), _entity.getTextureID());
+                    break;
+                }
+            }
         }
         return this;
     }
@@ -417,16 +592,16 @@ class CharacterEntity extends EntityWithStorage {
         if (_blob instanceof BABYLON.Bone) {
             _blob = _blob.id;
         }
-        if (this.equippedEntities.hasOwnProperty(_blob)) {
-            return this.equippedEntities[_blob] != null;
+        if (this.equipment.hasOwnProperty(_blob)) {
+            return this.equipment[_blob] != null;
         }
         _blob = Game.getEntity(_blob);
         if (!(_blob instanceof AbstractEntity)) {
             return false;
         }
-        for (var _bone in this.equippedEntities) {
-            if (this.equippedEntities[_bone] instanceof AbstractEntity) {
-                if (this.equippedEntities[_bone].id == _blob.id) {
+        for (var _bone in this.equipment) {
+            if (this.equipment[_bone] instanceof AbstractEntity) {
+                if (this.equipment[_bone].id == _blob.id) {
                     return true;
                 }
             }
@@ -689,38 +864,38 @@ class CharacterEntity extends EntityWithStorage {
         return this.experiencePoints.getValue();
     }
 
-    setLife(_int) {
-        this.durability.set(_int);
+    setHealth(_int) {
+        this.health.set(_int);
         return this;
     }
-    addLife(_int = 1) {
-        return this.durability.inc(_int);
+    addHealth(_int = 1) {
+        return this.health.inc(_int);
     }
-    subtractLife(_int = 1) {
-        return this.durability.dec(_int);
+    subtractHealth(_int = 1) {
+        return this.health.dec(_int);
     }
-    getLife() {
+    getHealth() {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.durability.getValue();
+        return this.health.getValue();
     }
 
-    setMaxLife(_int) {
-        this.durability.setMax(_int);
+    setMaxHealth(_int) {
+        this.health.setMax(_int);
         return this;
     }
-    addMaxLife(_int = 1) {
-        return this.durability.incMax(_int);
+    addMaxHealth(_int = 1) {
+        return this.health.incMax(_int);
     }
-    subtractMaxLife(_int = 1) {
-        return this.durability.decMax(_int);
+    subtractMaxHealth(_int = 1) {
+        return this.health.decMax(_int);
     }
-    getMaxLife() {
+    getMaxHealth() {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.durability.getMax();
+        return this.health.getMax();
     }
 
     setMana(_int) {
@@ -1154,14 +1329,14 @@ class CharacterEntity extends EntityWithStorage {
             }
         }
         if (this.hasEquippedEntity(_hand)) {
-            if (!this.unequipEntity(_hand)) {
+            if (!this.unequip(_hand)) {
                 return false;
             }
         }
-        return this.equipEntity(_instancedItem, _hand);
+        return this.equip(_instancedItem, _hand);
     }
     release(_instancedItemEntity, _hand = undefined) {
-        return this.unequipEntity(_instancedItemEntity); // TODO: remove this
+        return this.unequip(_instancedItemEntity); // TODO: remove this
     }
 
     getStance() {
@@ -1282,12 +1457,12 @@ class CharacterEntity extends EntityWithStorage {
     _generateProperties() {
         if (this.species == SpeciesEnum.FOX) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 36;
+                this._baseWeight = 36;
                 this._baseHeight = 1.20;
                 this._baseWidth = 0.4;
             }
             else {
-                this._baseMass = 32;
+                this._baseWeight = 32;
                 this._baseHeight = 1.12;
                 this._baseWidth = 0.37;
             }
@@ -1299,12 +1474,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.SHEEP) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 34;
+                this._baseWeight = 34;
                 this._baseHeight = 1.35;
                 this._baseWidth = 0.45;
             }
             else {
-                this._baseMass = 28;
+                this._baseWeight = 28;
                 this._baseHeight = 1.0;
                 this._baseWidth = 0.33;
             }
@@ -1320,7 +1495,7 @@ class CharacterEntity extends EntityWithStorage {
                 this._baseWidth = 0.63;
             }
             else {
-                this._baseMass = 66;
+                this._baseWeight = 66;
                 this._baseHeight = 1.8;
                 this._baseWidth = 0.6;
             }
@@ -1332,12 +1507,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.AARDWOLF) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 32;
+                this._baseWeight = 32;
                 this._baseHeight = 1.10;
                 this._baseWidth = 0.36;
             }
             else {
-                this._baseMass = 28;
+                this._baseWeight = 28;
                 this._baseHeight = 1.02;
                 this._baseWidth = 0.34;
             }
@@ -1349,12 +1524,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HYENA) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 58;
+                this._baseWeight = 58;
                 this._baseHeight = 1.6;
                 this._baseWidth = 0.53;
             }
             else {
-                this._baseMass = 62;
+                this._baseWeight = 62;
                 this._baseHeight = 1.75;
                 this._baseWidth = 0.58;
             }
@@ -1366,12 +1541,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.STOAT) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 10;
+                this._baseWeight = 10;
                 this._baseHeight = 0.6;
                 this._baseWidth = 0.2;
             }
             else {
-                this._baseMass = 8;
+                this._baseWeight = 8;
                 this._baseHeight = 0.5;
                 this._baseWidth = 0.16;
             }
@@ -1383,12 +1558,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.DEER) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 78;
+                this._baseWeight = 78;
                 this._baseHeight = 2.2;
                 this._baseWidth = 0.7;
             }
             else {
-                this._baseMass = 60;
+                this._baseWeight = 60;
                 this._baseHeight = 1.9;
                 this._baseWidth = 0.6;
             }
@@ -1400,12 +1575,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.RABBIT) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 22;
+                this._baseWeight = 22;
                 this._baseHeight = 0.95;
                 this._baseWidth = 0.34;
             }
             else {
-                this._baseMass = 14.9;
+                this._baseWeight = 14.9;
                 this._baseHeight = 0.81;
                 this._baseWidth = 0.3;
             }
@@ -1417,12 +1592,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.JACKAL) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 55;
+                this._baseWeight = 55;
                 this._baseHeight = 1.6;
                 this._baseWidth = 0.53;
             }
             else {
-                this._baseMass = 51;
+                this._baseWeight = 51;
                 this._baseHeight = 1.55;
                 this._baseWidth = 0.5;
             }
@@ -1434,12 +1609,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.COYOTE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 36;
+                this._baseWeight = 36;
                 this._baseHeight = 1.20;
                 this._baseWidth = 0.4;
             }
             else {
-                this._baseMass = 32;
+                this._baseWeight = 32;
                 this._baseHeight = 1.12;
                 this._baseWidth = 0.37;
             }
@@ -1451,12 +1626,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.TIGER) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 88;
+                this._baseWeight = 88;
                 this._baseHeight = 2.2;
                 this._baseWidth = 0.73;
             }
             else {
-                this._baseMass = 82;
+                this._baseWeight = 82;
                 this._baseHeight = 2.0;
                 this._baseWidth = 0.66;
             }
@@ -1468,12 +1643,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.ANTELOPE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 68;
+                this._baseWeight = 68;
                 this._baseHeight = 2.0;
                 this._baseWidth = 0.66;
             }
             else {
-                this._baseMass = 60;
+                this._baseWeight = 60;
                 this._baseHeight = 1.9;
                 this._baseWidth = 0.63;
             }
@@ -1485,12 +1660,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.PIG) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 46;
+                this._baseWeight = 46;
                 this._baseHeight = 1.3;
                 this._baseWidth = 0.54;
             }
             else {
-                this._baseMass = 44;
+                this._baseWeight = 44;
                 this._baseHeight = 1.2;
                 this._baseWidth = 0.5;
             }
@@ -1502,12 +1677,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HORSE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 82;
+                this._baseWeight = 82;
                 this._baseHeight = 2.0;
                 this._baseWidth = 0.66;
             }
             else {
-                this._baseMass = 78;
+                this._baseWeight = 78;
                 this._baseHeight = 1.9;
                 this._baseWidth = 0.63;
             }
@@ -1519,12 +1694,12 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.MOUSE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseMass = 0.4;
+                this._baseWeight = 0.4;
                 this._baseHeight = 0.16;
                 this._baseWidth = 0.05;
             }
             else {
-                this._baseMass = 0.4;
+                this._baseWeight = 0.4;
                 this._baseHeight = 0.15;
                 this._baseWidth = 0.05;
             }
@@ -1565,6 +1740,72 @@ class CharacterEntity extends EntityWithStorage {
         }
         this.width = this.height / 2.4;
         return this;
+    }
+    _generateBaseStats() {
+        this.health.setMax(this.endurance.getValue()/2 + this.strength.getValue()/2 + (this.level.getValue() * this.endurance.getValue()/10));
+        this.mana.setMax(this.intelligence.getValue() * this.magickMultiplier.getValue());
+        this.stamina.setMax(this.strength.getValue() + this.wisdom.getValue() + this.dexterity.getValue() + this.endurance.getValue());
+    }
+    /**
+     * Generates protections and multipliers; to be run after status effects and equipment are changed
+     */
+    _generateAdditionalStats() {
+        this.physicalMultiplier
+        this.magickMultiplier
+        for (let _slot in this.equipment) {
+            if (!(this.equipment[_armor] instanceof ClothingEntity)) {
+                switch (this.equipment[_armor]) {
+                    
+                }
+                this.physicalProtection += this.equipment[_armor].getPhysicalProtectionRating();
+            }
+        }
+        this.magickProtection
+    }
+    calculatePhysicalDamage(_target = undefined, _weapon = undefined, _skill = undefined) {
+        if (_target.hasGodMode()) {
+            return 0;
+        }
+        else if (this._godMode) {
+            return _target.health.getValue() + 1;
+        }
+        else {
+            return (_weapon.getPhysicalDamage() * ((100 + (this.strength.getValue() - 50)) / 100) * (_weapon.health.getValue()/_weapon.health.getMax()) * this.physicalMultiplier.getValue()) / _target.calculatePhysicalProtection(_weapon);
+        }
+    }
+    calculatePhysicalProtection(_weapon) {
+        if (this.hasGodeMode()) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+        else {
+            return;
+        }
+    }
+    /**
+     * Calculate magick-based damage against target using weapon
+     * @param  {AbstractEntity} _target A character, most likely. Or an item on the ground. Or a door. Or the sun.
+     * @param  {AbstractEntity} _weapon A staff, wand, another character, or your hand, if you're feeling dirty.
+     * @return {Number}         Calculates the amount of damage the character can do when casting a spell through an entity (or their hand) and returns a number.
+     */
+    calculateMagickDamage(_target = undefined, _weapon = undefined, _skill = undefined) {
+        if (!(_target instanceof AbstractEntity)) {
+            _target = Game.getEntity(_target);
+            if (!(_target instanceof AbstractEntity)) {
+                return 0;
+            }
+        }
+        if (_target.hasGodMode()) {
+            return 0;
+        }
+        else if (this._godMode) {
+            return _target.health.getValue() + 1;
+        }
+        else {
+            return (_weapon.getMagickDamage() * ((100 + (this.wisdom.getValue() - 50)) / 100) * (_weapon.health.getValue()/_weapon.health.getMax()) * this.magickMultiplier.getValue()) / _target.calculateMagickProtection(_weapon);
+        }
+    }
+    calculateMagickProtection(_weapon) {
+        
     }
     getSpecies() {
         return this.species;
@@ -1627,6 +1868,9 @@ class CharacterEntity extends EntityWithStorage {
     }
     disableGodMode() {
         this._godMode = false;
+    }
+    hasGodMode() {
+        return this._godMode;
     }
 
     dispose() {

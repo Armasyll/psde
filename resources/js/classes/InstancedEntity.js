@@ -6,9 +6,9 @@ class InstancedEntity extends AbstractEntity {
      * @param  {String} _name          Name
      * @param  {Character} _owner      Owner
      * @param  {Number} _price         Price, defaults to 0
-     * @param  {Number} _mass          Mass, defaults to 0.001
-     * @param  {Number} _durability    Durability, defaults to 1
-     * @param  {Number} _durabilityMax Max durability, defaults to 1
+     * @param  {Number} _weight        Weight, defaults to 0.001
+     * @param  {Number} _health        Health, defaults to 1
+     * @param  {Number} _healthMax     Max health, defaults to 1
      */
     constructor(_id, _entity, _name = undefined, _description = undefined, _image = undefined) {
         super(_id, _name, _description);
@@ -21,7 +21,7 @@ class InstancedEntity extends AbstractEntity {
         this.setDescription(_description || this.entity.getDescription());
         this.setImage(_image || this.entity.getImage());
         this.entityType = _entity.entityType;
-        this.durability = this.entity.durability.clone();
+        this.health = this.entity.health.clone();
 
         this._useOwnAvailableActions = false;
         this._useOwnHiddenAvailableActions = false;
@@ -43,8 +43,8 @@ class InstancedEntity extends AbstractEntity {
     getMaterialID() {
         return this.entity.getMaterialID();
     }
-    getMass() {
-        return this.entity.getMass();
+    getWeight() {
+        return this.entity.getWeight();
     }
 
     getPrice() {
@@ -256,7 +256,7 @@ class InstancedEntity extends AbstractEntity {
     
     clone(_id) {
         _instancedEntity = new InstancedEntity(_id, this.entity, this.name, this.description, this.image);
-        _instancedEntity.durability = this.durability.clone();
+        _instancedEntity.health = this.health.clone();
         _instancedEntity.specialProperties = new Set(this.specialProperties);
         return _instancedEntity;
     }

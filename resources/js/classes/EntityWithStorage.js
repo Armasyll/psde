@@ -5,15 +5,15 @@ class EntityWithStorage extends Entity {
         Map of integers, related to item slots, and InstancedItemEntities
          */
         this.items = new Map();
-        this.storageMass = new BoundedNumber(0, 0, 10);
+        this.storageWeight = new BoundedNumber(0, 0, 10);
         this.maxStorageSlots = 9;
     }
-    setMaxStorageMass(_int) {
-        this.storageMass.setMax(_int);
+    setMaxStorageWeight(_int) {
+        this.storageWeight.setMax(_int);
         return this;
     }
-    getMaxStorageMass() {
-        return this.storageMass.getMax();
+    getMaxStorageWeight() {
+        return this.storageWeight.getMax();
     }
     setMaxStorageSlots(_int) {
         this.maxStorageSlots = Game.filterInt(_int);
@@ -25,16 +25,16 @@ class EntityWithStorage extends Entity {
     getAvailableSlots() {
         return this.maxStorageSlots - this.items.size;
     }
-    calculateUsedStorageMass() {
-        let _mass = 0;
+    calculateUsedStorageWeight() {
+        let _weight = 0;
         this.items.forEach(function(_item) {
-            _mass += _item.getMass();
+            _weight += _item.getWeight();
         }, this);
-        this.storageMass.setValue(_mass);
-        return _mass;
+        this.storageWeight.setValue(_weight);
+        return _weight;
     }
-    getUsedStorageMass() {
-        return this.storageMass.getValue();
+    getUsedStorageWeight() {
+        return this.storageWeight.getValue();
     }
     getUsedStorageSlots() {
         return this.items.size;
@@ -59,7 +59,7 @@ class EntityWithStorage extends Entity {
         }
         if (_abstractEntity instanceof InstancedItemEntity) {
             this.items.set(_slot, _abstractEntity);
-            this.storageMass.inc(_abstractEntity.getMass());
+            this.storageWeight.inc(_abstractEntity.getWeight());
             return 0;
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
@@ -89,7 +89,7 @@ class EntityWithStorage extends Entity {
             let _slot = _abstractEntity;
             _abstractEntity = this.items.get(_abstractEntity);
             if (_abstractEntity instanceof InstancedItemEntity) {
-                this.storageMass.dec(_abstractEntity.getMass());
+                this.storageWeight.dec(_abstractEntity.getWeight());
                 this.items.delete(_slot);
             }
             return 0;
@@ -101,7 +101,7 @@ class EntityWithStorage extends Entity {
         if (_abstractEntity instanceof InstancedItemEntity) {
             for (let _i of this.items.keys()) {
                 if (this.items.get(_i) == _abstractEntity) {
-                    this.storageMass.dec(_abstractEntity.getMass());
+                    this.storageWeight.dec(_abstractEntity.getWeight());
                     this.items.delete(_i);
                     return 0;
                 }
@@ -203,9 +203,9 @@ class EntityWithStorage extends Entity {
         delete this.items;
         this.storageSlots.clear();
         delete this.storageSlots;
-        delete this.totalStorageMass;
+        delete this.totalStorageWeight;
         delete this.totalStorageSlots;
-        delete this.usedStorageMass;
+        delete this.usedStorageWeight;
         super.dispose();
         return undefined;
     }

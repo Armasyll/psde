@@ -11,12 +11,12 @@ class Entity extends AbstractEntity {
         super(_id, _name, _description, _image);
         this.entityType = _entityType;;
         /**
-         * Mass in kilograms
+         * Weight in kilograms
          * @type {BoundedNumber} 1 to Number.MAX_SAFE_INTEGER
          */
-        this.mass = new BoundedNumber(1, 0, Number.MAX_SAFE_INTEGER);
+        this.weight = new BoundedNumber(1, 0, Number.MAX_SAFE_INTEGER);
         this.price = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
-        this.durability = new BoundedNumber(100, 0, 100);
+        this.health = new BoundedNumber(100, 0, 100);
         this.meshID = null;
         this.textureID = null;
         this.materialID = null;
@@ -29,12 +29,12 @@ class Entity extends AbstractEntity {
         Game.setEntity(this.id, this);
     }
 
-    setMass(_int) {
-        this.mass.set(_int);
+    setWeight(_int) {
+        this.weight.set(_int);
         return this;
     }
-    getMass() {
-        return this.mass.getValue();
+    getWeight() {
+        return this.weight.getValue();
     }
 
     setPrice(_int) {
@@ -45,32 +45,32 @@ class Entity extends AbstractEntity {
         return this.price.getValue();
     }
 
-    setDurability(_int) {
-        this.durability.set(_int);
+    setHealth(_int) {
+        this.health.set(_int);
         return this;
     }
-    addDurability(_int = 1) {
-        return this.durability.inc(_int);
+    addHealth(_int = 1) {
+        return this.health.inc(_int);
     }
-    subtractDurability(_int = 1) {
-        return this.durability.dec(_int);
+    subtractHealth(_int = 1) {
+        return this.health.dec(_int);
     }
-    getDurability() {
-        return this.durability.value;
+    getHealth() {
+        return this.health.value;
     }
 
-    setMaxDurability(_int) {
-        this.durability.setMax(_int);
+    setMaxHealth(_int) {
+        this.health.setMax(_int);
         return this;
     }
-    addMaxDurability(_int = 1) {
-        return this.durability.incMax(_int);
+    addMaxHealth(_int = 1) {
+        return this.health.incMax(_int);
     }
-    subtractMaxDurability(_int = 1) {
-        return this.durability.decMax(_int);
+    subtractMaxHealth(_int = 1) {
+        return this.health.decMax(_int);
     }
-    getMaxDurability() {
-        return this.durability._max;
+    getMaxHealth() {
+        return this.health._max;
     }
 
     setMeshID(_mesh) {
@@ -281,9 +281,9 @@ class Entity extends AbstractEntity {
         _entity.specialProperties = new Set(this.specialProperties);
         _entity.defaultAction = this.defaultAction;
         // variables from Entity
-        _entity.mass.copyFrom(this.mass);
+        _entity.weight.copyFrom(this.weight);
         _entity.price.copyFrom(this.price);
-        _entity.durability.copyFrom(this.durability);
+        _entity.health.copyFrom(this.health);
         return _entity;
     }
     createInstance(_id = undefined) {

@@ -66,8 +66,8 @@ class BoundedNumber {
         if (isNaN(_int)) {
             return this;
         }
-        if (_int < Number.MIN_SAFE_INTEGER) {
-            _int = Number.MIN_SAFE_INTEGER;
+        if (_int <= Number.MIN_SAFE_INTEGER) {
+            _int = Number.MIN_SAFE_INTEGER + 1;
         }
         else if (_int > this._maximum) {
             _int = this._maximum - 1;
@@ -97,8 +97,8 @@ class BoundedNumber {
         if (_int < this._minimum) {
             _int = this._minimum + 1;
         }
-        else if (_int > Number.MAX_SAFE_INTEGER) {
-            _int = Number.MAX_SAFE_INTEGER;
+        else if (_int >= Number.MAX_SAFE_INTEGER) {
+            _int = Number.MAX_SAFE_INTEGER - 1;
         }
         this._maximum = _int;
         this.maximum = _int;

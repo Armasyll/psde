@@ -10,13 +10,34 @@ class ItemEntity extends Entity {
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItemIcon", _itemType = ItemEnum.GENERAL) {
         super(_id, _name, _description, _image, EntityEnum.ITEM);
 
-        this.itemType = _itemType;
+        this.itemType = ItemEnum.GENERAL;
 
         this.addAvailableAction(ActionEnum.DROP);
         this.addAvailableAction(ActionEnum.HOLD);
         this.addAvailableAction(ActionEnum.TAKE);
+        this.setItemType(_itemType);
 
         Game.setItemEntity(this.id, this);
+    }
+
+    setItemType(_type) {
+        if (typeof _type == "string") {
+            _type = _type.toUpperCase();
+            if (!ItemEnum.hasOwnProperty(_type)) {
+                _type = ItemEnum.GENERAL;
+            }
+            else {
+                _type = ItemEnum[_type];
+            }
+        }
+        else if (!ItemEnum.properties.hasOwnProperty(_type)) {
+            _type = ItemEnum.GENERAL;
+        }
+        this.itemType = _type;
+        return this;
+    }
+    getItemType() {
+        return this.itemType;
     }
 
     clone(_id = undefined) {
@@ -31,9 +52,9 @@ class ItemEntity extends Entity {
         _itemEntity.specialProperties = new Set(this.specialProperties);
         _itemEntity.defaultAction = this.defaultAction;
         // variables from Entity
-        _itemEntity.mass.copyFrom(this.mass);
+        _itemEntity.weight.copyFrom(this.weight);
         _itemEntity.price.copyFrom(this.price);
-        _itemEntity.durability.copyFrom(this.durability);
+        _itemEntity.health.copyFrom(this.health);
         return _itemEntity;
     }
     createInstance(_id = undefined) {

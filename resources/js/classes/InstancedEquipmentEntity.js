@@ -1,18 +1,16 @@
-class InstancedItemEntity extends InstancedEntity {
+class InstancedEquipmentEntity extends InstancedItemEntity {
     constructor(_id = undefined, _entity = undefined, _owner = undefined) {
         super(_id, _entity);
-        if (!(this.entity instanceof Entity)) {
+        if (!(this.entity instanceof EquipmentEntity)) {
             this.dispose();
             return undefined;
         }
 
         this.setOwner(_owner);
-
-        Game.setInstancedItemEntity(this.id, this);
     }
 
-    getItemType() {
-        return this.entity.getItemType();
+    getEquipmentSlot() {
+        return this.entity.getEquipmentSlot();
     }
 
     clone(_id) {
@@ -20,10 +18,9 @@ class InstancedItemEntity extends InstancedEntity {
         if (typeof _id != "string") {
             _id = genUUIDv4();
         }
-        return new InstancedItemEntity(_id, this.entity);
+        return new InstancedEquipmentEntity(_id, this.entity);
     }
     dispose() {
-        Game.removeInstancedItemEntity(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
