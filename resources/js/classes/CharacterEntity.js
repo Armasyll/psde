@@ -430,6 +430,7 @@ class CharacterEntity extends EntityWithStorage {
             switch (_equipmentSlot) {
                 case "HEAD": {
                     this.controller.attachToHead(_entity.getMeshID(), _entity.getTextureID());
+                    break;
                 }
                 case "NECK": {
                     this.controller.attachToNeck(_entity.getMeshID(), _entity.getTextureID());
