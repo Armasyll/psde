@@ -107,7 +107,6 @@ class CharacterEntity extends EntityWithStorage {
             FOOT_L:null,
             FOOT_R:null
         };
-        this._equipmentSet = new Set();
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * Base disposition this CharacterEntity has for others
@@ -420,11 +419,9 @@ class CharacterEntity extends EntityWithStorage {
         else if (this.equipment[_equipmentSlot] instanceof AbstractEntity) {
             this.unequipBySlot(_equipmentSlot);
             this.equipment[_equipmentSlot] = _entity;
-            this._equipmentSet.add(_entity);
         }
         else {
             this.equipment[_equipmentSlot] = _entity;
-            this._equipmentSet.add(_entity);
         }
         /*
         If we've got a controller in the world, and it's got an active mesh, attach _entity's mesh to it
@@ -532,7 +529,6 @@ class CharacterEntity extends EntityWithStorage {
             return this;
         }
         let _entity = this.equipment[_equipmentSlot];
-        this._equipmentSet.delete(this.equipment[_equipmentSlot]);
         this.equipment[_equipmentSlot] = null;
         if (_entity instanceof AbstractEntity && this.controller instanceof CharacterController && this.controller.hasMesh()) {
             switch (_equipmentSlot) {
