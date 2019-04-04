@@ -62,9 +62,9 @@ class CharacterEntity extends EntityWithStorage {
         this.spells = new Set();
         /**
          * Dominant hand
-         * @type {String} "hand.l" or "hand.r"
+         * @type {HandednessEnum} NONE, LEFT, or RIGHT
          */
-        this.handedness = "hand.r";
+        this.handedness = HandednessEnum.RIGHT;
         /**
          * Attached cosmetics
          * @type {<String, [Cosmetics]>} Bone ID and Cosmetic
@@ -107,6 +107,7 @@ class CharacterEntity extends EntityWithStorage {
             FOOT_L:null,
             FOOT_R:null
         };
+        this._equipmentSet = new Set();
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * Base disposition this CharacterEntity has for others
@@ -368,11 +369,10 @@ class CharacterEntity extends EntityWithStorage {
         if (!(_entity instanceof AbstractEntity)) {
             let _tempEntity = Game.getInstancedItemEntity(_entity);
             if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = Game.getItemEntity(_entity);
-                if (!(_tempEntity instanceof ItemEntity)) {
+                _tempEntity = this.getItem(_entity);
+                if (!(_tempEntity instanceof InstancedItemEntity)) {
                     return this;
                 }
-                _tempEntity = _entity.createInstance();
             }
             _entity = _tempEntity;
         }
@@ -397,6 +397,17 @@ class CharacterEntity extends EntityWithStorage {
             }
         }
         /*
+        Overrides for general slots
+         */
+        if (_equipmentSlot == ApparelSlotEnum.HANDS) {
+            if (this.handedness == HandednessEnum.LEFT) {
+                _equipmentSlot = ApparelSlotEnum.HAND_L;
+            }
+            else {
+                _equipmentSlot = ApparelSlotEnum.HAND_R;
+            }
+        }
+        /*
         If the apparel slot isn't an equipment slot, fail
          */
         if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
@@ -407,10 +418,13 @@ class CharacterEntity extends EntityWithStorage {
          */
         if (this.equipment[_equipmentSlot] == _entity) {}
         else if (this.equipment[_equipmentSlot] instanceof AbstractEntity) {
-            this.unequipByEntity(_equipmentSlot);
+            this.unequipBySlot(_equipmentSlot);
+            this.equipment[_equipmentSlot] = _entity;
+            this._equipmentSet.add(_entity);
         }
         else {
             this.equipment[_equipmentSlot] = _entity;
+            this._equipmentSet.add(_entity);
         }
         /*
         If we've got a controller in the world, and it's got an active mesh, attach _entity's mesh to it
@@ -476,9 +490,6 @@ class CharacterEntity extends EntityWithStorage {
         if (ApparelSlotEnum.hasOwnProperty(_blob) || ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
             return this.unequipBySlot(_blob);
         }
-        else if (_blob instanceof InstancedItemEntity) {
-            return this.unequipBySlot(_blob.getEquipmentSlot());
-        }
         else {
             return this.unequipByEntity(_blob);
         }
@@ -487,30 +498,20 @@ class CharacterEntity extends EntityWithStorage {
         if (!(_entity instanceof AbstractEntity)) {
             let _tempEntity = Game.getInstancedItemEntity(_entity);
             if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = Game.getItemEntity(_entity);
-                if (!(_tempEntity instanceof ItemEntity)) {
+                _tempEntity = this.getItem(_entity);
+                if (!(_tempEntity instanceof InstancedItemEntity)) {
                     return this;
                 }
             }
             _entity = _tempEntity;
         }
         let _equipmentSlot = null;
-        if (_entity instanceof InstancedItemEntity) {
-            for (let _i in this.equipment) {
-                if (this.equipment[_i] == _entity) {
-                    _equipmentSlot = _i;
-                }
+        for (let _slot in this.equipment) {
+            if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot] == _entity) {
+                _equipmentSlot = _slot;
             }
         }
-        else {
-            for (let _i in this.equipment) {
-                if (this.equipment[_i].getEntity() == _entity) {
-                    _equipmentSlot = _i;
-                }
-            }
-        }
-        this.unequipBySlot(_equipmentSlot);
-        return this;
+        return this.unequipBySlot(_equipmentSlot);
     }
     unequipBySlot(_equipmentSlot) {
         if (typeof _equipmentSlot == "string") {
@@ -530,8 +531,10 @@ class CharacterEntity extends EntityWithStorage {
         if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
             return this;
         }
+        let _entity = this.equipment[_equipmentSlot];
+        this._equipmentSet.delete(this.equipment[_equipmentSlot]);
         this.equipment[_equipmentSlot] = null;
-        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
+        if (_entity instanceof AbstractEntity && this.controller instanceof CharacterController && this.controller.hasMesh()) {
             switch (_equipmentSlot) {
                 case "HEAD": {
                     this.controller.detachFromHead(_entity.getMeshID(), _entity.getTextureID());
@@ -588,20 +591,27 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this;
     }
-    hasEquippedEntity(_blob) {
-        if (_blob instanceof BABYLON.Bone) {
-            _blob = _blob.id;
+    hasEquipment(_entity) {
+        if (!(_entity instanceof AbstractEntity)) {
+            let _tempEntity = Game.getInstancedItemEntity(_entity);
+            if (!(_tempEntity instanceof InstancedItemEntity)) {
+                _tempEntity = Game.getItemEntity(_entity);
+                if (!(_tempEntity instanceof ItemEntity)) {
+                    return null;
+                }
+            }
+            _entity = _tempEntity;
         }
-        if (this.equipment.hasOwnProperty(_blob)) {
-            return this.equipment[_blob] != null;
+        if (_entity instanceof Entity) {
+            for (let _slot in this.equipment) {
+                if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot].getEntity() == _entity) {
+                    return true;
+                }
+            }
         }
-        _blob = Game.getEntity(_blob);
-        if (!(_blob instanceof AbstractEntity)) {
-            return false;
-        }
-        for (var _bone in this.equipment) {
-            if (this.equipment[_bone] instanceof AbstractEntity) {
-                if (this.equipment[_bone].id == _blob.id) {
+        else if (_entity instanceof InstancedEntity) {
+            for (let _slot in this.equipment) {
+                if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot] == _entity) {
                     return true;
                 }
             }
@@ -660,7 +670,7 @@ class CharacterEntity extends EntityWithStorage {
      * @return {this}
      */
     removeItem(_abstractEntity) {
-        if (_abstractEntity instanceof InstancedItemEntity) {
+        if (_abstractEntity instanceof AbstractEntity) {
             this.unequipByEntity(_abstractEntity);
             super.removeItem(_abstractEntity);
             return this;
@@ -671,7 +681,7 @@ class CharacterEntity extends EntityWithStorage {
         }
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
-            return this.removeItem(_instancedItem.createInstance());
+            return this.removeItem(_instancedItem);
         }
         if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
         return this;
@@ -1304,39 +1314,20 @@ class CharacterEntity extends EntityWithStorage {
         return typeof this.furColourA != 'undefined';
     }
 
-    hold(_instancedItem, _hand = undefined) {
-        var _tempItem = Game.getInstancedItemEntity(_instancedItem);
-        if (!(_tempItem instanceof InstancedItemEntity)) {
-            _tempItem = Game.getItemEntity(_instancedItem);
-            if (!(_tempItem instanceof ItemEntity)) {
-                return null;
+    hold(_instancedItem, _hand) {
+        if (_hand != ApparelSlotEnum.HAND_L && _hand != ApparelSlotEnum.HAND_R) {
+            if (this.handedness == HandednessEnum.LEFT) {
+                _hand = ApparelSlotEnum.HAND_L;
             }
-        }
-        _instancedItem = this.getItem(_tempItem);
-        if (!(_instancedItem instanceof AbstractEntity)) {
-            return false;
-        }
-        
-        if (_hand != "hand.r" && _hand != "hand.l") {
-            _hand = this.handedness;
-            if (this.hasEquippedEntity(_hand)) {
-                if (_hand == "hand.r") {
-                    _hand = "hand.l";
-                }
-                else {
-                    _hand = "hand.r";
-                }
-            }
-        }
-        if (this.hasEquippedEntity(_hand)) {
-            if (!this.unequip(_hand)) {
-                return false;
+            else {
+                _hand = ApparelSlotEnum.HAND_R;
             }
         }
         return this.equip(_instancedItem, _hand);
     }
+    // TODO: remove this
     release(_instancedItemEntity, _hand = undefined) {
-        return this.unequip(_instancedItemEntity); // TODO: remove this
+        return this.unequip(_instancedItemEntity);
     }
 
     getStance() {

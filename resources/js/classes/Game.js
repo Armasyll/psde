@@ -3310,7 +3310,7 @@ class Game {
             return;
         }
         if (_subEntity instanceof CharacterEntity) {
-            _subEntity.equipEntity(_instancedItemEntity);
+            _subEntity.equip(_instancedItemEntity);
         }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);

@@ -943,7 +943,7 @@ class GameGUI {
                     break;
                 }
                 case ActionEnum.HOLD : {
-                    if (Game.player.hasEquippedEntity(_instancedItemEntity)) {
+                    if (Game.player.hasEquipment(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
                         _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
                     }

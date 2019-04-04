@@ -98,7 +98,7 @@ class EntityWithStorage extends Entity {
         /*
         else if the parameter is an InstancedItemEntity
          */
-        if (_abstractEntity instanceof InstancedItemEntity) {
+        if (_abstractEntity instanceof AbstractEntity) {
             for (let _i of this.items.keys()) {
                 if (this.items.get(_i) == _abstractEntity) {
                     this.storageWeight.dec(_abstractEntity.getWeight());
@@ -117,7 +117,7 @@ class EntityWithStorage extends Entity {
         }
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
-            return this.removeItem(_instancedItem.createInstance());
+            return this.removeItem(_instancedItem);
         }
         if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
         return 1;
@@ -156,7 +156,7 @@ class EntityWithStorage extends Entity {
         }
         if (_abstractEntity instanceof InstancedItemEntity) {
             for (let _i of this.items.keys()) {
-                if (this.items.get(_i) == _abstractEntity) {
+                if (this.items.get(_i) instanceof InstancedEntity && this.items.get(_i) == _abstractEntity) {
                     return this.items.get(_i);
                 }
             }
@@ -179,7 +179,7 @@ class EntityWithStorage extends Entity {
         _instancedItem = Game.getItemEntity(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
             for (let _i of this.items.keys()) {
-                if (this.items.get(_i).getEntity().getID() == _instancedItem.getID()) {
+                if (this.items.get(_i) instanceof InstancedEntity && this.items.get(_i).getEntity() == _instancedItem) {
                     return this.items.get(_i);
                 }
             }

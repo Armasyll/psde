@@ -590,6 +590,28 @@ ApparelSlotEnum = {
         }
     }
 };
+HandednessEnum = {
+    NONE: 0,
+    LEFT: 14,
+    RIGHT: 15,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        14: {
+            name: "Left",
+            value: 14,
+            key: "LEFT"
+        },
+        15: {
+            name: "Right",
+            value: 15,
+            key: "RIGHT"
+        }
+    }
+}
 PawEnum = {
     NONE: 0,
     FUR: 1,
@@ -1415,5 +1437,121 @@ WeaponEnum = {
             value: 40,
             key: "SHOTGUN"
         },
+    }
+}
+WeaponPropertiesEnum = {
+    NONE: 0,
+    AMMUNITION: 1,
+    FINESSE: 2,
+    HEAVY: 3,
+    LIGHT: 4,
+    LOADING: 5,
+    RANGE: 6,
+    REACH: 7,
+    SPECIAL: 8,
+    THROWN: 9,
+    TWOHANDED: 10,
+    VERSATILE: 11,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        1: {
+            name: "Ammunition",
+            value: 1,
+            key: "AMMUNITION"
+        },
+        2: {
+            name: "Finesse",
+            value: 2,
+            key: "FINESSE"
+        },
+        3: {
+            name: "Heavy",
+            value: 3,
+            key: "HEAVY"
+        },
+        4: {
+            name: "Light",
+            value: 4,
+            key: "LIGHT"
+        },
+        5: {
+            name: "Loading",
+            value: 5,
+            key: "LOADING"
+        },
+        6: {
+            name: "Range",
+            value: 6,
+            key: "RANGE"
+        },
+        7: {
+            name: "Reach",
+            value: 7,
+            key: "REACH"
+        },
+        8: {
+            name: "Special",
+            value: 8,
+            key: "SPECIAL"
+        },
+        9: {
+            name: "Thrown",
+            value: 9,
+            key: "THROWN"
+        },
+        10: {
+            name: "Two-Handed",
+            value: 10,
+            key: "TWOHANDED"
+        },
+        11: {
+            name: "Versatile",
+            value: 11,
+            key: "VERSATILE"
+        }
+    }
+}
+ArcaneFocusEnum = {
+    NONE: 0,
+    CRYSTAL: 1,
+    ORB: 2,
+    ROD: 3,
+    STAFF: 4,
+    WAND: 5,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        1: {
+            name: "Crystal",
+            value: 1,
+            key: "CRYSTAL"
+        },
+        2: {
+            name: "Orb",
+            value: 2,
+            key: "ORB"
+        },
+        3: {
+            name: "Rod",
+            value: 3,
+            key: "ROD"
+        },
+        4: {
+            name: "Staff",
+            value: 4,
+            key: "STAFF"
+        },
+        5: {
+            name: "Wand",
+            value: 5,
+            key: "WAND"
+        }
     }
 }
