@@ -17,7 +17,7 @@ Game.createItemEntity("cheeseWedge", "Cheese Wedge", "A wedge of cheese.", "chee
 
 Game.createItemEntity("barbute01", "Barbute", "", "barbute01Icon", "barbute01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createItemEntity("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01Icon", "barbuteHorned01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
-Game.createItemEntity("birdMask01", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01Icon", "birdMask01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
+Game.createItemEntity("birdMask01", "Bird Mask", "A mask resembling a bird's beak.", "birdMask01Icon", "birdMask01", "birdMask01", ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createItemEntity("wizardHat02", "Wizard Hat", "A silly, wide-brimmed hat.", "wizardHat02Icon", "wizardHat02", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createItemEntity("bracer01l", "Left Bracer", "Left iron bracer.", undefined, "bracer01.l", undefined, ItemEnum.APPAREL, ApparelSlotEnum.FOREARM_L);
 Game.createItemEntity("bracer01r", "Right Bracer", "Right iron bracer.", undefined, "bracer01.r", undefined, ItemEnum.APPAREL, ApparelSlotEnum.FOREARM_R);
