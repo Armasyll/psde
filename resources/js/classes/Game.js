@@ -594,10 +594,6 @@ class Game {
         this.actionTalk = new ActionData(ActionEnum.TALK, Game.actionTalkFunction, false);
         this.actionEquip = new ActionData(ActionEnum.EQUIP, Game.actionEquipFunction, false);
         this.actionUnequip = new ActionData(ActionEnum.UNEQUIP, Game.actionUnequipFunction, false);
-        this.XP_MIN = 0;
-        this.XP_MAP = 355000;
-        this.LEVEL_MIN = 0;
-        this.LEVEL_MAX = 20;
 
         this.loadDefaultTextures();
         this.loadDefaultMaterials();
@@ -2089,10 +2085,23 @@ class Game {
         }
         return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
     }
-    static filterFloat(_int) {
-        _int = Number.parseFloat(_int);
+    static filterFloat(_float) {
+        _float = Number.parseFloat(_float);
+        if (isNaN(_float)) {
+            return 0;
+        }
+        else if (_float > Number.MAX_SAFE_INTEGER) {
+            _float = Number.MAX_SAFE_INTEGER;
+        }
+        else if (_float < Number.MIN_SAFE_INTEGER) {
+            _float = Number.MIN_SAFE_INTEGER;
+        }
+        return Number(_float.toFixed(4));
+    }
+    static filterInt(_int) {
+        _int = Number.parseInt(_int);
         if (isNaN(_int)) {
-            return 1;
+            return 0;
         }
         else if (_int > Number.MAX_SAFE_INTEGER) {
             _int = Number.MAX_SAFE_INTEGER;
@@ -2100,10 +2109,7 @@ class Game {
         else if (_int < Number.MIN_SAFE_INTEGER) {
             _int = Number.MIN_SAFE_INTEGER;
         }
-        return Number(_int.toFixed(4));
-    }
-    static filterInt(_int) {
-        return Math.round(Game.filterFloat(_int));
+        return Math.round(_int);
     }
     static filterNumber(_int) {
         return Game.filterFloat(_int);
@@ -3729,7 +3735,7 @@ class Game {
 
     static calculateLevel(_int) {
         _int = Game.filterInt(_int);
-        if (_int >= Game.XP_MAX) {
+        if (_int >= 355000) {
             return 20;
         }
         else if (_int >= 305000) {
@@ -3790,94 +3796,6 @@ class Game {
             return 1;
         }
         return 0;
-    }
-    static calculateXP(_int) {
-        _int = Game.filterInt(_int);
-        switch (_int) {
-            case (20) : {
-                return Game.XP_MAX;
-                break;
-            }
-            case (19) : {
-                return 305000;
-                break;
-            }
-            case (18) : {
-                return 265000;
-                break;
-            }
-            case (17) : {
-                return 225000;
-                break;
-            }
-            case (16) : {
-                return 195000;
-                break;
-            }
-            case (15) : {
-                return 165000;
-                break;
-            }
-            case (14) : {
-                return 140000;
-                break;
-            }
-            case (13) : {
-                return 120000;
-                break;
-            }
-            case (12) : {
-                return 100000;
-                break;
-            }
-            case (11) : {
-                return 85000;
-                break;
-            }
-            case (10) : {
-                return 64000;
-                break;
-            }
-            case (9) : {
-                return 48000;
-                break;
-            }
-            case (8) : {
-                return 34000;
-                break;
-            }
-            case (7) : {
-                return 23000;
-                break;
-            }
-            case (6) : {
-                return 14000;
-                break;
-            }
-            case (5) : {
-                return 6500;
-                break;
-            }
-            case (4) : {
-                return 2700;
-                break;
-            }
-            case (3) : {
-                return 900;
-                break;
-            }
-            case (2) : {
-                return 300;
-                break;
-            }
-            case (1) : {
-                return 0;
-                break;
-            }
-            default : {
-                return 0;
-            }
-        }
     }
     static tgm() {
         Game.player.toggleGodMode();

@@ -196,8 +196,7 @@ class CharacterEntity extends EntityWithStorage {
         this.magickMultiplier = new BoundedNumber(0, 0, 10);
         this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
-        this.experiencePoints = new BoundedNumber(0, Game.XP_MIN, Game.XP_MAX);
-        this.level = new BoundedNumber(1, Game.LEVEL_MIN, Game.LEVEL_MAX);
+        this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         this.health.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed
@@ -239,10 +238,35 @@ class CharacterEntity extends EntityWithStorage {
          * @type {[type]}
          */
         this.furColourBHex = undefined;
-        this._baseWeight = 36; // Average weight, in kilograms, of NW at the age of 26
-        this._baseHeight = 1.20; // Average height, in metres, of NW at the age of 26
-        this._baseWidth = 0.4; // Average width, in metres, of NW at the age of 26
+        /**
+         * Average weight, in kilograms, of parent species; updated by this._generateProperties
+         * @type {Number}
+         */
+        this._baseWeight = 36;
+        /**
+         * Average height, in metres, of parent species; updated by this._generateProperties
+         * @type {Number}
+         */
+        this._baseHeight = 1.20;
+        /**
+         * Average width, in metres, of parent species; updated by this._generateProperties
+         * @type {Number}
+         */
+        this._baseWidth = 0.4;
+        /**
+         * Weight, in kilograms
+         * @type {Number}
+         */
+        this.weight = 0;
+        /**
+         * Height, in mtres
+         * @type {Number}
+         */
         this.height = 1.2;
+        /**
+         * Width, in metres
+         * @type {Number}
+         */
         this.width = 0.34;
         /**
          * Whether or not this CharacterEntity is a predator
@@ -269,11 +293,6 @@ class CharacterEntity extends EntityWithStorage {
          * @type {String} (PeltEnum)
          */
         this.peltType = PeltEnum.FUR;
-        /**
-         * Pelt trimmed
-         * @type {Number} 0 to 100
-         */
-        this.peltTrimmed = 50;
         /**
          * Map of Characters and this Character's disposition for them
          * @type {Map} <Character, Object>
@@ -307,6 +326,8 @@ class CharacterEntity extends EntityWithStorage {
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
         this._generateProperties();
+        this._generateBaseStats();
+        this._generateAdditionalStats();
         Game.setCharacterEntity(this.id, this);
     }
     
@@ -689,15 +710,8 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
 
-    clean() {
-        this.cleanliness = 100;
-        this.odorSex = 0;
-        this.odorSweat = 0;
-        return this;
-    }
-
     setAge(_int) {
-        this.age.set(_int);
+        this.age.setValue(_int);
         if (this.age.getValue() >= 18) {
             this.addAvailableAction(ActionEnum.SEX);
             this.addAvailableAction(ActionEnum.MASTURBATE);
@@ -716,7 +730,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setHunger(_int) {
-        this.hunger.set(_int);
+        this.hunger.setValue(_int);
         return this;
     }
     addHunger(_int) {
@@ -730,7 +744,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setStrength(_int) {
-        this.strength.set(_int);
+        this.strength.setValue(_int);
         return this;
     }
     addStrength(_int) {
@@ -746,7 +760,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.strength.getValue();
     }
     setDexterity(_int) {
-        this.dexterity.set(_int);
+        this.dexterity.setValue(_int);
         return this;
     }
     addDexterity(_int) {
@@ -762,7 +776,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.dexterity.getValue();
     }
     setConstitution(_int) {
-        this.constitution.set(_int);
+        this.constitution.setValue(_int);
         return this;
     }
     addConstitution(_int) {
@@ -778,7 +792,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.constitution.getValue();
     }
     setIntelligence(_int) {
-        this.intelligence.set(_int);
+        this.intelligence.setValue(_int);
         return this;
     }
     addIntelligence(_int) {
@@ -794,7 +808,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.intelligence.getValue();
     }
     setWisdom(_int) {
-        this.wisdom.set(_int);
+        this.wisdom.setValue(_int);
         return this;
     }
     addWisdom(_int) {
@@ -810,7 +824,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.wisdom.getValue();
     }
     setCharisma(_int) {
-        this.charisma.set(_int);
+        this.charisma.setValue(_int);
         return this;
     }
     addCharisma(_int) {
@@ -847,20 +861,11 @@ class CharacterEntity extends EntityWithStorage {
         return {strength: this.strength.getValue(), dexterity: this.dexterity.getValue(), constitution: this.constitution.getValue(), intelligence: this.intelligence.getValue(), wisdom: this.wisdom.getValue(), charisma: this.charisma.getValue()};
     }
 
-    setLevel(_int = 0) {
-        this.level.set(_int);
-        this.experiencePoints.set(Game.calculateXP(_int));
-        return this;
-    }
     getLevel() {
-        if (this._godMode) {
-            return this.level.getMax();
-        }
-        return this.level.getValue();
+        return Game.calculateLevel(this.experiencePoints.getValue())
     }
     setXP(_int = 0) {
-        this.experiencePoints.set(_int);
-        this.level.set(Game.calculateLevel(_int));
+        this.experiencePoints.setValue(_int);
         return this;
     }
     addXP(_int) {
@@ -877,13 +882,22 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setHealth(_int) {
-        this.health.set(_int);
+        if (this._godMode) {
+            return this;
+        }
+        this.health.setValue(_int);
         return this;
     }
     addHealth(_int = 1) {
+        if (this._godMode) {
+            return this.health.getValue();
+        }
         return this.health.inc(_int);
     }
     subtractHealth(_int = 1) {
+        if (this._godMode) {
+            return this.health.getValue();
+        }
         return this.health.dec(_int);
     }
     getHealth() {
@@ -894,13 +908,22 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setMaxHealth(_int) {
+        if (this._godMode) {
+            return this;
+        }
         this.health.setMax(_int);
         return this;
     }
     addMaxHealth(_int = 1) {
+        if (this._godMode) {
+            return this.health.getMax();
+        }
         return this.health.incMax(_int);
     }
     subtractMaxHealth(_int = 1) {
+        if (this._godMode) {
+            return this.health.getMax();
+        }
         return this.health.decMax(_int);
     }
     getMaxHealth() {
@@ -911,7 +934,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setMana(_int) {
-        this.mana.set(_int);
+        this.mana.setValue(_int);
         return this;
     }
     addMana(_int = 1) {
@@ -944,25 +967,8 @@ class CharacterEntity extends EntityWithStorage {
         return this.mana.getMax();
     }
 
-    setManaCostOffsetPercent(_int) {
-        this.manaCostOffsetPercent.set(_int);
-        return this;
-    }
-    addManaCostOffsetPercent(_int = 1) {
-        return this.manaCostOffsetPercent.inc(_int);
-    }
-    subtractManaCostOffsetPercent(_int = 1) {
-        return this.manaCostOffsetPercent.dec(_int);
-    }
-    getManaCostOffsetPercent() {
-        if (this._godMode) {
-            return this.manaCostOffsetPercent.getMax();
-        }
-        return this.manaCostOffsetPercent.getValue();
-    }
-
     setStamina(_int) {
-        this.stamina.set(_int);
+        this.stamina.setValue(_int);
         return this;
     }
     addStamina(_int) {
@@ -996,7 +1002,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setMoney(_int) {
-        this.money.set(_int);
+        this.money.setValue(_int);
         return this;
     }
     addMoney(_int) {
@@ -1019,7 +1025,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setPhilautia(_int) {
-        this.philautia.set(_int);
+        this.philautia.setValue(_int);
         return this;
     }
     addPhilautia(_int) {
@@ -1033,7 +1039,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setAgape(_int) {
-        this.agape.set(_int);
+        this.agape.setValue(_int);
         return this;
     }
     addAgape(_int) {
@@ -1047,7 +1053,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setSanguine(_int) {
-        this.sanguine.set(_int);
+        this.sanguine.setValue(_int);
         return this;
     }
     addSanguine(_int) {
@@ -1061,7 +1067,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setPhlegmatic(_int) {
-        this.phlegmatic.set(_int);
+        this.phlegmatic.setValue(_int);
         return this;
     }
     addPhlegmatic(_int) {
@@ -1075,7 +1081,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setCholeric(_int) {
-        this.choleric.set(_int);
+        this.choleric.setValue(_int);
         return this;
     }
     addCholeric(_int) {
@@ -1089,7 +1095,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setMelancholic(_int) {
-        this.melancholic.set(_int);
+        this.melancholic.setValue(_int);
         return this;
     }
     addMelancholic(_int) {
@@ -1121,7 +1127,7 @@ class CharacterEntity extends EntityWithStorage {
                 }
             }
         }
-        this.sex.set(_int);
+        this.sex.setValue(_int);
         return this;
     }
     getSex() {
@@ -1151,7 +1157,7 @@ class CharacterEntity extends EntityWithStorage {
                 }
             }
         }
-        this.gender.set(_int);
+        this.gender.setValue(_int);
         return this;
     }
     getGender() {
@@ -1719,6 +1725,18 @@ class CharacterEntity extends EntityWithStorage {
             else if (this.age.getValue() > 11) {
                 _addition = .15;
             }
+            /* I just bullshitted the weight :v */
+            let _tempWeight = this._baseWeight*(this.age.getValue()/25);
+            _tempWeight = _tempWeight + (_tempWeight * _addition);
+            if (_tempWeight < this._baseWeight/6) {
+                this.weight = this._baseHeight/6;
+            }
+            else if (_tempWeight > this._baseWeight) {
+                this.weight = this._baseWeight;
+            }
+            else {
+                this.weight = _tempWeight;
+            }
             let _tempHeight = this._baseHeight*(this.age.getValue()/25);
             _tempHeight = _tempHeight + (_tempHeight * _addition);
             if (_tempHeight < this._baseHeight/6) {
@@ -1731,11 +1749,15 @@ class CharacterEntity extends EntityWithStorage {
                 this.height = _tempHeight;
             }
         }
-        this.width = this.height / 2.4;
+        /**
+         * Width is 1/3rd(-ish) of height, times the ratio of weight to base weight
+         * @type {Number}
+         */
+        this.width = (this.height / 3.5294) * (this.weight / this._baseWeight);
         return this;
     }
     _generateBaseStats() {
-        this.health.setMax(this.endurance.getValue()/2 + this.strength.getValue()/2 + (this.level.getValue() * this.endurance.getValue()/10));
+        this.health.setMax(this.endurance.getValue()/2 + this.strength.getValue()/2 + (this.getLevel() * this.endurance.getValue()/10));
         this.mana.setMax(this.intelligence.getValue() * this.magickMultiplier.getValue());
         this.stamina.setMax(this.strength.getValue() + this.wisdom.getValue() + this.dexterity.getValue() + this.endurance.getValue());
     }

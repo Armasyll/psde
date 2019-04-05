@@ -1,11 +1,11 @@
+/**
+ * Creates a wrapper for safely incrementing and decrementing a number, with minimum and maximum values.
+ * @param  {Number} _value Value, default is 1
+ * @param  {Number} _minimum Minimum value; default is 0
+ * @param  {Number} _maximum Maximum value, default is 100
+ * @param  {Boolean}   _lockValue Whether or no the value is locked in place
+ */
 class BoundedNumber {
-    /**
-     * Creates a wrapper for safely incrementing and decrementing a number, with minimum and maximum values.
-     * @param  {Number} _value Value, default is 1
-     * @param  {Number} _minimum Minimum value; default is 0
-     * @param  {Number} _maximum Maximum value, default is 100
-     * @param  {Boolean}   _lockValue Whether or no the value is locked in place
-     */
     constructor(_value = 1, _minimum = 0, _maximum = 100, _lockValue = false) {
         this._value = 1;
         this._minimum = 0;
