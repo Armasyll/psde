@@ -306,7 +306,8 @@ class Game {
             "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png",
             "stoneTexture01":"resources/images/textures/static/stoneTexture01.png",
             "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png",
-            "dice01Texture":"resources/images/textures/items/dice01.svg"
+            "dice01Texture":"resources/images/textures/items/dice01.svg",
+            "birdMask01":"resources/images/textures/items/birdMask01.svg"
         };
         /**
          * Map of Textures per ID

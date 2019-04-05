@@ -14,6 +14,8 @@ class ClothingEntity extends EquipmentEntity {
         this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
 
+        this.setEquipmentSlot(_equipmentSlot);
+
         Game.setClothingEntity(this.id, this);
     }
 

@@ -378,18 +378,23 @@ class CharacterEntity extends EntityWithStorage {
         /*
         Get an apparel slot out of whatever _equipmentSlot is, otherwise fail
          */
-        if (_equipmentSlot == undefined && _entity instanceof InstancedItemEntity) {
-            _equipmentSlot = _entity.getEquipmentSlot();
-        }
-        else if (typeof _equipmentSlot == "string") {
+        if (typeof _equipmentSlot == "string") {
             _equipmentSlot = _equipmentSlot.toUpperCase();
             if (!ApparelSlotEnum.hasOwnProperty(_equipmentSlot)) {
-                return this;
+                _equipmentSlot = undefined;
             }
         }
         else {
             if (ApparelSlotEnum.properties.hasOwnProperty(_equipmentSlot)) {
                 _equipmentSlot = ApparelSlotEnum.properties[_equipmentSlot].key;
+            }
+            else {
+                _equipmentSlot = undefined;
+            }
+        }
+        if (_equipmentSlot == undefined && _entity instanceof InstancedItemEntity) {
+            if (ApparelSlotEnum.properties.hasOwnProperty) {
+                _equipmentSlot = ApparelSlotEnum.properties[_entity.getEquipmentSlot()].key;
             }
             else {
                 return this;
@@ -398,12 +403,12 @@ class CharacterEntity extends EntityWithStorage {
         /*
         Overrides for general slots
          */
-        if (_equipmentSlot == ApparelSlotEnum.HANDS) {
+        if (_equipmentSlot == "HANDS") {
             if (this.handedness == HandednessEnum.LEFT) {
-                _equipmentSlot = ApparelSlotEnum.HAND_L;
+                _equipmentSlot = "HAND_L";
             }
             else {
-                _equipmentSlot = ApparelSlotEnum.HAND_R;
+                _equipmentSlot = "HAND_R";
             }
         }
         /*
