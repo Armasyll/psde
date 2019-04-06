@@ -196,7 +196,7 @@ class CharacterEntity extends EntityWithStorage {
         this.magickMultiplier = new BoundedNumber(0, 0, 10);
         this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
-        this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
+        this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.health.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed
@@ -212,7 +212,7 @@ class CharacterEntity extends EntityWithStorage {
          * Money
          * @type {Number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.money = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
+        this.money = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         /**
          * Living
          * @type {Boolean} True - alive, false - dead
@@ -1757,9 +1757,9 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     _generateBaseStats() {
-        this.health.setMax(this.endurance.getValue()/2 + this.strength.getValue()/2 + (this.getLevel() * this.endurance.getValue()/10));
+        this.health.setMax(this.constitution.getValue()/2 + this.strength.getValue()/2 + (this.getLevel() * this.constitution.getValue()/10));
         this.mana.setMax(this.intelligence.getValue() * this.magickMultiplier.getValue());
-        this.stamina.setMax(this.strength.getValue() + this.wisdom.getValue() + this.dexterity.getValue() + this.endurance.getValue());
+        this.stamina.setMax(this.strength.getValue() + this.wisdom.getValue() + this.dexterity.getValue() + this.constitution.getValue());
     }
     /**
      * Generates protections and multipliers; to be run after status effects and equipment are changed
@@ -1768,14 +1768,26 @@ class CharacterEntity extends EntityWithStorage {
         this.physicalMultiplier
         this.magickMultiplier
         for (let _slot in this.equipment) {
-            if (!(this.equipment[_armor] instanceof ClothingEntity)) {
-                switch (this.equipment[_armor]) {
-                    
+            if (this.equipment[_slot] instanceof ClothingEntity) {
+                let _multiplier = 0;
+                switch (this.equipment[_slot].getEquipmentSlot()) {
+                    case ApparelSlotEnum.CHEST: {
+                        _multiplier = 0.3;
+                        break;
+                    }
+                    case ApparelSlotEnum.HAND_L:
+                    case ApparelSlotEnum.HAND_R:
+                    case ApparelSlotEnum.HANDS: {
+                        _multiplier = 0.05;
+                    }
+                    default: {
+                        _multiplier = 0.1;
+                    }
                 }
-                this.physicalProtection += this.equipment[_armor].getPhysicalProtectionRating();
+                this.physicalProtection += this.equipment[_slot].getPhysicalProtection() * _multiplier;
+                this.magickProtection += this.equipment[_slot].getMagickProtection() * _multiplier;
             }
         }
-        this.magickProtection
     }
     calculatePhysicalDamage(_target = undefined, _weapon = undefined, _skill = undefined) {
         if (_target.hasGodMode()) {
