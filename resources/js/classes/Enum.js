@@ -1189,6 +1189,94 @@ SpellSchoolEnum = {
     }
 };
 
+DamageEnum = {
+    NONE: 0,
+    ACID: 1,
+    BLUDGEONING: 2,
+    COLD: 3,
+    FIRE: 4,
+    FORCE: 5,
+    LIGHTNING: 6,
+    NECROTIC: 7,
+    PIERCING: 8,
+    POISON: 9,
+    PSYCHIC: 10,
+    RADIANT: 11,
+    SLASHING: 12,
+    THUNDER: 13,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        1: {
+            name: "Acid",
+            value: 1,
+            key: "ACID"
+        },
+        2: {
+            name: "Bludgeoning",
+            value: 2,
+            key: "BLUDGEONING"
+        },
+        3: {
+            name: "Cold",
+            value: 3,
+            key: "COLD"
+        },
+        4: {
+            name: "Fire",
+            value: 4,
+            key: "FIRE"
+        },
+        5: {
+            name: "Force",
+            value: 5,
+            key: "FORCE"
+        },
+        6: {
+            name: "Lightning",
+            value: 6,
+            key: "LIGHTNING"
+        },
+        7: {
+            name: "Necrotic",
+            value: 7,
+            key: "NECROTIC"
+        },
+        8: {
+            name: "Piercing",
+            value: 8,
+            key: "PIERCING"
+        },
+        9: {
+            name: "Poison",
+            value: 9,
+            key: "POISON"
+        },
+        10: {
+            name: "Psychic",
+            value: 10,
+            key: "PSYCHIC"
+        },
+        11: {
+            name: "Radiant",
+            value: 11,
+            key: "RADIANT"
+        },
+        12: {
+            name: "Slashing",
+            value: 12,
+            key: "SLASHING"
+        },
+        13: {
+            name: "Thunder",
+            value: 13,
+            key: "THUNDER"
+        }
+    }
+}
 WeaponEnum = {
     NONE: 0,
     CLUB: 1,

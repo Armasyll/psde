@@ -6,7 +6,7 @@ class AbstractEntity {
      * @param  {String} _description  Description
      * @param  {String}  _image       Image ID
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _type = undefined) {
+    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
         _id = Game.filterID(_id);
         if (typeof _id != "string") {
             _id = genUUIDv4();

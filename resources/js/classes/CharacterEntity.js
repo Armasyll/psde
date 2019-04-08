@@ -128,36 +128,6 @@ class CharacterEntity extends EntityWithStorage {
             hate:new BoundedNumber(0, 0, 100)
         };
         /**
-         * This Character's love for themself
-         * @type {Number} 0 to 100
-         */
-        this.philautia = new BoundedNumber(50, 0, 100);
-        /**
-         * This Character's love for others
-         * @type {Number} 0 to 100
-         */
-        this.agape = new BoundedNumber(50, 0, 100);
-        /**
-         * Optimism, carefree attitude, pleasure-seeking; may compliment philautia
-         * @type {Number} 0 to 100
-         */
-        this.sanguine = new BoundedNumber(0, 0, 100);
-        /**
-         * Caring, preservation, helpfulness; may compliment agape
-         * @type {Number} 0 to 100
-         */
-        this.phlegmatic = new BoundedNumber(0, 0, 100);
-        /**
-         * Practical, logical, asocial
-         * @type {Number} 0 to 100
-         */
-        this.choleric = new BoundedNumber(0, 0, 100);
-        /**
-         * Tradition, stability, order
-         * @type {Number} 0 to 100
-         */
-        this.melancholic = new BoundedNumber(0, 0, 100);
-        /**
          * Hunger; may affect health, stamina, and mana regeneration
          * @type {Number} 0 to 100
          */
@@ -167,36 +137,48 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Number}
          */
         this.strength = new BoundedNumber(10, 1, 30);
+        this.strengthOffset = new BoundedNumber(0, -100, 100);
         /**
          * Agility
          * @type {Number}
          */
         this.dexterity = new BoundedNumber(10, 1, 30);
+        this.dexterityOffset = new BoundedNumber(0, -100, 100);
         /**
          * Endurance
          * @type {Number}
          */
         this.constitution = new BoundedNumber(10, 1, 30);
+        this.constitutionOffset = new BoundedNumber(0, -100, 100);
         /**
          * Reasoning and memory
          * @type {Number}
          */
         this.intelligence = new BoundedNumber(10, 1, 30);
+        this.intelligenceOffset = new BoundedNumber(0, -100, 100);
         /**
          * Perception and insight
          * @type {Number}
          */
         this.wisdom = new BoundedNumber(10, 1, 30);
+        this.wisdomOffset = new BoundedNumber(0, -100, 100);
         /**
          * Force of personality
          * @type {Number}
          */
         this.charisma = new BoundedNumber(10, 1, 30);
+        this.charismaOffset = new BoundedNumber(0, -100, 100);
+
         this.physicalMultiplier = new BoundedNumber(0, 1, 10);
         this.magickMultiplier = new BoundedNumber(0, 0, 10);
         this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+
         this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+        /**
+         * Health; should this drops to 0, u gon' die
+         * @type {BoundedNumber} 0 to 100
+         */
         this.health.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed
@@ -757,7 +739,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.strength.getValue();
+        return this.strength.getValue() + this.strengthOffset.getValue();
     }
     setDexterity(_int) {
         this.dexterity.setValue(_int);
@@ -773,7 +755,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.dexterity.getValue();
+        return this.dexterity.getValue() + this.dexterityOffset.getValue();
     }
     setConstitution(_int) {
         this.constitution.setValue(_int);
@@ -785,11 +767,11 @@ class CharacterEntity extends EntityWithStorage {
     subtractConstitution(_int) {
         return this.constitution.dec(_int);
     }
-    getConsitution() {
+    getConstitution() {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.constitution.getValue();
+        return this.constitution.getValue() + this.constitutionOffset.getValue();
     }
     setIntelligence(_int) {
         this.intelligence.setValue(_int);
@@ -805,7 +787,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.intelligence.getValue();
+        return this.intelligence.getValue() + this.intelligenceOffset.getValue();
     }
     setWisdom(_int) {
         this.wisdom.setValue(_int);
@@ -821,7 +803,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.wisdom.getValue();
+        return this.wisdom.getValue() + this.wisdomOffset.getValue();
     }
     setCharisma(_int) {
         this.charisma.setValue(_int);
@@ -837,7 +819,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.charisma.getValue();
+        return this.charisma.getValue() + this.charismaOffset.getValue();
     }
     /**
      * Sets CharacterEntity attributes
@@ -1024,93 +1006,9 @@ class CharacterEntity extends EntityWithStorage {
         return this.money.getMax();
     }
 
-    setPhilautia(_int) {
-        this.philautia.setValue(_int);
-        return this;
-    }
-    addPhilautia(_int) {
-        return this.philautia.inc(_int);
-    }
-    subtractPhilautia(_int) {
-        return this.philautia.dec(_int);
-    }
-    getPhilautia() {
-        return this.philautia.getValue();
-    }
-
-    setAgape(_int) {
-        this.agape.setValue(_int);
-        return this;
-    }
-    addAgape(_int) {
-        return this.agape.inc(_int);
-    }
-    subtractAgape(_int) {
-        return this.agape.dec(_int);
-    }
-    getAgape() {
-        return this.agape.getValue();
-    }
-
-    setSanguine(_int) {
-        this.sanguine.setValue(_int);
-        return this;
-    }
-    addSanguine(_int) {
-        return this.sanguine.inc(_int);
-    }
-    subtractSanguine(_int) {
-        return this.sanguine.dec(_int);
-    }
-    getSanguine() {
-        return this.sanguine.getValue();
-    }
-
-    setPhlegmatic(_int) {
-        this.phlegmatic.setValue(_int);
-        return this;
-    }
-    addPhlegmatic(_int) {
-        return this.phlegmatic.inc(_int);
-    }
-    subtractPhlegmatic(_int) {
-        return this.phlegmatic.dec(_int);
-    }
-    getPhlegmatic() {
-        return this.phlegmatic.getValue();
-    }
-
-    setCholeric(_int) {
-        this.choleric.setValue(_int);
-        return this;
-    }
-    addCholeric(_int) {
-        return this.choleric.inc(_int);
-    }
-    subtractCholeric(_int) {
-        return this.choleric.dec(_int);
-    }
-    getCholeric() {
-        return this.choleric.getValue();
-    }
-
-    setMelancholic(_int) {
-        this.melancholic.setValue(_int);
-        return this;
-    }
-    addMelancholic(_int) {
-        return this.melancholic.inc(_int);
-    }
-    subtractMelancholic(_int) {
-        return this.melancholic.dec(_int);
-    }
-    getMelancholic() {
-        return this.melancholic.getValue();
-    }
-
     setSex(_int) {
         if (_int == undefined) {
-            _int = 0;
+            _int = 1;
         }
         else if (isNaN(_int)) {
             switch (_int.slice(0, 1)) {
@@ -1123,7 +1021,7 @@ class CharacterEntity extends EntityWithStorage {
                     break;
                 }
                 default : {
-                    _int = 0;
+                    _int = 1;
                 }
             }
         }
@@ -1136,7 +1034,7 @@ class CharacterEntity extends EntityWithStorage {
 
     setGender(_int) {
         if (_int == undefined) {
-            _int = 0;
+            _int = 1;
         }
         else if (isNaN(_int)) {
             switch (_int.slice(0, 1)) {
@@ -1153,7 +1051,7 @@ class CharacterEntity extends EntityWithStorage {
                     break;
                 }
                 default : {
-                    _int = 0;
+                    _int = 1;
                 }
             }
         }
@@ -1322,7 +1220,7 @@ class CharacterEntity extends EntityWithStorage {
         return typeof this.furColourA != 'undefined';
     }
 
-    hold(_instancedItem, _hand) {
+    hold(_instancedItem, _hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
         if (_hand != ApparelSlotEnum.HAND_L && _hand != ApparelSlotEnum.HAND_R) {
             if (this.handedness == HandednessEnum.LEFT) {
                 _hand = ApparelSlotEnum.HAND_L;
@@ -1342,22 +1240,22 @@ class CharacterEntity extends EntityWithStorage {
     	return this.stance.getValue();
     }
     isCrouching() {
-        return this.stance.getValue() == 2;
+        return this.stance.getValue() == ActionEnum.CROUCH;
     }
     isLying() {
-        return this.stance.getValue() == 0;
+        return this.stance.getValue() == ActionEnum.LAY;
     }
     isSleeping() {
-        return this.sleeping;
+        return this.sleeping == true;
     }
     isSitting() {
-        return this.stance.getValue() == 1;
+        return this.stance.getValue() == ActionEnum.SIT;
     }
     isStanding() {
-        return this.stance.getValue() == 3;
+        return this.stance.getValue() == ActionEnum.STAND;
     }
     isFlying() {
-        return this.stance.getValue() == 4;
+        return this.stance.getValue() == ActionEnum.FLY;
     }
 
     setPaws(_type) {
@@ -1757,9 +1655,9 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     _generateBaseStats() {
-        this.health.setMax(this.constitution.getValue()/2 + this.strength.getValue()/2 + (this.getLevel() * this.constitution.getValue()/10));
-        this.mana.setMax(this.intelligence.getValue() * this.magickMultiplier.getValue());
-        this.stamina.setMax(this.strength.getValue() + this.wisdom.getValue() + this.dexterity.getValue() + this.constitution.getValue());
+        this.health.setMax(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution/10));
+        this.mana.setMax(this.getIntelligence() * this.magickMultiplier.getValue());
+        this.stamina.setMax(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
     }
     /**
      * Generates protections and multipliers; to be run after status effects and equipment are changed
@@ -1788,51 +1686,6 @@ class CharacterEntity extends EntityWithStorage {
                 this.magickProtection += this.equipment[_slot].getMagickProtection() * _multiplier;
             }
         }
-    }
-    calculatePhysicalDamage(_target = undefined, _weapon = undefined, _skill = undefined) {
-        if (_target.hasGodMode()) {
-            return 0;
-        }
-        else if (this._godMode) {
-            return _target.health.getValue() + 1;
-        }
-        else {
-            return (_weapon.getPhysicalDamage() * ((100 + (this.strength.getValue() - 50)) / 100) * (_weapon.health.getValue()/_weapon.health.getMax()) * this.physicalMultiplier.getValue()) / _target.calculatePhysicalProtection(_weapon);
-        }
-    }
-    calculatePhysicalProtection(_weapon) {
-        if (this.hasGodeMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        else {
-            return;
-        }
-    }
-    /**
-     * Calculate magick-based damage against target using weapon
-     * @param  {AbstractEntity} _target A character, most likely. Or an item on the ground. Or a door. Or the sun.
-     * @param  {AbstractEntity} _weapon A staff, wand, another character, or your hand, if you're feeling dirty.
-     * @return {Number}         Calculates the amount of damage the character can do when casting a spell through an entity (or their hand) and returns a number.
-     */
-    calculateMagickDamage(_target = undefined, _weapon = undefined, _skill = undefined) {
-        if (!(_target instanceof AbstractEntity)) {
-            _target = Game.getEntity(_target);
-            if (!(_target instanceof AbstractEntity)) {
-                return 0;
-            }
-        }
-        if (_target.hasGodMode()) {
-            return 0;
-        }
-        else if (this._godMode) {
-            return _target.health.getValue() + 1;
-        }
-        else {
-            return (_weapon.getMagickDamage() * ((100 + (this.wisdom.getValue() - 50)) / 100) * (_weapon.health.getValue()/_weapon.health.getMax()) * this.magickMultiplier.getValue()) / _target.calculateMagickProtection(_weapon);
-        }
-    }
-    calculateMagickProtection(_weapon) {
-        
     }
     getSpecies() {
         return this.species;
