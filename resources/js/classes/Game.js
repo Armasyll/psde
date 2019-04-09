@@ -579,16 +579,6 @@ class Game {
         this.highlightLayer = undefined;
         this.highlightedMesh = undefined;
 
-        this.actionUse = new ActionData(ActionEnum.USE, Game.actionUseFunction, false);
-        this.actionLay = new ActionData(ActionEnum.LAY, Game.actionLayFunction, false);
-        this.actionSit = new ActionData(ActionEnum.SIT, Game.actionSitFunction, false);
-        this.actionTake = new ActionData(ActionEnum.TAKE, Game.actionTakeFunction, false);
-        this.actionOpen = new ActionData(ActionEnum.OPEN, Game.actionOpenFunction, false);
-        this.actionClose = new ActionData(ActionEnum.CLOSE, Game.actionCloseFunction, false);
-        this.actionTalk = new ActionData(ActionEnum.TALK, Game.actionTalkFunction, false);
-        this.actionEquip = new ActionData(ActionEnum.EQUIP, Game.actionEquipFunction, false);
-        this.actionUnequip = new ActionData(ActionEnum.UNEQUIP, Game.actionUnequipFunction, false);
-
         this.loadDefaultTextures();
         this.loadDefaultMaterials();
         this.loadDefaultMeshes();
@@ -3182,55 +3172,51 @@ class Game {
                 return;
             }
         }
-        if (_action instanceof ActionData || _action.hasOwnProperty("action")) {
+        if (_action instanceof ActionData) {
             _action = _action.action;
         }
         if (Game.debugEnabled) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
-        /*
-        If the entity doesn't have the action, or they have the action but it doesn't have a function assigned to it
-         */
-        if (!(_entity.hasAvailableAction(_action)) || !_entity.getAvailableAction(_action).hasFunction()) {
-            if (_action == ActionEnum.USE) {
+        switch (_action) {
+            case ActionEnum.USE: {
                 if (_entity instanceof LightingEntity) {
                     _entity.toggle();
                 }
+                break;
             }
-            else if (_action == ActionEnum.LAY) {
+            case ActionEnum.LAY: {
                 Game.actionLayFunction(_entity, _subEntity);
+                break;
             }
-            else if (_action == ActionEnum.SIT) {
+            case ActionEnum.SIT: {
                 Game.actionSitFunction(_entity, _subEntity);
+                break;
             }
-            else if (_action == ActionEnum.TAKE && _entity instanceof InstancedItemEntity) {
-                Game.actionTakeFunction(_entity, _subEntity);
+            case ActionEnum.TAKE: {
+                if (_entity instanceof InstancedItemEntity) {
+                    Game.actionTakeFunction(_entity, _subEntity);
+                }
+                break;
             }
-            else if (_action == ActionEnum.OPEN && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity)) {
-                Game.actionOpenFunction(_entity, _subEntity);
+            case ActionEnum.OPEN: {
+                if (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity) {
+                    Game.actionOpenFunction(_entity, _subEntity);
+                }
+                break;
             }
-            else if (_action == ActionEnum.CLOSE && (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity)) {
-                Game.actionCloseFunction(_entity, _subEntity);
+            case ActionEnum.CLOSE: {
+                if (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity) {
+                    Game.actionCloseFunction(_entity, _subEntity);
+                }
+                break;
             }
-            else if (_action == ActionEnum.TALK && _entity instanceof CharacterEntity) {
-                Game.actionTalkFunction(_entity, _subEntity);
+            case ActionEnum.TALK: {
+                if (_entity instanceof CharacterEntity) {
+                    Game.actionTalkFunction(_entity, _subEntity);
+                }
+                break;
             }
-            else if (_action == ActionEnum.STEAL && _entity instanceof EntityWithStorage) {
-                Game.actionTakeFunction(_entity, _subEntity);
-            }
-        }
-        else if (_entity instanceof InstancedEntity) {
-            if (_entity.getAvailableAction(_action).overrideParent) {
-                _entity.getAvailableAction(_action).execute();
-            }
-            else if (_entity.getAvailableAction(_action).runBeforeParent) {
-                _entity.getAvailableAction(_action).execute();
-            }
-            else {
-                _entity.getAvailableAction(_action).execute();
-            }
-        }
-        else if (_entity instanceof Entity) {
-            if (_entity.getAvailableAction(_action).overrideParent) {
-                _entity.getAvailableAction(_action).execute();
+            default: {
+                
             }
         }
     }
