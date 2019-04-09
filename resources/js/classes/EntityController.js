@@ -88,7 +88,7 @@ class EntityController {
             this.mesh = _mesh;
             if (this.mesh.material instanceof BABYLON.Material) {
                 this.setMaterial(this.mesh.material);
-                this.setTexture(this.mesh.material.texture);
+                this.setTexture(this.mesh.material.diffuseTexture);
             }
             this.mesh.controller = this;
             this.mesh.isPickable = true;
@@ -117,7 +117,6 @@ class EntityController {
     setMeshSkeleton(_skeleton) {
         if (_skeleton instanceof BABYLON.Skeleton) {
             this.skeleton = _skeleton;
-            this.checkAnimations(this.skeleton);
             this.propertiesChanged = true;
         }
         return this;
