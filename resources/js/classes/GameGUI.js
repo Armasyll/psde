@@ -262,6 +262,34 @@ class GameGUI {
     static getChatInput() {
         return GameGUI._chat.children[1];
     }
+    static chatInputClear() {
+        GameGUI.getChatInput().text = "";
+    }
+    static chatOutputClear() {
+        GameGUI.getChatOutput().text = "";
+    }
+    static chatOutputAppend(_string) {
+        GameGUI.getChatOutput().text += _string + "\n";
+    }
+    static chatOutputSet(_string) {
+        GameGUI._chatOutputClear();
+        GameGUI._chatOutputAppend(_string);
+    }
+    static setChatInputFocused(_boolean) {
+        GameGUI._chatWasFocused = false;
+        if (_boolean === true) {
+            GameGUI._hud.moveFocusToControl(GameGUI._chat.children[1]);
+        }
+        else {
+            GameGUI._hud.moveFocusToControl(null);
+        }
+    }
+    static getChatInputFocused() {
+        if (GameGUI._chatWasFocused) {
+            return true;
+        }
+        return GameGUI._hud.focusedControl == GameGUI._chat.children[1];
+    }
     static _generateCharacterChoiceMenu() {
         var characterChoiceMenuContainer = new BABYLON.GUI.StackPanel("characterChoiceMenu");
             var nameContainer = new BABYLON.GUI.StackPanel();
@@ -791,19 +819,6 @@ class GameGUI {
     static _setTargetPortraitManaText(_text = "") {
         GameGUI._targetPortrait.children[1].children[2].children[1].text = _text;
     }
-    static chatInputClear() {
-        GameGUI.getChatInput().text = "";
-    }
-    static chatOutputClear() {
-        GameGUI.getChatOutput().text = "";
-    }
-    static chatOutputAppend(_string) {
-        GameGUI.getChatOutput().text += _string + "\n";
-    }
-    static chatOutputSet(_string) {
-        GameGUI._chatOutputClear();
-        GameGUI._chatOutputAppend(_string);
-    }
     static _generateInventoryMenu() {
         var inventory = new BABYLON.GUI.Rectangle("inventory");
             inventory.height = 1.0;
@@ -1224,21 +1239,6 @@ class GameGUI {
                 GameGUI._actionsMenu.addControl(_button);
             }
         }
-    }
-    static setChatInputFocused(_boolean) {
-        GameGUI._chatWasFocused = false;
-        if (_boolean === true) {
-            GameGUI._hud.moveFocusToControl(GameGUI._chat.children[1]);
-        }
-        else {
-            GameGUI._hud.moveFocusToControl(null);
-        }
-    }
-    static getChatInputFocused() {
-        if (GameGUI._chatWasFocused) {
-            return true;
-        }
-        return GameGUI._hud.focusedControl == GameGUI._chat.children[1];
     }
     static _generateDialogueMenu() {
         /*

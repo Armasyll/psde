@@ -12,7 +12,7 @@
    viewBox="0 0 256 256"
    version="1.1"
    id="svg16"
-   sodipodi:docname="door.svg"
+   sodipodi:docname="plainDoor.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata22">
@@ -40,9 +40,9 @@
      inkscape:window-height="1056"
      id="namedview18"
      showgrid="false"
-     inkscape:zoom="2.2560608"
-     inkscape:cx="115.9157"
-     inkscape:cy="138.57989"
+     inkscape:zoom="2.7605751"
+     inkscape:cx="142.17315"
+     inkscape:cy="130.54401"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -68,11 +68,11 @@
      id="polygon8"
      style="stroke:none;fill:#28170b" />
   <polygon
-     stroke="black"
-     stroke-width="1"
      points="213.000,256.000 213.000,11.000 0.000,11.000 0.000,256.000 "
      id="polygon10"
-     style="stroke:none;fill:#28170b" />
+     style="stroke:none;fill:#28170b"
+     stroke-width="1"
+     stroke="black" />
   <polygon
      stroke="black"
      stroke-width="1"
@@ -85,32 +85,36 @@
      points="213.000,0.000 0.000,0.000 0.000,11.000 213.000,11.000 "
      id="polygon14"
      style="stroke:none;fill:#28170b" />
-  <rect
-     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect4628"
-     width="75"
-     height="75"
-     x="20"
-     y="36" />
-  <rect
-     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect4628-6"
-     width="75"
-     height="75"
-     x="118"
-     y="36" />
-  <rect
-     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect4628-7"
-     width="75"
-     height="105"
-     x="20"
-     y="131" />
-  <rect
-     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect4628-6-5"
-     width="75"
-     height="105"
-     x="118"
-     y="131" />
+  <g
+     id="g4535"
+     transform="translate(0,3.5)">
+    <rect
+       y="30"
+       x="20"
+       height="75"
+       width="75"
+       id="rect4628"
+       style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="30"
+       x="118"
+       height="75"
+       width="75"
+       id="rect4628-6"
+       style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:12.16910458;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="125"
+       x="20"
+       height="105"
+       width="75"
+       id="rect4628-7"
+       style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="125"
+       x="118"
+       height="105"
+       width="75"
+       id="rect4628-6-5"
+       style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:14.39867878;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
 </svg>

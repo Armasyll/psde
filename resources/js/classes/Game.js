@@ -561,7 +561,6 @@ class Game {
         this._finishedConfiguring = false;
         this._finishedConfiguring = false;
 
-        this.keyboardControls = {};
         this.player = undefined;
         this._castRayTargetIntervalFunction = undefined;
         this._castRayTargetInterval = 250;
@@ -576,14 +575,9 @@ class Game {
 
         this.postProcess = {};
 
-        this.highlightEnabled = true;
-        this.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
-        this.highlightLayer.outerGlow = true;
-        this.highlightLayer.innerGlow = false;
+        this.highlightEnabled = false;
+        this.highlightLayer = undefined;
         this.highlightedMesh = undefined;
-        this.highlightedColorEnemy = "red";
-        this.highlightedColorFriend = "green";
-        this.highlightedColorNeutral = "white";
 
         this.actionUse = new ActionData(ActionEnum.USE, Game.actionUseFunction, false);
         this.actionLay = new ActionData(ActionEnum.LAY, Game.actionLayFunction, false);
@@ -785,9 +779,12 @@ class Game {
         this.jumpCode = 32; // Space
         this.interfaceTargetedEntityCode = 70; // F
         this.useTargetedEntityCode = 69; // E
-        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82; // R
         this.showInventoryCode = 73; // I
+        this.UIAccept = 69; // E
+        this.UIAcceptAlt = 13; // Enter
+        this.UIDeny = 81; // Q
+        this.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
@@ -801,9 +798,12 @@ class Game {
         this.jumpCode = 32;
         this.interfaceTargetedEntityCode = 85;
         this.useTargetedEntityCode = 190;
-        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 80;
-        this.showInventoryCode = 73; // IDK :v maybe 
+        this.showInventoryCode = 67; // C
+        this.UIAccept = 190; // E
+        this.UIAcceptAlt = 13; // Enter
+        this.UIDeny = 222; // Q
+        this.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static initAzertyKeyboardControls() {
@@ -817,9 +817,12 @@ class Game {
         this.jumpCode = 32;
         this.interfaceTargetedEntityCode = 70;
         this.useTargetedEntityCode = 69;
-        this.interfaceSelectedItemCode = 0;
         this.useSelectedItemCode = 82;
         this.showInventoryCode = 73;
+        this.UIAccept = 69; // E
+        this.UIAcceptAlt = 13; // Enter
+        this.UIDeny = 65; // A
+        this.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
@@ -1074,7 +1077,7 @@ class Game {
         if (event == undefined) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         switch (event) {
@@ -1215,7 +1218,7 @@ class Game {
         if (event == undefined) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         switch (event) {
@@ -1278,7 +1281,7 @@ class Game {
         if (event == undefined) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         if (event.button == 1) {
@@ -1297,7 +1300,7 @@ class Game {
         if (event == undefined) {
             return undefined;
         }
-        if (!Game.player instanceof CharacterEntity || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return undefined;
         }
         if (Game.initialized && Game.player instanceof CharacterEntity && Game.player.getTarget() instanceof AbstractEntity) {
@@ -2944,6 +2947,18 @@ class Game {
             return Game.cosmetics[_id];
         }
         return null;
+    }
+    static enableHighlighting() {
+        this.highlightEnabled = true;
+        this.initHighlighting();
+    }
+    static disableHighlighting() {
+        this.highlightEnabled = false;
+    }
+    static initHighlighting() {
+        this.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
+        this.highlightLayer.outerGlow = true;
+        this.highlightLayer.innerGlow = false;
     }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh)) {
