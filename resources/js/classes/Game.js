@@ -224,7 +224,8 @@ class Game {
             "katana01":"resources/meshes/weapons.babylon",
             "wand01":"resources/meshes/weapons.babylon",
             "wand02":"resources/meshes/weapons.babylon",
-            "wand03":"resources/meshes/weapons.babylon"
+            "wand03":"resources/meshes/weapons.babylon",
+            "animatedChest01":"resources/meshes/animatedChest01.babylon",
         };
         /**
          * Map of Meshes per ID
@@ -307,7 +308,8 @@ class Game {
             "stoneTexture01":"resources/images/textures/static/stoneTexture01.png",
             "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png",
             "dice01Texture":"resources/images/textures/items/dice01.svg",
-            "birdMask01":"resources/images/textures/items/birdMask01.svg"
+            "birdMask01":"resources/images/textures/items/birdMask01.svg",
+            "chest01":"resources/images/textures/furniture/chest01.svg"
         };
         /**
          * Map of Textures per ID
