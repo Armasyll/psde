@@ -1,8 +1,8 @@
 class Cosmetic {
     constructor(_id, _name = "", _description = "", _image = "genericItemIcon", _mesh = "", _material = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         this.id = _id;
         this.name = "";
@@ -26,13 +26,13 @@ class Cosmetic {
         return this.id;
     }
     setName(_name) {
-        this.name = Game.filterName(_name);
+        this.name = Tools.filterName(_name);
     }
     getName() {
         return this.name;
     }
     setDescription(_description) {
-        this.description = Game.filterName(_description);
+        this.description = Tools.filterName(_description);
     }
     getDescription() {
         return this.description;

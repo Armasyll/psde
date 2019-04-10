@@ -383,20 +383,6 @@ class WeaponEntity extends EquipmentEntity {
     getWeaponProperties() {
         return Array.from(this.weaponProperties);
     }
-    getPhysicalDamage() {
-        return this.physicalDamage.getValue();
-    }
-    setPhysicalDamage(_int) {
-        this.physicalDamage.setValue(_int);
-        return this;
-    }
-    getMagickDamage() {
-        return this.magickDamage.getValue();
-    }
-    setMagickDamage(_int) {
-        this.magickDamage.setValue(_int);
-        return this;
-    }
 
     /**
      * Overrides EquipmentEntity.clone
@@ -404,9 +390,9 @@ class WeaponEntity extends EquipmentEntity {
      * @return {ClothingEntity}     new WeaponEntity
      */
     clone(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         var _itemEntity = new WeaponEntity(_id, this.name, this.description, this.image, this.equipmentSlot);
         // variables from AbstractEntity
@@ -430,9 +416,9 @@ class WeaponEntity extends EquipmentEntity {
      * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
     createInstance(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new InstancedWeaponEntity(_id, this);
     }

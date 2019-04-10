@@ -7,9 +7,9 @@ class AbstractEntity {
      * @param  {String}  _image       Image ID
      */
     constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         this.id = _id;
         this.entityType = EntityEnum.ABSTRACT;
@@ -70,7 +70,7 @@ class AbstractEntity {
         return this.id;
     }
     setName(_name) {
-        this.name = Game.filterName(_name);
+        this.name = Tools.filterName(_name);
     }
     getName() {
         return this.name;

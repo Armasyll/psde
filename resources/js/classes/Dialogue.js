@@ -12,9 +12,9 @@ class Dialogue {
      * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
      */
     constructor(_id, _title, _text) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         if (typeof _text != "string" && typeof _text != "function") {
             return undefined;
@@ -39,7 +39,7 @@ class Dialogue {
         return this.id;
     }
     setTitle(_title) {
-        _title = Game.filterName(_title);
+        _title = Tools.filterName(_title);
         if (typeof _title != "string") {
             _title = "";
         }
@@ -103,7 +103,7 @@ class Dialogue {
         if (_dialogueOption instanceof DialogueOption) {
             _dialogueOption = _dialogueOption.getID();
         }
-        _dialogueOption = Game.filterID(_dialogueOption);
+        _dialogueOption = Tools.filterID(_dialogueOption);
         if (!(this.options.hasOwnProperty(_dialogueOption))) {
             return true;
         }
@@ -126,7 +126,7 @@ class Dialogue {
         if (_dialogueOption instanceof DialogueOption) {
             _dialogueOption = _dialogueOption.getID();
         }
-        _dialogueOption = Game.filterID(_dialogueOption);
+        _dialogueOption = Tools.filterID(_dialogueOption);
         if (!(this.parentOptions.hasOwnProperty(_dialogueOption))) {
             return true;
         }
@@ -161,9 +161,9 @@ class Dialogue {
 }
 class DialogueOption {
     constructor(_id = undefined, _dialogue, _title = undefined, _condition = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         this.id = _id;
         this.dialogue = undefined;
@@ -196,7 +196,7 @@ class DialogueOption {
         return this.dialogue;
     }
     setTitle(_title) {
-        _title = Game.filterName(_title);
+        _title = Tools.filterName(_title);
         if (typeof _title == "string") {
             this.title = _title;
         }

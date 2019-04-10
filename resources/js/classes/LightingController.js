@@ -3,7 +3,7 @@ class LightingController extends FurnitureController {
         super (_id, _mesh, _entity);
 
         if (!(_lightPositionOffset instanceof BABYLON.Vector3)) {
-            _lightPositionOffset = Game.filterVector3(_lightPositionOffset);
+            _lightPositionOffset = Tools.filterVector3(_lightPositionOffset);
         }
         if (!(_light instanceof BABYLON.Light)) {
             _light = new BABYLON.PointLight(_id, _lightPositionOffset, Game.scene);
@@ -14,7 +14,7 @@ class LightingController extends FurnitureController {
             _light.position = _lightPositionOffset;
         }
         this.light = _light;
-        this.light.range = Game.filterNumber(_lightRange);
+        this.light.range = Tools.filterNumber(_lightRange);
 
         Game.setLightingController(this.id, this);
     }

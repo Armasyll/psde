@@ -270,9 +270,9 @@ class Entity extends AbstractEntity {
     }
 
     clone(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         var _entity = new Entity(_id, this.name, this.description, this.image, this.entityType);
         // variables from AbstractEntity
@@ -287,9 +287,9 @@ class Entity extends AbstractEntity {
         return _entity;
     }
     createInstance(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new InstancedEntity(_id, this);
     }

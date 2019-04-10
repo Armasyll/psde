@@ -8,7 +8,6 @@ class Game {
         Game.debugEnabled = false;
         this.physicsEnabled = false;
         this.Tools = Tools;
-        this.Tools.initialize();
 
         if (Game.debugEnabled) console.log("Running initialize");
         this.canvas = document.getElementById("canvas");
@@ -906,7 +905,7 @@ class Game {
             _newMaterial.specularColor.set(0,0,0);
             if (typeof _options == "object") {
                 if (_options.hasOwnProperty("specularColor")) {
-                    _newMaterial.specularColor.set(Game.filterVector(_options["specularColor"]));
+                    _newMaterial.specularColor.set(Tools.filterVector(_options["specularColor"]));
                 }
             }
             Game.setLoadedMaterial(_material, _newMaterial);
@@ -939,7 +938,7 @@ class Game {
         return null;
     }
     static setLoadedMesh(_id, _mesh) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (_id == undefined) {
             return null;
         }
@@ -949,7 +948,7 @@ class Game {
         this.loadedMeshes[_id] = _mesh;
     }
     static setLoadedTexture(_id, _texture) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (_id == undefined) {
             return null;
         }
@@ -959,7 +958,7 @@ class Game {
         this.loadedTextures[_id] = _texture;
     }
     static setLoadedMaterial(_id, _material) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (_id == undefined) {
             return null;
         }
@@ -980,7 +979,7 @@ class Game {
         this.loadedMeshMaterials[_mesh.name][_material.name] = _mesh;
     }
     static addClonedMesh(_mesh, _id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (!(_mesh instanceof BABYLON.Mesh)) {
             return undefined;
         }
@@ -990,7 +989,7 @@ class Game {
         this.clonedMeshes[_id] = _mesh;
     }
     static addInstancedMesh(_mesh, _id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (!(_mesh instanceof BABYLON.InstancedMesh)) {
             return undefined;
         }
@@ -1304,7 +1303,7 @@ class Game {
     }
     static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
         if (Game.debugEnabled) console.log("Running createCollisionWallX");
-        if (_rotation != 0 && isInt(_rotation)) {
+        if (_rotation != 0 && Tools.isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
         }
         if (_posStart.x == _posEnd.x) {
@@ -1585,9 +1584,9 @@ class Game {
         var _scaling = undefined;
         var _forceCreateClone = false;
         if ((typeof _blob[2] == "string" || _blob[2] == undefined) && _blob[3] instanceof BABYLON.Vector3) {
-            _id = Game.filterID(_blob[0]);
+            _id = Tools.filterID(_blob[0]);
             if (_id == undefined) {
-                _id = genUUIDv4();
+                _id = Tools.genUUIDv4();
             }
             if (_blob[1] instanceof BABYLON.AbstractMesh) {
                 _mesh = _blob[1].name;
@@ -1630,7 +1629,7 @@ class Game {
             }
         }
         else if ((typeof _blob[1] == "string" || _blob[1] == undefined) && _blob[2] instanceof BABYLON.Vector3) {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
             if (_blob[0] instanceof BABYLON.AbstractMesh) {
                 _mesh = _blob[0].name;
             }
@@ -2063,72 +2062,6 @@ class Game {
         );
         return _importedMeshes;
     }
-    static filterID(_id) {
-        if (_id == undefined) {
-            return undefined;
-        }
-        else if (isInt(_id)) {
-            return _id;
-        }
-        else if (typeof _id == "string") {
-            return _id.replace(/[^a-zA-Z0-9_\-]/g,"");
-        }
-    }
-    static filterName(_string) {
-        if (typeof _string != "string") {
-            return "";
-        }
-        return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
-    }
-    static filterFloat(_float) {
-        _float = Number.parseFloat(_float);
-        if (isNaN(_float)) {
-            return 0;
-        }
-        else if (_float > Number.MAX_SAFE_INTEGER) {
-            _float = Number.MAX_SAFE_INTEGER;
-        }
-        else if (_float < Number.MIN_SAFE_INTEGER) {
-            _float = Number.MIN_SAFE_INTEGER;
-        }
-        return Number(_float.toFixed(4));
-    }
-    static filterInt(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int)) {
-            return 0;
-        }
-        else if (_int > Number.MAX_SAFE_INTEGER) {
-            _int = Number.MAX_SAFE_INTEGER;
-        }
-        else if (_int < Number.MIN_SAFE_INTEGER) {
-            _int = Number.MIN_SAFE_INTEGER;
-        }
-        return Math.round(_int);
-    }
-    static filterNumber(_int) {
-        return Game.filterFloat(_int);
-    }
-    static filterVector(..._vector) {
-        if (_vector == undefined || _vector[0] == undefined) {
-            return BABYLON.Vector3.Zero();
-        }
-        else if (_vector[0] instanceof BABYLON.Vector3) {
-            return _vector[0];
-        }
-        else if (typeof _vector[0] == "object" && _vector[0].hasOwnProperty("x") && _vector[0].hasOwnProperty("y") && _vector[0].hasOwnProperty("z") && !isNaN(_vector[0].x) && !isNaN(_vector[0].y) && !isNaN(_vector[0].z)) {
-            return new BABYLON.Vector3(_vector[0].x, _vector[0].y, _vector[0].z);
-        }
-        else if (!isNaN(_vector[0]) && !isNaN(_vector[1]) && !isNaN(_vector[2])) {
-            return new BABYLON.Vector3(_vector[0], _vector[1], _vector[2]);
-        }
-        else if (_vector[0] instanceof Array && _vector[0].length == 3) {
-            return new BABYLON.Vector3(_vector[0][0], _vector[0][1], _vector[0][2]);
-        }
-        else {
-            return BABYLON.Vector3.Zero();
-        }
-    }
 
     static setPlayerID(_id) {
         Game.setEntityID(Game.player, _id);
@@ -2519,21 +2452,21 @@ class Game {
      */
     static createCharacter(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX, _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
             if (typeof _rotation == "number") {
                 _rotation = new BABYLON.Vector3(0, _rotation, 0);
             }
             else {
-                _rotation = Game.filterVector(_rotation);
+                _rotation = Tools.filterVector(_rotation);
             }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
@@ -2541,7 +2474,7 @@ class Game {
                 _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
             }
             else {
-                _scaling = Game.filterVector(_scaling);
+                _scaling = Tools.filterVector(_scaling);
             }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
@@ -2632,20 +2565,20 @@ class Game {
      * @return {EntityController}           The created EntityController in-game
      */
     static createDoor(_id, _name = "Door", _to = undefined, _mesh = "door", _texture = "plainDoor", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = Game.filterID(_id);
+        if (typeof _id != "string") {_id = Tools.genUUIDv4();}
+        _id = Tools.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
             if (typeof _rotation == "number") {
                 _rotation = new BABYLON.Vector3(0, _rotation, 0);
             }
             else {
-                _rotation = Game.filterVector(_rotation);
+                _rotation = Tools.filterVector(_rotation);
             }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
@@ -2653,7 +2586,7 @@ class Game {
                 _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
             }
             else {
-                _scaling = Game.filterVector(_scaling);
+                _scaling = Tools.filterVector(_scaling);
             }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
@@ -2684,8 +2617,8 @@ class Game {
         Game.removeMesh(_mesh);
     }
     static createFurnitureEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = FurnitureEnum.NONE, _weight = 1, _price = 1) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = Game.filterID(_id);
+        if (typeof _id != "string") {_id = Tools.genUUIDv4();}
+        _id = Tools.filterID(_id);
         var _entity = null;
         _entity = new FurnitureEntity(_id, _name, _description, _image, _type);
         _entity.setMeshID(_mesh);
@@ -2705,9 +2638,9 @@ class Game {
      */
     static createFurniture(_id, _entity, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (_entity instanceof FurnitureEntity) {
             _entity = _entity.createInstance(_id);
         }
@@ -2724,14 +2657,14 @@ class Game {
             return null;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
             if (typeof _rotation == "number") {
                 _rotation = new BABYLON.Vector3(0, _rotation, 0);
             }
             else {
-                _rotation = Game.filterVector(_rotation);
+                _rotation = Tools.filterVector(_rotation);
             }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
@@ -2739,7 +2672,7 @@ class Game {
                 _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
             }
             else {
-                _scaling = Game.filterVector(_scaling);
+                _scaling = Tools.filterVector(_scaling);
             }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
@@ -2771,20 +2704,20 @@ class Game {
         Game.removeMesh(_mesh);
     }
     static createLighting(_id, _name = "", _mesh, _texture, _type, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _lightingPositionOffset = BABYLON.Vector3.Zero(), _createCollisionMesh = true) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = Game.filterID(_id);
+        if (typeof _id != "string") {_id = Tools.genUUIDv4();}
+        _id = Tools.filterID(_id);
         if (!Game.hasMesh(_mesh)) {
             return false;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
             if (typeof _rotation == "number") {
                 _rotation = new BABYLON.Vector3(0, _rotation, 0);
             }
             else {
-                _rotation = Game.filterVector(_rotation);
+                _rotation = Tools.filterVector(_rotation);
             }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
@@ -2792,14 +2725,14 @@ class Game {
                 _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
             }
             else {
-                _scaling = Game.filterVector(_scaling);
+                _scaling = Tools.filterVector(_scaling);
             }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
         if (!(_lightingPositionOffset instanceof BABYLON.Vector3)) {
-            _lightingPositionOffset = Game.filterVector(_scaling);
+            _lightingPositionOffset = Tools.filterVector(_scaling);
         }
         if (!(Game.hasLoadedMesh(_mesh))) {
             Game.loadMesh(_mesh);
@@ -2827,8 +2760,8 @@ class Game {
         Game.removeMesh(_mesh);
     }
     static createItemEntity(_id, _name = "", _description = "", _image = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = ItemEnum.GENERAL, _subType = 0, _weight = 1, _price = 0) {
-        if (typeof _id != "string") {_id = genUUIDv4();}
-        _id = Game.filterID(_id);
+        if (typeof _id != "string") {_id = Tools.genUUIDv4();}
+        _id = Tools.filterID(_id);
         var _entity = null;
         switch (_type) {
             case ItemEnum.GENERAL : {
@@ -2863,9 +2796,9 @@ class Game {
     }
     static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (_entity instanceof ItemEntity) {
             _entity = _entity.createInstance(_id);
         }
@@ -2879,14 +2812,14 @@ class Game {
             return null;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
             if (typeof _rotation == "number") {
                 _rotation = new BABYLON.Vector3(0, _rotation, 0);
             }
             else {
-                _rotation = Game.filterVector(_rotation);
+                _rotation = Tools.filterVector(_rotation);
             }
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
@@ -2894,7 +2827,7 @@ class Game {
                 _scaling = new BABYLON.Vector3(_scaling, _scaling, _scaling);
             }
             else {
-                _scaling = Game.filterVector(_scaling);
+                _scaling = Tools.filterVector(_scaling);
             }
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
@@ -3737,7 +3670,7 @@ class Game {
     }
 
     static calculateLevel(_int) {
-        _int = Game.filterInt(_int);
+        _int = Tools.filterInt(_int);
         if (_int >= 355000) {
             return 20;
         }
@@ -3802,15 +3735,5 @@ class Game {
     }
     static tgm() {
         Game.player.toggleGodMode();
-    }
-
-    static areVectorsEqual(v1, v2, p) {
-        return ((Math.abs(v1.x - v2.x) < p) && (Math.abs(v1.y - v2.y) < p) && (Math.abs(v1.z - v2.z) < p));
-    }
-    static arePointsEqual(p1, p2, p) {
-        return Math.abs(p1 - p2) < p;
-    }
-    static verticalSlope(v) {
-        return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
 }

@@ -949,7 +949,7 @@ class GameGUI {
             _actions.removeControl(_actions.children[_i]);
         }
         for (var _action in _instancedItemEntity.getAvailableActions()) {
-            _action = Game.filterInt(_action);
+            _action = Tools.filterInt(_action);
             var _actionButton = undefined;
             switch (_action) {
                 case ActionEnum.DROP : {

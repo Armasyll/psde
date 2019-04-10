@@ -40,9 +40,9 @@ class ClothingEntity extends EquipmentEntity {
      * @return {ClothingEntity}     new ClothingEntity
      */
     clone(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         var _itemEntity = new ClothingEntity(_id, this.name, this.description, this.image, this.equipmentSlot);
         // variables from AbstractEntity
@@ -66,9 +66,9 @@ class ClothingEntity extends EquipmentEntity {
      * @return {InstancedClothingEntity}     new InstancedClothingEntity
      */
     createInstance(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new InstancedClothingEntity(_id, this);
     }

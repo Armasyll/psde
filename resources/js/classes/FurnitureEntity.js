@@ -20,7 +20,7 @@ class FurnitureEntity extends EntityWithStorage {
     }
 
     setFurnitureType(_type) {
-        _type = Game.filterNumber(_type);
+        _type = Tools.filterNumber(_type);
         switch(_type) {
             case FurnitureEnum.BED: {
                 this.addAvailableAction(ActionEnum.SLEEP);
@@ -170,16 +170,16 @@ class FurnitureEntity extends EntityWithStorage {
     }
 
     clone(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new FurnitureEntity(_id, this.name, this.description, this.image, this.furnitureType);
     }
     createInstance(_id = undefined) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new InstancedFurnitureEntity(_id, this);
     }

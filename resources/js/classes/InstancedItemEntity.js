@@ -16,9 +16,9 @@ class InstancedItemEntity extends InstancedEntity {
     }
 
     clone(_id) {
-        _id = Game.filterID(_id);
+        _id = Tools.filterID(_id);
         if (typeof _id != "string") {
-            _id = genUUIDv4();
+            _id = Tools.genUUIDv4();
         }
         return new InstancedItemEntity(_id, this.entity);
     }

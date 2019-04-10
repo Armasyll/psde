@@ -70,7 +70,7 @@ class Client {
     	}
     }
     static getController(_id) {
-    	if (isInt(_id)) {
+    	if (Tools.isInt(_id)) {
     		return Client.networkEntityMap[_id];
     	}
     	else {

@@ -254,8 +254,8 @@ class CharacterController extends EntityController {
             }
             else if (this.mesh.position.y < this.jumpStartPosY) {
                 var actDisp = this.mesh.position.subtract(this.avStartPos);
-                if (!(Game.areVectorsEqual(actDisp, disp, 0.001))) {
-                    if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
+                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                         this.endJump();
                     }
                 }
@@ -357,7 +357,7 @@ class CharacterController extends EntityController {
                 this.mesh.moveWithCollisions(this.moveVector);
                 if (this.mesh.position.y > this.avStartPos.y) {
                     var actDisp = this.mesh.position.subtract(this.avStartPos);
-                    var _sl = Game.verticalSlope(actDisp);
+                    var _sl = Tools.verticalSlope(actDisp);
                     if (_sl >= this.maxSlopeLimitRads) {
                         if (this._stepOffset > 0) {
                             if (this._vMoveTot == 0) {
@@ -388,8 +388,8 @@ class CharacterController extends EntityController {
                 }
                 else if ((this.mesh.position.y) < this.avStartPos.y) {
                     var actDisp = this.mesh.position.subtract(this.avStartPos);
-                    if (!(Game.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
-                        if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                    if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                        if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                             this.endFreeFall();
                         }
                         else {
@@ -445,8 +445,8 @@ class CharacterController extends EntityController {
         }
         else if (this.mesh.position.y < this.avStartPos.y) {
             var actDisp = this.mesh.position.subtract(this.avStartPos);
-            if (!(Game.areVectorsEqual(actDisp, disp, 0.001))) {
-                if (Game.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+            if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
+                if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
                     this.groundIt();
                     this.mesh.position.copyFrom(this.avStartPos);
                 }
@@ -699,13 +699,13 @@ class CharacterController extends EntityController {
             return this;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Game.filterVector(_position);
+            _position = Tools.filterVector(_position);
         }
         if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Game.filterVector(_rotation);
+            _rotation = Tools.filterVector(_rotation);
         }
         if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Game.filterVector(_scaling);
+            _scaling = Tools.filterVector(_scaling);
         }
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();

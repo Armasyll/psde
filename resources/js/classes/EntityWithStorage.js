@@ -16,7 +16,7 @@ class EntityWithStorage extends Entity {
         return this.storageWeight.getMax();
     }
     setMaxStorageSlots(_int) {
-        this.maxStorageSlots = Game.filterInt(_int);
+        this.maxStorageSlots = Tools.filterInt(_int);
         return this;
     }
     getMaxStorageSlots() {
