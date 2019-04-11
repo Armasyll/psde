@@ -288,7 +288,7 @@ class EntityController {
             Game.clearPlayerTarget()
         }
         this.clearTargetedBy();
-        if (this.mesh instanceof AbstractMesh) {
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
             Game.removeMeshToController(_mesh.id);
         }
         else {
