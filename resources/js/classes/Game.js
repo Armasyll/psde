@@ -488,6 +488,7 @@ class Game {
         
         this.hasBackloggedEntities = false;
 
+        this.meshToEntityController = {};
         this.entityControllers = {};
         this.furnitureControllers = {};
         this.lightingControllers = {};
@@ -1437,7 +1438,8 @@ class Game {
         _mesh.collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
         _mesh.collisionMesh.checkCollisions = true;
         _mesh.collisionMesh.setParent(_mesh);
-        if (_mesh.controller instanceof DoorController) {
+        let _controller = Game.getMeshToEntityController(_mesh);
+        if (_controller instanceof DoorController) {
             if (_mesh.collisionMesh.scaling.x > _mesh.collisionMesh.scaling.z) {
                 _mesh.collisionMesh.scaling.z += _mesh.collisionMesh.scaling.z * 0.1;
             }
@@ -2138,8 +2140,8 @@ class Game {
         else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
             return Game.entityControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof EntityController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id);
         }
         else {
             return undefined;
@@ -2178,8 +2180,8 @@ class Game {
         else if (typeof _id == "string" && Game.furnitureControllers.hasOwnProperty(_id)) {
             return Game.furnitureControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof FurnitureController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id);
         }
         else {
             return undefined;
@@ -2201,8 +2203,8 @@ class Game {
         else if (typeof _id == "string" && Game.lightingControllers.hasOwnProperty(_id)) {
             return Game.lightingControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof LightingController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id);
         }
         else {
             return undefined;
@@ -2224,8 +2226,8 @@ class Game {
         else if (typeof _id == "string" && Game.doorControllers.hasOwnProperty(_id)) {
             return Game.doorControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof DoorController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id)
         }
         else {
             return undefined;
@@ -2247,8 +2249,8 @@ class Game {
         else if (typeof _id == "string" && Game.itemControllers.hasOwnProperty(_id)) {
             return Game.itemControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof ItemController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id);
         }
         else {
             return undefined;
@@ -2270,8 +2272,8 @@ class Game {
         else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
             return Game.entityControllers[_id];
         }
-        else if (_id instanceof BABYLON.Mesh && _id.controller instanceof CharacterController) {
-            return _id.controller;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            return Game.getMeshToEntityController(_id);
         }
         else {
             return undefined;
@@ -2350,8 +2352,11 @@ class Game {
         else if (_id instanceof ItemController && _id.entity instanceof InstancedItemEntity) {
             return _id.entity;
         }
-        else if ((_id instanceof BABYLON.AbstractMesh) && _id.hasOwnProperty("controller") && _id.controller instanceof ItemController) {
-            return _id.controller.entity;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            let _controller = Game.getMeshToEntityController(_id);
+            if (_controller instanceof EntityController) {
+                return _controller.getEntity();
+            }
         }
         return null;
     }
@@ -2410,8 +2415,11 @@ class Game {
         else if (_id instanceof FurnitureController && _id.entity instanceof InstancedFurnitureEntity) {
             return _id.entity;
         }
-        else if ((_id instanceof BABYLON.AbstractMesh) && _id.hasOwnProperty("controller") && _id.controller instanceof FurnitureController) {
-            return _id.controller.entity;
+        else if (_id instanceof BABYLON.AbstractMesh) {
+            let _controller = Game.getMeshToEntityController(_id);
+            if (_controller instanceof EntityController) {
+                return _controller.getEntity();
+            }
         }
         return null;
     }
@@ -2895,12 +2903,13 @@ class Game {
         if (this.highlightedMesh != undefined) {
             this.highlightLayer.removeMesh(this.highlightedMesh);
         }
-        var _color = BABYLON.Color3.Gray();
-        if (_mesh.controller instanceof CharacterController) {
+        let _color = BABYLON.Color3.Gray();
+        let _controller = Game.getMeshToEntityController(_mesh);
+        if (_controller instanceof CharacterController) {
             _color = BABYLON.Color3.White();
         }
-        else if (_mesh.controller.getEntity() instanceof InstancedItemEntity) {
-            if (_mesh.controller.getEntity().getOwner() != Game.player) {
+        else if (_controller instanceof ItemController) {
+            if (_controller.getEntity().getOwner() != Game.player) {
                 _color = BABYLON.Color3.Red();
             }
             else {
@@ -2968,8 +2977,9 @@ class Game {
         }
         var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay);
         if (_hit.hit) {
-            if (_hit.pickedMesh.controller != Game.player.getController().getTarget()) {
-                Game.setPlayerTarget(_hit.pickedMesh.controller);
+            let _controller = Game.getMeshToEntityController(_hit.pickedMesh);
+            if (_controller != Game.player.getController().getTarget()) {
+                Game.setPlayerTarget(_controller);
             }
         }
         else {
@@ -3459,6 +3469,33 @@ class Game {
             Game.itemControllers[_i].dispose();
         }
         Game.itemControllers = {};
+    }
+    static setMeshToEntityController(_mesh, _entityController) {
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.id;
+        }
+        Tools.filterID(_mesh);
+        if (!(_entityController instanceof EntityController)) {
+            return;
+        }
+        Game.meshToEntityController[_mesh] = _entityController;
+    }
+    static getMeshToEntityController(_mesh) {
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.id;
+        }
+        Tools.filterID(_mesh);
+        return Game.meshToEntityController[_mesh];
+    }
+    static removeMeshToEntityController(_mesh) {
+        if (_mesh instanceof BABYLON.AbstractMesh) {
+            _mesh = _mesh.id;
+        }
+        Tools.filterID(_mesh);
+        delete Game.meshToEntityController[_mesh];
+    }
+    static clearMeshToEntityControllers() {
+        Game.meshToEntityController = {};
     }
 
     static setEntity(_id, _entity) {

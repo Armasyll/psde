@@ -865,7 +865,6 @@ class CharacterController extends EntityController {
             return false;
         }
         this.detachFromAllBones();
-        this.mesh.controller = null;
         super.dispose();
         for (var _var in this) {
             this[_var] = null;

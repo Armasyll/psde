@@ -10,36 +10,30 @@ class EntityController {
         if (!(_entity instanceof AbstractEntity)) {
             return null;
         }
-
         this.id = _id;
         this.entity = undefined;
-        this.setEntity(_entity);
         this.texture = null;
         this.material = null;
         this.mesh = undefined;
-        this.setMesh(_mesh);
         this.networkID = null;
         this.propertiesChanged = true;
         this.targetController = null;
         this.targetedByControllers = new Set();
-
         this.animations = new Array();
-
         this.started = false;
         this._stopAnim = false;
         this.currAnim = null;
         this.prevAnim = null;
-
-        this.skeleton = this.mesh.skeleton;
+        this.skeleton = null;
         this.bonesInUse = [];
         /**
          * Array of bones per animation
          * @type {Object} <String:Array>
          */
         this.animationBones = {};
-
         this._isEnabled = true;
-
+        this.setMesh(_mesh);
+        this.setEntity(_entity);
         Game.setEntityController(this.id, this);
     }
     setID(_id) {
@@ -90,12 +84,15 @@ class EntityController {
                 this.setMaterial(this.mesh.material);
                 this.setTexture(this.mesh.material.diffuseTexture);
             }
-            this.mesh.controller = this;
+            if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
+                this.skeleton = this.mesh.skeleton;
+            }
             this.mesh.isPickable = true;
             this.propertiesChanged = true;
             if (this.entity instanceof Entity) {
                 this.entity.setMeshID(_mesh);
             }
+            Game.setMeshToEntityController(this.mesh, this);
         }
         return this;
     }
@@ -291,6 +288,12 @@ class EntityController {
             Game.clearPlayerTarget()
         }
         this.clearTargetedBy();
+        if (this.mesh instanceof AbstractMesh) {
+            Game.removeMeshToController(_mesh.id);
+        }
+        else {
+            Game.removeMeshToController(this.entity.getMeshID());
+        }
         this.entity.removeController();
         for (var _var in this) {
             this[_var] = null;
