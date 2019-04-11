@@ -14,6 +14,7 @@ Game.createItemEntity("mountainChocolateBar", "Giant Toblerone", "A giant, delic
 Game.createItemEntity("cheeseWheel", "Cheese Wheel", "A wheel of cheese.", "cheeseWheelIcon", "cheeseWheel", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
 Game.createItemEntity("cheeseWheelSansWedge", "Partial Cheese Wheel", "A partially cut wheel of cheese.", "cheeseWheelSansWedgeIcon", "cheeseWheelSansWedge", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
 Game.createItemEntity("cheeseWedge", "Cheese Wedge", "A wedge of cheese.", "cheeseWedgeIcon", "cheeseWedge", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
+Game.createItemEntity("apple01", "Apple", "An apple.", "apple01Icon", "apple01", "apple01", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
 
 Game.createItemEntity("barbute01", "Barbute", "", "barbute01Icon", "barbute01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createItemEntity("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01Icon", "barbuteHorned01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
