@@ -289,10 +289,10 @@ class EntityController {
         }
         this.clearTargetedBy();
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            Game.removeMeshToController(this.mesh.id);
+            Game.removeMeshToEntityController(this.mesh.id);
         }
         else {
-            Game.removeMeshToController(this.entity.getMeshID());
+            Game.removeMeshToEntityController(this.entity.getMeshID());
         }
         this.entity.removeController();
         for (var _var in this) {
