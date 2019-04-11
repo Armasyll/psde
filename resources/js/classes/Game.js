@@ -3206,9 +3206,7 @@ class Game {
             );
         }
         else {
-            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.add(
-                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
-            ));
+            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position);
         }
         _subEntity.removeItem(_instancedItemEntity);
         if (_subEntity == Game.player) {
