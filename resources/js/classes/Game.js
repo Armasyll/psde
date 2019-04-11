@@ -2978,8 +2978,13 @@ class Game {
         var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay);
         if (_hit.hit) {
             let _controller = Game.getMeshToEntityController(_hit.pickedMesh);
-            if (_controller != Game.player.getController().getTarget()) {
-                Game.setPlayerTarget(_controller);
+            if (_controller instanceof EntityController) {
+                if (_controller != Game.player.getController().getTarget()) {
+                    Game.setPlayerTarget(_controller);
+                }
+            }
+            else {
+                Game.clearPlayerTarget();
             }
         }
         else {
