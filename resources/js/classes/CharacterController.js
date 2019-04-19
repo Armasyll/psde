@@ -5,49 +5,49 @@
 class CharacterController extends EntityController {
     constructor(_id, _mesh, _entity) {
         super (_id, _mesh, _entity);
-
-        // Mesh, attached to the 'FOCUS' bone, which will be the focus of the camera
+        if (!this.hasMesh()) {
+            return;
+        }
         this.focus = undefined;
         this.root = undefined;
-        // What EntityController this CharacterController is targeting
         this.targetController = null;
-        // The CharacterControllers targeting this CharacterController
         this.targetedByControllers = new Set();
-        // Ray which does the targeting
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
-
-        // Hard values calculated using the distance between the front heel and rear toe during the furthest stride in 24-frames per second, multiplied by the character's height. (then thrown out the window 'cause they were too damn slow)
-        this.gravity = -Game.scene.gravity.y;
+        this.gravityScale = 1.0;
+        this._gravity = -Game.scene.gravity.y * this.gravityScale;
         this.minSlopeLimit = 30;
         this.maxSlopeLimit = 50;
-        this.minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
-        this.maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
+        this._minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
+        this._maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
         this._stepOffset = 0.25;
         this._vMoveTot = 0;
         this._vMovStartPos = BABYLON.Vector3.Zero();
         this.walkSpeed = 0.68 * this.mesh.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
         this.sprintSpeed = this.walkSpeed * 2;
-        this.backSpeed = this.walkSpeed * 0.5;
+        this.backSpeed = this.walkSpeed;
         this.jumpSpeed = this.mesh.scaling.y * 4;
-
-        this.moveVector = new BABYLON.Vector3();
-        this.avStartPos = BABYLON.Vector3.Zero();
-        this.grounded = false;
-        this.freeFallDist = 0;
-        this.fallFrameCountMin = 50;
-        this.fallFrameCount = 0;
-        this.inFreeFall = false;
-        this.wasWalking = false;
-        this.wasRunning = false;
-        this.wasSprinting = false;
-        this.jumpStartPosY = 0;
-        this.jumpTime = 0;
-        this.movFallTime = 0;
-        this.idleFallTime = 0;
-        this.groundFrameCount = 0;
-        this.groundFrameMax = 10;
+        this._moveVector = new BABYLON.Vector3();
+        this._avStartPos = BABYLON.Vector3.Zero();
+        this._fallDist = 0;
+        this._fallFrameCountMin = 50;
+        this._fallFrameCount = 0;
+        this._jumpStartPosY = 0;
+        this._jumpTime = 0;
+        this._movFallTime = 0;
+        this._idleFallTime = 0;
+        this._groundFrameCount = 0;
+        this._groundFrameMax = 10;
+        this.isGrounded = false;
+        this.isFalling = false;
+        this.isCrouching = false;
+        this.isClimbing = false; // Ladder
+        this.isProne = false;
+        this.isWalking = false;
+        this.isRunning = false;
+        this.isSprinting = false;
+        this.isAttacking = false; // While crouching, walking, or running
 
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
@@ -64,8 +64,6 @@ class CharacterController extends EntityController {
         this.punch = new AnimData("punch");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
-        this.punch.standalone = false;
-
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
@@ -74,7 +72,7 @@ class CharacterController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
-        this.setPunchAnim("71_punch01", 1, false);
+        this.setPunchAnim("71_punch01", 1, false, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.checkAnims(this.skeleton);
@@ -86,13 +84,6 @@ class CharacterController extends EntityController {
 
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
-        var _this = this;
-        this.renderer = function () { _this.moveAV(); };
-
-        this._isEnabled = true;
-        this._isLocked = false;
-        this._isAnimated = true;
-
         this._showHelmet = true;
 
         /**
@@ -112,8 +103,8 @@ class CharacterController extends EntityController {
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
         this.minSlopeLimit = minSlopeLimit;
         this.maxSlopeLimit = maxSlopeLimit;
-        this.minSlopeLimitRads = Math.PI * minSlopeLimit / 180;
-        this.maxSlopeLimitRads = Math.PI * this.maxSlopeLimit / 180;
+        this._minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
+        this._maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
     }
     setStepOffset(stepOffset) {
         this._stepOffset = stepOffset;
@@ -130,56 +121,48 @@ class CharacterController extends EntityController {
     setJumpSpeed(_n) {
         this.jumpSpeed = _n;
     }
-    setGravity(_n) {
-        this.gravity = _n;
+    setGravityScale(_n) {
+        this.gravityScale = _n;
+        this._gravity = -Game.gravity.y * this.gravityScale;
     }
-    setWalkAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.walk, _rangeName, _rate, _loop);
+    setWalkAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.walk, _rangeName, _rate, _loop, _standalone);
     }
-    setRunAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.run, _rangeName, _rate, _loop);
+    setRunAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.run, _rangeName, _rate, _loop, _standalone);
     }
-    setWalkBackAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.walkBack, _rangeName, _rate, _loop);
+    setWalkBackAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.walkBack, _rangeName, _rate, _loop, _standalone);
     }
-    setSlideBackAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.slideBack, _rangeName, _rate, _loop);
+    setSlideBackAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.slideBack, _rangeName, _rate, _loop, _standalone);
     }
-    setIdleAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.idle, _rangeName, _rate, _loop);
+    setIdleAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.idle, _rangeName, _rate, _loop, _standalone);
     }
-    setIdleJumpAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.idleJump, _rangeName, _rate, _loop);
+    setIdleJumpAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.idleJump, _rangeName, _rate, _loop, _standalone);
     }
-    setTurnRightAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.turnRight, _rangeName, _rate, _loop);
+    setTurnRightAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.turnRight, _rangeName, _rate, _loop, _standalone);
     }
-    setTurnLeftAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.turnLeft, _rangeName, _rate, _loop);
+    setTurnLeftAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.turnLeft, _rangeName, _rate, _loop, _standalone);
     }
-    setStrafeRightAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.strafeRight, _rangeName, _rate, _loop);
+    setStrafeRightAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.strafeRight, _rangeName, _rate, _loop, _standalone);
     }
-    setSrafeLeftAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.strafeLeft, _rangeName, _rate, _loop);
+    setSrafeLeftAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.strafeLeft, _rangeName, _rate, _loop, _standalone);
     }
-    setRunJumpAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.runJump, _rangeName, _rate, _loop);
+    setRunJumpAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.runJump, _rangeName, _rate, _loop, _standalone);
     }
-    setFallAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.fall, _rangeName, _rate, _loop);
+    setFallAnim(_rangeName, _rate, _loop, _standalone = true) {
+        this.setAnimData(this.fall, _rangeName, _rate, _loop, _standalone);
     }
-    setPunchAnim(_rangeName, _rate, _loop) {
-        this.setAnim(this.punch, _rangeName, _rate, _loop);
-    }
-    start() {
-        if (this.started)
-            return;
-        this.started = true;
-        this.key.reset();
-        this.movFallTime = 0;
-        this.idleFallTime = 0.001;
-        this.grounded = false;
+    setPunchAnim(_rangeName, _rate, _loop, _standalone = false) {
+        this.setAnimData(this.punch, _rangeName, _rate, _loop, _standalone);
     }
     moveAV() {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
@@ -191,20 +174,20 @@ class CharacterController extends EntityController {
         if (this.getParent() != undefined) {
             this.removeParent();
         }
-        this.avStartPos.copyFrom(this.mesh.position);
+        this._avStartPos.copyFrom(this.mesh.position);
         var anim = null;
         var dt = Game.engine.getDeltaTime() / 1000;
-        if (this.key.jump && !this.inFreeFall) {
-            this.grounded = false;
-            this.idleFallTime = 0;
+        if (this.key.jump && !this.isFalling) {
+            this.isGrounded = false;
+            this._idleFallTime = 0;
             anim = this.doJump(dt);
         }
-        else if (this.anyMovement() || this.inFreeFall) {
-            this.grounded = false;
-            this.idleFallTime = 0;
+        else if (this.anyMovement() || this.isFalling) {
+            this.isGrounded = false;
+            this._idleFallTime = 0;
             anim = this.doMove(dt);
         }
-        else if (!this.inFreeFall) {
+        else if (!this.isFalling) {
             anim = this.doIdle(dt);
         }
         this.beginAnimation(anim);
@@ -216,28 +199,28 @@ class CharacterController extends EntityController {
     doJump(dt) {
         var anim = null;
         anim = this.runJump;
-        if (this.jumpTime === 0) {
-            this.jumpStartPosY = this.mesh.position.y;
+        if (this._jumpTime === 0) {
+            this._jumpStartPosY = this.mesh.position.y;
         }
-        var js = this.jumpSpeed - this.gravity * this.jumpTime;
-        var jumpDist = js * dt - 0.5 * this.gravity * dt * dt;
-        this.jumpTime = this.jumpTime + dt;
+        var js = this.jumpSpeed - this._gravity * this._jumpTime;
+        var jumpDist = js * dt - 0.5 * this._gravity * dt * dt;
+        this._jumpTime = this._jumpTime + dt;
         var forwardDist = 0;
         var disp;
         if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
             this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
-        if (this.wasSprinting || this.wasRunning || this.wasWalking) {
-            if (this.wasRunning) {
+        if (this.isSprinting || this.isRunning || this.isWalking) {
+            if (this.isRunning) {
                 forwardDist = this.runSpeed * dt;
             }
-            else if (this.wasWalking) {
+            else if (this.isWalking) {
                 forwardDist = this.walkSpeed * dt;
             }
-            else if (this.wasSprinting) {
+            else if (this.isSprinting) {
                 forwardDist = this.sprintSpeed * dt;
             }
-            disp = this.moveVector.clone();
+            disp = this._moveVector.clone();
             disp.y = 0;
             disp = disp.normalize();
             disp.scaleToRef(forwardDist, disp);
@@ -249,13 +232,13 @@ class CharacterController extends EntityController {
         }
         this.mesh.moveWithCollisions(disp);
         if (jumpDist < 0) {
-            if ((this.mesh.position.y > this.avStartPos.y) || ((this.mesh.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
+            if ((this.mesh.position.y > this._avStartPos.y) || ((this.mesh.position.y === this._avStartPos.y) && (disp.length() > 0.001))) {
                 this.endJump();
             }
-            else if (this.mesh.position.y < this.jumpStartPosY) {
-                var actDisp = this.mesh.position.subtract(this.avStartPos);
+            else if (this.mesh.position.y < this._jumpStartPosY) {
+                var actDisp = this.mesh.position.subtract(this._avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                         this.endJump();
                     }
                 }
@@ -265,36 +248,36 @@ class CharacterController extends EntityController {
     }
     endJump() {
         this.key.jump = false;
-        this.jumpTime = 0;
-        this.wasWalking = false;
-        this.wasRunning = false;
-        this.wasSprinting = false;
+        this._jumpTime = 0;
+        this.isWalking = false;
+        this.isRunning = false;
+        this.isSprinting = false;
     }
     doMove(dt) {
-        var u = this.movFallTime * this.gravity;
-        this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
-        this.movFallTime = this.movFallTime + dt;
+        var u = this._movFallTime * this._gravity;
+        this._fallDist = u * dt + this._gravity * dt * dt / 2;
+        this._movFallTime = this._movFallTime + dt;
         var moving = false;
         var anim = null;
-        if (this.inFreeFall) {
-            this.moveVector.y = -this.freeFallDist;
+        if (this.isFalling) {
+            this._moveVector.y = -this._fallDist;
             moving = true;
         }
         else {
-            this.moveVector.set(0,0,0);
-            this.wasWalking = false;
-            this.wasRunning = false;
-            this.wasSprinting = false;
+            this._moveVector.set(0,0,0);
+            this.isWalking = false;
+            this.isRunning = false;
+            this.isSprinting = false;
             var xDist = 0;
             var zDist = 0;
             if (this.key.forward) {
                 if (this.key.shift) { // TODO: add option to toggle walking somewhere
-                    this.wasSprinting = true;
+                    this.isSprinting = true;
                     zDist = this.sprintSpeed * dt;
                     anim = this.sprint;
                 }
                 else {
-                    this.wasRunning = true;
+                    this.isRunning = true;
                     zDist = this.runSpeed * dt;
                     anim = this.run;
                 }
@@ -315,55 +298,35 @@ class CharacterController extends EntityController {
                 xDist = this.runSpeed * dt;
                 moving = true;
             }
-            else {
-                if (this.key.turnLeft) {
-                    this.mesh.addRotation(0, -0.022, 0);
-                    if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
-                        Game.camera.alpha = -this.mesh.rotation.y - 4.69;
-                    }
-                    if (!moving) {
-                        anim = this.turnLeft;
-                    }
-                }
-                else if (this.key.turnRight) {
-                    this.mesh.addRotation(0, 0.022, 0);
-                    if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
-                        Game.camera.alpha = -this.mesh.rotation.y - 4.69;
-                    }
-                    if (!moving) {
-                        anim = this.turnRight;
-                    }
-                }
-            }
-            this.moveVector = this.mesh.calcMovePOV(xDist, -this.freeFallDist, zDist);
+            this._moveVector = this.mesh.calcMovePOV(xDist, -this._fallDist, zDist);
         }
         /*
-         *  Jittering in the Y direction caused by moveVector
+         *  Jittering in the Y direction caused by _moveVector
          */
         if (moving) {
             if (this == Game.player.getController() && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
                 this.mesh.rotation.y = -4.69 - Game.camera.alpha;
             }
-            if (this.moveVector.length() > 0.001) {
-                this.moveVector.x = Number(this.moveVector.x.toFixed(3));
-                this.moveVector.y = Number(this.moveVector.y.toFixed(3));
-                if (this.moveVector.y > 0) { // Effort to mitigate jittering; seems to work, and doesn't cause any floating when going down the stairs :v
-                    this.moveVector.y = this.moveVector.y - 0.00075;
+            if (this._moveVector.length() > 0.001) {
+                this._moveVector.x = Number(this._moveVector.x.toFixed(3));
+                this._moveVector.y = Number(this._moveVector.y.toFixed(3));
+                if (this._moveVector.y > 0) { // Effort to mitigate jittering; seems to work, and doesn't cause any floating when going down the stairs :v
+                    this._moveVector.y = this._moveVector.y - 0.00075;
                 }
                 else {
-                    this.moveVector.y = this.moveVector.y + 0.00075;
+                    this._moveVector.y = this._moveVector.y + 0.00075;
                 }
-                this.moveVector.z = Number(this.moveVector.z.toFixed(3));
-                this.mesh.moveWithCollisions(this.moveVector);
-                if (this.mesh.position.y > this.avStartPos.y) {
-                    var actDisp = this.mesh.position.subtract(this.avStartPos);
+                this._moveVector.z = Number(this._moveVector.z.toFixed(3));
+                this.mesh.moveWithCollisions(this._moveVector);
+                if (this.mesh.position.y > this._avStartPos.y) {
+                    var actDisp = this.mesh.position.subtract(this._avStartPos);
                     var _sl = Tools.verticalSlope(actDisp);
-                    if (_sl >= this.maxSlopeLimitRads) {
+                    if (_sl >= this._maxSlopeLimitRads) {
                         if (this._stepOffset > 0) {
                             if (this._vMoveTot == 0) {
-                                this._vMovStartPos.copyFrom(this.avStartPos);
+                                this._vMovStartPos.copyFrom(this._avStartPos);
                             }
-                            this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this.avStartPos.y);
+                            this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this._avStartPos.y);
                             if (this._vMoveTot > this._stepOffset) {
                                 this._vMoveTot = 0;
                                 this.mesh.position.copyFrom(this._vMovStartPos);
@@ -371,36 +334,36 @@ class CharacterController extends EntityController {
                             }
                         }
                         else {
-                            this.mesh.position.copyFrom(this.avStartPos);
+                            this.mesh.position.copyFrom(this._avStartPos);
                             this.endFreeFall();
                         }
                     }
                     else {
                         this._vMoveTot = 0;
-                        if (_sl > this.minSlopeLimitRads) {
-                            this.fallFrameCount = 0;
-                            this.inFreeFall = false;
+                        if (_sl > this._minSlopeLimitRads) {
+                            this._fallFrameCount = 0;
+                            this.isFalling = false;
                         }
                         else {
                             this.endFreeFall();
                         }
                     }
                 }
-                else if ((this.mesh.position.y) < this.avStartPos.y) {
-                    var actDisp = this.mesh.position.subtract(this.avStartPos);
-                    if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
-                        if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                else if ((this.mesh.position.y) < this._avStartPos.y) {
+                    var actDisp = this.mesh.position.subtract(this._avStartPos);
+                    if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
+                        if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                             this.endFreeFall();
                         }
                         else {
-                            this.fallFrameCount = 0;
-                            this.inFreeFall = false;
+                            this._fallFrameCount = 0;
+                            this.isFalling = false;
                         }
                     }
                     else {
-                        this.inFreeFall = true;
-                        this.fallFrameCount++;
-                        if (this.fallFrameCount > this.fallFrameCountMin) {
+                        this.isFalling = true;
+                        this._fallFrameCount++;
+                        if (this._fallFrameCount > this._fallFrameCountMin) {
                             anim = this.fall;
                         }
                     }
@@ -413,42 +376,42 @@ class CharacterController extends EntityController {
         return anim;
     }
     endFreeFall() {
-        this.movFallTime = 0;
-        this.fallFrameCount = 0;
-        this.inFreeFall = false;
+        this._movFallTime = 0;
+        this._fallFrameCount = 0;
+        this.isFalling = false;
     }
     doIdle(dt) {
-        if (this.grounded) {
+        if (this.isGrounded) {
             return this.idle;
         }
-        this.wasWalking = false;
-        this.wasRunning = false;
-        this.wasSprinting = false;
-        this.movFallTime = 0;
+        this.isWalking = false;
+        this.isRunning = false;
+        this.isSprinting = false;
+        this._movFallTime = 0;
         var anim = this.idle;
-        this.fallFrameCount = 0;
+        this._fallFrameCount = 0;
         if (dt === 0) {
-            this.freeFallDist = 5;
+            this._fallDist = 5;
         }
         else {
-            var u = this.idleFallTime * this.gravity;
-            this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
-            this.idleFallTime = this.idleFallTime + dt;
+            var u = this._idleFallTime * this._gravity;
+            this._fallDist = u * dt + this._gravity * dt * dt / 2;
+            this._idleFallTime = this._idleFallTime + dt;
         }
-        if (this.freeFallDist < 0.01)
+        if (this._fallDist < 0.01)
             return anim;
-        var disp = new BABYLON.Vector3(0, -this.freeFallDist, 0);
+        var disp = new BABYLON.Vector3(0, -this._fallDist, 0);
         ;
         this.mesh.moveWithCollisions(disp);
-        if ((this.mesh.position.y > this.avStartPos.y) || (this.mesh.position.y === this.avStartPos.y)) {
+        if ((this.mesh.position.y > this._avStartPos.y) || (this.mesh.position.y === this._avStartPos.y)) {
             this.groundIt();
         }
-        else if (this.mesh.position.y < this.avStartPos.y) {
-            var actDisp = this.mesh.position.subtract(this.avStartPos);
+        else if (this.mesh.position.y < this._avStartPos.y) {
+            var actDisp = this.mesh.position.subtract(this._avStartPos);
             if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                if (Tools.verticalSlope(actDisp) <= this.minSlopeLimitRads) {
+                if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                     this.groundIt();
-                    this.mesh.position.copyFrom(this.avStartPos);
+                    this.mesh.position.copyFrom(this._avStartPos);
                 }
                 else {
                     this.unGroundIt();
@@ -459,20 +422,23 @@ class CharacterController extends EntityController {
         return anim;
     }
     groundIt() {
-        this.groundFrameCount++;
-        if (this.groundFrameCount > this.groundFrameMax) {
-            this.grounded = true;
-            this.idleFallTime = 0;
+        this._groundFrameCount++;
+        if (this._groundFrameCount > this._groundFrameMax) {
+            this.isGrounded = true;
+            this._idleFallTime = 0;
         }
     }
     unGroundIt() {
-        this.grounded = false;
-        this.groundFrameCount = 0;
+        this.isGrounded = false;
+        this._groundFrameCount = 0;
     }
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
     doPunch(dt) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
         }
@@ -610,6 +576,9 @@ class CharacterController extends EntityController {
         return this;
     }
     hideAttachedMeshes() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         for (var _bone in this._meshesAttachedToBones) {
             if (_bone == "FOCUS" || _bone == "ROOT") {}
             else if (this._showHelmet && _bone == "head") {}
@@ -622,6 +591,9 @@ class CharacterController extends EntityController {
         return this;
     }
     showAttachedMeshes() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         for (var _bone in this._meshesAttachedToBones) {
             if (_bone == "FOCUS" || _bone == "ROOT") {}
             else if (!this._showHelmet && _bone == "head") {}
@@ -636,6 +608,9 @@ class CharacterController extends EntityController {
         return this;
     }
     hideHelmet() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
             for (var _mesh in this._meshesAttachedToBones["head"]) {
                 if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
@@ -647,6 +622,9 @@ class CharacterController extends EntityController {
         return this;
     }
     showHelmet() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
             for (var _mesh in this._meshesAttachedToBones["head"]) {
                 if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
@@ -660,24 +638,30 @@ class CharacterController extends EntityController {
 
     getBone(_bone) {
         if (Game.debugEnabled) console.log("Running getBone");
-        if (_bone instanceof BABYLON.Bone) {
-            return _bone;
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            if (_bone instanceof BABYLON.Bone) {
+                return _bone;
+            }
+            else if (typeof _bone == "string") {
+                return this.getBoneByName(_bone);
+            }
+            else if (typeof _bone == "number") {
+                return this.getBoneByID(_bone);
+            }
         }
-        else if (typeof _bone == "string") {
-            return this.getBoneByName(_bone);
-        }
-        else if (typeof _bone == "number") {
-            return this.getBoneByID(_bone);
-        }
-        else {
-            return null;
-        }
+        return null;
     }
     getBoneByName(_string) {
-        return this.mesh.skeleton.bones[this.mesh.skeleton.getBoneIndexByName(_string)];
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            return this.skeleton.bones[this.skeleton.getBoneIndexByName(_string)];
+        }
+        return null;
     }
     getBoneByID(_int) {
-        return this.mesh.skeleton.bones[_int];
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            return this.skeleton.bones[_int];
+        }
+        return null;
     }
     /**
      * Attaches a mesh to a bone
@@ -694,8 +678,11 @@ class CharacterController extends EntityController {
         if (!Game.hasMesh(_mesh)) {
             return this;
         }
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         _bone = this.getBone(_bone);
-        if (_bone == null) {
+        if (!(_bone instanceof BABYLON.Bone)) {
             return this;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
@@ -759,6 +746,9 @@ class CharacterController extends EntityController {
         return this.detachAllFromBone(_bone);
     }
     detachAllFromBone(_bone) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         _bone = this.getBone(_bone);
         if (!(_bone instanceof BABYLON.Bone)) {
             return this;
@@ -777,6 +767,9 @@ class CharacterController extends EntityController {
         return this;
     }
     detachMeshFromBone(_mesh, _bone = undefined) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         _mesh = Game.getMesh(_mesh);
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             return this;
@@ -801,6 +794,9 @@ class CharacterController extends EntityController {
         return this;
     }
     detachFromAllBones() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
         for (var _bone in this._meshesAttachedToBones) {
             if (_bone == "FOCUS" || _bone == "ROOT") {}
             else {
@@ -816,11 +812,11 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    attachToLeftEye(_mesh, _texture) {
-        return this.attachToBone(_mesh, _texture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    attachToFOCUS(_mesh) {
+        return this.attachToBone(_mesh, undefined, "FOCUS");
     }
-    attachToRightEye(_mesh, _texture) {
-        return this.attachToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+    detachFromFOCUS() {
+        return this.detachFromBone("FOCUS");
     }
     attachToHead(_mesh, _texture) {
         this.attachToBone(_mesh, _texture, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
@@ -832,20 +828,50 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    attachToFOCUS(_mesh) {
-        return this.attachToBone(_mesh, undefined, "FOCUS");
+    detachFromHead() {
+        return this.detachFromBone("head");
     }
-    attachToRightHand(_mesh, _texture) {
-        return this.attachToBone(_mesh, _texture, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+    attachToLeftEye(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
-    detachFromRightHand() {
-        return this.detachFromBone("hand.r");
+    detachFromLeftEye() {
+        return this.detachFromBone("eye.l");
     }
-    attachToLeftHand(_mesh, _texture) {
-        return this.attachToBone(_mesh, _texture, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+    attachToRightEye(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
-    detachFromLeftHand() {
-        return this.detachFromBone("hand.l");
+    detachFromLeftEye() {
+        return this.detachFromBone("eye.r");
+    }
+    attachToLeftEar(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "ear.l");
+    }
+    detachFromLeftEare() {
+        return this.detachFromBone("ear.l");
+    }
+    attachToRightEar(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "ear.r");
+    }
+    detachFromLeftEare() {
+        return this.detachFromBone("ear.r");
+    }
+    attachToNeck(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "neck");
+    }
+    detachFromNeck() {
+        return this.detachFromBone("neck");
+    }
+    attachToLeftShoulder(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+    }
+    detachFromLeftShoulder() {
+        return this.detachFromBone("shoulder.l");
+    }
+    attachToRightShoulder(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+    }
+    detachFromRightShoulder() {
+        return this.detachFromBone("shoulder.r");
     }
     attachToLeftForearm(_mesh, _texture) {
         return this.attachToBone(_mesh, _texture, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)));
@@ -858,6 +884,72 @@ class CharacterController extends EntityController {
     }
     detachFromRightForearm() {
         return this.detachFromBone("forearm.r");
+    }
+    attachToLeftHand(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+    }
+    detachFromLeftHand() {
+        return this.detachFromBone("hand.l");
+    }
+    attachToRightHand(_mesh, _texture) {
+        return this.attachToBone(_mesh, _texture, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+    }
+    detachFromRightHand() {
+        return this.detachFromBone("hand.r");
+    }
+    generateAttachedMeshes() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
+        if (this.entity instanceof CharacterEntity) {
+            for (_equipmentIndex in this.entity.getEquipment()) {
+                switch (_equipmentIndex) {
+                    case "HEAD": {
+                        this.attachToHead(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "EAR_L": {
+                        this.attachToLeftEar(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "EAR_R": {
+                        this.attachToRightEar(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "NECK": {
+                        this.attachToNeck(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "SHOULDER_L": {
+                        this.attachToLeftShoulder(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "SHOULDER_R": {
+                        this.attachToRightShoulder(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "FOREARM_L": {
+                        this.attachToLeftForearm(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "FOREARM_R": {
+                        this.attachToRightForearm(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "HAND_L": {
+                        this.attachToLeftHand(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    case "HAND_R": {
+                        this.attachToRightHand(this.entity.getEquipment()[_equipmentIndex]);
+                        break;
+                    }
+                    default: {
+                        
+                    }
+                }
+            }
+        }
     }
 
     dispose() {

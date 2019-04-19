@@ -32,6 +32,8 @@ class EntityController {
          */
         this.animationBones = {};
         this._isEnabled = true;
+        this._isLocked = false;
+        this._isAnimated = false;
         this.setMesh(_mesh);
         this.setEntity(_entity);
         Game.setEntityController(this.id, this);
@@ -101,6 +103,15 @@ class EntityController {
     }
     hasMesh() {
         return this.mesh instanceof BABYLON.AbstractMesh;
+    }
+    setSkeleton(_mesh) { // lolno
+        return this;
+    }
+    getSkeleton() {
+        return this.skeleton;
+    }
+    hasSkeleton() {
+        return this.skeleton instanceof BABYLON.Skeleton;
     }
     setEntity(_entity) {
         if (_entity instanceof AbstractEntity) {
@@ -185,12 +196,14 @@ class EntityController {
         return this;
     }
 
-    setAnim(_anim, _rangeName, _rate, _loop) {
-        if (this.skeleton == null)
-            return null;
+    setAnimData(_anim, _rangeName, _rate = 1, _loop = true, _standalone = true) {
+        if (this.skeleton == null) {
+            return;
+        }
         _anim.name = _rangeName;
         _anim.rate = _rate;
         _anim.loop = _loop;
+        _anim.standalone = _standalone;
         if (this.skeleton.getAnimationRange(_anim.name) != null) {
             _anim.exist = true;
             this.skeleton.getAnimationRange(_rangeName).from += 1;
@@ -269,17 +282,24 @@ class EntityController {
     }
 
     isEnabled() {
-        return this._isEnabled == true;
+        return this._isEnabled;
     }
-    setEnabled(_isEnabled = true) {
-        this._isEnabled = (_isEnabled == true);
+    setEnabled(_bool = true) {
+        this._isEnabled = _bool == true;
         return this;
     }
     isAnimated() {
-        return this._isAnimated == true;
+        return this._isAnimated;
     }
-    setAnimated(_isAnimated = true) {
-        this._isAnimated = (_isAnimated == true);
+    setAnimated(_bool = true) {
+        this._isAnimated = _bool == true;
+        return this;
+    }
+    isLocked() {
+        return this._isLocked;
+    }
+    setLocked(_bool = true) {
+        this._isLocked = _bool == true;
         return this;
     }
     dispose() {

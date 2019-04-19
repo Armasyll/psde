@@ -356,7 +356,6 @@ class GameGUI {
             submitOnline.color = GameGUI.color;
             submitOnline.background = GameGUI.focusedBackground;
             submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            submitOnline.isEnabled = false;
 
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
             Game.initQwertyKeyboardControls();
@@ -369,17 +368,13 @@ class GameGUI {
         });
         submitOnline.onPointerClickObservable.add(function() {
             if (!Game._finishedConfiguring) {
-                Game.generateApartment();
                 Game._finishedConfiguring = true;
-                Game.initPlayer();
-                Game.player.setName(nameInput.text);
-                GameGUI.setPlayerPortrait(Game.player);
+                Game.generateApartment();
+                Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
-            console.log("Online functionality hasn't been updated in months, sorry :V no multiplayer 4 u");
-            /*
             if (!Client.isOnline()) {
                 Client.connect();
-            }*/
+            }
             GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
@@ -388,9 +383,7 @@ class GameGUI {
             if (!Game._finishedConfiguring) {
                 Game._finishedConfiguring = true;
                 Game.generateApartment();
-                Game.initPlayer();
-                Game.player.setName(nameInput.text);
-                GameGUI.setPlayerPortrait(Game.player);
+                Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
             if (Client.isOnline()) {
                 Client.disconnect();
@@ -398,9 +391,6 @@ class GameGUI {
             GameGUI.hideCharacterChoiceMenu();
             GameGUI.hideMenu();
             GameGUI.showHUD();
-            console.log("Player Entity:\n\tGame.player");
-            console.log("Player 3D Controller:\n\tGame.player.getController()");
-            console.log("Player 3D Mesh:\n\tGame.player.getController().getMesh()");
         });
 
         characterChoiceMenuContainer.addControl(nameContainer);

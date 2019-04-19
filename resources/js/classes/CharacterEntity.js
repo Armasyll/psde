@@ -1285,7 +1285,7 @@ class CharacterEntity extends EntityWithStorage {
     }
     setEyeColour(_colour) {
         this.eyeColour = _colour
-        this.eyeColourHex = colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+        this.eyeColourHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
         return this;
     }
     setEyeColourHex(_hexColour) {
@@ -1307,12 +1307,12 @@ class CharacterEntity extends EntityWithStorage {
     }
     setFurColourA(_colour) {
         this.furColourA = _colour;
-        this.furColourAHex = colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+        this.furColourAHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
         return this;
     }
     setFurColourB(_colour) {
         this.furColourB = _colour;
-        this.furColourBHex = colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+        this.furColourBHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
         return this;
     }
     setFurColour(_colourA, _colourB = undefined) {

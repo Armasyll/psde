@@ -11,10 +11,10 @@ class FurnitureController extends EntityController {
             this.close = new AnimData("close");
             this.animations = this.animations.concat([this.closed, this.open, this.opened, this.close]);
 
-            this.setAnim(this.closed, "10_closed01", 1, true);
-            this.setAnim(this.open, "80_open01", 1, false);
-            this.setAnim(this.opened, "10_opened01", 1, true);
-            this.setAnim(this.close, "80_close01", 1, false);
+            this.setAnimData(this.closed, "10_closed01", 1, true);
+            this.setAnimData(this.open, "80_open01", 1, false);
+            this.setAnimData(this.opened, "10_opened01", 1, true);
+            this.setAnimData(this.close, "80_close01", 1, false);
 
             this.checkAnims(this.skeleton);
             this._isAnimated = true;
