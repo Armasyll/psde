@@ -122,6 +122,9 @@ class EntityController {
     getEntity() {
         return this.entity;
     }
+    hasEntity() {
+        return this.entity instanceof AbstractEntity;
+    }
     setMeshSkeleton(_skeleton) {
         if (_skeleton instanceof BABYLON.Skeleton) {
             this.skeleton = _skeleton;

@@ -1271,7 +1271,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
 
-    setEyes(_type) {
+    setEyeType(_type) {
         if (isNaN(_type)) {
             return this;
         }
@@ -1283,10 +1283,22 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this;
     }
+    getEyeType() {
+        return this.eyeType;
+    }
     setEyeColour(_colour) {
-        this.eyeColour = _colour
+        if (typeof _colour != "string") {
+            _colour = "gray";
+        }
+        else {
+            _colour = _colour.toLowerCase();
+        }
+        this.eyeColour = _colour;
         this.eyeColourHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
         return this;
+    }
+    getEyeColour() {
+        return this.eyeColour;
     }
     setEyeColourHex(_hexColour) {
         this.eyeColourHex = _hexColour;
@@ -1366,7 +1378,7 @@ class CharacterEntity extends EntityWithStorage {
 
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.SHEEP) {
@@ -1383,7 +1395,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.HOOF);
-            this.setEyes(EyeEnum.OBLONG);
+            this.setEyeType(EyeEnum.OBLONG);
             this.setPelt(PeltEnum.WOOL);
         }
         else if (this.species == SpeciesEnum.WOLF) {
@@ -1399,7 +1411,7 @@ class CharacterEntity extends EntityWithStorage {
 
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.AARDWOLF) {
@@ -1416,7 +1428,7 @@ class CharacterEntity extends EntityWithStorage {
 
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.HYENA) {
@@ -1433,7 +1445,7 @@ class CharacterEntity extends EntityWithStorage {
 
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.STOAT) {
@@ -1450,7 +1462,7 @@ class CharacterEntity extends EntityWithStorage {
 
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.DEER) {
@@ -1467,7 +1479,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.HOOF);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.WOOL);
         }
         else if (this.species == SpeciesEnum.RABBIT) {
@@ -1484,7 +1496,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.FUR);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.JACKAL) {
@@ -1501,7 +1513,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.COYOTE) {
@@ -1518,7 +1530,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.TIGER) {
@@ -1535,7 +1547,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = true;
             this.setPaws(PawEnum.PAD);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         else if (this.species == SpeciesEnum.ANTELOPE) {
@@ -1552,7 +1564,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.HOOF);
-            this.setEyes(EyeEnum.OBLONG);
+            this.setEyeType(EyeEnum.OBLONG);
             this.setPelt(PeltEnum.HAIR);
         }
         else if (this.species == SpeciesEnum.PIG) {
@@ -1569,7 +1581,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.HOOF);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.SKIN);
         }
         else if (this.species == SpeciesEnum.HORSE) {
@@ -1586,7 +1598,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.HOOF);
-            this.setEyes(EyeEnum.OBLONG);
+            this.setEyeType(EyeEnum.OBLONG);
             this.setPelt(PeltEnum.HAIR);
         }
         else if (this.species == SpeciesEnum.MOUSE) {
@@ -1603,7 +1615,7 @@ class CharacterEntity extends EntityWithStorage {
             
             this.predator = false;
             this.setPaws(PawEnum.SKIN);
-            this.setEyes(EyeEnum.CIRCLE);
+            this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
         if (this.age.getValue() > 19) {

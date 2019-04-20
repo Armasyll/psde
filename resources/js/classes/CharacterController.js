@@ -96,7 +96,7 @@ class CharacterController extends EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
-
+        this.generateOrganMeshes();
         Game.setCharacterController(this.id, this);
     }
 
@@ -840,19 +840,19 @@ class CharacterController extends EntityController {
     attachToRightEye(_mesh, _texture) {
         return this.attachToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
-    detachFromLeftEye() {
+    detachFromRightEye() {
         return this.detachFromBone("eye.r");
     }
     attachToLeftEar(_mesh, _texture) {
         return this.attachToBone(_mesh, _texture, "ear.l");
     }
-    detachFromLeftEare() {
+    detachFromLeftEar() {
         return this.detachFromBone("ear.l");
     }
     attachToRightEar(_mesh, _texture) {
         return this.attachToBone(_mesh, _texture, "ear.r");
     }
-    detachFromLeftEare() {
+    detachFromRightEar() {
         return this.detachFromBone("ear.r");
     }
     attachToNeck(_mesh, _texture) {
@@ -897,56 +897,121 @@ class CharacterController extends EntityController {
     detachFromRightHand() {
         return this.detachFromBone("hand.r");
     }
-    generateAttachedMeshes() {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+    /**
+     * Generates attached organ meshes :V
+     * @return {null} null
+     */
+    generateOrganMeshes() {
+        if (!this.hasSkeleton()) {
+            return;
         }
-        if (this.entity instanceof CharacterEntity) {
-            for (_equipmentIndex in this.entity.getEquipment()) {
-                switch (_equipmentIndex) {
-                    case "HEAD": {
-                        this.attachToHead(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "EAR_L": {
-                        this.attachToLeftEar(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "EAR_R": {
-                        this.attachToRightEar(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "NECK": {
-                        this.attachToNeck(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "SHOULDER_L": {
-                        this.attachToLeftShoulder(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "SHOULDER_R": {
-                        this.attachToRightShoulder(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "FOREARM_L": {
-                        this.attachToLeftForearm(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "FOREARM_R": {
-                        this.attachToRightForearm(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "HAND_L": {
-                        this.attachToLeftHand(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    case "HAND_R": {
-                        this.attachToRightHand(this.entity.getEquipment()[_equipmentIndex]);
-                        break;
-                    }
-                    default: {
-                        
-                    }
+        let _string = new String();
+        switch (this.entity.getEyeType()) {
+            case EyeEnum.FERAL: {
+                _string = _string.concat("feralEye");
+                break;
+            }
+            case EyeEnum.OBLONG: {
+                _string = _string.concat("oblongEye");
+                break;
+            }
+            case EyeEnum.CIRCLE:
+            default: {
+                _string = _string.concat("circularEye");
+            }
+        }
+        switch (this.entity.getEyeColour()) {
+            case "yellow": {
+                _string = _string.concat("Yellow");
+                break;
+            }
+            case "brown": {
+                _string = _string.concat("Brown");
+                break;
+            }
+            case "blue": {
+                _string = _string.concat("Blue");
+                break;
+            }
+            case "green": {
+                _string = _string.concat("Green");
+                break;
+            }
+            case "violet": {
+                _string = _string.concat("Violet");
+                break;
+            }
+            case "grey":
+            case "gray":
+            default: {
+            }
+        }
+        this.detachFromRightEye();
+        this.detachFromLeftEye();
+        this.attachToRightEye("eye01", _string);
+        this.attachToLeftEye("eye01", _string);
+    }
+    /**
+     * Generates attached cosmetic meshes according to entity's cosmetics
+     * @return {null} null
+     */
+    generateCosmeticMeshes() { // TODO
+        if (!this.hasSkeleton()) {
+            return;
+        }
+    }
+    /**
+     * Generated attached equipment meshes according to entity's equipment
+     * @return {null} null
+     */
+    generateEquippedMeshes() {
+        if (!this.hasSkeleton()) {
+            return;
+        }
+        for (_equipmentIndex in this.entity.getEquipment()) {
+            switch (_equipmentIndex) {
+                case "HEAD": {
+                    this.attachToHead(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "EAR_L": {
+                    this.attachToLeftEar(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "EAR_R": {
+                    this.attachToRightEar(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "NECK": {
+                    this.attachToNeck(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "SHOULDER_L": {
+                    this.attachToLeftShoulder(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "SHOULDER_R": {
+                    this.attachToRightShoulder(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "FOREARM_L": {
+                    this.attachToLeftForearm(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "FOREARM_R": {
+                    this.attachToRightForearm(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "HAND_L": {
+                    this.attachToLeftHand(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                case "HAND_R": {
+                    this.attachToRightHand(this.entity.getEquipment()[_equipmentIndex]);
+                    break;
+                }
+                default: {
+                    
                 }
             }
         }

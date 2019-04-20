@@ -248,11 +248,6 @@ class Game {
             "packStreetChapter23":"resources/images/textures/items/packStreetChapter23.svg",
             "packStreetChapter24":"resources/images/textures/items/packStreetChapter24.svg",
             "foxCorsac":"resources/images/textures/characters/foxCorsac.svg",
-            "oblongEye":"resources/images/textures/items/oblongEye.svg",
-            "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
-            "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
-            "feralEyeBlue":"resources/images/textures/items/feralEyeBlue.svg",
-            "feralEye":"resources/images/textures/items/feralEye.svg",
             "cross01":"resources/images/textures/items/cross01.svg",
             "spirit":"resources/images/textures/characters/spirit.png",
             "woodenFloorDark01":"resources/images/textures/static/woodenFloorDark01.xcf",
@@ -274,10 +269,6 @@ class Game {
             "metalIron01":"resources/images/textures/items/metalIron01.png",
             "foxRed":"resources/images/textures/characters/foxRed.svg",
             "foxRinehart":"resources/images/textures/characters/foxRinehart.svg",
-            "feralEyeViolet":"resources/images/textures/items/feralEyeViolet.svg",
-            "circularEyeViolet":"resources/images/textures/items/circularEyeViolet.svg",
-            "circularEyeBlue":"resources/images/textures/items/circularEyeBlue.svg",
-            "circularEyeGreen":"resources/images/textures/items/circularEyeGreen.svg",
             "dice":"resources/images/textures/items/dice.svg",
             "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
             "missingTexture":"resources/images/textures/static/missingTexture.svg",
@@ -313,7 +304,25 @@ class Game {
             "dice01Texture":"resources/images/textures/items/dice01.svg",
             "birdMask01":"resources/images/textures/items/birdMask01.svg",
             "chest01":"resources/images/textures/furniture/chest01.svg",
-            "apple01":"resources/images/textures/items/apple01.svg"
+            "apple01":"resources/images/textures/items/apple01.svg",
+            "circularEyeBlue":"resources/images/textures/items/circularEyeBlue.svg",
+            "circularEyeGreen":"resources/images/textures/items/circularEyeGreen.svg",
+            "circularEyeViolet":"resources/images/textures/items/circularEyeViolet.svg",
+            "circularEye":"resources/images/textures/items/circularEye.svg",
+            "feralEye":"resources/images/textures/items/feralEye.svg",
+            "feralEyeViolet":"resources/images/textures/items/feralEyeViolet.svg",
+            "feralEyeBlue":"resources/images/textures/items/feralEyeBlue.svg",
+            "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
+            "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
+            "oblongEye":"resources/images/textures/items/oblongEye.svg",
+            "circularEyeBrown":"resources/images/textures/items/circularEyeBrown.svg",
+            "feralEyeBrown":"resources/images/textures/items/feralEyeBrown.svg",
+            "circularEyeYellow":"resources/images/textures/items/circularEyeYellow.svg",
+            "oblongEyeYellow":"resources/images/textures/items/oblongEyeYellow.svg",
+            "oblongEyeBrown":"resources/images/textures/items/oblongEyeBrown.svg",
+            "oblongEyeBlue":"resources/images/textures/items/oblongEyeBlue.svg",
+            "oblongEyeGreen":"resources/images/textures/items/oblongEyeGreen.svg",
+            "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg"
         };
         /**
          * Map of Textures per ID
@@ -935,7 +944,7 @@ class Game {
     }
     static loadMaterial(_material = "", _diffuseTexture = undefined, _bumpTexture = undefined, _options = {}) {
         if (_material == undefined) {
-            return null;
+            return Game.loadedTextures["missingTexture"];
         }
         else if (_material instanceof BABYLON.Material) {
             if (!this.loadedMaterials.hasOwnProperty(_material.name)) {
@@ -973,7 +982,7 @@ class Game {
             Game.setLoadedMaterial(_material, _newMaterial);
             return _newMaterial;
         }
-        return null;
+        return Game.loadedTextures["missingTexture"];
     }
     static loadMesh(_mesh = "") {
         if (_mesh == undefined) {
@@ -2520,7 +2529,7 @@ class Game {
                 for (let _i in _options) {
                     switch (_i) {
                         case "eyes": {
-                            _entity.setEyes(_options[_i]);
+                            _entity.setEyeType(_options[_i]);
                             break;
                         }
                         case "eyesColour": {
