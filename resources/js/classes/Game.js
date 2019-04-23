@@ -1429,7 +1429,7 @@ class Game {
         var _width = Math.abs(_posEnd.x - _posStart.x);
         var _depth = Math.abs(_posEnd.z - _posStart.z);
         var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = _posY - 0.125/2;
+        var _posY = _posY - 0.06125;
         var _posZ = (_posStart.z + _posEnd.z) / 2;
         var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
         _floor.material = Game.loadedMaterials["collisionMaterial"];
@@ -3145,10 +3145,7 @@ class Game {
         }
         Game.initPlayerPortraitStatsUpdateInterval();
     }
-    
-    static castRayFOV(_fov = 90) {
-        return undefined;
-    }
+
     static pointerLock(_event) {
         if (Game.engine.isPointerLock) {
             return;

@@ -319,7 +319,7 @@ class CharacterController extends EntityController {
                     return false;
                 });
                 if (_hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.0625, 0.0125)) {
+                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.06125, 0.0125)) {
                         this._moveVector.y = 0;
                     }
                 }
