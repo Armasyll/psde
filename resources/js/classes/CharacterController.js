@@ -14,6 +14,7 @@ class CharacterController extends EntityController {
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
+        this.groundRay = new BABYLON.Ray(_mesh.position, _mesh.position.add(BABYLON.Vector3.Down()), 0.01);
         this.gravityScale = 1.0;
         this._gravity = -Game.scene.gravity.y * this.gravityScale;
         this.minSlopeLimit = 30;
@@ -310,11 +311,17 @@ class CharacterController extends EntityController {
             if (this._moveVector.length() > 0.001) {
                 this._moveVector.x = Number(this._moveVector.x.toFixed(3));
                 this._moveVector.y = Number(this._moveVector.y.toFixed(3));
-                if (this._moveVector.y > 0) { // Effort to mitigate jittering; seems to work, and doesn't cause any floating when going down the stairs :v
-                    this._moveVector.y = this._moveVector.y - 0.00075;
-                }
-                else {
-                    this._moveVector.y = this._moveVector.y + 0.00075;
+                this.updateGroundRay();
+                let _hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
+                    if (_mesh.isPickable && _mesh.checkCollisions) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (_hit.hit) {
+                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.0625, 0.0125)) {
+                        this._moveVector.y = 0;
+                    }
                 }
                 this._moveVector.z = Number(this._moveVector.z.toFixed(3));
                 this.mesh.moveWithCollisions(this._moveVector);
@@ -435,14 +442,6 @@ class CharacterController extends EntityController {
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
-    doPunch(dt) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
-        }
-        for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
-            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
-        }
-    }
     getMovementKey() {
         return this.key;
     }
@@ -537,6 +536,14 @@ class CharacterController extends EntityController {
         }
         return this;
     }
+    doPunch(dt) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
+        for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
+            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
+        }
+    }
 
     setTarget(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
@@ -563,6 +570,14 @@ class CharacterController extends EntityController {
     }
     getTarget() {
         return this.targetController;
+    }
+    updateGroundRay() {
+        if (!(this.groundRay instanceof BABYLON.Ray)) {
+            return this;
+        }
+        this.groundRay.origin = this.mesh.position;
+        this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
+        return this;
     }
 
     hideMesh() {
