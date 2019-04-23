@@ -2720,7 +2720,7 @@ class Game {
             if (_options.hasOwnProperty("locked") && _options["locked"] == true) {
                 _locked = true;
             }
-            if (_options.hasOwnProperty("key") && _options["key"] == true) {
+            if (_options.hasOwnProperty("key")) {
                 _key = _options["key"];
             }
             if (_options.hasOwnProperty("opensInward") && _options["opensInward"] == true) {
@@ -2730,6 +2730,7 @@ class Game {
                 _open = true;
             }
         }
+        console.log(_opensInward);
         var _entity = new DoorEntity(_id, _name, undefined, undefined, _locked, _key, _opensInward, _open);
         var _radius = Game.getMesh(_mesh).getBoundingInfo().boundingBox.extendSize.x * _scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
@@ -3365,7 +3366,7 @@ class Game {
             _entity.removeHiddenAvailableAction(ActionEnum.OPEN);
         }
         else if (_entity.getController() instanceof DoorController) {
-            _entity.getController().doClose();
+            _entity.setClose();
         }
     }
     static actionHoldFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
@@ -3458,7 +3459,7 @@ class Game {
                 }
                 _entity.setLocked(false);
             }
-            _entity.getController().doOpen();
+            _entity.setOpen();
         }
         else if (_entity.getController() instanceof FurnitureController) {
             _entity.getController().currAnim = _entity.getController().opened;

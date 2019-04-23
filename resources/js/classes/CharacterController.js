@@ -4,7 +4,7 @@
  */
 class CharacterController extends EntityController {
     constructor(_id, _mesh, _entity) {
-        super (_id, _mesh, _entity);
+        super(_id, _mesh, _entity);
         if (!this.hasMesh()) {
             return;
         }

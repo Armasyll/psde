@@ -1,6 +1,6 @@
 class FurnitureController extends EntityController {
     constructor(_id, _mesh, _entity) {
-        super (_id, _mesh, _entity);
+        super(_id, _mesh, _entity);
 
         // containers, doors: opening, opened, closing, closed
         // maybe make 90_idle01 closed

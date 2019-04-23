@@ -1,15 +1,14 @@
 class DoorController extends EntityController {
     constructor(_id, _mesh, _entity) {
-        super (_id, _mesh, _entity);
-
+        super(_id, _mesh, _entity);
         this.mesh = _mesh;
         this.entity = _entity;
         this.mesh.checkCollisions = true;
-        this.entity.setDefaultAction(ActionEnum.OPEN);
         this.avStartRot = this.mesh.rotation.clone();
-        this.avEndRot = undefined;
+        this.avEndRot = null;
+        this._isAnimated = true;
 
-        if (this.entity.getOpensInward) {
+        if (this.entity.getOpensInward()) {
             this.setOpensInward();
         }
         else {
@@ -21,8 +20,6 @@ class DoorController extends EntityController {
         else {
             this.doClose();
         }
-
-        this._isAnimated = true;
 
         Game.doorControllers[this.id] = this;
     }

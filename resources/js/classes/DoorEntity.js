@@ -9,7 +9,8 @@ class DoorEntity extends Entity {
 
         this.addAvailableAction(ActionEnum.CLOSE);
         this.addAvailableAction(ActionEnum.OPEN);
-        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.OPEN);
         this.setLocked(_locked);
         this.setKey(_key);
         this.setOpensInward(_opensInward);
@@ -40,16 +41,16 @@ class DoorEntity extends Entity {
             if (this.hasController()) {
                 this.controller.doOpen();
             }
-            this.setDefaultAction(ActionEnum.CLOSE);
             this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+            this.setDefaultAction(ActionEnum.CLOSE);
             this.addHiddenAvailableAction(ActionEnum.OPEN);
         }
         else {
             if (this.hasController()) {
                 this.controller.doClose();
             }
-            this.setDefaultAction(ActionEnum.OPEN);
             this.removeHiddenAvailableAction(ActionEnum.OPEN);
+            this.setDefaultAction(ActionEnum.OPEN);
             this.addHiddenAvailableAction(ActionEnum.CLOSE);
         }
     }
