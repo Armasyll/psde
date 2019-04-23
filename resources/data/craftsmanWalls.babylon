@@ -296,7 +296,7 @@
 ,"indices":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,3,19,10,17,20,0,21,1,6,22,23,24,25,10,15,26,16,18,4,3,10,15,17]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":27,"indexStart":0,"indexCount":42}]
 ,"instances":[]}
-,{"name":"craftsmanStairs","id":"craftsmanStairs","billboardMode":0,"position":[-3,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"craftsmanStairs","id":"craftsmanStairs","billboardMode":0,"position":[-3,0,-3],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":true,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-1,1.5,1,-1,1.3125,0.75,-1,1.5,0.75,1,1.5,1,1,1.5,0.75,-0.916,1.55,0,-1,0.8,-1,-0.916,0.8,-1,1,2.162,1,0.916,1.412,0,0.916,2.162,1,0.916,2.162,1,0.916,1.55,0,0.916,2.3,1,0.916,1.55,0,1,2.3,1,0.916,2.3,1
 ,1,0.75,0,-1,0.75,-0.25,1,0.75,-0.25,1,1.125,0.5,-1,1.125,0.25,1,1.125,0.25,1,0.375,-0.5,-1,0.375,-0.75,1,0.375,-0.75,1,0.1875,-0.75,-1,0.1875,-1,1,0.1875,-1,1,0.5625,-0.25,-1,0.5625,-0.5,1,0.5625,-0.5,1,0,-1,1,0.1875,-0.75
 ,1,0.1875,-1,1,0.9375,0.25,-1,0.9375,0,1,0.9375,0,1,1.3125,0.75,-1,1.3125,0.5,1,1.3125,0.5,1,1.3125,0.75,-1,1.125,0.5,1,1.125,0.5,-1,0.9375,0.25,1,0.9375,0.25,-1,0.75,0,1,0.75,0,-1,0.5625,-0.25,1,0.5625,-0.25,-1,0.375,-0.5

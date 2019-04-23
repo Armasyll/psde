@@ -137,10 +137,12 @@ class Game {
             "foxhead02":"resources/data/items.babylon",
             "ring01":"resources/data/items.babylon",
             "foxhead03":"resources/data/items.babylon",
+            "craftsmanDoorwayNoTrim":"resources/data/craftsmanWalls.babylon",
             "craftsmanWindowDouble":"resources/data/craftsmanWalls.babylon",
             "craftsmanWallNoTrim":"resources/data/craftsmanWalls.babylon",
             "craftsmanWallNoCrown":"resources/data/craftsmanWalls.babylon",
             "craftsmanWallNoBaseboard":"resources/data/craftsmanWalls.babylon",
+            "craftsmanWindowframeNoTrim":"resources/data/craftsmanWalls.babylon",
             "craftsmanStairWallCornerRight":"resources/data/craftsmanWalls.babylon",
             "craftsmanStairWallSideRight":"resources/data/craftsmanWalls.babylon",
             "craftsmanWindowframe":"resources/data/craftsmanWalls.babylon",
@@ -1673,7 +1675,7 @@ class Game {
             _material = Game.loadMaterial(_material);
         }
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            if (!Game.hasAvailableMesh(_mesh)) {
+            if (!Game.hasMesh(_mesh)) {
                 if (Game.debugEnabled) console.log(`\tMesh ${_mesh} doesn't exist`);
                 return Game.loadedMeshes["missingMesh"];
             }
