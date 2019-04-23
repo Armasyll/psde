@@ -1750,6 +1750,9 @@ class Game {
         }
         return _mesh;
     }
+    static createCollidableMesh(_id = undefined, _mesh = "missingMesh", _material = "missingMaterial", _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false) {
+        return Game.createMesh(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone, true);
+    }
     static addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone, _createCollisionMesh) {
         if (Game.hasMeshToCreate(_id)) {
             return true;
