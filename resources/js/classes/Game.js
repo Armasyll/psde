@@ -2730,7 +2730,6 @@ class Game {
                 _open = true;
             }
         }
-        console.log(_opensInward);
         var _entity = new DoorEntity(_id, _name, undefined, undefined, _locked, _key, _opensInward, _open);
         var _radius = Game.getMesh(_mesh).getBoundingInfo().boundingBox.extendSize.x * _scaling.x;
         var _xPos = _radius * (Math.cos(_rotation.y * Math.PI / 180) | 0);
