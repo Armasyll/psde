@@ -2585,7 +2585,7 @@ class Game {
                         }
                         break;
                     }
-                    case SpeciesEnum.FOXSKELETON: {
+                    case SpeciesEnum.SKELETON: {
                         _loadedMesh = "foxSkeletonN";
                     }
                     default : {
