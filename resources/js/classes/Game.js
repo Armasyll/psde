@@ -2887,7 +2887,6 @@ class Game {
         _entity.setController(_controller);
         _entity.setMeshID(_loadedMesh);
         _entity.off(); // set because lighting is bad
-        _entity.setLocked(true); // set because lighting is bad
         return _controller;
     }
     static removeLighting(_controller) {

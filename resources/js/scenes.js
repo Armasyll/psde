@@ -735,5 +735,5 @@ Game.generateWallScene = function() {
     
     Game.createMesh(undefined, "stopSign", "stopSign", new BABYLON.Vector3(3, 0, -14));
     
-    Game.createMesh(undefined, "lamp01", undefined, new BABYLON.Vector3(6, 0, -17));
+    Game.createLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, undefined, new BABYLON.Vector3(6, 0, -17));
 }
