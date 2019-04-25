@@ -26,8 +26,7 @@ class CharacterController extends EntityController {
         this._vMovStartPos = BABYLON.Vector3.Zero();
         this.walkSpeed = 0.68 * this.mesh.scaling.z;
         this.runSpeed = this.walkSpeed * 5;
-        this.sprintSpeed = this.walkSpeed * 2;
-        this.backSpeed = this.walkSpeed;
+        this.sprintSpeed = this.runSpeed * 2;
         this.jumpSpeed = this.mesh.scaling.y * 4;
         this._moveVector = new BABYLON.Vector3();
         this._avStartPos = BABYLON.Vector3.Zero();
@@ -115,9 +114,6 @@ class CharacterController extends EntityController {
     }
     setRunSpeed(_n) {
         this.runSpeed = _n;
-    }
-    setBackSpeed(_n) {
-        this.backSpeed = _n;
     }
     setJumpSpeed(_n) {
         this.jumpSpeed = _n;
@@ -263,54 +259,63 @@ class CharacterController extends EntityController {
         if (this.isFalling) {
             this._moveVector.y = -this._fallDist;
             moving = true;
+            anim = this.fall;
         }
         else {
             this._moveVector.set(0,0,0);
             this.isWalking = false;
             this.isRunning = false;
             this.isSprinting = false;
-            var xDist = 0;
-            var zDist = 0;
+            let dist = 0;
+            let atan = -Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90);
+            if (this.key.shift) {
+                dist = this.sprintSpeed * dt;
+            }
+            else {
+                dist = this.runSpeed * dt;
+                anim = this.run;
+                this.isRunning = true;
+                moving = true;
+            }
             if (this.key.forward) {
-                if (this.key.shift) { // TODO: add option to toggle walking somewhere
-                    this.isSprinting = true;
-                    zDist = this.sprintSpeed * dt;
-                    anim = this.sprint;
+                if (this.key.strafeRight && !this.key.strafeLeft) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(45);
+                }
+                else if (this.key.strafeLeft && !this.key.strafeRight) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(315);
                 }
                 else {
-                    this.isRunning = true;
-                    zDist = this.runSpeed * dt;
-                    anim = this.run;
+                    this.mesh.rotation.y = atan;
                 }
-                moving = true;
             }
-            else if (this.key.backward) { // TODO: also fix strafing and backwards 'running' speeds
-                zDist = -(this.backSpeed * dt);
-                anim = this.walkBack;
-                moving = true;
+            else if (this.key.backward) {
+                if (this.key.strafeRight && !this.key.strafeLeft) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(135);
+                }
+                else if (this.key.strafeLeft && !this.key.strafeRight) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(225);
+                }
+                else {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(180);
+                }
             }
-            if (this.key.strafeLeft) {
-                anim = this.strafeLeft;
-                xDist = -this.runSpeed * dt;
-                moving = true;
+            else if (this.key.strafeRight && !this.key.strafeLeft) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(90);
             }
-            else if (this.key.strafeRight) {
-                anim = this.strafeRight;
-                xDist = this.runSpeed * dt;
-                moving = true;
+            else if (this.key.strafeLeft && !this.key.strafeRight) {
+                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(270);
             }
-            this._moveVector = this.mesh.calcMovePOV(xDist, -this._fallDist, zDist);
+            else {
+                moving = false;
+                dist = 0;
+            }
+            this._moveVector = this.mesh.calcMovePOV(0, -this._fallDist, dist);
         }
         /*
          *  Jittering in the Y direction caused by _moveVector
          */
         if (moving) {
-            if (this == Game.player.getController() && Game.enableCameraAvatarRotation && !(this.key.turnRight || this.key.turnLeft)) {
-                this.mesh.rotation.y = -4.69 - Game.camera.alpha;
-            }
             if (this._moveVector.length() > 0.001) {
-                this._moveVector.x = Number(this._moveVector.x.toFixed(3));
-                this._moveVector.y = Number(this._moveVector.y.toFixed(3));
                 this.updateGroundRay();
                 let _hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
                     if (_mesh.isPickable && _mesh.checkCollisions) {
@@ -323,7 +328,6 @@ class CharacterController extends EntityController {
                         this._moveVector.y = 0;
                     }
                 }
-                this._moveVector.z = Number(this._moveVector.z.toFixed(3));
                 this.mesh.moveWithCollisions(this._moveVector);
                 if (this.mesh.position.y > this._avStartPos.y) {
                     var actDisp = this.mesh.position.subtract(this._avStartPos);
