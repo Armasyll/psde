@@ -2881,7 +2881,7 @@ class Game {
             Game.addLightingToCreate(_id, _name, _mesh, _texture, _type, _options, _position, _rotation, _scaling, _lightingPositionOffset, _createCollisionMesh);
             return true;
         }
-        var _loadedMesh = Game.createCollidableMesh(_id, _mesh, _texture, _position, _rotation, _scaling, true)
+        var _loadedMesh = Game.createMesh(_id, _mesh, _texture, _position, _rotation, _scaling, true)
         var _entity = new LightingEntity(_id, _name, undefined, undefined, _type);
         var _controller = new LightingController(_id, _loadedMesh, _entity, _type, _lightingPositionOffset);
         _entity.setController(_controller);
