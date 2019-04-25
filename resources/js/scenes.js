@@ -720,6 +720,12 @@ Game.generateWallScene = function() {
     var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
         _ambientLight.intensity = 0.9;
     Game.createCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+
+    var stoneMaterial = Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
+    var outsideFloorStone = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene);
+        outsideFloorStone.material = stoneMaterial;
+        outsideFloorStone.position.set(-5, 0, -25);
+
     Game.createCollidableMesh("greenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -22), new BABYLON.Vector3(0, 180, 0));
     Game.createCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -22), new BABYLON.Vector3(0, 180, 0));
     Game.createCollidableMesh("pinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -22), new BABYLON.Vector3(0, 180, 0));
