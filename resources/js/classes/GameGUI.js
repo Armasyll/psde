@@ -369,7 +369,7 @@ class GameGUI {
         submitOnline.onPointerClickObservable.add(function() {
             if (!Game._finishedConfiguring) {
                 Game._finishedConfiguring = true;
-                Game.generateApartment();
+                Game.generateWallScene();
                 Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
             if (!Client.isOnline()) {
