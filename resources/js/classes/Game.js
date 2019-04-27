@@ -1,17 +1,17 @@
 class Game {
     constructor() {
         this.initialized = false;
-        Game.debugEnabled = false;
-        Game.godModeEnabled = false;
+        Game.debugMode = false;
+        Game.godMode = false;
     }
     static initialize() {
         this.initialized = false;
-        Game.debugEnabled = false;
-        Game.godModeEnabled = false;
+        Game.debugMode = false;
+        Game.godMode = false;
         this.physicsEnabled = false;
         this.Tools = Tools;
 
-        if (Game.debugEnabled) console.log("Running initialize");
+        if (Game.debugMode) console.log("Running initialize");
         this.canvas = document.getElementById("canvas");
             this.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
             this.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
@@ -630,7 +630,7 @@ class Game {
         if (!Game.finishedConfiguring()) {
             if (Game.finishedLoadingFiles()) {
                 if (!Game.finishedInitializing()) {
-                    if (Game.debugEnabled) console.log("Finished loading assets.");
+                    if (Game.debugMode) console.log("Finished loading assets.");
                     Game.importItems();
                     Game.importCosmetics();
                     Game.importFurniture();
@@ -655,7 +655,7 @@ class Game {
             _map.forEach(function(_val, _key) {
                 switch(_key) {
                     case "debug": {
-                        Game.debugEnabled = true;
+                        Game.debugMode = true;
                         break;
                     }
                     case "tgm": {
@@ -762,7 +762,7 @@ class Game {
         Game.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
-        if (Game.debugEnabled) console.log("Running initFreeCamera");
+        if (Game.debugMode) console.log("Running initFreeCamera");
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
         }
@@ -804,7 +804,7 @@ class Game {
         }
     }
     static createPlayer(_id, _name = "", _description = "", _image = undefined, _age = 18, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX, _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.debugEnabled) console.log("Running initPlayer");
+        if (Game.debugMode) console.log("Running initPlayer");
         _id = Tools.filterID(_id);
         if (_id == undefined) {
             _id = Tools.genUUIDv4();
@@ -836,7 +836,7 @@ class Game {
         }
         Game.player.getController().attachToFOCUS("cameraFocus");
         Game.player.getController().getMesh().isPickable = false;
-        if (Game.godModeEnabled) {
+        if (Game.godMode) {
             
         }
         Game.gui.setPlayerPortrait(Game.player);
@@ -1163,7 +1163,7 @@ class Game {
         Game.importScript("resources/js/furniture.js");
     }
     static controlCharacterOnKeyDown(event) {
-        if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
         if (!Game.initialized) {
             return undefined;
         }
@@ -1281,12 +1281,12 @@ class Game {
             }
             case this.showMainMenuCode : {
                 if (Game.gui.getMenuVisible()) {
-                    if (Game.debugEnabled) console.log(`\tShowing HUD`);
+                    if (Game.debugMode) console.log(`\tShowing HUD`);
                     Game.gui.hideMenu(false);
                     Game.gui.showHUD(false);
                 }
                 else {
-                    if (Game.debugEnabled) console.log(`\tShowing Main Menu`);
+                    if (Game.debugMode) console.log(`\tShowing Main Menu`);
                     Game.gui.hideHUD(false);
                     Game.gui.showCharacterChoiceMenu(false);
                 }
@@ -1304,7 +1304,7 @@ class Game {
         }
     }
     static controlCharacterOnKeyUp(event) {
-        if (Game.debugEnabled) console.log(`Running Game::controlCharacterOnKeyUp(${event})`);
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyUp(${event})`);
         if (!Game.initialized) {
             return undefined;
         }
@@ -1404,7 +1404,7 @@ class Game {
         }
     }
     static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
-        if (Game.debugEnabled) console.log("Running createCollisionWallX");
+        if (Game.debugMode) console.log("Running createCollisionWallX");
         if (_rotation != 0 && Tools.isInt(_rotation)) {
             _rotation = BABYLON.Tools.ToRadians(_rotation);
         }
@@ -1436,7 +1436,7 @@ class Game {
         return _wall;
     }
     static createCollisionPlane(_posStart = {x:0, z:0}, _posEnd = {x:0, z:0}, _posY = 0) {
-        if (Game.debugEnabled) console.log("Running createCollisionPlane");
+        if (Game.debugMode) console.log("Running createCollisionPlane");
         if (_posStart instanceof BABYLON.AbstractMesh) {
             var _xRadius = _posStart.getBoundingInfo().boundingBox.extendSize.x * _posStart.scaling.x;
             var _zRadius = _posStart.getBoundingInfo().boundingBox.extendSize.z * _posStart.scaling.z;
@@ -1502,18 +1502,18 @@ class Game {
         return _ramp;
     }
     static assignPlanePhysicsToMesh(_mesh) {
-        if (Game.debugEnabled) console.log("Running assignPlanePhysicsToMesh");
+        if (Game.debugMode) console.log("Running assignPlanePhysicsToMesh");
         _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.BoxImpostor, {mass:0}, Game.scene);
         return _mesh.physicsImposter;
     }
     static assignCylinderPhysicsToMesh(_mesh, _options = {mass:0.8,restitution:0.1}) {
-        if (Game.debugEnabled) console.log("Running assignCylinderPhysicsToMesh");
+        if (Game.debugMode) console.log("Running assignCylinderPhysicsToMesh");
         if (typeof _options != "object" || typeof _object == "undefined") _options = {mass:0.8,restitution:0.1};
         _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.CylinderImpostor, _options, Game.scene);
         return _mesh.physicsImposter;
     }
     static assignBoxPhysicsToMesh(_mesh, _options = {mass:0.8,restitution:0.1}) {
-        if (Game.debugEnabled) console.log("Running assignBoxPhysicsToMesh");
+        if (Game.debugMode) console.log("Running assignBoxPhysicsToMesh");
         if (typeof _options != "object" || typeof _object == "undefined") _options = {mass:0.8,restitution:0.1};
         _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.BoxImpostor, _options, Game.scene);
         return _mesh.physicsImposter;
@@ -1522,14 +1522,14 @@ class Game {
 
     }
     static assignBoxCollisionToMesh(_mesh) {
-        if (Game.debugEnabled) console.log("Running assignBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running assignBoxCollisionToMesh");
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             return null;
         }
         this._assignBoundingBoxCollisionQueue.add(_mesh);
     }
     static _assignBoundingBoxCollisionToMesh(_mesh) {
-        if (Game.debugEnabled) console.log("Running _assignBoundingBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running _assignBoundingBoxCollisionToMesh");
         this._assignBoundingBoxCollisionQueue.delete(_mesh);
         var _boundingBox = _mesh.getBoundingInfo().boundingBox;
         _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
@@ -1558,7 +1558,7 @@ class Game {
         return true;
     }
     static createItemMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false) {
-        if (Game.debugEnabled) console.log("Running createItemMesh");
+        if (Game.debugMode) console.log("Running createItemMesh");
         var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling, _forceCreateClone);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
@@ -1570,7 +1570,7 @@ class Game {
         return _instance;
     }
     static createFurnitureMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false, _createCollisionMesh = true) {
-        if (Game.debugEnabled) console.log("Running createFurnitureMesh");
+        if (Game.debugMode) console.log("Running createFurnitureMesh");
         var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling, _forceCreateClone, _createCollisionMesh);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
@@ -1578,7 +1578,7 @@ class Game {
         return _instance;
     }
     static createCharacterMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.debugEnabled) console.log(`Running createCharacterMesh(${_id}, ${_meshID}, ${_texture})`);
+        if (Game.debugMode) console.log(`Running createCharacterMesh(${_id}, ${_meshID}, ${_texture})`);
         if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
         var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
@@ -1599,7 +1599,7 @@ class Game {
         return _instance;
     }
     static removeMesh(_mesh) { // TODO: Update this :v
-        if (Game.debugEnabled) console.log("Running removeMesh");
+        if (Game.debugMode) console.log("Running removeMesh");
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             _mesh = Game.getMesh(_mesh);
             if (!(_mesh instanceof CharacterController)) {
@@ -1690,22 +1690,22 @@ class Game {
         if (_id == undefined) {
             _id = Tools.genUUIDv4();
         }
-        if (Game.debugEnabled) console.log(`Running createMesh(${_id}, ${_mesh}, ${_material})`);
+        if (Game.debugMode) console.log(`Running createMesh(${_id}, ${_mesh}, ${_material})`);
         if (!(_material instanceof BABYLON.Material)) {
             _material = Game.loadMaterial(_material);
         }
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             if (!Game.hasMesh(_mesh)) {
-                if (Game.debugEnabled) console.log(`\tMesh ${_mesh} doesn't exist`);
+                if (Game.debugMode) console.log(`\tMesh ${_mesh} doesn't exist`);
                 return Game.loadedMeshes["missingMesh"];
             }
             else {
                 if (Game.hasLoadedMesh(_mesh)) {
-                    if (Game.debugEnabled) console.log(`\tMesh ${_mesh} exists and is loaded`);
+                    if (Game.debugMode) console.log(`\tMesh ${_mesh} exists and is loaded`);
                     _mesh = Game.loadMesh(_mesh);
                 }
                 else {
-                    if (Game.debugEnabled) console.log(`\tMesh ${_mesh} exists and will be loaded`);
+                    if (Game.debugMode) console.log(`\tMesh ${_mesh} exists and will be loaded`);
                     Game.addMeshToCreate(_id, _mesh, _material, _position, _rotation, _scaling, _forceCreateClone, _createCollisionMesh);
                     return Game.loadedMeshes["loadingMesh"];
                 }
@@ -1732,14 +1732,14 @@ class Game {
                 _mesh.makeGeometryUnique();
                 _mesh.id = _id;
                 _mesh.name = _name;
-                if (Game.debugEnabled) console.log("Creating master clone of " + _name + " with " + _material.name);
+                if (Game.debugMode) console.log("Creating master clone of " + _name + " with " + _material.name);
                 _mesh.material = _material;
                 _mesh.setEnabled(false);
                 _mesh.position.set(0,-4095,0);
                 Game.setLoadedMeshMaterial(_mesh, _material);
             }
             if (_forceCreateClone === true) {
-                if (Game.debugEnabled) console.log("  Creating clone...");
+                if (Game.debugMode) console.log("  Creating clone...");
                 _mesh = this.loadedMeshMaterials[_name][_material.name].clone(_id);
                 _mesh.makeGeometryUnique();
                 _mesh.id = _id;
@@ -1747,7 +1747,7 @@ class Game {
                 Game.addClonedMesh(_mesh, _id);
             }
             else {
-                if (Game.debugEnabled) console.log("  Creating instance...");
+                if (Game.debugMode) console.log("  Creating instance...");
                 _mesh = this.loadedMeshMaterials[_name][_material.name].createInstance(_id);
                 _mesh.id = _id;
                 _mesh.name = _name;
@@ -2134,7 +2134,7 @@ class Game {
         else {
             this.loadedFiles.add(_sceneFilename);
         }
-        if (Game.debugEnabled) console.log(`Running importMeshes(${_sceneFilename})`);
+        if (Game.debugMode) console.log(`Running importMeshes(${_sceneFilename})`);
         var _importedMeshes = {};
         Game._filesToLoad += 1;
         BABYLON.SceneLoader.ImportMesh(
@@ -2152,7 +2152,7 @@ class Game {
                         _meshes[_i].skeleon = _skeletons[_i];
                     }
                     Game.loadedMeshes[_meshes[_i].id] = _meshes[_i];
-                    if (Game.debugEnabled) console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
+                    if (Game.debugMode) console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
                 }
                 Game._filesToLoad -= 1;
                 if (typeof _callback == "function") {
@@ -2160,10 +2160,10 @@ class Game {
                 }
             },
             function() { // onProgress
-                if (Game.debugEnabled) console.log("Importing meshes from " + _sceneFilename + "...");
+                if (Game.debugMode) console.log("Importing meshes from " + _sceneFilename + "...");
             },
             function() { // onError
-                if (Game.debugEnabled) console.log("Error while importing meshes from " + _sceneFilename);
+                if (Game.debugMode) console.log("Error while importing meshes from " + _sceneFilename);
                 Game._filesToLoad -= 1;
             }
         );
@@ -2580,12 +2580,21 @@ class Game {
             if (_options instanceof Object) {
                 for (let _i in _options) {
                     switch (_i) {
+                        case "eye":
                         case "eyes": {
                             _entity.setEyeType(_options[_i]);
                             break;
                         }
+                        case "eyeColor":
+                        case "eyesColor":
+                        case "eyeColour":
                         case "eyesColour": {
                             _entity.setEyeColour(_options[_i]);
+                            break;
+                        }
+                        case "isEssential": {
+                            _entity.setEssential(_options[_i]);
+                            break;
                         }
                     }
                 }
@@ -2625,7 +2634,7 @@ class Game {
                         _loadedTexture = "foxRed";
                         break;
                     }
-                    case SpeciesEnum.FOXSKELETON: {
+                    case SpeciesEnum.SKELETON: {
                         _loadedTexture = "bone01";
                     }
                     default : {
@@ -2669,6 +2678,11 @@ class Game {
         }
         let _controller = new CharacterController(_entity.getID(), _loadedMesh, _entity);
         _entity.setController(_controller);
+        switch (_entity.getSpecies()) {
+            case SpeciesEnum.SKELETON: {
+                _controller.setDeathAnim("91_death99");
+            }
+        }
         let __scaling = _entity.height/_entity._baseHeight;
         _loadedMesh.scaling.set(__scaling,__scaling,__scaling);
         return _entity;
@@ -3126,7 +3140,7 @@ class Game {
             Game.player.getController().targetRay.origin = _ray.origin;
             Game.player.getController().targetRay.direction = _ray.direction;
         }
-        if (Game.debugEnabled) {
+        if (Game.debugMode) {
             if (Game.player.getController().targetRayHelper != undefined) {
                 Game.player.getController().targetRayHelper.dispose();
             }
@@ -3280,7 +3294,7 @@ class Game {
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
-        if (Game.debugEnabled) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
+        if (Game.debugMode) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
         switch (_action) {
             case ActionEnum.USE: {
                 if (_entity instanceof LightingEntity) {
@@ -3536,7 +3550,7 @@ class Game {
         }
     }
     static actionTalkFunction(_entity, _subEntity = Game.player) {
-        if (Game.debugEnabled) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);
+        if (Game.debugMode) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);
         if (!(_entity instanceof CharacterEntity)) {
             return;
         }
@@ -3957,8 +3971,8 @@ class Game {
         return 0;
     }
     static setGodMode(_bool = true) {
-        Game.godModeEnabled = _bool == true;
-        if (Game.godModeEnabled) {
+        Game.godMode = _bool == true;
+        if (Game.godMode) {
             if (Game.player instanceof AbstractEntity) {
                 Game.player.toggleGodMode();
             }
@@ -3971,7 +3985,7 @@ class Game {
         return Game.setGodMode(false);
     }
     static setDebugMode(_bool) {
-        Game.debugEnabled = _bool == true;
+        Game.debugMode = _bool == true;
     }
     static enableDebugMode() {
         return Game.setDebugMode(true);

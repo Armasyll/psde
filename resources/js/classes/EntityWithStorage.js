@@ -70,7 +70,7 @@ class EntityWithStorage extends Entity {
         if (_instancedItem instanceof ItemEntity) {
             return this.addItem(_instancedItem.createInstance());
         }
-        if (Game.debugEnabled) console.log(`Failed to add item ${_abstractEntity} to ${this.id}`);
+        if (Game.debugMode) console.log(`Failed to add item ${_abstractEntity} to ${this.id}`);
         return 1;
     }
     /**
@@ -119,7 +119,7 @@ class EntityWithStorage extends Entity {
         if (_instancedItem instanceof ItemEntity) {
             return this.removeItem(_instancedItem);
         }
-        if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
+        if (Game.debugMode) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
         return 1;
     }
     getSlot(_abstractEntity) {

@@ -48,6 +48,7 @@ class CharacterController extends EntityController {
         this.isRunning = false;
         this.isSprinting = false;
         this.isAttacking = false; // While crouching, walking, or running
+        this.isAlive = true;
 
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
@@ -62,6 +63,7 @@ class CharacterController extends EntityController {
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
         this.punch = new AnimData("punch");
+        this.death = new AnimData("death");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
@@ -73,6 +75,7 @@ class CharacterController extends EntityController {
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
         this.setPunchAnim("71_punch01", 1, false, false);
+        this.setDeathAnim("91_death01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.checkAnims(this.skeleton);
@@ -161,6 +164,9 @@ class CharacterController extends EntityController {
     setPunchAnim(_rangeName, _rate, _loop, _standalone = false) {
         this.setAnimData(this.punch, _rangeName, _rate, _loop, _standalone);
     }
+    setDeathAnim(_rangeName, _rate, _loop = false, _standalone = false) {
+        this.setAnimData(this.death, _rangeName, _rate, _loop, _standalone);
+    }
     moveAV() {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
@@ -177,15 +183,21 @@ class CharacterController extends EntityController {
         if (this.key.jump && !this.isFalling) {
             this.isGrounded = false;
             this._idleFallTime = 0;
-            anim = this.doJump(dt);
+            if (this.isAlive) {
+                anim = this.doJump(dt);
+            }
         }
         else if (this.anyMovement() || this.isFalling) {
             this.isGrounded = false;
             this._idleFallTime = 0;
-            anim = this.doMove(dt);
+            if (this.isAlive) {
+                anim = this.doMove(dt);
+            }
         }
         else if (!this.isFalling) {
-            anim = this.doIdle(dt);
+            if (this.isAlive) {
+                anim = this.doIdle(dt);
+            }
         }
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
@@ -240,6 +252,9 @@ class CharacterController extends EntityController {
                     }
                 }
             }
+        }
+        if (!this.isAlive) {
+            return null;
         }
         return anim;
     }
@@ -384,6 +399,9 @@ class CharacterController extends EntityController {
                 }
             }
         }
+        if (!this.isAlive) {
+            return null;
+        }
         return anim;
     }
     endFreeFall() {
@@ -429,6 +447,9 @@ class CharacterController extends EntityController {
                     anim = this.slideBack;
                 }
             }
+        }
+        if (!this.isAlive) {
+            return null;
         }
         return anim;
     }
@@ -548,6 +569,13 @@ class CharacterController extends EntityController {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
         }
     }
+    doDeath(dt) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
+        this.isAlive = false;
+        this.beginAnimation(this.death);
+    }
 
     setTarget(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
@@ -656,7 +684,7 @@ class CharacterController extends EntityController {
     }
 
     getBone(_bone) {
-        if (Game.debugEnabled) console.log("Running getBone");
+        if (Game.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
             if (_bone instanceof BABYLON.Bone) {
                 return _bone;
@@ -693,7 +721,7 @@ class CharacterController extends EntityController {
      * @return {CharacterController}                     This character controller.
      */
     attachToBone(_mesh = "missingMesh", _texture = "missingTexture", _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.debugEnabled) console.log("Running attachToBone");
+        if (Game.debugMode) console.log("Running attachToBone");
         if (!Game.hasMesh(_mesh)) {
             return this;
         }

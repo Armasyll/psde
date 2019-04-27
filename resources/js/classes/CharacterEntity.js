@@ -293,7 +293,7 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Dialogue}
          */
         this.dialogue = undefined;
-        this._godMode = false;
+        this.godMode = false;
 
         this.setName(_name);
         this.setImage(_image);
@@ -434,7 +434,7 @@ class CharacterEntity extends EntityWithStorage {
         /*
         If we've got a controller in the world, and it's got an active mesh, attach _entity's mesh to it
          */
-        if (this.controller instanceof CharacterController && this.controller.hasMesh()) {
+        if (this.hasController() && this.controller.hasMesh()) {
             switch (_equipmentSlot) {
                 case "HEAD": {
                     this.controller.attachToHead(_entity.getMeshID(), _entity.getTextureID());
@@ -539,7 +539,7 @@ class CharacterEntity extends EntityWithStorage {
         }
         let _entity = this.equipment[_equipmentSlot];
         this.equipment[_equipmentSlot] = null;
-        if (_entity instanceof AbstractEntity && this.controller instanceof CharacterController && this.controller.hasMesh()) {
+        if (_entity instanceof AbstractEntity && this.hasController() && this.controller.hasMesh()) {
             switch (_equipmentSlot) {
                 case "HEAD": {
                     this.controller.detachFromHead(_entity.getMeshID(), _entity.getTextureID());
@@ -688,7 +688,7 @@ class CharacterEntity extends EntityWithStorage {
         if (_instancedItem instanceof ItemEntity) {
             return this.removeItem(_instancedItem);
         }
-        if (Game.debugEnabled) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
+        if (Game.debugMode) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
         return this;
     }
 
@@ -736,7 +736,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.strength.dec(_int);
     }
     getStrength() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.strength.getValue() + this.strengthOffset.getValue();
@@ -752,7 +752,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.dexterity.dec(_int);
     }
     getDexterity() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.dexterity.getValue() + this.dexterityOffset.getValue();
@@ -768,7 +768,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.constitution.dec(_int);
     }
     getConstitution() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.constitution.getValue() + this.constitutionOffset.getValue();
@@ -784,7 +784,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.intelligence.dec(_int);
     }
     getIntelligence() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.intelligence.getValue() + this.intelligenceOffset.getValue();
@@ -800,7 +800,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.wisdom.dec(_int);
     }
     getWisdom() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.wisdom.getValue() + this.wisdomOffset.getValue();
@@ -816,7 +816,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.charisma.dec(_int);
     }
     getCharisma() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.charisma.getValue() + this.charismaOffset.getValue();
@@ -857,69 +857,75 @@ class CharacterEntity extends EntityWithStorage {
         return this.experiencePoints.dec(_int);
     }
     getXP() {
-        if (this._godMode) {
+        if (this.godMode) {
             return this.experiencePoints.getMax();
         }
         return this.experiencePoints.getValue();
     }
 
     setHealth(_int) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this;
         }
-        if (this.isEssential) {
-            if (_int < 1) {
-                return this;
+        this.health.setValue(_int);
+        if (this._isEssential) {
+            if (this.health.getValue() < 1) {
+                this.health.setValue(1);
             }
         }
-        this.health.setValue(_int);
+        if (this.health.getValue() <= 0) {
+            this.living = false;
+            if (this.hasController()) {
+                this.controller.doDeath();
+            }
+        }
         return this;
     }
     addHealth(_int = 1) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this.health.getValue();
         }
         return this.health.inc(_int);
     }
     subtractHealth(_int = 1) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this.health.getValue();
         }
         return this.health.dec(_int);
     }
     getHealth() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.health.getValue();
     }
 
     setMaxHealth(_int) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this;
         }
-        if (this.isEssential) {
-            if (_int < 1) {
-                return this;
+        this.health.setMax(_int);
+        if (this._isEssential) {
+            if (this.health.getMax() < 1) {
+                this.health.setMax(1);
             }
         }
-        this.health.setMax(_int);
         return this;
     }
     addMaxHealth(_int = 1) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this.health.getMax();
         }
         return this.health.incMax(_int);
     }
     subtractMaxHealth(_int = 1) {
-        if (this._godMode) {
+        if (this.godMode) {
             return this.health.getMax();
         }
         return this.health.decMax(_int);
     }
     getMaxHealth() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.health.getMax();
@@ -936,7 +942,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.mana.dec(_int);
     }
     getMana() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.mana.getValue();
@@ -953,7 +959,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.mana.decMax(_int);
     }
     getMaxMana() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.mana.getMax();
@@ -970,7 +976,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.stamina.dec(_int);
     }
     getStamina() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.stamina.getValue();
@@ -987,7 +993,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.stamina.decMax(_int);
     }
     getMaxStamina() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.stamina.getMax();
@@ -1004,37 +1010,19 @@ class CharacterEntity extends EntityWithStorage {
         return this.money.dec(_int);
     }
     getMoney() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.money.getValue();
     }
     getMaxMoney() {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.money.getMax();
     }
 
-    setSex(_int) {
-        if (_int == undefined) {
-            _int = 1;
-        }
-        else if (isNaN(_int)) {
-            switch (_int.slice(0, 1)) {
-                case "m" : {
-                    _int = 1;
-                    break;
-                }
-                case "f" : {
-                    _int = 2;
-                    break;
-                }
-                default : {
-                    _int = 1;
-                }
-            }
-        }
+    setSex(_int = SexEnum.MALE) {
         this.sex.setValue(_int);
         return this;
     }
@@ -1042,29 +1030,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.sex.getValue();
     }
 
-    setGender(_int) {
-        if (_int == undefined) {
-            _int = 1;
-        }
-        else if (isNaN(_int)) {
-            switch (_int.slice(0, 1)) {
-                case "m" : {
-                    _int = 0;
-                    break;
-                }
-                case "f" : {
-                    _int = 1;
-                    break;
-                }
-                case "h" : {
-                    _int = 2;
-                    break;
-                }
-                default : {
-                    _int = 1;
-                }
-            }
-        }
+    setGender(_int = SexEnum.MALE) {
         this.gender.setValue(_int);
         return this;
     }
@@ -1106,7 +1072,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["passion"] = _int;
     }
     getCharacterPassion(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["passion"];
@@ -1115,7 +1081,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["friendship"] = _int;
     }
     getCharacterFriendship(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["friendship"];
@@ -1124,7 +1090,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["playfulness"] = _int;
     }
     getCharacterPlayfulness(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["playfulness"];
@@ -1133,7 +1099,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["soulmate"] = _int;
     }
     getCharacterSoulmate(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["soulmate"];
@@ -1142,7 +1108,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["familial"] = _int;
     }
     getCharacterFamilial(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["familial"];
@@ -1151,7 +1117,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["obsession"] = _int;
     }
     getCharacterObsession(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.getCharacterDisposition[_character]["obsession"];
@@ -1160,7 +1126,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["hate"] = _int;
     }
     getCharacterHate(_character) {
-        if (this._godMode) {
+        if (this.godMode) {
             return Number.MAX_SAFE_INTEGER; // SO MUCH HATE >:VVVVV
         }
         return this.getCharacterDisposition[_character]["hate"];
@@ -1186,13 +1152,13 @@ class CharacterEntity extends EntityWithStorage {
         }
         if (this.characterDisposition.hasOwnProperty(_character)) {
             if (this.characterDisposition[_character].hasOwnProperty(_dispositionType)) {
-                if (this._godMode) {
+                if (this.godMode) {
                     return Number.MAX_SAFE_INTEGER;
                 }
                 return this.characterDisposition[_character][_dispositionType];
             }
             else {
-                if (this._godMode) {
+                if (this.godMode) {
                     return {
                         "passion":Number.MAX_SAFE_INTEGER,
                         "friendship":Number.MAX_SAFE_INTEGER,
@@ -1214,7 +1180,7 @@ class CharacterEntity extends EntityWithStorage {
         if (_character == undefined) {
             return false;
         }
-        if (this._godMode) {
+        if (this.godMode) {
             return true;
         }
         return this.characterDisposition.hasOwnProperty(_character);
@@ -1766,13 +1732,39 @@ class CharacterEntity extends EntityWithStorage {
         return this.dialogue;
     }
     enableGodMode() {
-        this._godMode = true;
+        this.godMode = true;
     }
     disableGodMode() {
-        this._godMode = false;
+        this.godMode = false;
     }
     hasGodMode() {
-        return this._godMode;
+        return this.godMode;
+    }
+    setLiving(_bool = true) {
+        this.living = _bool == true;
+    }
+    getLiving() {
+        return this.living;
+    }
+    isAlive() {
+        return this.living;
+    }
+    isDead() {
+        return !this.living;
+    }
+    isUndead() {
+        return !this.living && this.getHealth() > 0;
+    }
+    kill() {
+        this.setHealth(0);
+        return this;
+    }
+    resurrect() {
+        this.setHealth(this.getHealthMax());
+        this.setStamina(this.getStaminaMax());
+        this.setMana(this.getMaxMana());
+        this.living = true;
+        return this;
     }
 
     dispose() {
