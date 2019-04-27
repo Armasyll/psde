@@ -88,7 +88,7 @@ class GameGUI {
     static hideHUD(_updateChild = false) {
         if (Game.debugEnabled) console.log("Running GameGUI::hideHUD");
         if (_updateChild === true) {
-            GameGUI.showMenu(true);
+            GameGUI.showMenu(false);
         }
         GameGUI._hud.rootContainer.isVisible = false;
     }
@@ -113,7 +113,7 @@ class GameGUI {
     static hideMenu(_updateChild = false) {
         if (Game.debugEnabled) console.log("Running GameGUI::hideMenu");
         if (_updateChild === true) {
-            GameGUI.showHUD(true);
+            GameGUI.showHUD(false);
         }
         GameGUI._menu.rootContainer.isVisible = false;
     }
@@ -367,8 +367,7 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerClickObservable.add(function() {
-            if (!Game._finishedConfiguring) {
-                Game._finishedConfiguring = true;
+            if (!(Game.player instanceof AbstractEntity)) {
                 Game.generateWallScene();
                 Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.SKELETON, "foxSkeletonN", "bone01", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
@@ -380,8 +379,7 @@ class GameGUI {
             GameGUI.showHUD();
         });
         submitOffline.onPointerClickObservable.add(function() {
-            if (!Game._finishedConfiguring) {
-                Game._finishedConfiguring = true;
+            if (!(Game.player instanceof AbstractEntity)) {
                 Game.generateApartment();
                 Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
@@ -410,7 +408,9 @@ class GameGUI {
         return characterChoiceMenuContainer;
     }
     static showCharacterChoiceMenu() {
-        GameGUI.showMenu(true);
+        if (Game.debugEnabled) console.log("Running GameGUI::showCharacterChoiceMenu");
+        GameGUI.hideHUD()
+        GameGUI.showMenu();
         GameGUI._hideMenuChildren();
         GameGUI._characterChoiceMenu.isVisible = true;
     }

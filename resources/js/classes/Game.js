@@ -2,10 +2,12 @@ class Game {
     constructor() {
         this.initialized = false;
         Game.debugEnabled = false;
+        Game.godModeEnabled = false;
     }
     static initialize() {
         this.initialized = false;
         Game.debugEnabled = false;
+        Game.godModeEnabled = false;
         this.physicsEnabled = false;
         this.Tools = Tools;
 
@@ -524,6 +526,7 @@ class Game {
         this.weaponEntities = {};
         this.keyEntities = {};
         this.spellEntities = {};
+        this.essentialEntities = new Set();
 
         this.instancedEntities = {};
         this.instancedItemEntities = {};
@@ -640,12 +643,26 @@ class Game {
                         Game.functionControlOnKeyUp(evt.sourceEvent.keyCode);
                     }));
                 }
-                else if (Game.finishedInitializing()) {
+                else {
                     Client.initialize();
                     Game.gui.resizeText();
                     Game.gui.showCharacterChoiceMenu();
+                    Game._finishedConfiguring = true;
                 }
             }
+            let _url = new URL(window.location.href);
+            let _map = new Map(_url.searchParams);
+            _map.forEach(function(_val, _key) {
+                switch(_key) {
+                    case "debug": {
+                        Game.debugEnabled = true;
+                        break;
+                    }
+                    case "tgm": {
+                        Game.toggleGodMode();
+                    }
+                }
+            });
         }
     }
     static beforeRenderFunction() {
@@ -819,6 +836,9 @@ class Game {
         }
         Game.player.getController().attachToFOCUS("cameraFocus");
         Game.player.getController().getMesh().isPickable = false;
+        if (Game.godModeEnabled) {
+            
+        }
         Game.gui.setPlayerPortrait(Game.player);
         Game.initFollowCamera();
         Game.initCastRayInterval();
@@ -3756,6 +3776,34 @@ class Game {
         }
         Game.spellEntities = {};
     }
+    static setEssentialEntity(_entity) {
+        if (!(_entity instanceof AbstractEntity)) {
+            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+        }
+        if (!(_entity instanceof AbstractEntity)) {
+            return null;
+        }
+        _entity.setEssential(true);
+        Game.essentialEntities.add(_entity)
+    }
+    static removeEssentialEntity(_entity) {
+        if (!(_entity instanceof AbstractEntity)) {
+            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+        }
+        if (!(_entity instanceof AbstractEntity)) {
+            return null;
+        }
+        _entity.setEssential(false);
+        delete Game.essentialEntities.remove(_entity);
+    }
+    static clearEssentialEntities() {
+        Game.essentialEntities.forEach(function(_entity) {
+            if (_entity instanceof AbstractEntity) {
+                _entity.setEssential(false);
+            }
+        });
+        Game.essentialEntities.clear();
+    }
 
     static setInstancedEntity(_id, _instancedEntity) {
         Game.instancedEntities[_id] = _instancedEntity;
@@ -3908,7 +3956,27 @@ class Game {
         }
         return 0;
     }
-    static tgm() {
-        Game.player.toggleGodMode();
+    static setGodMode(_bool = true) {
+        Game.godModeEnabled = _bool == true;
+        if (Game.godModeEnabled) {
+            if (Game.player instanceof AbstractEntity) {
+                Game.player.toggleGodMode();
+            }
+        }
+    }
+    static enableGodMode() {
+        return Game.setGodMode(true);
+    }
+    static disableGodMode() {
+        return Game.setGodMode(false);
+    }
+    static setDebugMode(_bool) {
+        Game.debugEnabled = _bool == true;
+    }
+    static enableDebugMode() {
+        return Game.setDebugMode(true);
+    }
+    static disableDebugMode() {
+        return Game.setDebugMode(false);
     }
 }

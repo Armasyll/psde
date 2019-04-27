@@ -64,6 +64,8 @@ class AbstractEntity {
 
         this._isEnabled = true;
         this._isLocked = false;
+
+        this.isEssential = false;
     }
 
     getID() {
@@ -169,6 +171,19 @@ class AbstractEntity {
     }
     clearTarget() {
         return this.removeTarget();
+    }
+
+    setEssential(_bool = true) {
+        this.isEssential = _bool == true;
+        if (this.isEssential) {
+            Game.setEssentialEntity(this);
+        }
+        else {
+            Game.removeEssentialEntity(this);
+        }
+    }
+    getEssential() {
+        return this.isEssential
     }
 
     dispose() {

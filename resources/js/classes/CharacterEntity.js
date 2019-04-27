@@ -867,6 +867,11 @@ class CharacterEntity extends EntityWithStorage {
         if (this._godMode) {
             return this;
         }
+        if (this.isEssential) {
+            if (_int < 1) {
+                return this;
+            }
+        }
         this.health.setValue(_int);
         return this;
     }
@@ -892,6 +897,11 @@ class CharacterEntity extends EntityWithStorage {
     setMaxHealth(_int) {
         if (this._godMode) {
             return this;
+        }
+        if (this.isEssential) {
+            if (_int < 1) {
+                return this;
+            }
         }
         this.health.setMax(_int);
         return this;

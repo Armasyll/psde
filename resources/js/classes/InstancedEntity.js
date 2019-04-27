@@ -34,24 +34,44 @@ class InstancedEntity extends AbstractEntity {
     getEntity() {
         return this.entity;
     }
+    hasEntity() {
+        return this.entity instanceof Entity;
+    }
     getMeshID() {
+        if (!this.hasEntity()) {
+            return "missingMesh";
+        }
         return this.entity.getMeshID();
     }
     getTextureID() {
+        if (!this.hasEntity()) {
+            return "missingTexture";
+        }
         return this.entity.getTextureID();
     }
     getMaterialID() {
+        if (!this.hasEntity()) {
+            return "missingMaterial";
+        }
         return this.entity.getMaterialID();
     }
     getWeight() {
+        if (!this.hasEntity()) {
+            return 0;
+        }
         return this.entity.getWeight();
     }
-
     getPrice() {
+        if (!this.hasEntity()) {
+            return 0;
+        }
         return this.entity.getPrice();
     }
 
     _createOwnSpecialProperties() {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (this.entity.getSpecialProperties() instanceof Set) {
             this.specialProperties = new Set(this.entity.getSpecialProperties());
         }
@@ -61,6 +81,9 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnSpecialProperties = true;
     }
     addSpecialProperty(_specialProperty) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (isNaN(_specialProperty)) {
             return this;
         }
@@ -71,6 +94,9 @@ class InstancedEntity extends AbstractEntity {
         return this;
     }
     removeSpecialProperty(_specialProperty) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (isNaN(_specialProperty)) {
             return this;
         }
@@ -81,6 +107,9 @@ class InstancedEntity extends AbstractEntity {
         return this;
     }
     getSpecialProperties() {
+        if (!this.hasEntity()) {
+            return this.specialProperties;
+        }
         if (this._useOwnSpecialProperties) {
             return this.specialProperties;
         }
@@ -89,6 +118,9 @@ class InstancedEntity extends AbstractEntity {
         }
     }
     hasSpecialProperty(_specialProperty) {
+        if (!this.hasEntity()) {
+            return false;
+        }
         if (this._useOwnSpecialProperties) {
             if (isNaN(_specialProperty)) {
                 return false;
@@ -101,6 +133,9 @@ class InstancedEntity extends AbstractEntity {
     }
 
     _createOwnAvailableActions() {
+        if (!this.hasEntity()) {
+            return this;
+        }
         for (var _action in this.entity.getAvailableActions()) {
             var _availableAction = this.entity.getAvailableAction(_action);
             if (_availableAction instanceof ActionData) {
@@ -110,6 +145,9 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnAvailableActions = true;
     }
     addAvailableAction(_action, _function = undefined, _runOnce = false) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (ActionEnum.hasOwnProperty(_action)) {}
         else if (ActionEnum.properties.hasOwnProperty(_action)) {
             _action = ActionEnum.properties[_action].value;
@@ -124,6 +162,9 @@ class InstancedEntity extends AbstractEntity {
         return this;
     }
     removeAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (!this._useOwnAvailableActions) {
             this._createOwnAvailableActions();
         }
@@ -136,6 +177,9 @@ class InstancedEntity extends AbstractEntity {
         return this;
     }
     getAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return 0;
+        }
         if (this._useOwnAvailableActions) {
             if (this.availableActions.hasOwnProperty(_action)) {
                 return this.availableActions[_action];
@@ -146,6 +190,9 @@ class InstancedEntity extends AbstractEntity {
         }
     }
     getAvailableActions() {
+        if (!this.hasEntity()) {
+            return this.availableActions;
+        }
         if (this._useOwnAvailableActions) {
             return this.availableActions;
         }
@@ -154,6 +201,9 @@ class InstancedEntity extends AbstractEntity {
         }
     }
     hasAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return false;
+        }
         if (this._useOwnAvailableActions) {
             return this.availableActions.hasOwnProperty(_action);
         }
@@ -163,6 +213,9 @@ class InstancedEntity extends AbstractEntity {
     }
 
     _createOwnHiddenAvailableActions() {
+        if (!this.hasEntity()) {
+            return this;
+        }
         for (var _action in this.entity.getHiddenAvailableActions()) {
             var _availableAction = this.entity.getHiddenAvailableAction(_action);
             if (_availableAction instanceof ActionData) {
@@ -176,6 +229,9 @@ class InstancedEntity extends AbstractEntity {
      * @param {String} _action (ActionEnum)
      */
     addHiddenAvailableAction(_action, _function = undefined, _runOnce = false) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
@@ -194,6 +250,9 @@ class InstancedEntity extends AbstractEntity {
      * @return {Booealn}          Whether or not the Action was removed
      */
     removeHiddenAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
@@ -206,6 +265,9 @@ class InstancedEntity extends AbstractEntity {
         return this;
     }
     getHiddenAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return 0;
+        }
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
@@ -217,9 +279,12 @@ class InstancedEntity extends AbstractEntity {
         else {
             return this.entity.getHiddenAvailableAction(_action);
         }
-        return null;
+        return 0;
     }
     getHiddenAvailableActions() {
+        if (!this.hasEntity()) {
+            return this.hiddenAvailableActions;
+        }
         if (this._useOwnHiddenAvailableActions) {
             return this.hiddenAvailableActions;
         }
@@ -228,6 +293,9 @@ class InstancedEntity extends AbstractEntity {
         }
     }
     hasHiddenAvailableAction(_action) {
+        if (!this.hasEntity()) {
+            return false;
+        }
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
@@ -240,12 +308,18 @@ class InstancedEntity extends AbstractEntity {
     }
 
     setDefaultAction(_action) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         if (this.hasAvailableAction(_action)) {
             this._useOwnDefaultAction = true;
             this.defaultAction = _action;
         }
     }
     getDefaultAction() {
+        if (!this.hasEntity()) {
+            return this.defaultAction;
+        }
         if (this._useOwnDefaultAction) {
             return this.defaultAction;
         }
@@ -255,12 +329,18 @@ class InstancedEntity extends AbstractEntity {
     }
     
     clone(_id) {
+        if (!this.hasEntity()) {
+            return this;
+        }
         _instancedEntity = new InstancedEntity(_id, this.entity, this.name, this.description, this.image);
         _instancedEntity.health = this.health.clone();
         _instancedEntity.specialProperties = new Set(this.specialProperties);
         return _instancedEntity;
     }
     dispose() {
+        if (!this.hasEntity()) {
+            return this;
+        }
         for (var _action in this.availableActions) {
             if (this.availableActions[_action] instanceof ActionData) {
                 this.availableActions[_action].dispose();
