@@ -1384,7 +1384,7 @@ class Game {
         else if (event.button == 2) {
             return Game.controlCharacterOnContext(event);
         }
-        Game.player.getController().doPunch();
+        Game.actionAttackFunction(Game.player.getTarget(), Game.player);
     }
     static controlCharacterOnContext(event) {
         if (!Game.initialized) {
@@ -3334,6 +3334,11 @@ class Game {
                 }
                 break;
             }
+            case ActionEnum.ATTACK: {
+                if (_entity instanceof AbstractEntity) {
+                    Game.actionAttackFunction(_entity, _subEntity);
+                }
+            }
             default: {
                 
             }
@@ -3348,6 +3353,23 @@ class Game {
         }
         _subEntity.addItem(_instancedItemEntity);
         Game.removeItemInSpace(_instancedItemEntity);
+    }
+    static actionAttackFunction(_entity, _subEntity = Game.player) {
+        if (!(_entity instanceof AbstractEntity)) {
+            _entity = null;
+        }
+        if (!(_subEntity instanceof CharacterEntity)) {
+            return;
+        }
+        if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
+            _subEntity.controller.doPunch();
+            _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
+        }
+        if (_entity instanceof CharacterEntity) {
+            if (Game.withinRange(_subEntity, _entity)) {
+                _entity.kill();
+            }
+        }
     }
     static actionDropFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
@@ -3992,5 +4014,33 @@ class Game {
     }
     static disableDebugMode() {
         return Game.setDebugMode(false);
+    }
+    static withinRange(_entityA, _entityB, _distance = 0) {
+        if (!(_entityA instanceof AbstractEntity)) {
+            _entityA = Game.getInstancedEntity(_entityA) || Game.getInstancedEntity(_entityA);
+            if (!(_entityA instanceof AbstractEntity)) {
+                return null;
+            }
+        }
+        if (!(_entityB instanceof AbstractEntity)) {
+            _entityB = Game.getInstancedEntity(_entityB) || Game.getInstancedEntity(_entityB);
+            if (!(_entityB instanceof AbstractEntity)) {
+                return null;
+            }
+        }
+        if (!_entityA.hasController() || !_entityB.hasController()) {
+            return null;
+        }
+        else if (!_entityA.getController().hasMesh() || !_entityB.getController().hasMesh()) {
+            return null;
+        }
+        if (_distance <= 0) {
+            _distance = _entityA.getHeight();
+            if (_entityB.getHeight() > _distance) {
+                _distance = _entityB.getHeight();
+            }
+            _distance = _distance * 0.5; // assuming arm length is half of the body length, idk
+        }
+        return Game.Tools.areVectorsClose(_entityA.controller.mesh.position, _entityB.controller.mesh.position, _distance);
     }
 }

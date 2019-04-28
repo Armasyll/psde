@@ -25,7 +25,7 @@ class CharacterController extends EntityController {
         this._vMoveTot = 0;
         this._vMovStartPos = BABYLON.Vector3.Zero();
         this.walkSpeed = 0.68 * this.mesh.scaling.z;
-        this.runSpeed = this.walkSpeed * 5;
+        this.runSpeed = 3.2 * this.mesh.scaling.z;
         this.sprintSpeed = this.runSpeed * 2;
         this.jumpSpeed = this.mesh.scaling.y * 4;
         this._moveVector = new BABYLON.Vector3();

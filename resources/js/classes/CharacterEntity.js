@@ -853,7 +853,7 @@ class CharacterEntity extends EntityWithStorage {
     addXP(_int) {
         return this.experiencePoints.inc(_int);
     }
-    subtracttractXP(_int) {
+    subtractXP(_int) {
         return this.experiencePoints.dec(_int);
     }
     getXP() {
@@ -972,7 +972,7 @@ class CharacterEntity extends EntityWithStorage {
     addStamina(_int) {
         return this.stamina.inc(_int);
     }
-    subtracttractStamina(_int) {
+    subtractStamina(_int) {
         return this.stamina.dec(_int);
     }
     getStamina() {
@@ -989,7 +989,7 @@ class CharacterEntity extends EntityWithStorage {
     addMaxStamina(_int = 1) {
         return this.stamina.incMax(_int);
     }
-    subtracttractMaxStamina(_int) {
+    subtractMaxStamina(_int) {
         return this.stamina.decMax(_int);
     }
     getMaxStamina() {
@@ -1642,17 +1642,29 @@ class CharacterEntity extends EntityWithStorage {
         this.width = (this.height / 3.5294) * (this.weight / this._baseWeight);
         return this;
     }
+    getHeight() {
+        return this.height;
+    }
+    getWeight() {
+        return this.weight;
+    }
+    getWidth() {
+        return this.width;
+    }
     _generateBaseStats() {
-        this.health.setMax(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution/10));
-        this.mana.setMax(this.getIntelligence() * this.magickMultiplier.getValue());
-        this.stamina.setMax(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
+        this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution/10));
+        this.setMaxMana(this.getIntelligence() * this.magickMultiplier.getValue());
+        this.setMaxStamina(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
+        this.setHealth(this.getMaxHealth());
+        this.setMana(this.getMaxMana());
+        this.setStamina(this.getMaxStamina());
     }
     /**
      * Generates protections and multipliers; to be run after status effects and equipment are changed
      */
     _generateAdditionalStats() {
-        this.physicalMultiplier
-        this.magickMultiplier
+        this.physicalMultiplier = 0;
+        this.magickMultiplier = 0;
         for (let _slot in this.equipment) {
             if (this.equipment[_slot] instanceof ClothingEntity) {
                 let _multiplier = 0;

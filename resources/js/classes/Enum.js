@@ -730,6 +730,7 @@ ActionEnum = {
     TOUCH: 18,
     UNEQUIP: 19,
     USE: 20,
+    ATTACK: 21,
     properties: {
         0: {
             name: "None",
@@ -835,6 +836,11 @@ ActionEnum = {
             name: "Use",
             value: 20,
             key: "USE"
+        },
+        21: {
+            name: "Attack",
+            value: 21,
+            key: "ATTACK"
         }
     }
 };

@@ -40,6 +40,9 @@ class Tools {
     static arePointsEqual(p1, p2, p) {
         return Math.abs(p1 - p2) < p;
     }
+    static areVectorsClose(v1, v2, p) {
+        return BABYLON.Vector3.Distance(v1, v2) < p;
+    }
     static verticalSlope(v) {
         return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
