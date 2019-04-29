@@ -3366,7 +3366,7 @@ class Game {
             _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
         }
         if (_entity instanceof CharacterEntity) {
-            if (Game.withinRange(_subEntity, _entity)) {
+            if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_entity, _subEntity)) {
                 _entity.kill();
             }
         }
@@ -4039,8 +4039,38 @@ class Game {
             if (_entityB.getHeight() > _distance) {
                 _distance = _entityB.getHeight();
             }
-            _distance = _distance * 0.5; // assuming arm length is half of the body length, idk
+            _distance = _distance * 0.75; // assuming arm length is half of the body length, idk
         }
         return Game.Tools.areVectorsClose(_entityA.controller.mesh.position, _entityB.controller.mesh.position, _distance);
+    }
+    static inFrontOf(_entityA, _entityB, _grace = 0.3926991) { // grace could also be called epsilon in this case :V
+        if (!(_entityA instanceof AbstractEntity)) {
+            _entityA = Game.getInstancedEntity(_entityA) || Game.getInstancedEntity(_entityA);
+            if (!(_entityA instanceof AbstractEntity)) {
+                return null;
+            }
+        }
+        if (!(_entityB instanceof AbstractEntity)) {
+            _entityB = Game.getInstancedEntity(_entityB) || Game.getInstancedEntity(_entityB);
+            if (!(_entityB instanceof AbstractEntity)) {
+                return null;
+            }
+        }
+        if (!_entityA.hasController() || !_entityB.hasController()) {
+            return null;
+        }
+        else if (!_entityA.getController().hasMesh() || !_entityB.getController().hasMesh()) {
+            return null;
+        }
+        let _aPos = new BABYLON.Vector2(_entityA.controller.mesh.position.x, _entityA.controller.mesh.position.z);
+        let _bPos = _entityA.controller.mesh.calcMovePOV(0,0,1);
+        _bPos = _aPos.add(new BABYLON.Vector2(_bPos.x, _bPos.z));
+        let _cPos = new BABYLON.Vector2(_entityB.controller.mesh.position.x, _entityB.controller.mesh.position.z);
+        let _bAng = BABYLON.Angle.BetweenTwoPoints(_aPos, _bPos);
+        let _aAng = BABYLON.Angle.BetweenTwoPoints(_aPos, _cPos);
+        if (_aAng.radians() - _bAng.radians() <= _grace) {
+            return true;
+        }
+        return false;
     }
 }
