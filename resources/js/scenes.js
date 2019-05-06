@@ -695,7 +695,7 @@ Game.generateApartment = function() {
         }
     );
     Game.getCharacterEntity("rinehart").setDialogue("rinehartTalk");
-    Game.getCharacterEntity("rinehart").addItem(new InstancedItemEntity(undefined, "mountainChocolateBar"));
+    Game.getCharacterEntity("rinehart").addItem("mountainChocolateBar");
     Game.getCharacterEntity("rinehart").hold("mountainChocolateBar");
     /*
     // Create fire material
