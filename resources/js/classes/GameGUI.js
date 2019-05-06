@@ -3,6 +3,7 @@ class GameGUI {
         GameGUI.initialized = false;
     }
     static initialize() {
+        GameGUI.fontSize = 24;
         GameGUI.alpha = "0.75";
         GameGUI.color = "#c3c3c3";
         GameGUI.background = "#0c0c0c";
@@ -61,8 +62,9 @@ class GameGUI {
         if (!GameGUI.initialized) {
             return;
         }
-        GameGUI._hud.rootContainer.fontSize = String(Math.floor(24 * (window.innerWidth / 1920))) + "px";
-        GameGUI._menu.rootContainer.fontSize = GameGUI._hud.rootContainer.fontSize;
+        GameGUI.fontSize = Math.floor(24 * (window.innerWidth / 1920));
+        GameGUI._hud.rootContainer.fontSize = GameGUI.fontSize + "px";
+        GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize + "px";
     }
     static pointerLock() {
         Game.pointerLock();
@@ -151,68 +153,6 @@ class GameGUI {
     static hideCrosshair() {
         GameGUI._crosshair.isVisible = false;
     }
-    static _generateDemoMenu() {
-        var bottomMenuContainer = new BABYLON.GUI.StackPanel("bottomMenuContainer");
-        bottomMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        bottomMenuContainer.isVertical = true;
-        //GameGUI.gui.addControl(bottomMenuContainer);
-
-        var firstRow = new BABYLON.GUI.StackPanel();
-        firstRow.height = "64px";
-        firstRow.isVertical = false;
-        bottomMenuContainer.addControl(firstRow);
-        
-        var secondRow = new BABYLON.GUI.StackPanel();
-        secondRow.height = "64px";
-        secondRow.isVertical = false;
-        bottomMenuContainer.addControl(secondRow);
-
-        var thirdRow = new BABYLON.GUI.StackPanel();
-        thirdRow.height = "64px";
-        thirdRow.isVertical = false;
-        bottomMenuContainer.addControl(thirdRow);
-
-        var optionOne = new BABYLON.GUI.Button.CreateSimpleButton("optionOne", "1");
-        optionOne.width = "25%";
-        firstRow.addControl(optionOne);
-        var optionTwo = new BABYLON.GUI.Button.CreateSimpleButton("optionTwo", "2");
-        optionTwo.width = "25%";
-        firstRow.addControl(optionTwo);
-        var optionThree = new BABYLON.GUI.Button.CreateSimpleButton("optionThree", "3");
-        optionThree.width = "25%";
-        firstRow.addControl(optionThree);
-        var optionFour = new BABYLON.GUI.Button.CreateSimpleButton("optionFour", "4");
-        optionFour.width = "25%";
-        firstRow.addControl(optionFour);
-
-        var optionQ = new BABYLON.GUI.Button.CreateSimpleButton("optionQ", "Q");
-        optionQ.width = "25%";
-        secondRow.addControl(optionQ);
-        var optionW = new BABYLON.GUI.Button.CreateSimpleButton("optionW", "W");
-        optionW.width = "25%";
-        secondRow.addControl(optionW);
-        var optionE = new BABYLON.GUI.Button.CreateSimpleButton("optionE", "E");
-        optionE.width = "25%";
-        secondRow.addControl(optionE);
-        var optionR = new BABYLON.GUI.Button.CreateSimpleButton("optionR", "R");
-        optionR.width = "25%";
-        secondRow.addControl(optionR);
-
-        var optionA = new BABYLON.GUI.Button.CreateSimpleButton("optionA", "A");
-        optionA.width = "25%";
-        thirdRow.addControl(optionA);
-        var optionS = new BABYLON.GUI.Button.CreateSimpleButton("optionS", "S");
-        optionS.width = "25%";
-        thirdRow.addControl(optionS);
-        var optionD = new BABYLON.GUI.Button.CreateSimpleButton("optionD", "D");
-        optionD.width = "25%";
-        thirdRow.addControl(optionD);
-        var optionF = new BABYLON.GUI.Button.CreateSimpleButton("optionF", "F");
-        optionF.width = "25%";
-        thirdRow.addControl(optionF);
-
-        return bottomMenuContainer;
-    }
     static _generateChat() {
         var chatBox = new BABYLON.GUI.Rectangle("chatBox");
         chatBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
@@ -291,72 +231,106 @@ class GameGUI {
         return GameGUI._hud.focusedControl == GameGUI._chat.children[1];
     }
     static _generateCharacterChoiceMenu() {
-        var characterChoiceMenuContainer = new BABYLON.GUI.StackPanel("characterChoiceMenu");
-            var nameContainer = new BABYLON.GUI.StackPanel();
-                var nameLabel = new BABYLON.GUI.TextBlock();
-                var nameInput = new BABYLON.GUI.InputText();
-            var buttonKBLayoutContainer = new BABYLON.GUI.StackPanel();
-                var buttonKBLayoutLabel = new BABYLON.GUI.TextBlock();
-                var buttonKBLayoutOptions = new BABYLON.GUI.StackPanel();
-                    var buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
-                    var buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
-                    var buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
-            var submitContainer = new BABYLON.GUI.StackPanel();
-                var submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
-                var submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
+        if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");
+        let characterChoiceMenuContainer = new BABYLON.GUI.Grid("characterChoiceMenu");
+        let nameLabel = new BABYLON.GUI.TextBlock("nameLabel");
+        let nameInput = new BABYLON.GUI.InputText("nameInput");
+        let ageLabel = new BABYLON.GUI.TextBlock("ageLabel");
+        let ageInput = new BABYLON.GUI.InputText("ageInput");
+        let buttonKBLayoutLabel = new BABYLON.GUI.TextBlock("kbLayoutLabel");
+        let buttonKBLayoutContainer = new BABYLON.GUI.Grid("kbLayoutContainer");
+        let buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
+        let buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
+        let buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
+        let submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
+        let submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
         
-        characterChoiceMenuContainer.isVertical = true;
-        nameContainer.isVertical = false;
-        buttonKBLayoutContainer.isVertical = false;
-            buttonKBLayoutOptions.isVertical = true;
-        submitContainer.isVertical = false;
-
         characterChoiceMenuContainer.zIndex = 90;
         characterChoiceMenuContainer.height = 0.6
         characterChoiceMenuContainer.width = 0.5;
         characterChoiceMenuContainer.background = GameGUI.background;
         characterChoiceMenuContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        characterChoiceMenuContainer.addColumnDefinition(0.5, false);
+        characterChoiceMenuContainer.addColumnDefinition(0.5, false);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
+        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
+        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
+        buttonKBLayoutContainer.addRowDefinition(1.0, false);
 
-        nameContainer.height = 0.05;
-            nameLabel.text = "Name: ";
-            nameLabel.width = 0.3;
-            nameLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            nameLabel.color = GameGUI.color;
+        nameLabel.text = "Name: ";
+        nameLabel.height = 1.0;
+        nameLabel.width = 1.0;
+        nameLabel.color = GameGUI.color;
 
-            nameInput.width = 0.7;
-            nameInput.color = GameGUI.color;
-            nameInput.background = GameGUI.focusedBackground;
-            nameInput.text = "Player";
+        nameInput.text = "Player";
+        nameInput.height = 1.0;
+        nameInput.width = 1.0;
+        nameInput.color = GameGUI.color;
+        nameInput.background = GameGUI.focusedBackground;
 
-        buttonKBLayoutContainer.height = 0.15;
-            buttonKBLayoutLabel.text = "Keyboard Layout: ";
-            buttonKBLayoutLabel.width = 0.3;
-            buttonKBLayoutLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            buttonKBLayoutLabel.color = GameGUI.color;
+        ageLabel.text = "Age: ";
+        ageLabel.height = 1.0;
+        ageLabel.width = 1.0;
+        ageLabel.color = GameGUI.color;
 
-            buttonKBLayoutOptions.width = 0.7;
-                buttonKBLayoutQwerty.height = 0.3;
-                buttonKBLayoutQwerty.background = GameGUI.focusedBackground;
-                buttonKBLayoutQwerty.color = GameGUI.color;
-                buttonKBLayoutDvorak.height = 0.3;
-                buttonKBLayoutDvorak.background = GameGUI.focusedBackground;
-                buttonKBLayoutDvorak.color = GameGUI.color;
-                buttonKBLayoutAzerty.height = 0.3;
-                buttonKBLayoutAzerty.background = GameGUI.focusedBackground;
-                buttonKBLayoutAzerty.color = GameGUI.color;
+        ageInput.text = "18";
+        ageInput.height = 1.0;
+        ageInput.width = 1.0;
+        ageInput.color = GameGUI.color;
+        ageInput.background = GameGUI.focusedBackground;
 
-        submitContainer.height = 0.05;
-            submitOffline.width = 0.5;
-            submitOffline.color = GameGUI.color;
-            submitOffline.background = GameGUI.focusedBackground;
-            submitOffline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        buttonKBLayoutLabel.text = "Keyboard Layout: ";
+        buttonKBLayoutLabel.height = 1.0;
+        buttonKBLayoutLabel.width = 1.0;
+        buttonKBLayoutLabel.color = GameGUI.color;
 
-            submitOnline.width = 0.5;
-            submitOnline.color = GameGUI.color;
-            submitOnline.background = GameGUI.focusedBackground;
-            submitOnline.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        buttonKBLayoutQwerty.height = 1.0;
+        buttonKBLayoutQwerty.width = 1.0;
+        buttonKBLayoutQwerty.color = GameGUI.color;
+        buttonKBLayoutQwerty.background = GameGUI.focusedBackground;
+        buttonKBLayoutDvorak.height = 1.0;
+        buttonKBLayoutDvorak.width = 1.0;
+        buttonKBLayoutDvorak.color = GameGUI.color;
+        buttonKBLayoutDvorak.background = GameGUI.focusedBackground;
+        buttonKBLayoutAzerty.height = 1.0;
+        buttonKBLayoutAzerty.width = 1.0;
+        buttonKBLayoutAzerty.color = GameGUI.color;
+        buttonKBLayoutAzerty.background = GameGUI.focusedBackground;
 
+        submitOffline.width = 1.0;
+        submitOffline.color = GameGUI.color;
+        submitOffline.background = GameGUI.focusedBackground;
+
+        submitOnline.width = 1.0;
+        submitOnline.color = GameGUI.color;
+        submitOnline.background = GameGUI.focusedBackground;
+
+        nameInput.onTextChangedObservable.add(function() {
+            let _string = Game.Tools.filterID(nameInput.text);
+            if (_string.length < 1 || _string == undefined) {
+                nameInput.text = "Player";
+            }
+            else {
+                nameInput.text = _string;
+            }
+        });
+        ageInput.onTextChangedObservable.add(function() {
+            let _int = Game.Tools.filterInt(ageInput.text);
+            if (_int < 1 || _int == undefined) {
+                ageInput.text = 1;
+            }
+            else if (_int > 127) {
+                ageInput.text = 127;
+            }
+            else {
+                ageInput.text = _int;
+            }
+        });
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
             Game.initQwertyKeyboardControls();
         });
@@ -369,7 +343,7 @@ class GameGUI {
         submitOnline.onPointerClickObservable.add(function() {
             if (!(Game.player instanceof AbstractEntity)) {
                 Game.generateWallScene();
-                Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.SKELETON, "foxSkeletonN", "bone01", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+                Game.createPlayer("00000000-0000-0000-0000-000000000000", nameInput.text, undefined, undefined, ageInput.text, SexEnum.MALE, SpeciesEnum.SKELETON, "foxSkeletonN", "bone01", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
             if (!Client.isOnline()) {
                 Client.connect();
@@ -381,7 +355,7 @@ class GameGUI {
         submitOffline.onPointerClickObservable.add(function() {
             if (!(Game.player instanceof AbstractEntity)) {
                 Game.generateApartment();
-                Game.createPlayer(undefined, nameInput.text, undefined, undefined, 33, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+                Game.createPlayer("00000000-0000-0000-0000-000000000000", nameInput.text, undefined, undefined, ageInput.text, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
             }
             if (Client.isOnline()) {
                 Client.disconnect();
@@ -391,20 +365,18 @@ class GameGUI {
             GameGUI.showHUD();
         });
 
-        characterChoiceMenuContainer.addControl(nameContainer);
-            nameContainer.addControl(nameLabel);
-            nameContainer.addControl(nameInput);
-        characterChoiceMenuContainer.addControl(buttonKBLayoutContainer);
-            buttonKBLayoutContainer.addControl(buttonKBLayoutLabel);
-            buttonKBLayoutContainer.addControl(buttonKBLayoutOptions);
-                buttonKBLayoutOptions.addControl(buttonKBLayoutQwerty);
-                buttonKBLayoutOptions.addControl(buttonKBLayoutDvorak);
-                buttonKBLayoutOptions.addControl(buttonKBLayoutAzerty);
-        characterChoiceMenuContainer.addControl(submitContainer);
-            submitContainer.addControl(submitOffline);
-            submitContainer.addControl(submitOnline);
+        characterChoiceMenuContainer.addControl(nameLabel, 0, 0);
+        characterChoiceMenuContainer.addControl(nameInput, 0, 1);
+        characterChoiceMenuContainer.addControl(ageLabel, 1, 0);
+        characterChoiceMenuContainer.addControl(ageInput, 1, 1);
+        characterChoiceMenuContainer.addControl(buttonKBLayoutLabel, 2, 0);
+        characterChoiceMenuContainer.addControl(buttonKBLayoutContainer, 2, 1);
+            buttonKBLayoutContainer.addControl(buttonKBLayoutQwerty, 0, 0);
+            buttonKBLayoutContainer.addControl(buttonKBLayoutDvorak, 0, 1);
+            buttonKBLayoutContainer.addControl(buttonKBLayoutAzerty, 0, 2);
+        characterChoiceMenuContainer.addControl(submitOffline, 3, 0);
+        characterChoiceMenuContainer.addControl(submitOnline, 3, 1);
         characterChoiceMenuContainer.isVisible = false;
-        characterChoiceMenuContainer.zIndex = 90;
         return characterChoiceMenuContainer;
     }
     static showCharacterChoiceMenu() {

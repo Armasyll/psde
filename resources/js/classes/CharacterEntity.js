@@ -1743,13 +1743,16 @@ class CharacterEntity extends EntityWithStorage {
     getDialogue() {
         return this.dialogue;
     }
+    setGodMode(_bool = true) {
+        this.godMode = _bool == true;
+    }
     enableGodMode() {
-        this.godMode = true;
+        this.setGodMode(true);
     }
     disableGodMode() {
-        this.godMode = false;
+        this.setGodMode(false);
     }
-    hasGodMode() {
+    getGodMode() {
         return this.godMode;
     }
     setLiving(_bool = true) {

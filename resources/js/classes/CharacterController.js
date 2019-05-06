@@ -789,10 +789,10 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    detachFromBone(_bone) {
-        return this.detachAllFromBone(_bone);
+    detachFromBone(_bone, _destroyMesh = true) {
+        return this.detachAllFromBone(_bone, _destroyMesh);
     }
-    detachAllFromBone(_bone) {
+    detachAllFromBone(_bone, _destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
@@ -803,67 +803,95 @@ class CharacterController extends EntityController {
         if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
             return this;
         }
-        for (var _mesh in this._meshesAttachedToBones[_bone.id]) {
+        let _meshes = new Array();
+        for (let _mesh in this._meshesAttachedToBones[_bone.id]) {
             if (this._meshesAttachedToBones[_bone.id][_mesh] instanceof BABYLON.AbstractMesh) {
                 this._meshesAttachedToBones[_bone.id][_mesh].detachFromBone();
-                Game.removeMesh(this._meshesAttachedToBones[_bone.id][_mesh]);
+                if (_destroyMesh) {
+                    Game.removeMesh(this._meshesAttachedToBones[_bone.id][_mesh]);
+                }
+                else {
+                    _meshes.push(this._meshesAttachedToBones[_bone.id][_mesh]);
+                }
                 delete this._bonesAttachedToMeshes[_mesh][_bone.id];
             }
         }
         delete this._meshesAttachedToBones[_bone.id];
-        return this;
+        if (_destroyMesh) {
+            return this;
+        }
+        return _meshes;
     }
-    detachMeshFromBone(_mesh, _bone = undefined) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v
+    detachMesh(_mesh, _destroyMesh = true) {
+        return this.detachMeshFromBone(_mesh, undefined, _destroyMesh);
+    }
+    detachMeshFromBone(_mesh, _bone = undefined, _destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        _mesh = Game.getMesh(_mesh);
-        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            return this;
+        if (!(_mesh instanceof AbstractMesh)) {
+            _mesh = Game.getMesh(_mesh);
+            if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+                return this;
+            }
         }
         if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
             return this;
         }
         _bone = this.getBone(_bone);
+        let _meshes = new Array();
         if (_bone instanceof BABYLON.Bone) {
             delete this._meshesAttachedToBones[_bone.id][_mesh.id];
         }
         else {
-            for (var _boneWithAttachment in this._bonesAttachedToMeshes[_mesh.id]) {
+            for (let _boneWithAttachment in this._bonesAttachedToMeshes[_mesh.id]) {
                 if (this._bonesAttachedToMeshes[_mesh.id][_boneWithAttachment] instanceof BABYLON.Bone) {
                     delete this._meshesAttachedToBones[_boneWithAttachment][_mesh.id];
                 }
             }
         }
-        delete this._bonesAttachedToMeshes[_mesh.id];
         _mesh.detachFromBone();
-        Game.removeMesh(_mesh);
-        return this;
+        delete this._bonesAttachedToMeshes[_mesh.id];
+        if (_destroyMesh) {
+            Game.removeMesh(_mesh);
+            return this;
+        }
+        _meshes.push(_mesh);
+        return _meshes;
     }
-    detachFromAllBones() {
+    detachFromAllBones(_destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        for (var _bone in this._meshesAttachedToBones) {
+        let _meshes = new Array();
+        for (let _bone in this._meshesAttachedToBones) {
             if (_bone == "FOCUS" || _bone == "ROOT") {}
             else {
-                for (var _mesh in this._meshesAttachedToBones[_bone]) {
+                for (let _mesh in this._meshesAttachedToBones[_bone]) {
                     if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
                         this._meshesAttachedToBones[_bone][_mesh].detachFromBone();
-                        Game.removeMesh(this._meshesAttachedToBones[_bone][_mesh]);
+                        if (_destroyMesh) {
+                            Game.removeMesh(this._meshesAttachedToBones[_bone][_mesh]);
+                        }
+                        else {
+                            _meshes.push(this._meshesAttachedToBones[_bone][_mesh]);
+                        }
                         delete this._bonesAttachedToMeshes[_mesh][_bone];
                     }
                 }
                 delete this._meshesAttachedToBones[_bone];
             }
         }
-        return this;
+        if (_destroyMesh) {
+            return this;
+        }
+        return _meshes;
     }
     attachToFOCUS(_mesh) {
         return this.attachToBone(_mesh, undefined, "FOCUS");
     }
     detachFromFOCUS() {
-        return this.detachFromBone("FOCUS");
+        return this.detachFromBone("FOCUS", false)[0];
     }
     attachToHead(_mesh, _texture) {
         this.attachToBone(_mesh, _texture, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));

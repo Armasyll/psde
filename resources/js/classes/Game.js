@@ -817,27 +817,27 @@ class Game {
             Game.addPlayerToCreate(_id);
         }
     }
-    static assignPlayer(_character) {
+    static assignPlayer(_character) { // TODO: allow for reassigning player :v
         _character = Game.getCharacterEntity(_character);
         if (_character instanceof CharacterEntity) {
             if (!_character.hasController()) {
                 return false;
             }
-            Game.player = _character;
         }
         else if (_character instanceof CharacterController) {
-            Game.player = _character.getEntity();
+            _character = _character.getEntity();
         }
         else {
             return false;
         }
-        if (!Game.player.hasController() || !Game.player.getController().hasMesh() || !Game.player.getController().hasSkeleton()) {
+        if (!_character.hasController() || !_character.getController().hasMesh() || !_character.getController().hasSkeleton()) {
             return false;
         }
-        Game.player.getController().attachToFOCUS("cameraFocus");
+        Game.player = _character;
+        Game.player.getController().attachToFOCUS("cameraFocus"); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
         if (Game.godMode) {
-            
+            Game.player.setGodMode(true);
         }
         Game.gui.setPlayerPortrait(Game.player);
         Game.initFollowCamera();
@@ -3992,19 +3992,18 @@ class Game {
         }
         return 0;
     }
-    static setGodMode(_bool = true) {
-        Game.godMode = _bool == true;
-        if (Game.godMode) {
-            if (Game.player instanceof AbstractEntity) {
-                Game.player.toggleGodMode();
-            }
+    static setGodMode(_characterEntity = Game.player, _bool = true) {
+        _bool = _bool == true;
+        if (_characterEntity instanceof CharacterEntity) {
+            _characterEntity.setGodMode(_bool);
         }
+        this.godMode = _bool;
     }
     static enableGodMode() {
-        return Game.setGodMode(true);
+        return Game.setGodMode(Game.player, true);
     }
     static disableGodMode() {
-        return Game.setGodMode(false);
+        return Game.setGodMode(Game.player, false);
     }
     static setDebugMode(_bool) {
         Game.debugMode = _bool == true;
