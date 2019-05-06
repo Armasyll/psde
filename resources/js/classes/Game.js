@@ -30,6 +30,8 @@ class Game {
             Game.scene.collisionsEnabled = true;
             Game.scene.workerCollisions = false;
         }
+        this.camera = null;
+        this.cameraFocus = null;
 
         this._assignBoundingBoxCollisionQueue = new Set();
 
@@ -833,8 +835,19 @@ class Game {
         if (!_character.hasController() || !_character.getController().hasMesh() || !_character.getController().hasSkeleton()) {
             return false;
         }
+        let _focus = null;
+        if (Game.player instanceof AbstractEntity) {
+            _focus = Game.player.getController().detachFromFOCUS();
+            Game.player.getController().getMesh().isPickable = true;
+            if (Game.godMode) {
+                Game.player.setGodMode(false);
+            }
+        }
+        else {
+            _focus = Game.createMesh("cameraFocus");
+        }
         Game.player = _character;
-        Game.player.getController().attachToFOCUS("cameraFocus"); // and reassigning an instanced mesh without destroying it
+        Game.player.getController().attachToFOCUS(_focus); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
         if (Game.godMode) {
             Game.player.setGodMode(true);

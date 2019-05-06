@@ -749,15 +749,21 @@ class CharacterController extends EntityController {
             Game.addAttachmentToCreate((this.id + _bone + _mesh), this, _mesh, _texture, _bone, _position, _rotation, _scaling);
             return this;
         }
-        var _instance = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
-        if (!(_instance instanceof BABYLON.AbstractMesh)) {
-            if (_mesh instanceof BABYLON.AbstractMesh) {
-                console.log("Error creating mesh `" + _mesh.id + "` for Controller `" + this.id + "`");
+        let _instance = null;
+        if (_mesh instanceof BABYLON.InstancedMesh) {
+            _instance = _mesh;
+        }
+        else {
+            _instance = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
+            if (!(_instance instanceof BABYLON.AbstractMesh)) {
+                if (_mesh instanceof BABYLON.AbstractMesh) {
+                    console.log("Error creating mesh `" + _mesh.id + "` for Controller `" + this.id + "`");
+                }
+                else {
+                    console.log("Error creating mesh `" + _mesh + "` for Controller `" + this.id + "`");
+                }
+                return this;
             }
-            else {
-                console.log("Error creating mesh `" + _mesh + "` for Controller `" + this.id + "`");
-            }
-            return this;
         }
         _instance.attachToBone(_bone, this.mesh);
         _instance.position.copyFrom(_position);
