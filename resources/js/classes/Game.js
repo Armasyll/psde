@@ -3375,8 +3375,9 @@ class Game {
             return;
         }
         if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
-            _subEntity.controller.doPunch();
-            _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
+            if (_subEntity.controller.doPunchRH()) {
+                _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
+            }
         }
         if (_entity instanceof CharacterEntity) {
             if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_entity, _subEntity)) {

@@ -55,6 +55,10 @@ class CharacterController extends EntityController {
         this.idle = new AnimData("idle");
         this.idleJump = new AnimData("idleJump");
         this.fall = new AnimData("fall");
+        this.fallLong = new AnimData("fallLong");
+        this.land = new AnimData("land");
+        this.landHard = new AnimData("landHard");
+        this.rollForward = new AnimData("rollForward");
         this.run = new AnimData("run");
         this.runJump = new AnimData("runJump");
         this.turnLeft = new AnimData("turnLeft");
@@ -62,7 +66,17 @@ class CharacterController extends EntityController {
         this.strafeLeft = new AnimData("strafeLeft");
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
-        this.punch = new AnimData("punch");
+        this.attackPunchRH = new AnimData("attachPunchRH");
+        this.attackThrustRH = new AnimData("attackThrustRH");
+        this.attackSlashRH = new AnimData("attackSlashRH");
+        this.attackChopRH = new AnimData("attackChopRH");
+        this.attackPunchLH = new AnimData("attachPunchLH");
+        this.attackThrustLH = new AnimData("attackThrustLH");
+        this.attackSlashLH = new AnimData("attackSlashLH");
+        this.attackChopLH = new AnimData("attackChopLH");
+        this.attackThrust2H = new AnimData("attackThrust2H");
+        this.attackSlash2H = new AnimData("attackSlash2H");
+        this.attackChop2H = new AnimData("attackChop2H");
         this.death = new AnimData("death");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
@@ -74,7 +88,7 @@ class CharacterController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
-        this.setPunchAnim("71_punch01", 1, false, false);
+        this.setPunchRHAnim("71_punch01", 1, false, false);
         this.setDeathAnim("91_death01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
@@ -163,8 +177,8 @@ class CharacterController extends EntityController {
     setFallAnim(_rangeName, _rate, _loop, _standalone = true) {
         this.setAnimData(this.fall, _rangeName, _rate, _loop, _standalone);
     }
-    setPunchAnim(_rangeName, _rate, _loop, _standalone = false) {
-        this.setAnimData(this.punch, _rangeName, _rate, _loop, _standalone);
+    setPunchRHAnim(_rangeName, _rate, _loop, _standalone = false) {
+        this.setAnimData(this.attackPunchRH, _rangeName, _rate, _loop, _standalone);
     }
     setDeathAnim(_rangeName, _rate, _loop = false, _standalone = false) {
         this.setAnimData(this.death, _rangeName, _rate, _loop, _standalone);
@@ -563,22 +577,40 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    doPunch(dt) {
+    doPunchRH(dt) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return false;
         }
+        if (this.isAttacking) {
+            return false;
+        }
+        this.setAttacking(true);
+        let _this = this;
+        setTimeout(function() {_this.setAttacking(false);}, 800);
         for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
-            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.punch.from, this.punch.to, this.punch.loop, this.punch.rate);
+            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
         }
+        return true;
+    }
+    doAttack(dt) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return false;
+        }
+        return true;
     }
     doDeath(dt) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return false;
         }
         this.isAlive = false;
         this.beginAnimation(this.death);
+        return true;
     }
 
+    setAttacking(_bool = true) {
+        this.isAttacking = _bool == true;
+        console.log(`running setAttacking(${this.isAttacking ? "true" : "false"})`);
+    }
     setTarget(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
             return this;
