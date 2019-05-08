@@ -742,4 +742,6 @@ Game.generateWallScene = function() {
     Game.createCollidableMesh(undefined, "stopSign", "stopSign", new BABYLON.Vector3(3, 0, -14));
     
     Game.createLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, undefined, new BABYLON.Vector3(6, 0, -17));
+    
+    Game.createCharacter("rinehart", "Rinehart Nye", undefined, "genericCharacterIcon", 30, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRinehart", {eyes:EyeEnum.CIRCLE, eyesColour:"violet"}, new BABYLON.Vector3(1, 0, -22), new BABYLON.Vector3(0, 180, 0));
 }
