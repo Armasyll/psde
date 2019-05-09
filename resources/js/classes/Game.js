@@ -161,7 +161,7 @@ class Game {
             "foxF":"resources/data/characters.babylon",
             "foxSkeletonN":"resources/data/characters.babylon",
             "foxM":"resources/data/characters.babylon",
-            "spider":"resources/data/arachnids.babylon",
+            "spider":"resources/meshes/arachnids.babylon",
             "borb":"resources/meshes/borb.babylon",
             "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
             "animatedRefrigerator01":"resources/meshes/animatedRefrigerator01.babylon",
