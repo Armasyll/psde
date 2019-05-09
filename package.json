@@ -1,0 +1,33 @@
+{
+  "name": "psde",
+  "version": "1.0.0",
+  "description": "A development environment for a Pack Street game.",
+  "main": "./express/server.js",
+  "scripts": {
+    "start": "node ./bin/production",
+    "development": "node ./bin/development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chickenputty/psde.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chickenputty/psde/issues"
+  },
+  "homepage": "https://github.com/chickenputty/psde#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-mysql-session": "^2.1.0",
+    "express-session": "^1.16.1",
+    "http-errors": "^1.7.2",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7"
+  }
+}
