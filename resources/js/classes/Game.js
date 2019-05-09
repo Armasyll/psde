@@ -758,12 +758,7 @@ class Game {
         Game.camera.attachControl(this.canvas, false);
 
         Game.camera.minZ = 0.001;
-        if (Game.player.getController() instanceof CharacterControllerV2) {
-            
-        }
-        else {
-            Game.camera.lockedTarget = Game.player.getController().focus;
-        }
+        Game.camera.lockedTarget = Game.player.getController().focus;
         Game.initPostProcessing();
     }
     static initFreeCamera(_applyGravity = true) {
