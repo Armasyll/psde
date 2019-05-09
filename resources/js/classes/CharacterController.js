@@ -584,9 +584,8 @@ class CharacterController extends EntityController {
         if (this.isAttacking) {
             return false;
         }
-        this.setAttacking(true);
-        let _this = this;
-        setTimeout(function() {_this.setAttacking(false);}, 800);
+        this.isAttacking = true;
+        setTimeout(() => {this.isAttacking = false;}, 800);
         for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
         }

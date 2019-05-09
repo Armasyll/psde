@@ -7,7 +7,4 @@ window.addEventListener('resize', function() {
 window.addEventListener("DOMContentLoaded", function() {
     console.log("Initializing game.");
     Game.initialize();
-    Game.engine.runRenderLoop(Game.renderLoopFunction);
-    Game.scene.registerBeforeRender(Game.beforeRenderFunction);
-    Game.scene.registerAfterRender(Game.afterRenderFunction);
 });
