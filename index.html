@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="manifest" href="/manifest.json">
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+        <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png">
+        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png">
+        <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <meta property="og:site_name" content="PSDE"/>
+        <meta property="og:title" content="Pack Street Development Edition"/>
+        <meta property="og:description" content="A development environment for a Pack Street game."/>
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:image" content="https://ztg.zapto.org/favicon.png"/>
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:height" content="512"/>
+        <meta property="og:image:width" content="512"/>
+        <meta property="og:url" content="https://ztg.zapto.org/"/>
+        <meta http-equiv="Content-Security-Policy" content="worker-src data: blob: 'self';">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="Description" content="A development environment for a Pack Street game.">
+        <meta name="theme-color" content="#120818"/>
+        <title>Pack Street Development Edition</title>
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #canvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" oncontextmenu="return false;" tabindex="-1"></canvas>
+        <p tabindex="0">JavaScript is required for this page to load.</p>
+        <!--<script src="vendors/jquery/jquery-3.2.1.min.js"></script>-->
+        <!--<script src="vendors/cannonjs/cannon.min.js"></script>-->
+        <!--<script src="vendors/mapbox/earcut.min.js"></script>-->
+        <script src="vendors/babylonjs/babylon.js"></script>
+        <script src="vendors/babylonjs/materialsLibrary/babylon.fireMaterial.min.js"></script>
+        <script src="vendors/babylonjs/materialsLibrary/babylon.furMaterial.min.js"></script>
+        <script src="vendors/babylonjs/materialsLibrary/babylon.waterMaterial.min.js"></script>
+        <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+        <script src="resources/js/Overrides.js"></script>
+        <script src="resources/js/classes/BoundedNumber.js"></script>
+        <script src="resources/js/classes/Tools.js"></script>
+
+        <script src="resources/js/classes/Enum.js"></script><!-- Not really an Enum class, just contains Enums :v -->
+        <script src="resources/js/classes/Game.js"></script>
+        <script src="resources/js/classes/GameGUI.js"></script>
+        <script src="resources/js/classes/ActionData.js"></script>
+        <script src="resources/js/classes/AnimData.js"></script>
+        <script src="resources/js/classes/Dialogue.js"></script>
+        <script src="resources/js/classes/ControllerMovementKey.js"></script>
+        <script src="resources/js/classes/Cosmetic.js"></script>
+
+        <script src="resources/js/classes/AbstractEntity.js"></script>
+        <script src="resources/js/classes/Entity.js"></script>
+        <script src="resources/js/classes/EntityWithStorage.js"></script>
+        <script src="resources/js/classes/FurnitureEntity.js"></script>
+        <script src="resources/js/classes/LightingEntity.js"></script>
+        <script src="resources/js/classes/DoorEntity.js"></script>
+        <script src="resources/js/classes/CharacterEntity.js"></script>
+        <script src="resources/js/classes/ItemEntity.js"></script>
+        <script src="resources/js/classes/EquipmentEntity.js"></script>
+        <script src="resources/js/classes/ClothingEntity.js"></script>
+        <script src="resources/js/classes/WeaponEntity.js"></script>
+        <script src="resources/js/classes/KeyEntity.js"></script>
+
+        <script src="resources/js/classes/InstancedEntity.js"></script>
+        <script src="resources/js/classes/InstancedFurnitureEntity.js"></script>
+        <script src="resources/js/classes/InstancedItemEntity.js"></script>
+        <script src="resources/js/classes/InstancedEquipmentEntity.js"></script>
+        <script src="resources/js/classes/InstancedClothingEntity.js"></script>
+        <script src="resources/js/classes/InstancedWeaponEntity.js"></script>
+
+        <script src="resources/js/classes/EntityController.js"></script>
+        <script src="resources/js/classes/FurnitureController.js"></script>
+        <script src="resources/js/classes/LightingController.js"></script>
+        <script src="resources/js/classes/DoorController.js"></script>
+        <script src="resources/js/classes/CharacterController.js"></script>
+        <script src="resources/js/classes/ItemController.js"></script>
+
+        <script src="resources/js/classes/NetworkController.js"></script>
+        <script src="resources/js/classes/MessageRouter.js"></script>
+        <script src="resources/js/classes/Client.js"></script>
+
+        <script src="resources/js/start.js"></script>
+        <script src="resources/js/scenes.js"></script>
+    </body>
+</html>
