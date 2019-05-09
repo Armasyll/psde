@@ -695,12 +695,8 @@ class CharacterEntity extends EntityWithStorage {
     setAge(_int) {
         this.age.setValue(_int);
         if (this.age.getValue() >= 18) {
-            this.addAvailableAction(ActionEnum.SEX);
-            this.addAvailableAction(ActionEnum.MASTURBATE);
         }
         else {
-            this.removeAvailableAction(ActionEnum.SEX);
-            this.removeAvailableAction(ActionEnum.MASTURBATE);
         }
         return this;
     }
