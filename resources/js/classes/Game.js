@@ -626,6 +626,9 @@ class Game {
 
         this._filesToLoad -= 1;
         this.initialized = true;
+        this.engine.runRenderLoop(Game.renderLoopFunction);
+        this.scene.registerBeforeRender(Game.beforeRenderFunction);
+        this.scene.registerAfterRender(Game.afterRenderFunction);
     }
     static renderLoopFunction() {
         Game.scene.render();
