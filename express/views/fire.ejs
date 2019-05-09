@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <link rel="shortcut icon" href="/resources/images/textures/effects/fire.png" type="image/png">
+        <link rel="icon" type="image/png" sizes="512x512" href="/resources/images/textures/effects/fire.png">
+        <meta property="og:description" content="Fire! :V"/>
+        <meta property="og:image" content="https://ztg.zapto.org/resources/images/textures/effects/fire.png"/>
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:height" content="512"/>
+        <meta property="og:image:width" content="512"/>
+        <meta property="og:url" content="https://ztg.zapto.org/fire.html"/>
+        <%- include('./templates/head', {style: 'home', title: 'Fwoosh :v', basic: false}); %>
+        <script src="vendors/babylonjs/babylon.js"></script>
+        <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+        <script src="vendors/babylonjs/materialsLibrary/babylon.fireMaterial.min.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas" oncontextmenu="return false;"></canvas>
+        <script>
+            var canvas = document.getElementById("canvas");
+
+            var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+
+            var scene = new BABYLON.Scene(engine);
+                scene.clearColor = new BABYLON.Color3(0, 0, 0);
+
+            var camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 5, -10), scene);
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(canvas, true);
+
+            // Create fire material
+            var fire = new BABYLON.FireMaterial("fire", scene);
+                fire.opacityTexture = new BABYLON.Texture("resources/images/textures/effects/fireOpacity.png", scene);
+                fire.distortionTexture = new BABYLON.Texture("resources/images/textures/effects/fireDistortion.png", scene);
+                fire.diffuseTexture = new BABYLON.Texture("resources/images/textures/effects/fire.png", scene);
+                fire.speed = 5.0;
+
+            // Create plane to apply the fire material
+            var plane = BABYLON.Mesh.CreatePlane("fireplane", 1.5, scene);
+                plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+                plane.material = fire;
+                plane.scaling.y = 2;
+
+            engine.runRenderLoop(function() {
+                if (scene) {
+                    scene.render();
+                }
+            });
+
+            // Resize
+            window.addEventListener("resize", function() {
+                engine.resize();
+            });
+        </script>
+    </body>
+</html>

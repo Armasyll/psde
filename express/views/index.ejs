@@ -1,44 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
-        <meta charset="utf-8"/>
-        <link rel="manifest" href="/manifest.json">
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-        <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
-        <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png">
-        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png">
-        <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <meta property="og:site_name" content="PSDE"/>
-        <meta property="og:title" content="Pack Street Development Edition"/>
-        <meta property="og:description" content="A development environment for a Pack Street game."/>
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:image" content="https://ztg.zapto.org/favicon.png"/>
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:height" content="512"/>
-        <meta property="og:image:width" content="512"/>
-        <meta property="og:url" content="https://ztg.zapto.org/"/>
-        <meta http-equiv="Content-Security-Policy" content="worker-src data: blob: 'self';">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="Description" content="A development environment for a Pack Street game.">
-        <meta name="theme-color" content="#120818"/>
-        <title>Pack Street Development Edition</title>
-        <style>
-            html, body {
-                overflow: hidden;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            #canvas {
-                width: 100%;
-                height: 100%;
-                touch-action: none;
-            }
-        </style>
+        <%- include('../templates/head', {style: 'home', title: 'Pack Street Development Edition', basic: true}); %>
     </head>
     <body>
         <canvas id="canvas" oncontextmenu="return false;" tabindex="-1"></canvas>
