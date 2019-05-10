@@ -1577,7 +1577,6 @@ class Game {
         if (this.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
-        else {}
         return _instance;
     }
     static createFurnitureMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _forceCreateClone = false, _createCollisionMesh = true) {
@@ -1590,7 +1589,9 @@ class Game {
     }
     static createCharacterMesh(_id = undefined, _meshID = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         if (Game.debugMode) console.log(`Running createCharacterMesh(${_id}, ${_meshID}, ${_texture})`);
-        if (typeof _options != "object") {_options = {mass:0.8,restitution:0.1};}
+        if (typeof _options != "object") {
+            _options = {mass:0.8,restitution:0.1};
+        }
         var _instance = Game.createMesh(_id, _meshID, _texture, _position, _rotation, _scaling);
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
@@ -1599,12 +1600,11 @@ class Game {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
         else {
-            var _boundingBox = _instance.getBoundingInfo().boundingBox;
             _instance.checkCollisions = true;
             /*
                 Using X for Z size 'cause the tail throws my collision box size off
              */
-            _instance.ellipsoid = new BABYLON.Vector3(_boundingBox.extendSize.x * _scaling.x, _boundingBox.extendSize.y * _scaling.y, (_boundingBox.extendSize.x * 0.6) * _scaling.z);
+            _instance.ellipsoid = new BABYLON.Vector3(_instance.getBoundingInfo().boundingBox.extendSize.x * _scaling.x, _instance.getBoundingInfo().boundingBox.extendSize.y * _scaling.y, (_instance.getBoundingInfo().boundingBox.extendSize.x * 0.6) * _scaling.z);
             _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, 0);
         }
         return _instance;
