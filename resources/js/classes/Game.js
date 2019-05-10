@@ -1595,18 +1595,6 @@ class Game {
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
         }
-        if (this.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(_instance, _options);
-        }
-        else {
-            var _boundingBox = _instance.getBoundingInfo().boundingBox;
-            _instance.checkCollisions = true;
-            /*
-                Using X for Z size 'cause the tail throws my collision box size off
-             */
-            _instance.ellipsoid = new BABYLON.Vector3(_boundingBox.extendSize.x * _scaling.x, _boundingBox.extendSize.y * _scaling.y, (_boundingBox.extendSize.x * 0.6) * _scaling.z);
-            _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, 0);
-        }
         return _instance;
     }
     static removeMesh(_mesh) { // TODO: Update this :v
