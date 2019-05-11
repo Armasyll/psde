@@ -1542,14 +1542,11 @@ class Game {
     static _assignBoundingBoxCollisionToMesh(_mesh) {
         if (Game.debugMode) console.log("Running _assignBoundingBoxCollisionToMesh");
         this._assignBoundingBoxCollisionQueue.delete(_mesh);
-        var _boundingBox = _mesh.getBoundingInfo().boundingBox;
-        _mesh.collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_boundingBox.vectors[1].x - _boundingBox.vectors[0].x, height:_boundingBox.vectors[1].y - _boundingBox.vectors[0].y, depth:_boundingBox.vectors[1].z - _boundingBox.vectors[0].z}, Game.scene);
-        _mesh.collisionMesh.position = _boundingBox.centerWorld.clone();
-        _mesh.collisionMesh.rotation = _mesh.rotation.clone();
-        _mesh.collisionMesh.scaling = _mesh.scaling.clone();
-        _mesh.collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
-        _mesh.collisionMesh.checkCollisions = true;
-        _mesh.collisionMesh.setParent(_mesh);
+        let _collisionMesh 
+        _collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_mesh.getBoundingInfo().boundingBox.vectors[1].x - _mesh.getBoundingInfo().boundingBox.vectors[0].x, height:_mesh.getBoundingInfo().boundingBox.vectors[1].y - _mesh.getBoundingInfo().boundingBox.vectors[0].y, depth:_mesh.getBoundingInfo().boundingBox.vectors[1].z - _mesh.getBoundingInfo().boundingBox.vectors[0].z}, Game.scene);
+        _collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
+        _collisionMesh.checkCollisions = true;
+        _collisionMesh.setParent(_mesh);
         let _controller = Game.getMeshToEntityController(_mesh);
         if (_controller instanceof DoorController) {
             if (_mesh.collisionMesh.scaling.x > _mesh.collisionMesh.scaling.z) {
@@ -1559,6 +1556,7 @@ class Game {
                 _mesh.collisionMesh.scaling.x += _mesh.collisionMesh.scaling.x * 0.2;
             }
         }
+        _collisionMesh.setParent(_mesh);
     }
     static _createBackloggedBoundingCollisions() {
         if (this._assignBoundingBoxCollisionQueue.size > 0) {
@@ -1604,8 +1602,8 @@ class Game {
             /*
                 Using X for Z size 'cause the tail throws my collision box size off
              */
-            _instance.ellipsoid = new BABYLON.Vector3(_instance.getBoundingInfo().boundingBox.extendSize.x * _scaling.x, _instance.getBoundingInfo().boundingBox.extendSize.y * _scaling.y, (_instance.getBoundingInfo().boundingBox.extendSize.x * 0.6) * _scaling.z);
-            _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, 0);
+            _instance.ellipsoid = new BABYLON.Vector3(_instance.getBoundingInfo().boundingBox.extendSize.x * _scaling.x, _instance.getBoundingInfo().boundingBox.extendSize.y * _scaling.y, _instance.getBoundingInfo().boundingBox.extendSize.x * _scaling.z);
+            _instance.ellipsoidOffset = new BABYLON.Vector3(0, _instance.ellipsoid.y, -0.1);
         }
         return _instance;
     }
@@ -1775,7 +1773,7 @@ class Game {
                 Game.assignBoxPhysicsToMesh(_mesh);
             }
             else {
-                Game.assignBoxCollisionToMesh(_mesh);
+                //Game.assignBoxCollisionToMesh(_mesh);
                 _mesh.checkCollisions = true;
             }
         }
@@ -3378,7 +3376,7 @@ class Game {
             }
         }
         if (_entity instanceof CharacterEntity) {
-            if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_entity, _subEntity)) {
+            if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_subEntity, _entity)) {
                 _entity.kill();
             }
         }
@@ -4054,6 +4052,12 @@ class Game {
         }
         return Game.Tools.areVectorsClose(_entityA.controller.mesh.position, _entityB.controller.mesh.position, _distance);
     }
+    /**
+     * Whether or not _entityB is in front of _entityA
+     * @param {AbstractEntity} _entityA The entity that's looking
+     * @param {AbstractEntity} _entityB The entity that's being looked at
+     * @param {Number} _grace Episode in radians
+     */
     static inFrontOf(_entityA, _entityB, _grace = 0.3926991) { // grace could also be called epsilon in this case :V
         if (!(_entityA instanceof AbstractEntity)) {
             _entityA = Game.getInstancedEntity(_entityA) || Game.getInstancedEntity(_entityA);
