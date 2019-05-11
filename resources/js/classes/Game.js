@@ -578,7 +578,25 @@ class Game {
                 "fingersIndexMetacarpal.r",
                 "fingersIndexProximinalPhalanx.r",
                 "fingersIndexMiddlePhalanx.r",
-                "fingersIndexDistalPhalanx.r",
+                "fingersIndexDistalPhalanx.r"
+            ],
+            "10_eyes_closed":[
+                "eyelidTop.r",
+                "eyelidTop.l",
+                "eyelidBot.r",
+                "eyelidBot.l"
+            ],
+            "10_eyes_half_opened":[
+                "eyelidTop.r",
+                "eyelidTop.l",
+                "eyelidBot.r",
+                "eyelidBot.l"
+            ],
+            "10_eyes_opened":[
+                "eyelidTop.r",
+                "eyelidTop.l",
+                "eyelidBot.r",
+                "eyelidBot.l"
             ]
         }
 
