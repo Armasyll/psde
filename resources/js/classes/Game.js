@@ -3496,12 +3496,12 @@ class Game {
         if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
             if (_subEntity.controller.doPunchRH()) {
                 _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
-                Game.playSound("hit");
             }
         }
         if (_entity instanceof CharacterEntity) {
             if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_subEntity, _entity)) {
                 _entity.kill();
+                Game.playSound("hit");
             }
         }
     }
@@ -3557,6 +3557,7 @@ class Game {
         }
         else if (_entity.getController() instanceof DoorController) {
             _entity.setClose();
+            Game.playSound("openDoor");
         }
     }
     static actionHoldFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
@@ -3650,6 +3651,7 @@ class Game {
                 _entity.setLocked(false);
             }
             _entity.setOpen();
+            Game.playSound("openDoor");
         }
         else if (_entity.getController() instanceof FurnitureController) {
             _entity.getController().currAnim = _entity.getController().opened;
