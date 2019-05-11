@@ -450,6 +450,20 @@ class Game {
             "apple01Icon":"resources/images/icons/items/apple01.png"
         };
         /**
+         * Map of Sound file locations per ID
+         * eg, {"openDoor":"resources/sounds/Open Door.mp3"}
+         * @type {<String, String>}
+         */
+        this.soundLocations = {
+            "openDoor":"resources/sounds/Open Door.mp3",
+            "hit":"resources/sounds/Hit.mp3"
+        };
+        /**
+         * Map of Sounds per ID
+         * @type {<String, BABYLON.Sound>}
+         */
+        this.loadedSounds = {};
+        /**
          * Map of Meshes per Texture IDs per Mesh IDs
          * eg, {"ring01":{"ring01Silver":{ring01 Mesh with ring01Silver Texture}, "ring01Gold":{ring01 Mesh with ring01Gold Texture}}, "ring02":{...}}
          * @type {<String, <String, BABYLON.Mesh>>}
@@ -625,6 +639,7 @@ class Game {
         this.loadDefaultTextures();
         this.loadDefaultMaterials();
         this.loadDefaultMeshes();
+        this.loadDefaultSounds();
         /*
             Which function handles the function of the key presses;
             controlerCharacter, controlMenu
@@ -967,6 +982,35 @@ class Game {
         Game.loadedMeshes["loadingMesh"].setEnabled(false);
         Game.loadedMeshes["cameraFocus"].isVisible = false;
     }
+    static loadDefaultSounds() {
+        Game.loadSound(new BABYLON.Sound("missingSound", "resources/sounds/Spell Miss.mp3", Game.scene));
+        Game.loadSound(new BABYLON.Sound("hit", "resources/sounds/Hit.mp3", Game.scene));
+        Game.loadSound(new BABYLON.Sound("openDoor", "resources/sounds/Open Door.mp3", Game.scene));
+    }
+    static loadSound(_sound = "", _options = {}) {
+        if (_sound == undefined) {
+            return Game.loadedSounds["missingSound"];
+        }
+        else if (_sound instanceof BABYLON.Sound) {
+            if (!this.loadedSounds.hasOwnProperty(_sound.name)) {
+                this.loadedSounds[_sound.name] = _sound;
+            }
+            return _sound;
+        }
+        else if (typeof _sound == "string") {
+            _sound = Game.Tools.filterID(_sound);
+            if (Game.hasLoadedSound(_sound)) {
+                return this.loadedSounds[_sound];
+            }
+            else if (Game.hasAvailableSound(_sound)) {
+                let _loadedSound = new BABYLON.Sound(_sound, this.soundLocations[_sound], Game.scene);
+                _loadedSound.name = _sound;
+                Game.setLoadedSound(_sound, _loadedSound);
+                return _loadedSound;
+            }
+        }
+        return Game.loadedSounds["missingSound"];
+    }
     static loadTexture(_texture = "", _options = {}) {
         if (_texture == undefined) {
             return Game.loadedTextures["missingTexture"];
@@ -1077,6 +1121,16 @@ class Game {
             return null;
         }
         this.loadedMeshes[_id] = _mesh;
+    }
+    static setLoadedSound(_id, _sound) {
+        _id = Tools.filterID(_id);
+        if (_id == undefined) {
+            return null;
+        }
+        if (!(_sound instanceof BABYLON.Sound)) {
+            return null;
+        }
+        this.loadedSounds[_id] = _sound;
     }
     static setLoadedTexture(_id, _texture) {
         _id = Tools.filterID(_id);
@@ -1663,6 +1717,57 @@ class Game {
             return true;
         }
         return false;
+    }
+    static hasAvailableSound(_sound) {
+        if (_sound instanceof BABYLON.Sound) {
+            _sound = _sound.name;
+        }
+        _sound = Game.Tools.filterID(_sound);
+        return this.soundLocations.hasOwnProperty(_sound);
+    }
+    static hasLoadedSound(_sound) {
+        if (_sound instanceof BABYLON.Sound) {
+            _sound = _sound.name;
+        }
+        _sound = Game.Tools.filterID(_sound);
+        return this.loadedSounds.hasOwnProperty(_sound);
+    }
+    static hasSound(_sound) {
+        if (Game.hasLoadedSound(_sound)) {
+            return true;
+        }
+        else if (Game.hasAvailableSound(_sound)) {
+            Game.loadSound(_sound);
+            return true;
+        }
+        return false;
+    }
+    static addSound(_id, _location) {
+        if (Game.hasSound(_id)) {
+            return null;
+        }
+        this.soundLocations[_id] = _location;
+    }
+    static getSound(_id) {
+        if (_id instanceof BABYLON.Sound) {
+            return _id;
+        }
+        else if (Game.hasLoadedSound(_id)) {
+            return this.loadedSounds[_id];
+        }
+        else if (Game.hasAvailableSound(_id)) {
+            Game.loadSound(_id);
+            return this.loadedSounds["missingSound"];
+        }
+        else {
+            return this.loadedSounds["missingSound"];
+        }
+    }
+    static playSound(_id) {
+        _id = Game.getSound(_id);
+        if (_id instanceof BABYLON.Sound && _id.name != "missingSound") {
+            _id.play();
+        }
     }
     static hasAvailableTexture(_texture) {
         if (_texture instanceof BABYLON.Texture) {
@@ -3391,6 +3496,7 @@ class Game {
         if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
             if (_subEntity.controller.doPunchRH()) {
                 _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
+                Game.playSound("hit");
             }
         }
         if (_entity instanceof CharacterEntity) {
