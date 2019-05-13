@@ -3966,7 +3966,7 @@ class Game {
             return null;
         }
         _entity.setEssential(false);
-        delete Game.essentialEntities.remove(_entity);
+        Game.essentialEntities.delete(_entity);
     }
     static clearEssentialEntities() {
         Game.essentialEntities.forEach(function(_entity) {
