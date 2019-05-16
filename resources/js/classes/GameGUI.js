@@ -322,13 +322,10 @@ class GameGUI {
         ageInput.onTextChangedObservable.add(function() {
             let _int = Game.Tools.filterInt(ageInput.text);
             if (_int < 1 || _int == undefined) {
-                ageInput.text = 1;
+                ageInput.text = "1";
             }
             else if (_int > 127) {
-                ageInput.text = 127;
-            }
-            else {
-                ageInput.text = _int;
+                ageInput.text = "127";
             }
         });
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
