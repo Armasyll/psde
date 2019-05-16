@@ -1,1 +1,2 @@
 AddType application/babylon .babylon
+Header set Content-Security-Policy "script-src 'self'; object-src 'none'; worker-src data: blob: 'self';"
