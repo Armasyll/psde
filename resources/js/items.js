@@ -51,7 +51,7 @@ Game.createItemEntity("katana01", "Katana", "", "katana01Icon", "katana01", "met
 Game.createItemEntity("knife01", "Knife", "A dull knife.", "knife01Icon", "knife01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("morningstar", "Morningstar", "A spiked mace.", "morningstarIcon", "morningstar", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("shortSword01", "Short Sword", "A simple short Sword.", "shortSword01Icon", "shortSword01", "metalTool01", ItemEnum.WEAPON);
-Game.createItemEntity("shovel01", "Shovel", "A plain shovel.", undefined, "shovel01", "metalTool01", ItemEnum.WEAPON);
+Game.createItemEntity("shovel01", "Shovel", "A plain shovel.", "shovel01Icon", "shovel01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("spear01", "Spear", "A wooden spear with a metal tip.", "spear01Icon", "spear01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("staff01", "Staff", "A plain staff.", "staff01Icon", "staff01", undefined, ItemEnum.WEAPON);
 Game.createItemEntity("staff02", "Staff", "A staff with a forked, circular head.", "staff02Icon", "staff02", undefined, ItemEnum.WEAPON);

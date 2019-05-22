@@ -383,6 +383,7 @@ class Game {
             "parmaShieldIcon":"resources/images/icons/items/parmaShield.png",
             "scutumShieldIcon":"resources/images/icons/items/scutumShield.png",
             "mallet01Icon":"resources/images/icons/items/mallet01.png",
+            "shovel01Icon":"resources/images/icons/items/shovel01.png",
             "pickaxe01Icon":"resources/images/icons/items/pickaxe01.png",
             "warHammer01Icon":"resources/images/icons/items/warHammer01.png",
             "harpeIcon":"resources/images/icons/items/harpe.png",
