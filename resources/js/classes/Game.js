@@ -1550,6 +1550,23 @@ class Game {
         }
         return _floor;
     }
+    static createCollisionPlaneV2(start = BABYLON.Vector2.Zero(), end = BABYLON.Vector2.One()) {
+        if (Game.debugMode) console.log("Running createCollisionPlane");
+        if (start instanceof BABYLON.AbstractMesh) {
+            posEnd.set(start.position.x + (start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x) * 2, start.position.y, start.position.z + (start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z) * 2)
+            start = start.position.clone();
+        }
+        let floor = BABYLON.MeshBuilder.CreateBox("plane", {"height":0.125, "depth":Math.abs(end.z - start.z), "width":Math.abs(end.x - start.x)}, Game.scene);
+        floor.material = Game.loadedMaterials["collisionMaterial"];
+        floor.position.set((start.x + start.x) / 2, start.y, (start.z + end.z) / 2);
+        if (this.physicsEnabled) {
+            Game.assignBoxPhysicsToMesh(floor, {mass:0});
+        }
+        else {
+            floor.checkCollisions = true;
+        }
+        return floor;
+    }
     static createCollisionRamp(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotationY = 0) {
         if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
             return null;
@@ -3348,7 +3365,12 @@ class Game {
         if (_command.slice(0, 1) == "/") {
             _command = _command.slice(1);
         }
-        switch (_command) {
+        _command = String(_command).toLowerCase();
+        let _commandSplit = _command.split(" ");
+        if (_commandSplit.length == 0) {
+            _commandSplit.push("help");
+        }
+        switch (_commandSplit[0]) {
             case "help" : {
                 Game.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
@@ -3376,6 +3398,42 @@ class Game {
                 break;
             }
             case "load" : {
+                break;
+            }
+            case "addallitems" : {
+                for (let i in Game.itemEntities) {
+                    Game.player.addItem(i);
+                }
+                break;
+            }
+            case "addallweapons" : {
+                for (let i in Game.weaponEntities) {
+                    Game.player.addItem(i);
+                }
+                break;
+            }
+            case "addallarmour" :
+            case "addallarmor" :
+            case "addallclothing" : {
+                for (let i in Game.clothingEntities) {
+                    Game.player.addItem(i);
+                }
+                break;
+            }
+            case "addmoney" : {
+                let _money = Tools.filterInt(_commandSplit[1]) || 1;
+                Game.player.addMoney(_money);
+                Game.gui.chatOutputAppend(`Added \$${_money} to your wallet.`);
+                break;
+            }
+            case "setmoney" : {
+                let _money = Tools.filterInt(_commandSplit[1]) || 1;
+                Game.player.setMoney(_money);
+                Game.gui.chatOutputAppend(`Set your wallet to \$${_money}.`);
+                break;
+            }
+            case "getmoney" : {
+                Game.gui.chatOutputAppend(`You have \$${Game.player.getMoney()} in your wallet.`);
                 break;
             }
             case ":v" :

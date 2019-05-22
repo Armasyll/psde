@@ -76,6 +76,9 @@ class Tools {
         }
         return Number(_float.toFixed(4));
     }
+    static filterInteger(_int) {
+        return Tools.filterInt(_int);
+    }
     static filterInt(_int) {
         _int = Number.parseInt(_int);
         if (isNaN(_int)) {
