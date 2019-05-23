@@ -3436,6 +3436,14 @@ class Game {
                 Game.gui.chatOutputAppend(`You have \$${Game.player.getMoney()} in your wallet.`);
                 break;
             }
+            case "kill" : {
+                let _target = Game.player;
+                if (typeof _commandSplit[1] == "string" && Game.hasCharacterEntity(_commandSplit[1])) {
+                    _target = Game.getCharacterEntity(_commandSplit[1]);
+                }
+                _target.setHealth(0);
+                break;
+            }
             case ":v" :
             case "v:" :
             case ":V" :
@@ -4008,6 +4016,21 @@ class Game {
             Game.spellEntities[_i].dispose();
         }
         Game.spellEntities = {};
+    }
+    static hasSpell(_id) {
+        return Game.hasSpellEntity(_id);
+    }
+    static hasSpellEntity(_id) {
+        return Game.spellEntities.hasOwnProperty(_id);
+    }
+    static getSpell(_id) {
+        return Game.getSpellEntity(_id);
+    }
+    static getSpellEntity(_id) {
+        if (Game.hasSpellEntity(_id)) {
+            return Game.spellEntities[_id];
+        }
+        return null;
     }
     static setEssentialEntity(_entity) {
         if (!(_entity instanceof AbstractEntity)) {
