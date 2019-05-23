@@ -4,7 +4,7 @@ Game.createItemEntity("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simp
 Game.createItemEntity("pandorasBoxLocationKey", "Key to Pandora's Box", "A complex brass key meant for digitigrade mammals to Pandora's Box.", "pandorasBoxLocationKeyIcon", "key01", undefined, ItemEnum.KEY);
 
 Game.createItemEntity("packstreet23StrangeNewDay", "Pack Street Chapter 23", "In the wake of Bellwether's arrest, Remmy takes stock of a changed city.", "packstreet23StrangeNewDayIcon", "bookHardcoverClosed01", "packStreetChapter23", ItemEnum.BOOK);
-Game.createItemEntity("packstreet24PaintJob", "Pack Street Chapter 24", "Remmy finds himself doing community service.", "packstreet24StrangeNewDay", "bookHardcoverClosed01Icon", "packStreetChapter24", ItemEnum.BOOK);
+Game.createItemEntity("packstreet24PaintJob", "Pack Street Chapter 24", "Remmy finds himself doing community service.", "packstreet24StrangeNewDayIcon", "bookHardcoverClosed01", "packStreetChapter24", ItemEnum.BOOK);
 Game.createItemEntity("theLesserKeyOfSolomon", "The Lesser Key of Solomon", "The Lesser Key of Solomon, also known as Clavicula Salomonis Regis or Lemegeton, is an anonymous grimoire on demonology. It was compiled in the mid-17th century, mostly from materials a couple of centuries older.", "theLesserKeyOfSolomonIcon", "bookHardcoverClosed01", "theLesserKeyOfSolomon", ItemEnum.BOOK);
 Game.createItemEntity("bottle03RedSarcophagusJuice", "Red Sarcophagus Juice", "A small sample of some red liquid from the bottom of an obsidian sarcophagus.", "bottle03RedSarcophagusJuiceIcon", "bottle03", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
 Game.createItemEntity("bottle04RedSarcophagusJuice", "Red Sarcophagus Juice", "A flask of some red liquid from the bottom of an obsidian sarcophagus.", "bottle04RedSarcophagusJuiceIcon", "bottle04", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
@@ -40,10 +40,11 @@ Game.createItemEntity("dice01", "Die", "A beige die.", "dice01Icon", "cube", "di
 Game.createItemEntity("axe03", "Cheap Axe", "", "axe03Icon", "axe03", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("axe01", "Axe", "", "axe01Icon", "axe01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("axe02", "Curved Axe", "", "axe02Icon", "axe02", "metalTool01", ItemEnum.WEAPON);
-Game.createItemEntity("battleAxe01", "Double-headed Axe", "", "battleAxe01Icon", "battleAxe01", "metalTool01", ItemEnum.WEAPON);
+Game.createItemEntity("battleAxe01", "Double-headed Axe", "A double-headed axe.", "battleAxe01Icon", "battleAxe01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("cross01", "Cross", "A metal-capped cross.", "cross01Icon", "cross01", "cross01", ItemEnum.WEAPON);
 Game.createItemEntity("cudgel01", "Cudgel", "A chunk of metal attached to a stick.", "cudgel01Icon", "cudgel01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("forgeHammer01", "Blacksmith's Hammer", "", "forgeHammer01Icon", "forgeHammer01", "metalTool01", ItemEnum.WEAPON);
+Game.createItemEntity("forgeHammer02", "Blacksmith's Hammer", "", "forgeHammer02Icon", "forgeHammer02", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("gladius01", "Gladius", "", "gladius01Icon", "gladius01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("glaive01", "Glaive", "", "glaive01Icon", "glaive01", "metalTool01", ItemEnum.WEAPON);
 Game.createItemEntity("harpe", "Harpe", "A Sword with a curved falange. Not a harp, the instrument.", "harpeIcon", "harpe", "metalTool01", ItemEnum.WEAPON);

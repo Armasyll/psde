@@ -323,6 +323,7 @@ Game.generateApartment = function() {
 
     Game.createItem("alBuildingLocationKeyInstance", "alBuildingLocationKey", undefined, new BABYLON.Vector3(10, 0.75, -22.75));
     Game.createItem("packstreet23StrangeNewDayInstance", "packstreet23StrangeNewDay", undefined, new BABYLON.Vector3(10, 0.75, -21.25), new BABYLON.Vector3(0, 180, 0));
+    Game.createItem("packstreet24PaintJobInstance", "packstreet24PaintJob", undefined, new BABYLON.Vector3(10, 0.75, -21), new BABYLON.Vector3(0, 180, 0));
 
     Game.createLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, undefined, new BABYLON.Vector3(-0.5, 0, -26.5), undefined, undefined, new BABYLON.Vector3(0, 1.2, 0));
 

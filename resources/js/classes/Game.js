@@ -205,13 +205,14 @@ class Game {
             "knife01":"resources/meshes/weapons.babylon",
             "spear01":"resources/meshes/weapons.babylon",
             "glaive01":"resources/meshes/weapons.babylon",
-            "battleaxe01":"resources/meshes/weapons.babylon",
+            "battleAxe01":"resources/meshes/weapons.babylon",
             "axe03":"resources/meshes/weapons.babylon",
             "axe02":"resources/meshes/weapons.babylon",
             "axe01":"resources/meshes/weapons.babylon",
             "sword01":"resources/meshes/weapons.babylon",
             "glaive01":"resources/meshes/weapons.babylon",
             "forgeHammer01":"resources/meshes/weapons.babylon",
+            "forgeHammer02":"resources/meshes/weapons.babylon",
             "warHammer01":"resources/meshes/weapons.babylon",
             "mallet01":"resources/meshes/weapons.babylon",
             "pickaxe01":"resources/meshes/weapons.babylon",
@@ -450,7 +451,14 @@ class Game {
             "chair02Icon":"resources/images/icons/items/chair02.png",
             "chair03Icon":"resources/images/icons/items/chair03.png",
             "dice01Icon":"resources/images/icons/items/dice01.png",
-            "apple01Icon":"resources/images/icons/items/apple01.png"
+            "apple01Icon":"resources/images/icons/items/apple01.png",
+            "axe01Icon":"resources/images/icons/items/axe01.png",
+            "axe02Icon":"resources/images/icons/items/axe02.png",
+            "axe03Icon":"resources/images/icons/items/axe03.png",
+            "battleAxe01Icon":"resources/images/icons/items/battleAxe01.png",
+            "forgeHammer01Icon":"resources/images/icons/items/forgeHammer01.png",
+            "forgeHammer02Icon":"resources/images/icons/items/forgeHammer02.png",
+            "cudgel01Icon":"resources/images/icons/items/cudgel01.png"
         };
         /**
          * Map of Sound file locations per ID
