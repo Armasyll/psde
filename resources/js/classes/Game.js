@@ -2223,15 +2223,15 @@ class Game {
             return true;
         }
         for (var _i in Game.itemsToCreate) {
-            if (Game.hasLoadedMesh(Game.itemsToCreate[_i][1].getEntity().getMeshID())) {
-                Game.createItem(
+            if (Game.hasLoadedMesh(Game.itemsToCreate[_i][1].getMeshID())) {
+                console.log(Game.createItem(
                     Game.itemsToCreate[_i][0],
                     Game.itemsToCreate[_i][1],
                     Game.itemsToCreate[_i][2],
                     Game.itemsToCreate[_i][3],
                     Game.itemsToCreate[_i][4],
                     Game.itemsToCreate[_i][5]
-                );
+                ));
                 Game.removeItemToCreate(_i);
             }
         }
@@ -3130,22 +3130,29 @@ class Game {
         _entity.setTextureID(_texture);
         return _entity;
     }
-    static createItem(_id, _entity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static createItem(_id, _abstractEntity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         _id = Tools.filterID(_id);
         if (_id == undefined) {
             _id = Tools.genUUIDv4();
         }
-        if (_entity instanceof ItemEntity) {
-            _entity = _entity.createInstance(_id);
+        if (_abstractEntity instanceof ItemEntity) {
+            _abstractEntity = _abstractEntity.createInstance(_id);
         }
-        else if (_entity instanceof InstancedItemEntity) {
-            _entity = _entity.clone(_id);
+        else if (typeof _abstractEntity == "string" ) {
+            if (Game.hasItemEntity(_abstractEntity)) {
+                _abstractEntity = Game.getItemEntity(_abstractEntity).createInstance(_id);
+            }
+            else if (Game.hasInstancedItemEntity(_abstractEntity)) {
+                _abstractEntity = Game.getInstancedItemEntity(_abstractEntity);
+            }
+            else {
+                if (Game.debugMode) console.log(`\tThe abstract entity (${_abstractEntity}) couldn't be found.`);
+                return 2;
+            }
         }
-        else if (typeof _entity == "string" && Game.hasItemEntity(_entity)) {
-            _entity = Game.getItemEntity(_entity).createInstance(_id);
-        }
-        else {
-            return null;
+        else if (!(_abstractEntity instanceof InstancedItemEntity)) {
+            if (Game.debugMode) console.log(`\tThe abstract entity was neither a valid string, InstancedItemEntity, or an ItemEntity.`);
+            return 2;
         }
         if (!(_position instanceof BABYLON.Vector3)) {
             _position = Tools.filterVector(_position);
@@ -3169,14 +3176,16 @@ class Game {
         if (_scaling.equals(BABYLON.Vector3.Zero())) {
             _scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(_entity.getMeshID()))) {
-            Game.loadMesh(_entity.getMeshID());
-            Game.addItemToCreate(_id, _entity, _options, _position, _rotation, _scaling);
-            return true;
+        if (!(Game.hasLoadedMesh(_abstractEntity.getMeshID()))) {
+            Game.loadMesh(_abstractEntity.getMeshID());
+            Game.loadTexture(_abstractEntity.getTextureID());
+            Game.addItemToCreate(_id, _abstractEntity, _options, _position, _rotation, _scaling);
+            if (Game.debugMode) console.log(`\tThe item's mesh needs to be loaded. Inserting it into the qeueu.`);
+            return 1;
         }
-        var _mesh = Game.createItemMesh(_id, _entity.getMeshID(), _entity.getTextureID(), _options, _position, _rotation, _scaling);
-        var _controller = new ItemController(_id, _mesh, _entity);
-        _entity.setController(_controller);
+        let _mesh = Game.createItemMesh(_id, _abstractEntity.getMeshID(), _abstractEntity.getTextureID(), _options, _position, _rotation, _scaling);
+        let _controller = new ItemController(_id, _mesh, _abstractEntity);
+        _abstractEntity.setController(_controller);
         return _controller;
     }
     static removeItem(_controller) {
@@ -3595,22 +3604,15 @@ class Game {
             return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
-            if (typeof _callback == "function") {
-                _callback();
-            }
             return 1;
         }
-        if (_subEntity instanceof CharacterController) {
-            _subEntity.unequip(_instancedItemEntity);
-        }
-        if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
-            _instancedItemEntity.setParent(null);
-            _instancedItemEntity.position = _subEntity.getController().getMesh().position.clone.add(
-                new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
-            );
-        }
-        else {
-            Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position);
+        if (_subEntity instanceof CharacterController && _subEntity.hasEquipment(_instancedItemEntity)) {
+            if (_subEntity.unequip(_instancedItemEntity) != 0) {
+                if (typeof _callback == "function") {
+                    _callback();
+                }
+                return 0;
+            }
         }
         if (_subEntity.removeItem(_instancedItemEntity) == 0) {
             if (_subEntity == Game.player) {
@@ -3619,9 +3621,18 @@ class Game {
             else if (_entity == Game.player) {
                 Game.gui.updateInventoryMenuWith(_entity);
             }
-            if (typeof _callback == "function") {
-                _callback();
+            if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
+                _instancedItemEntity.setParent(null);
+                _instancedItemEntity.position = _subEntity.getController().getMesh().position.clone.add(
+                    new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+                );
             }
+            else {
+                Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.clone(), _subEntity.getController().getMesh().rotation.clone());
+            }
+        }
+        if (typeof _callback == "function") {
+            _callback();
         }
         return 0;
     }
