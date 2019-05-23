@@ -374,11 +374,12 @@ class CharacterEntity extends EntityWithStorage {
             if (!(_tempEntity instanceof InstancedItemEntity)) {
                 _tempEntity = this.getItem(_entity);
                 if (!(_tempEntity instanceof InstancedItemEntity)) {
-                    return this;
+                    return 2;
                 }
             }
             _entity = _tempEntity;
         }
+        if (Game.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${_entity.id}, ${_equipmentSlot})`);
         /*
         Get an apparel slot out of whatever _equipmentSlot is, otherwise fail
          */
@@ -401,7 +402,8 @@ class CharacterEntity extends EntityWithStorage {
                 _equipmentSlot = ApparelSlotEnum.properties[_entity.getEquipmentSlot()].key;
             }
             else {
-                return this;
+                if (Game.debugMode) console.log(`\tNo equipment slot was defined.`);
+                return 2;
             }
         }
         /*
@@ -419,7 +421,8 @@ class CharacterEntity extends EntityWithStorage {
         If the apparel slot isn't an equipment slot, fail
          */
         if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
-            return this;
+            if (Game.debugMode) console.log(`\tThe equipment slot (${_equipmentSlot}) doesn't exist.`);
+            return 2;
         }
         /*
         Clear out the equipment slot if it's in use, and set its value to _entity
@@ -491,7 +494,7 @@ class CharacterEntity extends EntityWithStorage {
                 }
             }
         }
-        return this;
+        return 0;
     }
     unequip(_blob) {
         if (ApparelSlotEnum.hasOwnProperty(_blob) || ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
@@ -507,7 +510,8 @@ class CharacterEntity extends EntityWithStorage {
             if (!(_tempEntity instanceof InstancedItemEntity)) {
                 _tempEntity = this.getItem(_entity);
                 if (!(_tempEntity instanceof InstancedItemEntity)) {
-                    return this;
+                    if (Game.debugMode) console.log(`\tThe entity (${_entity}) doesn't exist.`);
+                    return 2;
                 }
             }
             _entity = _tempEntity;
@@ -518,13 +522,18 @@ class CharacterEntity extends EntityWithStorage {
                 _equipmentSlot = _slot;
             }
         }
+        if (_equipmentSlot == null) {
+            if (Game.debugMode) console.log(`\tThe entity (${_entity.id}) was not equipped.`);
+            return 0;
+        }
         return this.unequipBySlot(_equipmentSlot);
     }
     unequipBySlot(_equipmentSlot) {
         if (typeof _equipmentSlot == "string") {
             _equipmentSlot = _equipmentSlot.toUpperCase();
             if (!ApparelSlotEnum.hasOwnProperty(_equipmentSlot)) {
-                return this;
+                if (Game.debugMode) console.log(`\tThe equipment slot (${_equipmentSlot}) doesn't exist.`);
+                return 2;
             }
         }
         else {
@@ -532,11 +541,13 @@ class CharacterEntity extends EntityWithStorage {
                 _equipmentSlot = ApparelSlotEnum.properties[_equipmentSlot].key;
             }
             else {
-                return this;
+                if (Game.debugMode) console.log(`\tThe equipment slot (${_equipmentSlot}) doesn't exist.`);
+                return 2;
             }
         }
         if (!this.equipment.hasOwnProperty(_equipmentSlot)) {
-            return this;
+            if (Game.debugMode) console.log(`\tThough the equipment slot (${_equipmentSlot}) exists, it doesn't for this entity.`);
+            return 2;
         }
         let _entity = this.equipment[_equipmentSlot];
         this.equipment[_equipmentSlot] = null;
@@ -596,7 +607,7 @@ class CharacterEntity extends EntityWithStorage {
                 }
             }
         }
-        return this;
+        return 0;
     }
     hasEquipment(_entity) {
         if (!(_entity instanceof AbstractEntity)) {
@@ -679,8 +690,7 @@ class CharacterEntity extends EntityWithStorage {
     removeItem(_abstractEntity) {
         if (_abstractEntity instanceof AbstractEntity) {
             this.unequipByEntity(_abstractEntity);
-            super.removeItem(_abstractEntity);
-            return this;
+            return super.removeItem(_abstractEntity);
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
         if (_instancedItem instanceof InstancedItemEntity) {
@@ -691,7 +701,7 @@ class CharacterEntity extends EntityWithStorage {
             return this.removeItem(_instancedItem);
         }
         if (Game.debugMode) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
-        return this;
+        return 1;
     }
 
     setAge(_int) {

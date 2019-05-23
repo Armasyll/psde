@@ -3491,13 +3491,13 @@ class Game {
         if (!(_entity instanceof AbstractEntity)) {
             _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
             if (!(_entity instanceof AbstractEntity)) {
-                return;
+                return 2;
             }
         }
         if (!(_subEntity instanceof AbstractEntity)) {
             _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
             if (!(_subEntity instanceof AbstractEntity)) {
-                return;
+                return 2;
             }
         }
         if (_action instanceof ActionData) {
@@ -3547,28 +3547,32 @@ class Game {
                 if (_entity instanceof AbstractEntity) {
                     Game.actionAttackFunction(_entity, _subEntity);
                 }
+                break;
             }
             default: {
                 
             }
         }
+        return 0;
     }
     static actionTakeFunction(_instancedItemEntity, _subEntity = Game.player) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
-        _subEntity.addItem(_instancedItemEntity);
-        Game.removeItemInSpace(_instancedItemEntity);
+        if (_subEntity.addItem(_instancedItemEntity) == 0) {
+            Game.removeItemInSpace(_instancedItemEntity);
+        }
+        return 0;
     }
     static actionAttackFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity)) {
             _entity = null;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
             if (_subEntity.controller.doPunchRH()) {
@@ -3581,19 +3585,20 @@ class Game {
                 Game.playSound("hit");
             }
         }
+        return 0;
     }
     static actionDropFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
-            return;
+            return 1;
         }
         if (_subEntity instanceof CharacterController) {
             _subEntity.unequip(_instancedItemEntity);
@@ -3605,25 +3610,27 @@ class Game {
             );
         }
         else {
-            var _item = Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position);
+            Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position);
         }
-        _subEntity.removeItem(_instancedItemEntity);
-        if (_subEntity == Game.player) {
-            Game.gui.updateInventoryMenuWith(_subEntity);
+        if (_subEntity.removeItem(_instancedItemEntity) == 0) {
+            if (_subEntity == Game.player) {
+                Game.gui.updateInventoryMenuWith(_subEntity);
+            }
+            else if (_entity == Game.player) {
+                Game.gui.updateInventoryMenuWith(_entity);
+            }
+            if (typeof _callback == "function") {
+                _callback();
+            }
         }
-        else if (_entity == Game.player) {
-            Game.gui.updateInventoryMenuWith(_entity);
-        }
-        if (typeof _callback == "function") {
-            _callback();
-        }
+        return 0;
     }
     static actionCloseFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (_entity.getController() instanceof FurnitureController) {
             _entity.getController().currAnim = _entity.getController().closed;
@@ -3636,94 +3643,111 @@ class Game {
             _entity.setClose();
             Game.playSound("openDoor");
         }
+        return 0;
     }
     static actionHoldFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
-            return;
+            return 1;
         }
-        _subEntity.hold(_instancedItemEntity);
+        if (_subEntity instanceof CharacterEntity) {
+            if (_subEntity.hold(_instancedItemEntity) != 0) {
+                return 1
+            }
+        }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);
         }
+        return 0;
     }
     static actionEquipFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
-            return;
+            return 1;
         }
         if (_subEntity instanceof CharacterEntity) {
-            _subEntity.equip(_instancedItemEntity);
+            if (_subEntity.equip(_instancedItemEntity) != 0) {
+                return 1;
+            }
         }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);
         }
+        return 0;
     }
     static actionUnequipFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
-            return;
+            return 1;
         }
         if (_subEntity instanceof CharacterEntity) {
-            _subEntity.unequip(_instancedItemEntity);
+            if (_subEntity.unequip(_instancedItemEntity) != 0) {
+                return 1;
+            }
         }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);
         }
+        return 0;
     }
     static actionReleaseFunction(_instancedItemEntity, _subEntity = Game.player, _callback = undefined) {
         if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof EntityWithStorage)) {
-            return;
+            return 2;
         }
         if (!_subEntity.hasItem(_instancedItemEntity)) {
             if (typeof _callback == "function") {
                 _callback();
             }
-            return;
+            return 1;
         }
-        _subEntity.unequip(_instancedItemEntity);
+        if (_subEntity instanceof CharacterEntity) {
+            if (_subEntity.unequip(_instancedItemEntity) != 0) {
+                return 1;
+            }
+        }
         if (typeof _callback == "function") {
             _callback(_instancedItemEntity, undefined, _subEntity);
         }
+        return 0;
     }
     static actionOpenFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (_entity.getController() instanceof DoorController) {
             if (_entity.getLocked()) {
                 if (!_subEntity.hasItem(_entity.getKey())) {
-                    return;
+                    return 1;
                 }
                 _entity.setLocked(false);
             }
@@ -3737,30 +3761,33 @@ class Game {
             _entity.addHiddenAvailableAction(ActionEnum.OPEN);
             _entity.removeHiddenAvailableAction(ActionEnum.CLOSE);
         }
+        return 0;
     }
     static actionUseFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (_entity.getController() instanceof LightingController) {
             _entity.getController().toggle();
         }
+        return 0;
     }
     static actionLayFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof EntityController)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
-            return;
+            return 2;
         }
         var _seatingBoundingBox = Game.getMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entity.getController().getMesh().scaling.x);
         _subEntity.getController().setParent(_entity.getController().getMesh());
         _subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
         _subEntity.getController().getMesh().rotation.set(0,0,0);
+        return 0;
     }
     /**
      * Places the subEntity near the Entity, and sets its parent to the Entity
@@ -3770,10 +3797,10 @@ class Game {
      */
     static actionSitFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity) || !(_entity.getController() instanceof FurnitureController)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity) || !(_subEntity.getController() instanceof CharacterController)) {
-            return;
+            return 2;
         }
         var _seatingBoundingBox = Game.getMesh(_entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         var _seatingWidth = (_seatingBoundingBox.extendSize.x * _entity.getController().getMesh().scaling.x);
@@ -3783,17 +3810,18 @@ class Game {
         if (_subEntity == Game.player && Game.camera.radius <= 0.5 && Game.enableFirstPerson) {
             Game.camera.alpha = _entity.getController().getMesh().rotation.y - BABYLON.Tools.ToRadians(90);
         }
+        return 0;
     }
     static actionTalkFunction(_entity, _subEntity = Game.player) {
         if (Game.debugMode) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);
         if (!(_entity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (!(_subEntity instanceof CharacterEntity)) {
-            return;
+            return 2;
         }
         if (!(_entity.getDialogue() instanceof Dialogue)) {
-            return;
+            return 2;
         }
         Game.gui.setDialogue(_entity.getDialogue(), _entity, _subEntity);
         Game.gui.showDialogueMenu();
@@ -3804,6 +3832,7 @@ class Game {
         else if (typeof _dialogue == "function") {
             Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue(_entity, _subEntity));
         }*/
+        return 0;
     }
     static setEntityController(_id, _entityController) {
         Game.entityControllers[_id] = _entityController;

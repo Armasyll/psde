@@ -91,14 +91,14 @@ class EntityWithStorage extends Entity {
             if (_abstractEntity instanceof InstancedItemEntity) {
                 this.storageWeight.dec(_abstractEntity.getWeight());
                 this.items.delete(_slot);
+                return 0;
             }
-            return 0;
-            
+            return 2;
         }
         /*
         else if the parameter is an InstancedItemEntity
          */
-        if (_abstractEntity instanceof AbstractEntity) {
+        if (_abstractEntity instanceof InstancedEntity) {
             for (let _i of this.items.keys()) {
                 if (this.items.get(_i) == _abstractEntity) {
                     this.storageWeight.dec(_abstractEntity.getWeight());
