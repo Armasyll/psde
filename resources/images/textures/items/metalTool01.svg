@@ -13,7 +13,7 @@
    viewBox="0 0 1024 1024"
    version="1.1"
    id="svg5100"
-   sodipodi:docname="weapons.svg"
+   sodipodi:docname="metalTool01.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata5106">
@@ -233,7 +233,7 @@
        id="filter1566">
       <feTurbulence
          seed="10"
-         baseFrequency="0.12 0.02"
+         baseFrequency="0.025000000000000001 0.125"
          numOctaves="10"
          type="fractalNoise"
          id="feTurbulence1544" />
@@ -254,7 +254,7 @@
       <feTurbulence
          seed="25"
          type="turbulence"
-         baseFrequency="0.08 0.05"
+         baseFrequency="0.080000000000000002 0.050000000000000003"
          numOctaves="8"
          result="result91"
          id="feTurbulence1552" />
@@ -269,8 +269,8 @@
       <feSpecularLighting
          specularExponent="35"
          specularConstant="1"
-         surfaceScale="2"
-         lighting-color="#ffffff"
+         surfaceScale="1.25"
+         lighting-color="rgb(255,255,255)"
          result="result1"
          in="result4"
          id="feSpecularLighting1558">
@@ -288,8 +288,8 @@
       <feComposite
          k4="0"
          k1="0"
-         k3="1"
-         k2="1"
+         k3="1.1499999999999999"
+         k2="0.90000000000000002"
          operator="arithmetic"
          result="result4"
          in="result4"
@@ -395,9 +395,9 @@
      id="namedview5102"
      showgrid="false"
      inkscape:snap-page="true"
-     inkscape:zoom="0.69014377"
-     inkscape:cx="601.18155"
-     inkscape:cy="491.89968"
+     inkscape:zoom="0.5"
+     inkscape:cx="128.00341"
+     inkscape:cy="532.78197"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -405,19 +405,19 @@
   <desc
      id="desc4914">'weapons.blend', shovel01, (Blender 2.79 (sub 0))</desc>
   <rect
-     style="opacity:1;vector-effect:none;fill:#666666;fill-opacity:1;stroke:none;stroke-width:11.41039658;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;vector-effect:none;fill:#666666;fill-opacity:1;stroke:none;stroke-width:9.13046455;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect906"
      width="1024"
-     height="799.62384"
+     height="512"
      x="0"
-     y="224.37616" />
+     y="512" />
   <rect
-     style="opacity:1;vector-effect:none;fill:#28170b;fill-opacity:1;stroke:none;stroke-width:0.25685054;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;vector-effect:none;fill:#28170b;fill-opacity:1;stroke:none;stroke-width:0.38799587;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect2082"
      width="1024"
-     height="224.37616"
+     height="512"
      x="0"
-     y="0" />
+     y="-2.8421709e-14" />
   <path
      style="fill:#502d16;stroke:none;filter:url(#filter1566)"
      d="m 0,0 v 24 24 24 24 24 24 24 24 H 592.09863 V 168 144 120 96 72 48 24 0 Z"
@@ -426,7 +426,7 @@
      transform="matrix(1.0041265,0,0,1.0249079,0.60957208,0.11623246)"
      sodipodi:nodetypes="ccccccccccccccccccc" />
   <g
-     transform="translate(8.0343241e-8,-1.6538057e-5)"
+     transform="matrix(0.98087751,0,0,0.89823694,312.17282,333.75308)"
      id="g5601">
     <ellipse
        transform="matrix(1.03881,0,0,1.03881,-25.596359,-4.9022105)"
@@ -463,10 +463,11 @@
        sodipodi:type="spiral" />
   </g>
   <rect
-     style="opacity:0.12;vector-effect:none;fill:#999999;fill-opacity:1;stroke:none;stroke-width:11.41039658;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter904)"
+     style="opacity:0.12000002;vector-effect:none;fill:#999999;fill-opacity:1;stroke:none;stroke-width:11.41039658;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter904)"
      id="rect5816"
-     width="1024"
-     height="799.62384"
-     x="0"
-     y="224.37616" />
+     width="1023.9999"
+     height="799.62415"
+     x="1.8432569e-05"
+     y="224.3754"
+     transform="matrix(1.0308617,0,0,0.65436574,-15.80119,366.45998)" />
 </svg>
