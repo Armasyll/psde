@@ -3130,6 +3130,16 @@ class Game {
         _entity.setTextureID(_texture);
         return _entity;
     }
+    /**
+     * Places instanced item in the world at a given position.
+     * @param {String} _id String ID
+     * @param {AbstractEntity} _abstractEntity Abstract entity; preferably an InstancedItemEntity
+     * @param {Object} [_options] Options
+     * @param {BABYLON.Vector3} _position Position
+     * @param {BABYLON.Vector3} [_rotation] Rotation, optional
+     * @param {BABYLON.Vector3} [_scaling] Scaling
+     * @returns {(EntityController|int)} An entity controller or an integer
+     */
     static createItem(_id, _abstractEntity, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
         _id = Tools.filterID(_id);
         if (_id == undefined) {
