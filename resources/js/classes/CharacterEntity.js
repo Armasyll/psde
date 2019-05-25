@@ -1,69 +1,28 @@
 class CharacterEntity extends EntityWithStorage {
     /**
      * Creates a CharacterEntity
-     * @param  {String} _id           Unique ID
-     * @param  {String} _name         Name
-     * @param  {String} _description  Description
-     * @param  {String}  _image       Image ID
-     * @param  {String} _class        Role
-     * @param  {Number} _age          Age
-     * @param  {Number} sex           Sex (0 Male, 1 Female, 2 Herm)
-     * @param  {String} _species      Species
+     * @param  {string} id Unique ID
+     * @param  {string} name Name
+     * @param  {string} [description] Description
+     * @param  {string} [icon] Icon ID
+     * @param  {CharacterClassEnum} [characterCless] CharacterClassEnum
+     * @param  {number} [age] Age
+     * @param  {SexEnum} [sex] SexEnum
+     * @param  {SpeciesEnum} [species] SpeciesEnum
      */
-    constructor(_id = "nickWilde", _name = "Wilde, Nicholas", _description = undefined, _image = "genericCharacterIcon", _characterClass = CharacterClassEnum.CLASSLESS, _age = 33, sex = SexEnum.MALE, _species = SpeciesEnum.FOX) {
-        super(_id);
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", icon = "genericCharacterIcon", characterCless = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, species = SpeciesEnum.FOX) {
+        super(id);
         this.entityType = EntityEnum.CHARACTER;
-        /**
-         * Surname
-         * @type {String} Cannot be undefined!
-         */
-        this.name = undefined;
-        this.surname = undefined;
-        /**
-         * Nickname
-         * @type {String} Can be undefined
-         */
-        this.nickname = undefined;
-        /**
-         * Class title
-         * @type {String}
-         */
+        this.name = "";
+        this.surname = "";
+        this.nickname = "";
         this.characterClass = CharacterClassEnum.CLASSLESS;
-        /**
-         * Age
-         * @type {Number} 0 to Number.MAX_SAFE_INTEGER
-         */
-        this.age = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
-        /**
-         * Physical sexual identity
-         * @type {Number} 0 - none, 1 - male, 2 - female
-         */
-        this.sex = new BoundedNumber(0, 0, 2);
-        /**
-         * Personal sexual identity
-         * @type {Number} 0 - none, 1 - male, 2 - female
-         */
-        this.gender = new BoundedNumber(0, 0, 2);
-        /**
-         * Intraactions this CharacterEntity is currently performing
-         * @type {Map} <ActionEnum>
-         */
+        this.age = new BoundedNumber(17, 0, Number.MAX_SAFE_INTEGER);
+        this.sex = SexEnum.MALE;
+        this.gender = SexEnum.MALE;
         this.currentActions = {};
-        /**
-         * Stance this CharacterEntity is currently performing
-         * 0 - Lay, 1 - Sit, 2 - Crouch, 3 - Stand, 4 - Fly
-         * @type {Number}
-         */
-        this.stance = new BoundedNumber(3, 0, 4);
-        /**
-         * Spells known by this Character
-         * @type {Set} <Spell>
-         */
+        this.stance = ActionEnum.STAND;
         this.spells = new Set();
-        /**
-         * Dominant hand
-         * @type {HandednessEnum} NONE, LEFT, or RIGHT
-         */
         this.handedness = HandednessEnum.RIGHT;
         /**
          * Attached cosmetics
@@ -296,13 +255,13 @@ class CharacterEntity extends EntityWithStorage {
         this.dialogue = undefined;
         this.godMode = false;
 
-        this.setName(_name);
-        this.setImage(_image);
-        this.setClass(_characterClass);
-        this.setAge(_age);
+        this.setName(name);
+        this.setImage(icon);
+        this.setClass(characterCless);
+        this.setAge(age);
         this.setSex(sex);
         this.setGender(sex);
-        this.setSpecies(_species);
+        this.setSpecies(species);
         this.addAvailableAction(ActionEnum.ATTACK);
         this.addAvailableAction(ActionEnum.HOLD);
         this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
@@ -314,19 +273,19 @@ class CharacterEntity extends EntityWithStorage {
         Game.setCharacterEntity(this.id, this);
     }
     
-    setName(_string = "") {
-        if (_string.split(", ").length > 1) {
-            var tempName = _string.split(", ");
+    setName(name = "") {
+        if (name.split(", ").length > 1) {
+            let tempName = name.split(", ");
             this.name = tempName[1].replace(/[^0-9a-z]/gi, '');
             this.surname = tempName[0].replace(/[^0-9a-z]/gi, '');
         }
-        else if (_string.split(" ").length > 1) {
-            var tempName = _string.split(" ");
+        else if (name.split(" ").length > 1) {
+            let tempName = name.split(" ");
             this.name = tempName[0].replace(/[^0-9a-z]/gi, '');
             this.surname = tempName[1].replace(/[^0-9a-z]/gi, '');
         }
         else {
-            this.name = _string.replace(/[^0-9a-z]/gi, '');
+            this.name = name.replace(/[^0-9a-z]/gi, '');
         }
         return this;
     }
@@ -346,17 +305,12 @@ class CharacterEntity extends EntityWithStorage {
         return this.getLastName();
     }
 
-    setClass(_characterClass) {
-        if (isNaN(_characterClass)) {
-            return this;
+    setClass(characterClass) {
+        if (CharacterClassEnum.properties.hasOwnProperty(characterClass)) {
+            this.characterClass = characterClass;
+            return 0;
         }
-        if (CharacterClassEnum.properties.hasOwnProperty(_characterClass)) {
-            this.characterClass = _characterClass;
-        }
-        else {
-            this.characterClass = CharacterClassEnum.CLASSLESS
-        }
-        return this;
+        return 2;
     }
     getClass() {
         return this.characterClass;
@@ -1025,20 +979,26 @@ class CharacterEntity extends EntityWithStorage {
         return this.money.getValue();
     }
 
-    setSex(_int = SexEnum.MALE) {
-        this.sex.setValue(_int);
-        return this;
+    setSex(sex = SexEnum.MALE) {
+        if (SexEnum.properties.hasProperty(sex)) {
+            this.sex = sex;
+            return 0;
+        }
+        return 2;
     }
     getSex() {
-        return this.sex.getValue();
+        return this.sex;
     }
 
-    setGender(_int = SexEnum.MALE) {
-        this.gender.setValue(_int);
-        return this;
+    setGender(gender = SexEnum.MALE) {
+        if (SexEnum.properties.hasProperty(gender)) {
+            this.gender = gender;
+            return 0;
+        }
+        return 2;
     }
     getGender() {
-        return this.gender.getValue();
+        return this.gender;
     }
 
     setDefaultDisposition(_passion = 0, _friendship = 0, _playfulness = 0, _soulmate = 0, _familial = 0, _obsession = 0, _hate = 0) {
@@ -1211,26 +1171,33 @@ class CharacterEntity extends EntityWithStorage {
         return this.unequip(_instancedItemEntity);
     }
 
+    setStance(stance = ActionEnum.STAND) {
+        if (ActionEnum.properties.hasProperty(stance)) {
+            this.stance = stance;
+            return 0;
+        }
+        return 2;
+    }
     getStance() {
-    	return this.stance.getValue();
+    	return this.stance;
     }
     isCrouching() {
-        return this.stance.getValue() == ActionEnum.CROUCH;
+        return this.stance == ActionEnum.CROUCH;
     }
     isLying() {
-        return this.stance.getValue() == ActionEnum.LAY;
+        return this.stance == ActionEnum.LAY;
     }
     isSleeping() {
         return this.sleeping == true;
     }
     isSitting() {
-        return this.stance.getValue() == ActionEnum.SIT;
+        return this.stance == ActionEnum.SIT;
     }
     isStanding() {
-        return this.stance.getValue() == ActionEnum.STAND;
+        return this.stance == ActionEnum.STAND;
     }
     isFlying() {
-        return this.stance.getValue() == ActionEnum.FLY;
+        return this.stance == ActionEnum.FLY;
     }
 
     setPaws(_type) {

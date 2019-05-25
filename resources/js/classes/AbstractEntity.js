@@ -1,40 +1,24 @@
 class AbstractEntity {
     /**
      * Creates an AbstractEntity
-     * @param  {String} _id           Unique ID
-     * @param  {String} _name         Name
-     * @param  {String} _description  Description
-     * @param  {String}  _image       Image ID
+     * @param  {String} id Unique ID, auto-generated if none given
+     * @param  {String} name Name
+     * @param  {String} description Description
+     * @param  {String} icon Icon ID
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem") {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    constructor(id = undefined, name = undefined, description = undefined, icon = "genericItem") {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        this.id = _id;
+        this.id = id;
         this.entityType = EntityEnum.ABSTRACT;
-        /**
-         * Name
-         * @type {String} Can be undefined
-         */
         this.name = null;
-        this.setName(_name);
-        /**
-         * Description
-         * @type {String} Can be undefined
-         */
+        this.setName(name);
         this.description = null;
-        this.setDescription(_description);
-        /**
-         * Path to Entity's picture
-         * @type {String} Relative path to an image, or base64 encoded String
-         */
-        this.image = null;
-        this.setImage(_image);
-        /**
-         * Entity's controller
-         * @type {CharacterController}
-         */
+        this.setDescription(description);
+        this.icon = null;
+        this.setIcon(icon);
         this.controller = null;
 
         this.owner = null;
@@ -83,37 +67,37 @@ class AbstractEntity {
     getDescription() {
         return this.description;
     }
-    setImage(_image) {
-        if (Game.hasIcon(_image)) {
-            this.image = _image;
+    setIcon(_icon) {
+        if (Game.hasIcon(_icon)) {
+            this.icon = _icon;
         }
         else {
-            this.image = "missingIcon";
+            this.icon = "missingIcon";
         }
         return this;
     }
-    getImage() {
-        return this.image;
+    getIcon() {
+        return this.icon;
     }
 
     isEnabled() {
         return this._isEnabled == true;
     }
-    setEnabled(_isEnabled = true) {
-        this._isEnabled = (_isEnabled == true);
+    setEnabled(isEnabled = true) {
+        this._isEnabled = (isEnabled == true);
         return this;
     }
 
     isLocked() {
         return this._isLocked == true;
     }
-    setLocked(_isLocked = true) {
-        this._isLocked = (_isLocked == true);
+    setLocked(isLocked = true) {
+        this._isLocked = (isLocked == true);
         return this;
     }
 
-    setController(_controller) {
-        this.controller = Game.getEntityController(_controller);
+    setController(entityController) {
+        this.controller = Game.getEntityController(entityController);
         return this;
     }
     getController() {
@@ -129,13 +113,13 @@ class AbstractEntity {
 
     /**
      * Sets Owner
-     * @param {Character} _entity Character, or undefined
+     * @param {CharacterEntity} characterEntity Character, or undefined
      */
-    setOwner(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+    setOwner(characterEntity) {
+        if (!(characterEntity instanceof AbstractEntity)) {
+            characterEntity = Game.getInstancedEntity(characterEntity) || Game.getEntity(characterEntity);
         }
-        this.owner = Game.getCharacterEntity(_entity);
+        this.owner = Game.getCharacterEntity(characterEntity);
         return this;
     }
     getOwner() {
@@ -152,11 +136,11 @@ class AbstractEntity {
         return this.removeOwner();
     }
 
-    setTarget(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
+    setTarget(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            abstractEntity = Game.getInstancedEntity(abstractEntity) || Game.getEntity(abstractEntity);
         }
-        this.target = _entity;
+        this.target = abstractEntity;
         return this;
     }
     getTarget() {
@@ -173,8 +157,8 @@ class AbstractEntity {
         return this.removeTarget();
     }
 
-    setEssential(_bool = true) {
-        this._isEssential = _bool == true;
+    setEssential(isEssential = true) {
+        this._isEssential = isEssential == true;
         if (this._isEssential) {
             Game.setEssentialEntity(this);
         }
@@ -188,13 +172,13 @@ class AbstractEntity {
 
     dispose() {
         this._isEnabled = false;
-        for (var _action in this.availableActions) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
+        for (let action in this.availableActions) {
+            if (this.availableActions[action] instanceof ActionData) {
+                this.availableActions[action].dispose();
             }
         }
-        for (var _var in this) {
-            this[_var] = null;
+        for (let param in this) {
+            this[param] = null;
         }
         return undefined;
     }
