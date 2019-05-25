@@ -561,8 +561,8 @@ class Game {
         this.instancedWeaponEntities = {};
         this.instancedFurnitureEntities = {};
 
-        this.dialogues = {};
-        this.cosmetics = {};
+        this.dialogues = new Map();
+        this.cosmetics = new Map();
 
         this.entityAnimationBones = {
             "71_punch01":[
@@ -2224,14 +2224,14 @@ class Game {
         }
         for (var _i in Game.itemsToCreate) {
             if (Game.hasLoadedMesh(Game.itemsToCreate[_i][1].getMeshID())) {
-                console.log(Game.createItem(
+                Game.createItem(
                     Game.itemsToCreate[_i][0],
                     Game.itemsToCreate[_i][1],
                     Game.itemsToCreate[_i][2],
                     Game.itemsToCreate[_i][3],
                     Game.itemsToCreate[_i][4],
                     Game.itemsToCreate[_i][5]
-                ));
+                );
                 Game.removeItemToCreate(_i);
             }
         }
@@ -2783,7 +2783,7 @@ class Game {
     }
     /**
      * Tries to return a Dialogue based on its ID
-     * @param {string} id Dialogue ID
+     * @param {string} id Unique ID
      * @returns {(Dialogue|number)} A Dialogue or an integer status code
      */
     static getDialogue(id) {
@@ -2793,8 +2793,8 @@ class Game {
         else if (id instanceof Dialogue) {
             return id;
         }
-        else if (typeof id == "string" && Game.dialogues.hasOwnProperty(id)) {
-            return Game.dialogues[id];
+        else if (typeof id == "string" && Game.dialogues.has(id)) {
+            return Game.dialogues.get(id);
         }
         return 1;
     }
@@ -3440,7 +3440,7 @@ class Game {
     }
     /**
      * Tries to return a Cosmetic based on its ID
-     * @param {string} id Unique ID, auto-generated if none given
+     * @param {string} id Unique ID
      * @returns {(Cosmetic|number)} A Cosmetic or an integer status code
      */
     static getCosmetic(id) {
@@ -3450,10 +3450,21 @@ class Game {
         else if (id instanceof Cosmetic) {
             return id;
         }
-        else if (typeof id == "string" && Game.cosmetics.hasOwnProperty(id)) {
-            return Game.cosmetics[id];
+        else if (typeof id == "string" && Game.cosmetics.has(id)) {
+            return Game.cosmetics.get(id);
         }
         return 1;
+    }
+    /**
+     * Whether or not a Cosmetic exists
+     * @param {string} id Cosmetic ID
+     * @returns {boolean}
+     */
+    static hasCosmetic(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.cosmetics.has(id);
     }
     static enableHighlighting() {
         this.highlightEnabled = true;
@@ -4402,93 +4413,131 @@ class Game {
         }
         Game.instancedFurnitureEntities = {};
     }
-
-    static setDialogue(_id, _dialogue) {
-        Game.dialogues[_id] = _dialogue;
-    }
-    static removeDialogue(_id) {
-        delete Game.dialogues[_id];
-    }
-    static clearDialogues() {
-        for (var _i in Game.dialogues) {
-            Game.dialogues[_i].dispose();
-        }
-        Game.dialogues = {};
-    }
-
-    static setCosmetic(_id, _cosmetic) {
-        Game.cosmetics[_id] = _cosmetic;
-    }
-    static removeCosmetic(_id) {
-        delete Game.cosmetics[_id];
-    }
-    static clearCosmetics() {
-        for (var _i in Game.cosmetics) {
-            Game.cosmetics[_i].dispose();
-        }
-        Game.cosmetics = {};
-    }
-
-    static calculateLevel(_int) {
-        _int = Tools.filterInt(_int);
-        if (_int >= 355000) {
-            return 20;
-        }
-        else if (_int >= 305000) {
-            return 19;
-        }
-        else if (_int >= 265000) {
-            return 18;
-        }
-        else if (_int >= 225000) {
-            return 17;
-        }
-        else if (_int >= 195000) {
-            return 16;
-        }
-        else if (_int >= 165000) {
-            return 15;
-        }
-        else if (_int >= 140000) {
-            return 14;
-        }
-        else if (_int >= 120000) {
-            return 13;
-        }
-        else if (_int >= 100000) {
-            return 12;
-        }
-        else if (_int >= 85000) {
-            return 11;
-        }
-        else if (_int >= 64000) {
-            return 10;
-        }
-        else if (_int >= 48000) {
-            return 9;
-        }
-        else if (_int >= 34000) {
-            return 8;
-        }
-        else if (_int >= 23000) {
-            return 7;
-        }
-        else if (_int >= 14000) {
-            return 6;
-        }
-        else if (_int >= 6500) {
-            return 5;
-        }
-        else if (_int >= 2700) {
-            return 4;
-        }
-        else if (_int >= 900) {
-            return 3;
-        }
-        else if (_int >= 300) {
+    /**
+     * Tries to set a Dialogue
+     * @param {Dialogue} dialogue 
+     */
+    static setDialogue(dialogue) {
+        if (!(dialogue instanceof Dialogue)) {
             return 2;
         }
-        else if (_int >= 0) {
+        Game.dialogues.set(dialogue.id, dialogue);
+        return 0;
+    }
+    /**
+     * Tries to remove a Dialogue
+     * @param {Dialogue} dialogue 
+     */
+    static removeDialogue(dialogue) {
+        if (typeof dialogue == "string" && Game.dialogues.has(dialogue)) {
+            dialogue = Game.dialogues.get(id);
+        }
+        else if (!(dialogue instanceof Dialogue)) {
+            return 2;
+        }
+        dialogue.dispose();
+        Game.dialogues.delete(dialogue.id);
+        return 0;
+    }
+    static clearDialogues() {
+        Game.dialogues.forEach(function(value) {
+            Game.removeDialogue(value);
+        });
+        return 0;
+    }
+    /**
+     * Tries to set a Cosmetic
+     * @param {Cosmetic} cosmetic 
+     */
+    static setCosmetic(cosmetic) {
+        if (!(cosmetic instanceof Cosmetic)) {
+            return 2;
+        }
+        Game.cosmetics.set(cosmetic.id, cosmetic);
+        return 0;
+    }
+    /**
+     * Tries to remove a Cosmetic
+     * @param {Cosmetic} cosmetic 
+     */
+    static removeCosmetic(cosmetic) {
+        if (typeof cosmetic == "string" && Game.cosmetics.has(cosmetic)) {
+            cosmetic = Game.cosmetics.get(id);
+        }
+        else if (!(cosmetic instanceof Cosmetic)) {
+            return 2;
+        }
+        cosmetic.dispose();
+        Game.cosmetics.delete(cosmetic.id);
+        return 0;
+    }
+    static clearCosmetics() {
+        Game.cosmetics.forEach(function(value) {
+            Game.removeCosmetic(value);
+        });
+        return 0;
+    }
+
+    static calculateLevel(experiencePoints) {
+        experiencePoints = Tools.filterInt(experiencePoints);
+        if (experiencePoints >= 355000) {
+            return 20;
+        }
+        else if (experiencePoints >= 305000) {
+            return 19;
+        }
+        else if (experiencePoints >= 265000) {
+            return 18;
+        }
+        else if (experiencePoints >= 225000) {
+            return 17;
+        }
+        else if (experiencePoints >= 195000) {
+            return 16;
+        }
+        else if (experiencePoints >= 165000) {
+            return 15;
+        }
+        else if (experiencePoints >= 140000) {
+            return 14;
+        }
+        else if (experiencePoints >= 120000) {
+            return 13;
+        }
+        else if (experiencePoints >= 100000) {
+            return 12;
+        }
+        else if (experiencePoints >= 85000) {
+            return 11;
+        }
+        else if (experiencePoints >= 64000) {
+            return 10;
+        }
+        else if (experiencePoints >= 48000) {
+            return 9;
+        }
+        else if (experiencePoints >= 34000) {
+            return 8;
+        }
+        else if (experiencePoints >= 23000) {
+            return 7;
+        }
+        else if (experiencePoints >= 14000) {
+            return 6;
+        }
+        else if (experiencePoints >= 6500) {
+            return 5;
+        }
+        else if (experiencePoints >= 2700) {
+            return 4;
+        }
+        else if (experiencePoints >= 900) {
+            return 3;
+        }
+        else if (experiencePoints >= 300) {
+            return 2;
+        }
+        else if (experiencePoints >= 0) {
             return 1;
         }
         return 0;

@@ -1,6 +1,6 @@
 class DoorEntity extends Entity {
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "plainDoorIcon", _locked = false, _key = undefined, _opensInward = false, _open = false) {
-        super(_id, _name, _description, _image);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "plainDoorIcon", _locked = false, _key = undefined, _opensInward = false, _open = false) {
+        super(_id, _name, _description, _icon);
         this.entityType = EntityEnum.DOOR;
         this.locked = false;
         this.key = null;

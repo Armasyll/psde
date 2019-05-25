@@ -4,10 +4,10 @@ class LightingEntity extends FurnitureEntity {
      * @param  {String}  _id          Unique ID
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
-     * @param  {String}  _image       Image ID
+     * @param  {String}  _icon       Image ID
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _lightType) {
-        super(_id, _name, _description, _image, FurnitureEnum.LAMP);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _lightType) {
+        super(_id, _name, _description, _icon, FurnitureEnum.LAMP);
 
         this.lightOn = true;
 
@@ -58,7 +58,7 @@ class LightingEntity extends FurnitureEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new LightingEntity(_id, this.name, this.description, this.image);
+        return new LightingEntity(_id, this.name, this.description, this.icon);
     }
     dispose() {
         Game.removeLightingEntity(this.id);

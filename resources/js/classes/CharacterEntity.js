@@ -256,7 +256,7 @@ class CharacterEntity extends EntityWithStorage {
         this.godMode = false;
 
         this.setName(name);
-        this.setImage(icon);
+        this.setIcon(icon);
         this.setClass(characterCless);
         this.setAge(age);
         this.setSex(sex);
@@ -980,7 +980,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setSex(sex = SexEnum.MALE) {
-        if (SexEnum.properties.hasProperty(sex)) {
+        if (SexEnum.properties.hasOwnProperty(sex)) {
             this.sex = sex;
             return 0;
         }
@@ -991,7 +991,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setGender(gender = SexEnum.MALE) {
-        if (SexEnum.properties.hasProperty(gender)) {
+        if (SexEnum.properties.hasOwnProperty(gender)) {
             this.gender = gender;
             return 0;
         }
@@ -1172,7 +1172,7 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setStance(stance = ActionEnum.STAND) {
-        if (ActionEnum.properties.hasProperty(stance)) {
+        if (ActionEnum.properties.hasOwnProperty(stance)) {
             this.stance = stance;
             return 0;
         }

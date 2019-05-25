@@ -644,7 +644,7 @@ class GameGUI {
             return undefined;
         }
         GameGUI.updatePlayerPortraitStats(_entity);
-        GameGUI._setPlayerPortraitImage(_entity.getImage());
+        GameGUI._setPlayerPortraitImage(_entity.getIcon());
         GameGUI._setPlayerPortraitName(_entity.getName());
     }
     static updatePlayerPortraitStats(_entity = Game.player) {
@@ -701,11 +701,11 @@ class GameGUI {
             GameGUI._hideTargetPortraitMana();
             GameGUI._hideTargetPortraitStamina();
         }
-        GameGUI._setTargetPortraitImage(_entity.getImage());
+        GameGUI._setTargetPortraitImage(_entity.getIcon());
         GameGUI._setTargetPortraitName(_entity.getName());
     }
-    static _setPlayerPortraitImage(_image = "genericCharacter") {
-        GameGUI._playerPortrait.children[1].children[0].domImage.setAttribute("src", Game.getIcon(_image));
+    static _setPlayerPortraitImage(_icon = "genericCharacter") {
+        GameGUI._playerPortrait.children[1].children[0].domImage.setAttribute("src", Game.getIcon(_icon));
     }
     static _setPlayerPortraitName(_string) {
         GameGUI._playerPortrait.children[2].children[0].text = _string;
@@ -736,8 +736,8 @@ class GameGUI {
     static _setPlayerPortraitManaText(_text = "") {
         GameGUI._playerPortrait.children[2].children[2].children[1].text = _text;
     }
-    static _setTargetPortraitImage(_image = "genericItem") {
-        GameGUI._targetPortrait.children[2].children[0].domImage.setAttribute("src", Game.getIcon(_image));
+    static _setTargetPortraitImage(_icon = "genericItem") {
+        GameGUI._targetPortrait.children[2].children[0].domImage.setAttribute("src", Game.getIcon(_icon));
     }
     static _setTargetPortraitName(_string) {
         GameGUI._targetPortrait.children[1].children[0].text = _string;
@@ -868,7 +868,7 @@ class GameGUI {
         }
         for (let _key of _entity.getItems().keys()) {
             let _instancedItemEntity = _entity.getItems().get(_key);
-            var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, Game.getIcon(_instancedItemEntity.getImage()));
+            var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, Game.getIcon(_instancedItemEntity.getIcon()));
             _button.width = 1.0;
             _button.height = 0.1;
             _button.onPointerUpObservable.add(function() {
@@ -893,7 +893,7 @@ class GameGUI {
 
         var _summary = GameGUI._inventoryMenu.getChildByName("summary");
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
-        _summary.getChildByName("selectedImage").source = Game.getIcon(_instancedItemEntity.getImage());
+        _summary.getChildByName("selectedImage").source = Game.getIcon(_instancedItemEntity.getIcon());
         _summary.getChildByName("selectedDescription").text = _instancedItemEntity.getDescription();
         var _weightString = undefined;
         if (_instancedItemEntity.getWeight() < 1) {
@@ -967,11 +967,11 @@ class GameGUI {
             _actions.removeControl(_actions.children[_i]);
         }
     }
-    static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _image = undefined) {
+    static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _icon = undefined) {
         var _button = new BABYLON.GUI.Button(_id);
             _button.width = 1.0;
             _button.height = 0.1;
-        var _buttonImage = new BABYLON.GUI.Image("", _image);
+        var _buttonImage = new BABYLON.GUI.Image("", _icon);
             _buttonImage.width = 0.2;
             _buttonImage.height = 1.0;
             _buttonImage.left = "-40%";

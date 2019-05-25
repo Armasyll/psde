@@ -1,70 +1,69 @@
 class Cosmetic {
-    constructor(_id, _name = "", _description = "", _image = "genericItemIcon", _mesh = "", _material = undefined, _equipmentSlot = ApparelSlotEnum.HEAD) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    constructor(id, name = "", description = "", icon = "genericItemIcon", mesh = "", material = undefined, equipmentSlot = ApparelSlotEnum.HEAD) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        this.id = _id;
+        this.id = id;
         this.name = "";
         this.description = "";
-        this.image = "";
+        this.icon = "";
         this.meshID = "";
         this.materialID = "";
         this.equipmentSlot = ApparelSlotEnum.HEAD;
 
-        this.setName(_name);
-        this.setDescription(_description);
-        this.setImage(_image);
-        this.setMeshID(_mesh);
-        this.setMaterialID(_material);
-        this.setApparelSlot(_equipmentSlot);
+        this.setName(name);
+        this.setDescription(description);
+        this.setIcon(icon);
+        this.setMeshID(mesh);
+        this.setMaterialID(material);
+        this.setApparelSlot(equipmentSlot);
 
-        Game.setCosmetic(this.id, this);
+        Game.setCosmetic(this);
     }
-
     getID() {
         return this.id;
     }
-    setName(_name) {
-        this.name = Tools.filterName(_name);
+    setName(name) {
+        this.name = Tools.filterName(name);
     }
     getName() {
         return this.name;
     }
-    setDescription(_description) {
-        this.description = Tools.filterName(_description);
+    setDescription(description) {
+        this.description = Tools.filterName(description);
     }
     getDescription() {
         return this.description;
     }
-    setImage(_image) {
-        if (Game.hasIcon(_image)) {
-            this.image = _image;
+    setIcon(icon) {
+        if (Game.hasIcon(icon)) {
+            this.icon = icon;
         }
         else {
-            this.image = "missingIcon";
+            this.icon = "missingIcon";
         }
         return this;
     }
-    getImage() {
-        return this.image;
+    getIcon() {
+        return this.icon;
     }
-    setMeshID(_mesh) {
-        var _loadedMesh = Game.loadMesh(_mesh);
-        if (_loadedMesh instanceof BABYLON.AbstractMesh) {
-            if (_loadedMesh.id == "loadingMesh") {
-                if (_mesh instanceof BABYLON.AbstractMesh) {
-                    this.meshID = _mesh.id;
+    setMeshID(mesh) {
+        let loadedMesh = Game.loadMesh(mesh);
+        if (loadedMesh instanceof BABYLON.AbstractMesh) {
+            if (loadedMesh.id == "loadingMesh") {
+                if (mesh instanceof BABYLON.AbstractMesh) {
+                    this.meshID = mesh.id;
                 }
                 else {
-                    this.meshID = _mesh;
+                    this.meshID = mesh;
                 }
             }
-            else if (_loadedMesh.id == "missingMesh") {
+            else if (loadedMesh.id == "missingMesh") {
                 this.meshID = "missingMesh";
             }
             else {
-                this.meshID = _loadedMesh.name;
+                this.meshID = loadedMesh.name;
             }
         }
         else {
@@ -75,10 +74,10 @@ class Cosmetic {
     getMeshID() {
         return this.meshID;
     }
-    setMaterialID(_material) {
-        _material = Game.loadMaterial(_material);
-        if (_material instanceof BABYLON.Material) {
-            this.materialID = _material.name;
+    setMaterialID(material) {
+        material = Game.loadMaterial(material);
+        if (material instanceof BABYLON.Material) {
+            this.materialID = material.name;
         }
         else {
             this.materialID = "missingMaterial";
@@ -88,12 +87,12 @@ class Cosmetic {
     getMaterialID() {
         return this.materialID;
     }
-    setApparelSlot(_type) {
-        if (isNaN(_type)) {
+    setApparelSlot(apparelSlot) {
+        if (isNaN(apparelSlot)) {
             return this;
         }
-        if (ApparelSlotEnum.properties.hasOwnProperty(_type)) {
-            this.equipmentSlot = _type;
+        if (ApparelSlotEnum.properties.hasOwnProperty(apparelSlot)) {
+            this.equipmentSlot = apparelSlot;
         }
         else {
             this.equipmentSlot = ApparelSlotEnum.HEAD;
@@ -101,11 +100,10 @@ class Cosmetic {
         return this;
     }
     getApparelSlot() {
-        return this.equipmentType;
+        return this.equipmentSlot;
     }
-
     dispose() {
-        Game.removeEntity(this.id);
-        return undefined;
+        Game.removeCosmetic(this);
+        return 0;
     }
 }

@@ -10,7 +10,7 @@ class InstancedEntity extends AbstractEntity {
      * @param  {Number} _health        Health, defaults to 1
      * @param  {Number} _healthMax     Max health, defaults to 1
      */
-    constructor(_id, _entity, _name = undefined, _description = undefined, _image = undefined) {
+    constructor(_id, _entity, _name = undefined, _description = undefined, _icon = undefined) {
         super(_id, _name, _description);
         this.entity = Game.getEntity(_entity);
         if (!(this.entity instanceof Entity)) {
@@ -19,7 +19,7 @@ class InstancedEntity extends AbstractEntity {
 
         this.setName(_name || this.entity.getName());
         this.setDescription(_description || this.entity.getDescription());
-        this.setImage(_image || this.entity.getImage());
+        this.setIcon(_icon || this.entity.getIcon());
         this.entityType = _entity.entityType;
         this.health = this.entity.health.clone();
 
@@ -332,7 +332,7 @@ class InstancedEntity extends AbstractEntity {
         if (!this.hasEntity()) {
             return this;
         }
-        _instancedEntity = new InstancedEntity(_id, this.entity, this.name, this.description, this.image);
+        _instancedEntity = new InstancedEntity(_id, this.entity, this.name, this.description, this.icon);
         _instancedEntity.health = this.health.clone();
         _instancedEntity.specialProperties = new Set(this.specialProperties);
         return _instancedEntity;

@@ -1,9 +1,9 @@
 class Dialogue {
     /**
      * Creates a Dialogue
-     * @param  {String}    _id       Unique ID
-     * @param  {String}    _title    Title
-     * @param  {String}    _text     String, or Function, with the parameters _them and _you, that returns a String
+     * @param  {String}    id       Unique ID
+     * @param  {String}    title    Title
+     * @param  {String}    text     String, or Function, with the parameters _them and _you, that returns a String
      * @param  {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
      * @return {Dialogue}  Dialogue
      * @example new Dialogue("exampleA", "Example A", "This is a test!")
@@ -11,16 +11,16 @@ class Dialogue {
      * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
      * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
      */
-    constructor(_id, _title, _text) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    constructor(id, title, text) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        if (typeof _text != "string" && typeof _text != "function") {
+        if (typeof text != "string" && typeof text != "function") {
             return undefined;
         }
 
-        this.id = _id;
+        this.id = id;
         this.title = undefined;
         this.text = undefined;
         this.textType = 0;
@@ -30,20 +30,20 @@ class Dialogue {
         this.parentOptionsCount = 0;
         this._isEnabled = true;
 
-        this.setTitle(_title);
-        this.setText(_text);
+        this.setTitle(title);
+        this.setText(text);
 
-        Game.setDialogue(this.id, this);
+        Game.setDialogue(this);
     }
     getID() {
         return this.id;
     }
-    setTitle(_title) {
-        _title = Tools.filterName(_title);
-        if (typeof _title != "string") {
-            _title = "";
+    setTitle(title) {
+        title = Tools.filterName(title);
+        if (typeof title != "string") {
+            title = "";
         }
-        this.title = _title;
+        this.title = title;
         return this;
     }
     getTitle() {
@@ -64,14 +64,14 @@ class Dialogue {
         }
         return this;
     }
-    getText(_them = undefined, _you = Game.player.getEntity()) {
-        _them = Game.getEntity(_them);
-        _you = Game.getEntity(_you);
+    getText(them = undefined, you = Game.player) {
+        them = Game.getEntity(them);
+        you = Game.getEntity(you);
         if (typeof this.text == "string") {
             return this.text;
         }
         else if (typeof this.text == "function") {
-            return this.text(_them, _you);
+            return this.text(them, you);
         }
         else {
             return "";
@@ -90,104 +90,101 @@ class Dialogue {
     getOptions() {
         return this.options;
     }
-    setOption(_id = undefined, _dialogue, _title, _condition) {
-        var _dialogueOption = new DialogueOption(_id, _dialogue, _title, _condition);
-        if (!(_dialogueOption instanceof DialogueOption)) {
+    setOption(id = undefined, dialogue, title, condition) {
+        let dialogueOption = new DialogueOption(id, dialogue, title, condition);
+        if (!(dialogueOption instanceof DialogueOption)) {
             return undefined;
         }
-        this.options[_dialogueOption.getID()] = _dialogueOption;
+        this.options[dialogueOption.getID()] = dialogueOption;
         this.optionsCount += 1;
-        return _dialogueOption;
+        return dialogueOption;
     }
-    removeOption(_dialogueOption) {
-        if (_dialogueOption instanceof DialogueOption) {
-            _dialogueOption = _dialogueOption.getID();
+    removeOption(dialogueOption) {
+        if (dialogueOption instanceof DialogueOption) {
+            dialogueOption = dialogueOption.getID();
         }
-        _dialogueOption = Tools.filterID(_dialogueOption);
-        if (!(this.options.hasOwnProperty(_dialogueOption))) {
+        dialogueOption = Tools.filterID(dialogueOption);
+        if (!(this.options.hasOwnProperty(dialogueOption))) {
             return true;
         }
-        if (this.options[_dialogueOption].getDialogue() instanceof Dialogue) {
-            this.options[_dialogueOption].getDialogue().removeParentOption(_dialogueOption);
+        if (this.options[dialogueOption].getDialogue() instanceof Dialogue) {
+            this.options[dialogueOption].getDialogue().removeParentOption(dialogueOption);
         }
-        this.options[_dialogueOption].dispose();
-        delete this.options[_dialogueOption];
+        this.options[dialogueOption].dispose();
+        delete this.options[dialogueOption];
         this.optionsCount -= 1;
         return true;
     }
-    setParentOption(_dialogueOption) {
-        if (!(_dialogueOption instanceof DialogueOption)) {
+    setParentOption(dialogueOption) {
+        if (!(dialogueOption instanceof DialogueOption)) {
             return undefined;
         }
-        this.parentOptions[_dialogueOption.getID()] = _dialogueOption;
+        this.parentOptions[dialogueOption.getID()] = dialogueOption;
         this.parentOptionsCount += 1;
     }
-    removeParentOption(_dialogueOption) {
-        if (_dialogueOption instanceof DialogueOption) {
-            _dialogueOption = _dialogueOption.getID();
+    removeParentOption(dialogueOption) {
+        if (dialogueOption instanceof DialogueOption) {
+            dialogueOption = dialogueOption.getID();
         }
-        _dialogueOption = Tools.filterID(_dialogueOption);
-        if (!(this.parentOptions.hasOwnProperty(_dialogueOption))) {
+        dialogueOption = Tools.filterID(dialogueOption);
+        if (!(this.parentOptions.hasOwnProperty(dialogueOption))) {
             return true;
         }
-        this.parentOptions[_dialogueOption].dispose();
-        delete this.parentOptions[_dialogueOption];
+        this.parentOptions[dialogueOption].dispose();
+        delete this.parentOptions[dialogueOption];
         this.parentOptionsCount -= 1;
         return true;
     }
     isEnabled() {
         return this._isEnabled == true;
     }
-    setEnabled(_isEnabled = true) {
-        this._isEnabled = (_isEnabled == true);
+    setEnabled(isEnabled = true) {
+        this._isEnabled = (isEnabled == true);
         return this;
     }
     dispose() {
         this._isEnabled = false;
-        for (var _var in this.parentOptions) {
-            this.parentOptions[_var].dispose();
-            delete this.parentOptions[_var];
+        for (let option in this.parentOptions) {
+            this.parentOptions[option].dispose();
+            delete this.parentOptions[option];
         }
-        for (var _var in this.options) {
-            this.options[_var].dispose();
-            delete this.options[_var];
+        for (let option in this.options) {
+            this.options[option].dispose();
+            delete this.options[option];
         }
-        Game.removeDialogue(this.id);
-        for (var _var in this) {
-            this[_var] = null;
-        }
-        return undefined;
+        Game.removeDialogue(this);
+        return 0;
     }
 }
 class DialogueOption {
-    constructor(_id = undefined, _dialogue, _title = undefined, _condition = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    constructor(id = undefined, dialogue, title = undefined, condition = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        this.id = _id;
+        this.id = id;
         this.dialogue = undefined;
         this.title = undefined;
         this.condition = undefined;
-        this.setDialogue(_dialogue);
-        if (typeof _title == "string") {
-            this.setTitle(_title);
+        this.setDialogue(dialogue);
+        if (typeof title == "string") {
+            this.setTitle(title);
         }
         else {
             this.setTitle(this.dialogue.getTitle());
         }
-        if (typeof _condition == "function") {
-            this.setCondition(_condition);
+        if (typeof condition == "function") {
+            this.setCondition(condition);
         }
         this._isEnabled = true;
     }
     getID() {
         return this.id;
     }
-    setDialogue(_dialogue) {
-        _dialogue = Game.getDialogue(_dialogue);
-        if (_dialogue instanceof Dialogue) {
-            this.dialogue = _dialogue;
+    setDialogue(dialogue) {
+        dialogue = Game.getDialogue(dialogue);
+        if (dialogue instanceof Dialogue) {
+            this.dialogue = dialogue;
             this.dialogue.setParentOption(this);
         }
         return this;
@@ -195,10 +192,10 @@ class DialogueOption {
     getDialogue() {
         return this.dialogue;
     }
-    setTitle(_title) {
-        _title = Tools.filterName(_title);
-        if (typeof _title == "string") {
-            this.title = _title;
+    setTitle(title) {
+        title = Tools.filterName(title);
+        if (typeof title == "string") {
+            this.title = title;
         }
         else {
             this.title = "";
@@ -208,21 +205,21 @@ class DialogueOption {
     getTitle() {
         return this.title;
     }
-    setCondition(_function) {
+    setCondition(condition) {
         if (!(this.dialogue instanceof Dialogue)) {
             return this;
         }
-        if (typeof _function == "function") {
-            this.condition = _function;
+        if (typeof condition == "function") {
+            this.condition = condition;
         }
         else {
             this.condition = undefined;
         }
         return this;
     }
-    getCondition(_them = undefined, _you = undefined) {
+    getCondition(them = undefined, you = undefined) {
         if (typeof this.condition == "function") {
-            return this.condition(_them, _you);
+            return this.condition(them, you);
         }
         else {
             return true;
@@ -231,46 +228,43 @@ class DialogueOption {
     isEnabled() {
         return this._isEnabled == true;
     }
-    setEnabled(_isEnabled = true) {
-        this._isEnabled = (_isEnabled == true);
+    setEnabled(isEnabled = true) {
+        this._isEnabled = (isEnabled == true);
         return this;
     }
     dispose() {
         this._isEnabled = false;
         delete this.condition;
-        for (var _var in this) {
-            this[_var] = null;
-        }
     }
-    static createFromArray(_array) {
-        if (!(_array instanceof Array)) {
+    static createFromArray(oArray) {
+        if (!(oArray instanceof Array)) {
             return;
         }
-        if (_array.length == 0) {
+        if (oArray.length == 0) {
             return;
         }
-        var _tempDialogue = Game.getDialogue(_array[0]);
-        if (!(_tempDialogue instanceof Dialogue)) {
+        let tempDialogue = Game.getDialogue(oArray[0]);
+        if (!(tempDialogue instanceof Dialogue)) {
             return;
         }
-        var _tempDialogueOption = new DialogueOption(_tempDialogue);
-        if (_array.length > 2) {
-            if (typeof _array[1] == "string") {
-                _tempDialogueOption.setTitle(_array[1]);
+        let tempDialogueOption = new DialogueOption(tempDialogue);
+        if (oArray.length > 2) {
+            if (typeof oArray[1] == "string") {
+                tempDialogueOption.setTitle(oArray[1]);
             }
-            if (typeof _array[2] == "function") {
-                _tempDialogueOption.setCondition(_array[2]);
-            }
-        }
-        else if (_array.length > 1) {
-            if (typeof _array[1] == "function") {
-                _tempDialogueOption.setCondition(_array[1]);
-            }
-            else if (typeof _array[1] == "string") {
-                _tempDialogueOption.setTitle(_array[1]);
+            if (typeof oArray[2] == "function") {
+                tempDialogueOption.setCondition(oArray[2]);
             }
         }
-        return _tempDialogueOption;
+        else if (oArray.length > 1) {
+            if (typeof oArray[1] == "function") {
+                tempDialogueOption.setCondition(oArray[1]);
+            }
+            else if (typeof oArray[1] == "string") {
+                tempDialogueOption.setTitle(oArray[1]);
+            }
+        }
+        return tempDialogueOption;
     }
 }
 __checkDialogue = function() {

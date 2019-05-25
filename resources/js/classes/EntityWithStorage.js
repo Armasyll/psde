@@ -1,6 +1,6 @@
 class EntityWithStorage extends Entity {
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined) {
-        super(_id, _name, _description, _image);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined) {
+        super(_id, _name, _description, _icon);
         /*
         Map of integers, related to item slots, and InstancedItemEntities
          */

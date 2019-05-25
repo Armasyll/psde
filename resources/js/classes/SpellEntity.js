@@ -4,14 +4,14 @@ class Spell extends Entity {
      * @param  {String} _id          Unique ID
      * @param  {String} _name        Name
      * @param  {String} _description Description
-     * @param  {String} _image       Image path of base64
+     * @param  {String} _icon       Image path of base64
      * @param  {String} _school      PSDE.kSpellSchools
      * @param  {Number} _manaCost    Cost of Spell in Mana
      * @param  {Number} _healthCost  Cost of Spell in Health
      * @param  {Number} _staminaCost Cost of Spell in Stamina
      */
-    constructor(_id, _name = "", _description = undefined, _image = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _healthCost = 0, _staminaCost = 0) {
-        super(_id, _name, _description, _image);
+    constructor(_id, _name = "", _description = undefined, _icon = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _healthCost = 0, _staminaCost = 0) {
+        super(_id, _name, _description, _icon);
         this.entityType = EntityEnum.SPELL;
 
         if (SpellSchoolEnum.has(_school)) {

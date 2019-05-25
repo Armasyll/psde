@@ -4,13 +4,13 @@ class FurnitureEntity extends EntityWithStorage {
      * @param  {String}  _id            Unique ID
      * @param  {String}  _name          Name
      * @param  {String}  _description   Description
-     * @param  {String}  _image         Image ID
+     * @param  {String}  _icon         Image ID
      * @param  {Number}  _type          furnitureType
      * @param  {Number}  _seatingSpace  Seating Space
      * @param  {Number}  _storageSpace  Storage Space
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = undefined, _type = FurnitureEnum.CHAIR) {
-        super(_id, _name, _description, _image);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _type = FurnitureEnum.CHAIR) {
+        super(_id, _name, _description, _icon);
 
         this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = 0;
@@ -174,7 +174,7 @@ class FurnitureEntity extends EntityWithStorage {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new FurnitureEntity(_id, this.name, this.description, this.image, this.furnitureType);
+        return new FurnitureEntity(_id, this.name, this.description, this.icon, this.furnitureType);
     }
     createInstance(_id = undefined) {
         _id = Tools.filterID(_id);

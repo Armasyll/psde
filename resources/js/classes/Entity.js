@@ -4,11 +4,11 @@ class Entity extends AbstractEntity {
      * @param  {String} _id           Unique ID
      * @param  {String} _name         Name
      * @param  {String} _description  Description
-     * @param  {String}  _image       Image ID
+     * @param  {String}  _icon       Image ID
      * @param  {EntityEnum} _itemType EntityEnum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItem", _entityType = EntityEnum.ENTITY) {
-        super(_id, _name, _description, _image);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "genericItem", _entityType = EntityEnum.ENTITY) {
+        super(_id, _name, _description, _icon);
         this.entityType = _entityType;;
         /**
          * Weight in kilograms
@@ -274,7 +274,7 @@ class Entity extends AbstractEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        var _entity = new Entity(_id, this.name, this.description, this.image, this.entityType);
+        var _entity = new Entity(_id, this.name, this.description, this.icon, this.entityType);
         // variables from AbstractEntity
         _entity.availableActions = Object.assign({}, this.availableActions);
         _entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);

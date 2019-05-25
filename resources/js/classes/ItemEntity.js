@@ -4,11 +4,11 @@ class ItemEntity extends Entity {
      * @param  {String}  _id          Unique ID
      * @param  {String}  _name        Name
      * @param  {String}  _description Description
-     * @param  {String}  _image       Image ID
+     * @param  {String}  _icon       Image ID
      * @param  {ItemEnum} _itemType   ItemEnum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _image = "genericItemIcon", _itemType = ItemEnum.GENERAL) {
-        super(_id, _name, _description, _image, EntityEnum.ITEM);
+    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "genericItemIcon", _itemType = ItemEnum.GENERAL) {
+        super(_id, _name, _description, _icon, EntityEnum.ITEM);
 
         this.itemType = ItemEnum.GENERAL;
 
@@ -45,7 +45,7 @@ class ItemEntity extends Entity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        var _itemEntity = new ItemEntity(_id, this.name, this.description, this.image, this.itemType);
+        var _itemEntity = new ItemEntity(_id, this.name, this.description, this.icon, this.itemType);
         // variables from AbstractEntity
         _itemEntity.availableActions = Object.assign({}, this.availableActions);
         _itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
