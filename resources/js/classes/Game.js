@@ -5,45 +5,45 @@ class Game {
         Game.godMode = false;
     }
     static initialize() {
-        this.initialized = false;
+        Game.initialized = false;
         Game.debugMode = false;
         Game.godMode = false;
-        this.physicsEnabled = false;
-        this.Tools = Tools;
+        Game.physicsEnabled = false;
+        Game.Tools = Tools;
 
         if (Game.debugMode) console.log("Running initialize");
-        this.canvas = document.getElementById("canvas");
-            this.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-            this.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
-        this.engine = new BABYLON.Engine(this.canvas, false, null, false);
-            this.engine.enableOfflineSupport = false; // Disables .manifest file errors
-            this.engine.isPointerLock = false;
-        Game.scene = new BABYLON.Scene(this.engine);
+        Game.canvas = document.getElementById("canvas");
+            Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
+        Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
+            Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
+            Game.engine.isPointerLock = false;
+        Game.scene = new BABYLON.Scene(Game.engine);
             Game.scene.autoClear = false;
             Game.scene.autoClearDepthAndStencil = false;
             Game.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
             Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.initPhysics();
         }
         else {
             Game.scene.collisionsEnabled = true;
             Game.scene.workerCollisions = false;
         }
-        this.camera = null;
-        this.cameraFocus = null;
+        Game.camera = null;
+        Game.cameraFocus = null;
 
-        this._assignBoundingBoxCollisionQueue = new Set();
+        Game._assignBoundingBoxCollisionQueue = new Set();
 
-        this._filesToLoad = 1;
-        this.loadedFiles = new Set();
+        Game._filesToLoad = 1;
+        Game.loadedFiles = new Set();
 
         /**
          * Map of Mesh file locations per ID
          * eg, {"foxM":"resources/data/characters.babylon"}
          * @type {<String, String>}
          */
-        this.meshLocations = {
+        Game.meshLocations = {
             "missingMesh":null,
             "loadingMesh":null,
             "cameraFocus":null,
@@ -243,13 +243,13 @@ class Game {
          * eg, {"ring01":{ring01 Mesh}, "ring02":{...}}
          * @type {<String, BABYLON.Mesh>}
          */
-        this.loadedMeshes = {};
+        Game.loadedMeshes = {};
         /**
          * Map of Texture file locations per ID
          * eg, {"foxRed":"resources/images/textures/characters/foxRed.svg"}
          * @type {<String, String>}
          */
-        this.textureLocations = {
+        Game.textureLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
             "carpetPink01":"resources/images/textures/static/carpetPink01.png",
             "noooo":"resources/images/textures/static/noooo.jpg",
@@ -338,18 +338,18 @@ class Game {
          * eg, {"ring01Silver":{ring01Silver Texture}, "ring01Gold":{...}}
          * @type {<String, BABYLON.Texture>}
          */
-        this.loadedTextures = {};
+        Game.loadedTextures = {};
         /**
          * Map of Materials per ID
          * @type {<String, BABYLON.Material>}
          */
-        this.loadedMaterials = {};
+        Game.loadedMaterials = {};
         /**
          * Map of Icon file locations per ID
          * eg, {"rosie":"resources/images/icons/characters/rosie.png"}
          * @type {<String, String>}
          */
-        this.iconLocations = {
+        Game.iconLocations = {
             "rosieIcon":"resources/images/icons/characters/rosie.png",
             "charlieIcon":"resources/images/icons/characters/charlie.svg",
             "genericItemIcon":"resources/images/icons/items/genericItem.svg",
@@ -465,7 +465,7 @@ class Game {
          * eg, {"openDoor":"resources/sounds/Open Door.mp3"}
          * @type {<String, String>}
          */
-        this.soundLocations = {
+        Game.soundLocations = {
             "openDoor":"resources/sounds/Open Door.mp3",
             "hit":"resources/sounds/Hit.mp3"
         };
@@ -473,98 +473,98 @@ class Game {
          * Map of Sounds per ID
          * @type {<String, BABYLON.Sound>}
          */
-        this.loadedSounds = {};
+        Game.loadedSounds = {};
         /**
          * Map of Meshes per Texture IDs per Mesh IDs
          * eg, {"ring01":{"ring01Silver":{ring01 Mesh with ring01Silver Texture}, "ring01Gold":{ring01 Mesh with ring01Gold Texture}}, "ring02":{...}}
          * @type {<String, <String, BABYLON.Mesh>>}
          */
-        this.loadedMeshMaterials = {};
+        Game.loadedMeshMaterials = {};
         /**
          * Map of Instanced Meshes per ID
          * @type {<String, BABYLON.InstancedMesh>}
          */
-        this.instancedMeshes = {};
+        Game.instancedMeshes = {};
         /**
          * Map cloned Meshes per ID
          * @type {<String, BABYLON.Mesh>}
          */
-        this.clonedMeshes = {};
+        Game.clonedMeshes = {};
         /**
          * Map of Meshes that are waiting to be created
          * @type {<String, <Objects...>>}
          */
-        this.meshesToCreateCounter = 0;
-        this.meshesToCreate = {};
-        this.texturesToCreateCounter = 0;
-        this.texturesToCreate = {};
-        this.materialsToCreateCounter = 0;
-        this.materialsToCreate = {};
+        Game.meshesToCreateCounter = 0;
+        Game.meshesToCreate = {};
+        Game.texturesToCreateCounter = 0;
+        Game.texturesToCreate = {};
+        Game.materialsToCreateCounter = 0;
+        Game.materialsToCreate = {};
         /**
          * Map of Furniture that are waiting to be created
          * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
          */
-        this.furnitureToCreateCounter = 0;
-        this.furnitureToCreate = {};
+        Game.furnitureToCreateCounter = 0;
+        Game.furnitureToCreate = {};
         /**
          * Map of Lighting that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
          * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:options, String:position, String:rotation, String:scaling, Boolean:createCollisionMesh>}
          */
-        this.lightingToCreateCounter = 0;
-        this.lightingToCreate = {};
+        Game.lightingToCreateCounter = 0;
+        Game.lightingToCreate = {};
         /**
          * Map of Doors that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
          * @type {<String, <String:id, String:name, Forgot:to, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling>}
          */
-        this.doorsToCreateCounter = 0;
-        this.doorsToCreate = {};
+        Game.doorsToCreateCounter = 0;
+        Game.doorsToCreate = {};
         /**
          * Map of Characters that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
          * @type {<String, <String:id, String:name, String:description, String:icon, Number:age, Number:sex, String:species, String:mesh, String:texture, String:options, String:position, String:rotation, String:scaling>}
          */
-        this.charactersToCreateCounter = 0;
-        this.charactersToCreate = {};
-        this.playerToCreate = null;
-        this.itemsToCreateCounter = 0;
-        this.itemsToCreate = {};
-        this.attachmentsToCreateCounter = 0;
-        this.attachmentsToCreate = {};
+        Game.charactersToCreateCounter = 0;
+        Game.charactersToCreate = {};
+        Game.playerToCreate = null;
+        Game.itemsToCreateCounter = 0;
+        Game.itemsToCreate = {};
+        Game.attachmentsToCreateCounter = 0;
+        Game.attachmentsToCreate = {};
         
-        this.hasBackloggedEntities = false;
+        Game.hasBackloggedEntities = false;
 
-        this.meshToEntityController = {};
-        this.entityControllers = {};
-        this.furnitureControllers = {};
-        this.lightingControllers = {};
-        this.doorControllers = {};
-        this.characterControllers = {};
-        this.itemControllers = {};
+        Game.meshToEntityController = {};
+        Game.entityControllers = {};
+        Game.furnitureControllers = {};
+        Game.lightingControllers = {};
+        Game.doorControllers = {};
+        Game.characterControllers = {};
+        Game.itemControllers = {};
 
-        this.entities = {};
-        this.furnitureEntities = {};
-        this.lightingEntities = {};
-        this.doorEntities = {};
-        this.characterEntities = {};
-        this.itemEntities = {};
-        this.clothingEntities = {};
-        this.weaponEntities = {};
-        this.keyEntities = {};
-        this.spellEntities = {};
-        this.essentialEntities = new Set();
+        Game.entities = {};
+        Game.furnitureEntities = {};
+        Game.lightingEntities = {};
+        Game.doorEntities = {};
+        Game.characterEntities = {};
+        Game.itemEntities = {};
+        Game.clothingEntities = {};
+        Game.weaponEntities = {};
+        Game.keyEntities = {};
+        Game.spellEntities = {};
+        Game.essentialEntities = new Set();
 
-        this.instancedEntities = {};
-        this.instancedItemEntities = {};
-        this.instancedClothingEntities = {};
-        this.instancedWeaponEntities = {};
-        this.instancedFurnitureEntities = {};
+        Game.instancedEntities = {};
+        Game.instancedItemEntities = {};
+        Game.instancedClothingEntities = {};
+        Game.instancedWeaponEntities = {};
+        Game.instancedFurnitureEntities = {};
 
-        this.dialogues = new Map();
-        this.cosmetics = new Map();
+        Game.dialogues = new Map();
+        Game.cosmetics = new Map();
 
-        this.entityAnimationBones = {
+        Game.entityAnimationBones = {
             "71_punch01":[
                 "shoulder.r",
                 "upperArm.r",
@@ -625,54 +625,53 @@ class Game {
             ]
         }
 
-        this._finishedInitializing = false;
-        this._finishedConfiguring = false;
-        this._finishedConfiguring = false;
+        Game._finishedInitializing = false;
+        Game._finishedConfiguring = false;
 
-        this.player = undefined;
-        this._castRayTargetIntervalFunction = undefined;
-        this._castRayTargetInterval = 250;
-        this._pointerLockFunction = undefined;
-        this.previousSelectedMesh = undefined;
-        this.currentSelectedMesh = undefined;
-        this._playerPortraitStatsUpdateIntervalFunction = undefined;
-        this._playerPortraitStatsUpdateInterval = 100;
+        Game.player = undefined;
+        Game._castRayTargetIntervalFunction = undefined;
+        Game._castRayTargetInterval = 250;
+        Game._pointerLockFunction = undefined;
+        Game.previousSelectedMesh = undefined;
+        Game.currentSelectedMesh = undefined;
+        Game._playerPortraitStatsUpdateIntervalFunction = undefined;
+        Game._playerPortraitStatsUpdateInterval = 100;
 
-        this.enableFirstPerson = true;
-        this.enableCameraAvatarRotation = true;
+        Game.enableFirstPerson = true;
+        Game.enableCameraAvatarRotation = true;
 
-        this.postProcess = {};
+        Game.postProcess = {};
 
-        this.highlightEnabled = false;
-        this.highlightLayer = undefined;
-        this.highlightedMesh = undefined;
+        Game.highlightEnabled = false;
+        Game.highlightLayer = undefined;
+        Game.highlightedMesh = undefined;
 
-        this.loadDefaultTextures();
-        this.loadDefaultMaterials();
-        this.loadDefaultMeshes();
-        this.loadDefaultSounds();
+        Game.loadDefaultTextures();
+        Game.loadDefaultMaterials();
+        Game.loadDefaultMeshes();
+        Game.loadDefaultSounds();
         /*
             Which function handles the function of the key presses;
             controlerCharacter, controlMenu
          */
-        this.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
-        this.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
-        this.functionControlOnClick = Game.controlCharacterOnClick;
-        this.functionControlOnContext = Game.controlCharacterOnContext;
+        Game.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
+        Game.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
+        Game.functionControlOnClick = Game.controlCharacterOnClick;
+        Game.functionControlOnContext = Game.controlCharacterOnContext;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
-        this.gui = GameGUI;
-        this.gui.initialize();
-        this.initFreeCamera();
-        this.initQwertyKeyboardControls();
-        this.initPostProcessing();
+        Game.gui = GameGUI;
+        Game.gui.initialize();
+        Game.initFreeCamera();
+        Game.initQwertyKeyboardControls();
+        Game.initPostProcessing();
         window.addEventListener("click", Game.functionControlOnClick);
         window.addEventListener("contextmenu", Game.functionControlOnContext);
 
-        this._filesToLoad -= 1;
-        this.initialized = true;
-        this.engine.runRenderLoop(Game.renderLoopFunction);
-        this.scene.registerBeforeRender(Game.beforeRenderFunction);
-        this.scene.registerAfterRender(Game.afterRenderFunction);
+        Game._filesToLoad -= 1;
+        Game.initialized = true;
+        Game.engine.runRenderLoop(Game.renderLoopFunction);
+        Game.scene.registerBeforeRender(Game.beforeRenderFunction);
+        Game.scene.registerAfterRender(Game.afterRenderFunction);
     }
     static renderLoopFunction() {
         Game.scene.render();
@@ -761,18 +760,18 @@ class Game {
         }
     }
     static finishedInitializing() {
-        return this._finishedInitializing;
+        return Game._finishedInitializing;
     }
     static finishedLoadingFiles() {
-        return this._filesToLoad == 0;
+        return Game._filesToLoad == 0;
     }
     static finishedConfiguring() {
-        return this._finishedConfiguring;
+        return Game._finishedConfiguring;
     }
     static initPhysics() {
-        this.physicsPlugin = new BABYLON.CannonJSPlugin();
-        Game.scene.enablePhysics(Game.scene.gravity, this.physicsPlugin);
-        this.physicsEnabled = true;
+        Game.physicsPlugin = new BABYLON.CannonJSPlugin();
+        Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
+        Game.physicsEnabled = true;
     }
     static initFollowCamera(_offset = BABYLON.Vector3.Zero()) {
         if (Game.camera instanceof BABYLON.Camera) {
@@ -799,7 +798,7 @@ class Game {
         Game.camera.keysRight=[];
         Game.camera.keysUp=[];
         Game.camera.keysDown=[];
-        Game.camera.attachControl(this.canvas, false);
+        Game.camera.attachControl(Game.canvas, false);
 
         Game.camera.minZ = 0.001;
         Game.camera.lockedTarget = Game.player.getController().focus;
@@ -816,8 +815,8 @@ class Game {
         Game.camera.heightOffset = 1;
         Game.camera.rotationOffset = 0;
         Game.camera.speed = 0.25;
-        Game.camera.attachControl(this.canvas, true);
-        if (this.physicsEnabled) {}
+        Game.camera.attachControl(Game.canvas, true);
+        if (Game.physicsEnabled) {}
         else {
             Game.camera.applyGravity = _applyGravity;
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
@@ -901,72 +900,72 @@ class Game {
         return true;
     }
     static initBaseKeyboardControls() {
-        this.chatInputFocusCode = 13;
-        this.chatInputSubmitCode = 13;
-        this.showMainMenuCode = 27;
+        Game.chatInputFocusCode = 13;
+        Game.chatInputSubmitCode = 13;
+        Game.showMainMenuCode = 27;
     }
     static initQwertyKeyboardControls() {
         Game.initBaseKeyboardControls();
-        this.walkCode = 87; // W
-        this.walkBackCode = 83; // S
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 65; // A
-        this.strafeRightCode = 68; // D
-        this.jumpCode = 32; // Space
-        this.interfaceTargetedEntityCode = 70; // F
-        this.useTargetedEntityCode = 69; // E
-        this.useSelectedItemCode = 82; // R
-        this.showInventoryCode = 73; // I
-        this.UIAccept = 69; // E
-        this.UIAcceptAlt = 13; // Enter
-        this.UIDeny = 81; // Q
-        this.UIDenyAlt = 18; // Alt
+        Game.walkCode = 87; // W
+        Game.walkBackCode = 83; // S
+        Game.turnLeftCode = 0;
+        Game.turnRightCode = 0;
+        Game.strafeLeftCode = 65; // A
+        Game.strafeRightCode = 68; // D
+        Game.jumpCode = 32; // Space
+        Game.interfaceTargetedEntityCode = 70; // F
+        Game.useTargetedEntityCode = 69; // E
+        Game.useSelectedItemCode = 82; // R
+        Game.showInventoryCode = 73; // I
+        Game.UIAccept = 69; // E
+        Game.UIAcceptAlt = 13; // Enter
+        Game.UIDeny = 81; // Q
+        Game.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static initDvorakKeyboardControls() {
         Game.initBaseKeyboardControls();
-        this.walkCode = 188;
-        this.walkBackCode = 73;
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 65;
-        this.strafeRightCode = 69;
-        this.jumpCode = 32;
-        this.interfaceTargetedEntityCode = 85;
-        this.useTargetedEntityCode = 190;
-        this.useSelectedItemCode = 80;
-        this.showInventoryCode = 67; // C
-        this.UIAccept = 190; // E
-        this.UIAcceptAlt = 13; // Enter
-        this.UIDeny = 222; // Q
-        this.UIDenyAlt = 18; // Alt
+        Game.walkCode = 188;
+        Game.walkBackCode = 73;
+        Game.turnLeftCode = 0;
+        Game.turnRightCode = 0;
+        Game.strafeLeftCode = 65;
+        Game.strafeRightCode = 69;
+        Game.jumpCode = 32;
+        Game.interfaceTargetedEntityCode = 85;
+        Game.useTargetedEntityCode = 190;
+        Game.useSelectedItemCode = 80;
+        Game.showInventoryCode = 67; // C
+        Game.UIAccept = 190; // E
+        Game.UIAcceptAlt = 13; // Enter
+        Game.UIDeny = 222; // Q
+        Game.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static initAzertyKeyboardControls() {
         Game.initBaseKeyboardControls();
-        this.walkCode = 90;
-        this.walkBackCode = 83;
-        this.turnLeftCode = 0;
-        this.turnRightCode = 0;
-        this.strafeLeftCode = 81;
-        this.strafeRightCode = 68;
-        this.jumpCode = 32;
-        this.interfaceTargetedEntityCode = 70;
-        this.useTargetedEntityCode = 69;
-        this.useSelectedItemCode = 82;
-        this.showInventoryCode = 73;
-        this.UIAccept = 69; // E
-        this.UIAcceptAlt = 13; // Enter
-        this.UIDeny = 65; // A
-        this.UIDenyAlt = 18; // Alt
+        Game.walkCode = 90;
+        Game.walkBackCode = 83;
+        Game.turnLeftCode = 0;
+        Game.turnRightCode = 0;
+        Game.strafeLeftCode = 81;
+        Game.strafeRightCode = 68;
+        Game.jumpCode = 32;
+        Game.interfaceTargetedEntityCode = 70;
+        Game.useTargetedEntityCode = 69;
+        Game.useSelectedItemCode = 82;
+        Game.showInventoryCode = 73;
+        Game.UIAccept = 69; // E
+        Game.UIAcceptAlt = 13; // Enter
+        Game.UIDeny = 65; // A
+        Game.UIDenyAlt = 18; // Alt
         Game._updateMenuKeyboardDisplayKeys();
     }
     static _updateMenuKeyboardDisplayKeys() {
         Game.gui.setActionTooltipLetter();
     }
     static initPostProcessing() {
-        this.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, Game.camera);
+        Game.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, Game.camera);
         //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, Game.camera); // Could be used for darkness, when using too many lights is an issue
     }
     static loadDefaultTextures() {
@@ -1003,18 +1002,18 @@ class Game {
             return Game.loadedSounds["missingSound"];
         }
         else if (_sound instanceof BABYLON.Sound) {
-            if (!this.loadedSounds.hasOwnProperty(_sound.name)) {
-                this.loadedSounds[_sound.name] = _sound;
+            if (!Game.loadedSounds.hasOwnProperty(_sound.name)) {
+                Game.loadedSounds[_sound.name] = _sound;
             }
             return _sound;
         }
         else if (typeof _sound == "string") {
             _sound = Game.Tools.filterID(_sound);
             if (Game.hasLoadedSound(_sound)) {
-                return this.loadedSounds[_sound];
+                return Game.loadedSounds[_sound];
             }
             else if (Game.hasAvailableSound(_sound)) {
-                let _loadedSound = new BABYLON.Sound(_sound, this.soundLocations[_sound], Game.scene);
+                let _loadedSound = new BABYLON.Sound(_sound, Game.soundLocations[_sound], Game.scene);
                 _loadedSound.name = _sound;
                 Game.setLoadedSound(_sound, _loadedSound);
                 return _loadedSound;
@@ -1027,18 +1026,18 @@ class Game {
             return Game.loadedTextures["missingTexture"];
         }
         else if (_texture instanceof BABYLON.Texture) {
-            if (!this.loadedTextures.hasOwnProperty(_texture.name)) {
-                this.loadedTextures[_texture.name] = _texture;
+            if (!Game.loadedTextures.hasOwnProperty(_texture.name)) {
+                Game.loadedTextures[_texture.name] = _texture;
             }
             return _texture;
         }
         else if (typeof _texture == "string") {
             _texture = Game.Tools.filterID(_texture);
             if (Game.hasLoadedTexture(_texture)) {
-                return this.loadedTextures[_texture];
+                return Game.loadedTextures[_texture];
             }
             else if (Game.hasAvailableTexture(_texture)) {
-                let _loadedTexture = new BABYLON.Texture(this.textureLocations[_texture], Game.scene);
+                let _loadedTexture = new BABYLON.Texture(Game.textureLocations[_texture], Game.scene);
                 _loadedTexture.name = _texture;
                 if (_options.hasOwnProperty("hasAlpha")) {
                     _loadedTexture.hasAlpha = _options["hasAlpha"] == true;
@@ -1104,21 +1103,21 @@ class Game {
             return null;
         }
         else if (_mesh instanceof BABYLON.Mesh) {
-            if (!this.loadedMeshes.hasOwnProperty(_mesh.name)) {
-                this.loadedMeshes[_mesh.name] = _mesh;
+            if (!Game.loadedMeshes.hasOwnProperty(_mesh.name)) {
+                Game.loadedMeshes[_mesh.name] = _mesh;
             }
             return _mesh;
         }
         else if (typeof _mesh == "string") {
-            if (this.loadedMeshes.hasOwnProperty(_mesh)) {
-                return this.loadedMeshes[_mesh];
+            if (Game.loadedMeshes.hasOwnProperty(_mesh)) {
+                return Game.loadedMeshes[_mesh];
             }
-            else if (this.meshLocations.hasOwnProperty(_mesh)) {
-                Game.importMeshes(this.meshLocations[_mesh]);
-                return this.loadedMeshes["loadingMesh"];
+            else if (Game.meshLocations.hasOwnProperty(_mesh)) {
+                Game.importMeshes(Game.meshLocations[_mesh]);
+                return Game.loadedMeshes["loadingMesh"];
             }
             else {
-                return this.loadedMeshes["missingMesh"];
+                return Game.loadedMeshes["missingMesh"];
             }
         }
         return null;
@@ -1131,7 +1130,7 @@ class Game {
         if (!(_mesh instanceof BABYLON.Mesh)) {
             return null;
         }
-        this.loadedMeshes[_id] = _mesh;
+        Game.loadedMeshes[_id] = _mesh;
     }
     static setLoadedSound(_id, _sound) {
         _id = Tools.filterID(_id);
@@ -1141,7 +1140,7 @@ class Game {
         if (!(_sound instanceof BABYLON.Sound)) {
             return null;
         }
-        this.loadedSounds[_id] = _sound;
+        Game.loadedSounds[_id] = _sound;
     }
     static setLoadedTexture(_id, _texture) {
         _id = Tools.filterID(_id);
@@ -1151,7 +1150,7 @@ class Game {
         if (!(_texture instanceof BABYLON.Texture)) {
             return null;
         }
-        this.loadedTextures[_id] = _texture;
+        Game.loadedTextures[_id] = _texture;
     }
     static setLoadedMaterial(_id, _material) {
         _id = Tools.filterID(_id);
@@ -1161,7 +1160,7 @@ class Game {
         if (!(_material instanceof BABYLON.Material)) {
             return null;
         }
-        this.loadedMaterials[_id] = _material;
+        Game.loadedMaterials[_id] = _material;
     }
     static setLoadedMeshMaterial(_mesh, _material) {
         _mesh = Game.loadMesh(_mesh);
@@ -1169,10 +1168,10 @@ class Game {
         if (!(_mesh instanceof BABYLON.Mesh) || !(_material instanceof BABYLON.Material)) {
             return null;
         }
-        if (!this.loadedMeshMaterials.hasOwnProperty(_mesh.name)) {
-            this.loadedMeshMaterials[_mesh.name] = {};
+        if (!Game.loadedMeshMaterials.hasOwnProperty(_mesh.name)) {
+            Game.loadedMeshMaterials[_mesh.name] = {};
         }
-        this.loadedMeshMaterials[_mesh.name][_material.name] = _mesh;
+        Game.loadedMeshMaterials[_mesh.name][_material.name] = _mesh;
     }
     static addClonedMesh(_mesh, _id = undefined) {
         _id = Tools.filterID(_id);
@@ -1182,7 +1181,7 @@ class Game {
         if (_id == undefined) {
             _id = _mesh.id;
         }
-        this.clonedMeshes[_id] = _mesh;
+        Game.clonedMeshes[_id] = _mesh;
     }
     static addInstancedMesh(_mesh, _id = undefined) {
         _id = Tools.filterID(_id);
@@ -1192,7 +1191,7 @@ class Game {
         if (_id == undefined) {
             _id = _mesh.id;
         }
-        this.instancedMeshes[_id] = _mesh;
+        Game.instancedMeshes[_id] = _mesh;
     }
     static getMeshLocation(_mesh) {
         if (Game.meshLocations.hasOwnProperty(_mesh)) {
@@ -1210,33 +1209,33 @@ class Game {
             return _mesh;
         }
         else if (typeof _mesh == "string") {
-            if (this.loadedMeshes.hasOwnProperty(_mesh)) {
-                return this.loadedMeshes[_mesh];
+            if (Game.loadedMeshes.hasOwnProperty(_mesh)) {
+                return Game.loadedMeshes[_mesh];
             }
-            else if (this.clonedMeshes.hasOwnProperty(_mesh)) {
-                return this.clonedMeshes[_mesh];
+            else if (Game.clonedMeshes.hasOwnProperty(_mesh)) {
+                return Game.clonedMeshes[_mesh];
             }
-            else if (this.instancedMeshes.hasOwnProperty(_mesh)) {
-                return this.instancedMeshes[_mesh];
+            else if (Game.instancedMeshes.hasOwnProperty(_mesh)) {
+                return Game.instancedMeshes[_mesh];
             }
         }
         return null;
     }
     static hasIcon(_icon) {
-        return this.iconLocations.hasOwnProperty(_icon);
+        return Game.iconLocations.hasOwnProperty(_icon);
     }
     static addIcon(_id, _location) {
         if (Game.hasIcon(_id)) {
             return null;
         }
-        this.iconLocations[_id] = _location;
+        Game.iconLocations[_id] = _location;
     }
     static getIcon(_id) {
         if (Game.hasIcon(_id)) {
-            return this.iconLocations[_id];
+            return Game.iconLocations[_id];
         }
         else {
-            return this.iconLocations["missingIcon"];
+            return Game.iconLocations["missingIcon"];
         }
     }
     static importScript(_file) {
@@ -1268,7 +1267,7 @@ class Game {
             return undefined;
         }
         switch (event) {
-            case this.jumpCode : {
+            case Game.jumpCode : {
                 Game.player.getController().keyJump(true);
                 break;
             }
@@ -1276,31 +1275,31 @@ class Game {
                 Game.player.getController().keyShift(true);
                 break;
             }
-            case this.walkCode : {
+            case Game.walkCode : {
                 Game.player.getController().keyMoveForward(true);
                 break;
             }
-            case this.turnLeftCode : {
+            case Game.turnLeftCode : {
                 Game.player.getController().keyTurnLeft(true);
                 break;
             }
-            case this.turnRightCode : {
+            case Game.turnRightCode : {
                 Game.player.getController().keyTurnRight(true);
                 break;
             }
-            case this.walkBackCode : {
+            case Game.walkBackCode : {
                 Game.player.getController().keyMoveBackward(true);
                 break;
             }
-            case this.strafeLeftCode : {
+            case Game.strafeLeftCode : {
                 Game.player.getController().keyStrafeLeft(true);
                 break;
             }
-            case this.strafeRightCode : {
+            case Game.strafeRightCode : {
                 Game.player.getController().keyStrafeRight(true);
                 break;
             }
-            case this.chatInputFocusCode : {
+            case Game.chatInputFocusCode : {
                 if (Game.gui.getHudVisible()) {
                     if (!Game.gui.getChatInputFocused()) {
                         Game.gui.setChatInputFocused(true);
@@ -1321,7 +1320,7 @@ class Game {
                 }
                 break;
             }
-            case this.chatInputSubmitCode : {
+            case Game.chatInputSubmitCode : {
                 var _text = Game.gui.getChatInput().text.trim();
                 if (_text.length == 0) {
                     return;
@@ -1336,7 +1335,7 @@ class Game {
                 Game.gui.setChatInputFocused(false);
                 break;
             }
-            case this.useTargetedEntityCode : {
+            case Game.useTargetedEntityCode : {
                 /*
                     TODO: on press (which it's being right now) begin a timeout for 1.5 (or w/e) seconds that opens a radial for additional interfacing;
                         if the key is released before then, which should be handled in controlCharacterOnKeyDown's useTargetedEntityCode, delete the timeout function
@@ -1350,7 +1349,7 @@ class Game {
                  */
                 break;
             }
-            case this.interfaceTargetedEntityCode : {
+            case Game.interfaceTargetedEntityCode : {
                 if (Game.player.getController().getTarget() instanceof EntityController) {
                     Game.gui.clearActionsMenu();
                     Game.gui.populateActionsMenuWithTarget();
@@ -1359,7 +1358,7 @@ class Game {
                 }
                 break;
             }
-            case this.showInventoryCode : {
+            case Game.showInventoryCode : {
                 if (Game.gui.getInventoryMenuVisible()) {
                     Game.gui.hideInventoryMenu();
                     Game.gui.hideMenu(true);
@@ -1373,7 +1372,7 @@ class Game {
                 }
                 break;
             }
-            case this.showMainMenuCode : {
+            case Game.showMainMenuCode : {
                 if (Game.gui.getMenuVisible()) {
                     if (Game.debugMode) console.log(`\tShowing HUD`);
                     Game.gui.hideMenu(false);
@@ -1409,7 +1408,7 @@ class Game {
             return undefined;
         }
         switch (event) {
-            case this.jumpCode : {
+            case Game.jumpCode : {
                 Game.player.getController().keyJump(false);
                 break;
             }
@@ -1417,31 +1416,31 @@ class Game {
                 Game.player.getController().keyShift(false);
                 break;
             }
-            case this.walkCode : {
+            case Game.walkCode : {
                 Game.player.getController().keyMoveForward(false);
                 break;
             }
-            case this.turnLeftCode : {
+            case Game.turnLeftCode : {
                 Game.player.getController().keyTurnLeft(false);
                 break;
             }
-            case this.turnRightCode : {
+            case Game.turnRightCode : {
                 Game.player.getController().keyTurnRight(false);
                 break;
             }
-            case this.walkBackCode : {
+            case Game.walkBackCode : {
                 Game.player.getController().keyMoveBackward(false);
                 break;
             }
-            case this.strafeLeftCode : {
+            case Game.strafeLeftCode : {
                 Game.player.getController().keyStrafeLeft(false);
                 break;
             }
-            case this.strafeRightCode : {
+            case Game.strafeRightCode : {
                 Game.player.getController().keyStrafeRight(false);
                 break;
             }
-            case this.useTargetedEntityCode : {
+            case Game.useTargetedEntityCode : {
                 if (!(Game.player.getTarget() instanceof AbstractEntity)) {
                     return;
                 }
@@ -1521,7 +1520,7 @@ class Game {
         _wall.material = Game.loadedMaterials["collisionMaterial"];
         _wall.position.set(_posX,_posY,_posZ);
         _wall.rotation.y = _rotation;
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_wall, {mass:0});
         }
         else {
@@ -1550,7 +1549,7 @@ class Game {
         var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
         _floor.material = Game.loadedMaterials["collisionMaterial"];
         _floor.position.set(_posX,_posY,_posZ);
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_floor, {mass:0});
         }
         else {
@@ -1567,7 +1566,7 @@ class Game {
         let floor = BABYLON.MeshBuilder.CreateBox("plane", {"height":0.125, "depth":Math.abs(end.z - start.z), "width":Math.abs(end.x - start.x)}, Game.scene);
         floor.material = Game.loadedMaterials["collisionMaterial"];
         floor.position.set((start.x + start.x) / 2, start.y, (start.z + end.z) / 2);
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(floor, {mass:0});
         }
         else {
@@ -1604,7 +1603,7 @@ class Game {
         _ramp.position.set((_posEnd.x + _posStart.x) / 2 - 1,(_posEnd.y + _posStart.y) / 2 - 0.125/2,(_posEnd.z + _posStart.z) / 2 - 1);
         _ramp.rotation.set(_angle, BABYLON.Tools.ToRadians(_rotationY), 0);
         _ramp.material = Game.loadedMaterials["collisionMaterial"];
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_ramp, {mass:0});
         }
         else {
@@ -1637,11 +1636,11 @@ class Game {
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
             return null;
         }
-        this._assignBoundingBoxCollisionQueue.add(_mesh);
+        Game._assignBoundingBoxCollisionQueue.add(_mesh);
     }
     static _assignBoundingBoxCollisionToMesh(_mesh) {
         if (Game.debugMode) console.log("Running _assignBoundingBoxCollisionToMesh");
-        this._assignBoundingBoxCollisionQueue.delete(_mesh);
+        Game._assignBoundingBoxCollisionQueue.delete(_mesh);
         let _collisionMesh 
         _collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_mesh.getBoundingInfo().boundingBox.vectors[1].x - _mesh.getBoundingInfo().boundingBox.vectors[0].x, height:_mesh.getBoundingInfo().boundingBox.vectors[1].y - _mesh.getBoundingInfo().boundingBox.vectors[0].y, depth:_mesh.getBoundingInfo().boundingBox.vectors[1].z - _mesh.getBoundingInfo().boundingBox.vectors[0].z}, Game.scene);
         _collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
@@ -1659,8 +1658,8 @@ class Game {
         _collisionMesh.setParent(_mesh);
     }
     static _createBackloggedBoundingCollisions() {
-        if (this._assignBoundingBoxCollisionQueue.size > 0) {
-            this._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
+        if (Game._assignBoundingBoxCollisionQueue.size > 0) {
+            Game._assignBoundingBoxCollisionQueue.forEach(function(_mesh) {
                 Game._assignBoundingBoxCollisionToMesh(_mesh);
             });
         }
@@ -1672,7 +1671,7 @@ class Game {
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
         }
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
         return _instance;
@@ -1694,7 +1693,7 @@ class Game {
         if (!(_instance instanceof BABYLON.AbstractMesh)) {
             return _instance;
         }
-        if (this.physicsEnabled) {
+        if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(_instance, _options);
         }
         else {
@@ -1716,7 +1715,7 @@ class Game {
             }
         }
         // Don't delete the original meshes
-        if (this.loadedMeshes[_mesh.name] == _mesh) {
+        if (Game.loadedMeshes[_mesh.name] == _mesh) {
             return undefined;
         }
         
@@ -1727,14 +1726,14 @@ class Game {
             _mesh = _mesh.name;
         }
         _mesh = Game.Tools.filterID(_mesh);
-        return this.meshLocations.hasOwnProperty(_mesh);
+        return Game.meshLocations.hasOwnProperty(_mesh);
     }
     static hasLoadedMesh(_mesh) {
         if (_mesh instanceof BABYLON.AbstractMesh) {
             _mesh = _mesh.name;
         }
         _mesh = Game.Tools.filterID(_mesh);
-        return this.loadedMeshes.hasOwnProperty(_mesh);
+        return Game.loadedMeshes.hasOwnProperty(_mesh);
     }
     static hasMesh(_mesh) {
         if (Game.hasLoadedMesh(_mesh)) {
@@ -1751,14 +1750,14 @@ class Game {
             _sound = _sound.name;
         }
         _sound = Game.Tools.filterID(_sound);
-        return this.soundLocations.hasOwnProperty(_sound);
+        return Game.soundLocations.hasOwnProperty(_sound);
     }
     static hasLoadedSound(_sound) {
         if (_sound instanceof BABYLON.Sound) {
             _sound = _sound.name;
         }
         _sound = Game.Tools.filterID(_sound);
-        return this.loadedSounds.hasOwnProperty(_sound);
+        return Game.loadedSounds.hasOwnProperty(_sound);
     }
     static hasSound(_sound) {
         if (Game.hasLoadedSound(_sound)) {
@@ -1774,21 +1773,21 @@ class Game {
         if (Game.hasSound(_id)) {
             return null;
         }
-        this.soundLocations[_id] = _location;
+        Game.soundLocations[_id] = _location;
     }
     static getSound(_id) {
         if (_id instanceof BABYLON.Sound) {
             return _id;
         }
         else if (Game.hasLoadedSound(_id)) {
-            return this.loadedSounds[_id];
+            return Game.loadedSounds[_id];
         }
         else if (Game.hasAvailableSound(_id)) {
             Game.loadSound(_id);
-            return this.loadedSounds["missingSound"];
+            return Game.loadedSounds["missingSound"];
         }
         else {
-            return this.loadedSounds["missingSound"];
+            return Game.loadedSounds["missingSound"];
         }
     }
     static playSound(_id) {
@@ -1802,14 +1801,14 @@ class Game {
             _texture = _texture.name;
         }
         _texture = Game.Tools.filterID(_texture);
-        return this.textureLocations.hasOwnProperty(_texture);
+        return Game.textureLocations.hasOwnProperty(_texture);
     }
     static hasLoadedTexture(_texture) {
         if (_texture instanceof BABYLON.Texture) {
             _texture = _texture.name;
         }
         _texture = Game.Tools.filterID(_texture);
-        return this.loadedTextures.hasOwnProperty(_texture);
+        return Game.loadedTextures.hasOwnProperty(_texture);
     }
     static hasTexture(_texture) {
         if (Game.hasLoadedTexture(_texture)) {
@@ -1826,7 +1825,7 @@ class Game {
             _material = _material.name;
         }
         _material = Game.Tools.filterID(_material);
-        return this.loadedMaterials.hasOwnProperty(_material);
+        return Game.loadedMaterials.hasOwnProperty(_material);
     }
     static hasLoadedMaterial(_material) {
         return Game.hasAvailableMaterial(_material);
@@ -1884,10 +1883,10 @@ class Game {
             Game.setLoadedMeshMaterial(_mesh, _material);
         }
         else {
-            if (!this.loadedMeshMaterials.hasOwnProperty(_name)) {
-                this.loadedMeshMaterials[_name] = {};
+            if (!Game.loadedMeshMaterials.hasOwnProperty(_name)) {
+                Game.loadedMeshMaterials[_name] = {};
             }
-            if (!this.loadedMeshMaterials[_name].hasOwnProperty(_material.name)) {
+            if (!Game.loadedMeshMaterials[_name].hasOwnProperty(_material.name)) {
                 _mesh = _mesh.clone(_name + _material.name);
                 _mesh.makeGeometryUnique();
                 _mesh.id = _id;
@@ -1900,7 +1899,7 @@ class Game {
             }
             if (_forceCreateClone === true) {
                 if (Game.debugMode) console.log("  Creating clone...");
-                _mesh = this.loadedMeshMaterials[_name][_material.name].clone(_id);
+                _mesh = Game.loadedMeshMaterials[_name][_material.name].clone(_id);
                 _mesh.makeGeometryUnique();
                 _mesh.id = _id;
                 _mesh.name = _name;
@@ -1908,7 +1907,7 @@ class Game {
             }
             else {
                 if (Game.debugMode) console.log("  Creating instance...");
-                _mesh = this.loadedMeshMaterials[_name][_material.name].createInstance(_id);
+                _mesh = Game.loadedMeshMaterials[_name][_material.name].createInstance(_id);
                 _mesh.id = _id;
                 _mesh.name = _name;
                 Game.addInstancedMesh(_mesh, _id);
@@ -1920,7 +1919,7 @@ class Game {
         _mesh.scaling.copyFrom(_scaling);
         _mesh.setEnabled(true);
         if (_createCollisionMesh) {
-            if (this.physicsEnabled) {
+            if (Game.physicsEnabled) {
                 Game.assignBoxPhysicsToMesh(_mesh);
             }
             else {
@@ -2015,7 +2014,7 @@ class Game {
         }
         for (var _i in Game.furnitureToCreate) {
             if (Game.loadedMeshes.hasOwnProperty(Game.getInstancedFurnitureEntity(Game.furnitureToCreate[_i][1]).getMeshID())) {
-                Game.createFurniture(
+                Game.createFurnitureInstance(
                     Game.furnitureToCreate[_i][0],
                     Game.furnitureToCreate[_i][1],
                     Game.furnitureToCreate[_i][2],
@@ -2224,7 +2223,7 @@ class Game {
         }
         for (var _i in Game.itemsToCreate) {
             if (Game.hasLoadedMesh(Game.itemsToCreate[_i][1].getMeshID())) {
-                Game.createItem(
+                Game.createItemInstance(
                     Game.itemsToCreate[_i][0],
                     Game.itemsToCreate[_i][1],
                     Game.itemsToCreate[_i][2],
@@ -2288,11 +2287,11 @@ class Game {
     }
 
     static importMeshes(_sceneFilename, _meshNames = undefined, _callback = undefined) {
-        if (this.loadedFiles.has(_sceneFilename)) {
+        if (Game.loadedFiles.has(_sceneFilename)) {
             return;
         }
         else {
-            this.loadedFiles.add(_sceneFilename);
+            Game.loadedFiles.add(_sceneFilename);
         }
         if (Game.debugMode) console.log(`Running importMeshes(${_sceneFilename})`);
         var _importedMeshes = {};
@@ -3095,7 +3094,7 @@ class Game {
      * @param  {BABYLON.Vector3} [scaling] Scaling       
      * @return {(FurnitureController|number)} A FurnitureController or an integer status code
      */
-    static createFurniture(id, furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createFurnitureInstance(id, furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
         if (id == undefined) {
             id = Tools.genUUIDv4();
@@ -3316,9 +3315,9 @@ class Game {
      * @param {BABYLON.Vector3} position Position
      * @param {BABYLON.Vector3} [rotation] Rotation
      * @param {BABYLON.Vector3} [scaling] Scaling
-     * @returns {(EntityController|number)} An EntityController or an integer status code
+     * @returns {(ItemController|number)} An EntityController or an integer status code
      */
-    static createItem(id, abstractEntity, options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createItemInstance(id, abstractEntity, options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
         if (id == undefined) {
             id = Tools.genUUIDv4();
@@ -3373,9 +3372,9 @@ class Game {
             return 1;
         }
         let mesh = Game.createItemMesh(id, abstractEntity.getMeshID(), abstractEntity.getTextureID(), options, position, rotation, scaling);
-        let controller = new ItemController(id, mesh, abstractEntity);
-        abstractEntity.setController(controller);
-        return controller;
+        let itemController = new ItemController(id, mesh, abstractEntity);
+        abstractEntity.setController(itemController);
+        return itemController;
     }
     /**
      * Removes an InstancedItemEntity, its ItemController, and its BABYLON.InstancedMesh
@@ -3467,26 +3466,26 @@ class Game {
         return Game.cosmetics.has(id);
     }
     static enableHighlighting() {
-        this.highlightEnabled = true;
-        this.initHighlighting();
+        Game.highlightEnabled = true;
+        Game.initHighlighting();
     }
     static disableHighlighting() {
-        this.highlightEnabled = false;
+        Game.highlightEnabled = false;
     }
     static initHighlighting() {
-        this.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
-        this.highlightLayer.outerGlow = true;
-        this.highlightLayer.innerGlow = false;
+        Game.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
+        Game.highlightLayer.outerGlow = true;
+        Game.highlightLayer.innerGlow = false;
     }
     static highlightMesh(_mesh) {
         if (!(_mesh instanceof BABYLON.Mesh)) {
             return;
         }
-        if (!this.highlightEnabled || this.highlightedMesh == _mesh) {
+        if (!Game.highlightEnabled || Game.highlightedMesh == _mesh) {
             return;
         }
-        if (this.highlightedMesh != undefined) {
-            this.highlightLayer.removeMesh(this.highlightedMesh);
+        if (Game.highlightedMesh != undefined) {
+            Game.highlightLayer.removeMesh(Game.highlightedMesh);
         }
         let _color = BABYLON.Color3.Gray();
         let _controller = Game.getMeshToEntityController(_mesh);
@@ -3501,15 +3500,15 @@ class Game {
                 _color = BABYLON.Color3.White();
             }
         }
-        this.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
-        this.highlightedMesh = _mesh;
+        Game.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
+        Game.highlightedMesh = _mesh;
     }
     static clearHightlightMesh() {
-        if (!(this.highlightedMesh instanceof BABYLON.Mesh)) {
+        if (!(Game.highlightedMesh instanceof BABYLON.Mesh)) {
             return;
         }
-        this.highlightLayer.removeMesh(this.highlightedMesh);
-        this.highlightedMesh = null;
+        Game.highlightLayer.removeMesh(Game.highlightedMesh);
+        Game.highlightedMesh = null;
     }
     static setPlayerTarget(_controller) {
         if (!(Game.player.getController() instanceof CharacterController)) {
@@ -3872,7 +3871,7 @@ class Game {
                 );
             }
             else {
-                Game.createItem(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.clone(), _subEntity.getController().getMesh().rotation.clone());
+                Game.createItemInstance(undefined, _instancedItemEntity, undefined, _subEntity.getController().getMesh().position.clone(), _subEntity.getController().getMesh().rotation.clone());
             }
         }
         if (typeof _callback == "function") {
@@ -4095,7 +4094,7 @@ class Game {
     static removeEntityController(_id) {
         delete Game.entityControllers[_id];
     }
-    static clearyControllers() {
+    static clearControllers() {
         for (var _i in Game.entityControllers) {
             Game.entityControllers[_i].dispose();
         }
@@ -4404,8 +4403,28 @@ class Game {
     static setInstancedFurnitureEntity(_id, _instancedFurnitureEntity) {
         Game.instancedFurnitureEntities[_id] = _instancedFurnitureEntity;
     }
-    static removeInstancedFurnitureEntity(_id) {
-        delete Game.instancedFurnitureEntities[_id];
+    /**
+     * Removes an InstancedItemEntity, its ItemController, and its BABYLON.InstancedMesh
+     * @param {(ItemController|string)} itemController An ItemController, or its string ID
+     * @returns {number} Integer status code
+     */
+    static removeItem(itemController) {
+        if (!(itemController instanceof ItemController)) {
+            itemController = Game.getItemController(itemController);
+            if (itemController == undefined) {
+                return 2;
+            }
+        }
+        let mesh = itemController.getMesh();
+        itemController.entity.dispose();
+        itemController.dispose();
+        if (mesh instanceof BABYLON.InstancedMesh) {
+            Game.removeMesh(mesh);
+        }
+        return 0;
+    }
+    static removeInstancedFurnitureEntity(instancedFurnitureEntity) {
+        delete Game.instancedFurnitureEntities[instancedFurnitureEntity];
     }
     static clearInstancedFurnitureEntities() {
         for (var _i in Game.instancedFurnitureEntities) {
@@ -4477,7 +4496,6 @@ class Game {
         });
         return 0;
     }
-
     static calculateLevel(experiencePoints) {
         experiencePoints = Tools.filterInt(experiencePoints);
         if (experiencePoints >= 355000) {
@@ -4542,13 +4560,13 @@ class Game {
         }
         return 0;
     }
-    static setGodMode(_characterEntity = Game.player, _bool = true) {
-        _bool = _bool == true;
-        if (_characterEntity instanceof CharacterEntity) {
-            _characterEntity.setGodMode(_bool);
+    static setGodMode(characterEntity = Game.player, godMode = true) {
+        godMode = godMode == true;
+        if (characterEntity instanceof CharacterEntity) {
+            characterEntity.setGodMode(godMode);
         }
-        this.godMode = _bool;
-        return null;
+        Game.godMode = godMode;
+        return 0;
     }
     static enableGodMode() {
         return Game.setGodMode(Game.player, true);
