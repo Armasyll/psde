@@ -4,6 +4,7 @@ Game.generateApartment = function() {
     Game.loadTexture("greenWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("yellowWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("pinkWallpaperPlainWood", {"hasAlpha":true});
+    Game.loadTexture("greenWallpaper");
     Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
     Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
 
