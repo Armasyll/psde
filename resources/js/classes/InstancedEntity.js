@@ -1,14 +1,14 @@
 class InstancedEntity extends AbstractEntity {
     /**
      * Creates an InstancedEntity
-     * @param  {UUIDv4} _id            UUID
-     * @param  {Entity} _entity        Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
-     * @param  {String} _name          Name
-     * @param  {Character} _owner      Owner
-     * @param  {Number} _price         Price, defaults to 0
-     * @param  {Number} _weight        Weight, defaults to 0.001
-     * @param  {Number} _health        Health, defaults to 1
-     * @param  {Number} _healthMax     Max health, defaults to 1
+     * @param  {stirng} _id Unique ID, auto-generated if none given
+     * @param  {Entity} _entity Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
+     * @param  {string} _name Name
+     * @param  {CharacterEntity} _owner Owner
+     * @param  {number} _price Price, defaults to 0
+     * @param  {number} _weight Weight, defaults to 0.001
+     * @param  {number} _health Health, defaults to 1
+     * @param  {number} _healthMax Max health, defaults to 1
      */
     constructor(_id, _entity, _name = undefined, _description = undefined, _icon = undefined) {
         super(_id, _name, _description);
@@ -29,7 +29,7 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnDefaultAction = false;
         this._useOwnSpecialProperties = false;
 
-        Game.setInstancedEntity(this.id, this);
+        Game.setEntityInstance(this.id, this);
     }
     getEntity() {
         return this.entity;
@@ -346,7 +346,7 @@ class InstancedEntity extends AbstractEntity {
                 this.availableActions[_action].dispose();
             }
         }
-        Game.removeInstancedEntity(this.id);
+        Game.removeEntityInstance(this.id);
         super.dispose();
         return undefined;
     }

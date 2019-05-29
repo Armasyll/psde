@@ -8,7 +8,7 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
 
         this.setOwner(_owner);
 
-        Game.setInstancedClothingEntity(this.id, this);
+        Game.setClothingInstance(this.id, this);
     }
 
     getPhysicalProtection() {
@@ -26,7 +26,7 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
         return new InstancedClothingEntity(_id, this.entity);
     }
     dispose() {
-        Game.removeInstancedClothingEntity(this.id);
+        Game.removeClothingInstance(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;

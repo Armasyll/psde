@@ -52,36 +52,27 @@ class EntityController {
     getNetworkID() {
         return this.networkID;
     }
-    setTexture(_texture = undefined) {
-        _texture = Game.loadTexture(_texture);
-        if (_texture instanceof BABYLON.Texture) {
-            this.texture = _texture;
-            if (this.entity instanceof Entity) {
-                this.entity.setTextureID(_texture);
-            }
+    setTexture(texture) {
+        if (texture instanceof BABYLON.Texture) {
+            this.texture = texture;
         }
         return this;
     }
     getTexture() {
         return this.texture;
     }
-    setMaterial(_material = undefined) {
-        _material = Game.loadMaterial(_material);
-        if (_material instanceof BABYLON.Material) {
-            this.material = _material;
-            if (this.entity instanceof Entity) {
-                this.entity.setMaterialID(_material);
-            }
+    setMaterial(material) {
+        if (material instanceof BABYLON.Material) {
+            this.material = material;
         }
         return this;
     }
     getMaterial() {
         return this.material;
     }
-    setMesh(_mesh) {
-        _mesh = Game.getMesh(_mesh);
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            this.mesh = _mesh;
+    setMesh(mesh) {
+        if (mesh instanceof BABYLON.AbstractMesh) {
+            this.mesh = mesh;
             if (this.mesh.material instanceof BABYLON.Material) {
                 this.setMaterial(this.mesh.material);
                 this.setTexture(this.mesh.material.diffuseTexture);
@@ -91,9 +82,6 @@ class EntityController {
             }
             this.mesh.isPickable = true;
             this.propertiesChanged = true;
-            if (this.entity instanceof Entity) {
-                this.entity.setMeshID(_mesh);
-            }
             Game.setMeshToEntityController(this.mesh, this);
         }
         return this;
@@ -177,10 +165,6 @@ class EntityController {
         return this.targetedByControllers;
     }
     updateProperties() {
-        if (this.entity instanceof Entity && this.mesh instanceof BABYLON.AbstractMesh) {
-            this.entity.setMeshID(this.mesh);
-            this.entity.setTextureID(this.texture);
-        }
         this.propertiesChanged = false;
         return this;
     }

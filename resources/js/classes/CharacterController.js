@@ -745,86 +745,80 @@ class CharacterController extends EntityController {
     }
     /**
      * Attaches a mesh to a bone
-     * @param  {BABYLON.AbstractMesh} _mesh               Mesh, or Mesh ID
-     * @param  {BABYLON.Texture} _texture            Texture, or Texture ID
-     * @param  {String} _bone               Bone name
-     * @param  {BABYLON.Vector3} _position           Mesh position
-     * @param  {BABYLON.Vector3} _rotation           Mesh rotation
-     * @param  {BABYLON.Vector3} _scaling              Mesh scaling
-     * @return {CharacterController}                     This character controller.
+     * @param  {string} meshID Mesh ID
+     * @param  {string} materialID Texture ID
+     * @param  {string} boneID Bone name
+     * @param  {BABYLON.Vector3} position Mesh position
+     * @param  {BABYLON.Vector3} rotation Mesh rotation
+     * @param  {BABYLON.Vector3} scaling Mesh scaling
+     * @return {CharacterController} This character controller.
      */
-    attachToBone(_mesh = "missingMesh", _texture = "missingTexture", _bone, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         if (Game.debugMode) console.log("Running attachToBone");
-        if (!Game.hasMesh(_mesh)) {
+        if (!Game.hasAvailableMesh(meshID)) {
             return this;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        _bone = this.getBone(_bone);
-        if (!(_bone instanceof BABYLON.Bone)) {
+        let bone = this.getBone(boneID);
+        if (!(bone instanceof BABYLON.Bone)) {
             return this;
         }
-        if (!(_position instanceof BABYLON.Vector3)) {
-            _position = Tools.filterVector(_position);
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
         }
-        if (!(_rotation instanceof BABYLON.Vector3)) {
-            _rotation = Tools.filterVector(_rotation);
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            rotation = Tools.filterVector(rotation);
         }
-        if (!(_scaling instanceof BABYLON.Vector3)) {
-            _scaling = Tools.filterVector(_scaling);
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            scaling = Tools.filterVector(scaling);
         }
-        if (_scaling.equals(BABYLON.Vector3.Zero())) {
-            _scaling = BABYLON.Vector3.One();
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(_mesh))) {
-            Game.loadMesh(_mesh);
-            Game.addAttachmentToCreate((this.id + _bone + _mesh), this, _mesh, _texture, _bone, _position, _rotation, _scaling);
+        if (!(Game.hasLoadedMesh(meshID))) {
+            Game.loadMesh(meshID);
+            Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
             return this;
         }
-        let _instance = null;
-        if (_mesh instanceof BABYLON.InstancedMesh) {
-            _instance = _mesh;
+        let loadedMesh = Game.createMesh(undefined, meshID, materialID, position, rotation, scaling);
+        return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);
+    }
+    attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
         }
-        else {
-            _instance = Game.createMesh(undefined, _mesh, _texture, _position, _rotation, _scaling);
-            if (!(_instance instanceof BABYLON.AbstractMesh)) {
-                if (_mesh instanceof BABYLON.AbstractMesh) {
-                    console.log("Error creating mesh `" + _mesh.id + "` for Controller `" + this.id + "`");
-                }
-                else {
-                    console.log("Error creating mesh `" + _mesh + "` for Controller `" + this.id + "`");
-                }
-                return this;
-            }
+        if (!(bone instanceof BABYLON.Bone)) {
+            return 2;
         }
-        _instance.attachToBone(_bone, this.mesh);
-        _instance.position.copyFrom(_position);
-        _instance.rotation.copyFrom(_rotation);
-        if (!(_scaling instanceof BABYLON.Vector3)) {
-            _instance.scaling.copyFrom(this.mesh.scaling);
+        mesh.attachToBone(bone, this.mesh);
+        mesh.position.copyFrom(position);
+        mesh.rotation.copyFrom(rotation);
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            mesh.scaling.copyFrom(this.mesh.scaling);
         }
         if (this.prevAnim == undefined) {
             /*
             Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
              */
-            _instance.scalingDeterminant = -1;
+            mesh.scalingDeterminant = -1;
         }
-        if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
-            this._meshesAttachedToBones[_bone.id] = {};
+        if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
+            this._meshesAttachedToBones[bone.id] = {};
         }
-        this._meshesAttachedToBones[_bone.id][_instance.id] = _instance;
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_instance.id))) {
-            this._bonesAttachedToMeshes[_instance.id] = {};
+        this._meshesAttachedToBones[bone.id][mesh.id] = mesh;
+        if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
+            this._bonesAttachedToMeshes[mesh.id] = {};
         }
-        this._bonesAttachedToMeshes[_instance.id][_bone.id] = _bone;
-        if (_bone.id == "FOCUS") {
-            this.focus = _instance;
-            _instance.isVisible = false;
+        this._bonesAttachedToMeshes[mesh.id][bone.id] = bone;
+        if (bone.id == "FOCUS") {
+            this.focus = mesh;
+            mesh.isVisible = false;
         }
-        else if (_bone.id == "ROOT") {
-            this.root = _instance;
-            _instance.isVisible = false;
+        else if (bone.id == "ROOT") {
+            this.root = mesh;
+            mesh.isVisible = false;
         }
         return this;
     }
@@ -926,14 +920,17 @@ class CharacterController extends EntityController {
         }
         return _meshes;
     }
-    attachToFOCUS(_mesh) {
-        return this.attachToBone(_mesh, undefined, "FOCUS");
+    attachToFOCUS(mesh) {
+        if (mesh instanceof BABYLON.AbstractMesh) {
+            return this.attachMeshToBone(mesh, this.getBone("FOCUS"));
+        }
+        return this.attachMeshIDToBone(mesh, undefined, "FOCUS");
     }
     detachFromFOCUS() {
         return this.detachFromBone("FOCUS", false)[0];
     }
     attachToHead(_mesh, _texture) {
-        this.attachToBone(_mesh, _texture, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
+        this.attachMeshIDToBone(_mesh, _texture, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0));
         if (this._showHelmet) {
             this.showHelmet();
         }
@@ -946,67 +943,67 @@ class CharacterController extends EntityController {
         return this.detachFromBone("head");
     }
     attachToLeftEye(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        return this.attachMeshIDToBone(_mesh, _texture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     detachFromLeftEye() {
         return this.detachFromBone("eye.l");
     }
     attachToRightEye(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
+        return this.attachMeshIDToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0));
     }
     detachFromRightEye() {
         return this.detachFromBone("eye.r");
     }
     attachToLeftEar(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "ear.l");
+        return this.attachMeshIDToBone(_mesh, _texture, "ear.l");
     }
     detachFromLeftEar() {
         return this.detachFromBone("ear.l");
     }
     attachToRightEar(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "ear.r");
+        return this.attachMeshIDToBone(_mesh, _texture, "ear.r");
     }
     detachFromRightEar() {
         return this.detachFromBone("ear.r");
     }
     attachToNeck(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "neck");
+        return this.attachMeshIDToBone(_mesh, _texture, "neck");
     }
     detachFromNeck() {
         return this.detachFromBone("neck");
     }
     attachToLeftShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
     }
     detachFromLeftShoulder() {
         return this.detachFromBone("shoulder.l");
     }
     attachToRightShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
     }
     detachFromRightShoulder() {
         return this.detachFromBone("shoulder.r");
     }
     attachToLeftForearm(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)));
     }
     detachFromLeftForearm() {
         return this.detachFromBone("forearm.l");
     }
     attachToRightForearm(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
     }
     detachFromRightForearm() {
         return this.detachFromBone("forearm.r");
     }
     attachToLeftHand(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
     }
     detachFromLeftHand() {
         return this.detachFromBone("hand.l");
     }
     attachToRightHand(_mesh, _texture = "missingTexture") {
-        return this.attachToBone(_mesh, _texture, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)));
     }
     detachFromRightHand() {
         return this.detachFromBone("hand.r");

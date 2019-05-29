@@ -73,12 +73,9 @@ class Entity extends AbstractEntity {
         return this.health._max;
     }
 
-    setMeshID(_mesh) {
-        if (Game.hasMesh(_mesh)) {
-            if (_mesh instanceof BABYLON.AbstractMesh) {
-                _mesh = _mesh.name;
-            }
-            this.meshID = _mesh;
+    setMeshID(meshID) {
+        if (Game.hasAvailableMesh(meshID)) {
+            this.meshID = meshID;
         }
         else {
             this.meshID = "missingMesh";
@@ -88,10 +85,9 @@ class Entity extends AbstractEntity {
     getMeshID() {
         return this.meshID;
     }
-    setTextureID(_texture) {
-        _texture = Game.loadTexture(_texture);
-        if (_texture instanceof BABYLON.Texture) {
-            this.textureID = _texture.name;
+    setTextureID(textureID) {
+        if (Game.hasAvailableTexture(textureID)) {
+            this.textureID = textureID;
         }
         else {
             this.textureID = "missingTexture";
@@ -101,10 +97,9 @@ class Entity extends AbstractEntity {
     getTextureID() {
         return this.textureID;
     }
-    setMaterialID(_material) {
-        _material = Game.loadMaterial(_material);
-        if (_material instanceof BABYLON.Material) {
-            this.materialID = _material.name;
+    setMaterialID(materialID) {
+        if (Game.hasAvailableMaterial(materialID) || Game.hasAvailableTexture(materialID)) {
+            this.materialID = materialID;
         }
         else {
             this.materialID = "missingMaterial";

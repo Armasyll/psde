@@ -47,15 +47,10 @@ class Tools {
         return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
     static filterID(_id) {
-        if (_id == undefined) {
-            return undefined;
-        }
-        else if (Tools.isInt(_id)) {
-            return _id;
-        }
-        else if (typeof _id == "string") {
+        if (typeof _id == "string") {
             return _id.replace(/[^a-zA-Z0-9_\-]/g,"");
         }
+        return "";
     }
     static filterName(_string) {
         if (typeof _string != "string") {

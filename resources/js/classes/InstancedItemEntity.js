@@ -8,7 +8,7 @@ class InstancedItemEntity extends InstancedEntity {
 
         this.setOwner(_owner);
 
-        Game.setInstancedItemEntity(this.id, this);
+        Game.setItemInstance(this.id, this);
     }
 
     getItemType() {
@@ -20,10 +20,10 @@ class InstancedItemEntity extends InstancedEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new InstancedItemEntity(_id, this.entity);
+        return new InstancedItemEntity(_id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeInstancedItemEntity(this.id);
+        Game.removeItemInstance(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;

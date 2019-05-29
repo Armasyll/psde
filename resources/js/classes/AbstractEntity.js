@@ -1,14 +1,14 @@
 class AbstractEntity {
     /**
      * Creates an AbstractEntity
-     * @param  {String} id Unique ID, auto-generated if none given
-     * @param  {String} name Name
-     * @param  {String} description Description
-     * @param  {String} icon Icon ID
+     * @param  {string} [id] Unique ID, auto-generated if none given
+     * @param  {string} name Name
+     * @param  {string} [description] Description
+     * @param  {string} [icon] Icon ID
      */
-    constructor(id = undefined, name = undefined, description = undefined, icon = "genericItem") {
+    constructor(id = "", name = "", description = "", icon = "genericItem") {
         id = Tools.filterID(id);
-        if (typeof id != "string") {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         this.id = id;

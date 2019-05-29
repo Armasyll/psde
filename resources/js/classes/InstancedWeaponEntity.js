@@ -8,7 +8,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
 
         this.setOwner(_owner);
 
-        Game.setInstancedWeaponEntity(this.id, this);
+        Game.setWeaponInstance(this.id, this);
     }
 
     getPhysicalDamage() {
@@ -23,10 +23,10 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new InstancedWeaponEntity(_id, this.entity);
+        return new InstancedWeaponEntity(_id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeInstancedWeaponEntity(this.id);
+        Game.removeWeaponInstance(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;

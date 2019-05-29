@@ -18,7 +18,7 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new InstancedEquipmentEntity(_id, this.entity);
+        return new InstancedEquipmentEntity(_id, this.entity, this.owner);
     }
     dispose() {
         super.dispose()

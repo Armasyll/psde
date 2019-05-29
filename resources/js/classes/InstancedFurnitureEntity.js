@@ -8,7 +8,7 @@ class InstancedFurnitureEntity extends InstancedEntity {
 
         this.setOwner(_owner);
 
-        Game.setInstancedFurnitureEntity(this.id, this);
+        Game.setFurnitureInstance(this.id, this);
     }
 
     clone(_id) {
@@ -16,10 +16,10 @@ class InstancedFurnitureEntity extends InstancedEntity {
         if (typeof _id != "string") {
             _id = Tools.genUUIDv4();
         }
-        return new InstancedFurnitureEntity(_id, this.entity);
+        return new InstancedFurnitureEntity(_id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeInstancedFurnitureEntity(this.id);
+        Game.removeFurnitureInstance(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
