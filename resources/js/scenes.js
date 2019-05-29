@@ -1,9 +1,11 @@
 Game.generateApartment = function() {
     console.log("Initializing apartment...");
-    
+
     Game.loadTexture("greenWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("yellowWallpaperPlainWood", {"hasAlpha":true});
+    Game.loadTexture("pinkWallpaperPlainWood", {"hasAlpha":true});
     Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
+    Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
 
     var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
     var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);
@@ -102,7 +104,7 @@ Game.generateApartment = function() {
     Game.createCollisionPlane({x:-1, z:-27}, {x:16, z:1});
 
     var ceilingMaterial = new BABYLON.StandardMaterial("ceilingMaterial", Game.scene);
-        ceilingMaterial.diffuseTexture = Game.loadTexture("greenWallpaper");
+        ceilingMaterial.diffuseTexture = Game.getLoadedTexture("greenWallpaper");
         ceilingMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         ceilingMaterial.backFaceCulling = false;
     var ceilingMesh01 = BABYLON.MeshBuilder.CreateTiledGround("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, Game.scene);
@@ -577,7 +579,7 @@ Game.generateApartment = function() {
     Game.createCollisionWall(new BABYLON.Vector3(-1, 0, -27), new BABYLON.Vector3(-1, 3, -31));
     Game.createCollisionWall(new BABYLON.Vector3(-1, 0, -31), new BABYLON.Vector3(15, 3, -31));
     
-    var stoneMaterial = Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
+    var stoneMaterial = Game.getLoadedMaterial("stoneTexture01");
     var outsideFloorStone = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 4, subdivisions: {w:16, h:4}}, Game.scene);
         outsideFloorStone.material = stoneMaterial;
         outsideFloorStone.position.set(-1, -0.0625, -31);
@@ -722,7 +724,7 @@ Game.generateWallScene = function() {
         _ambientLight.intensity = 0.9;
     Game.createCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
 
-    var stoneMaterial = Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
+    var stoneMaterial = Game.getLoadedMaterial("stoneTexture01");
     var outsideFloorStone = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene);
         outsideFloorStone.material = stoneMaterial;
         outsideFloorStone.position.set(-5, 0, -25);

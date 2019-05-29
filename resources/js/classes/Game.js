@@ -698,10 +698,10 @@ class Game {
                     Game._finishedConfiguring = true;
                 }
             }
-            let _url = new URL(window.location.href);
-            let _map = new Map(_url.searchParams);
-            _map.forEach(function(_val, _key) {
-                switch(_key) {
+            let url = new URL(window.location.href);
+            let urlMap = new Map(url.searchParams);
+            urlMap.forEach(function(val, key) {
+                switch(key) {
                     case "debug": {
                         Game.debugMode = true;
                         break;
@@ -729,17 +729,12 @@ class Game {
         if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
             Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
         }
-        for (let _entity in Game.characterControllers) {
-            if (Game.characterControllers[_entity]._isAnimated) {
-                Game.characterControllers[_entity].moveAV();
-                if (Game.characterControllers[_entity].propertiesChanged) {
-                    Game.characterControllers[_entity].updateProperties();
+        for (let characterController in Game.characterControllers) {
+            if (Game.characterControllers[characterController]._isAnimated) {
+                Game.characterControllers[characterController].moveAV();
+                if (Game.characterControllers[characterController].propertiesChanged) {
+                    Game.characterControllers[characterController].updateProperties();
                 }
-            }
-        }
-        for (let _entity in Game.furnitureControllers) {
-            if (Game.furnitureControllers[_entity]._isAnimated) {
-                Game.furnitureControllers[_entity].moveAV();
             }
         }
     }
@@ -754,7 +749,7 @@ class Game {
             Game.createBackloggedCharacters();
             Game.createBackloggedPlayer();
             Game.createBackloggedAttachments();
-            if (!Game._filesToLoad) {
+            if (Game._filesToLoad == 0) {
                 Game.hasBackloggedEntities = false;
             }
         }
@@ -773,7 +768,7 @@ class Game {
         Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
         Game.physicsEnabled = true;
     }
-    static initFollowCamera(_offset = BABYLON.Vector3.Zero()) {
+    static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
         }
@@ -840,8 +835,8 @@ class Game {
         return Game.playerToCreate != null;
     }
     static createBackloggedPlayer() {
-        if (Game.hasPlayerToCreate() && Game.hasCharacterController(Game.playerToCreate)) {
-            if (Game.assignPlayer(Game.playerToCreate)) {
+        if (Game.hasPlayerToCreate() && Game.hasCharacterEntity(Game.playerToCreate)) {
+            if (Game.assignPlayer(Game.getCharacterEntity(Game.playerToCreate)) == 0) {
                 Game.removePlayerToCreate();
             }
         }
@@ -852,32 +847,23 @@ class Game {
         if (characterID.length == 0) {
             characterID = Tools.genUUIDv4();
         }
-        let characterEntity = Game.createCharacter(characterID, name, description, icon, age, sex, species, meshID, textureID, options, position, rotation, scaling);
-        if (characterEntity instanceof CharacterEntity && characterEntity.hasController() && characterEntity.getController().hasMesh()) {
-            Game.assignPlayer(characterEntity);
+        let characterController = Game.createCharacter(characterID, name, description, icon, age, sex, species, meshID, textureID, options, position, rotation, scaling);
+        if (characterController instanceof CharacterEntity && characterController.hasController() && characterController.getController().hasMesh()) {
+            Game.assignPlayer(characterController.getEntity());
         }
         else {
             Game.addPlayerToCreate(characterID);
         }
     }
     static assignPlayer(characterEntity) { // TODO: allow for reassigning player :v
-        characterEntity = Game.getCharacterEntity(characterEntity);
-        if (characterEntity instanceof CharacterEntity) {
-            if (!characterEntity.hasController()) {
-                return false;
-            }
-        }
-        else if (characterEntity instanceof CharacterController) {
-            characterEntity = characterEntity.getEntity();
-        }
-        else {
-            return false;
+        if (!(characterEntity instanceof CharacterEntity)) {
+            return 2;
         }
         if (!characterEntity.hasController() || !characterEntity.getController().hasMesh() || !characterEntity.getController().hasSkeleton()) {
-            return false;
+            return 1;
         }
         if (Game.player instanceof AbstractEntity) {
-            Game.cameraFocus = Game.player.getController().detachFromFOCUS();
+            Game.player.getController().detachFromFOCUS();
             Game.player.getController().getMesh().isPickable = true;
             if (Game.godMode) {
                 Game.player.setGodMode(false);
@@ -896,12 +882,13 @@ class Game {
         Game.initFollowCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
-        return true;
+        return 0;
     }
     static initBaseKeyboardControls() {
         Game.chatInputFocusCode = 13;
         Game.chatInputSubmitCode = 13;
         Game.showMainMenuCode = 27;
+        return 0;
     }
     static initQwertyKeyboardControls() {
         Game.initBaseKeyboardControls();
@@ -920,7 +907,8 @@ class Game {
         Game.UIAcceptAlt = 13; // Enter
         Game.UIDeny = 81; // Q
         Game.UIDenyAlt = 18; // Alt
-        Game._updateMenuKeyboardDisplayKeys();
+        Game.updateMenuKeyboardDisplayKeys();
+        return 0;
     }
     static initDvorakKeyboardControls() {
         Game.initBaseKeyboardControls();
@@ -939,7 +927,8 @@ class Game {
         Game.UIAcceptAlt = 13; // Enter
         Game.UIDeny = 222; // Q
         Game.UIDenyAlt = 18; // Alt
-        Game._updateMenuKeyboardDisplayKeys();
+        Game.updateMenuKeyboardDisplayKeys();
+        return 0;
     }
     static initAzertyKeyboardControls() {
         Game.initBaseKeyboardControls();
@@ -958,18 +947,22 @@ class Game {
         Game.UIAcceptAlt = 13; // Enter
         Game.UIDeny = 65; // A
         Game.UIDenyAlt = 18; // Alt
-        Game._updateMenuKeyboardDisplayKeys();
+        Game.updateMenuKeyboardDisplayKeys();
+        return 0;
     }
-    static _updateMenuKeyboardDisplayKeys() {
+    static updateMenuKeyboardDisplayKeys() {
         Game.gui.setActionTooltipLetter();
+        return 0;
     }
     static initPostProcessing() {
         Game.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, Game.camera);
         //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, Game.camera); // Could be used for darkness, when using too many lights is an issue
+        return 0;
     }
     static loadDefaultTextures() {
         Game.loadedTextures["default"] = new BABYLON.Texture(null, Game.scene);
         Game.loadTexture("missingTexture");
+        return 0;
     }
     static loadDefaultMaterials() {
         Game.setLoadedMaterial("default", new BABYLON.StandardMaterial("default", Game.scene));
@@ -981,6 +974,7 @@ class Game {
         Game.loadedMaterials["missingMaterial"].specularColor.set(0,0,0);
         Game.loadedMaterials["loadingMaterial"].specularColor.set(0,0,0);
         Game.loadedMaterials["loadingMaterial"].diffuseColor.set(1, 0.85, 1);
+        return 0;
     }
     static loadDefaultMeshes() {
         Game.setLoadedMesh("missingMesh", BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
@@ -990,12 +984,19 @@ class Game {
         Game.loadedMeshes["missingMesh"].setEnabled(false);
         Game.loadedMeshes["loadingMesh"].setEnabled(false);
         Game.loadedMeshes["cameraFocus"].isVisible = false;
+        return 0;
     }
     static loadDefaultSounds() {
         Game.setLoadedSound("missingSound", new BABYLON.Sound("missingSound", "resources/sounds/Spell Miss.mp3", Game.scene));
         Game.setLoadedSound("hit", new BABYLON.Sound("hit", "resources/sounds/Hit.mp3", Game.scene));
         Game.setLoadedSound("openDoor", new BABYLON.Sound("openDoor", "resources/sounds/Open Door.mp3", Game.scene));
+        return 0;
     }
+    /**
+     * Loads and creates a BABYLON.Sound
+     * @param {string} soundID Sound ID
+     * @returns {number} Integer status code
+     */
     static loadSound(soundID = "") {
         soundID = Tools.filterID(soundID);
         if (soundID.length == 0) {
@@ -1012,45 +1013,53 @@ class Game {
         }
         return 1
     }
+    /**
+     * Loads and creates a BABYLON.Texture
+     * @param {string} textureID Texture ID
+     * @param {object} options Options
+     * @returns {number} Integer status code
+     */
     static loadTexture(textureID = "", options = {}) {
         textureID = Tools.filterID(textureID);
         if (textureID.length == 0) {
-            return Game.loadedTextures["missingTexture"];
+            return 2;
         }
-        else if (textureID instanceof BABYLON.Texture) {
-            if (!Game.loadedTextures.hasOwnProperty(textureID.name)) {
-                Game.loadedTextures[textureID.name] = textureID;
-            }
-            return textureID;
+        if (Game.hasLoadedTexture(textureID)) {
+            return 0;
         }
-        else if (typeof textureID == "string") {
-            textureID = Game.Tools.filterID(textureID);
-            if (Game.hasLoadedTexture(textureID)) {
-                return Game.loadedTextures[textureID];
+        else if (Game.hasAvailableTexture(textureID)) {
+            let loadedTexture = new BABYLON.Texture(Game.textureLocations[textureID], Game.scene);
+            loadedTexture.name = textureID;
+            if (options.hasOwnProperty("hasAlpha")) {
+                loadedTexture.hasAlpha = options["hasAlpha"] == true;
             }
-            else if (Game.hasAvailableTexture(textureID)) {
-                let _loadedTexture = new BABYLON.Texture(Game.textureLocations[textureID], Game.scene);
-                _loadedTexture.name = textureID;
-                if (options.hasOwnProperty("hasAlpha")) {
-                    _loadedTexture.hasAlpha = options["hasAlpha"] == true;
-                }
-                Game.setLoadedTexture(textureID, _loadedTexture);
-                return _loadedTexture;
-            }
+            Game.setLoadedTexture(textureID, loadedTexture);
+            return 0;
         }
-        return Game.loadedTextures["missingTexture"];
+        return 2;
     }
+    /**
+     * Loads and creates a BABYLON.Material
+     * @param {string} materialID Material ID
+     * @param {string} diffuseTextureID Texture ID for diffuse texture
+     * @param {string} bumpTextureID Texture ID for bump/normal map
+     * @param {object} options Options
+     * @returns {number} Integer status code
+     */
     static loadMaterial(materialID = "", diffuseTextureID = "", bumpTextureID = "", options = {}) {
         materialID = Tools.filterID(materialID);
         if (materialID.length == 0) {
-            return Game.loadedTextures["missingTexture"];
+            return 2;
         }
         diffuseTextureID = Tools.filterID(diffuseTextureID);
         if (diffuseTextureID.length > 0 && Game.hasAvailableTexture(diffuseTextureID) && !Game.hasLoadedTexture(diffuseTextureID)) {
             Game.loadTexture(diffuseTextureID);
         }
-        else {
+        else if (Game.hasAvailableTexture(materialID)) {
             diffuseTextureID = materialID;
+        }
+        else {
+            diffuseTextureID = "missingTexture";
         }
         bumpTextureID = Tools.filterID(bumpTextureID);
         if (bumpTextureID.length > 0 && Game.hasAvailableTexture(bumpTextureID) && !Game.hasLoadedTexture(bumpTextureID)) {
@@ -1059,8 +1068,8 @@ class Game {
         let loadedMaterial = new BABYLON.StandardMaterial(materialID)
         loadedMaterial.name = materialID;
         loadedMaterial.diffuseTexture = Game.getLoadedTexture(diffuseTextureID);
-        if (bumpTextureID instanceof BABYLON.Texture) {
-            loadedMaterial.bumpTexture = bumpTextureID;
+        if (Game.hasLoadedTexture(bumpTextureID)) {
+            loadedMaterial.bumpTexture = Game.getLoadedTexture(bumpTextureID);
         }
         loadedMaterial.specularColor.set(0,0,0);
         if (typeof options == "object") {
@@ -1069,17 +1078,22 @@ class Game {
             }
         }
         Game.setLoadedMaterial(materialID, loadedMaterial);
-        return loadedMaterial;
+        return 0;
     }
+    /**
+     * Loads and create a BABYLON.Mesh
+     * @param {string} meshID Mesh ID
+     * @returns {number} Integer status code
+     */
     static loadMesh(meshID) {
         meshID = Tools.filterID(meshID);
         if (meshID.length == 0) {
             return 2;
         }
-        if (Game.loadedMeshes.hasOwnProperty(meshID)) {
+        if (Game.hasLoadedMesh(meshID)) {
             return 0;
         }
-        else if (Game.meshLocations.hasOwnProperty(meshID)) {
+        else if (Game.hasAvailableMesh(meshID)) {
             Game.importMeshes(Game.meshLocations[meshID]);
             return 1;
         }

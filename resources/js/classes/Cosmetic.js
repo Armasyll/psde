@@ -48,23 +48,9 @@ class Cosmetic {
     getIcon() {
         return this.icon;
     }
-    setMeshID(mesh) {
-        let loadedMesh = Game.loadMesh(mesh);
-        if (loadedMesh instanceof BABYLON.AbstractMesh) {
-            if (loadedMesh.id == "loadingMesh") {
-                if (mesh instanceof BABYLON.AbstractMesh) {
-                    this.meshID = mesh.id;
-                }
-                else {
-                    this.meshID = mesh;
-                }
-            }
-            else if (loadedMesh.id == "missingMesh") {
-                this.meshID = "missingMesh";
-            }
-            else {
-                this.meshID = loadedMesh.name;
-            }
+    setMeshID(meshID) {
+        if (Game.hasLoadedMesh(meshID)) {
+            this.meshID = meshID;
         }
         else {
             this.meshID = "missingMesh";
@@ -74,10 +60,9 @@ class Cosmetic {
     getMeshID() {
         return this.meshID;
     }
-    setMaterialID(material) {
-        material = Game.loadMaterial(material);
-        if (material instanceof BABYLON.Material) {
-            this.materialID = material.name;
+    setMaterialID(materialID) {
+        if (Game.hasLoadedMaterial(materialID)) {
+            this.materialID = materialID;
         }
         else {
             this.materialID = "missingMaterial";
