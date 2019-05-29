@@ -998,7 +998,7 @@ class Game {
     }
     static loadSound(soundID = "", options = {}) {
         soundID = Tools.filterID(soundID);
-        if (soundID.length) {
+        if (soundID.length == 0) {
             return 2;
         }
         if (Game.hasLoadedSound(soundID)) {
@@ -1013,7 +1013,8 @@ class Game {
         return 1
     }
     static loadTexture(textureID = "", options = {}) {
-        if (textureID == undefined) {
+        textureID = Tools.filterID(textureID);
+        if (textureID.length == 0) {
             return Game.loadedTextures["missingTexture"];
         }
         else if (textureID instanceof BABYLON.Texture) {
@@ -1156,7 +1157,7 @@ class Game {
         if (!(mesh instanceof BABYLON.Mesh)) {
             return 2;
         }
-        if (newMeshID == undefined) {
+        if (newMeshID.length == 0) {
             newMeshID = mesh.id;
         }
         Game.clonedMeshes[newMeshID] = mesh;
@@ -1170,7 +1171,7 @@ class Game {
         if (!(mesh instanceof BABYLON.InstancedMesh)) {
             return 2;
         }
-        if (newMeshID == undefined) {
+        if (newMeshID.length == 0) {
             newMeshID = mesh.id;
         }
         Game.instancedMeshes[newMeshID] = mesh;
@@ -1828,10 +1829,32 @@ class Game {
      */
     static createMesh(meshIndexID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), forceCreateClone = false, createCollisionMesh = false) {
         meshIndexID = Tools.filterID(meshIndexID);
-        if (meshIndexID == undefined) {
+        if (meshIndexID.length == 0) {
             meshIndexID = Tools.genUUIDv4();
         }
         if (Game.debugMode) console.log(`Running createMesh(${meshIndexID}, ${meshID}, ${materialID})`);
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
+        }
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            if (typeof rotation == "number") {
+                rotation = new BABYLON.Vector3(0, rotation, 0);
+            }
+            else {
+                rotation = Tools.filterVector(rotation);
+            }
+        }
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            if (typeof scaling == "number") {
+                scaling = new BABYLON.Vector3(scaling, scaling, scaling);
+            }
+            else {
+                scaling = Tools.filterVector(scaling);
+            }
+        }
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
+        }
         if (!Game.hasAvailableMesh(meshID)) {
             if (Game.debugMode) console.log(`\tMesh ${meshID} doesn't exist`);
             return Game.loadedMeshes["missingMesh"];
@@ -2912,10 +2935,10 @@ class Game {
      */
     static removeCharacter(characterController) {
         if (!(characterController instanceof CharacterController)) {
-            characterController = Game.getCharacterController(characterController);
-            if (characterController == undefined) {
+            if (!Game.hasCharacterController(characterController)) {
                 return 2;
             }
+            characterController = Game.getCharacterController(characterController);
         }
         if (characterController == Game.player.getController()) {
             return 1;
@@ -2943,7 +2966,7 @@ class Game {
      */
     static createDoor(id, name = "Door", to = undefined, mesh = "door", texture = "plainDoor", options = {locked:false, key:null, opensInward:false, open:false}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
-        if (id == undefined) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         if (!Game.hasMesh(mesh)) {
@@ -3011,10 +3034,10 @@ class Game {
      */
     static removeDoor(doorController) {
         if (!(doorController instanceof DoorController)) {
-            doorController = Game.getEntityController(doorController);
-            if (doorController == undefined) {
+            if (!Game.hasDoorController(doorController)) {
                 return 2;
             }
+            doorController = Game.getEntityController(doorController);
         }
         let mesh = doorController.getMesh();
         doorController.entity.dispose();
@@ -3038,7 +3061,7 @@ class Game {
      */
     static createFurnitureEntity(id, name = "", description = "", icon = "", mesh = "missingMesh", texture = "missingMaterial", furnitureType = FurnitureEnum.NONE, weight = 1, price = 1) {
         id = Tools.filterID(id);
-        if (id.length) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         let furnitureEntity = new FurnitureEntity(id, name, description, icon, furnitureType);
@@ -3062,7 +3085,7 @@ class Game {
      */
     static createFurnitureInstance(id, furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
-        if (id == undefined) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         if (furnitureEntity instanceof FurnitureEntity) {
@@ -3125,10 +3148,10 @@ class Game {
      */
     static removeFurniture(furnitureController) {
         if (!(furnitureController instanceof FurnitureController)) {
-            furnitureController = Game.getFurnitureController(furnitureController);
-            if (furnitureController == undefined) {
+            if (!Game.hasFurnitureController(furnitureController)) {
                 return 2;
             }
+            furnitureController = Game.getFurnitureController(furnitureController);
         }
         var mesh = furnitureController.getMesh();
         furnitureController.entity.dispose();
@@ -3155,7 +3178,7 @@ class Game {
      */
     static createLighting(id, name = "", mesh, texture, lightingType, options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), lightingPositionOffset = BABYLON.Vector3.Zero(), createCollisionMesh = true) {
         id = Tools.filterID(id);
-        if (id == undefined) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         if (!Game.hasMesh(mesh)) {
@@ -3206,10 +3229,10 @@ class Game {
      */
     static removeLighting(lightingController) {
         if (!(lightingController instanceof LightingController)) {
-            lightingController = Game.getLightingController(lightingController);
-            if (lightingController == undefined) {
+            if (!(Game.hasLightingController(lightingController))) {
                 return 2;
             }
+            lightingController = Game.getLightingController(lightingController);
         }
         let mesh = lightingController.getMesh();
         lightingController.entity.dispose();
@@ -3235,7 +3258,7 @@ class Game {
      */
     static createItemEntity(id, name = "", description = "", icon = "", mesh = "missingMesh", texture = "missingMaterial", itemType = ItemEnum.GENERAL, subType = 0, weight = 1, price = 0) {
         id = Tools.filterID(id);
-        if (id == undefined) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         let itemEntity = null;
@@ -3285,7 +3308,7 @@ class Game {
      */
     static createItemInstance(id, abstractEntity, options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
-        if (id == undefined) {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         if (abstractEntity instanceof InstancedItemEntity) {}
@@ -3349,10 +3372,10 @@ class Game {
      */
     static removeItemInstance(itemController) {
         if (!(itemController instanceof ItemController)) {
-            itemController = Game.getItemController(itemController);
-            if (itemController == undefined) {
+            if (!Game.hasItemController(itemController)) {
                 return 2;
             }
+            itemController = Game.getItemController(itemController);
         }
         let mesh = itemController.getMesh();
         itemController.entity.dispose();
@@ -3369,10 +3392,10 @@ class Game {
      */
     static removeItemInSpace(itemController) {
         if (!(itemController instanceof ItemController)) {
-            itemController = Game.getItemController(itemController);
-            if (itemController == undefined) {
+            if (!Game.hasItemController(itemController)) {
                 return 2;
             }
+            itemController = Game.getItemController(itemController);
         }
         let mesh = itemController.getMesh();
         itemController.dispose();

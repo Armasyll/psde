@@ -731,8 +731,12 @@ Game.generateWallScene = function() {
     Game.createCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -22), new BABYLON.Vector3(0, 180, 0));
     Game.createCollidableMesh("pinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -22), new BABYLON.Vector3(0, 180, 0));
     Game.createCollidableMesh("greenDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    Game.createCollidableMesh("secondGreenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-1, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    Game.createCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-3, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Third green wall
+    Game.createCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-5, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Forth green wall
     Game.createCollidableMesh("yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
     Game.createCollidableMesh("pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    Game.createCollidableMesh("secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(7, 0, -20), new BABYLON.Vector3(0, 180, 0));
     
     Game.createDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", {opensInward:true}, new BABYLON.Vector3(1, 0, -21), new BABYLON.Vector3(0, 180, 0));
     Game.createDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", {opensInward:false}, new BABYLON.Vector3(3, 0, -21), new BABYLON.Vector3(0, 180, 0));
