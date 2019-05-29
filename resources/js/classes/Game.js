@@ -804,7 +804,7 @@ class Game {
         Game.camera.lockedTarget = Game.player.getController().focus;
         Game.initPostProcessing();
     }
-    static initFreeCamera(_applyGravity = true) {
+    static initFreeCamera(applyGravity = true) {
         if (Game.debugMode) console.log("Running initFreeCamera");
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
@@ -818,18 +818,18 @@ class Game {
         Game.camera.attachControl(Game.canvas, true);
         if (Game.physicsEnabled) {}
         else {
-            Game.camera.applyGravity = _applyGravity;
+            Game.camera.applyGravity = applyGravity;
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
             Game.camera.checkCollisions = true;
         }
         Game.initPostProcessing();
     }
-    static addPlayerToCreate(_id) {
+    static addPlayerToCreate(characterID) {
         if (Game.hasPlayerToCreate()) {
             return true;
         }
-        _id = Tools.filterID(_id);
-        Game.playerToCreate = _id;
+        characterID = Tools.filterID(characterID);
+        Game.playerToCreate = characterID;
         return true;
     }
     static removePlayerToCreate() {
@@ -846,18 +846,18 @@ class Game {
             }
         }
     }
-    static createPlayer(_id, _name = "", _description = "", _icon = undefined, _age = 18, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX, _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
+    static createPlayer(characterID, name = "", description = "", icon = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", textureID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         if (Game.debugMode) console.log("Running initPlayer");
-        _id = Tools.filterID(_id);
-        if (_id.length == 0) {
-            _id = Tools.genUUIDv4();
+        characterID = Tools.filterID(characterID);
+        if (characterID.length == 0) {
+            characterID = Tools.genUUIDv4();
         }
-        let _character = Game.createCharacter(_id, _name, _description, _icon, _age, _sex, _species, _mesh, _texture, _options, _position, _rotation, _scaling);
-        if (_character instanceof CharacterEntity && _character.hasController() && _character.getController().hasMesh()) {
-            Game.assignPlayer(_character);
+        let characterEntity = Game.createCharacter(characterID, name, description, icon, age, sex, species, meshID, textureID, options, position, rotation, scaling);
+        if (characterEntity instanceof CharacterEntity && characterEntity.hasController() && characterEntity.getController().hasMesh()) {
+            Game.assignPlayer(characterEntity);
         }
         else {
-            Game.addPlayerToCreate(_id);
+            Game.addPlayerToCreate(characterID);
         }
     }
     static assignPlayer(characterEntity) { // TODO: allow for reassigning player :v
@@ -996,7 +996,7 @@ class Game {
         Game.setLoadedSound("hit", new BABYLON.Sound("hit", "resources/sounds/Hit.mp3", Game.scene));
         Game.setLoadedSound("openDoor", new BABYLON.Sound("openDoor", "resources/sounds/Open Door.mp3", Game.scene));
     }
-    static loadSound(soundID = "", options = {}) {
+    static loadSound(soundID = "") {
         soundID = Tools.filterID(soundID);
         if (soundID.length == 0) {
             return 2;
