@@ -170,7 +170,10 @@ class EntityController {
     }
     setParent(_mesh) {
         if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            _mesh = Game.getMesh(_mesh);
+            if (_mesh == undefined) {}
+            else if (Game.hasLoadedMesh(_mesh)) {
+                _mesh = Game.getMesh(_mesh);
+            }
         }
         this.getMesh().setParent(_mesh);
         return this;

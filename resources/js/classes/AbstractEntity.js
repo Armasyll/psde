@@ -55,6 +55,15 @@ class AbstractEntity {
     getID() {
         return this.id;
     }
+    setID(id) {
+        if (this._isLocked) {
+            id = Game.filterID(id);
+            if (id.length > 0) {
+                this.id = id;
+            }
+        }
+        return this.id;
+    }
     setName(_name) {
         this.name = Tools.filterName(_name);
     }
@@ -97,7 +106,7 @@ class AbstractEntity {
     }
 
     setController(entityController) {
-        this.controller = Game.getEntityController(entityController);
+        this.controller = entityController;
         return this;
     }
     getController() {
@@ -117,10 +126,18 @@ class AbstractEntity {
      */
     setOwner(characterEntity) {
         if (!(characterEntity instanceof AbstractEntity)) {
-            characterEntity = Game.getInstancedEntity(characterEntity) || Game.getEntity(characterEntity);
+            if (Game.hasInstancedEntity(characterEntity)) {
+                characterEntity = Game.getInstancedEntity(characterEntity);
+            }
+            else if (Game.hasEntity(characterEntity)) {
+                characterEntity = Game.getEntity(characterEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        this.owner = Game.getCharacterEntity(characterEntity);
-        return this;
+        this.owner = characterEntity;
+        return 0;
     }
     getOwner() {
         return this.owner;
@@ -138,10 +155,18 @@ class AbstractEntity {
 
     setTarget(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            abstractEntity = Game.getInstancedEntity(abstractEntity) || Game.getEntity(abstractEntity);
+            if (Game.hasInstancedEntity(abstractEntity)) {
+                abstractEntity = Game.getInstancedEntity(characterEntity);
+            }
+            else if (Game.hasEntity(characterEntity)) {
+                abstractEntity = Game.getEntity(abstractEntity);
+            }
+            else {
+                return 2;
+            }
         }
         this.target = abstractEntity;
-        return this;
+        return 0;
     }
     getTarget() {
         return this.target;

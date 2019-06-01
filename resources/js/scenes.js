@@ -691,7 +691,6 @@ Game.generateApartment = function() {
         "rinehartTakeChocolate",
         undefined,
         function(_them, _you) {
-            _them = Game.getCharacterEntity(_them);
             if (_them instanceof CharacterEntity) {
                 return _them.hasItem("mountainChocolateBar");
             }

@@ -49,13 +49,13 @@ class Dialogue {
     getTitle() {
         return this.title;
     }
-    setText(_blob) {
-        if (typeof _blob == "string") {
-            this.text = _blob;
+    setText(text) {
+        if (typeof text == "string") {
+            this.text = text;
             this.textType = 0;
         }
-        else if (typeof _blob == "function") {
-            this.text = _blob;
+        else if (typeof text == "function") {
+            this.text = text;
             this.textType = 1;
         }
         else {
@@ -65,12 +65,23 @@ class Dialogue {
         return this;
     }
     getText(them = undefined, you = Game.player) {
-        them = Game.getEntity(them);
-        you = Game.getEntity(you);
         if (typeof this.text == "string") {
             return this.text;
         }
         else if (typeof this.text == "function") {
+            if (!(them instanceof AbstractEntity)) {
+                if (Game.hasEntity(them)) {
+                    them = Game.getEntity(them);
+                }
+                else {
+                    them = undefined;
+                }
+            }
+            if (!(you instanceof AbstractEntity)) {
+                if (Game.hasEntity(you)) {
+                    you = Game.getEntity(you);
+                }
+            }
             return this.text(them, you);
         }
         else {
@@ -182,11 +193,16 @@ class DialogueOption {
         return this.id;
     }
     setDialogue(dialogue) {
-        dialogue = Game.getDialogue(dialogue);
-        if (dialogue instanceof Dialogue) {
-            this.dialogue = dialogue;
-            this.dialogue.setParentOption(this);
+        if (!(dialogue instanceof Dialogue)) {
+            if (Game.hasDialogue(dialogue)) {
+                dialogue = Game.getDialogue(dialogue);
+            }
+            else {
+                return 2;
+            }
         }
+        this.dialogue = dialogue;
+        this.dialogue.setParentOption(this);
         return this;
     }
     getDialogue() {
@@ -243,11 +259,16 @@ class DialogueOption {
         if (oArray.length == 0) {
             return;
         }
-        let tempDialogue = Game.getDialogue(oArray[0]);
-        if (!(tempDialogue instanceof Dialogue)) {
-            return;
+        if (oArray[0] instanceof Dialogue) {
+            var tempDialogue = oArray[0];
         }
-        let tempDialogueOption = new DialogueOption(tempDialogue);
+        else if (typeof oArray[0] == "string" && Game.hasDialogue(oArray[0])) {
+            var tempDialogue = Game.getDialogue(oArray[0]);
+        }
+        else {
+            return 2;
+        }
+        let tempDialogueOption = new DialogueOption(undefined, tempDialogue);
         if (oArray.length > 2) {
             if (typeof oArray[1] == "string") {
                 tempDialogueOption.setTitle(oArray[1]);

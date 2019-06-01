@@ -600,15 +600,17 @@ class CharacterEntity extends EntityWithStorage {
         return this.attachedCosmetics;
     }
     attachCosmetic(_cosmetic, _bone) {
-        _cosmetic = Game.getCosmetic(_cosmetic);
-        if (_cosmetic == undefined) {
-            return this;
+        if (!(_cosmetic instanceof Cosmetic)) {
+            _cosmetic = Game.getCosmetic(_cosmetic);
+            if (!(_cosmetic instanceof Cosmetic)) {
+                return 2;
+            }
         }
         if (_bone instanceof BABYLON.Bone) {
             _bone = _bone.id;
         }
         if (!this.attachedCosmetics.hasOwnProperty(_bone)) {
-            return this;
+            return 2;
         }
         this.attachedCosmetics[_bone][_cosmetic.id] = _cosmetic;
         if (this.hasController()) {
@@ -616,23 +618,25 @@ class CharacterEntity extends EntityWithStorage {
                 this.controller.attachToHead(_cosmetic.getMeshID(), _cosmetic.getMaterialID());
             }
         }
-        return this;
+        return 0;
     }
     detachCosmetic(_cosmetic, _bone = undefined) { // TODO: this, still :v
-        _cosmetic = Game.getCosmetic(_cosmetic);
-        if (_cosmetic == undefined) {
-            return this;
+        if (!(_cosmetic instanceof Cosmetic)) {
+            _cosmetic = Game.getCosmetic(_cosmetic);
+            if (!(_cosmetic instanceof Cosmetic)) {
+                return 2;
+            }
         }
         if (_bone instanceof BABYLON.Bone) {
             _bone = _bone.id;
         }
         if (!this.attachedCosmetics.hasOwnProperty(_bone)) {
-            return this;
+            return 2;
         }
         if (this.hasController()) {
             this.controller.detachMeshFromBone(_cosmetic.getMeshID());
         }
-        return this;
+        return 0;
     }
 
     /**
@@ -1038,7 +1042,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["passion"];
+        return this.characterDisposition[_character]["passion"];
     }
     setCharacterFriendship(_character, _int) {
         return this.characterDisposition[_character]["friendship"] = _int;
@@ -1047,7 +1051,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["friendship"];
+        return this.characterDisposition[_character]["friendship"];
     }
     setCharacterPlayfulness(_character, _int) {
         return this.characterDisposition[_character]["playfulness"] = _int;
@@ -1056,7 +1060,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["playfulness"];
+        return this.characterDisposition[_character]["playfulness"];
     }
     setCharacterSoulmate(_character, _int) {
         return this.characterDisposition[_character]["soulmate"] = _int;
@@ -1065,7 +1069,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["soulmate"];
+        return this.characterDisposition[_character]["soulmate"];
     }
     setCharacterFamilial(_character, _int) {
         return this.characterDisposition[_character]["familial"] = _int;
@@ -1074,7 +1078,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["familial"];
+        return this.characterDisposition[_character]["familial"];
     }
     setCharacterObsession(_character, _int) {
         return this.characterDisposition[_character]["obsession"] = _int;
@@ -1083,7 +1087,7 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.getCharacterDisposition[_character]["obsession"];
+        return this.characterDisposition[_character]["obsession"];
     }
     setCharacterHate(_character, _int) {
         return this.characterDisposition[_character]["hate"] = _int;
@@ -1092,67 +1096,39 @@ class CharacterEntity extends EntityWithStorage {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER; // SO MUCH HATE >:VVVVV
         }
-        return this.getCharacterDisposition[_character]["hate"];
+        return this.characterDisposition[_character]["hate"];
     }
-    getCharacterDisposition(_character, _dispositionType = undefined) {
+    getCharacterDisposition(characterID) {
         if (Game.enableDebug) console.log("Running getCharacterDisposition");
-        _character = Game.getCharacterEntity(_character);
-        if (_character == undefined) {
-            if (this.characterDisposition[_character].hasOwnProperty(_dispositionType)) {
-                return 0;
-            }
-            else {
-                return {
-                    "passion":0,
-                    "friendship":0,
-                    "playfulness":0,
-                    "soulmate":0,
-                    "familial":0,
-                    "obsession":0,
-                    "hate":0
-                };
-            }
+        if (!(Game.hasCharacterEntity(characterID))) {
+            return 2;
         }
-        if (this.characterDisposition.hasOwnProperty(_character)) {
-            if (this.characterDisposition[_character].hasOwnProperty(_dispositionType)) {
-                if (this.godMode) {
-                    return Number.MAX_SAFE_INTEGER;
-                }
-                return this.characterDisposition[_character][_dispositionType];
-            }
-            else {
-                if (this.godMode) {
-                    return {
-                        "passion":Number.MAX_SAFE_INTEGER,
-                        "friendship":Number.MAX_SAFE_INTEGER,
-                        "playfulness":Number.MAX_SAFE_INTEGER,
-                        "soulmate":Number.MAX_SAFE_INTEGER,
-                        "familial":Number.MAX_SAFE_INTEGER,
-                        "obsession":Number.MAX_SAFE_INTEGER,
-                        "hate":Number.MIN_SAFE_INTEGER
-                    };
-                }
-                return this.characterDisposition[_character];
-            }
+        if (this.hasCharacterDisposition(characterID)) {
+            return this.characterDisposition[characterID];
         }
-        else
-            return false;
+        else {
+            return {
+                "passion":0,
+                "friendship":0,
+                "playfulness":0,
+                "soulmate":0,
+                "familial":0,
+                "obsession":0,
+                "hate":0
+            };
+        }
     }
-    hasCharacterDisposition(_character) {
-        _character = Game.getCharacterEntity(_character);
-        if (_character == undefined) {
-            return false;
-        }
+    hasCharacterDisposition(characterID) {
         if (this.godMode) {
             return true;
         }
-        return this.characterDisposition.hasOwnProperty(_character);
+        return this.characterDisposition.hasOwnProperty(characterID);
     }
     getCharacterDispositions() {
         return this.characterDisposition;
     }
-    hasMet(_character) {
-        return this.hasCharacterDisposition(_character);
+    hasMet(characterID) {
+        return this.hasCharacterDisposition(characterID);
     }
 
     hold(_instancedItem, _hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)

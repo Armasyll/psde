@@ -885,11 +885,22 @@ class GameGUI {
      * @param {Entity} _playerEntity        The Entity viewing the item; the player.
      */
     static updateInventoryMenuSelected(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player) {
-        _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        if (_instancedItemEntity == undefined) {GameGUI._clearInventorySelectedItem; return;}
-        _targetEntity = Game.getEntity(_targetEntity);
-        _playerEntity = Game.getEntity(_playerEntity);
-        if (_playerEntity == undefined) {_playerEntity = Game.player;}
+        if (!(_instancedItemEntity instanceof AbstractEntity)) {
+            if (_instancedItemEntity == undefined) {
+                GameGUI._clearInventorySelectedItem;
+                return 0;
+            }
+            _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
+        }
+        if (!(_targetEntity instanceof AbstractEntity)) {
+            _targetEntity = Game.getEntity(_targetEntity);
+        }
+        if (!(_playerEntity instanceof AbstractEntity)) {
+            _playerEntity = Game.getEntity(_playerEntity);
+            if (!(_playerEntity instanceof AbstractEntity)) {
+                _playerEntity = Game.player;
+            }
+        }
 
         var _summary = GameGUI._inventoryMenu.getChildByName("summary");
         _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
@@ -1091,35 +1102,44 @@ class GameGUI {
         _aRM.zIndex = 12;
         return _aRM;
     }
-    static populateActionsMenuWith(_controller) {
-        _controller = Game.getEntityController(_controller);
-        if (!(_controller instanceof EntityController)) {
-            return;
-        }
-        GameGUI._actionsMenuOptions.clear();
-        var _actions = _controller.getEntity().getAvailableActions();
-        for (var _action in _actions) {
-            if (!_controller.getEntity().hasHiddenAvailableAction(_action)) {
-                GameGUI.addActionsMenuOption(_actions[_action].action, _controller);
+    static populateActionsMenuWith(entityController) {
+        if (!(entityController instanceof EntityController)) {
+            entityController = Game.getEntityController(entityController);
+            if (!(entityController instanceof EntityController)) {
+                return 2;
             }
         }
-        return true;
+        GameGUI._actionsMenuOptions.clear();
+        let actions = entityController.getEntity().getAvailableActions();
+        for (let action in actions) {
+            if (!entityController.getEntity().hasHiddenAvailableAction(action)) {
+                GameGUI.addActionsMenuOption(actions[action].action, entityController);
+            }
+        }
+        return 0;
     }
     static populateActionsMenuWithTarget () {
         return GameGUI.populateActionsMenuWith(Game.player.getController().getTarget());
     }
-    static addActionsMenuOption(_action, _entity) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    static addActionsMenuOption(action, abstractEntity) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        if (!ActionEnum.properties.hasOwnProperty(_action)) {
-            return;
+        if (!ActionEnum.properties.hasOwnProperty(action)) {
+            return 2;
         }
-        _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
-        if (!(_entity instanceof AbstractEntity)) {
-            return;
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (Game.hasInstancedEntity(abstractEntity)) {
+                abstractEntity = Game.getInstancedEntity(abstractEntity)
+            }
+            else if (Game.hasEntity(abstractEntity)) {
+                abstractEntity = Game.getEntity(abstractEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        GameGUI._actionsMenuOptions.push({action:_action,target:_entity});
+        GameGUI._actionsMenuOptions.push({action:action,target:abstractEntity});
         if (GameGUI._actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
@@ -1295,9 +1315,34 @@ class GameGUI {
     }
     static setDialogue(_dialogue, _them, _you = Game.player) {
         GameGUI.clearDialogue();
-        _dialogue = Game.getDialogue(_dialogue);
-        _them = Game.getEntity(_them);
-        _you = Game.getEntity(_you);
+        if (!(_dialogue instanceof Dialogue)) {
+            _dialogue = Game.getDialogue(_dialogue);
+            if (!(_dialogue instanceof Dialogue)) {
+                return 2;
+            }
+        }
+        if (!(_them instanceof AbstractEntity)) {
+            if (Game.hasInstancedEntity(_them)) {
+                _them = Game.getInstancedEntity(_them)
+            }
+            else if (Game.hasEntity(_them)) {
+                _them = Game.getEntity(_them);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(_you instanceof AbstractEntity)) {
+            if (Game.hasInstancedEntity(_you)) {
+                _you = Game.getInstancedEntity(_you)
+            }
+            else if (Game.hasEntity(_you)) {
+                _you = Game.getEntity(_you);
+            }
+            else {
+                return 2;
+            }
+        }
         GameGUI.setDialogueTitle(_dialogue.getTitle());
         var _text = _dialogue.getText(_them, _you);
         if (typeof _text == "function") {
@@ -1344,7 +1389,7 @@ class GameGUI {
         _button.width = 1.0;
         _button.height = 0.33;
         _button.onPointerUpObservable.add(function() {
-            GameGUI.setDialogue(_dialogueOption.getDialogue().getID(), _them.getID(), _you.getID());
+            GameGUI.setDialogue(_dialogueOption.getDialogue(), _them, _you);
         });
         if (GameGUI._dialogueOptions.length > 5) {
             GameGUI._dialogueMenu.children[2].children[2].addControl(_button);

@@ -2,7 +2,7 @@ class DoorEntity extends Entity {
     constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "plainDoorIcon", _locked = false, _key = undefined, _opensInward = false, _open = false) {
         super(_id, _name, _description, _icon);
         this.entityType = EntityEnum.DOOR;
-        this.locked = false;
+        this._isDoorLocked = false;
         this.key = null;
         this.open = false;
         this.opensInward = false;
@@ -11,7 +11,7 @@ class DoorEntity extends Entity {
         this.addAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
         this.setDefaultAction(ActionEnum.OPEN);
-        this.setLocked(_locked);
+        this.setDoorLocked(_locked);
         this.setKey(_key);
         this.setOpensInward(_opensInward);
         this.setOpen(_open);
@@ -19,18 +19,27 @@ class DoorEntity extends Entity {
         Game.setDoorEntity(this.id, this);
 	}
 
-	setLocked(_bool) {
-		this.locked = _bool == true;
+    /**
+     * Door lock, not to be confused with the functionality lock.
+     * @param {boolean} isDoorLocked 
+     */
+	setDoorLocked(isDoorLocked) {
+		this._isDoorLocked = isDoorLocked == true;
 	}
-	getLocked() {
-		return this.locked;
+	isDoorLocked() {
+		return this._isDoorLocked;
 	}
-	setKey(_itemEntity) {
-		_itemEntity = Game.getItemEntity(_itemEntity);
-		if (_itemEntity == undefined) {
-            return;
+	setKey(itemEntity) {
+        if (!(itemEntity instanceof ItemEntity)) {
+            if (Game.hasItemEntity(itemEntity)) {
+                itemEntity = Game.getItemEntity(itemEntity);
+            }
+            else {
+                return 2;
+            }
         }
-		this.key = _itemEntity;
+        this.key = itemEntity;
+        return 0;
 	}
 	getKey() {
 		return this.key;

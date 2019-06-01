@@ -650,6 +650,8 @@ class Game {
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
+        Game.loadDefaultItems();
+
         /*
             Which function handles the function of the key presses;
             controlerCharacter, controlMenu
@@ -841,13 +843,13 @@ class Game {
             }
         }
     }
-    static createPlayer(characterID, name = "", description = "", icon = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", textureID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createPlayer(characterID, name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", textureID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         if (Game.debugMode) console.log("Running initPlayer");
         characterID = Tools.filterID(characterID);
         if (characterID.length == 0) {
             characterID = Tools.genUUIDv4();
         }
-        let characterController = Game.createCharacter(characterID, name, description, icon, age, sex, species, meshID, textureID, options, position, rotation, scaling);
+        let characterController = Game.createCharacter(characterID, name, description, iconID, age, sex, species, meshID, textureID, options, position, rotation, scaling);
         if (characterController instanceof CharacterEntity && characterController.hasController() && characterController.getController().hasMesh()) {
             Game.assignPlayer(characterController.getEntity());
         }
@@ -991,6 +993,9 @@ class Game {
         Game.setLoadedSound("hit", new BABYLON.Sound("hit", "resources/sounds/Hit.mp3", Game.scene));
         Game.setLoadedSound("openDoor", new BABYLON.Sound("openDoor", "resources/sounds/Open Door.mp3", Game.scene));
         return 0;
+    }
+    static loadDefaultItems() {
+        Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "loadingMesh", "loadingMaterial", ItemEnum.GENERAL);
     }
     /**
      * Loads and creates a BABYLON.Sound
@@ -1442,9 +1447,6 @@ class Game {
                 break;
             }
             case Game.useTargetedEntityCode : {
-                if (!(Game.player.getTarget() instanceof AbstractEntity)) {
-                    return;
-                }
                 if (Game.player.getTarget() instanceof AbstractEntity) {
                     Game.doEntityAction(Game.player.getTarget(), Game.player, Game.player.getTarget().getDefaultAction());
                 }
@@ -1497,76 +1499,69 @@ class Game {
             Game.gui.showActionsMenu();
         }
     }
-    static createCollisionWall(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotation = 0) {
+    /**
+     * Creates a primitive wall for collision
+     * @param {BABYLON.Vector3} start 
+     * @param {BABYLON.Vector3} end 
+     * @param {number} yRotation 
+     */
+    static createCollisionWall(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
         if (Game.debugMode) console.log("Running createCollisionWallX");
-        if (_rotation != 0 && Tools.isInt(_rotation)) {
-            _rotation = BABYLON.Tools.ToRadians(_rotation);
+        if (yRotation != 0 && Tools.isInt(yRotation)) {
+            yRotation = BABYLON.Tools.ToRadians(yRotation);
         }
-        if (_posStart.x == _posEnd.x) {
-            _rotation += BABYLON.Tools.ToRadians(90);
+        if (start.x == end.x) {
+            yRotation += BABYLON.Tools.ToRadians(90);
+            var width = Math.abs(end.z - start.z);
         }
-        if (_posStart.x == _posEnd.x) {
-            var _width = Math.abs(_posEnd.z - _posStart.z);
-        }
-        else if (_posStart.z == _posEnd.z) {
-            var _width = Math.abs(_posEnd.x - _posStart.x);
+        else if (start.z == end.z) {
+            var width = Math.abs(end.x - start.x);
         }
         else {
             return null;
         }
-        var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = (_posStart.y + _posEnd.y) / 2;
-        var _posZ = (_posStart.z + _posEnd.z) / 2;
-        var _wall = BABYLON.MeshBuilder.CreateBox("wall", {height:_posEnd.y - _posStart.y, depth:0.125, width:_width}, Game.scene);
-        _wall.material = Game.loadedMaterials["collisionMaterial"];
-        _wall.position.set(_posX,_posY,_posZ);
-        _wall.rotation.y = _rotation;
+        let xPosition = (start.x + end.x) / 2;
+        let yPosition = (start.y + end.y) / 2;
+        let zPosition = (start.z + end.z) / 2;
+        let wall = BABYLON.MeshBuilder.CreateBox("wall", {"height":end.y - start.y, "depth":0.125, "width":width}, Game.scene);
+        wall.material = Game.loadedMaterials["collisionMaterial"];
+        wall.position.set(xPosition,yPosition,zPosition);
+        wall.rotation.y = yRotation;
         if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(_wall, {mass:0});
+            Game.assignBoxPhysicsToMesh(wall, {mass:0});
         }
         else {
-            _wall.checkCollisions = true;
+            wall.checkCollisions = true;
         }
-        return _wall;
+        return wall;
     }
-    static createCollisionPlane(_posStart = {x:0, z:0}, _posEnd = {x:0, z:0}, _posY = 0) {
-        if (Game.debugMode) console.log("Running createCollisionPlane");
-        if (_posStart instanceof BABYLON.AbstractMesh) {
-            var _xRadius = _posStart.getBoundingInfo().boundingBox.extendSize.x * _posStart.scaling.x;
-            var _zRadius = _posStart.getBoundingInfo().boundingBox.extendSize.z * _posStart.scaling.z;
-            var _nPosStart = {x:0, z:0};
-            _nPosStart.x = _posStart.position.x;
-            _nPosStart.z = _posStart.position.z;
-            _posEnd.x = _posStart.position.x + _xRadius * 2;
-            _posEnd.z = _posStart.position.z + _zRadius * 2;
-            _posY = _posStart.position.y;
-            _posStart = _nPosStart;
-        }
-        var _width = Math.abs(_posEnd.x - _posStart.x);
-        var _depth = Math.abs(_posEnd.z - _posStart.z);
-        var _posX = (_posStart.x + _posEnd.x) / 2;
-        var _posY = _posY - 0.06125;
-        var _posZ = (_posStart.z + _posEnd.z) / 2;
-        var _floor = BABYLON.MeshBuilder.CreateBox("wall", {height:0.125, depth:_depth, width:_width}, Game.scene);
-        _floor.material = Game.loadedMaterials["collisionMaterial"];
-        _floor.position.set(_posX,_posY,_posZ);
-        if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(_floor, {mass:0});
-        }
-        else {
-            _floor.checkCollisions = true;
-        }
-        return _floor;
-    }
-    static createCollisionPlaneV2(start = BABYLON.Vector2.Zero(), end = BABYLON.Vector2.One()) {
+    /**
+     * Creates a primitive floor for collision
+     * @param {BABYLON.Vector3} start 
+     * @param {BABYLON.Vector3} end 
+     * @param {number} yPosition 
+     */
+    static createCollisionPlane(start = {x:0, z:0}, end = {x:0, z:0}, yPosition = 0) {
         if (Game.debugMode) console.log("Running createCollisionPlane");
         if (start instanceof BABYLON.AbstractMesh) {
-            posEnd.set(start.position.x + (start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x) * 2, start.position.y, start.position.z + (start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z) * 2)
-            start = start.position.clone();
+            let xRadius = start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x;
+            let zRadius = start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z;
+            let newStart = {x:0, z:0};
+            newStart.x = start.position.x;
+            newStart.z = start.position.z;
+            end.x = start.position.x + xRadius * 2;
+            end.z = start.position.z + zRadius * 2;
+            yPosition = start.position.y;
+            start = newStart;
         }
-        let floor = BABYLON.MeshBuilder.CreateBox("plane", {"height":0.125, "depth":Math.abs(end.z - start.z), "width":Math.abs(end.x - start.x)}, Game.scene);
+        let width = Math.abs(end.x - start.x);
+        let depth = Math.abs(end.z - start.z);
+        let xPosition = (start.x + end.x) / 2;
+        yPosition = yPosition - 0.06125;
+        let zPosition = (start.z + end.z) / 2;
+        let floor = BABYLON.MeshBuilder.CreateBox("wall", {"height":0.125, "depth":depth, "width":width}, Game.scene);
         floor.material = Game.loadedMaterials["collisionMaterial"];
-        floor.position.set((start.x + start.x) / 2, start.y, (start.z + end.z) / 2);
+        floor.position.set(xPosition,yPosition,zPosition);
         if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(floor, {mass:0});
         }
@@ -1575,87 +1570,119 @@ class Game {
         }
         return floor;
     }
-    static createCollisionRamp(_posStart = BABYLON.Vector3.Zero(), _posEnd = BABYLON.Vector3.Zero(), _rotationY = 0) {
-        if (typeof _posStart != "object" || typeof _posEnd != "object" || !_posStart.hasOwnProperty("z") || !_posEnd.hasOwnProperty("z")) {
+    /**
+     * Creates a primitive ramp for collision
+     * @param {BABYLON.Vector3} start 
+     * @param {BABYLON.Vector3} end 
+     * @param {number} yPosition 
+     */
+    static createCollisionRamp(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
+        if (typeof start != "object" || typeof end != "object" || !start.hasOwnProperty("z") || !end.hasOwnProperty("z")) {
             return null;
         }
-        if (_posStart.x == _posEnd.x || _posStart.y == _posEnd.y || _posStart.z == _posEnd.z) {
+        if (start.x == end.x || start.y == end.y || start.z == end.z) {
             return null;
         }
-        if (_posStart.y > _posEnd.y) {
-            var _temp = _posStart;
-            var _posStart = _posEnd;
-            var _posEnd = _temp;
+        if (start.y > end.y) {
+            var _temp = start;
+            start = end;
+            end = _temp;
         }
-        var _opp = _posEnd.y - _posStart.y;
-        var _width = 0;
-        var _adj = 0;
-        if (_posEnd.z - _posStart.z > _posEnd.x - _posStart.x) { // Z-based ramp
-            _width = _posEnd.x - _posStart.x;
-            _adj = _posEnd.z - _posStart.z;
+        let oppositeSide = end.y - start.y;
+        let width = 0;
+        let adjacentSide = 0;
+        if (end.z - start.z > end.x - start.x) { // Z-based ramp
+            width = end.x - start.x;
+            adjacentSide = end.z - start.z;
         }
         else { // X-based ramp
-            _width = _posEnd.z - _posStart.z;
-            _adj = _posEnd.x - _posStart.x;
+            width = end.z - start.z;
+            adjacentSide = end.x - start.x;
         }
-        var _angle = Math.acos(_opp / _adj);
-        var _hyp = _opp * (1/Math.cos(_angle)); // height
-        var _ramp = BABYLON.MeshBuilder.CreateBox("ramp", {height:_hyp, depth:0.125, width:_width}, Game.scene);
-        _ramp.position.set((_posEnd.x + _posStart.x) / 2 - 1,(_posEnd.y + _posStart.y) / 2 - 0.125/2,(_posEnd.z + _posStart.z) / 2 - 1);
-        _ramp.rotation.set(_angle, BABYLON.Tools.ToRadians(_rotationY), 0);
-        _ramp.material = Game.loadedMaterials["collisionMaterial"];
+        let hypotenuseAngle = Math.acos(oppositeSide / adjacentSide);
+        let hypotenuseSide = oppositeSide * (1/Math.cos(hypotenuseAngle)); // height
+        let ramp = BABYLON.MeshBuilder.CreateBox("ramp", {"height":hypotenuseSide, "depth":0.125, "width":width}, Game.scene);
+        ramp.position.set((end.x + start.x) / 2 - 1,(end.y + start.y) / 2 - 0.125/2,(end.z + start.z) / 2 - 1);
+        ramp.rotation.set(hypotenuseAngle, BABYLON.Tools.ToRadians(yRotation), 0);
+        ramp.material = Game.loadedMaterials["collisionMaterial"];
         if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(_ramp, {mass:0});
+            Game.assignBoxPhysicsToMesh(ramp, {mass:0});
         }
         else {
-            _ramp.checkCollisions = true;
+            ramp.checkCollisions = true;
         }
-        return _ramp;
+        return ramp;
     }
-    static assignPlanePhysicsToMesh(_mesh) {
+    static assignPlanePhysicsToMesh(mesh) {
         if (Game.debugMode) console.log("Running assignPlanePhysicsToMesh");
-        _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.BoxImpostor, {mass:0}, Game.scene);
-        return _mesh.physicsImposter;
-    }
-    static assignCylinderPhysicsToMesh(_mesh, _options = {mass:0.8,restitution:0.1}) {
-        if (Game.debugMode) console.log("Running assignCylinderPhysicsToMesh");
-        if (typeof _options != "object" || typeof _object == "undefined") _options = {mass:0.8,restitution:0.1};
-        _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.CylinderImpostor, _options, Game.scene);
-        return _mesh.physicsImposter;
-    }
-    static assignBoxPhysicsToMesh(_mesh, _options = {mass:0.8,restitution:0.1}) {
-        if (Game.debugMode) console.log("Running assignBoxPhysicsToMesh");
-        if (typeof _options != "object" || typeof _object == "undefined") _options = {mass:0.8,restitution:0.1};
-        _mesh.physicsImposter = new BABYLON.PhysicsImpostor(_mesh, BABYLON.PhysicsImpostor.BoxImpostor, _options, Game.scene);
-        return _mesh.physicsImposter;
-    }
-    static assignBoxPhysicsToBone(_bone, _options = {mass:0.8,restitution:0.1}) {
-
-    }
-    static assignBoxCollisionToMesh(_mesh) {
-        if (Game.debugMode) console.log("Running assignBoxCollisionToMesh");
-        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            return null;
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
         }
-        Game.assignBoundingBoxCollisionQueue.add(_mesh);
+        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {mass:0}, Game.scene);
+        return 0;
     }
-    static assignBoundingBoxCollisionToMesh(_mesh) {
-        if (Game.debugMode) console.log("Running _assignBoundingBoxCollisionToMesh");
-        Game.assignBoundingBoxCollisionQueue.delete(_mesh);
-        let _collisionMesh = BABYLON.MeshBuilder.CreateBox(_mesh.id + "-collisionBox", {width:_mesh.getBoundingInfo().boundingBox.vectors[1].x - _mesh.getBoundingInfo().boundingBox.vectors[0].x, height:_mesh.getBoundingInfo().boundingBox.vectors[1].y - _mesh.getBoundingInfo().boundingBox.vectors[0].y, depth:_mesh.getBoundingInfo().boundingBox.vectors[1].z - _mesh.getBoundingInfo().boundingBox.vectors[0].z}, Game.scene);
-        _collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
-        _collisionMesh.checkCollisions = true;
-        _collisionMesh.setParent(_mesh);
-        let _controller = Game.getMeshToEntityController(_mesh);
-        if (_controller instanceof DoorController) {
-            if (_mesh.collisionMesh.scaling.x > _mesh.collisionMesh.scaling.z) {
-                _mesh.collisionMesh.scaling.z += _mesh.collisionMesh.scaling.z * 0.1;
+    static assignCylinderPhysicsToMesh(mesh, options) {
+        if (Game.debugMode) console.log("Running assignCylinderPhysicsToMesh");
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        if (typeof options != "object") {
+            options = {mass:0.8,restitution:0.1};
+        }
+        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.CylinderImpostor, options, Game.scene);
+        return 0;
+    }
+    static assignBoxPhysicsToMesh(mesh, options) {
+        if (Game.debugMode) console.log("Running assignBoxPhysicsToMesh");
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        if (typeof options != "object") {
+            options = {mass:0.8,restitution:0.1};
+        }
+        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, options, Game.scene);
+        return 0;
+    }
+    static assignBoxPhysicsToBone(bone, options) {
+        if (Game.debugMode) console.log("Running assignBoxPhysicsToBone");
+        if (!(bone instanceof BABYLON.Bone)) {
+            return 2;
+        }
+        if (typeof options != "object") {
+            options = {mass:0.8,restitution:0.1};
+        }
+        // bone boxes :v idk yet
+        return 2;
+    }
+    static assignBoxCollisionToMesh(mesh) {
+        if (Game.debugMode) console.log("Running assignBoxCollisionToMesh");
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        Game.assignBoundingBoxCollisionQueue.add(mesh);
+        return 0;
+    }
+    static assignBoundingBoxCollisionToMesh(mesh) {
+        if (Game.debugMode) console.log("Running assignBoundingBoxCollisionToMesh");
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        Game.assignBoundingBoxCollisionQueue.delete(mesh);
+        let collisionMesh = BABYLON.MeshBuilder.CreateBox(mesh.id + "-collisionBox", {width:mesh.getBoundingInfo().boundingBox.vectors[1].x - mesh.getBoundingInfo().boundingBox.vectors[0].x, height:mesh.getBoundingInfo().boundingBox.vectors[1].y - mesh.getBoundingInfo().boundingBox.vectors[0].y, depth:mesh.getBoundingInfo().boundingBox.vectors[1].z - mesh.getBoundingInfo().boundingBox.vectors[0].z}, Game.scene);
+        collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
+        collisionMesh.checkCollisions = true;
+        collisionMesh.setParent(mesh);
+        let controller = Game.getMeshToEntityController(mesh);
+        if (controller instanceof DoorController) {
+            if (mesh.collisionMesh.scaling.x > mesh.collisionMesh.scaling.z) {
+                mesh.collisionMesh.scaling.z += mesh.collisionMesh.scaling.z * 0.1;
             }
             else {
-                _mesh.collisionMesh.scaling.x += _mesh.collisionMesh.scaling.x * 0.2;
+                mesh.collisionMesh.scaling.x += mesh.collisionMesh.scaling.x * 0.2;
             }
         }
-        _collisionMesh.setParent(_mesh);
+        collisionMesh.setParent(mesh);
+        return 0;
     }
     static createBackloggedBoundingCollisions() {
         if (Game.assignBoundingBoxCollisionQueue.size > 0) {
@@ -1663,7 +1690,7 @@ class Game {
                 Game.assignBoundingBoxCollisionToMesh(meshID);
             });
         }
-        return true;
+        return 0;
     }
     static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), forceCreateClone = false) {
         if (Game.debugMode) console.log("Running createItemMesh");
@@ -1988,584 +2015,573 @@ class Game {
         if (Game.meshesToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.meshesToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.meshesToCreate[_i][1])) {
+        for (let i in Game.meshesToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.meshesToCreate[i][1])) {
                 Game.createMesh(
-                    Game.meshesToCreate[_i][0],
-                    Game.meshesToCreate[_i][1],
-                    Game.meshesToCreate[_i][2],
-                    Game.meshesToCreate[_i][3],
-                    Game.meshesToCreate[_i][4],
-                    Game.meshesToCreate[_i][5],
-                    Game.meshesToCreate[_i][6],
-                    Game.meshesToCreate[_i][7]
+                    Game.meshesToCreate[i][0],
+                    Game.meshesToCreate[i][1],
+                    Game.meshesToCreate[i][2],
+                    Game.meshesToCreate[i][3],
+                    Game.meshesToCreate[i][4],
+                    Game.meshesToCreate[i][5],
+                    Game.meshesToCreate[i][6],
+                    Game.meshesToCreate[i][7]
                 );
-                Game.removeMeshToCreate(_i);
+                Game.removeMeshToCreate(i);
             }
         }
     }
-    static addFurnitureToCreate(_id, _entity = "", _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasFurnitureToCreate(_id)) {
+    static addFurnitureToCreate(furnitureIndexID, furnitureEntity = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (Game.hasFurnitureToCreate(furnitureIndexID)) {
             return true;
         }
-        Game.furnitureToCreate[_id] = {
-            0:_id,
-            1:_entity,
-            2:_position,
-            3:_rotation,
-            4:_scaling
+        Game.furnitureToCreate[furnitureIndexID] = {
+            0:furnitureIndexID,
+            1:furnitureEntity,
+            2:position,
+            3:rotation,
+            4:scaling
         };
         Game.furnitureToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeFurnitureToCreate(_id) {
-        if (!Game.hasFurnitureToCreate(_id)) {
+    static removeFurnitureToCreate(furnitureIndexID) {
+        if (!Game.hasFurnitureToCreate(furnitureIndexID)) {
             return true;
         }
-        delete Game.furnitureToCreate[_id];
+        delete Game.furnitureToCreate[furnitureIndexID];
         Game.furnitureToCreateCounter -= 1;
         return true;
     }
-    static hasFurnitureToCreate(_id) {
-        return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(_id);
+    static hasFurnitureToCreate(furnitureIndexID) {
+        return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(furnitureIndexID);
     }
     static createBackloggedFurniture() {
         if (Game.furnitureToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.furnitureToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.getInstancedFurnitureEntity(Game.furnitureToCreate[_i][1]).getMeshID())) {
+        for (let i in Game.furnitureToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.getInstancedFurnitureEntity(Game.furnitureToCreate[i][1]).getMeshID())) {
                 Game.createFurnitureInstance(
-                    Game.furnitureToCreate[_i][0],
-                    Game.furnitureToCreate[_i][1],
-                    Game.furnitureToCreate[_i][2],
-                    Game.furnitureToCreate[_i][3],
-                    Game.furnitureToCreate[_i][4]
+                    Game.furnitureToCreate[i][0],
+                    Game.furnitureToCreate[i][1],
+                    Game.furnitureToCreate[i][2],
+                    Game.furnitureToCreate[i][3],
+                    Game.furnitureToCreate[i][4]
                 );
-                Game.removeFurnitureToCreate(_i);
+                Game.removeFurnitureToCreate(i);
             }
         }
     }
-    static addLightingToCreate(_id, _name = "", _mesh = "missingMesh", _texture = "missingMaterial", _type = "", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One(), _lightingPositionOffset = BABYLON.Vector3.Zero(), _createCollisionMesh = true) {
-        if (Game.hasLightingToCreate(_id)) {
+    static addLightingToCreate(lightingIndexID, name = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = "", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), lightPositionOffset = BABYLON.Vector3.Zero(), createCollisionMesh = true) {
+        if (Game.hasLightingToCreate(lightingIndexID)) {
             return true;
         }
-        Game.lightingToCreate[_id] = {
-            0:_id,
-            1:_name,
-            2:_mesh,
-            3:_texture,
-            4:_type,
-            5:_options,
-            6:_position,
-            7:_rotation,
-            8:_scaling,
-            9:_lightingPositionOffset,
-            10:_createCollisionMesh
+        Game.lightingToCreate[lightingIndexID] = {
+            0:lightingIndexID,
+            1:name,
+            2:meshID,
+            3:textureID,
+            4:lightingType,
+            5:options,
+            6:position,
+            7:rotation,
+            8:scaling,
+            9:lightPositionOffset,
+            10:createCollisionMesh
         };
         Game.lightingToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeLightingToCreate(_id) {
-        if (!Game.hasLightingToCreate(_id)) {
+    static removeLightingToCreate(lightingIndexID) {
+        if (!Game.hasLightingToCreate(lightingIndexID)) {
             return true;
         }
-        delete Game.lightingToCreate[_id];
+        delete Game.lightingToCreate[lightingIndexID];
         Game.lightingToCreateCounter -= 1;
         return true;
     }
-    static hasLightingToCreate(_id) {
-        return Game.lightingToCreateCounter > 0 && Game.lightingToCreate.hasOwnProperty(_id);
+    static hasLightingToCreate(lightingIndexID) {
+        return Game.lightingToCreateCounter > 0 && Game.lightingToCreate.hasOwnProperty(lightingIndexID);
     }
     static createBackloggedLighting() {
         if (Game.lightingToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.lightingToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.lightingToCreate[_i][2])) {
+        for (let i in Game.lightingToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.lightingToCreate[i][2])) {
                 Game.createLighting(
-                    Game.lightingToCreate[_i][0],
-                    Game.lightingToCreate[_i][1],
-                    Game.lightingToCreate[_i][2],
-                    Game.lightingToCreate[_i][3],
-                    Game.lightingToCreate[_i][4],
-                    Game.lightingToCreate[_i][5],
-                    Game.lightingToCreate[_i][6],
-                    Game.lightingToCreate[_i][7],
-                    Game.lightingToCreate[_i][8],
-                    Game.lightingToCreate[_i][9],
-                    Game.lightingToCreate[_i][10]
+                    Game.lightingToCreate[i][0],
+                    Game.lightingToCreate[i][1],
+                    Game.lightingToCreate[i][2],
+                    Game.lightingToCreate[i][3],
+                    Game.lightingToCreate[i][4],
+                    Game.lightingToCreate[i][5],
+                    Game.lightingToCreate[i][6],
+                    Game.lightingToCreate[i][7],
+                    Game.lightingToCreate[i][8],
+                    Game.lightingToCreate[i][9],
+                    Game.lightingToCreate[i][10]
                 );
-                Game.removeLightingToCreate(_i);
+                Game.removeLightingToCreate(i);
             }
         }
     }
-    static addDoorsToCreate(_id, _name = "", _to = "", _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasDoorsToCreate(_id)) {
+    static addDoorsToCreate(doorIndexID, name = "", to = "", meshID = "missingMesh", textureID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (Game.hasDoorsToCreate(doorIndexID)) {
             return true;
         }
-        Game.doorsToCreate[_id] = {
-            0:_id,
-            1:_name,
-            2:_to,
-            3:_mesh,
-            4:_texture,
-            5:_options,
-            6:_position,
-            7:_rotation,
-            8:_scaling
+        Game.doorsToCreate[doorIndexID] = {
+            0:doorIndexID,
+            1:name,
+            2:to,
+            3:meshID,
+            4:textureID,
+            5:options,
+            6:position,
+            7:rotation,
+            8:scaling
         };
         Game.doorsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeDoorsToCreate(_id) {
-        if (!Game.hasDoorsToCreate(_id)) {
+    static removeDoorsToCreate(doorIndexID) {
+        if (!Game.hasDoorsToCreate(doorIndexID)) {
             return true;
         }
-        delete Game.doorsToCreate[_id];
+        delete Game.doorsToCreate[doorIndexID];
         Game.doorsToCreateCounter -= 1;
         return true;
     }
-    static hasDoorsToCreate(_id) {
-        return Game.doorsToCreateCounter > 0 && Game.doorsToCreate.hasOwnProperty(_id);
+    static hasDoorsToCreate(doorIndexID) {
+        return Game.doorsToCreateCounter > 0 && Game.doorsToCreate.hasOwnProperty(doorIndexID);
     }
     static createBackloggedDoors() {
         if (Game.doorsToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.doorsToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.doorsToCreate[_i][3])) {
+        for (let i in Game.doorsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.doorsToCreate[i][3])) {
                 Game.createDoor(
-                    Game.doorsToCreate[_i][0],
-                    Game.doorsToCreate[_i][1],
-                    Game.doorsToCreate[_i][2],
-                    Game.doorsToCreate[_i][3],
-                    Game.doorsToCreate[_i][4],
-                    Game.doorsToCreate[_i][5],
-                    Game.doorsToCreate[_i][6],
-                    Game.doorsToCreate[_i][7],
-                    Game.doorsToCreate[_i][8]
+                    Game.doorsToCreate[i][0],
+                    Game.doorsToCreate[i][1],
+                    Game.doorsToCreate[i][2],
+                    Game.doorsToCreate[i][3],
+                    Game.doorsToCreate[i][4],
+                    Game.doorsToCreate[i][5],
+                    Game.doorsToCreate[i][6],
+                    Game.doorsToCreate[i][7],
+                    Game.doorsToCreate[i][8]
                 );
-                Game.removeDoorsToCreate(_i);
+                Game.removeDoorsToCreate(i);
             }
         }
     }
-    static addCharacterToCreate(_id, _name = "", _description = "", _icon = undefined, _age = 18, _sex = SexEnum.MALE, _species = SpeciesEnum.FOX, _mesh = "missingMesh", _texture = "missingMaterial", _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasCharacterToCreate(_id)) {
+    static addCharacterToCreate(characterIndexID, name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (Game.hasCharacterToCreate(characterIndexID)) {
             return true;
         }
-        Game.charactersToCreate[_id] = {
-            0:_id,
-            1:_name,
-            2:_description,
-            3:_icon,
-            4:_age,
-            5:_sex,
-            6:_species,
-            7:_mesh,
-            8:_texture,
-            9:_options,
-            10:_position,
-            11:_rotation,
-            12:_scaling
+        Game.charactersToCreate[characterIndexID] = {
+            0:characterIndexID,
+            1:name,
+            2:description,
+            3:iconID,
+            4:age,
+            5:sex,
+            6:species,
+            7:meshID,
+            8:materialID,
+            9:options,
+            10:position,
+            11:rotation,
+            12:scaling
         };
         Game.charactersToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeCharacterToCreate(_id) {
-        if (!Game.hasCharacterToCreate(_id)) {
+    static removeCharacterToCreate(characterIndexID) {
+        if (!Game.hasCharacterToCreate(characterIndexID)) {
             return true;
         }
-        delete Game.charactersToCreate[_id];
+        delete Game.charactersToCreate[characterIndexID];
         Game.charactersToCreateCounter -= 1;
         return true;
     }
-    static hasCharacterToCreate(_id) {
-        return Game.charactersToCreateCounter > 0 && Game.charactersToCreate.hasOwnProperty(_id);
+    static hasCharacterToCreate(characterIndexID) {
+        return Game.charactersToCreateCounter > 0 && Game.charactersToCreate.hasOwnProperty(characterIndexID);
     }
     static createBackloggedCharacters() {
         if (Game.charactersToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.charactersToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.charactersToCreate[_i][7])) {
+        for (let i in Game.charactersToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.charactersToCreate[i][7])) {
                 Game.createCharacter(
-                    Game.charactersToCreate[_i][0],
-                    Game.charactersToCreate[_i][1],
-                    Game.charactersToCreate[_i][2],
-                    Game.charactersToCreate[_i][3],
-                    Game.charactersToCreate[_i][4],
-                    Game.charactersToCreate[_i][5],
-                    Game.charactersToCreate[_i][6],
-                    Game.charactersToCreate[_i][7],
-                    Game.charactersToCreate[_i][8],
-                    Game.charactersToCreate[_i][9],
-                    Game.charactersToCreate[_i][10],
-                    Game.charactersToCreate[_i][11],
-                    Game.charactersToCreate[_i][12]
+                    Game.charactersToCreate[i][0],
+                    Game.charactersToCreate[i][1],
+                    Game.charactersToCreate[i][2],
+                    Game.charactersToCreate[i][3],
+                    Game.charactersToCreate[i][4],
+                    Game.charactersToCreate[i][5],
+                    Game.charactersToCreate[i][6],
+                    Game.charactersToCreate[i][7],
+                    Game.charactersToCreate[i][8],
+                    Game.charactersToCreate[i][9],
+                    Game.charactersToCreate[i][10],
+                    Game.charactersToCreate[i][11],
+                    Game.charactersToCreate[i][12]
                 );
-                Game.removeCharacterToCreate(_i);
+                Game.removeCharacterToCreate(i);
             }
         }
     }
-    static addItemToCreate(_id, _entity = undefined, _options = {}, _position = BABYLON.Vector3.Zero(), _rotation = BABYLON.Vector3.Zero(), _scaling = BABYLON.Vector3.One()) {
-        if (Game.hasItemToCreate(_id)) {
+    static addItemToCreate(itemIndexID, itemEntity = undefined, options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (Game.hasItemToCreate(itemIndexID)) {
             return true;
         }
-        Game.itemsToCreate[_id] = {
-            0:_id,
-            1:_entity,
-            2:_options,
-            3:_position,
-            4:_rotation,
-            5:_scaling
+        Game.itemsToCreate[itemIndexID] = {
+            0:itemIndexID,
+            1:itemEntity,
+            2:options,
+            3:position,
+            4:rotation,
+            5:scaling
         };
         Game.itemsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeItemToCreate(_id) {
-        if (!Game.hasItemToCreate(_id)) {
+    static removeItemToCreate(itemIndexID) {
+        if (!Game.hasItemToCreate(itemIndexID)) {
             return true;
         }
-        delete Game.itemsToCreate[_id];
+        delete Game.itemsToCreate[itemIndexID];
         Game.itemsToCreateCounter -= 1;
         return true;
     }
-    static hasItemToCreate(_id) {
-        return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(_id);
+    static hasItemToCreate(itemIndexID) {
+        return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(itemIndexID);
     }
     static createBackloggedItems() { // It's InstancedItemEntities :v
         if (Game.itemsToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.itemsToCreate) {
-            if (Game.hasLoadedMesh(Game.itemsToCreate[_i][1].getMeshID())) {
+        for (let i in Game.itemsToCreate) {
+            if (Game.hasLoadedMesh(Game.itemsToCreate[i][1].getMeshID())) {
                 Game.createItemInstance(
-                    Game.itemsToCreate[_i][0],
-                    Game.itemsToCreate[_i][1],
-                    Game.itemsToCreate[_i][2],
-                    Game.itemsToCreate[_i][3],
-                    Game.itemsToCreate[_i][4],
-                    Game.itemsToCreate[_i][5]
+                    Game.itemsToCreate[i][0],
+                    Game.itemsToCreate[i][1],
+                    Game.itemsToCreate[i][2],
+                    Game.itemsToCreate[i][3],
+                    Game.itemsToCreate[i][4],
+                    Game.itemsToCreate[i][5]
                 );
-                Game.removeItemToCreate(_i);
+                Game.removeItemToCreate(i);
             }
         }
     }
-    static addAttachmentToCreate(_id, _attachToController, _mesh, _texture, _bone, _position, _rotation, _scaling) {
-        if (Game.hasAttachmentToCreate(_id)) {
+    static addAttachmentToCreate(attachmentIndexID, attachToController, meshID, materialID, bone, position, rotation, scaling) {
+        if (Game.hasAttachmentToCreate(attachmentIndexID)) {
             return true;
         }
-        Game.attachmentsToCreate[_id] = {
-            0:_id,
-            1:_attachToController,
-            2:_mesh,
-            3:_texture,
-            4:_bone,
-            5:_position,
-            6:_rotation,
-            7:_scaling
+        Game.attachmentsToCreate[attachmentIndexID] = {
+            0:attachmentIndexID,
+            1:attachToController,
+            2:meshID,
+            3:materialID,
+            4:bone,
+            5:position,
+            6:rotation,
+            7:scaling
         };
         Game.attachmentsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeAttachmentToCreate(_id) {
-        if (!Game.hasAttachmentToCreate(_id)) {
+    static removeAttachmentToCreate(attachmentIndexID) {
+        if (!Game.hasAttachmentToCreate(attachmentIndexID)) {
             return true;
         }
-        delete Game.attachmentsToCreate[_id];
+        delete Game.attachmentsToCreate[attachmentIndexID];
         Game.attachmentsToCreateCounter -= 1;
         return true;
     }
-    static hasAttachmentToCreate(_id) {
-        return Game.attachmentsToCreateCounter > 0 && Game.attachmentsToCreate.hasOwnProperty(_id);
+    static hasAttachmentToCreate(attachmentIndexID) {
+        return Game.attachmentsToCreateCounter > 0 && Game.attachmentsToCreate.hasOwnProperty(attachmentIndexID);
     }
     static createBackloggedAttachments() {
         if (Game.attachmentsToCreateCounter == 0) {
             return true;
         }
-        for (var _i in Game.attachmentsToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.attachmentsToCreate[_i][2])) {
-                Game.attachmentsToCreate[_i][1] = Game.getEntityController(Game.attachmentsToCreate[_i][1]);
-                if (Game.attachmentsToCreate[_i][1] instanceof CharacterController) {
-                    Game.attachmentsToCreate[_i][1].attachToBone(
-                        Game.attachmentsToCreate[_i][2],
-                        Game.attachmentsToCreate[_i][3],
-                        Game.attachmentsToCreate[_i][4],
-                        Game.attachmentsToCreate[_i][5],
-                        Game.attachmentsToCreate[_i][6],
-                        Game.attachmentsToCreate[_i][7]
+        for (let i in Game.attachmentsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.attachmentsToCreate[i][2])) {
+                Game.attachmentsToCreate[i][1] = Game.getEntityController(Game.attachmentsToCreate[i][1]);
+                if (Game.attachmentsToCreate[i][1] instanceof CharacterController) {
+                    Game.attachmentsToCreate[i][1].attachToBone(
+                        Game.attachmentsToCreate[i][2],
+                        Game.attachmentsToCreate[i][3],
+                        Game.attachmentsToCreate[i][4],
+                        Game.attachmentsToCreate[i][5],
+                        Game.attachmentsToCreate[i][6],
+                        Game.attachmentsToCreate[i][7]
                     );
                 }
-                Game.removeAttachmentToCreate(_i);
+                Game.removeAttachmentToCreate(i);
             }
         }
     }
 
-    static importMeshes(_sceneFilename, _meshNames = undefined, _callback = undefined) {
-        if (Game.loadedFiles.has(_sceneFilename)) {
-            return;
+    static importMeshes(file, meshIDs = undefined, callback = undefined) {
+        if (Game.loadedFiles.has(file)) {
+            return 0;
         }
         else {
-            Game.loadedFiles.add(_sceneFilename);
+            Game.loadedFiles.add(file);
         }
-        if (Game.debugMode) console.log(`Running importMeshes(${_sceneFilename})`);
-        var _importedMeshes = {};
+        if (Game.debugMode) console.log(`Running importMeshes(${file})`);
+        let importedMeshes = {};
         Game._filesToLoad += 1;
         BABYLON.SceneLoader.ImportMesh(
             undefined, // meshNames
-            _sceneFilename.substr(0, _sceneFilename.lastIndexOf("/")+1), // rootUrl
-            _sceneFilename.substr(_sceneFilename.lastIndexOf("/")+1), // sceneFilename
+            file.substr(0, file.lastIndexOf("/")+1), // rootUrl
+            file.substr(file.lastIndexOf("/")+1), // sceneFilename
             Game.scene, // scene
-            function(_meshes, _particleSystems, _skeletons) { // onSuccess
-                for(var _i = 0; _i < _meshes.length; _i++) {
-                    _meshes[_i].name = _meshes[_i].id;
-                    _meshes[_i].setEnabled(false);
-                    _meshes[_i].material = Game.loadedMaterials["default"];
-                    _importedMeshes[_meshes[_i].id] = _meshes[_i];
-                    if (_skeletons[_i] != undefined) {
-                        _meshes[_i].skeleon = _skeletons[_i];
+            function(meshes, particleSystems, skeletons) { // onSuccess
+                for(let i = 0; i < meshes.length; i++) {
+                    meshes[i].name = meshes[i].id;
+                    meshes[i].setEnabled(false);
+                    meshes[i].material = Game.loadedMaterials["default"];
+                    importedMeshes[meshes[i].id] = meshes[i];
+                    if (skeletons[i] != undefined) {
+                        meshes[i].skeleon = skeletons[i];
                     }
-                    Game.loadedMeshes[_meshes[_i].id] = _meshes[_i];
-                    if (Game.debugMode) console.log("Importing mesh " + _meshes[_i].id + " from " + _sceneFilename + ".");
+                    Game.loadedMeshes[meshes[i].id] = meshes[i];
+                    if (Game.debugMode) console.log("Importing mesh " + meshes[i].id + " from " + file + ".");
                 }
                 Game._filesToLoad -= 1;
-                if (typeof _callback == "function") {
-                    _callback(_importedMeshes);
+                if (typeof callback == "function") {
+                    callback(importedMeshes);
                 }
             },
             function() { // onProgress
-                if (Game.debugMode) console.log("Importing meshes from " + _sceneFilename + "...");
+                if (Game.debugMode) console.log("Importing meshes from " + file + "...");
             },
             function() { // onError
-                if (Game.debugMode) console.log("Error while importing meshes from " + _sceneFilename);
+                if (Game.debugMode) console.log("Error while importing meshes from " + file);
                 Game._filesToLoad -= 1;
             }
         );
+        return 0;
     }
 
-    static setPlayerID(_id) {
-        Game.setEntityID(Game.player, _id);
+    static setPlayerID(id) {
+        Game.setEntityID(Game.player.id, id);
     }
-    static setEntityID(_currentID, _newID) {
-        // Three things: Mesh, CharacterController, Character
-        //   Game.instancedMeshes
-        //   Game.characterControllers
-        //      Game.entityControllers
-        //   Game.characterEntities
-        //      Game.entities
-        // They should all share the same ID; need to remove the methods to set the ID; will do that later :v
-        if (typeof _currentID == "object") {
-            if (_currentID instanceof BABYLON.AbstractMesh) {
-                _currentID = _currentID.id;
-            }
-            else if (_currentID instanceof EntityController) {
-                _currentID = _currentID.id;
-            }
-            else if (_currentID instanceof Entity) {
-                _currentID = _currentID.id;
-            }
-            else {
-                return null;
-            }
+    static setEntityID(currentID, newID) {
+        if (!Game.hasEntity(currentID)) {
+            return 1;
         }
-        else if (typeof _currentID == "string") {
-            if (Game.hasEntityController(_currentID)) {
-                _currentID = Game.getEntityController(_currentID).id;
+        let entity = Game.getEntity(currentID);
+        if (entity.hasController()) {
+            entity.getController().setLocked(true);
+            entity.getController().setEnabled(false);
+        }
+        entity.setLocked(true);
+        entity.setEnabled(false);
+        if (entity instanceof Entity) {
+            Game.removeEntity(currentID);
+            if (entity instanceof CharacterEntity) {
+                Game.removeCharacterEntity(currentID);
+                Game.setCharacterEntity(newID, entity);
             }
-            else {
-                return null;
+            else if (entity instanceof DoorEntity) {
+                Game.removeDoorEntity(currentID);
+                Game.setDoorEntity(newID, entity);
             }
+            else if (entity instanceof ItemEntity) {
+                Game.removeItemEntity(currentID);
+                Game.setItemEntity(newID, entity);
+                if (entity instanceof EquipmentEntity) {
+                    /*Game.removeEquipmentEntity(currentID);
+                    Game.setEquipmentEntity(newID, entity);*/
+                    if (entity instanceof ClothingEntity) {
+                        Game.removeClothingEntity(currentID);
+                        Game.setClothingEntity(newID, entity);
+                    }
+                    else if (entity instanceof WeaponEntity) {
+                        Game.removeWeaponEntity(currentID);
+                        Game.setWeaponEntity(newID, entity);
+                    }
+                }
+                else if (entity instanceof KeyEntity) {
+                    Game.removeKeyEntity(currentID);
+                    Game.setKeyEntity(newID, entity);
+                }
+            }
+            else if (entity instanceof FurnitureEntity) {
+                Game.removeFurnitureEntity(currentID);
+                Game.setFurnitureEntity(newID, entity);
+                if (entity instanceof LightingEntity) {
+                    Game.removeLightingEntity(currentID);
+                    Game.setLightingEntity(newID, entity);
+                }
+            }
+            else if (entity instanceof SpellEntity) {
+                Game.removeSpellEntity(currentID);
+                Game.setSpellEntity(newID, entity);
+            }
+            entity.setID(newID);
+            Game.setEntity(newID, entity);
+        }
+        else if (entity instanceof InstancedEntity) {
+            Game.removeEntityInstance(currentID);
+            if (entity instanceof InstancedFurnitureEntity) {
+                Game.removeFurnitureInstance(currentID);
+                Game.setFurnitureInstance(newID, entity);
+            }
+            else if (entity instanceof InstancedItemEntity) {
+                Game.removeItemInstance(currentID);
+                Game.setItemInstance(newID, entity);
+                if (entity instanceof InstancedEquipmentEntity) {
+                    /*Game.removeEquipmentInstance(currentID);
+                    Game.setEquipmentInstance(newID, entity);*/
+                    if (entity instanceof InstancedClothingEntity) {
+                        Game.removeClothingInstance(currentID);
+                        Game.setClothingInstance(newID, entity);
+                    }
+                    else if (entity instanceof InstancedWeaponEntity) {
+                        Game.removeWeaponInstance(currentID);
+                        Game.setWeaponInstance(newID, entity);
+                    }
+                }
+            }
+            entity.setID(newID);
+            Game.setEntityInstance(newID, entity);
         }
         else {
-            return null;
+            return 2;
         }
-        var _temp = undefined;
-        _temp = Game.getMesh(_currentID);
-        _temp.id = _newID;
-        Game.instancedMeshes[_newID] = _temp;
-        delete Game.instancedMeshes[_currentID];
-        if (Game.hasMesh(_currentID)) {
-            Game.instancedMeshes[_newID] = _temp;
-            delete Game.instancedMeshes[_currentID];
+        if (entity.hasController()) {
+            let controller = entity.getController();
+            let mesh = controller.getMesh();
+            Game.removeMeshToEntityController(mesh.id);
+            Game.removeEntityController(controller.getID());
+            if (controller instanceof CharacterController) {
+                Game.removeCharacterController(controller.getID());
+                Game.setCharacterController(newID, controller);
+            }
+            else if (controller instanceof DoorController) {
+                Game.removeDoorController(controller.getID());
+                Game.setDoorController(newID, controller);
+            }
+            else if (controller instanceof FurnitureController) {
+                Game.removeFurnitureController(controller.getID());
+                Game.setFurnitureController(newID, controller);
+                if (controller instanceof LightingController) {
+                    Game.removeLightingController(controller.getID());
+                    Game.setLightingController(newID, controller);
+                }
+            }
+            else if (controller instanceof ItemController) {
+                Game.removeItemController(controller.getID());
+                Game.setItemController(newID, controller);
+            }
+            controller.setID(newID);
+            Game.setEntityController(newID, controller);
+            Game.setMeshToEntityController(mesh, controller);
         }
-        _temp = Game.getEntityController(_currentID);
-        _temp.id = _newID;
-        Game.entityControllers[_newID] = _temp
-        delete Game.entityControllers[_currentID];
-        if (Game.hasCharacterController(_currentID)) {
-            Game.characterControllers[_newID] = _temp;
-            delete Game.characterControllers[_currentID];
+        entity.setEnabled(true);
+        entity.setLocked(false);
+        if (entity.hasController()) {
+            entity.getController().setEnabled(true);
+            entity.getController().setLocked(false);
         }
-        _temp = Game.getEntity(_currentID);
-        _temp.id = _newID;
-        Game.entities[_newID] = _temp;
-        delete Game.entities[_currentID];
-        if (Game.hasCharacterEntity(_currentID)) {
-            Game.characterEntities[_newID] = _temp;
-            delete Game.characterEntities[_currentID];
-        }
+        return 0;
     }
-    static getEntityController(_id) {
-        if (_id == undefined) {
-            return;
+    static getEntityController(id) {
+        if (Game.hasEntityController(id)) {
+            return Game.entityControllers[id];
         }
-        else if (_id instanceof EntityController) {
-            return _id;
-        }
-        else if (_id instanceof AbstractEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
-            return Game.entityControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id);
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
-    static hasEntityController(_id) {
-        return Game.getEntityController(_id) != undefined;
+    static hasEntityController(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.entityControllers.hasOwnProperty(id);
     }
-    /*static getNetworkedCharacterController(_id) {
-        if (this.networkedCharacterControllers.hasOwnProperty(_id)) {
-            return this.networkedCharacterControllers[_id];
+    /*static getNetworkedCharacterController(id) {
+        if (Game.hasNetworkedCharacterController(id)) {
+            return Game.networkedCharacterControllers[id];
         }
-        else if (_id instanceof CharacterController && this.networkedCharacterControllers.hasOwnProperty(_id.networkID)) {
-            return this.networkedCharacterControllers[_id.networkID];
-        }
-        else if (this.hasCharacterController(_id)) {
-            return this.networkedCharacterControllers[this.getCharacterController(_id).networkID];
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
-    static hasNetworkedCharacterController(_id) {
-        return this.networkedCharacterControllers.hasOwnProperty(_id);
+    static hasNetworkedCharacterController(id) {
+        return Game.networkedCharacterControllers.hasOwnProperty(id);
     }*/
-    static getFurnitureController(_id) {
-        if (_id == undefined) {
-            return;
+    static getFurnitureController(id) {
+        if (Game.hasFurnitureController(id)) {
+            return Game.furnitureControllers[id];
         }
-        else if (_id instanceof FurnitureController) {
-            return _id;
-        }
-        else if (_id instanceof FurnitureEntity || _id instanceof InstancedFurnitureEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.furnitureControllers.hasOwnProperty(_id)) {
-            return Game.furnitureControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id);
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
     static hasFurnitureController(_id) {
-        return Game.getFurnitureController(_id) != undefined;
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.furnitureControllers.hasOwnProperty(id);
     }
-    static getLightingController(_id) {
-        if (_id == undefined) {
-            return;
+    static getLightingController(id) {
+        if (Game.hasLightingController(id)) {
+            return Game.lightingControllers[id];
         }
-        else if (_id instanceof LightingController) {
-            return _id;
-        }
-        else if (_id instanceof LightingEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.lightingControllers.hasOwnProperty(_id)) {
-            return Game.lightingControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id);
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
-    static hasLightingController(_id) {
-        return Game.getLightingController(_id) != undefined;
+    static hasLightingController(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.lightingControllers.hasOwnProperty(id);
     }
-    static getDoorController(_id) {
-        if (_id == undefined) {
-            return;
+    static getDoorController(id) {
+        if (Game.hasDoorController(id)) {
+            return Game.doorControllers[id];
         }
-        else if (_id instanceof DoorController) {
-            return _id;
-        }
-        else if (_id instanceof DoorEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.doorControllers.hasOwnProperty(_id)) {
-            return Game.doorControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id)
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
-    static hasDoorController(_id) {
-        return Game.getDoorController(_id) != undefined;
+    static hasDoorController(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.doorControllers.hasOwnProperty(id);
     }
-    static getItemController(_id) {
-        if (_id == undefined) {
-            return;
+    static getItemController(id) {
+        if (Game.hasItemController(id)) {
+            return Game.itemControllers[id];
         }
-        else if (_id instanceof ItemController) {
-            return _id;
-        }
-        else if (_id instanceof InstancedItemEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.itemControllers.hasOwnProperty(_id)) {
-            return Game.itemControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id);
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
-    static hasItemController(_id) {
-        return Game.getItemController(_id) != undefined;
+    static hasItemController(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.itemControllers.hasOwnProperty(id);
     }
-    static getCharacterController(_id) {
-        if (_id == undefined) {
-            return;
+    static getCharacterController(id) {
+        if (Game.hasCharacterController(id)) {
+            return Game.characterControllers[id];
         }
-        else if (_id instanceof CharacterController) {
-            return _id;
-        }
-        else if (_id instanceof CharacterEntity) {
-            return _id.getController();
-        }
-        else if (typeof _id == "string" && Game.entityControllers.hasOwnProperty(_id)) {
-            return Game.entityControllers[_id];
-        }
-        else if (_id instanceof BABYLON.AbstractMesh) {
-            return Game.getMeshToEntityController(_id);
-        }
-        else {
-            return undefined;
-        }
+        return 2;
     }
     static hasCharacterController(_id) {
-        return Game.getCharacterController(_id) != undefined;
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.characterControllers.hasOwnProperty(id);
     }
     /**
      * Tries to return an Entity based on its ID
@@ -2573,19 +2589,10 @@ class Game {
      * @returns {(Entity|number)} An Entity or an integer status code
      */
     static getEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof Entity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.entities.hasOwnProperty(id)) {
+        if (Game.hasEntity(id)) {
             return Game.entities[id];
         }
-        else if (id.hasOwnProperty("entity") && id.entity instanceof Entity) {
-            return id.entity;
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not an Entity exists
@@ -2604,19 +2611,10 @@ class Game {
      * @returns {(InstancedEntity|number)} An InstancedEntity or an integer status code
      */
     static getInstancedEntity(id) {
-        if (id == undefined) {
-            return 2;
+        if (Game.hasInstancedEntity(id)) {
+            return Game.instancedEntities[id];
         }
-        else if (id instanceof InstancedEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.instancedEntities.hasOwnProperty(id)) {
-            return Game.entities[id];
-        }
-        else if (id.hasOwnProperty("entity") && id.entity instanceof InstancedEntity) {
-            return id.entity;
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not an InstancedEntity exists
@@ -2635,22 +2633,10 @@ class Game {
      * @returns {(ItemEntity|number)} An ItemEntity or an integer status code
      */
     static getItemEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof ItemEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.itemEntities.hasOwnProperty(id)) {
+        if (Game.hasItemEntity(id)) {
             return Game.itemEntities[id];
         }
-        else if (id instanceof InstancedItemEntity) {
-            return id.getEntity();
-        }
-        else if (id instanceof ItemController && id.getEntity() instanceof InstancedItemEntity) {
-            return id.getEntity().getEntity();
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not an ItemEntity exists
@@ -2669,25 +2655,10 @@ class Game {
      * @returns {(InstancedItemEntity|number)} An InstancedItemEntity or an integer status code
      */
     static getInstancedItemEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof InstancedItemEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.instancedItemEntities.hasOwnProperty(id)) {
+        if (Game.hasInstancedItemEntity(id)) {
             return Game.instancedItemEntities[id];
         }
-        else if (id instanceof ItemController && id.entity instanceof InstancedItemEntity) {
-            return id.entity;
-        }
-        else if (id instanceof BABYLON.AbstractMesh) {
-            let itemController = Game.getMeshToEntityController(id);
-            if (itemController instanceof ItemController) {
-                return itemController.getEntity();
-            }
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not an InstancedItemEntity exists
@@ -2706,19 +2677,10 @@ class Game {
      * @returns {(CharacterEntity|number)} An CharacterEntity or an integer status code
      */
     static getCharacterEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof CharacterEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.characterEntities.hasOwnProperty(id)) {
+        if (Game.hasCharacterEntity(id)) {
             return Game.characterEntities[id];
         }
-        else if (id instanceof CharacterController && id.getEntity() instanceof CharacterController) {
-            return id.getEntity().getEntity();
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not a CharacterEntity exists
@@ -2737,22 +2699,10 @@ class Game {
      * @returns {(FurnitureEntity|number)} An FurnitureEntity or an integer status code
      */
     static getFurnitureEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof FurnitureEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.furnitureEntities.hasOwnProperty(id)) {
+        if (Game.hasFurnitureEntity(id)) {
             return Game.furnitureEntities[id];
         }
-        else if (id instanceof InstancedFurnitureEntity) {
-            return id.getEntity();
-        }
-        else if (id instanceof FurnitureController && id.getEntity() instanceof InstancedFurnitureEntity) {
-            return id.getEntity().getEntity();
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not a FurnitureEntity exists
@@ -2771,25 +2721,10 @@ class Game {
      * @returns {(InstancedFurnitureEntity|number)} An InstancedFurnitureEntity or an integer status code
      */
     static getInstancedFurnitureEntity(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof InstancedFurnitureEntity) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.instancedFurnitureEntities.hasOwnProperty(id)) {
+        if (Game.hasInstancedFurnitureEntity(id)) {
             return Game.instancedFurnitureEntities[id];
         }
-        else if (id instanceof FurnitureController && id.entity instanceof InstancedFurnitureEntity) {
-            return id.entity;
-        }
-        else if (id instanceof BABYLON.AbstractMesh) {
-            let _controller = Game.getMeshToEntityController(id);
-            if (_controller instanceof EntityController) {
-                return _controller.getEntity();
-            }
-        }
-        return 1;
+        return 2;
     }
     /**
      * Whether or not an InstancedFurnitureEntity exists
@@ -2808,23 +2743,23 @@ class Game {
      * @returns {(Dialogue|number)} A Dialogue or an integer status code
      */
     static getDialogue(id) {
-        if (id == undefined) {
-            return 2;
-        }
-        else if (id instanceof Dialogue) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.dialogues.has(id)) {
+        if (Game.hasDialogue(id)) {
             return Game.dialogues.get(id);
         }
-        return 1;
+        return 2;
+    }
+    static hasDialogue(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.dialogues.has(id);
     }
     /**
      * Creates a character mesh, entity, and controller.
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} name Name
      * @param  {string} [description] Description
-     * @param  {string} [icon] Icon ID
+     * @param  {string} [iconID] Icon ID
      * @param  {number} age Age
      * @param  {SexEnum} sex SexEnum
      * @param  {SpeciesEnum} species SpeciesEnum
@@ -2836,31 +2771,31 @@ class Game {
      * @param  {BABYLON.Vector3} [scaling] Scale
      * @return {CharacterController} Character Controller
      */
-    static createCharacter(id, name = "", description = "", icon = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createCharacter(id, name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
         let characterEntity = null;
         if (!Game.hasCharacterEntity(id)) {
-            characterEntity = new CharacterEntity(id, name, description, icon, undefined, age, sex, species);
+            characterEntity = new CharacterEntity(id, name, description, iconID, undefined, age, sex, species);
             if (options instanceof Object) {
-                for (let index in options) {
-                    switch (index) {
+                for (let i in options) {
+                    switch (i) {
                         case "eye":
                         case "eyes": {
-                            characterEntity.setEyeType(options[index]);
+                            characterEntity.setEyeType(options[i]);
                             break;
                         }
                         case "eyeColor":
                         case "eyesColor":
                         case "eyeColour":
                         case "eyesColour": {
-                            characterEntity.setEyeColour(options[index]);
+                            characterEntity.setEyeColour(options[i]);
                             break;
                         }
                         case "isEssential": {
-                            characterEntity.setEssential(options[index]);
+                            characterEntity.setEssential(options[i]);
                             break;
                         }
                     }
@@ -2970,20 +2905,20 @@ class Game {
      * @param  {String} [id] Unique ID, auto-generated if none given
      * @param  {String} name Name
      * @param  {Object} [to] Future movement between cells
-     * @param  {String} mesh Mesh ID
-     * @param  {String} texture Texture ID
+     * @param  {String} meshID Mesh ID
+     * @param  {String} textureID Texture ID
      * @param  {Object} [options] Physics options, if they're enabled
      * @param  {BABYLON.Vector3} position Position
      * @param  {BABYLON.Vector3} [rotation] Rotation
      * @param  {BABYLON.Vector3} [scaling] Scaling
      * @return {(EntityController|number)} A DoorController or an integer status code
      */
-    static createDoor(id, name = "Door", to = undefined, mesh = "door", texture = "plainDoor", options = {locked:false, key:null, opensInward:false, open:false}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createDoor(id, name = "Door", to = undefined, meshID = "door", textureID = "plainDoor", options = {locked:false, key:null, opensInward:false, open:false}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        if (!Game.hasMesh(mesh)) {
+        if (!Game.hasMesh(meshID)) {
             return false;
         }
         if (!(position instanceof BABYLON.Vector3)) {
@@ -3008,9 +2943,9 @@ class Game {
         if (scaling.equals(BABYLON.Vector3.Zero())) {
             scaling = BABYLON.Vector3.One();
         }
-        if (!(Game.hasLoadedMesh(mesh))) {
-            Game.loadMesh(mesh);
-            Game.addDoorsToCreate(id, name, to, mesh, texture, options, position, rotation, scaling);
+        if (!(Game.hasLoadedMesh(meshID))) {
+            Game.loadMesh(meshID);
+            Game.addDoorsToCreate(id, name, to, meshID, textureID, options, position, rotation, scaling);
             return true;
         }
         let locked = false;
@@ -3032,10 +2967,10 @@ class Game {
             }
         }
         var doorEntity = new DoorEntity(id, name, undefined, undefined, locked, key, opensInward, open);
-        var radius = Game.getMesh(mesh).getBoundingInfo().boundingBox.extendSize.x * scaling.x;
+        var radius = Game.getMesh(meshID).getBoundingInfo().boundingBox.extendSize.x * scaling.x;
         var xPosition = radius * (Math.cos(rotation.y * Math.PI / 180) | 0);
         var yPosition = radius * (Math.sin(rotation.y * Math.PI / 180) | 0);
-        var loadedMesh = Game.createMesh(id, mesh, texture, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, true);
+        var loadedMesh = Game.createMesh(id, meshID, textureID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, true);
         var doorController = new DoorController(id, loadedMesh, doorEntity);
         doorEntity.setController(doorController);
         doorEntity.setMeshID(loadedMesh);
@@ -3066,22 +3001,22 @@ class Game {
      * @param {string} [id] Unique ID
      * @param {string} name Name
      * @param {string} [description] Description
-     * @param {string} [icon] Icon ID
-     * @param {string} mesh Mesh ID
-     * @param {string} texture Texture ID
+     * @param {string} [iconID] Icon ID
+     * @param {string} meshID Mesh ID
+     * @param {string} textureID Texture ID
      * @param {FurnitureEnum} furnitureType FurnitureEnum
      * @param {number} weight Weight in kilograms
      * @param {number} price Price, non-decimal
      */
-    static createFurnitureEntity(id, name = "", description = "", icon = "", mesh = "missingMesh", texture = "missingMaterial", furnitureType = FurnitureEnum.NONE, weight = 1, price = 1) {
+    static createFurnitureEntity(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", furnitureType = FurnitureEnum.NONE, weight = 1, price = 1) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let furnitureEntity = new FurnitureEntity(id, name, description, icon, furnitureType);
+        let furnitureEntity = new FurnitureEntity(id, name, description, iconID, furnitureType);
         if (furnitureEntity instanceof FurnitureEntity) {
-            furnitureEntity.setMeshID(mesh);
-            furnitureEntity.setTextureID(texture);
+            furnitureEntity.setMeshID(meshID);
+            furnitureEntity.setTextureID(textureID);
             furnitureEntity.setPrice(price);
             furnitureEntity.setWeight(weight);
             return furnitureEntity;
@@ -3261,16 +3196,16 @@ class Game {
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} [description] Description
-     * @param {string} [icon] Icon ID
-     * @param {string} mesh Mesh ID
-     * @param {string} texture Texture ID
+     * @param {string} [iconID] Icon ID
+     * @param {string} meshID Mesh ID
+     * @param {string} textureID Texture ID
      * @param {ItemEnum} itemType ItemEnum
      * @param {number} [subType] Dependant on itemType
      * @param {number} [weight] Weight in kilograms
      * @param {number} [price] Price, non-decimal
      * @returns {(ItemEntity|number)} An ItemEntity or an integer status code
      */
-    static createItemEntity(id, name = "", description = "", icon = "", mesh = "missingMesh", texture = "missingMaterial", itemType = ItemEnum.GENERAL, subType = 0, weight = 1, price = 0) {
+    static createItemEntity(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", itemType = ItemEnum.GENERAL, subType = 0, weight = 1, price = 0) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3278,19 +3213,19 @@ class Game {
         let itemEntity = null;
         switch (itemType) {
             case ItemEnum.GENERAL : {
-                itemEntity = new ItemEntity(id, name, description, icon);
+                itemEntity = new ItemEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.APPAREL: {
-                itemEntity = new ClothingEntity(id, name, description, icon, subType);
+                itemEntity = new ClothingEntity(id, name, description, iconID, subType);
                 break;
             }
             case ItemEnum.WEAPON : {
-                itemEntity = new WeaponEntity(id, name, description, icon, subType);
+                itemEntity = new WeaponEntity(id, name, description, iconID, subType);
                 break;
             }
             case ItemEnum.KEY : {
-                itemEntity = new KeyEntity(id, name, description, icon);
+                itemEntity = new KeyEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.BOOK : {
@@ -3300,12 +3235,12 @@ class Game {
                 //_entity = new ConsumableEntity(_id, _name, _description, _icon, _subType); // TODO: this :v
             }
             default: {
-                itemEntity = new ItemEntity(id, name, description, icon);
+                itemEntity = new ItemEntity(id, name, description, iconID);
             }
         }
         if (itemEntity instanceof ItemEntity) {
-            itemEntity.setMeshID(mesh);
-            itemEntity.setTextureID(texture);
+            itemEntity.setMeshID(meshID);
+            itemEntity.setTextureID(textureID);
             return itemEntity;
         }
         return 2;
@@ -3401,20 +3336,19 @@ class Game {
     }
     /**
      * Removes an InstancedItemEntity's ItemController, and its BABYLON.InstancedMesh
-     * @param {(ItemController|string)} itemController An ItemController, or its string ID
+     * @param {(ItemController|string)} instancedItemEntity An ItemController, or its string ID
      * @returns {number} Integer status code
      */
-    static removeItemInSpace(itemController) {
-        if (!(itemController instanceof ItemController)) {
-            if (!Game.hasItemController(itemController)) {
+    static removeItemInSpace(instancedItemEntity) {
+        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
+            if (!Game.hasInstancedItem(instancedItemEntity)) {
                 return 2;
             }
-            itemController = Game.getItemController(itemController);
+            instancedItemEntity = Game.getInstancedItemEntity(instancedItemEntity);
         }
-        let mesh = itemController.getMesh();
-        itemController.dispose();
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
+        if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) {
+            Game.removeMesh(instancedItemEntity.getController().getMesh());
+            instancedItemEntity.getController().dispose();
         }
         return 0;
     }
@@ -3423,18 +3357,18 @@ class Game {
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} [description] Description
-     * @param {string} [icon] Icon ID
-     * @param {string} mesh Mesh ID
-     * @param {string} texture Texture ID
+     * @param {string} [iconID] Icon ID
+     * @param {string} meshID Mesh ID
+     * @param {string} textureID Texture ID
      * @param {ApparelSlotEnum} equipmentSlot ApparelSlotEnum
      * @returns {(Cosmetic|number)} A Cosmetic or an integer status code
      */
-    static createCosmetic(id, name = "", description = "", icon = "", mesh = "missingMesh", texture = "missingMaterial", equipmentSlot = ApparelSlotEnum.HEAD) {
+    static createCosmetic(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", equipmentSlot = ApparelSlotEnum.HEAD) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let cosmetic = new Cosmetic(id, name, description, icon, mesh, texture, equipmentSlot);
+        let cosmetic = new Cosmetic(id, name, description, iconID, meshID, textureID, equipmentSlot);
         if (cosmetic instanceof Cosmetic) {
             return cosmetic;
         }
@@ -3759,7 +3693,7 @@ class Game {
         if (_action instanceof ActionData) {
             _action = _action.action;
         }
-        if (Game.debugMode) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action.action})`);
+        if (Game.debugMode) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action})`);
         switch (_action) {
             case ActionEnum.USE: {
                 if (_entity instanceof LightingEntity) {
@@ -3820,8 +3754,9 @@ class Game {
         }
         if (_subEntity.addItem(_instancedItemEntity) == 0) {
             Game.removeItemInSpace(_instancedItemEntity);
+            return 0;
         }
-        return 0;
+        return 1;
     }
     static actionAttackFunction(_entity, _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity)) {
@@ -3865,12 +3800,9 @@ class Game {
             if (_subEntity == Game.player) {
                 Game.gui.updateInventoryMenuWith(_subEntity);
             }
-            else if (_entity == Game.player) {
-                Game.gui.updateInventoryMenuWith(_entity);
-            }
             if (_instancedItemEntity.hasController() && _instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
-                _instancedItemEntity.setParent(null);
-                _instancedItemEntity.position = _subEntity.getController().getMesh().position.clone.add(
+                _instancedItemEntity.getController().setParent(null);
+                _instancedItemEntity.getController().getMesh().position = _subEntity.getController().getMesh().position.clone().add(
                     new BABYLON.Vector3(0, Game.getMesh(_instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
                 );
             }
@@ -4003,7 +3935,7 @@ class Game {
             return 2;
         }
         if (_entity.getController() instanceof DoorController) {
-            if (_entity.getLocked()) {
+            if (_entity.isDoorLocked()) {
                 if (!_subEntity.hasItem(_entity.getKey())) {
                     return 1;
                 }

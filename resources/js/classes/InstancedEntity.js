@@ -12,15 +12,17 @@ class InstancedEntity extends AbstractEntity {
      */
     constructor(_id, _entity, _name = undefined, _description = undefined, _icon = undefined) {
         super(_id, _name, _description);
-        this.entity = Game.getEntity(_entity);
-        if (!(this.entity instanceof Entity)) {
-            return undefined;
+        if (!(_entity instanceof Entity)) {
+            _entity = Game.getEntity(_entity);
+            if (!(_entity instanceof Entity)) {
+                return undefined;
+            }
         }
-
+        this.entity = _entity;
         this.setName(_name || this.entity.getName());
         this.setDescription(_description || this.entity.getDescription());
         this.setIcon(_icon || this.entity.getIcon());
-        this.entityType = _entity.entityType;
+        this.entityType = this.entity.entityType;
         this.health = this.entity.health.clone();
 
         this._useOwnAvailableActions = false;
