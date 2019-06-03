@@ -3,8 +3,8 @@
  * It's great :v you should check it out.
  */
 class CharacterController extends EntityController {
-    constructor(_id, _mesh, _entity) {
-        super(_id, _mesh, _entity);
+    constructor(id, mesh, entity) {
+        super(id, mesh, entity);
         if (!this.hasMesh()) {
             return;
         }
@@ -14,7 +14,7 @@ class CharacterController extends EntityController {
         this.targetedByControllers = new Set();
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
-        this.groundRay = new BABYLON.Ray(_mesh.position, _mesh.position.add(BABYLON.Vector3.Down()), 0.01);
+        this.groundRay = new BABYLON.Ray(mesh.position, mesh.position.add(BABYLON.Vector3.Down()), 0.01);
         this.gravityScale = 1.0;
         this._gravity = -Game.scene.gravity.y * this.gravityScale;
         this.minSlopeLimit = 30;
@@ -1162,6 +1162,8 @@ class CharacterController extends EntityController {
         if (this == Game.player.getController()) {
             return false;
         }
+        this.setLocked(true);
+        this.setEnabled(false);
         this.detachFromAllBones();
         super.dispose();
         for (var _var in this) {

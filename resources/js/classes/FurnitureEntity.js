@@ -1,27 +1,28 @@
 class FurnitureEntity extends EntityWithStorage {
     /**
      * Creats Furniture
-     * @param  {String}  _id            Unique ID
-     * @param  {String}  _name          Name
-     * @param  {String}  _description   Description
-     * @param  {String}  _icon         Image ID
-     * @param  {Number}  _type          furnitureType
-     * @param  {Number}  _seatingSpace  Seating Space
-     * @param  {Number}  _storageSpace  Storage Space
+     * @param  {string}  id            Unique ID
+     * @param  {string}  name          Name
+     * @param  {string}  description   Description
+     * @param  {string}  iconID         Image ID
+     * @param  {FurnitureEnum}  furnitureType          furnitureType
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _type = FurnitureEnum.CHAIR) {
-        super(_id, _name, _description, _icon);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, furnitureType = FurnitureEnum.CHAIR) {
+        super(id, name, description, iconID);
 
         this.entityType = EntityEnum.FURNITURE;
-        this.furnitureType = 0;
-        this.setFurnitureType(_type);
+        this.furnitureType = FurnitureEnum.NONE;
+
+        this.setFurnitureType(furnitureType);
 
         Game.setFurnitureEntity(this.id, this);
     }
 
-    setFurnitureType(_type) {
-        _type = Tools.filterNumber(_type);
-        switch(_type) {
+    setFurnitureType(furnitureType) {
+        if (!FurnitureEnum.properties.hasOwnProperty(furnitureType)) {
+            furnitureType = FurnitureEnum.NONE;
+        }
+        switch(furnitureType) {
             case FurnitureEnum.BED: {
                 this.addAvailableAction(ActionEnum.SLEEP);
                 this.addAvailableAction(ActionEnum.LAY);
@@ -159,36 +160,33 @@ class FurnitureEntity extends EntityWithStorage {
                 break;
             }
             default : {
-                _type = FurnitureEnum.NONE;
+                furnitureType = FurnitureEnum.NONE;
             }
         }
-        this.type = _type;
+        this.type = furnitureType;
         return this;
     }
     getFurnitureType() {
         return this.type;
     }
 
-    clone(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new FurnitureEntity(_id, this.name, this.description, this.icon, this.furnitureType);
+        return new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
     }
-    createInstance(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    createInstance(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedFurnitureEntity(_id, this);
+        return new InstancedFurnitureEntity(id, this);
     }
-    dispose() {
+    dispose() { // TODO: what about the instances :v
         Game.removeFurnitureEntity(this.id);
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
     }
 }

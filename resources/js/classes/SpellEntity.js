@@ -1,47 +1,54 @@
-class Spell extends Entity {
+class Spell extends AbstractEntity {
     /**
      * Creates a Spell
-     * @param  {String} _id          Unique ID
-     * @param  {String} _name        Name
-     * @param  {String} _description Description
-     * @param  {String} _icon       Image path of base64
-     * @param  {String} _school      PSDE.kSpellSchools
-     * @param  {Number} _manaCost    Cost of Spell in Mana
-     * @param  {Number} _healthCost  Cost of Spell in Health
-     * @param  {Number} _staminaCost Cost of Spell in Stamina
+     * @param  {string} id          Unique ID
+     * @param  {string} name        Name
+     * @param  {string} description Description
+     * @param  {string} iconID       Image path of base64
+     * @param  {SpellTypeEnum} spellType      Spell type
+     * @param  {number} manaCost    Cost of Spell in Mana
+     * @param  {number} healthCost  Cost of Spell in Health
+     * @param  {number} staminaCost Cost of Spell in Stamina
      */
-    constructor(_id, _name = "", _description = undefined, _icon = undefined, _school = SpellSchoolEnum.UNIVERSAL, _manaCost = 0, _healthCost = 0, _staminaCost = 0) {
-        super(_id, _name, _description, _icon);
+    constructor(id, name = "", description = undefined, iconID = undefined, spellType = SpellTypeEnum.UNIVERSAL, manaCost = 0, healthCost = 0, staminaCost = 0) {
+        super(id, name, description, iconID);
         this.entityType = EntityEnum.SPELL;
-
-        if (SpellSchoolEnum.has(_school)) {
-            this.school = _school;
-        }
-        else {
-            this.school = SpellSchoolEnum.UNIVERSAL;
-        }
-
-        if (isNaN(_manaCost)) {
+        this.spellType = SpellTypeEnum.NONE;
+        if (isNaN(manaCost)) {
             this.manaCost = 0;
         }
         else {
-            this.manaCost = Number.parseInt(_manaCost);
+            this.manaCost = Number.parseInt(manaCost);
         }
 
-        if (isNaN(_healthCost)) {
+        if (isNaN(healthCost)) {
             this.healthCost = 0;
         }
         else {
-            this.healthCost = Number.parseInt(_healthCost);
+            this.healthCost = Number.parseInt(healthCost);
         }
 
-        if (isNaN(_staminaCost)) {
+        if (isNaN(staminaCost)) {
             this.staminaCost = 0;
         }
         else {
-            this.staminaCost = Number.parseInt(_staminaCost);
+            this.staminaCost = Number.parseInt(staminaCost);
         }
 
-        Game.spellEntities[this.id] = this;
+        this.setSpellType(spellType);
+
+        Game.setSpellEntity(this.id, this);
+    }
+    setSpellType(spellType) {
+        if (!SpellTypeEnum.properties.hasOwnProperty(spellType)) {
+            spellType = SpellTypeEnum.NONE;
+        }
+        this.spellType = spellType;
+    }
+    getSpellType() {
+        return this.spellType;
+    }
+    dispose() {
+        Game.removeSpellEntity(this.id);
     }
 }

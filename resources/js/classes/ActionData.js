@@ -1,41 +1,44 @@
 class ActionData {
-	constructor(_action, _function = null, _runOnce = false, _overrideParent = true, _runBeforeParent = true) {
+	constructor(action, _function = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
 		this.action = null;
 		this._function = null;
-		this.runOnce = _runOnce == true;
-		this.setAction(_action);
+		this.runOnce = runOnce == true;
+		this.setAction(action);
 
 		/**
 		 * Used only if applied to an InstancedEntity
 		 * @type {Boolean} Whether or not to override parent ActionData
 		 */
-		this.overrideParent = _overrideParent == true;
+		this.overrideParent = overrideParent == true;
 		/**
 		 * Used only if applied to an InstancedEntity
 		 * @type {Boolean} Whether or not to run before parent ActionData
 		 */
-		this.runBeforeParent = _runBeforeParent == true;
+		this.runBeforeParent = runBeforeParent == true;
 	}
-	setAction(_action) {
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-        	_action = ActionEnum.properties[_action].value;
+	setAction(action) {
+        if (ActionEnum.properties.hasOwnProperty(action)) {}
+        else if (ActionEnum.hasOwnProperty(action)) {
+        	action = ActionEnum[action];
         }
         else {
-        	_action = 0;
+        	action = ActionEnum.NONE;
         }
-        this.action = _action;
+		this.action = action;
+		return 0;
 	}
 	getAction() {
 		return this.action;
 	}
 	hasFunction() {
-		return false;
+		return (typeof this._function == "function");
 	}
 	dispose() {
-        for (var _var in this) {
-            this[_var] = null;
-        }
+		this.action = ActionEnum.NONE;
+		this._function = null;
+		this.runOnce = true;
+		this.overrideParent = false;
+		this.runBeforeParent = false;
         return undefined;
 	}
 }

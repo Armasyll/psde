@@ -1,12 +1,12 @@
 class AbstractEntity {
     /**
      * Creates an AbstractEntity
-     * @param  {string} [id] Unique ID, auto-generated if none given
+     * @param  {string} id Unique ID, auto-generated if none given
      * @param  {string} name Name
      * @param  {string} [description] Description
-     * @param  {string} [icon] Icon ID
+     * @param  {string} [iconID] Icon ID
      */
-    constructor(id = "", name = "", description = "", icon = "genericItem") {
+    constructor(id = "", name = "", description = "", iconID = "genericItem") {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -18,37 +18,16 @@ class AbstractEntity {
         this.description = null;
         this.setDescription(description);
         this.icon = null;
-        this.setIcon(icon);
+        this.setIcon(iconID);
         this.controller = null;
-
         this.owner = null;
-        
         this.target = null;
-
-        /**
-         * Actions available to this Entity
-         * @type {Object} <ActionEnum:ActionData>
-         */
         this.availableActions = {};
-        /**
-         * Hidden actions available to this Entity
-         * @type {Object} <ActionEnum:ActionData>
-         */
         this.hiddenAvailableActions = {};
-        /**
-         * Special Properties
-         * @type {Set} <SpecialPropertyEnum>
-         */
         this.specialProperties = new Set();
-        /**
-         * Default Action
-         * @type {ActionData} <ActionEnum>
-         */
         this.defaultAction = null;
-
         this._isEnabled = true;
         this._isLocked = false;
-
         this._isEssential = false;
     }
 
@@ -64,26 +43,28 @@ class AbstractEntity {
         }
         return this.id;
     }
-    setName(_name) {
-        this.name = Tools.filterName(_name);
+    setName(name) {
+        this.name = Tools.filterName(name);
+        return 0;
     }
     getName() {
         return this.name;
     }
-    setDescription(_description) {
-        this.description = _description;
+    setDescription(description) {
+        this.description = Tools.filterName(description);
+        return 0;
     }
     getDescription() {
         return this.description;
     }
-    setIcon(_icon) {
-        if (Game.hasIcon(_icon)) {
-            this.icon = _icon;
+    setIcon(iconID) {
+        if (Game.hasIcon(iconID)) {
+            this.icon = iconID;
         }
         else {
             this.icon = "missingIcon";
         }
-        return this;
+        return 0;
     }
     getIcon() {
         return this.icon;
@@ -94,7 +75,7 @@ class AbstractEntity {
     }
     setEnabled(isEnabled = true) {
         this._isEnabled = (isEnabled == true);
-        return this;
+        return 0;
     }
 
     isLocked() {
@@ -102,12 +83,15 @@ class AbstractEntity {
     }
     setLocked(isLocked = true) {
         this._isLocked = (isLocked == true);
-        return this;
+        return 0;
     }
 
     setController(entityController) {
-        this.controller = entityController;
-        return this;
+        if (entityController instanceof EntityController) {
+            this.controller = entityController;
+            return 0;
+        }
+        return 2;
     }
     getController() {
         return this.controller;
@@ -117,7 +101,7 @@ class AbstractEntity {
     }
     removeController() {
         this.controller = undefined;
-        return this;
+        return 0;
     }
 
     /**
@@ -147,7 +131,7 @@ class AbstractEntity {
     }
     removeOwner() {
         this.owner = null;
-        return this;
+        return 0;
     }
     clearOwner() {
         return this.removeOwner();
@@ -176,7 +160,7 @@ class AbstractEntity {
     }
     removeTarget() {
         this.target = null;
-        return this;
+        return 0;
     }
     clearTarget() {
         return this.removeTarget();
@@ -196,14 +180,12 @@ class AbstractEntity {
     }
 
     dispose() {
-        this._isEnabled = false;
+        this.setLocked(true);
+        this.setEnabled(false);
         for (let action in this.availableActions) {
             if (this.availableActions[action] instanceof ActionData) {
                 this.availableActions[action].dispose();
             }
-        }
-        for (let param in this) {
-            this[param] = null;
         }
         return undefined;
     }

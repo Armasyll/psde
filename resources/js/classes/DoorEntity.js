@@ -1,6 +1,6 @@
 class DoorEntity extends Entity {
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "plainDoorIcon", _locked = false, _key = undefined, _opensInward = false, _open = false) {
-        super(_id, _name, _description, _icon);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = "plainDoorIcon", locked = false, key = undefined, opensInward = false, open = false) {
+        super(id, name, description, iconID);
         this.entityType = EntityEnum.DOOR;
         this._isDoorLocked = false;
         this.key = null;
@@ -11,10 +11,10 @@ class DoorEntity extends Entity {
         this.addAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
         this.setDefaultAction(ActionEnum.OPEN);
-        this.setDoorLocked(_locked);
-        this.setKey(_key);
-        this.setOpensInward(_opensInward);
-        this.setOpen(_open);
+        this.setDoorLocked(locked);
+        this.setKey(key);
+        this.setOpensInward(opensInward);
+        this.setOpen(open);
 
         Game.setDoorEntity(this.id, this);
 	}
@@ -44,8 +44,8 @@ class DoorEntity extends Entity {
 	getKey() {
 		return this.key;
 	}
-    setOpen(_bool = true) {
-        this.open = _bool == true;
+    setOpen(open = true) {
+        this.open = open == true;
         if (this.open) {
             if (this.hasController()) {
                 this.controller.doOpen();
@@ -74,8 +74,8 @@ class DoorEntity extends Entity {
     getOpen() {
         return this.open;
     }
-    setOpensInward(_bool = true) {
-        this.opensInward = _bool == true;
+    setOpensInward(opensInward = true) {
+        this.opensInward = opensInward == true;
         if (this.opensInward) {
             if (this.hasController()) {
                 this.controller.setOpensInward();
@@ -100,9 +100,6 @@ class DoorEntity extends Entity {
 	dispose() {
         Game.removeDoorEntity(this.id);
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
 	}
 }

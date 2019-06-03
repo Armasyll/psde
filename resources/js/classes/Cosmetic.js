@@ -1,5 +1,5 @@
 class Cosmetic {
-    constructor(id, name = "", description = "", icon = "genericItemIcon", mesh = "", material = undefined, equipmentSlot = ApparelSlotEnum.HEAD) {
+    constructor(id, name = "", description = "", iconID = "genericItemIcon", meshID = "", materialID = undefined, equipmentSlot = ApparelSlotEnum.HEAD) {
         id = Tools.filterID(id);
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
@@ -14,9 +14,9 @@ class Cosmetic {
 
         this.setName(name);
         this.setDescription(description);
-        this.setIcon(icon);
-        this.setMeshID(mesh);
-        this.setMaterialID(material);
+        this.setIcon(iconID);
+        this.setMeshID(meshID);
+        this.setMaterialID(materialID);
         this.setApparelSlot(equipmentSlot);
 
         Game.setCosmetic(this);

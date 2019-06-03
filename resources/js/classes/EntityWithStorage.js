@@ -1,6 +1,6 @@
 class EntityWithStorage extends Entity {
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined) {
-        super(_id, _name, _description, _icon);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined) {
+        super(id, name, description, iconID);
         /*
         Map of integers, related to item slots, and InstancedItemEntities
          */
@@ -64,22 +64,22 @@ class EntityWithStorage extends Entity {
     }
     /**
      * Adds the InstancedItemEntity to this entity's Item array
-     * @param  {InstancedItemEntity} any       InstancedItemEntity, or ItemEntity, to be added
-     * @return {this}
+     * @param  {any} any       InstancedItemEntity, or ItemEntity, to be added
+     * @return {number}
      */
     addItem(any) {
         if (any instanceof InstancedEntity) {
             return this.addItemToSlot(any, this.getAvailableStorageSlot());
         }
         else if (any instanceof Entity) {
-            return this.addItemToSlot(instancedItem.createInstance(), this.getAvailableStorageSlot());
+            return this.addItemToSlot(any.createInstance(), this.getAvailableStorageSlot());
         }
         else if (typeof any == "string") {
             if (Game.hasInstancedEntity(any)) {
-                return this.addItemToSlot(Game.getInstancedEntity(instancedItem), this.getAvailableStorageSlot());
+                return this.addItemToSlot(Game.getInstancedEntity(any), this.getAvailableStorageSlot());
             }
             else if (Game.hasEntity(any)) {
-                return this.addItemToSlot(Game.getEntity(instancedItem).createInstance(), this.getAvailableStorageSlot());
+                return this.addItemToSlot(Game.getEntity(any).createInstance(), this.getAvailableStorageSlot());
             }
         }
         if (Game.debugMode) console.log(`Failed to add item ${any} to ${this.id}`);

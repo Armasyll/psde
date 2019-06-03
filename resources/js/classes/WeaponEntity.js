@@ -1,14 +1,14 @@
 class WeaponEntity extends EquipmentEntity {
     /**
      * Creats Weapon
-     * @param  {String}  _id          Unique ID
-     * @param  {String}  _name        Name
-     * @param  {String}  _description Description
-     * @param  {String}  _icon       Image ID
-     * @param  {String}  _type        weaponType
+     * @param  {string}  id          Unique ID
+     * @param  {string}  name        Name
+     * @param  {string}  description Description
+     * @param  {string}  iconID       Image ID
+     * @param  {WeaponEnum}  weaponType        weaponType
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _type = WeaponEnum.CLUB) {
-        super(_id, _name, _description, _icon);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, weaponType = WeaponEnum.CLUB) {
+        super(id, name, description, iconID);
         this.itemType = ItemEnum.WEAPON;
 
         this.equipmentSlot = ApparelSlotEnum.HANDS;
@@ -23,7 +23,7 @@ class WeaponEntity extends EquipmentEntity {
         this.versatileRollCount = 1;
         this.versatileRoll = 0;
 
-        this.setWeaponType(_type);
+        this.setWeaponType(weaponType);
 
         Game.setWeaponEntity(this.id, this);
     }
@@ -329,56 +329,55 @@ class WeaponEntity extends EquipmentEntity {
             }
         }
     }
-    setThrownRange(_min = 0, _max = 0) {
-        this.thrownRange[0] = _min;
-        this.thrownRange[1] = _max;
+    setThrownRange(min = 0, max = 0) {
+        this.thrownRange[0] = min;
+        this.thrownRange[1] = max;
         return this;
     }
     getAmmunitionRange() {
         return this.thrownRange;
     }
-    setAmmunitionRange(_min = 0, _max = 0) {
-        this.ammunitionRange[0] = _min;
-        this.ammunitionRange[1] = _max;
+    setAmmunitionRange(min = 0, max = 0) {
+        this.ammunitionRange[0] = min;
+        this.ammunitionRange[1] = max;
         return this;
     }
     getAmmunitionRange() {
         return this.ammunitionRange;
     }
 
-    setWeaponType(_type) {
-        if (typeof _type == "string") {
-            _type = _type.toUpperCase();
-            if (!WeaponEnum.hasOwnProperty(_type)) {
-                _type = WeaponEnum.CLUB;
+    setWeaponType(weaponType) {
+        if (typeof weaponType == "string") {
+            weaponType = weaponType.toUpperCase();
+            if (!WeaponEnum.hasOwnProperty(weaponType)) {
+                weaponType = WeaponEnum.CLUB;
             }
             else {
-                _type = WeaponEnum[_type];
+                weaponType = WeaponEnum[weaponType];
             }
         }
-        else if (!WeaponEnum.properties.hasOwnProperty(_type)) {
-            _type = WeaponEnum.CLUB; // Everything can be a club :v
+        else if (!WeaponEnum.properties.hasOwnProperty(weaponType)) {
+            weaponType = WeaponEnum.CLUB; // Everything can be a club :v
         }
-        this.weaponType = _type;
+        this.weaponType = weaponType;
         this._generateProperties();
     }
     getWeaponType() {
         return this.weaponType;
     }
-    addWeaponProperty(_int) {
-        if (typeof _int == "string") {
-            _int = _int.toUpperCase();
-            if (!WeaponPropertiesEnum.hasOwnProperty(_int)) {
-                return this;
-            }
-            else {
-                _int = WeaponPropertiesEnum[_int];
-            }
+    addWeaponProperty(weaponProperty) {
+        if (!WeaponPropertiesEnum.properties.hasOwnProperty(weaponProperty)) {
+            return 2;
         }
-        else if (!WeaponPropertiesEnum.properties.hasOwnProperty(_int)) {
-            return this;
+        this.weaponProperties.add(weaponProperty);
+        return 0;
+    }
+    addWeaponProperty(weaponProperty) {
+        if (!WeaponPropertiesEnum.properties.hasOwnProperty(weaponProperty)) {
+            return 2;
         }
-        this.weaponProperties.add(_int);
+        this.weaponProperties.remove(weaponProperty);
+        return 0;
     }
     getWeaponProperties() {
         return Array.from(this.weaponProperties);
@@ -386,45 +385,45 @@ class WeaponEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {ClothingEntity}     new WeaponEntity
      */
-    clone(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        var _itemEntity = new WeaponEntity(_id, this.name, this.description, this.icon, this.equipmentSlot);
+        var weaponEntity = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
-        _itemEntity.availableActions = Object.assign({}, this.availableActions);
-        _itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        _itemEntity.specialProperties = new Set(this.specialProperties);
-        _itemEntity.defaultAction = this.defaultAction;
+        weaponEntity.availableActions = Object.assign({}, this.availableActions);
+        weaponEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        weaponEntity.specialProperties = new Set(this.specialProperties);
+        weaponEntity.defaultAction = this.defaultAction;
         // variables from Entity
-        _itemEntity.weight.copyFrom(this.weight);
-        _itemEntity.price.copyFrom(this.price);
-        _itemEntity.health.copyFrom(this.health);
+        weaponEntity.weight.copyFrom(this.weight);
+        weaponEntity.price.copyFrom(this.price);
+        weaponEntity.health.copyFrom(this.health);
         // variables from ItemEntity
-        _itemType.setItemType(this.itemType);
+        weaponEntity.setItemType(this.itemType);
         // variables from EquipmentEntity
-        _itemType.setEquipmentSlot(this.equipmentSlot);
-        return _itemEntity;
+        weaponEntity.setEquipmentSlot(this.equipmentSlot);
+        return weaponEntity;
     }
     /**
      * Overrides EquipmentEntity.createInstance
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
-    createInstance(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    createInstance(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedWeaponEntity(_id, this);
+        return new InstancedWeaponEntity(id, this);
     }
-    dispose() {
+    dispose() { // TODO: what about the instances :v
+        this.weaponProperties.clear();
         Game.removeWeaponEntity(this.id);
-        super.dispose();
         for (var _var in this) {
             this[_var] = null;
         }

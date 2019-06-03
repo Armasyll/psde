@@ -1130,7 +1130,7 @@ CharacterClassEnum = {
         }
     }
 };
-SpellSchoolEnum = {
+SpellTypeEnum = {
     NONE: 0,
     ABJURATION: 1,
     CONJURATION: 2,

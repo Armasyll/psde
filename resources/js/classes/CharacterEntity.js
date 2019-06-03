@@ -17,7 +17,7 @@ class CharacterEntity extends EntityWithStorage {
         this.surname = "";
         this.nickname = "";
         this.characterClass = CharacterClassEnum.CLASSLESS;
-        this.age = new BoundedNumber(17, 0, Number.MAX_SAFE_INTEGER);
+        this.age = 18;
         this.sex = SexEnum.MALE;
         this.gender = SexEnum.MALE;
         this.currentActions = {};
@@ -662,19 +662,15 @@ class CharacterEntity extends EntityWithStorage {
         return 1;
     }
 
-    setAge(_int) {
-        this.age.setValue(_int);
-        if (this.age.getValue() >= 18) {
-        }
-        else {
-        }
-        return this;
+    setAge(age) {
+        this.age = Game.Tools.filterInt(age);
+        return 0;
     }
-    addAge(_int) {
-        return this.age.inc(_int);
+    addAge(int) {
+        return this.age += Game.Tools.filterInt(int);
     }
     getAge() {
-        return this.age.getValue();
+        return this.age;
     }
 
     setHunger(_int) {
@@ -1536,25 +1532,25 @@ class CharacterEntity extends EntityWithStorage {
             this.setEyeType(EyeEnum.CIRCLE);
             this.setPelt(PeltEnum.FUR);
         }
-        if (this.age.getValue() > 19) {
+        if (this.age > 19) {
             this.height = this._baseHeight;
         }
         else {
             let _addition = 0;
-            if (this.age.getValue() > 17) {
+            if (this.age > 17) {
                 _addition = .45;
             }
-            else if (this.age.getValue() > 15) {
+            else if (this.age > 15) {
                 _addition = .35;
             }
-            else if (this.age.getValue() > 13) {
+            else if (this.age > 13) {
                 _addition = .25;
             }
-            else if (this.age.getValue() > 11) {
+            else if (this.age > 11) {
                 _addition = .15;
             }
             /* I just bullshitted the weight :v */
-            let _tempWeight = this._baseWeight*(this.age.getValue()/25);
+            let _tempWeight = this._baseWeight*(this.age/25);
             _tempWeight = _tempWeight + (_tempWeight * _addition);
             if (_tempWeight < this._baseWeight/6) {
                 this.weight = this._baseHeight/6;
@@ -1565,7 +1561,7 @@ class CharacterEntity extends EntityWithStorage {
             else {
                 this.weight = _tempWeight;
             }
-            let _tempHeight = this._baseHeight*(this.age.getValue()/25);
+            let _tempHeight = this._baseHeight*(this.age/25);
             _tempHeight = _tempHeight + (_tempHeight * _addition);
             if (_tempHeight < this._baseHeight/6) {
                 this.height = this._baseHeight/6;

@@ -1,6 +1,6 @@
 class FurnitureController extends EntityController {
-    constructor(_id, _mesh, _entity) {
-        super(_id, _mesh, _entity);
+    constructor(id, mesh, entity) {
+        super(id, mesh, entity);
 
         // containers, doors: opening, opened, closing, closed
         // maybe make 90_idle01 closed
@@ -32,6 +32,8 @@ class FurnitureController extends EntityController {
     }
 
     dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         super.dispose();
         Game.removeFurnitureController(this.id);
         return undefined;

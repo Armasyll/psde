@@ -1,20 +1,20 @@
 class LightingController extends FurnitureController {
-    constructor(_id, _mesh, _entity, _light = undefined, _lightPositionOffset = BABYLON.Vector3.Zero(), _lightRange = 16) {
-        super(_id, _mesh, _entity);
+    constructor(id, mesh, entity, light = undefined, lightPositionOffset = BABYLON.Vector3.Zero(), lightRange = 16) {
+        super(id, mesh, entity);
 
-        if (!(_lightPositionOffset instanceof BABYLON.Vector3)) {
-            _lightPositionOffset = Tools.filterVector3(_lightPositionOffset);
+        if (!(lightPositionOffset instanceof BABYLON.Vector3)) {
+            lightPositionOffset = Tools.filterVector3(lightPositionOffset);
         }
-        if (!(_light instanceof BABYLON.Light)) {
-            _light = new BABYLON.PointLight(_id, _lightPositionOffset, Game.scene);
-            _light.parent = _mesh;
+        if (!(light instanceof BABYLON.Light)) {
+            light = new BABYLON.PointLight(id, lightPositionOffset, Game.scene);
+            light.parent = mesh;
         }
         else {
-            _light.parent = _mesh;
-            _light.position = _lightPositionOffset;
+            light.parent = mesh;
+            light.position = lightPositionOffset;
         }
-        this.light = _light;
-        this.light.range = Tools.filterNumber(_lightRange);
+        this.light = light;
+        this.light.range = Tools.filterFloat(lightRange);
 
         Game.setLightingController(this.id, this);
     }
@@ -27,6 +27,8 @@ class LightingController extends FurnitureController {
     }
 
     dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         this.light.dispose();
         super.dispose();
         Game.removeLightingController(this.id);

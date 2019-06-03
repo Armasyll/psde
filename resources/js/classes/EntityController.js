@@ -293,7 +293,12 @@ class EntityController {
         return this;
     }
     dispose() {
-        this._isEnabled = false;
+        this.setLocked(true);
+        this.setEnabled(false);
+        this.animations.forEach(function(animData) {
+            animData.dipose();
+        });
+        this.animations.clear();
         if (Game.player.getController().targetController == this) {
             Game.clearPlayerTarget()
         }

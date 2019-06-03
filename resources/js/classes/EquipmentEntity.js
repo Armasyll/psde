@@ -1,31 +1,25 @@
 class EquipmentEntity extends ItemEntity {
     /**
      * Creats Equipment
-     * @param  {String}  _id          Unique ID
-     * @param  {String}  _name        Name
-     * @param  {String}  _description Description
-     * @param  {String}  _icon       Image ID
-     * @param  {String}  _equipmentSlot  Apparel slot enum
+     * @param  {string}  id          Unique ID
+     * @param  {string}  name        Name
+     * @param  {string}  description Description
+     * @param  {string}  iconID       Image ID
+     * @param  {ApparelSlotEnum}  equipmentSlot  Apparel slot enum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _equipmentSlot = ApparelSlotEnum.NONE) {
-        super(_id, _name, _description, _icon);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE) {
+        super(id, name, description, iconID);
 
         this.equipmentSlot = ApparelSlotEnum.NONE;
 
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);
-        this.setEquipmentSlot(_equipmentSlot);
+        this.setEquipmentSlot(equipmentSlot);
     }
 
-    setEquipmentSlot(_equipmentSlot) {
-        if (isNaN(_equipmentSlot)) {
-            if (ApparelSlotEnum.hasOwnProperty(_equipmentSlot)) {
-                return this.setEquipmentSlot(ApparelSlotEnum[_equipmentSlot]);
-            }
-            return this;
-        }
-        if (ApparelSlotEnum.properties.hasOwnProperty(_equipmentSlot)) {
-            this.equipmentSlot = _equipmentSlot;
+    setEquipmentSlot(equipmentSlot) {
+        if (ApparelSlotEnum.properties.hasOwnProperty(equipmentSlot)) {
+            this.equipmentSlot = equipmentSlot;
         }
         else {
             this.equipmentSlot = ApparelSlotEnum.NONE;
@@ -38,42 +32,41 @@ class EquipmentEntity extends ItemEntity {
 
     /**
      * Overrides ItemEntity.clone; not meant to be run.
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {EquipmentEntity}     new EquipmentEntity
      */
-    clone(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        var _itemEntity = new EquipmentEntity(_id, this.name, this.description, this.icon, this.equipmentSlot);
+        var itemEntity = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
-        _itemEntity.availableActions = Object.assign({}, this.availableActions);
-        _itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        _itemEntity.specialProperties = new Set(this.specialProperties);
-        _itemEntity.defaultAction = this.defaultAction;
+        itemEntity.availableActions = Object.assign({}, this.availableActions);
+        itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        itemEntity.specialProperties = new Set(this.specialProperties);
+        itemEntity.defaultAction = this.defaultAction;
         // variables from Entity
-        _itemEntity.weight.copyFrom(this.weight);
-        _itemEntity.price.copyFrom(this.price);
-        _itemEntity.health.copyFrom(this.health);
+        itemEntity.weight.copyFrom(this.weight);
+        itemEntity.price.copyFrom(this.price);
+        itemEntity.health.copyFrom(this.health);
         // variables from ItemEntity
-        _itemType.itemType = this.itemType;
-        return _itemEntity;
+        itemEntity.itemType = this.itemType;
+        return itemEntity;
     }
     /**
      * Overrides ItemEntity.createInstance; not meant to be run.
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {InstancedEquipmentEntity}     new InstancedEquipmentEntity
      */
-    createInstance(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    createInstance(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedEquipmentEntity(_id, this);
+        return new InstancedEquipmentEntity(id, this);
     }
-    dispose() {
-        this.equipmentSlot = undefined;
+    dispose() { // TODO: what about the instances :v
         super.dispose();
         for (var _var in this) {
             this[_var] = null;

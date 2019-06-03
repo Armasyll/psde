@@ -59,9 +59,11 @@ class Tools {
         return _string.replace(/[^a-zA-Z0-9_\-\ \'\,\"]/g, '');
     }
     static filterFloat(_float) {
-        _float = Number.parseFloat(_float);
         if (isNaN(_float)) {
-            return 0;
+            _float = Number.parseFloat(_float);
+            if (isNaN(_float)) {
+                return 0;
+            }
         }
         else if (_float > Number.MAX_SAFE_INTEGER) {
             _float = Number.MAX_SAFE_INTEGER;
@@ -71,24 +73,14 @@ class Tools {
         }
         return Number(_float.toFixed(4));
     }
-    static filterInteger(_int) {
-        return Tools.filterInt(_int);
-    }
     static filterInt(_int) {
-        _int = Number.parseInt(_int);
-        if (isNaN(_int)) {
-            return 0;
-        }
-        else if (_int > Number.MAX_SAFE_INTEGER) {
+        if (_int > Number.MAX_SAFE_INTEGER) {
             _int = Number.MAX_SAFE_INTEGER;
         }
         else if (_int < Number.MIN_SAFE_INTEGER) {
             _int = Number.MIN_SAFE_INTEGER;
         }
-        return Math.round(_int);
-    }
-    static filterNumber(_int) {
-        return Tools.filterFloat(_int);
+        return (_int|0);
     }
     static filterVector(..._vector) {
         if (_vector == undefined || _vector[0] == undefined) {

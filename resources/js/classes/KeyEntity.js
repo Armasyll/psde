@@ -1,6 +1,6 @@
 class KeyEntity extends ItemEntity {
-    constructor(_id, _name, _description, _icon) {
-        super(_id, _name, _description, _icon);
+    constructor(id, name, description, iconID) {
+        super(id, name, description, iconID);
 
         this.itemType = ItemEnum.KEY;
 

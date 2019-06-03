@@ -1,20 +1,20 @@
 class ClothingEntity extends EquipmentEntity {
     /**
      * Creats Clothing
-     * @param  {String}  _id          Unique ID
-     * @param  {String}  _name        Name
-     * @param  {String}  _description Description
-     * @param  {String}  _icon       Image ID
-     * @param  {String}  _equipmentSlot  Apparel slot enum
+     * @param  {string}  id          Unique ID
+     * @param  {string}  name        Name
+     * @param  {string}  description Description
+     * @param  {string}  iconID       Image ID
+     * @param  {ApparelSlotEnum}  equipmentSlot  Apparel slot enum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = undefined, _equipmentSlot = ApparelSlotEnum.NONE) {
-        super(_id, _name, _description, _icon, _equipmentSlot);
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE) {
+        super(id, name, description, iconID, equipmentSlot);
         this.itemType = ItemEnum.APPAREL;
 
         this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
 
-        this.setEquipmentSlot(_equipmentSlot);
+        this.setEquipmentSlot(equipmentSlot);
 
         Game.setClothingEntity(this.id, this);
     }
@@ -36,48 +36,47 @@ class ClothingEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {ClothingEntity}     new ClothingEntity
      */
-    clone(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        var _itemEntity = new ClothingEntity(_id, this.name, this.description, this.icon, this.equipmentSlot);
+        let clothingEntity = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
-        _itemEntity.availableActions = Object.assign({}, this.availableActions);
-        _itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        _itemEntity.specialProperties = new Set(this.specialProperties);
-        _itemEntity.defaultAction = this.defaultAction;
+        clothingEntity.availableActions = Object.assign({}, this.availableActions);
+        clothingEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clothingEntity.specialProperties = new Set(this.specialProperties);
+        clothingEntity.defaultAction = this.defaultAction;
         // variables from Entity
-        _itemEntity.weight.copyFrom(this.weight);
-        _itemEntity.price.copyFrom(this.price);
-        _itemEntity.health.copyFrom(this.health);
+        clothingEntity.weight.copyFrom(this.weight);
+        clothingEntity.price.copyFrom(this.price);
+        clothingEntity.health.copyFrom(this.health);
         // variables from ItemEntity
-        _itemType.setItemType(this.itemType);
+        clothingEntity.setItemType(this.itemType);
         // variables from EquipmentEntity
-        _itemType.setEquipmentSlot(this.equipmentSlot);
-        return _itemEntity;
+        clothingEntity.setEquipmentSlot(this.equipmentSlot);
+        return clothingEntity;
     }
     /**
      * Overrides EquipmentEntity.createInstance
-     * @param  {string} _id ID
+     * @param  {string} id ID
      * @return {InstancedClothingEntity}     new InstancedClothingEntity
      */
-    createInstance(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    createInstance(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedClothingEntity(_id, this);
+        return new InstancedClothingEntity(id, this);
     }
 	dispose() {
+        this.physicalProtection.dispose();
+        this.magickProtection.dispose();
         Game.removeClothingEntity(this.id);
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
 	}
 }

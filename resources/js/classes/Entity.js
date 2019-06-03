@@ -1,76 +1,71 @@
 class Entity extends AbstractEntity {
     /**
      * Creates an Entity
-     * @param  {String} _id           Unique ID
-     * @param  {String} _name         Name
-     * @param  {String} _description  Description
-     * @param  {String}  _icon       Image ID
-     * @param  {EntityEnum} _itemType EntityEnum
+     * @param  {string} id           Unique ID
+     * @param  {string} name         Name
+     * @param  {string} description  Description
+     * @param  {string}  iconID       Image ID
+     * @param  {EntityEnum} entityType EntityEnum
      */
-    constructor(_id = undefined, _name = undefined, _description = undefined, _icon = "genericItem", _entityType = EntityEnum.ENTITY) {
-        super(_id, _name, _description, _icon);
-        this.entityType = _entityType;;
-        /**
-         * Weight in kilograms
-         * @type {BoundedNumber} 1 to Number.MAX_SAFE_INTEGER
-         */
+    constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItem", entityType = EntityEnum.ENTITY) {
+        super(id, name, description, iconID);
+        this.entityType = entityType;;
         this.weight = new BoundedNumber(1, 0, Number.MAX_SAFE_INTEGER);
         this.price = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
         this.health = new BoundedNumber(100, 0, 100);
-        this.meshID = null;
-        this.textureID = null;
-        this.materialID = null;
+        this.meshID = "missingMesh";
+        this.textureID = "missingTexture";
+        this.materialID = "missingMaterial";
 
         this.addAvailableAction(ActionEnum.LOOK);
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
-
         this.setDefaultAction(ActionEnum.LOOK);
 
         Game.setEntity(this.id, this);
     }
 
-    setWeight(_int) {
-        this.weight.set(_int);
+    setWeight(weight) {
+        this.weight.set(weight);
         return this;
     }
     getWeight() {
         return this.weight.getValue();
     }
 
-    setPrice(_int) {
-        this.price.set(_int);
+    setPrice(price) {
+        this.price.set(price);
         return this;
     }
     getPrice() {
         return this.price.getValue();
     }
 
-    setHealth(_int) {
-        this.health.set(_int);
+    setHealth(health) {
+        this.health.set(health);
         return this;
     }
-    addHealth(_int = 1) {
-        return this.health.inc(_int);
+    addHealth(int = 1) {
+        return this.health.inc(int);
     }
-    subtractHealth(_int = 1) {
-        return this.health.dec(_int);
+    subtractHealth(int = 1) {
+        return this.health.dec(int);
     }
     getHealth() {
-        return this.health.value;
+        return this.health.getValue();
     }
 
-    setMaxHealth(_int) {
-        this.health.setMax(_int);
+    setMaxHealth(int) {
+        this.health.setMax(int);
         return this;
     }
-    addMaxHealth(_int = 1) {
-        return this.health.incMax(_int);
+    addMaxHealth(int = 1) {
+        return this.health.incMax(int);
     }
-    subtractMaxHealth(_int = 1) {
-        return this.health.decMax(_int);
+    subtractMaxHealth(int = 1) {
+        return this.health.decMax(int);
     }
     getMaxHealth() {
-        return this.health._max;
+        return this.health.getMax();
     }
 
     setMeshID(meshID) {
@@ -112,129 +107,129 @@ class Entity extends AbstractEntity {
 
     /**
      * Adds an available Action when interacting with this Entity
-     * @param {String} _action (ActionEnum)
+     * @param {ActionEnum} action (ActionEnum)
      */
-    addAvailableAction(_action, _function = undefined, _runOnce = false) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    addAvailableAction(action, _function = undefined, runOnce = false) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+        else if (!ActionEnum.properties.hasOwnProperty(action)) {
             return this;
         }
-        this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
+        this.availableActions[action] = new ActionData(action, _function, runOnce);
         return this;
     }
     /**
      * Removes an available Action when interacting with this Entity
-     * @param  {String} _action (ActionEnum)
+     * @param  {ActionEnum} action (ActionEnum)
      * @return {Booealn}          Whether or not the Action was removed
      */
-    removeAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    removeAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+        else if (!ActionEnum.properties.hasOwnProperty(action)) {
             return this;
         }
-        if (this.availableActions.hasOwnProperty(_action)) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
+        if (this.availableActions.hasOwnProperty(action)) {
+            if (this.availableActions[action] instanceof ActionData) {
+                this.availableActions[action].dispose();
             }
-            delete this.availableActions[_action];
+            delete this.availableActions[action];
         }
         return this;
     }
-    getAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    getAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+        else if (!ActionEnum.properties.hasOwnProperty(action)) {
             return null;
         }
-        if (this.availableActions.hasOwnProperty(_action)) {
-            return this.availableActions[_action];
+        if (this.availableActions.hasOwnProperty(action)) {
+            return this.availableActions[action];
         }
     }
     getAvailableActions() {
         return this.availableActions;
     }
-    hasAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    hasAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        else if (!ActionEnum.properties.hasOwnProperty(_action)) {
+        else if (!ActionEnum.properties.hasOwnProperty(action)) {
             return false;
         }
-        return this.availableActions.hasOwnProperty(_action);
+        return this.availableActions.hasOwnProperty(action);
     }
 
     /**
      * Adds a Hidden Available Action when interacting with this Entity
-     * @param {String} _action (ActionEnum)
+     * @param {ActionEnum} action (ActionEnum)
      */
-    addHiddenAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    addHiddenAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        _action = this.getAvailableAction(_action);
-        if (_action instanceof ActionData) {
-            this.hiddenAvailableActions[_action.action] = _action;
+        action = this.getAvailableAction(action);
+        if (action instanceof ActionData) {
+            this.hiddenAvailableActions[action.action] = action;
         }
         return this;
     }
     /**
      * Removes a Hidden Available Action when interacting with this Entity
-     * @param  {String} _action (ActionEnum)
+     * @param  {ActionEnum} action (ActionEnum)
      * @return {Booealn}          Whether or not the Action was removed
      */
-    removeHiddenAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    removeHiddenAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        if (this.hasHiddenAvailableAction(_action)) {
-            delete this.hiddenAvailableActions[_action];
+        if (this.hasHiddenAvailableAction(action)) {
+            delete this.hiddenAvailableActions[action];
         }
         return this;
     }
-    getHiddenAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    getHiddenAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        if (this.hiddenAvailableActions.hasOwnProperty(_action)) {
-            return this.hiddenAvailableActions[_action];
+        if (this.hiddenAvailableActions.hasOwnProperty(action)) {
+            return this.hiddenAvailableActions[action];
         }
     }
     getHiddenAvailableActions() {
         return this.hiddenAvailableActions;
     }
-    hasHiddenAvailableAction(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    hasHiddenAvailableAction(action) {
+        if (action instanceof ActionData) {
+            action = action.action;
         }
-        return this.hiddenAvailableActions.hasOwnProperty(_action);
+        return this.hiddenAvailableActions.hasOwnProperty(action);
     }
 
     /**
      * Adds a special property
-     * @param {Number} _specialProperty
+     * @param {SpecialPropertyEnum} specialProperty
      */
-    addSpecialProperty(_specialProperty) {
-        if (isNaN(_specialProperty)) {
-            return this;
+    addSpecialProperty(specialProperty) {
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
+            return 2;
         }
-        this.specialProperties.add(_specialProperty);
-        return this;
+        this.specialProperties.add(specialProperty);
+        return 0;
     }
     /**
      * Removes a special property
-     * @param {Number} _specialProperty
+     * @param {SpecialPropertyEnum} specialProperty
      */
-    removeSpecialProperty(_specialProperty) {
-        if (isNaN(_specialProperty)) {
-            return this;
+    removeSpecialProperty(specialProperty) {
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
+            return 2;
         }
-        this.specialProperties.remove(_specialProperty);
-        return this;
+        this.specialProperties.remove(specialProperty);
+        return 0;
     }
     /**
      * Returns this Entity's special properties
@@ -245,50 +240,55 @@ class Entity extends AbstractEntity {
     }
     /**
      * Returns whether or not this Entity has the specific special property
-     * @param  {Number}  _specialProperty (SpecialPropertyEnum)
+     * @param  {Number}  specialProperty (SpecialPropertyEnum)
      * @return {Boolean} Whether or not this Entity has the specific SpecialPropertyEnum
      */
-    hasSpecialProperty(_specialProperty) {
-        if (isNaN(_specialProperty)) {
+    hasSpecialProperty(specialProperty) {
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
             return false;
         }
-        return this.specialProperties.has(_specialProperty);
+        return this.specialProperties.has(specialProperty);
     }
 
-    setDefaultAction(_action) {
-        if (this.hasAvailableAction(_action)) {
-            this.defaultAction = _action;
+    setDefaultAction(action) {
+        if (this.hasAvailableAction(action)) {
+            this.defaultAction = action;
+            return 0;
         }
+        return 2;
     }
     getDefaultAction() {
         return this.defaultAction;
     }
 
-    clone(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        var _entity = new Entity(_id, this.name, this.description, this.icon, this.entityType);
+        let entity = new Entity(id, this.name, this.description, this.icon, this.entityType);
         // variables from AbstractEntity
-        _entity.availableActions = Object.assign({}, this.availableActions);
-        _entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        _entity.specialProperties = new Set(this.specialProperties);
-        _entity.defaultAction = this.defaultAction;
+        entity.availableActions = Object.assign({}, this.availableActions);
+        entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        entity.specialProperties = new Set(this.specialProperties);
+        entity.defaultAction = this.defaultAction;
         // variables from Entity
-        _entity.weight.copyFrom(this.weight);
-        _entity.price.copyFrom(this.price);
-        _entity.health.copyFrom(this.health);
-        return _entity;
+        entity.weight.copyFrom(this.weight);
+        entity.price.copyFrom(this.price);
+        entity.health.copyFrom(this.health);
+        return entity;
     }
-    createInstance(_id = undefined) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    createInstance(id = undefined) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedEntity(_id, this);
+        return new InstancedEntity(id, this);
     }
     dispose() {
+        this.weight.dispose();
+        this.height.dispose();
+        this.price.dispose();
         Game.removeEntity(this.id);
         super.dispose();
         return undefined;

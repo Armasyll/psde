@@ -4,6 +4,12 @@ class ItemController extends EntityController {
 
         this.entity.setDefaultAction(ActionEnum.TAKE);
 
-        Game.itemControllers[this.id] = this;
+        Game.setItemController(this.id, this);
+    }
+
+    dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
+        super.dispose();
     }
 }
