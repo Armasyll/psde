@@ -202,6 +202,8 @@ class Game {
             "protohelmet":"resources/meshes/armour.babylon",
             "bracer01.l":"resources/meshes/armour.babylon",
             "bracer01.r":"resources/meshes/armour.babylon",
+            "pauldron01.l":"resources/meshes/armour.babylon",
+            "pauldron01.r":"resources/meshes/armour.babylon",
             "knife01":"resources/meshes/weapons.babylon",
             "spear01":"resources/meshes/weapons.babylon",
             "glaive01":"resources/meshes/weapons.babylon",
@@ -823,25 +825,31 @@ class Game {
     }
     static addPlayerToCreate(characterID) {
         if (Game.hasPlayerToCreate()) {
-            return true;
+            return 0;
         }
-        characterID = Tools.filterID(characterID);
-        Game.playerToCreate = characterID;
-        return true;
+        if (Game.characterEntities.hasOwnProperty(characterID)) {
+            Game.playerToCreate = characterID;
+            return 0;
+        }
+        return 2;
     }
     static removePlayerToCreate() {
         Game.playerToCreate = null;
-        return true;
+        return 0;
     }
     static hasPlayerToCreate() {
         return Game.playerToCreate != null;
     }
     static createBackloggedPlayer() {
-        if (Game.hasPlayerToCreate() && Game.hasCharacterEntity(Game.playerToCreate)) {
+        if (Game.hasPlayerToCreate()) {
+            if (!Game.hasCharacterEntity(Game.playerToCreate)) {
+                return 2;
+            }
             if (Game.assignPlayer(Game.getCharacterEntity(Game.playerToCreate)) == 0) {
                 Game.removePlayerToCreate();
             }
         }
+        return 0;
     }
     static createPlayer(characterID, name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", textureID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         if (Game.debugMode) console.log("Running initPlayer");
@@ -856,6 +864,7 @@ class Game {
         else {
             Game.addPlayerToCreate(characterID);
         }
+        return 0;
     }
     static assignPlayer(characterEntity) { // TODO: allow for reassigning player :v
         if (!(characterEntity instanceof CharacterEntity)) {
@@ -995,7 +1004,8 @@ class Game {
         return 0;
     }
     static loadDefaultItems() {
-        Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "loadingMesh", "loadingMaterial", ItemEnum.GENERAL);
+        Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "block", "loadingMaterial", ItemEnum.GENERAL);
+        return 0;
     }
     /**
      * Loads and creates a BABYLON.Sound
@@ -1016,7 +1026,7 @@ class Game {
             Game.setLoadedSound(soundID, loadedSound);
             return 0;
         }
-        return 1
+        return 1;
     }
     /**
      * Loads and creates a BABYLON.Texture

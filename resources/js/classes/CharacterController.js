@@ -973,13 +973,13 @@ class CharacterController extends EntityController {
         return this.detachFromBone("neck");
     }
     attachToLeftShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", new BABYLON.Vector3(0.05, 0.1, 0.025), new BABYLON.Vector3(BABYLON.Tools.ToRadians(135), BABYLON.Tools.ToRadians(45), BABYLON.Tools.ToRadians(90)));
     }
     detachFromLeftShoulder() {
         return this.detachFromBone("shoulder.l");
     }
     attachToRightShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", new BABYLON.Vector3(-0.05, 0.1, 0.025), new BABYLON.Vector3(BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(135), BABYLON.Tools.ToRadians(90)));
     }
     detachFromRightShoulder() {
         return this.detachFromBone("shoulder.r");
