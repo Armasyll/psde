@@ -1649,3 +1649,37 @@ ArcaneFocusEnum = {
         }
     }
 }
+InterfaceModeEnum = {
+    NONE: 0,
+    CHARACTER: 1,
+    DIALOGUE: 2,
+    MENU: 3,
+    EDIT: 4,
+    WRITING: 5,
+    properties: {
+        0: {
+            name: "None",
+            value: 0
+        },
+        1: {
+            name: "Character",
+            value: 1
+        },
+        2: {
+            name: "Dialogue",
+            value: 2
+        },
+        3: {
+            name: "Menu",
+            value: 3
+        },
+        4: {
+            name: "Edit",
+            value: 4
+        },
+        5: {
+            name: "Writing",
+            value: 5
+        }
+    }
+}

@@ -81,6 +81,7 @@ class GameGUI {
     }
     static showHUD(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showHUD");
+        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         if (_updateChild === true) {
             GameGUI.hideMenu(false);
         }
@@ -107,6 +108,7 @@ class GameGUI {
     }
     static showMenu(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showMenu");
+        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         if (_updateChild === true) {
             GameGUI.hideHUD(false);
         }
@@ -114,6 +116,7 @@ class GameGUI {
     }
     static hideMenu(_updateChild = false) {
         if (Game.debugMode) console.log("Running GameGUI::hideMenu");
+        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         if (_updateChild === true) {
             GameGUI.showHUD(false);
         }
@@ -848,7 +851,7 @@ class GameGUI {
      * Returns whether or not the inventory menu is visible.
      * @return {Boolean} Whether or not the inventory menu is visible.
      */
-    static getInventoryMenuVisible() {
+    static isInventoryMenuVisible() {
         return GameGUI._inventoryMenu.isVisible;
     }
     static showInventoryMenu() {
@@ -1102,55 +1105,41 @@ class GameGUI {
         _aRM.zIndex = 12;
         return _aRM;
     }
-    static populateActionsMenuWith(entityController) {
-        if (!(entityController instanceof EntityController)) {
-            entityController = Game.getEntityController(entityController);
-            if (!(entityController instanceof EntityController)) {
-                return 2;
-            }
-        }
+    static populateActionsMenuWith(abstractEntity) {
         GameGUI._actionsMenuOptions.clear();
-        let actions = entityController.getEntity().getAvailableActions();
-        for (let action in actions) {
-            if (!entityController.getEntity().hasHiddenAvailableAction(action)) {
-                GameGUI.addActionsMenuOption(actions[action].action, entityController);
+        let actions = abstractEntity.getAvailableActions();
+        for (let actionID in actions) {
+            if (!abstractEntity.hasHiddenAvailableAction(actionID)) {
+                GameGUI.addActionsMenuOption(actionID, abstractEntity);
             }
         }
         return 0;
     }
-    static populateActionsMenuWithTarget () {
-        return GameGUI.populateActionsMenuWith(Game.player.getController().getTarget());
+    static populateActionsMenuWithTarget() {
+        return GameGUI.populateActionsMenuWith(Game.player.getTarget());
     }
-    static addActionsMenuOption(action, abstractEntity) {
-        if (action instanceof ActionData) {
-            action = action.action;
+    static addActionsMenuOption(actionID, abstractEntity) {
+        if (typeof actionID == "string") {
+            actionID = Number(actionID);
         }
-        if (!ActionEnum.properties.hasOwnProperty(action)) {
+        if (!ActionEnum.properties.hasOwnProperty(actionID)) {
             return 2;
         }
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(abstractEntity)) {
-                abstractEntity = Game.getInstancedEntity(abstractEntity)
-            }
-            else if (Game.hasEntity(abstractEntity)) {
-                abstractEntity = Game.getEntity(abstractEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        GameGUI._actionsMenuOptions.push({action:action,target:abstractEntity});
+        GameGUI._actionsMenuOptions.push({
+            action:actionID,
+            target:abstractEntity
+        });
         if (GameGUI._actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
         return true;
     }
-    static removeActionsMenuOption(_action) {
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+    static removeActionsMenuOption(actionID) {
+        if (typeof actionID == "string") {
+            actionID = Number(actionID);
         }
         for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
-            if (GameGUI._actionsMenuOptions[_i].action == _action) {
+            if (GameGUI._actionsMenuOptions[_i].action == actionID) {
                 GameGUI._actionsMenuOptions.splice(_i, 1);
                 _i = _actionsMenuOptions.length;
             }
@@ -1161,61 +1150,62 @@ class GameGUI {
         return true;
     }
     static clearActionsMenu() {
-        for (var _i = GameGUI._actionsMenu.children.length - 1; _i >= 0; _i--) {
-            GameGUI._actionsMenu.children[_i].dispose();
+        for (let i = GameGUI._actionsMenu.children.length - 1; i >= 0; i--) {
+            GameGUI._actionsMenu.children[i].dispose();
         }
         GameGUI._actionsMenuOptions.clear();
         return true;
     }
-    static showActionsMenu(_pointerRelease = true, _updateChild = true) {
-        if (_updateChild) {
+    static showActionsMenu(pointerRelease = true, updateChild = true) {
+        if (updateChild) {
             GameGUI.hideActionTooltip();
         }
         GameGUI._actionsMenu.isVisible = true;
-        if (_pointerRelease) {
+        if (pointerRelease) {
             GameGUI.pointerRelease();
         }
     }
-    static hideActionsMenu(_pointerLock = true, _updateChild = true) {
+    static hideActionsMenu(pointerLock = true, updateChild = true) {
         GameGUI._actionsMenu.isVisible = false;
-        if (_updateChild) {
+        if (updateChild) {
             GameGUI.showActionTooltip();
         }
-        if (_pointerLock) {
+        if (pointerLock) {
             GameGUI.pointerLock();
         }
     }
     static updateActionsMenu() {
-        for (var _i = GameGUI._actionsMenu.children.length - 1; _i >= 0; _i--) {
-            GameGUI._actionsMenu.children[_i].dispose();
+        for (let i = GameGUI._actionsMenu.children.length - 1; i >= 0; i--) {
+            GameGUI._actionsMenu.children[i].dispose();
         }
-        var _x = 0;
-        var _y = 0;
-        var _button = new BABYLON.GUI.Button.CreateSimpleButton("closeRadialMenu", "X");
-        _button.width = "24px";
-        _button.height = "24px";
-        _button.color = GameGUI.color;
-        _button.background = GameGUI.background;
-        _button.onPointerClickObservable.add(function() {GameGUI.hideActionsMenu();GameGUI.pointerLock();});
-        _button._moveToProjectedPosition(new BABYLON.Vector2(_x, _y));
-        GameGUI._actionsMenu.addControl(_button);
+        let xPosition = 0;
+        let yPosition = 0;
+        let button = new BABYLON.GUI.Button.CreateSimpleButton("closeRadialMenu", "X");
+        button.width = "24px";
+        button.height = "24px";
+        button.color = GameGUI.color;
+        button.background = GameGUI.background;
+        button.onPointerClickObservable.add(function() {
+            GameGUI.hideActionsMenu();
+            GameGUI.pointerLock();
+        });
+        button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
+        GameGUI._actionsMenu.addControl(button);
         if (GameGUI._actionsMenuOptions.length > 0) {
-            for (let _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
-                _x = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
-                _y = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*_i - 90));
-                _button = new BABYLON.GUI.Button.CreateSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[_i].action].name);
-                _button.width = "96px";
-                _button.height = "24px";
-                _button.color = GameGUI.color;
-                _button.background = GameGUI.background;
-                _button._moveToProjectedPosition(new BABYLON.Vector2(_x, _y));
-                _button.onPointerClickObservable.add(
-                    function() {
-                        GameGUI.hideActionsMenu();
-                        Game.doEntityAction(GameGUI._actionsMenuOptions[_i].target, Game.player, GameGUI._actionsMenuOptions[_i].action);
-                    }
-                );
-                GameGUI._actionsMenu.addControl(_button);
+            for (let i = 0; i < GameGUI._actionsMenuOptions.length; i++) {
+                xPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
+                yPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
+                button = new BABYLON.GUI.Button.CreateSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[i].action].name);
+                button.width = "96px";
+                button.height = "24px";
+                button.color = GameGUI.color;
+                button.background = GameGUI.background;
+                button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
+                button.onPointerClickObservable.add(function() {
+                    GameGUI.hideActionsMenu();
+                    Game.doEntityAction(GameGUI._actionsMenuOptions[i].target, Game.player, GameGUI._actionsMenuOptions[i].action);
+                });
+                GameGUI._actionsMenu.addControl(button);
             }
         }
     }
@@ -1306,14 +1296,19 @@ class GameGUI {
         return _container;
     }
     static showDialogueMenu() {
+        if (Game.debugMode) console.log("Running GameGUI::showDialogueMenu");
+        Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
         GameGUI.pointerRelease();
         GameGUI._dialogueMenu.isVisible = true;
     }
     static hideDialogueMenu() {
+        if (Game.debugMode) console.log("Running GameGUI::hideDialogueMenu");
+        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         GameGUI.pointerLock();
         GameGUI._dialogueMenu.isVisible = false;
     }
     static setDialogue(_dialogue, _them, _you = Game.player) {
+        if (Game.debugMode) console.log("Running GameGUI::setDialogue");
         GameGUI.clearDialogue();
         if (!(_dialogue instanceof Dialogue)) {
             _dialogue = Game.getDialogue(_dialogue);

@@ -194,8 +194,8 @@ class CharacterController extends EntityController {
             this.removeParent();
         }
         this._avStartPos.copyFrom(this.mesh.position);
-        var anim = null;
-        var dt = Game.engine.getDeltaTime() / 1000;
+        let anim = this.idle;
+        let dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.isFalling) {
             this.isGrounded = false;
             this._idleFallTime = 0;
@@ -221,17 +221,16 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    doJump(dt) {
-        var anim = null;
-        anim = this.runJump;
+    doJump(dt, power = 1.0) {
+        let anim = this.runJump;
         if (this._jumpTime === 0) {
             this._jumpStartPosY = this.mesh.position.y;
         }
-        var js = this.jumpSpeed - this._gravity * this._jumpTime;
-        var jumpDist = js * dt - 0.5 * this._gravity * dt * dt;
-        this._jumpTime = this._jumpTime + dt;
-        var forwardDist = 0;
-        var disp;
+        let js = this.jumpSpeed - this._gravity * this._jumpTime;
+        let jumpDist = js * dt * power - 0.5 * this._gravity * dt * dt;
+        this._jumpTime += dt;
+        let forwardDist = 0;
+        let disp = BABYLON.Vector3.Zero();
         if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
             this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
@@ -261,7 +260,7 @@ class CharacterController extends EntityController {
                 this.endJump();
             }
             else if (this.mesh.position.y < this._jumpStartPosY) {
-                var actDisp = this.mesh.position.subtract(this._avStartPos);
+                let actDisp = this.mesh.position.subtract(this._avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
                     if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                         this.endJump();
@@ -282,11 +281,11 @@ class CharacterController extends EntityController {
         this.isSprinting = false;
     }
     doMove(dt) {
-        var u = this._movFallTime * this._gravity;
+        let anim = this.idle;
+        let u = this._movFallTime * this._gravity;
         this._fallDist = u * dt + this._gravity * dt * dt / 2;
         this._movFallTime = this._movFallTime + dt;
-        var moving = false;
-        var anim = null;
+        let moving = false;
         if (this.isFalling) {
             this._moveVector.y = -this._fallDist;
             moving = true;
@@ -392,7 +391,7 @@ class CharacterController extends EntityController {
                     }
                 }
                 else if ((this.mesh.position.y) < this._avStartPos.y) {
-                    var actDisp = this.mesh.position.subtract(this._avStartPos);
+                    let actDisp = this.mesh.position.subtract(this._avStartPos);
                     if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
                         if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                             this.endFreeFall();
@@ -429,30 +428,30 @@ class CharacterController extends EntityController {
         if (this.isGrounded) {
             return this.idle;
         }
+        let anim = this.idle;
         this.isWalking = false;
         this.isRunning = false;
         this.isSprinting = false;
         this._movFallTime = 0;
-        var anim = this.idle;
         this._fallFrameCount = 0;
         if (dt === 0) {
             this._fallDist = 5;
         }
         else {
-            var u = this._idleFallTime * this._gravity;
+            let u = this._idleFallTime * this._gravity;
             this._fallDist = u * dt + this._gravity * dt * dt / 2;
             this._idleFallTime = this._idleFallTime + dt;
         }
-        if (this._fallDist < 0.01)
+        if (this._fallDist < 0.01) {
             return anim;
-        var disp = new BABYLON.Vector3(0, -this._fallDist, 0);
-        ;
+        }
+        let disp = new BABYLON.Vector3(0, -this._fallDist, 0);
         this.mesh.moveWithCollisions(disp);
         if ((this.mesh.position.y > this._avStartPos.y) || (this.mesh.position.y === this._avStartPos.y)) {
             this.groundIt();
         }
         else if (this.mesh.position.y < this._avStartPos.y) {
-            var actDisp = this.mesh.position.subtract(this._avStartPos);
+            let actDisp = this.mesh.position.subtract(this._avStartPos);
             if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
                 if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
                     this.groundIt();

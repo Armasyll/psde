@@ -672,6 +672,7 @@ class Game {
         window.addEventListener("contextmenu", Game.functionControlOnContext);
 
         Game._filesToLoad -= 1;
+        Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.initialized = true;
         Game.engine.runRenderLoop(Game.renderLoopFunction);
         Game.scene.registerBeforeRender(Game.beforeRenderFunction);
@@ -689,10 +690,10 @@ class Game {
                     Game._finishedInitializing = true;
 
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                        Game.functionControlOnKeyDown(evt.sourceEvent.keyCode);
+                        Game.functionControlOnKeyDown(evt.sourceEvent);
                     }));
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                        Game.functionControlOnKeyUp(evt.sourceEvent.keyCode);
+                        Game.functionControlOnKeyUp(evt.sourceEvent);
                     }));
                 }
                 else {
@@ -1271,18 +1272,18 @@ class Game {
     static importFurniture() {
         Game.importScript("resources/js/furniture.js");
     }
-    static controlCharacterOnKeyDown(event) {
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyDown(${event})`);
+    static controlCharacterOnKeyDown(keyboardEvent) {
         if (!Game.initialized) {
-            return undefined;
+            return 1;
         }
-        if (event == undefined) {
-            return undefined;
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
         }
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyDown(${keyboardEvent.keyCode})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
-            return undefined;
+            return 2;
         }
-        switch (event) {
+        switch (keyboardEvent.keyCode) {
             case Game.jumpCode : {
                 Game.player.getController().keyJump(true);
                 break;
@@ -1375,17 +1376,10 @@ class Game {
                 break;
             }
             case Game.showInventoryCode : {
-                if (Game.gui.getInventoryMenuVisible()) {
-                    Game.gui.hideInventoryMenu();
-                    Game.gui.hideMenu(true);
-                    Game.gui.pointerLock();
-                }
-                else {
-                    Game.gui.updateInventoryMenuWith(Game.player);
-                    Game.gui.showMenu(true);
-                    Game.gui.showInventoryMenu();
-                    Game.gui.pointerRelease();
-                }
+                Game.gui.updateInventoryMenuWith(Game.player);
+                Game.gui.showMenu(true);
+                Game.gui.showInventoryMenu();
+                Game.gui.pointerRelease();
                 break;
             }
             case Game.showMainMenuCode : {
@@ -1401,8 +1395,6 @@ class Game {
                 }
                 break;
             }
-            default : {
-            }
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
@@ -1411,19 +1403,24 @@ class Game {
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
         }
+        return 0;
     }
-    static controlCharacterOnKeyUp(event) {
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyUp(${event})`);
+    static controlCharacterOnKeyUp(keyboardEvent) {
         if (!Game.initialized) {
-            return undefined;
+            return 1;
         }
-        if (event == undefined) {
-            return undefined;
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
         }
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyUp(${keyboardEvent.keyCode})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
-            return undefined;
+            return 2;
         }
-        switch (event) {
+        switch (keyboardEvent.keyCode) {
+            case 49: case 50: case 51: case 52: case 53:
+            case 54: case 55: case 56: case 57: case 49: {
+                break;
+            }
             case Game.jumpCode : {
                 Game.player.getController().keyJump(false);
                 break;
@@ -1462,8 +1459,6 @@ class Game {
                 }
                 break;
             }
-            default : {
-            }
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
@@ -1472,35 +1467,39 @@ class Game {
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
         }
+        return 0;
     }
-    static controlCharacterOnClick(event) {
+    static controlCharacterOnClick(mouseEvent) {
         if (!Game.initialized) {
-            return undefined;
+            return 1;
         }
-        if (event == undefined) {
-            return undefined;
+        if (!(mouseEvent instanceof MouseEvent)) {
+            return 2;
         }
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnClick(${mouseEvent.button})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
-            return undefined;
+            return 2;
         }
-        if (event.button == 1) {
-            // nothing for middle click :v
-            return true;
+        if (mouseEvent.button == 1) {
+            return 0;
         }
-        else if (event.button == 2) {
-            return Game.controlCharacterOnContext(event);
+        else if (mouseEvent.button == 2) {
+            Game.controlCharacterOnContext(mouseEvent);
+            return 0;
         }
         Game.actionAttackFunction(Game.player.getTarget(), Game.player);
+        return 0;
     }
-    static controlCharacterOnContext(event) {
+    static controlCharacterOnContext(mouseEvent) {
         if (!Game.initialized) {
-            return undefined;
+            return 1;
         }
-        if (event == undefined) {
-            return undefined;
+        if (!(mouseEvent instanceof MouseEvent)) {
+            return 2;
         }
+        if (Game.debugMode) console.log(`Running Game::controlCharacterOnContext(${mouseEvent.button})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
-            return undefined;
+            return 2;
         }
         if (Game.initialized && Game.player instanceof CharacterEntity && Game.player.getTarget() instanceof AbstractEntity) {
             Game.gui.clearActionsMenu();
@@ -1508,6 +1507,96 @@ class Game {
             Game.gui.updateActionsMenu();
             Game.gui.showActionsMenu();
         }
+        return 0;
+    }
+    static controlDialogueOnKeyDown(keyboardEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlDialogueOnKeyDown(${keyboardEvent.keyCode})`);
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return 2;
+        }
+        switch (keyboardEvent.keyCode) {
+            case 49: case 50: case 51: case 52: case 53:
+            case 54: case 55: case 56: case 57: case 49: {
+                break;
+            }
+            case Game.UIAcceptAlt:
+            case Game.UIAccept: {
+
+                break;
+            }
+            case Game.UIDenyAlt:
+            case Game.UIDeny: {
+                GameGUI.hideMenu(true);
+                break;
+            }
+        }
+        return 0;
+    }
+    static controlDialogueOnKeyUp(keyboardEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlDialogueOnKeyUp(${keyboardEvent.keyCode})`);
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return 2;
+        }
+        return 0;
+    }
+    static controlDialogueOnClick(mouseEvent) {
+        return 0;
+    }
+    static controlDialogueOnContext(mouseEvent) {
+        return 0;
+    }
+    static controlMenuOnKeyDown(keyboardEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlMenuOnKeyDown(${keyboardEvent.keyCode})`);
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return 2;
+        }
+        switch (keyboardEvent.keyCode) {
+            case Game.showInventoryCode: {
+                if (GameGUI.isInventoryMenuVisible()) {
+                    GameGUI.hideInventoryMenu();
+                    GameGUI.hideMenu();
+                    GameGUI.showHUD();
+                }
+                else {
+                    Game.gui.updateInventoryMenuWith(Game.player);
+                    GameGUI.showInventoryMenu();
+                }
+                break;
+            }
+            case Game.UIDenyAlt:
+            case Game.UIDeny: {
+                GameGUI.hideMenu(true);
+                break;
+            }
+        }
+        return 0;
+    }
+    static controlMenuOnKeyUp(keyboardEvent) {
+        return 0;
+    }
+    static controlMenuOnClick(mouseEvent) {
+        return 0;
+    }
+    static controlMenuOnContext(mouseEvent) {
+        return 0;
     }
     /**
      * Creates a primitive wall for collision
@@ -3687,70 +3776,67 @@ class Game {
             Game.gui.hideCrosshair();
         }
     }
-    static doEntityAction(_entity, _subEntity = Game.player, _action) {
-        if (!(_entity instanceof AbstractEntity)) {
-            _entity = Game.getInstancedItemEntity(_entity) || Game.getEntity(_entity);
-            if (!(_entity instanceof AbstractEntity)) {
+    static doEntityAction(abstractEntity, subAbstractEntity = Game.player, actionID) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            abstractEntity = Game.getInstancedItemEntity(abstractEntity) || Game.getEntity(abstractEntity);
+            if (!(abstractEntity instanceof AbstractEntity)) {
                 return 2;
             }
         }
-        if (!(_subEntity instanceof AbstractEntity)) {
-            _subEntity = Game.getInstancedItemEntity(_subEntity) || Game.getEntity(_subEntity);
-            if (!(_subEntity instanceof AbstractEntity)) {
+        if (!(subAbstractEntity instanceof AbstractEntity)) {
+            subAbstractEntity = Game.getInstancedItemEntity(subAbstractEntity) || Game.getEntity(subAbstractEntity);
+            if (!(subAbstractEntity instanceof AbstractEntity)) {
                 return 2;
             }
         }
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+        if (typeof actionID == "string") {
+            actionID = Number(actionID);
         }
-        if (Game.debugMode) console.log(`Running Game::doEntityAction(${_entity.id}, ${_subEntity.id}, ${_action})`);
-        switch (_action) {
+        if (Game.debugMode) console.log(`Running Game::doEntityAction(${abstractEntity.id}, ${subAbstractEntity.id}, ${actionID})`);
+        switch (actionID) {
             case ActionEnum.USE: {
-                if (_entity instanceof LightingEntity) {
-                    _entity.toggle();
+                if (abstractEntity instanceof LightingEntity) {
+                    abstractEntity.toggle();
                 }
                 break;
             }
             case ActionEnum.LAY: {
-                Game.actionLayFunction(_entity, _subEntity);
+                Game.actionLayFunction(abstractEntity, subAbstractEntity);
                 break;
             }
             case ActionEnum.SIT: {
-                Game.actionSitFunction(_entity, _subEntity);
+                Game.actionSitFunction(abstractEntity, subAbstractEntity);
                 break;
             }
             case ActionEnum.TAKE: {
-                if (_entity instanceof InstancedItemEntity) {
-                    Game.actionTakeFunction(_entity, _subEntity);
+                if (abstractEntity instanceof InstancedItemEntity) {
+                    Game.actionTakeFunction(abstractEntity, subAbstractEntity);
                 }
                 break;
             }
             case ActionEnum.OPEN: {
-                if (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity) {
-                    Game.actionOpenFunction(_entity, _subEntity);
+                if (abstractEntity instanceof DoorEntity || abstractEntity instanceof FurnitureEntity || abstractEntity instanceof InstancedFurnitureEntity) {
+                    Game.actionOpenFunction(abstractEntity, subAbstractEntity);
                 }
                 break;
             }
             case ActionEnum.CLOSE: {
-                if (_entity instanceof DoorEntity || _entity instanceof FurnitureEntity || _entity instanceof InstancedFurnitureEntity) {
-                    Game.actionCloseFunction(_entity, _subEntity);
+                if (abstractEntity instanceof DoorEntity || abstractEntity instanceof FurnitureEntity || abstractEntity instanceof InstancedFurnitureEntity) {
+                    Game.actionCloseFunction(abstractEntity, subAbstractEntity);
                 }
                 break;
             }
             case ActionEnum.TALK: {
-                if (_entity instanceof CharacterEntity) {
-                    Game.actionTalkFunction(_entity, _subEntity);
+                if (abstractEntity instanceof CharacterEntity) {
+                    Game.actionTalkFunction(abstractEntity, subAbstractEntity);
                 }
                 break;
             }
             case ActionEnum.ATTACK: {
-                if (_entity instanceof AbstractEntity) {
-                    Game.actionAttackFunction(_entity, _subEntity);
+                if (abstractEntity instanceof AbstractEntity) {
+                    Game.actionAttackFunction(abstractEntity, subAbstractEntity);
                 }
                 break;
-            }
-            default: {
-                
             }
         }
         return 0;
@@ -4012,18 +4098,18 @@ class Game {
         }
         return 0;
     }
-    static actionTalkFunction(_entity, _subEntity = Game.player) {
-        if (Game.debugMode) console.log(`Running Game::actionTalkFunction(${_entity.id}, ${_subEntity.id})`);
-        if (!(_entity instanceof CharacterEntity)) {
+    static actionTalkFunction(abstractEntity, subAbstractEntity = Game.player) {
+        if (Game.debugMode) console.log(`Running Game::actionTalkFunction(${abstractEntity.id}, ${subAbstractEntity.id})`);
+        if (!(abstractEntity instanceof CharacterEntity)) {
             return 2;
         }
-        if (!(_subEntity instanceof CharacterEntity)) {
+        if (!(subAbstractEntity instanceof CharacterEntity)) {
             return 2;
         }
-        if (!(_entity.getDialogue() instanceof Dialogue)) {
+        if (!(abstractEntity.getDialogue() instanceof Dialogue)) {
             return 2;
         }
-        Game.gui.setDialogue(_entity.getDialogue(), _entity, _subEntity);
+        Game.gui.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
         Game.gui.showDialogueMenu();
         /*var _dialogue = _entity.getDialogue().getText();
         if (typeof _dialogue == "string") {
@@ -4508,6 +4594,49 @@ class Game {
     }
     static disableDebugMode() {
         return Game.setDebugMode(false);
+    }
+    static setInterfaceMode(interfaceMode = InterfaceModeEnum.NONE) {
+        if (Game.interfaceMode == interfaceMode) {
+            return 0;
+        }
+        if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) {}
+        else if (isNaN(interfaceMode) && InterfaceModeEnum.hasOwnProperty(interfaceMode)) {
+            interfaceMode = InterfaceModeEnum[interfaceMode];
+        }
+        else {
+            return 2;
+        }
+        Game.interfaceMode = interfaceMode;
+        switch (Game.interfaceMode) {
+            case InterfaceModeEnum.CHARACTER: {
+                Game.functionControlOnKeyDown = Game.controlCharacterOnKeyDown;
+                Game.functionControlOnKeyUp = Game.controlCharacterOnKeyUp;
+                Game.functionControlOnClick = Game.controlCharacterOnClick;
+                Game.functionControlOnContext = Game.controlCharacterOnContext;
+                break;
+            }
+            case InterfaceModeEnum.DIALOGUE: {
+                Game.functionControlOnKeyDown = Game.controlDialogueOnKeyDown;
+                Game.functionControlOnKeyUp = Game.controlDialogueOnKeyUp;
+                Game.functionControlOnClick = Game.controlDialogueOnClick;
+                Game.functionControlOnContext = Game.controlDialogueOnContext;
+                break;
+            }
+            case InterfaceModeEnum.MENU: {
+                Game.functionControlOnKeyDown = Game.controlMenuOnKeyDown;
+                Game.functionControlOnKeyUp = Game.controlMenuOnKeyUp;
+                Game.functionControlOnClick = Game.controlMenuOnClick;
+                Game.functionControlOnContext = Game.controlMenuOnContext;
+                break;
+            }
+            case InterfaceModeEnum.EDIT: {
+                break;
+            }
+        }
+        return 0;
+    }
+    static getInterfaceMode() {
+        return Game.interfaceMode;
     }
     /**
      * Returns whether or not entityB is within distance of entityA
