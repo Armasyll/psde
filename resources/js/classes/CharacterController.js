@@ -67,6 +67,7 @@ class CharacterController extends EntityController {
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
         this.attackPunchRH = new AnimData("attachPunchRH");
+        this.attackRunningPunchRH = new AnimData("attachPunchRH");
         this.attackThrustRH = new AnimData("attackThrustRH");
         this.attackSlashRH = new AnimData("attackSlashRH");
         this.attackChopRH = new AnimData("attackChopRH");
@@ -88,7 +89,9 @@ class CharacterController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
-        this.setPunchRHAnim("71_punch01", 1, false, false);
+        this.setAnimData(this.attackPunchRH, "71_punch01", 1, false, false);
+        this.setAnimData(this.attackRunningPunchRH, "71_runningPunch01", 1, false, false);
+        this.setAnimData(this.attackThrustRH, "71_stab01", 1, false, false);
         this.setDeathAnim("91_death01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
@@ -177,9 +180,6 @@ class CharacterController extends EntityController {
     setFallAnim(_rangeName, _rate, _loop, _standalone = true) {
         this.setAnimData(this.fall, _rangeName, _rate, _loop, _standalone);
     }
-    setPunchRHAnim(_rangeName, _rate, _loop, _standalone = false) {
-        this.setAnimData(this.attackPunchRH, _rangeName, _rate, _loop, _standalone);
-    }
     setDeathAnim(_rangeName, _rate, _loop = false, _standalone = false) {
         this.setAnimData(this.death, _rangeName, _rate, _loop, _standalone);
     }
@@ -188,6 +188,9 @@ class CharacterController extends EntityController {
             return this;
         }
         if (this._isLocked) {
+            return this;
+        }
+        if (!this.isAlive) {
             return this;
         }
         if (this.getParent() != undefined) {
@@ -199,21 +202,15 @@ class CharacterController extends EntityController {
         if (this.key.jump && !this.isFalling) {
             this.isGrounded = false;
             this._idleFallTime = 0;
-            if (this.isAlive) {
-                anim = this.doJump(dt);
-            }
+            anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.isFalling) {
             this.isGrounded = false;
             this._idleFallTime = 0;
-            if (this.isAlive) {
-                anim = this.doMove(dt);
-            }
+            anim = this.doMove(dt);
         }
         else if (!this.isFalling) {
-            if (this.isAlive) {
-                anim = this.doIdle(dt);
-            }
+            anim = this.doIdle(dt);
         }
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
@@ -585,14 +582,29 @@ class CharacterController extends EntityController {
         }
         this.isAttacking = true;
         setTimeout(() => {this.isAttacking = false;}, 800);
-        for (var _i = 0; _i < this.animationBones["71_punch01"].length; _i++) {
-            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["71_punch01"][_i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
+        if (this.isRunning) {
+            for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
+                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
+            }
+        }
+        else {
+            for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
+                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
+            }
         }
         return true;
     }
-    doAttack(dt) {
+    doThrustRH(dt) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
+        }
+        if (this.isAttacking) {
+            return false;
+        }
+        this.isAttacking = true;
+        setTimeout(() => {this.isAttacking = false;}, 800);
+        for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
+            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
         }
         return true;
     }

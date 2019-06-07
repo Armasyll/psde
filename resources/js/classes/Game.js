@@ -567,7 +567,7 @@ class Game {
         Game.cosmetics = new Map();
 
         Game.entityAnimationBones = {
-            "71_punch01":[
+            "rightArm":[
                 "shoulder.r",
                 "upperArm.r",
                 "forearm.r",
@@ -590,7 +590,30 @@ class Game {
                 "fingersIndexDistalPhalanx.r",
                 "POLE.elbow.r"
             ],
-            "10_hand.r.grip":[
+            "leftArm":[
+                "shoulder.l",
+                "upperArm.l",
+                "forearm.l",
+                "IK.hand.l",
+                "wrist.l",
+                "fingersMetacarpal.l",
+                "fingersProximinalPhalanx.l",
+                "fingersMiddlePhalanx.l",
+                "fingersDistalPhalanx.l",
+                "thumbMetacarpal.l",
+                "thumbProximinalPhalanx.l",
+                "thumbDistalPhalanx.l",
+                "fingersPinkieMetacarpal.l",
+                "fingersPinkieProximinalPhalanx.l",
+                "fingersPinkieMiddlePhalanx.l",
+                "fingersPinkieDistalPhalanx.l",
+                "fingersIndexMetacarpal.l",
+                "fingersIndexProximinalPhalanx.l",
+                "fingersIndexMiddlePhalanx.l",
+                "fingersIndexDistalPhalanx.l",
+                "POLE.elbow.l"
+            ],
+            "rightHand":[
                 "fingersMetacarpal.r",
                 "fingersProximinalPhalanx.r",
                 "fingersMiddlePhalanx.r",
@@ -607,19 +630,7 @@ class Game {
                 "fingersIndexMiddlePhalanx.r",
                 "fingersIndexDistalPhalanx.r"
             ],
-            "10_eyes_closed":[
-                "eyelidTop.r",
-                "eyelidTop.l",
-                "eyelidBot.r",
-                "eyelidBot.l"
-            ],
-            "10_eyes_half_opened":[
-                "eyelidTop.r",
-                "eyelidTop.l",
-                "eyelidBot.r",
-                "eyelidBot.l"
-            ],
-            "10_eyes_opened":[
+            "eyelids":[
                 "eyelidTop.r",
                 "eyelidTop.l",
                 "eyelidBot.r",
@@ -3861,15 +3872,56 @@ class Game {
         if (!(_subEntity instanceof CharacterEntity)) {
             return 2;
         }
-        if (_subEntity instanceof CharacterEntity && _subEntity.hasController()) {
-            if (_subEntity.controller.doPunchRH()) {
-                _subEntity.subtractStamina(2); // TODO: weapon weight or w/e subtracts more stamina
-            }
-        }
-        if (_entity instanceof CharacterEntity) {
+        let didHit = false;
+        let attackRoll = Game.roll(1, 20);
+        if (_entity instanceof CharacterEntity && _subEntity instanceof CharacterEntity) {
             if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_subEntity, _entity)) {
-                _entity.kill();
-                Game.playSound("hit");
+                didHit = attackRoll > _entity.getArmourClass();
+            }
+            if (didHit) {
+                let damageRollCount = 1;
+                let damageRoll = 0;
+                let damageType = DamageEnum.BLUDGEONING;
+                let unarmed = false;
+                if (_subEntity.isRightHanded() && _subEntity.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                    damageRollCount = _subEntity.getEquipment()["HAND_R"].getDamageRollCount();
+                    damageRoll = _subEntity.getEquipment()["HAND_R"].getDamageRoll();
+                    damageType = _subEntity.getEquipment()["HAND_R"].getDamageType();
+                }
+                else if (_subEntity.isLeftHanded() && _subEntity.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                    damageRollCount = _subEntity.getEquipment()["HAND_L"].getDamageRollCount();
+                    damageRoll = _subEntity.getEquipment()["HAND_L"].getDamageRoll();
+                    damageType = _subEntity.getEquipment()["HAND_L"].getDamageType();
+                }
+                else {
+                    unarmed = true;
+                }
+                if (unarmed) {
+                    damageRoll = 1 + Game.calculateAbilityModifier(_subEntity.getStrength());
+                    if (damageRoll < 0) {
+                        damageRoll = 0;
+                    }
+                    _entity.subtractHealth(damageRoll);
+                    _subEntity.controller.doPunchRH();
+                    Game.playSound("hit");
+                }
+                else {
+                    let damage = Game.roll(damageRollCount, damageRoll);
+                    switch (damageType) {
+                        case DamageEnum.PIERCING: {
+                            _subEntity.controller.doThrustRH();
+                            Game.playSound("hit");
+                        }
+                        default: {
+                            _subEntity.controller.doThrustRH();
+                            Game.playSound("hit");
+                        }
+                    }
+                    _entity.subtractHealth(damage);
+                }
+                if (_subEntity == Game.player && Game.player.hasTarget()) {
+                    Game.gui.setTargetPortrait(Game.player.getTarget());
+                }
             }
         }
         return 0;
@@ -4508,6 +4560,9 @@ class Game {
         });
         return 0;
     }
+    static calculateAbilityModifier(score) {
+        return Math.floor((score - 10) / 2);
+    }
     static calculateLevel(experiencePoints) {
         experiencePoints = Tools.filterInt(experiencePoints);
         if (experiencePoints >= 355000) {
@@ -4637,6 +4692,53 @@ class Game {
     }
     static getInterfaceMode() {
         return Game.interfaceMode;
+    }
+    /**
+     * Roll a die
+     * @param {number} die Number of times to roll
+     * @param {number} faces Number of faces
+     * @param {RollEnum} rollType
+     */
+    static roll(die = 1, faces = 6, rollType = RollEnum.TOTAL) {
+        switch (rollType) {
+            case RollEnum.TOTAL: {
+                let total = 0;
+                for (let i = 0; i < die; i++) {
+                    total += Math.ceil(Math.random() * faces);
+                }
+                return Number.parseFloat(total);
+            }
+            case RollEnum.MIN: {
+                let min = 1;
+                let roll = 0;
+                for (let i = 0; i < die; i++) {
+                    roll = Math.ceil(Math.random() * faces);
+                    if (roll < min) {
+                        min = roll;
+                    }
+                }
+                return Number.parseFloat(min);
+            }
+            case RollEnum.AVG: {
+                let total = 0;
+                for (let i = 0; i < die; i++) {
+                    total += Math.ceil(Math.random() * faces);
+                }
+                return Number.parseFloat(total/die);
+            }
+            case RollEnum.MAX: {
+                let max = 1;
+                let roll = 0;
+                for (let i = 0; i < die; i++) {
+                    roll = Math.ceil(Math.random() * faces);
+                    if (roll > max) {
+                        max = roll;
+                    }
+                }
+                return Number.parseFloat(max);
+            }
+        }
+        return 1.0;
     }
     /**
      * Returns whether or not entityB is within distance of entityA

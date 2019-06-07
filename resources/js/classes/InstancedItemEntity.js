@@ -1,12 +1,12 @@
 class InstancedItemEntity extends InstancedEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
-        super(_id, _entity);
+    constructor(id = undefined, itemEntity = undefined, owner = undefined) {
+        super(id, itemEntity);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
             return undefined;
         }
 
-        this.setOwner(_owner);
+        this.setOwner(owner);
 
         Game.setItemInstance(this.id, this);
     }

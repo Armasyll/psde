@@ -28,7 +28,7 @@ class EntityController {
         this.bonesInUse = [];
         /**
          * Array of bones per animation
-         * @type {Object} <String:Array>
+         * @type {Object} <string:Array>
          */
         this.animationBones = {};
         this._isEnabled = true;
@@ -78,7 +78,7 @@ class EntityController {
                 this.setTexture(this.mesh.material.diffuseTexture);
             }
             if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
-                this.skeleton = this.mesh.skeleton;
+                this.setSkeleton(this.mesh.skeleton);
             }
             this.mesh.isPickable = true;
             this.propertiesChanged = true;
@@ -92,7 +92,14 @@ class EntityController {
     hasMesh() {
         return this.mesh instanceof BABYLON.AbstractMesh;
     }
-    setSkeleton(_mesh) { // lolno
+    setSkeleton(skeleton) {
+        this.skeleton = skeleton;
+        for (let boneGroup in Game.entityAnimationBones) {
+            this.animationBones[boneGroup] = new Array();
+            for (let i = 0; i < Game.entityAnimationBones[boneGroup].length; i++) {
+                this.animationBones[boneGroup].push(this.skeleton.getBoneIndexByName(Game.entityAnimationBones[boneGroup][i]));
+            }
+        }
         return this;
     }
     getSkeleton() {
@@ -199,12 +206,6 @@ class EntityController {
             this.skeleton.getAnimationRange(_rangeName).from += 1;
             _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
             _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
-            if (Game.entityAnimationBones.hasOwnProperty(_rangeName)) {
-                this.animationBones[_rangeName] = new Array();
-                for (var _i = 0; _i < Game.entityAnimationBones[_rangeName].length; _i++) {
-                    this.animationBones[_rangeName].push(this.skeleton.getBoneIndexByName(Game.entityAnimationBones[_rangeName][_i]));
-                }
-            }
         }
         else {
             _anim.exist = false;

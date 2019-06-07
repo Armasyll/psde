@@ -1195,6 +1195,80 @@ SpellTypeEnum = {
     }
 };
 
+ArmourEnum = {
+    NONE: 0,
+    PADDED: 1,
+    LEATHER: 2,
+    STUDDEDLEATHER: 3,
+    HIDE: 4,
+    CHAINSHIRT: 5,
+    SCALEMAIL: 6,
+    BREASTPLATE: 7,
+    HALFPLATE: 8,
+    RINGMAIL: 9,
+    CHAINMAIL: 10,
+    SPLINT: 11,
+    PLATE: 12,
+    SHIELD: 13,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+        },
+        1: {
+            name: "Padded",
+            value: 1,
+        },
+        2: {
+            name: "Leather",
+            value: 2,
+        },
+        3: {
+            name: "Studded Leather",
+            value: 3,
+        },
+        4: {
+            name: "Hide",
+            value: 4,
+        },
+        5: {
+            name: "Chain Shirt",
+            value: 5,
+        },
+        6: {
+            name: "Scale Mail",
+            value: 6,
+        },
+        7: {
+            name: "Breastplate",
+            value: 7,
+        },
+        8: {
+            name: "Half Plate",
+            value: 8,
+        },
+        9: {
+            name: "Ring Mail",
+            value: 9,
+        },
+        10: {
+            name: "Chain Mail",
+            value: 10,
+        },
+        11: {
+            name: "Splint",
+            value: 11,
+        },
+        12: {
+            name: "Plate",
+            value: 12,
+        },
+        13: {
+            name: "Shield",
+            value: 13,
+        }
+    }
+}
 DamageEnum = {
     NONE: 0,
     ACID: 1,
@@ -1681,5 +1755,29 @@ InterfaceModeEnum = {
             name: "Writing",
             value: 5
         }
+    }
+}
+RollEnum = {
+    TOTAL: 0,
+    MIN: 1,
+    AVG: 2,
+    MAX: 3,
+    properties: {
+        0: {
+            name: "Total",
+            value: 0
+        },
+        1: {
+            name: "Minimum",
+            value: 1
+        },
+        2: {
+            name: "Average",
+            value: 2
+        },
+        3: {
+            name: "Maximum",
+            value: 3
+        },
     }
 }

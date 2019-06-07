@@ -14,7 +14,7 @@ class WeaponEntity extends EquipmentEntity {
         this.equipmentSlot = ApparelSlotEnum.HANDS;
         this.weaponType = WeaponEnum.CLUB;
         this.damageRollCount = 1;
-        this.damageRoll = 0;
+        this.damageRoll = 1;
         this.damageType = DamageEnum.NONE;
         this.weaponProperties = new Set();
         this.silvered = false;
@@ -24,11 +24,12 @@ class WeaponEntity extends EquipmentEntity {
         this.versatileRoll = 0;
 
         this.setWeaponType(weaponType);
+        this.generateProperties();
 
         Game.setWeaponEntity(this.id, this);
     }
 
-    _generateProperties() {
+    generateProperties() {
         switch (this.weaponType) {
             case WeaponEnum.NONE: {
                 this.damageType = DamageEnum.NONE;
@@ -346,21 +347,21 @@ class WeaponEntity extends EquipmentEntity {
         return this.ammunitionRange;
     }
 
+    getDamageType() {
+        return this.damageType;
+    }
+    getDamageRoll() {
+        return this.damageRoll;
+    }
+    getDamageRollCount() {
+        return this.damageRollCount;
+    }
+
     setWeaponType(weaponType) {
-        if (typeof weaponType == "string") {
-            weaponType = weaponType.toUpperCase();
-            if (!WeaponEnum.hasOwnProperty(weaponType)) {
-                weaponType = WeaponEnum.CLUB;
-            }
-            else {
-                weaponType = WeaponEnum[weaponType];
-            }
-        }
-        else if (!WeaponEnum.properties.hasOwnProperty(weaponType)) {
+        if (!WeaponEnum.properties.hasOwnProperty(weaponType)) {
             weaponType = WeaponEnum.CLUB; // Everything can be a club :v
         }
         this.weaponType = weaponType;
-        this._generateProperties();
     }
     getWeaponType() {
         return this.weaponType;

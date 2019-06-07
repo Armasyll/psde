@@ -7,31 +7,118 @@ class ClothingEntity extends EquipmentEntity {
      * @param  {string}  iconID       Image ID
      * @param  {ApparelSlotEnum}  equipmentSlot  Apparel slot enum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE) {
+    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE, armourType = ArmourEnum.NONE) {
         super(id, name, description, iconID, equipmentSlot);
         this.itemType = ItemEnum.APPAREL;
 
-        this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
-        this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+        this.armourType = ArmourEnum.NONE;
+        this.armourClass = 0;
 
         this.setEquipmentSlot(equipmentSlot);
+        this.setArmourType(armourType);
+        this.generateProperties();
 
         Game.setClothingEntity(this.id, this);
     }
 
-    getPhysicalProtection() {
-        return this.physicalProtection.getValue();
+    setArmourType(armourType) {
+        if (!ArmourEnum.properties.hasOwnProperty(armourType)) {
+            armourType = ArmourEnum.NONE;
+        }
+        this.armourType = armourType;
     }
-    setPhysicalProtection(_int) {
-        this.physicalProtection.setValue(_int);
-        return this;
+    getArmourType() {
+        return this.armourType;
     }
-    getMagickProtection() {
-        return this.magickProtection.getValue();
+    getArmourClass() {
+        return this.armourClass;
     }
-    setMagickProtection(_int) {
-        this.magickProtection.setValue(_int);
-        return this;
+
+    generateProperties() {
+        let multiplier = 0;
+        switch (this.equipmentSlot) {
+            case ApparelSlotEnum.CHEST: {
+                multiplier = 0.3;
+                break;
+            }
+            case ApparelSlotEnum.HAND_L:
+            case ApparelSlotEnum.HAND_R:
+            case ApparelSlotEnum.HANDS: {
+                multiplier = 0.05;
+                break;
+            }
+            default: {
+                multiplier = 0.1;
+                break;
+            }
+        }
+        switch (this.armourType) {
+            case ArmourEnum.PADDED: {
+                this.armourClass = 11 * multiplier;
+                this.price = 50 * multiplier;
+                break;
+            }
+            case ArmourEnum.LEATHER: {
+                this.armourClass = 11 * multiplier;
+                this.price = 100 * multiplier;
+                break;
+            }
+            case ArmourEnum.STUDDEDLEATHER: {
+                this.armourClass = 12 * multiplier;
+                this.price = 450 * multiplier;
+                break;
+            }
+            case ArmourEnum.HIDE: {
+                this.armourClass = 12 * multiplier;
+                this.price = 100 * multiplier;
+                break;
+            }
+            case ArmourEnum.CHAINSHIRT: {
+                this.armourClass = 13 * multiplier;
+                this.price = 500 * multiplier;
+                break;
+            }
+            case ArmourEnum.SCALEMAIL: {
+                this.armourClass = 14 * multiplier;
+                this.price = 500 * multiplier;
+                break;
+            }
+            case ArmourEnum.BREASTPLATE: {
+                this.armourClass = 14 * multiplier;
+                this.price = 4000 * multiplier;
+                break;
+            }
+            case ArmourEnum.HALFPLATE: {
+                this.armourClass = 15 * multiplier;
+                this.price = 7500 * multiplier;
+                break;
+            }
+            case ArmourEnum.RINGMAIL: {
+                this.armourClass = 14 * multiplier;
+                this.price = 300 * multiplier;
+                break;
+            }
+            case ArmourEnum.CHAINMAIL: {
+                this.armourClass = 16 * multiplier;
+                this.price = 750 * multiplier;
+                break;
+            }
+            case ArmourEnum.SPLINT: {
+                this.armourClass = 17 * multiplier;
+                this.price = 2000 * multiplier;
+                break;
+            }
+            case ArmourEnum.PLATE: {
+                this.armourClass = 18 * multiplier;
+                this.price = 15000 * multiplier;
+                break;
+            }
+            case ArmourEnum.SHIELD: {
+                this.armourClass = 2;
+                this.price = 100;
+                break;
+            }
+        }
     }
 
     /**

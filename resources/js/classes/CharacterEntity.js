@@ -128,10 +128,8 @@ class CharacterEntity extends EntityWithStorage {
         this.charisma = new BoundedNumber(10, 1, 30);
         this.charismaOffset = new BoundedNumber(0, -100, 100);
 
-        this.physicalMultiplier = new BoundedNumber(0, 1, 10);
-        this.magickMultiplier = new BoundedNumber(0, 0, 10);
-        this.physicalProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
-        this.magickProtection = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+        this.magickMultiplier = 0;
+        this.armourClass = 0;
 
         this.experienceLevel = 0;
         this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
@@ -1127,6 +1125,23 @@ class CharacterEntity extends EntityWithStorage {
         return this.hasCharacterDisposition(characterID);
     }
 
+    setHandedness(handedness) {
+        if (HandednessEnum.properties.has(handedness)) {
+            this.handedness = handedness;
+            return 0;
+        }
+        return 2;
+    }
+    getHandedness() {
+        return this.handedness;
+    }
+    isRightHanded() {
+        return this.handedness == HandednessEnum.RIGHT;
+    }
+    isLeftHanded() {
+        return this.handedness == HandednessEnum.LEFT;
+    }
+
     hold(_instancedItem, _hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
         if (_hand != ApparelSlotEnum.HAND_L && _hand != ApparelSlotEnum.HAND_R) {
             if (this.handedness == HandednessEnum.LEFT) {
@@ -1589,9 +1604,12 @@ class CharacterEntity extends EntityWithStorage {
     getWidth() {
         return this.width;
     }
+    getArmourClass() {
+        return this.armourClass;
+    }
     generateBaseStats() {
-        this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution/10));
-        this.setMaxMana(this.getIntelligence() * this.magickMultiplier.getValue());
+        this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution()/10));
+        this.setMaxMana(this.getIntelligence() * this.magickMultiplier);
         this.setMaxStamina(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
         this.setHealth(this.getMaxHealth());
         this.setMana(this.getMaxMana());
@@ -1601,27 +1619,42 @@ class CharacterEntity extends EntityWithStorage {
      * Generates protections and multipliers; to be run after status effects and equipment are changed
      */
     generateAdditionalStats() {
-        this.physicalMultiplier = 0;
-        this.magickMultiplier = 0;
-        for (let _slot in this.equipment) {
-            if (this.equipment[_slot] instanceof ClothingEntity) {
-                let _multiplier = 0;
-                switch (this.equipment[_slot].getEquipmentSlot()) {
+        this.armourClass = 0;
+        for (let slot in this.equipment) {
+            if (this.equipment[slot] instanceof ClothingEntity) {
+                let multiplier = 0.1;
+                switch (this.equipment[slot].getEquipmentSlot()) {
                     case ApparelSlotEnum.CHEST: {
-                        _multiplier = 0.3;
+                        multiplier = 0.3;
                         break;
                     }
                     case ApparelSlotEnum.HAND_L:
                     case ApparelSlotEnum.HAND_R:
                     case ApparelSlotEnum.HANDS: {
-                        _multiplier = 0.05;
+                        multiplier = 0.05;
+                    }                      
+                }
+                let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
+                switch (this.equipment[slot].getArmourType()) {
+                    case PADDED:
+                    case LEATHER:
+                    case STUDDEDLEATHER: {
+                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        break;
                     }
-                    default: {
-                        _multiplier = 0.1;
+                    case HIDE:
+                    case CHAINSHIRT:
+                    case SCALEMAIL:
+                    case BREASTPLATE:
+                    case HALFPLATE: {
+                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        if (modifier > 2) {
+                            modifier = 2;
+                        }
+                        break;
                     }
                 }
-                this.physicalProtection += this.equipment[_slot].getPhysicalProtection() * _multiplier;
-                this.magickProtection += this.equipment[_slot].getMagickProtection() * _multiplier;
+                this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
             }
         }
     }

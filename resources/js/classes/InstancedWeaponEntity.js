@@ -1,29 +1,38 @@
 class InstancedWeaponEntity extends InstancedEquipmentEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
-        super(_id, _entity);
+    constructor(id = undefined, weaponEntity = undefined, owner = undefined) {
+        super(id, weaponEntity);
         if (!(this.entity instanceof WeaponEntity)) {
             this.dispose();
             return undefined;
         }
 
-        this.setOwner(_owner);
+        this.setOwner(owner);
 
         Game.setWeaponInstance(this.id, this);
     }
 
-    getPhysicalDamage() {
-        return this.entity.getPhysicalDamage();
+    getDamageType() {
+        return this.entity.getDamageType();
     }
-    getMagickDamage() {
-        return this.entity.getMagickDamage();
+    getDamageRoll() {
+        return this.entity.getDamageRoll();
+    }
+    getDamageRollCount() {
+        return this.entity.getDamageRollCount();
+    }
+    getWeaponType() {
+        return this.entity.getWeaponType();
+    }
+    getWeaponProperties() {
+        return this.entity.getWeaponProperties();
     }
 
-    clone(_id) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedWeaponEntity(_id, this.entity, this.owner);
+        return new InstancedWeaponEntity(id, this.entity, this.owner);
     }
     dispose() {
         Game.removeWeaponInstance(this.id);

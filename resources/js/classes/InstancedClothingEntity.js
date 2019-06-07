@@ -1,36 +1,33 @@
 class InstancedClothingEntity extends InstancedEquipmentEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
-        super(_id, _entity);
+    constructor(id = undefined, clothingEntity = undefined, owner = undefined) {
+        super(id, clothingEntity);
         if (!(this.entity instanceof ClothingEntity)) {
             this.dispose();
             return undefined;
         }
 
-        this.setOwner(_owner);
+        this.setOwner(owner);
 
         Game.setClothingInstance(this.id, this);
     }
 
-    getPhysicalProtection() {
-        return this.entity.getPhysicalProtection();
+    getArmourType() {
+        return this.entity.getArmourType();
     }
-    getMagickProtection() {
-        return this.entity.getMagickProtection();
+    getArmourClass() {
+        return this.entity.getArmourClass();
     }
 
-    clone(_id) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    clone(id) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        return new InstancedClothingEntity(_id, this.entity);
+        return new InstancedClothingEntity(id, this.entity);
     }
     dispose() {
         Game.removeClothingInstance(this.id);
-        super.dispose()
-        for (var _var in this) {
-            this[_var] = null;
-        }
+        super.dispose();
         return undefined;
     }
 }
