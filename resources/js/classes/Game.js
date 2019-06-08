@@ -3872,9 +3872,12 @@ class Game {
         if (!(_subEntity instanceof CharacterEntity)) {
             return 2;
         }
-        let didHit = false;
-        let attackRoll = Game.roll(1, 20);
+        if (_subEntity.getController().isAttacking()) {
+            return 1;
+        }
         if (_entity instanceof CharacterEntity && _subEntity instanceof CharacterEntity) {
+            let didHit = false;
+            let attackRoll = Game.roll(1, 20);
             if (Game.withinRange(_subEntity, _entity) && Game.inFrontOf(_subEntity, _entity)) {
                 didHit = attackRoll > _entity.getArmourClass();
             }
