@@ -47,7 +47,7 @@ class CharacterController extends EntityController {
         this.isWalking = false;
         this.isRunning = false;
         this.isSprinting = false;
-        this.isAttacking = false; // While crouching, walking, or running
+        this._isAttacking = false; // While crouching, walking, or running
         this.isAlive = true;
 
         this.walk = new AnimData("walk");
@@ -577,11 +577,11 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this.isAttacking) {
+        if (this._isAttacking) {
             return false;
         }
-        this.isAttacking = true;
-        setTimeout(() => {this.isAttacking = false;}, 800);
+        this._isAttacking = true;
+        setTimeout(() => {this._isAttacking = false;}, 800);
         if (this.isRunning) {
             for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
                 Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
@@ -598,11 +598,11 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this.isAttacking) {
+        if (this._isAttacking) {
             return false;
         }
-        this.isAttacking = true;
-        setTimeout(() => {this.isAttacking = false;}, 800);
+        this._isAttacking = true;
+        setTimeout(() => {this._isAttacking = false;}, 800);
         for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
         }
@@ -618,8 +618,11 @@ class CharacterController extends EntityController {
     }
 
     setAttacking(_bool = true) {
-        this.isAttacking = _bool == true;
-        console.log(`running setAttacking(${this.isAttacking ? "true" : "false"})`);
+        this._isAttacking = _bool == true;
+        console.log(`running setAttacking(${this._isAttacking ? "true" : "false"})`);
+    }
+    isAttacking() {
+        return this._isAttacking;
     }
     setTarget(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
