@@ -22,10 +22,7 @@ class MessageRouter {
 			}
 			case "S_ACCEPT_UUID" : {
 				console.log("S_ACCEPT_UUID : Connected with UUID " + _data.content.uuid + " and NID " + _data.content.nid);
-				Game.setPlayerID(_data.content.uuid);
-				Client.setPlayerEntry(_data.content.nid);
-
-				Client.initializeSelf();
+				Client.initializeSelf(_data.content.uuid, _data.content.nid);
 				break;
 			}
 			case "S_DENY_UUID" : {
@@ -84,7 +81,7 @@ class MessageRouter {
 			}
 			case "S_DESTROY_PLAYER" : {
 				console.log(`S_DESTROY_PLAYER (${_data.content})`);
-				if (_data.content == Game.player.controller.networkID) {
+				if (_data.content == Client.getOwnNetworkID()) {
 					return undefined;
 				}
 				else {
@@ -96,7 +93,7 @@ class MessageRouter {
 			case "S_UPDATE_LOCROTSCALES_PLAYERS" : {
 				console.log("S_UPDATE_LOCROTSCALES_PLAYERS");
 				for (let characterObject in _data.content) {
-					if (_data.content[characterObject][0] == Game.player.controller.networkID) {}
+					if (_data.content[characterObject][0] == Client.getOwnNetworkID()) {}
 					else if (isNaN(_data.content[characterObject][0])) {}
 					else {
 						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[characterObject][0]);

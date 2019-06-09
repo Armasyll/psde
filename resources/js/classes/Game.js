@@ -770,6 +770,14 @@ class Game {
                 Game.hasBackloggedEntities = false;
             }
         }
+        if (Client.isOnline()) {
+            if (Client.hasPlayerToCreate()) {
+                Client.createBackloggedPlayers();
+            }
+            if (Client.hasPlayerToUpdate()) {
+                Client.updateBackloggedPlayers();
+            }
+        }
     }
     static finishedInitializing() {
         return Game._finishedInitializing;
@@ -2490,7 +2498,7 @@ class Game {
     }
 
     static setPlayerID(id) {
-        Game.setEntityID(Game.player.id, id);
+        Game.setEntityID(Game.player.getID(), id);
     }
     static setEntityID(currentID, newID) {
         if (!Game.hasEntity(currentID)) {

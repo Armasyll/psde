@@ -36,7 +36,7 @@ class AbstractEntity {
     }
     setID(id) {
         if (this._isLocked) {
-            id = Game.filterID(id);
+            id = Tools.filterID(id);
             if (id.length > 0) {
                 this.id = id;
             }
