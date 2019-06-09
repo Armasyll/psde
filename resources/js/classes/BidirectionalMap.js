@@ -17,12 +17,12 @@ class BidirectionalMap extends Map {
         super.delete(a);
         return super.this;
     }
-    deleteKey(b) {
+    deleteByValue(b) {
         super.delete(this.otherMap.get(b));
         this.otherMap.delete(b);
         return super.this;
     }
-    deleteValue(a) {
+    deleteByKey(a) {
         return this.delete(a);
     }
     clear() {
@@ -36,10 +36,10 @@ class BidirectionalMap extends Map {
     getValue(a) {
         return super.get(a);
     }
-    hasKey(b) {
-        return this.otherMap.has(b);
-    }
-    hasValue(a) {
+    hasKey(a) {
         return super.has(a);
+    }
+    hasValue(b) {
+        return this.otherMap.has(b);
     }
 }

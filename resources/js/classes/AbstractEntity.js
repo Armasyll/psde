@@ -174,6 +174,7 @@ class AbstractEntity {
         else {
             Game.removeEssentialEntity(this);
         }
+        return 0;
     }
     isEssential() {
         return this._isEssential;
@@ -182,6 +183,12 @@ class AbstractEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
+        this.clearTarget();
+        if (this.hasController()) {
+            this.controller.setLocked(true);
+            this.controller.setEnabled(false);
+            this.controller.dispose();
+        }
         for (let action in this.availableActions) {
             if (this.availableActions[action] instanceof ActionData) {
                 this.availableActions[action].dispose();

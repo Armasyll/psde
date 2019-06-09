@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="162.000000pt"
+   height="163.000000pt"
+   viewBox="0 0 162.000000 163.000000"
+   preserveAspectRatio="xMidYMid meet"
+   id="svg8"
+   sodipodi:docname="genericRabbit.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="2.6574458"
+     inkscape:cx="110.4643"
+     inkscape:cy="145.20445"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <metadata
+     id="metadata2">
+Created by potrace 1.13, written by Peter Selinger 2001-2015
+<rdf:RDF>
+  <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+  </cc:Work>
+</rdf:RDF>
+</metadata>
+  <g
+     transform="translate(0.000000,163.000000) scale(0.100000,-0.100000)"
+     fill="#8c8c8c"
+     stroke="none"
+     id="g6">
+    <path
+       d="m 645.00001,1620 c -162.90264,4.0071 -141.68336,-374.4257 -125.01173,-466.9568 12.04062,-67.2953 12.04062,-115.5207 3.7048,-154.9259 C 500.53805,886.97439 516.28347,804.1224 570.92935,743.499 618.16562,690.95872 614,732.92967 630,651.99669 650,555.46216 639,592.93626 521,481.08723 396,361.12013 382.14909,318 362.35863,189 354.81941,138 348.22259,74 348.22259,48 V 0 H 810 1271.7774 v 48 c 0,25.938552 -6.5968,90 -14.136,141 C 1237.8509,318 1224,361.12013 1099,481.08723 981,592.93626 970,555.46216 990,651.99669 c 16,80.93298 11.613,38.96203 58.8493,91.50231 54.6458,60.6234 70.3913,143.47539 47.2362,254.6183 -8.3358,39.4052 -8.3358,87.6306 3.7048,154.9259 18.5241,103.747 34.1228,469.3948 -124.79029,466.9568 C 820.43,1617.6286 969.36635,1188.7787 873.7972,1121.8275 h -63.9079 -63.90789 c -63.04706,28.73 38.18341,494.7493 -100.9814,498.1725 z"
+       id="path4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="sccccccscccsccccccscccs" />
+  </g>
+</svg>

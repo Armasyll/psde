@@ -42,29 +42,44 @@ class MessageRouter {
 			}
 			case "S_SEND_PLAYER" : {
 				console.log("S_SEND_PLAYER");
-				if (_data.content.nid == Game.player.controller.networkID) {
+				if (_data.content.nid == Client.getOwnNetworkID()) {
 					return undefined;
 				}
-				var _character = Game.getCharacterController(_data.content[1]);
-				if (!(_character instanceof CharacterController)) {
-					_character = Game.createCharacter(
-						_data.content[1],
+				if (Client.hasNetworkID(_data.content[1])) {
+					let characterController = Client.getController(_data.content[1]).getController();
+					characterController.setMovementKey(_data.content["movementKeys"]);
+					if (characterController.getID() != _data.content[0]) {
+						Game.setEntityID(characterController.getID(), _data.content[0]);
+					}
+					characterController.mesh.position.copyFrom(
+						_data.content[8]
+					);
+					characterController.mesh.rotation.copyFrom(
+						_data.content[9]
+					);
+					characterController.mesh.scaling.copyFrom(
+						_data.content[10]
+					);
+					characterController.key.copyFrom(_data.content[11]);
+				}
+				else {
+					Game.createCharacter(
+						_data.content[0],
 						_data.content[2],
+						undefined,
+						"genericRabbit",
 						_data.content[3],
 						_data.content[4],
 						_data.content[5],
-						undefined,
 						_data.content[6],
-						{mass:0.8,restitution:0.1},
 						_data.content[7],
+						{mass:0.8,restitution:0.1},
 						_data.content[8],
-						_data.content[9]
+						_data.content[9],
+						_data.content[10]
 					);
+					Client.addPlayerToCreate(_data.content[0], _data.content[1]);
 				}
-				_character.controller.setMovementKey(_data.content["movementKeys"]);
-				Game.setEntityID(_character, _data.content[1]);
-				Client.setEntry(_character, _data.content[0]);
-				//Game.networkCharacters[_data.content["nid"]] = _character;
 				break;
 			}
 			case "S_DESTROY_PLAYER" : {
@@ -80,25 +95,26 @@ class MessageRouter {
 			}
 			case "S_UPDATE_LOCROTSCALES_PLAYERS" : {
 				console.log("S_UPDATE_LOCROTSCALES_PLAYERS");
-				for (var _character in _data.content) {
-					if (_data.content[_character][0] == Game.player.controller.networkID) {}
-					else if (isNaN(_data.content[_character][0])) {}
+				for (let characterObject in _data.content) {
+					if (_data.content[characterObject][0] == Game.player.controller.networkID) {}
+					else if (isNaN(_data.content[characterObject][0])) {}
 					else {
-						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[_character][0]);
-						if (Client.getController(_data.content[_character][0]) instanceof CharacterController) {
-							Client.getController(_data.content[_character][0]).mesh.position.copyFrom(
-								_data.content[_character][1]
+						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[characterObject][0]);
+						if (Client.hasNetworkID(_data.content[characterObject][0])) {
+							let characterController = Client.getController(_data.content[characterObject][0]).getController();
+							characterController.mesh.position.copyFrom(
+								_data.content[characterObject][1]
 							);
-							Client.getController(_data.content[_character][0]).mesh.rotation.copyFrom(
-								_data.content[_character][2]
+							characterController.mesh.rotation.copyFrom(
+								_data.content[characterObject][2]
 							);
-							Client.getController(_data.content[_character][0]).mesh.scaling.copyFrom(
-								_data.content[_character][3]
+							characterController.mesh.scaling.copyFrom(
+								_data.content[characterObject][3]
 							);
-							Client.getController(_data.content[_character][0]).key.copyFrom(_data.content[_character][4]);
+							characterController.key.copyFrom(_data.content[characterObject][4]);
 						}
 						else {
-							Client.requestPlayerByNetworkID(_data.content[_character][0]);
+							Client.requestPlayerByNetworkID(_data.content[characterObject][0]);
 						}
 					}
 				}

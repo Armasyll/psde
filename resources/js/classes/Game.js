@@ -356,6 +356,7 @@ class Game {
             "charlieIcon":"resources/images/icons/characters/charlie.svg",
             "genericItemIcon":"resources/images/icons/items/genericItem.svg",
             "genericCharacterIcon":"resources/images/icons/characters/genericCharacter.svg",
+            "genericRabbitIcon":"resources/images/icons/characters/genericRabbit.svg",
             "pandorasBoxLocationKeyIcon":"resources/images/icons/items/pandorasBoxLocationKey.svg",
             "keyIcon":"resources/images/icons/items/key.svg",
             "nickWildeIcon":"resources/images/icons/characters/nickWilde.svg",
@@ -1409,7 +1410,7 @@ class Game {
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
-            if (Client.online) {
+            if (Client._isOnline) {
                 Client.updateLocRotScaleSelf();
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
@@ -1473,7 +1474,7 @@ class Game {
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
-            if (Client.online) {
+            if (Client._isOnline) {
                 Client.updateLocRotScaleSelf();
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
@@ -4279,13 +4280,13 @@ class Game {
         Game.entities[_id] = _entity;
     }
     static removeEntity(_id) {
-        delete Game.entityies[_id];
+        delete Game.entities[_id];
     }
     static clearEntities() {
-        for (var _i in Game.entityies) {
-            Game.entityies[_i].dispose();
+        for (var _i in Game.entities) {
+            Game.entities[_i].dispose();
         }
-        Game.entityies = {};
+        Game.entities = {};
     }
     static setCharacterEntity(_id, _characterEntity) {
         Game.characterEntities[_id] = _characterEntity;
