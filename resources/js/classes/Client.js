@@ -12,10 +12,10 @@ class Client {
         Client.playersToCreateCounter = 0;
         Client.hasBackloggedPlayers = true;
         Client.lockBackloggedPlayerCreation = false;
-        Client.playersToUpdate = {};
-        Client.playersToUpdateCounter = 0;
-        Client.hasBackloggedPlayersToUpdate = true;
-        Client.lockBackloggedPlayerToUpdate = false;
+        Client.playersToInitialize = {};
+        Client.playersToInitializeCounter = 0;
+        Client.hasBackloggedPlayersToInitialize = true;
+        Client.lockBackloggedPlayerToInitialize = false;
         Client.networkID = "";
 	}
 	static connect() {
@@ -140,24 +140,24 @@ class Client {
             return 1;
         }
         if (!(Game.player instanceof CharacterEntity)) {
-            Client.addPlayerToUpdate("00000000-0000-0000-0000-000000000000", stringUUID, networkID);
+            Client.addPlayerToInitialize("00000000-0000-0000-0000-000000000000", stringUUID, networkID);
             return 1;
         }
+        console.log(`Client::initializeSelf(${stringUUID}, ${networkID})`);
         Client.sendMessage({
             type: "P_INIT_SELF",
             content: [
+                Game.player.getID(),
             	Game.player.getName(),
                 Game.player.getAge(),
                 Game.player.getSex(),
                 Game.player.getSpecies(),
-                Game.player.controller.textureID,
-                Game.player.controller.meshID,
-                Game.player.controller.mesh.position.x,
-                Game.player.controller.mesh.position.y,
-                Game.player.controller.mesh.position.z,
-                Game.player.controller.mesh.rotation.y,
-                Game.player.controller.mesh.scaling.x,
-            	Game.player.controller.key.toNumber()
+                Game.player.getMeshID(),
+                Game.player.getMaterialID(),
+                Game.player.controller.mesh.position,
+                Game.player.controller.mesh.rotation,
+                Game.player.controller.mesh.scaling,
+            	Game.player.controller.key.toInteger()
 			]
         });
         return 0;
@@ -169,11 +169,10 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-                Game.player.controller.mesh.position.x,
-                Game.player.controller.mesh.position.y,
-                Game.player.controller.mesh.position.z,
-                Game.player.controller.mesh.rotation.y,
-                Game.player.controller.key.toNumber()
+                Game.player.controller.mesh.position,
+                Game.player.controller.mesh.rotation,
+                Game.player.controller.mesh.scaling,
+                Game.player.controller.key.toInteger()
             ]
         });
     }
@@ -184,7 +183,7 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_MOVEMENTKEYS_SELF",
             content: [
-                Game.player.controller.key.toNumber()
+                Game.player.controller.key.toInteger()
             ]
         });
     }
@@ -192,57 +191,69 @@ class Client {
         if (!Client._isOnline) {
             return null;
         }
-        console.log("requestPlayerByNetworkID(" + networkID + ")");
+        console.log(`Client::requestPlayerByNetworkID(${networkID})`);
         Client.sendMessage({
             type: "P_REQUEST_PLAYER",
             content: networkID
         });
     }
     static requestAllPlayers() {
-        console.log("requestAllPlayers()");
+        console.log("Client::requestAllPlayers()");
         Client.sendMessage({
             type: "P_REQUEST_ALL_PLAYERS",
             content: ""
         });
     }
-    static addPlayerToUpdate(characterID, newCharacterID, networkID) {
+    static addPlayerToInitialize(characterID, newCharacterID, networkID) {
+        console.log(`Client::addPlayerToInitialize(${characterID}, ${newCharacterID}, ${networkID})`);
         if (Client.hasPlayerToUpdate(characterID)) {
             return 0;
         }
-        Client.playersToUpdate[characterID] = {
+        Client.playersToInitialize[characterID] = {
             0:characterID,
             1:newCharacterID,
             2:networkID
         }
-        Client.playersToUpdateCounter += 1;
-        Client.hasBackloggedPlayersToUpdate = true;
+        Client.playersToInitializeCounter += 1;
+        Client.hasBackloggedPlayersToInitialize = true;
         return 0;
     }
     static removePlayerToUpdate(characterID) {
         if (!Client.hasPlayerToUpdate(characterID)) {
             return 0;
         }
-        delete Client.playersToUpdate[characterID];
-        Client.playersToUpdateCounter -= 1;
+        delete Client.playersToInitialize[characterID];
+        Client.playersToInitializeCounter -= 1;
         return 0;
     }
     static hasPlayerToUpdate(characterID) {
-        return Client.playersToUpdateCounter > 0 || Client.playersToUpdate.hasOwnProperty(characterID);
+        return Client.playersToInitializeCounter > 0 || Client.playersToInitialize.hasOwnProperty(characterID);
     }
     static updateBackloggedPlayers() {
-        if (Client.playersToUpdateCounter == 0 || Client.lockBackloggedPlayerUpdate) {
+        if (Client.playersToInitializeCounter == 0 || Client.lockBackloggedPlayerUpdate) {
             return true;
         }
-        Client.lockBackloggedPlayerToUpdate = true;
-        for (let i in Client.playersToUpdate) {
-            if (Game.hasCharacterEntity(Client.playersToUpdate[i][0]) && Game.getCharacterEntity(Client.playersToUpdate[i][0]).hasController()) {
-				Game.setEntityID(Client.playersToUpdate[i][0], Client.playersToUpdate[i][1]);
-                Client.setEntry(Client.playersToUpdate[2], Game.getCharacterEntity(Client.playersToUpdate[i][1]));
+        console.log("Client::updateBackloggedPlayers()");
+        Client.lockBackloggedPlayerToInitialize = true;
+        for (let i in Client.playersToInitialize) {
+            if (Game.hasCharacterEntity(Client.playersToInitialize[i][0]) && Game.getCharacterEntity(Client.playersToInitialize[i][0]).hasController()) {
+                let oldID = Client.playersToInitialize[i][0];
+                let newID = Client.playersToInitialize[i][1];
+                let networkID = Client.playersToInitialize[i][2];
+                let abstractEntity = Game.getCharacterEntity(oldID);
+				Game.setEntityID(oldID, newID);
+                if (abstractEntity == Game.player) {
+                    Client.setPlayerEntry(networkID);
+                }
+                else {
+                    Client.setEntry(networkID, abstractEntity);
+                }
                 Client.removePlayerToUpdate(i);
+                Client.initializeSelf(newID, networkID);
             }
         }
-        Client.hasBackloggedPlayersToUpdate = false;
-        Client.lockBackloggedPlayerToUpdate = false;
+        Client.hasBackloggedPlayersToInitialize = false;
+        Client.lockBackloggedPlayerToInitialize = false;
         return 0;
     }
     static addPlayerToCreate(characterID, networkID) {

@@ -61,7 +61,7 @@ class MessageRouter {
 				}
 				else {
 					Game.createCharacter(
-						_data.content[0],
+						_data.content[1],
 						_data.content[2],
 						undefined,
 						"genericRabbit",
@@ -71,11 +71,11 @@ class MessageRouter {
 						_data.content[6],
 						_data.content[7],
 						{mass:0.8,restitution:0.1},
-						_data.content[8],
-						_data.content[9],
-						_data.content[10]
+						_data.content[8][0],
+						_data.content[9][0],
+						_data.content[10][0]
 					);
-					Client.addPlayerToCreate(_data.content[0], _data.content[1]);
+					Client.addPlayerToCreate(_data.content[1], _data.content[0]);
 				}
 				break;
 			}
@@ -124,7 +124,8 @@ class MessageRouter {
 				break;
 			}
 			case "S_SEND_ALL_PLAYERS" : {
-				console.log("S_REQUEST_ALL_PLAYERS : " + _data.content);
+				console.log("S_REQUEST_ALL_PLAYERS : ");
+				console.log(_data.content);
 				break;
 			}
 			default : {

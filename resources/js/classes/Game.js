@@ -3874,7 +3874,7 @@ class Game {
         }
         return 1;
     }
-    static actionAttackFunction(_entity, _subEntity = Game.player) {
+    static actionAttackFunction(_entity = Game.player.getTarget(), _subEntity = Game.player) {
         if (!(_entity instanceof AbstractEntity)) {
             _entity = null;
         }
