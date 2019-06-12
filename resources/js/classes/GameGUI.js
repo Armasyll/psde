@@ -6,10 +6,15 @@ class GameGUI {
         GameGUI.fontSize = 24;
         GameGUI.alpha = "0.75";
         GameGUI.color = "#c3c3c3";
+        GameGUI.colorDanger = "#ffffff";
         GameGUI.background = "#0c0c0c";
         GameGUI.backgroundDisabled = "#030c0c";
+        GameGUI.backgroundDanger = "#dc3545";
         GameGUI.focusedBackground = "#3c3c3c";
         GameGUI.focusedBackgroundDisabled = "#0c3c3c";
+
+        GameGUI._nameInput = undefined;
+        GameGUI._ageInput = undefined;
         GameGUI._menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
         GameGUI._menu.rootContainer.isVisible = false;
         GameGUI._menu.rootContainer.zIndex = 5;
@@ -237,9 +242,9 @@ class GameGUI {
         if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");
         let characterChoiceMenuContainer = new BABYLON.GUI.Grid("characterChoiceMenu");
         let nameLabel = new BABYLON.GUI.TextBlock("nameLabel");
-        let nameInput = new BABYLON.GUI.InputText("nameInput");
+        GameGUI._nameInput = new BABYLON.GUI.InputText("nameInput");
         let ageLabel = new BABYLON.GUI.TextBlock("ageLabel");
-        let ageInput = new BABYLON.GUI.InputText("ageInput");
+        GameGUI._ageInput = new BABYLON.GUI.InputText("ageInput");
         let buttonKBLayoutLabel = new BABYLON.GUI.TextBlock("kbLayoutLabel");
         let buttonKBLayoutContainer = new BABYLON.GUI.Grid("kbLayoutContainer");
         let buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
@@ -270,22 +275,22 @@ class GameGUI {
         nameLabel.width = 1.0;
         nameLabel.color = GameGUI.color;
 
-        nameInput.text = "Player";
-        nameInput.height = 1.0;
-        nameInput.width = 1.0;
-        nameInput.color = GameGUI.color;
-        nameInput.background = GameGUI.focusedBackground;
+        GameGUI._nameInput.text = "Player";
+        GameGUI._nameInput.height = 1.0;
+        GameGUI._nameInput.width = 1.0;
+        GameGUI._nameInput.color = GameGUI.color;
+        GameGUI._nameInput.background = GameGUI.focusedBackground;
 
         ageLabel.text = "Age: ";
         ageLabel.height = 1.0;
         ageLabel.width = 1.0;
         ageLabel.color = GameGUI.color;
 
-        ageInput.text = "18";
-        ageInput.height = 1.0;
-        ageInput.width = 1.0;
-        ageInput.color = GameGUI.color;
-        ageInput.background = GameGUI.focusedBackground;
+        GameGUI._ageInput.text = "18";
+        GameGUI._ageInput.height = 1.0;
+        GameGUI._ageInput.width = 1.0;
+        GameGUI._ageInput.color = GameGUI.color;
+        GameGUI._ageInput.background = GameGUI.focusedBackground;
 
         buttonKBLayoutLabel.text = "Keyboard Layout: ";
         buttonKBLayoutLabel.height = 1.0;
@@ -313,23 +318,11 @@ class GameGUI {
         submitOnline.color = GameGUI.color;
         submitOnline.background = GameGUI.focusedBackground;
 
-        nameInput.onTextChangedObservable.add(function() { // TODO: Invalid on submission, not on change :v
-            let _string = Game.Tools.filterID(nameInput.text);
-            if (_string.length < 1 || _string == undefined) {
-                nameInput.text = "Player";
-            }
-            else {
-                nameInput.text = _string;
-            }
+        GameGUI._nameInput.onTextChangedObservable.add(function() {
+            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
         });
-        ageInput.onTextChangedObservable.add(function() {
-            let _int = Game.Tools.filterInt(ageInput.text);
-            if (_int < 1 || _int == undefined) {
-                ageInput.text = "1";
-            }
-            else if (_int > 127) {
-                ageInput.text = "127";
-            }
+        GameGUI._ageInput.onTextChangedObservable.add(function() {
+            GameGUI._ageInput.text = String(Game.Tools.filterInt(GameGUI._ageInput.text));
         });
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
             Game.initQwertyKeyboardControls();
@@ -341,34 +334,80 @@ class GameGUI {
             Game.initAzertyKeyboardControls();
         });
         submitOnline.onPointerClickObservable.add(function() {
-            if (!(Game.player instanceof AbstractEntity)) {
-                Game.generateWallScene();
-                Game.createPlayer("00000000-0000-0000-0000-000000000000", nameInput.text, undefined, undefined, ageInput.text, SexEnum.MALE, SpeciesEnum.SKELETON, "foxSkeletonN", "bone01", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+            let doNotPassGo = false;
+            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
+            GameGUI._ageInput.text = Game.Tools.filterInt(GameGUI._ageInput.text)
+            if (GameGUI._nameInput.text.length < 1) {
+                GameGUI._nameInput.color = GameGUI.colorDanger;
+                GameGUI._nameInput.background = GameGUI.backgroundDanger;
+                doNotPassGo = true;
             }
-            if (!Client.isOnline()) {
-                Client.connect();
+            else {
+                GameGUI._nameInput.color = GameGUI.color;
+                GameGUI._nameInput.background = GameGUI.background;
             }
-            GameGUI.hideCharacterChoiceMenu();
-            GameGUI.hideMenu();
-            GameGUI.showHUD();
+            if (Number.parseInt(GameGUI._ageInput.text) <= 0) {
+                GameGUI._ageInput.color = GameGUI.colorDanger;
+                GameGUI._ageInput.background = GameGUI.backgroundDanger;
+                doNotPassGo = true;
+            }
+            else {
+                GameGUI._ageInput.color = GameGUI.color;
+                GameGUI._ageInput.background = GameGUI.background;
+            }
+            if (!doNotPassGo) {
+                if (!(Game.player instanceof AbstractEntity)) {
+                    Game.generateWallScene();
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, GameGUI._ageInput.text, SexEnum.MALE, SpeciesEnum.SKELETON, "foxSkeletonN", "bone01", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+                }
+                if (!Client.isOnline()) {
+                    Client.connect();
+                }
+                GameGUI.hideCharacterChoiceMenu();
+                GameGUI.hideMenu();
+                GameGUI.showHUD();
+            }
         });
         submitOffline.onPointerClickObservable.add(function() {
-            if (!(Game.player instanceof AbstractEntity)) {
-                Game.generateApartment();
-                Game.createPlayer("00000000-0000-0000-0000-000000000000", nameInput.text, undefined, undefined, ageInput.text, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+            let doNotPassGo = false;
+            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
+            GameGUI._ageInput.text = Game.Tools.filterInt(GameGUI._ageInput.text)
+            if (GameGUI._nameInput.text.length < 1) {
+                GameGUI._nameInput.color = GameGUI.colorDanger;
+                GameGUI._nameInput.background = GameGUI.backgroundDanger;
+                doNotPassGo = true;
             }
-            if (Client.isOnline()) {
-                Client.disconnect();
+            else {
+                GameGUI._nameInput.color = GameGUI.color;
+                GameGUI._nameInput.background = GameGUI.background;
             }
-            GameGUI.hideCharacterChoiceMenu();
-            GameGUI.hideMenu();
-            GameGUI.showHUD();
+            if (Number.parseInt(GameGUI._ageInput.text) <= 0) {
+                GameGUI._ageInput.color = GameGUI.colorDanger;
+                GameGUI._ageInput.background = GameGUI.backgroundDanger;
+                doNotPassGo = true;
+            }
+            else {
+                GameGUI._ageInput.color = GameGUI.color;
+                GameGUI._ageInput.background = GameGUI.background;
+            }
+            if (!doNotPassGo) {
+                if (!(Game.player instanceof AbstractEntity)) {
+                    Game.generateApartment();
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, GameGUI._ageInput.text, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"green"}, new BABYLON.Vector3(3, 0, -17));
+                }
+                if (Client.isOnline()) {
+                    Client.disconnect();
+                }
+                GameGUI.hideCharacterChoiceMenu();
+                GameGUI.hideMenu();
+                GameGUI.showHUD();
+            }
         });
 
         characterChoiceMenuContainer.addControl(nameLabel, 0, 0);
-        characterChoiceMenuContainer.addControl(nameInput, 0, 1);
+        characterChoiceMenuContainer.addControl(GameGUI._nameInput, 0, 1);
         characterChoiceMenuContainer.addControl(ageLabel, 1, 0);
-        characterChoiceMenuContainer.addControl(ageInput, 1, 1);
+        characterChoiceMenuContainer.addControl(GameGUI._ageInput, 1, 1);
         characterChoiceMenuContainer.addControl(buttonKBLayoutLabel, 2, 0);
         characterChoiceMenuContainer.addControl(buttonKBLayoutContainer, 2, 1);
             buttonKBLayoutContainer.addControl(buttonKBLayoutQwerty, 0, 0);
