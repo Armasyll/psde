@@ -43,6 +43,9 @@ class AbstractEntity {
         }
         return this.id;
     }
+    getType() {
+        return this.entityType;
+    }
     setName(name) {
         this.name = Tools.filterName(name);
         return 0;

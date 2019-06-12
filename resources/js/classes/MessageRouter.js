@@ -61,18 +61,13 @@ class MessageRouter {
 					if (characterController.getID() != _data.content[0]) {
 						Game.setEntityID(characterController.getID(), _data.content[0]);
 					}
-					characterController.mesh.position.copyFrom(
-						_data.content[8]
-					);
-					characterController.mesh.rotation.copyFrom(
-						_data.content[9]
-					);
-					characterController.mesh.scaling.copyFrom(
-						_data.content[10]
-					);
+					characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[8]));
+					characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[9]));
+					characterController.mesh.scaling.copyFrom(BABYLON.Vector3.FromArray(_data.content[10]));
 					characterController.key.copyFrom(_data.content[11]);
 				}
 				else {
+					console.log(_data.content);
 					Game.createCharacter(
 						_data.content[1],
 						_data.content[2],
@@ -84,9 +79,9 @@ class MessageRouter {
 						_data.content[6],
 						_data.content[7],
 						{mass:0.8,restitution:0.1},
-						_data.content[8][0],
-						_data.content[9][0],
-						_data.content[10][0]
+						_data.content[8],
+						_data.content[9],
+						_data.content[10]
 					);
 					Client.addPlayerToCreate(_data.content[1], _data.content[0]);
 				}
@@ -112,15 +107,9 @@ class MessageRouter {
 						console.log("S_UPDATE_LOCROTSCALES_PLAYERS :     Checking for " + _data.content[characterObject][0]);
 						if (Client.hasNetworkID(_data.content[characterObject][0])) {
 							let characterController = Client.getController(_data.content[characterObject][0]).getController();
-							characterController.mesh.position.copyFrom(
-								_data.content[characterObject][1]
-							);
-							characterController.mesh.rotation.copyFrom(
-								_data.content[characterObject][2]
-							);
-							characterController.mesh.scaling.copyFrom(
-								_data.content[characterObject][3]
-							);
+							characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][1]));
+							characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][2]));
+							characterController.mesh.scaling.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][3]));
 							characterController.key.copyFrom(_data.content[characterObject][4]);
 						}
 						else {
@@ -154,20 +143,20 @@ class MessageRouter {
 				let entityType = Number.parseInt(_data.content[0]);
 				let subEntityType = Number.parseInt(_data.content[2]);
 				let actionID = Number.parseInt(_data.content[4]);
-				if (!Game.hasEntity(_data.content[1])) {
+				if (!Game.hasEntity(_data.content[1]) && !Game.hasInstancedEntity(_data.content[1])) {
 					console.log(`\tEntity (${EntityEnum.properties[_data.content[0]].key}:${_data.content[1]}) does not exist!`);
 					return 2;
 				}
-				if (!Game.hasEntity(_data.content[3])) {
+				if (!Game.hasEntity(_data.content[3]) && !Game.hasInstancedEntity(_data.content[3])) {
 					console.log(`\tSub-Entity (${EntityEnum.properties[_data.content[3]].key}:${_data.content[3]}) does not exist!`);
 					return 2;
 				}
-				if (!ActionEnums.properties.hasOwnProperty(_data.content[4])) {
+				if (!ActionEnum.properties.hasOwnProperty(_data.content[4])) {
 					console.log(`\tAction (${_data.content[4]}) does not exist!`);
 					return 2;
 				}
-				let entity = Game.getEntity(_data.content[1]);
-				let subEntity = Game.getEntity(_data.content[3]);
+				let entity = Game.getEntity(_data.content[1]) || Game.getInstancedEntity(_data.content[1]);
+				let subEntity = Game.getEntity(_data.content[3]) || Game.getInstancedEntity(_data.content[3]);
 				switch (actionID) {
 					case ActionEnum.ATTACK: {
 						if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {

@@ -1431,7 +1431,7 @@ class Game {
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
-            if (Client._isOnline) {
+            if (Client.isOnline()) {
                 Client.updateLocRotScaleSelf();
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
@@ -1495,7 +1495,7 @@ class Game {
         }
         Game.player.getController().move = Game.player.getController().anyMovement();
         if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
-            if (Client._isOnline) {
+            if (Client.isOnline()) {
                 Client.updateLocRotScaleSelf();
             }
             Game.player.getController().prevKey.copyFrom(Game.player.getController().key);

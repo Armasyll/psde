@@ -169,9 +169,9 @@ class Client {
                 Game.player.getSpecies(),
                 Game.player.getMeshID(),
                 Game.player.getMaterialID(),
-                Game.player.controller.mesh.position,
-                Game.player.controller.mesh.rotation,
-                Game.player.controller.mesh.scaling,
+                Game.player.controller.mesh.position.asArray(),
+                Game.player.controller.mesh.rotation.asArray(),
+                Game.player.controller.mesh.scaling.asArray(),
             	Game.player.controller.key.toInteger()
 			]
         });
@@ -184,9 +184,9 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_LOCROTSCALE_SELF",
             content: [
-                Game.player.controller.mesh.position,
-                Game.player.controller.mesh.rotation,
-                Game.player.controller.mesh.scaling,
+                Game.player.controller.mesh.position.asArray(),
+                Game.player.controller.mesh.rotation.asArray(),
+                Game.player.controller.mesh.scaling.asArray(),
                 Game.player.controller.key.toInteger()
             ]
         });
