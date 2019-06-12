@@ -3897,15 +3897,21 @@ class Game {
         if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
             let damage = Game.calculateDamage(entity, subEntity);
             if (damage > 0) {
-                switch (subEntity.getMainWeapon().getDamageType()) {
-                    case DamageEnum.PIERCING: {
-                        subEntity.controller.doThrustRH();
-                        Game.playSound("hit");
+                if (subEntity.getMainWeapon() instanceof InstancedItemEntity) {
+                    switch (subEntity.getMainWeapon().getDamageType()) {
+                        case DamageEnum.PIERCING: {
+                            subEntity.controller.doThrustRH();
+                            Game.playSound("hit");
+                        }
+                        default: {
+                            subEntity.controller.doPunchRH();
+                            Game.playSound("hit");
+                        }
                     }
-                    default: {
-                        subEntity.controller.doPunchRH();
-                        Game.playSound("hit");
-                    }
+                }
+                else {
+                    subEntity.controller.doPunchRH();
+                    Game.playSound("hit");
                 }
                 entity.subtractHealth(damage);
                 if (subEntity == Game.player && Game.player.hasTarget()) {
