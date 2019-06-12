@@ -313,7 +313,7 @@ class GameGUI {
         submitOnline.color = GameGUI.color;
         submitOnline.background = GameGUI.focusedBackground;
 
-        nameInput.onTextChangedObservable.add(function() {
+        nameInput.onTextChangedObservable.add(function() { // TODO: Invalid on submission, not on change :v
             let _string = Game.Tools.filterID(nameInput.text);
             if (_string.length < 1 || _string == undefined) {
                 nameInput.text = "Player";
