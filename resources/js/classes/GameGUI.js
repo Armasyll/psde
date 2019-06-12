@@ -1203,7 +1203,7 @@ class GameGUI {
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
                     GameGUI.hideActionsMenu();
-                    Game.doEntityAction(GameGUI._actionsMenuOptions[i].target, Game.player, GameGUI._actionsMenuOptions[i].action);
+                    Game.doEntityActionFunction(GameGUI._actionsMenuOptions[i].target, Game.player, GameGUI._actionsMenuOptions[i].action);
                 });
                 GameGUI._actionsMenu.addControl(button);
             }

@@ -1141,6 +1141,22 @@ class CharacterEntity extends EntityWithStorage {
     isLeftHanded() {
         return this.handedness == HandednessEnum.LEFT;
     }
+    getMainWeapon() {
+        if (this.isRightHanded()) {
+            return this.getEquipment()["HAND_R"];
+        }
+        else {
+            return this.getEquipment()["HAND_L"];
+        }
+    }
+    getSubWeapon() {
+        if (this.isRightHanded()) {
+            return this.getEquipment()["HAND_L"];
+        }
+        else {
+            return this.getEquipment()["HAND_R"];
+        }
+    }
 
     hold(_instancedItem, _hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
         if (_hand != ApparelSlotEnum.HAND_L && _hand != ApparelSlotEnum.HAND_R) {

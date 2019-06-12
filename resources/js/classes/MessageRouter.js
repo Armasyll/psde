@@ -1,7 +1,7 @@
 class MessageRouter {
 	static incoming(_data) {
 		if (typeof _data.type != "string") {
-			console.log("Incorrect incoming data `" + _data + "`");
+			console.log("Incorrect incoming data.");
 			return undefined;
 		}
 		switch (_data.type) {
@@ -31,6 +31,19 @@ class MessageRouter {
 			}
 			case "S_ACCEPT_INIT_SELF" : {
 				console.log("S_ACCEPT_INIT_SELF");
+				Game.doEntityActionFunction = Client.requestEntityAction;
+				Game.actionAttackFunction = Client.actionAttack;
+				Game.actionCloseFunction = Client.actionClose;
+				Game.actionDropFunction = Client.actionDrop;
+				Game.actionEquipFunction = Client.actionEquip;
+				Game.actionHoldFunction = Client.actionHold;
+				Game.actionLayFunction = Client.actionLay;
+				Game.actionOpenFunction = Client.actionOpen;
+				Game.actionReleaseFunction = Client.actionRelease;
+				Game.actionSitFunction = Client.actionSit;
+				Game.actionTakeFunction = Client.actionTake;
+				Game.actionTalkFunction = Client.actionTalk;
+				Game.actionUnequipFunction = Client.actionUnequip;
 				break;
 			}
 			case "S_DENY_INIT_SELF" : {
@@ -128,8 +141,64 @@ class MessageRouter {
 				console.log(_data.content);
 				break;
 			}
+			case "S_DO_ENTITY_ACTION" : {
+				console.log("S_DO_ENTITY_ACTION");
+				/*
+					0: EntityEnum Entity's EntityType
+					1: AbstractEntity Entity
+					2: EntityEnum SubEntity's EntityType
+					3: AbstractEntity SebEntity
+					4: ActionEnum Action SubEntity is doing to Entity
+					5: [number] Depends on the ActionEnum; if it's ActionEnum.ATTACK, then this is the attack damage
+				*/
+				let entityType = Number.parseInt(_data.content[0]);
+				let subEntityType = Number.parseInt(_data.content[2]);
+				let actionID = Number.parseInt(_data.content[4]);
+				if (!Game.hasEntity(_data.content[1])) {
+					console.log(`\tEntity (${EntityEnum.properties[_data.content[0]].key}:${_data.content[1]}) does not exist!`);
+					return 2;
+				}
+				if (!Game.hasEntity(_data.content[3])) {
+					console.log(`\tSub-Entity (${EntityEnum.properties[_data.content[3]].key}:${_data.content[3]}) does not exist!`);
+					return 2;
+				}
+				if (!ActionEnums.properties.hasOwnProperty(_data.content[4])) {
+					console.log(`\tAction (${_data.content[4]}) does not exist!`);
+					return 2;
+				}
+				let entity = Game.getEntity(_data.content[1]);
+				let subEntity = Game.getEntity(_data.content[3]);
+				switch (actionID) {
+					case ActionEnum.ATTACK: {
+						if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
+							let damage = Number.parseInt(_data.content[5]) || 0;
+							if (damage > 0) {
+								switch (subEntity.getMainWeapon().getDamageType()) {
+									case DamageEnum.PIERCING: {
+										subEntity.controller.doThrustRH();
+										Game.playSound("hit");
+									}
+									default: {
+										subEntity.controller.doPunchRH();
+										Game.playSound("hit");
+									}
+								}
+								entity.subtractHealth(damage);
+								if (subEntity == Game.player && Game.player.hasTarget()) {
+									Game.gui.setTargetPortrait(Game.player.getTarget());
+								}
+							}
+						}
+						break;
+					}
+					default: {
+						Game.doEntityAction(entity, subEntity, actionID);
+					}
+				}
+				break;
+			}
 			default : {
-
+				console.log(`Incorrect incoming data type (${_data.type})`);
 			}
 		}
 	}
