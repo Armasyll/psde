@@ -157,33 +157,7 @@ class MessageRouter {
 				}
 				let entity = Game.getEntity(_data.content[1]) || Game.getInstancedEntity(_data.content[1]);
 				let subEntity = Game.getEntity(_data.content[3]) || Game.getInstancedEntity(_data.content[3]);
-				switch (actionID) {
-					case ActionEnum.ATTACK: {
-						if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
-							let damage = Number.parseInt(_data.content[5]) || 0;
-							if (damage > 0) {
-								switch (subEntity.getMainWeapon().getDamageType()) {
-									case DamageEnum.PIERCING: {
-										subEntity.controller.doThrustRH();
-										Game.playSound("hit");
-									}
-									default: {
-										subEntity.controller.doPunchRH();
-										Game.playSound("hit");
-									}
-								}
-								entity.subtractHealth(damage);
-								if (subEntity == Game.player && Game.player.hasTarget()) {
-									Game.gui.setTargetPortrait(Game.player.getTarget());
-								}
-							}
-						}
-						break;
-					}
-					default: {
-						Game.doEntityAction(entity, subEntity, actionID);
-					}
-				}
+				Game.actionAttack(entity, subEntity, (_data.content[5] || 0));
 				break;
 			}
 			default : {

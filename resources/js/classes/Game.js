@@ -3884,7 +3884,7 @@ class Game {
         }
         return 1;
     }
-    static actionAttack(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
+    static actionAttack(entity = Game.player.getTarget(), subEntity = Game.player, damage = 0, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             entity = null;
         }
@@ -3895,7 +3895,9 @@ class Game {
             return 1;
         }
         if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
-            let damage = Game.calculateDamage(entity, subEntity);
+            if (damage == 0) {
+                damage = Game.calculateDamage(entity, subEntity);
+            }
             if (damage > 0) {
                 if (subEntity.getMainWeapon() instanceof InstancedItemEntity) {
                     switch (subEntity.getMainWeapon().getDamageType()) {
