@@ -4805,7 +4805,7 @@ class Game {
             }
             distance = distance * 0.75; // assuming arm length is half of the body length, idk
         }
-        return Game.Tools.areVectorsClose(entityA.controller.mesh.position, entityB.controller.mesh.position, distance);
+        return entityA.controller.mesh.position.equalsWithEpsilon(entityB.controller.mesh.position, distance);
     }
     /**
      * Whether or not entityB is in entityA's point of view (epislon value)
