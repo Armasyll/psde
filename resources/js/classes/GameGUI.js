@@ -969,12 +969,23 @@ class GameGUI {
                     _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenu);});
                     break;
                 }
+                case ActionEnum.EQUIP : {
+                    if (Game.player.hasEquipment(_instancedItemEntity) && !Game.player.hasHeldItem(_instancedItemEntity)) {
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.UNEQUIP].name);
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
+                    }
+                    else {
+                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.EQUIP].name);
+                        _actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
+                    }
+                    break;
+                }
                 case ActionEnum.HOLD : {
-                    if (Game.player.hasEquipment(_instancedItemEntity)) {
+                    if (Game.player.hasHeldItem(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
                         _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
                     }
-                    else {
+                    else if (!Game.player.hasEquipment(_instancedItemEntity)) {
                         _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
                         _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
                     }

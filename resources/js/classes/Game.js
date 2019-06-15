@@ -470,7 +470,8 @@ class Game {
          */
         Game.soundLocations = {
             "openDoor":"resources/sounds/Open Door.mp3",
-            "hit":"resources/sounds/Hit.mp3"
+            "hit":"resources/sounds/Hit.mp3",
+            "slice":"resources/sounds/Slice.mp3"
         };
         /**
          * Map of Sounds per ID
@@ -2160,13 +2161,17 @@ class Game {
             }
         }
     }
-    static addFurnitureToCreate(furnitureIndexID, furnitureEntity = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
-        if (Game.hasFurnitureToCreate(furnitureIndexID)) {
+    static addFurnitureToCreate(furnitureInstanceID, furnitureInstance = undefined, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        if (Game.hasFurnitureToCreate(furnitureInstanceID)) {
             return true;
         }
-        Game.furnitureToCreate[furnitureIndexID] = {
-            0:furnitureIndexID,
-            1:furnitureEntity,
+        if (!(furnitureInstance instanceof InstancedFurnitureEntity) && Game.hasInstancedFurnitureEntity(furnitureInstance)) {
+            furnitureInstance = Game.getInstancedFurnitureEntity(furnitureInstance);
+        }
+        Game.loadMesh(furnitureInstance.getMeshID());
+        Game.furnitureToCreate[furnitureInstanceID] = {
+            0:furnitureInstanceID,
+            1:furnitureInstance,
             2:position,
             3:rotation,
             4:scaling
@@ -2175,23 +2180,23 @@ class Game {
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeFurnitureToCreate(furnitureIndexID) {
-        if (!Game.hasFurnitureToCreate(furnitureIndexID)) {
+    static removeFurnitureToCreate(furnitureInstanceID) {
+        if (!Game.hasFurnitureToCreate(furnitureInstanceID)) {
             return true;
         }
-        delete Game.furnitureToCreate[furnitureIndexID];
+        delete Game.furnitureToCreate[furnitureInstanceID];
         Game.furnitureToCreateCounter -= 1;
         return true;
     }
-    static hasFurnitureToCreate(furnitureIndexID) {
-        return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(furnitureIndexID);
+    static hasFurnitureToCreate(furnitureInstanceID) {
+        return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(furnitureInstanceID);
     }
     static createBackloggedFurniture() {
         if (Game.furnitureToCreateCounter == 0) {
             return true;
         }
         for (let i in Game.furnitureToCreate) {
-            if (Game.loadedMeshes.hasOwnProperty(Game.getInstancedFurnitureEntity(Game.furnitureToCreate[i][1]).getMeshID())) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.furnitureToCreate[i][1].getMeshID())) {
                 Game.createFurnitureInstance(
                     Game.furnitureToCreate[i][0],
                     Game.furnitureToCreate[i][1],
@@ -2207,6 +2212,7 @@ class Game {
         if (Game.hasLightingToCreate(lightingIndexID)) {
             return true;
         }
+        Game.loadMesh(meshID);
         Game.lightingToCreate[lightingIndexID] = {
             0:lightingIndexID,
             1:name,
@@ -2262,6 +2268,7 @@ class Game {
         if (Game.hasDoorsToCreate(doorIndexID)) {
             return true;
         }
+        Game.loadMesh(meshID);
         Game.doorsToCreate[doorIndexID] = {
             0:doorIndexID,
             1:name,
@@ -2313,6 +2320,7 @@ class Game {
         if (Game.hasCharacterToCreate(characterIndexID)) {
             return true;
         }
+        Game.loadMesh(meshID);
         Game.charactersToCreate[characterIndexID] = {
             0:characterIndexID,
             1:name,
@@ -2372,6 +2380,7 @@ class Game {
         if (Game.hasItemToCreate(itemIndexID)) {
             return true;
         }
+        Game.loadMesh(itemEntity.getMeshID());
         Game.itemsToCreate[itemIndexID] = {
             0:itemIndexID,
             1:itemEntity,
@@ -2417,6 +2426,7 @@ class Game {
         if (Game.hasAttachmentToCreate(attachmentIndexID)) {
             return true;
         }
+        Game.loadMesh(meshID);
         Game.attachmentsToCreate[attachmentIndexID] = {
             0:attachmentIndexID,
             1:attachToController,
@@ -2448,9 +2458,8 @@ class Game {
         }
         for (let i in Game.attachmentsToCreate) {
             if (Game.loadedMeshes.hasOwnProperty(Game.attachmentsToCreate[i][2])) {
-                Game.attachmentsToCreate[i][1] = Game.getEntityController(Game.attachmentsToCreate[i][1]);
                 if (Game.attachmentsToCreate[i][1] instanceof CharacterController) {
-                    Game.attachmentsToCreate[i][1].attachToBone(
+                    Game.attachmentsToCreate[i][1].attachMeshIDToBone(
                         Game.attachmentsToCreate[i][2],
                         Game.attachmentsToCreate[i][3],
                         Game.attachmentsToCreate[i][4],
@@ -3205,7 +3214,7 @@ class Game {
         }
         if (!(Game.hasLoadedMesh(furnitureEntity.getMeshID()))) {
             Game.loadMesh(furnitureEntity.getMeshID());
-            Game.addFurnitureToCreate(id, furnitureEntity.getID(), position, rotation, scaling);
+            Game.addFurnitureToCreate(id, furnitureEntity, position, rotation, scaling);
             return 0;
         }
         let loadedMesh = Game.createMesh(id, furnitureEntity.getMeshID(), furnitureEntity.getTextureID(), position, rotation, scaling, true);
@@ -3895,7 +3904,7 @@ class Game {
             return 1;
         }
         if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
-            if (damage == 0) {
+            if (damage == 0 && Game.withinRange(subEntity, entity) && Game.inFrontOf(subEntity, entity)) {
                 damage = Game.calculateDamage(entity, subEntity);
             }
             if (damage > 0) {
@@ -3903,7 +3912,7 @@ class Game {
                     switch (subEntity.getMainWeapon().getDamageType()) {
                         case DamageEnum.PIERCING: {
                             subEntity.controller.doThrustRH();
-                            Game.playSound("hit");
+                            Game.playSound("slice");
                         }
                         default: {
                             subEntity.controller.doPunchRH();
@@ -3924,11 +3933,8 @@ class Game {
         return 0;
     }
     static calculateDamage(defender, attacker) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
-        let didHit = false;
         let attackRoll = Game.roll(1, 20);
-        if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
-            didHit = attackRoll > defender.getArmourClass();
-        }
+        let didHit = attackRoll > defender.getArmourClass();
         if (didHit) {
             let damageRollCount = 1;
             let damageRoll = 0;

@@ -48,7 +48,7 @@ class Tools {
     }
     static filterID(_id) {
         if (typeof _id == "string") {
-            return _id.replace(/[^a-zA-Z0-9_\-]/g,"");
+            return _id.replace(/[^a-zA-Z0-9_\-\.]/g,"");
         }
         return "";
     }

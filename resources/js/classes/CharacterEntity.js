@@ -561,27 +561,54 @@ class CharacterEntity extends EntityWithStorage {
         }
         return 0;
     }
-    hasEquipment(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            let _tempEntity = Game.getInstancedItemEntity(_entity);
+    hasEquipment(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            let _tempEntity = Game.getInstancedItemEntity(abstractEntity);
             if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = Game.getItemEntity(_entity);
+                _tempEntity = Game.getItemEntity(abstractEntity);
                 if (!(_tempEntity instanceof ItemEntity)) {
                     return null;
                 }
             }
-            _entity = _tempEntity;
+            abstractEntity = _tempEntity;
         }
-        if (_entity instanceof Entity) {
-            for (let _slot in this.equipment) {
-                if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot].getEntity() == _entity) {
+        if (abstractEntity instanceof Entity) {
+            for (let equipmentSlot in this.equipment) {
+                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot].getEntity() == abstractEntity) {
                     return true;
                 }
             }
         }
-        else if (_entity instanceof InstancedEntity) {
-            for (let _slot in this.equipment) {
-                if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot] == _entity) {
+        else if (abstractEntity instanceof InstancedEntity) {
+            for (let equipmentSlot in this.equipment) {
+                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot] == abstractEntity) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    hasHeldItem(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            let _tempEntity = Game.getInstancedItemEntity(abstractEntity);
+            if (!(_tempEntity instanceof InstancedItemEntity)) {
+                _tempEntity = Game.getItemEntity(abstractEntity);
+                if (!(_tempEntity instanceof ItemEntity)) {
+                    return null;
+                }
+            }
+            abstractEntity = _tempEntity;
+        }
+        if (abstractEntity instanceof Entity) {
+            for (let equipmentSlot in {"HAND_L":null, "HAND_R":null}) {
+                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot].getEntity() == abstractEntity) {
+                    return true;
+                }
+            }
+        }
+        else if (abstractEntity instanceof InstancedEntity) {
+            for (let equipmentSlot in {"HAND_L":null, "HAND_R":null}) {
+                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot] == abstractEntity) {
                     return true;
                 }
             }

@@ -768,7 +768,7 @@ class CharacterController extends EntityController {
      * @return {CharacterController} This character controller.
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
-        if (Game.debugMode) console.log("Running attachToBone");
+        if (Game.debugMode) console.log("Running attachMeshIDToBone");
         if (!Game.hasAvailableMesh(meshID)) {
             return this;
         }
@@ -987,13 +987,13 @@ class CharacterController extends EntityController {
         return this.detachFromBone("neck");
     }
     attachToLeftShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", new BABYLON.Vector3(0.05, 0.1, 0.025), new BABYLON.Vector3(BABYLON.Tools.ToRadians(135), BABYLON.Tools.ToRadians(45), BABYLON.Tools.ToRadians(90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(315), BABYLON.Tools.ToRadians(120)));
     }
     detachFromLeftShoulder() {
         return this.detachFromBone("shoulder.l");
     }
     attachToRightShoulder(_mesh, _texture = "missingTexture") {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", new BABYLON.Vector3(-0.05, 0.1, 0.025), new BABYLON.Vector3(BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(135), BABYLON.Tools.ToRadians(90)));
+        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(60)));
     }
     detachFromRightShoulder() {
         return this.detachFromBone("shoulder.r");
