@@ -64,7 +64,7 @@ class MessageRouter {
 					characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[8]));
 					characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[9]));
 					characterController.mesh.scaling.copyFrom(BABYLON.Vector3.FromArray(_data.content[10]));
-					characterController.key.copyFrom(_data.content[11]);
+					characterController.key.fromBinary(_data.content[11]);
 				}
 				else {
 					console.log(_data.content);
@@ -110,7 +110,7 @@ class MessageRouter {
 							characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][1]));
 							characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][2]));
 							characterController.mesh.scaling.copyFrom(BABYLON.Vector3.FromArray(_data.content[characterObject][3]));
-							characterController.key.copyFrom(_data.content[characterObject][4]);
+							characterController.key.fromBinary(_data.content[characterObject][4]);
 						}
 						else {
 							Client.requestPlayerByNetworkID(_data.content[characterObject][0]);

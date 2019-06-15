@@ -172,7 +172,7 @@ class Client {
                 Game.player.controller.mesh.position.asArray(),
                 Game.player.controller.mesh.rotation.asArray(),
                 Game.player.controller.mesh.scaling.asArray(),
-            	Game.player.controller.key.toInteger()
+            	Game.player.controller.key.toBinary()
 			]
         });
         return 0;
@@ -187,7 +187,7 @@ class Client {
                 Game.player.controller.mesh.position.asArray(),
                 Game.player.controller.mesh.rotation.asArray(),
                 Game.player.controller.mesh.scaling.asArray(),
-                Game.player.controller.key.toInteger()
+                Game.player.controller.key.toBinary()
             ]
         });
     }
@@ -198,7 +198,7 @@ class Client {
         Client.sendMessage({
             type: "P_UPDATE_MOVEMENTKEYS_SELF",
             content: [
-                Game.player.controller.key.toInteger()
+                Game.player.controller.key.toBinary()
             ]
         });
     }
@@ -349,6 +349,7 @@ class Client {
         if (!(ActionEnum.properties.hasOwnProperty(actionID))) {
             return 2;
         }
+        Client.updateLocRotScaleSelf();
         console.log(`Client::requestEntityAction(${entity.getID()}, ${subEntity.getID()}, ${actionID})`);
         if (entity instanceof AbstractEntity) {
             Client.sendMessage({

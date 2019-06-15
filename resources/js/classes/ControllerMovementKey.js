@@ -1,13 +1,13 @@
 class ControllerMovementKey {
-    constructor(_forward = false, _shift = false, _backward = false, _turnRight = false, _turnLeft = false, _strafeRight = false, _strafeLeft = false, _jump = false) {
-        this.forward = _forward;
-        this.shift = _shift;
-        this.backward = _backward;
-        this.turnRight = _turnRight;
-        this.turnLeft = _turnLeft;
-        this.strafeRight = _strafeRight;
-        this.strafeLeft = _strafeLeft;
-        this.jump = _jump;
+    constructor(forward = false, shift = false, backward = false, turnRight = false, turnLeft = false, strafeRight = false, strafeLeft = false, jump = false) {
+        this.forward = forward;
+        this.shift = shift;
+        this.backward = backward;
+        this.turnRight = turnRight;
+        this.turnLeft = turnLeft;
+        this.strafeRight = strafeRight;
+        this.strafeLeft = strafeLeft;
+        this.jump = jump;
     }
     reset() {
         this.forward = false;
@@ -19,99 +19,105 @@ class ControllerMovementKey {
         this.strafeLeft = false;
         this.jump = false;
     }
-    copyFrom(_key) {
-        if (!(_key.hasOwnProperty("forward"))) {
-            return undefined;
+    copyFrom(controllerMovementKey) {
+        if (!(controllerMovementKey instanceof ControllerMovementKey)) {
+            return false;
         }
-        this.forward = _key.forward;
-        this.shift = _key.shift;
-        this.backward = _key.backward;
-        this.turnRight = _key.turnRight;
-        this.turnLeft = _key.turnLeft;
-        this.strafeRight = _key.strafeRight;
-        this.strafeLeft = _key.strafeLeft;
-        this.jump = _key.jump;
+        this.forward = controllerMovementKey.forward;
+        this.shift = controllerMovementKey.shift;
+        this.backward = controllerMovementKey.backward;
+        this.turnRight = controllerMovementKey.turnRight;
+        this.turnLeft = controllerMovementKey.turnLeft;
+        this.strafeRight = controllerMovementKey.strafeRight;
+        this.strafeLeft = controllerMovementKey.strafeLeft;
+        this.jump = controllerMovementKey.jump;
     }
     clone() {
         return new ControllerMovementKey(this.forward, this.shift, this.backward, this.turnRight, this.turnLeft, this.strafeRight, this.strafeLeft, this.jump);
     }
-    equals(_key) {
-        if (!(_key.hasOwnProperty("forward"))) {
-            return undefined;
+    equals(controllerMovementKey) {
+        if (!(controllerMovementKey instanceof ControllerMovementKey)) {
+            return false;
         }
         return (
-            this.forward == _key.forward &&
-            this.shift == _key.shift &&
-            this.backward == _key.backward &&
-            this.turnRight == _key.turnRight &&
-            this.turnLeft == _key.turnLeft &&
-            this.strafeRight == _key.strafeRight &&
-            this.strafeLeft == _key.strafeLeft &&
-            this.jump == _key.jump
+            this.forward == controllerMovementKey.forward &&
+            this.shift == controllerMovementKey.shift &&
+            this.backward == controllerMovementKey.backward &&
+            this.turnRight == controllerMovementKey.turnRight &&
+            this.turnLeft == controllerMovementKey.turnLeft &&
+            this.strafeRight == controllerMovementKey.strafeRight &&
+            this.strafeLeft == controllerMovementKey.strafeLeft &&
+            this.jump == controllerMovementKey.jump
         )
     }
     toSource() {
         return `new ControllerMovementKey(${this.forward ? "true" : "false"}, ${this.shift ? "true" : "false"}, ${this.backward ? "true" : "false"}, ${this.turnRight ? "true" : "false"}, ${this.turnLeft ? "true" : "false"}, ${this.strafeRight ? "true" : "false"}, ${this.strafeLeft ? "true" : "false"}, ${this.jump ? "true" : "false"})`;
     }
+    toBinary() {
+        return this.toInteger().toString(2);
+    }
     toInteger() {
-        let _h = 0;
+        let integer = 0;
         if (this.forward) {
-            _h += 1;
+            integer += 1;
         }
         if (this.shift) {
-            _h += 2;
+            integer += 2;
         }
         if (this.backward) {
-            _h += 4;
+            integer += 4;
         }
         if (this.turnRight) {
-            _h += 8;
+            integer += 8;
         }
         if (this.turnLeft) {
-            _h += 16;
+            integer += 16;
         }
         if (this.strafeRight) {
-            _h += 32;
+            integer += 32;
         }
         if (this.strafeLeft) {
-            _h += 64;
+            integer += 64;
         }
         if (this.jump) {
-            _h += 128;
+            integer += 128;
         }
-        return _h;
+        return integer;
     }
-    fromInteger() {
-        if (_h > 128) {
-            _h -= 128;
+    fromBinary(binary) {
+        return this.fromInteger(Number.parseInt(binary, 2));
+    }
+    fromInteger(integer) {
+        if (integer > 128) {
+            integer -= 128;
             this.jump = true;
         }
-        if (_h > 64) {
-            _h -= 64;
+        if (integer > 64) {
+            integer -= 64;
             this.strafeLeft = true;
         }
-        if (_h > 32) {
-            _h -= 32;
+        if (integer > 32) {
+            integer -= 32;
             this.strafeRight = true;
         }
-        if (_h > 16) {
-            _h -= 16;
+        if (integer > 16) {
+            integer -= 16;
             this.turnLeft = true;
         }
-        if (_h > 8) {
-            _h -= 8;
+        if (integer > 8) {
+            integer -= 8;
             this.turnRight = true;
         }
-        if (_h > 4) {
-            _h -= 4;
+        if (integer > 4) {
+            integer -= 4;
             this.backward = true;
         }
-        if (_h > 2) {
-            _h -= 2;
+        if (integer > 2) {
+            integer -= 2;
             this.shift = true;
         }
-        if (_h > 1) {
-            _h -= 1;
+        if (integer > 1) {
+            integer -= 1;
             this.forward = true;
         }
         return true;
