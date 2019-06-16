@@ -22,7 +22,8 @@ class GameGUI {
         GameGUI._hud.rootContainer.isVisible = false;
         GameGUI._hud.rootContainer.zIndex = 3;
 
-        GameGUI._dialogueOptions = new Array();
+        GameGUI.pointerLockEventFunction = GameGUI.pointerLockEvent
+
         GameGUI._crosshair = undefined;
         GameGUI._chat = undefined;
         GameGUI._playerPortrait = undefined;
@@ -30,11 +31,11 @@ class GameGUI {
         GameGUI._actionTooltip = undefined;
         GameGUI._actionsMenu = undefined;
         GameGUI._actionsMenuOptions = new Array();
-        GameGUI._dialogueMenu = undefined;
+        GameGUI.dialogueMenu = undefined;
         GameGUI._initHUD();
 
         GameGUI._characterChoiceMenu = undefined;
-        GameGUI._inventoryMenu = undefined;
+        GameGUI.inventoryMenu = undefined;
         GameGUI._initMenu();
 
         GameGUI._chatWasFocused = false;
@@ -48,20 +49,22 @@ class GameGUI {
         GameGUI._targetPortrait = GameGUI._generateTargetPortrait();
         GameGUI._actionTooltip = GameGUI._generateTargetActionTooltip();
         GameGUI._actionsMenu = GameGUI._generateActionsRadialMenu();
-        GameGUI._dialogueMenu = GameGUI._generateDialogueMenu();
+        GameGUI.dialogueMenu = DialogueGameGUI;
+        GameGUI.dialogueMenu.initialize();
         GameGUI._hud.addControl(GameGUI._crosshair);
         GameGUI._hud.addControl(GameGUI._chat);
         GameGUI._hud.addControl(GameGUI._playerPortrait);
         GameGUI._hud.addControl(GameGUI._targetPortrait);
         GameGUI._hud.addControl(GameGUI._actionsMenu);
         GameGUI._hud.addControl(GameGUI._actionTooltip);
-        GameGUI._hud.addControl(GameGUI._dialogueMenu);
+        GameGUI._hud.addControl(GameGUI.dialogueMenu.getController());
     }
     static _initMenu() {
         GameGUI._characterChoiceMenu = GameGUI._generateCharacterChoiceMenu()
-        GameGUI._inventoryMenu = GameGUI._generateInventoryMenu();
+        GameGUI.inventoryMenu = InventoryGameGUI;
+        GameGUI.inventoryMenu.initialize();
         GameGUI._menu.addControl(GameGUI._characterChoiceMenu);
-        GameGUI._menu.addControl(GameGUI._inventoryMenu);
+        GameGUI._menu.addControl(GameGUI.inventoryMenu.getController());
     }
     static resizeText() {
         if (!GameGUI.initialized) {
@@ -73,13 +76,13 @@ class GameGUI {
     }
     static pointerLock() {
         Game.pointerLock();
-        window.addEventListener("click", GameGUI._pointerLockEventFunction);
+        window.addEventListener("click", GameGUI.pointerLockEventFunction);
     }
     static pointerRelease() {
         Game.pointerRelease();
-        window.removeEventListener("click", GameGUI._pointerLockEventFunction);
+        window.removeEventListener("click", GameGUI.pointerLockEventFunction);
     }
-    static _pointerLockEventFunction(_event) {
+    static pointerLockEvent(_event) {
         if (GameGUI._hud.rootContainer.isVisible) {
             Game.pointerLock();
         }
@@ -820,217 +823,6 @@ class GameGUI {
     static _setTargetPortraitManaText(_text = "") {
         GameGUI._targetPortrait.children[1].children[2].children[1].text = _text;
     }
-    static _generateInventoryMenu() {
-        var inventory = new BABYLON.GUI.Rectangle("inventory");
-            inventory.height = 1.0;
-            inventory.width = 0.6;
-            inventory.background = GameGUI.background;
-        var items = new BABYLON.GUI.StackPanel("items");
-            items.height = 1.0;
-            items.width = 0.475;
-            items.left = 0;
-            items.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-            inventory.addControl(items);
-        var scrollbar = new BABYLON.GUI.Rectangle("slider");
-            scrollbar.isVertical = true;
-            scrollbar.height = 1.0;
-            scrollbar.width = 0.025;
-            scrollbar.left = "47.5%";
-            scrollbar.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-            inventory.addControl(scrollbar);
-        var summary = new BABYLON.GUI.Rectangle("summary");
-            summary.height = 0.6;
-            summary.width = 0.5;
-            summary.top = "-20%";
-            summary.left = "25%";
-            summary.isVertical = true;
-            inventory.addControl(summary);
-            var selectedName = new BABYLON.GUI.TextBlock("selectedName");
-                selectedName.width = 1.0;
-                selectedName.height = 0.1;
-                selectedName.top = "-45%";
-                selectedName.left = 0;
-                selectedName.color = GameGUI.color;
-                summary.addControl(selectedName);
-            var selectedImage = new BABYLON.GUI.Image("selectedImage", "resources/images/blank.svg");
-                selectedImage.width = 1.0;
-                selectedImage.height = 0.4;
-                selectedImage.top = "-20%";
-                selectedImage.left = 0;
-                selectedImage.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                summary.addControl(selectedImage);
-            var selectedDescription = new BABYLON.GUI.TextBlock("selectedDescription");
-                selectedDescription.width = 1.0;
-                selectedDescription.height = 0.3;
-                selectedDescription.top = "5%";
-                selectedDescription.left = 0;
-                selectedDescription.paddingLeft = 0.1;
-                selectedDescription.paddingRight = 0.1;
-                selectedDescription.textWrapping = true;
-                selectedDescription.color = GameGUI.color;
-                summary.addControl(selectedDescription);
-            var selectedDetails = new BABYLON.GUI.TextBlock("selectedDetails");
-                selectedDetails.width = 1.0;
-                selectedDetails.height = 0.2;
-                selectedDetails.top = "45%";
-                selectedDetails.left = 0;
-                selectedDetails.color = GameGUI.color;
-                summary.addControl(selectedDetails);
-        var actions = new BABYLON.GUI.Rectangle("actions");
-            actions.height = 0.4;
-            actions.width = 0.5;
-            actions.top = "30%";
-            actions.left = "25%";
-            inventory.addControl(actions);
-        inventory.isVisible = false;
-        inventory.zIndex = 50;
-        return inventory;
-    }
-    /**
-     * Returns whether or not the inventory menu is visible.
-     * @return {Boolean} Whether or not the inventory menu is visible.
-     */
-    static isInventoryMenuVisible() {
-        return GameGUI._inventoryMenu.isVisible;
-    }
-    static showInventoryMenu() {
-        GameGUI._inventoryMenu.isVisible = true;
-    }
-    static hideInventoryMenu() {
-        GameGUI._inventoryMenu.isVisible = false;
-    }
-    /**
-     * Sets the inventory menu's content using an entity's inventory.
-     * @param {Entity} _entity The Entity with the inventory.
-     */
-    static updateInventoryMenuWith(_entity = Game.player) {
-        var _inventory = GameGUI._inventoryMenu.getChildByName("items").children;
-        for (var _i = _inventory.length - 1; _i > -1; _i--) {
-            GameGUI._inventoryMenu.getChildByName("items").removeControl(_inventory[_i]);
-        }
-        for (let _key of _entity.getItems().keys()) {
-            let _instancedItemEntity = _entity.getItems().get(_key);
-            var _button = GameGUI._generateButton(undefined, _instancedItemEntity.getName(), undefined, Game.getIcon(_instancedItemEntity.getIcon()));
-            _button.width = 1.0;
-            _button.height = 0.1;
-            _button.onPointerUpObservable.add(function() {
-                GameGUI.updateInventoryMenuSelected(_instancedItemEntity.getID(), _entity);
-            });
-            GameGUI._inventoryMenu.getChildByName("items").addControl(_button);
-        };
-        GameGUI._clearInventorySelectedItem();
-    }
-    /**
-     * Sets the inventory menu's selected item section.
-     * @param {InstancedItemEntity} _instancedItemEntity [description]
-     * @param {Entity} _targetEntity        The Entity storing the InstancedItemEntity
-     * @param {Entity} _playerEntity        The Entity viewing the item; the player.
-     */
-    static updateInventoryMenuSelected(_instancedItemEntity, _targetEntity = undefined, _playerEntity = Game.player) {
-        if (!(_instancedItemEntity instanceof AbstractEntity)) {
-            if (_instancedItemEntity == undefined) {
-                GameGUI._clearInventorySelectedItem;
-                return 0;
-            }
-            _instancedItemEntity = Game.getInstancedItemEntity(_instancedItemEntity);
-        }
-        if (!(_targetEntity instanceof AbstractEntity)) {
-            _targetEntity = Game.getEntity(_targetEntity);
-        }
-        if (!(_playerEntity instanceof AbstractEntity)) {
-            _playerEntity = Game.getEntity(_playerEntity);
-            if (!(_playerEntity instanceof AbstractEntity)) {
-                _playerEntity = Game.player;
-            }
-        }
-
-        var _summary = GameGUI._inventoryMenu.getChildByName("summary");
-        _summary.getChildByName("selectedName").text = _instancedItemEntity.getName();
-        _summary.getChildByName("selectedImage").source = Game.getIcon(_instancedItemEntity.getIcon());
-        _summary.getChildByName("selectedDescription").text = _instancedItemEntity.getDescription();
-        var _weightString = undefined;
-        if (_instancedItemEntity.getWeight() < 1) {
-            _weightString = String(_instancedItemEntity.getWeight() * 1000) + "g";
-        }
-        else {
-            _weightString = String(_instancedItemEntity.getWeight()) + "kg";
-        }
-        _summary.getChildByName("selectedDetails").text = `Price: $${_instancedItemEntity.getPrice()}, Weight: ${_weightString}`;
-        var _actions = GameGUI._inventoryMenu.getChildByName("actions");
-        for (var _i = _actions.children.length - 1; _i > -1; _i--) {
-            _actions.removeControl(_actions.children[_i]);
-        }
-        for (var _action in _instancedItemEntity.getAvailableActions()) {
-            _action = Tools.filterInt(_action);
-            var _actionButton = undefined;
-            switch (_action) {
-                case ActionEnum.DROP : {
-                    _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
-                    _actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenu);});
-                    break;
-                }
-                case ActionEnum.EQUIP : {
-                    if (Game.player.hasEquipment(_instancedItemEntity) && !Game.player.hasHeldItem(_instancedItemEntity)) {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.UNEQUIP].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
-                    }
-                    else {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.EQUIP].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
-                    }
-                    break;
-                }
-                case ActionEnum.HOLD : {
-                    if (Game.player.hasHeldItem(_instancedItemEntity)) {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
-                    }
-                    else if (!Game.player.hasEquipment(_instancedItemEntity)) {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
-                        _actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(_instancedItemEntity, _playerEntity, GameGUI.updateInventoryMenuSelected);});
-                    }
-                    break;
-                }
-                case ActionEnum.LOOK : {
-                    _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
-                    break;
-                }
-                case ActionEnum.PUT : {
-                    if (_playerEntity != Game.player) {
-                        break;
-                    }
-                    else if (_targetEntity instanceof EntityWithStorage) {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
-                    }
-                    break;
-                }
-                case ActionEnum.TAKE : {
-                    if (_playerEntity == Game.player) {}
-                    else {
-                        _actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[_action].name);
-                    }
-                    break;
-                }
-            }
-            if (_actionButton != undefined) {
-                _actions.addControl(_actionButton);
-                _actionButton.top = ((_actions.children.length * 10) - 55) + "%";
-            }
-        }
-    }
-    /**
-     * Clears the inventory menu's selected item section.
-     */
-    static _clearInventorySelectedItem() {
-        var _summary = GameGUI._inventoryMenu.getChildByName("summary");
-        _summary.getChildByName("selectedName").text = "";
-        _summary.getChildByName("selectedImage").source = "";
-        _summary.getChildByName("selectedDescription").text = "";
-        var _actions = GameGUI._inventoryMenu.getChildByName("actions");
-        for (var _i = _actions.children.length - 1; _i >= 0; _i--) {
-            _actions.removeControl(_actions.children[_i]);
-        }
-    }
     static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _icon = undefined) {
         var _button = new BABYLON.GUI.Button(_id);
             _button.width = 1.0;
@@ -1258,226 +1050,5 @@ class GameGUI {
                 GameGUI._actionsMenu.addControl(button);
             }
         }
-    }
-    static _generateDialogueMenu() {
-        /*
-            [Image        Name          X]
-            [----------------------------]
-            [Dialogue                    ]
-            [spacing                     ]
-            [----------------------------]
-            [Options                     ]
-         */
-        var _container = new BABYLON.GUI.Rectangle("dialogueContainer");
-            _container.width = 0.5;
-            _container.height = 0.4;
-            _container.background = GameGUI.background;
-            _container.thickness = 0;
-            _container.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        var _titleBar = new BABYLON.GUI.Rectangle("dialogueTitleBar");
-            _titleBar.width = 1.0;
-            _titleBar.height = 0.1;
-            _titleBar.thickness = 0;
-            _titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        var _title = new BABYLON.GUI.TextBlock("dialogueTitle");
-            _title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-            _title.color = GameGUI.color;
-            _title.text = "Title :V";
-        var _closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
-            _closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            _closeButton.color = GameGUI.color;
-            _closeButton.width = 0.05;
-        var _bodyContainer = new BABYLON.GUI.Rectangle("dialogueBodyContainer"); // TODO: Replace with ScrollViewer when it becomes available
-            _bodyContainer.width = 1.0;
-            _bodyContainer.height = 0.6;
-            _bodyContainer.thickness = 0;
-            _bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-            _bodyContainer.top = "-10%";
-        var _body = new BABYLON.GUI.TextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
-            _body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            _body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            _body.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            _body.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-            _body.textWrapping = BABYLON.GUI.TextWrapping.WordWrap;
-            _body.resizeToFit = true;
-            _body.width = 1.0;
-            _body.height = 1.0;
-            _body.color = GameGUI.color;
-            _body.paddingTop = "8px";
-            _body.paddingRight = "8px";
-            _body.paddingBottom = "8px";
-            _body.paddingLeft = "8px";
-            _body.text = "\"Who draw dis? :v\"";
-        var _optionsContainer = new BABYLON.GUI.StackPanel("dialogueOptionsContainer");
-            _optionsContainer.isVertical = false;
-            _optionsContainer.width = 1.0;
-            _optionsContainer.height = 0.3;
-            _optionsContainer.thickness = 0;
-            _optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        var _optionsColA = new BABYLON.GUI.StackPanel();
-            _optionsColA.isVertical = true;
-            _optionsColA.width = 0.33;
-            _optionsColA.height = 1.0;
-        var _optionsColB = new BABYLON.GUI.StackPanel();
-            _optionsColB.isVertical = true;
-            _optionsColB.width = 0.341;
-            _optionsColB.height = 1.0;
-        var _optionsColC = new BABYLON.GUI.StackPanel();
-            _optionsColC.isVertical = true;
-            _optionsColC.width = 0.33;
-            _optionsColC.height = 1.0;
-        
-        _closeButton.onPointerUpObservable.add(function() {
-            GameGUI.clearDialogueOptions();
-            GameGUI.hideDialogueMenu();
-        });
-        
-        _optionsContainer.addControl(_optionsColA);
-        _optionsContainer.addControl(_optionsColB);
-        _optionsContainer.addControl(_optionsColC);
-        _titleBar.addControl(_title);
-        _titleBar.addControl(_closeButton);
-        _bodyContainer.addControl(_body);
-        _container.addControl(_titleBar);
-        _container.addControl(_bodyContainer);
-        _container.addControl(_optionsContainer);
-        _container.isVisible = false;
-        _container.zIndex = 15;
-        return _container;
-    }
-    static showDialogueMenu() {
-        if (Game.debugMode) console.log("Running GameGUI::showDialogueMenu");
-        Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
-        GameGUI.pointerRelease();
-        GameGUI._dialogueMenu.isVisible = true;
-    }
-    static hideDialogueMenu() {
-        if (Game.debugMode) console.log("Running GameGUI::hideDialogueMenu");
-        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        GameGUI.pointerLock();
-        GameGUI._dialogueMenu.isVisible = false;
-    }
-    static setDialogue(_dialogue, _them, _you = Game.player) {
-        if (Game.debugMode) console.log("Running GameGUI::setDialogue");
-        GameGUI.clearDialogue();
-        if (!(_dialogue instanceof Dialogue)) {
-            _dialogue = Game.getDialogue(_dialogue);
-            if (!(_dialogue instanceof Dialogue)) {
-                return 2;
-            }
-        }
-        if (!(_them instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(_them)) {
-                _them = Game.getInstancedEntity(_them)
-            }
-            else if (Game.hasEntity(_them)) {
-                _them = Game.getEntity(_them);
-            }
-            else {
-                return 2;
-            }
-        }
-        if (!(_you instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(_you)) {
-                _you = Game.getInstancedEntity(_you)
-            }
-            else if (Game.hasEntity(_you)) {
-                _you = Game.getEntity(_you);
-            }
-            else {
-                return 2;
-            }
-        }
-        GameGUI.setDialogueTitle(_dialogue.getTitle());
-        var _text = _dialogue.getText(_them, _you);
-        if (typeof _text == "function") {
-            GameGUI.setDialogueBody(_text);
-        }
-        else {
-            GameGUI.setDialogueBody(_text);
-        }
-        if (_dialogue.hasOptions()) {
-            for (var _option in _dialogue.getOptions()) {
-                if (_dialogue.getOptions()[_option].getCondition(_them, _you)) {
-                    GameGUI.addDialogueOption(_dialogue.getOptions()[_option], _them, _you, true);
-                }
-            }
-        }
-    }
-    static setDialogueTitle(_string) {
-        GameGUI._dialogueMenu.children[0].children[0].text = _string;
-    }
-    static clearDialogueTitle() {
-        GameGUI.setDialogueTitle("");
-    }
-    static setDialogueBody(_string) {
-        if (typeof _string != "string") {
-            _string = "MISSING DIALOGUE :V";
-        }
-        GameGUI._dialogueMenu.children[1].children[0].text = _string;
-    }
-    static appendDialogueBody(_string) {
-        GameGUI._dialogueMenu.children[1].children[0].text += _string;
-    }
-    static clearDialogueBody() {
-        GameGUI.setDialogueBody("");
-    }
-    static addDialogueOption(_dialogueOption, _them, _you = Game.player) {
-        if (!(_dialogueOption instanceof DialogueOption)) {
-            return undefined;
-        }
-        if (GameGUI._dialogueOptions.length > 7 || GameGUI._dialogueOptions.hasOwnProperty(_dialogueOption.getDialogue().getID())) {
-            return false;
-        }
-        var _button = new BABYLON.GUI.Button.CreateSimpleButton(_dialogueOption.getDialogue().getID(), _dialogueOption.getTitle());
-        _button.color = GameGUI.color;
-        _button.width = 1.0;
-        _button.height = 0.33;
-        _button.onPointerUpObservable.add(function() {
-            GameGUI.setDialogue(_dialogueOption.getDialogue(), _them, _you);
-        });
-        if (GameGUI._dialogueOptions.length > 5) {
-            GameGUI._dialogueMenu.children[2].children[2].addControl(_button);
-        }
-        else if (GameGUI._dialogueOptions.length > 2) {
-            GameGUI._dialogueMenu.children[2].children[1].addControl(_button);
-        }
-        else {
-            GameGUI._dialogueMenu.children[2].children[0].addControl(_button);
-        }
-        GameGUI._dialogueOptions.push(_dialogueOption);
-        return true;
-    }
-    static removeDialogueOption(_dialogueOption) {
-        if (!(_dialogueOption instanceof DialogueOption)) {
-            return false;
-        }
-        for (var _i = 0; _i < GameGUI._dialogueMenu.children[2].children.length; _i++) {
-            for (var _j = GameGUI._dialogueMenu.children[2].children[_i].children.length; _j >= 0; _j--) {
-                if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Container) {
-                    if (GameGUI._dialogueMenu.children[2].children[_i].children[_j].id == _dialogueOption.getID()) {
-                        GameGUI._dialogueMenu.children[2].children[_i].children[_j].dispose();
-                    }
-                }
-            }
-        }
-        if (GameGUI._dialogueOptions.indexOf(_dialogueOption) > -1) {
-            GameGUI._dialogueOptions.remove(_dialogueOption);
-        }
-    }
-    static clearDialogueOptions() {
-        for (var _i = 0; _i < GameGUI._dialogueMenu.children[2].children.length; _i++) {
-            for (var _j = GameGUI._dialogueMenu.children[2].children[_i].children.length; _j >= 0; _j--) {
-                if (GameGUI._dialogueMenu.children[2].children[_i].children[_j] instanceof BABYLON.GUI.Container) {
-                    GameGUI._dialogueMenu.children[2].children[_i].children[_j].dispose();
-                }
-            }
-        }
-        GameGUI._dialogueOptions.clear();
-    }
-    static clearDialogue() {
-        GameGUI.clearDialogueTitle();
-        GameGUI.clearDialogueBody();
-        GameGUI.clearDialogueOptions();
     }
 }

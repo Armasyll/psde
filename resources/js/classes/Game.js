@@ -673,7 +673,7 @@ class Game {
          */
         Game.onKeyDownFunction = Game.controlCharacterOnKeyDown;
         Game.onKeyUpFunction = Game.controlCharacterOnKeyUp;
-        Game.onClickFunction = Game.controlCharacterOnClick;
+        Game.onClickFunction = Game.controlMetaOnClick;
         Game.onContextFunction = Game.controlCharacterOnContext;
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
@@ -700,15 +700,15 @@ class Game {
         Game._filesToLoad -= 1;
         Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.initialized = true;
-        Game.engine.runRenderLoop(Game.renderLoopFunction);
-        Game.scene.registerBeforeRender(Game.beforeRenderFunction);
-        Game.scene.registerAfterRender(Game.afterRenderFunction);
+        Game.engine.runRenderLoop(Game._renderLoopFunction);
+        Game.scene.registerBeforeRender(Game._beforeRenderFunction);
+        Game.scene.registerAfterRender(Game._afterRenderFunction);
     }
-    static renderLoopFunction() {
+    static _renderLoopFunction() {
         Game.scene.render();
-        if (!Game.finishedConfiguring()) {
-            if (Game.finishedLoadingFiles()) {
-                if (!Game.finishedInitializing()) {
+        if (!Game._finishedConfiguring) {
+            if (Game._filesToLoad == 0) {
+                if (!Game._finishedInitializing) {
                     if (Game.debugMode) console.log("Finished loading assets.");
                     Game.importItems();
                     Game.importCosmetics();
@@ -744,7 +744,7 @@ class Game {
             });
         }
     }
-    static beforeRenderFunction() {
+    static _beforeRenderFunction() {
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return null;
         }
@@ -769,7 +769,7 @@ class Game {
             }
         }
     }
-    static afterRenderFunction() {
+    static _afterRenderFunction() {
         if (Game.hasBackloggedEntities) {
             Game.createBackloggedMeshes();
             Game.createBackloggedBoundingCollisions();
@@ -792,15 +792,6 @@ class Game {
                 Client.updateBackloggedPlayers();
             }
         }
-    }
-    static finishedInitializing() {
-        return Game._finishedInitializing;
-    }
-    static finishedLoadingFiles() {
-        return Game._filesToLoad == 0;
-    }
-    static finishedConfiguring() {
-        return Game._finishedConfiguring;
     }
     static initPhysics() {
         Game.physicsPlugin = new BABYLON.CannonJSPlugin();
@@ -1410,9 +1401,9 @@ class Game {
                 break;
             }
             case Game.showInventoryCode : {
-                Game.gui.updateInventoryMenuWith(Game.player);
+                Game.gui.inventoryMenu.updateWith(Game.player);
                 Game.gui.showMenu(true);
-                Game.gui.showInventoryMenu();
+                Game.gui.inventoryMenu.show();
                 Game.gui.pointerRelease();
                 break;
             }
@@ -1500,7 +1491,19 @@ class Game {
         }
         return 0;
     }
-    static controlCharacterOnClick(mouseEvent) {
+    static controlMetaOnClick(mouseEvent) {
+        if (Game.interfaceMode == InterfaceModeEnum.CHARACTER) {
+            return Game.controlCharacterOnClick(mouseEvent);
+        }
+        else if (Game.interfaceMode == InterfaceModeEnum.DIALOGUE) {
+            return Game.controlDialogueOnClick(mouseEvent);
+        }
+        else if (Game.interfaceMode == InterfaceModeEnum.MENU) {
+            return Game.controlMenuOnClick(mouseEvent);
+        }
+        console.error("Oops :V No click handler for this!");
+    }
+    static controlCharacterOnClick(mouseEvent) { // TODO: Fix when a click is pressed during another InterfaceMode and released when set to CHARACTER this is triggered
         if (!Game.initialized) {
             return 1;
         }
@@ -1601,14 +1604,14 @@ class Game {
         }
         switch (keyboardEvent.keyCode) {
             case Game.showInventoryCode: {
-                if (GameGUI.isInventoryMenuVisible()) {
-                    GameGUI.hideInventoryMenu();
+                if (GameGUI.inventoryMenu.isVisible()) {
+                    GameGUI.inventoryMenu.hide();
                     GameGUI.hideMenu();
                     GameGUI.showHUD();
                 }
                 else {
-                    Game.gui.updateInventoryMenuWith(Game.player);
-                    GameGUI.showInventoryMenu();
+                    Game.gui.inventoryMenu.updateWith(Game.player);
+                    Game.gui.inventoryMenu.show();
                 }
                 break;
             }
@@ -3986,7 +3989,7 @@ class Game {
         }
         if (subEntity.removeItem(instancedItemEntity) == 0) {
             if (subEntity == Game.player) {
-                Game.gui.updateInventoryMenuWith(subEntity);
+                Game.gui.inventoryMenu.updateWith(subEntity);
             }
             if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
                 instancedItemEntity.getController().setParent(null);
@@ -4191,7 +4194,7 @@ class Game {
         return 0;
     }
     static actionTalk(abstractEntity = Game.player.getTarget(), subAbstractEntity = Game.player, callback = undefined) {
-        if (Game.debugMode) console.log(`Running Game::actionTalkFunction(${abstractEntity.id}, ${subAbstractEntity.id})`);
+        if (Game.debugMode) console.log(`Running Game::actionTalk(${abstractEntity.id}, ${subAbstractEntity.id})`);
         if (!(abstractEntity instanceof CharacterEntity)) {
             return 2;
         }
@@ -4201,8 +4204,8 @@ class Game {
         if (!(abstractEntity.getDialogue() instanceof Dialogue)) {
             return 2;
         }
-        Game.gui.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
-        Game.gui.showDialogueMenu();
+        Game.gui.dialogueMenu.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
+        Game.gui.dialogueMenu.show();
         /*var _dialogue = _entity.getDialogue().getText();
         if (typeof _dialogue == "string") {
             Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue);
@@ -4701,26 +4704,24 @@ class Game {
         else {
             return 2;
         }
+        if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
         Game.interfaceMode = interfaceMode;
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.onKeyDownFunction = Game.controlCharacterOnKeyDown;
                 Game.onKeyUpFunction = Game.controlCharacterOnKeyUp;
-                Game.onClickFunction = Game.controlCharacterOnClick;
                 Game.onContextFunction = Game.controlCharacterOnContext;
                 break;
             }
             case InterfaceModeEnum.DIALOGUE: {
                 Game.onKeyDownFunction = Game.controlDialogueOnKeyDown;
                 Game.onKeyUpFunction = Game.controlDialogueOnKeyUp;
-                Game.onClickFunction = Game.controlDialogueOnClick;
                 Game.onContextFunction = Game.controlDialogueOnContext;
                 break;
             }
             case InterfaceModeEnum.MENU: {
                 Game.onKeyDownFunction = Game.controlMenuOnKeyDown;
                 Game.onKeyUpFunction = Game.controlMenuOnKeyUp;
-                Game.onClickFunction = Game.controlMenuOnClick;
                 Game.onContextFunction = Game.controlMenuOnContext;
                 break;
             }
