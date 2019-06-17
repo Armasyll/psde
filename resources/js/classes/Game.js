@@ -674,6 +674,8 @@ class Game {
         Game.onKeyDownFunction = Game.controlCharacterOnKeyDown;
         Game.onKeyUpFunction = Game.controlCharacterOnKeyUp;
         Game.onClickFunction = Game.controlMetaOnClick;
+        Game.onMouseDownFunction = Game.controlMetaOnMouseDown;
+        Game.onMouseUpFunction = Game.controlMetaOnMouseUp;
         Game.onContextFunction = Game.controlCharacterOnContext;
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
@@ -688,6 +690,8 @@ class Game {
         Game.actionTakeFunction = Game.actionTake;
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
+        Game.mouseDownDate = 0;
+        Game.mouseUpDate = 1;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         Game.gui = GameGUI;
         Game.gui.initialize();
@@ -695,6 +699,8 @@ class Game {
         Game.initQwertyKeyboardControls();
         Game.initPostProcessing();
         window.addEventListener("click", Game.onClickFunction);
+        window.addEventListener("mousedown", Game.onMouseDownFunction);
+        window.addEventListener("mouseup", Game.onMouseUpFunction);
         window.addEventListener("contextmenu", Game.onContextFunction);
 
         Game._filesToLoad -= 1;
@@ -1492,18 +1498,63 @@ class Game {
         return 0;
     }
     static controlMetaOnClick(mouseEvent) {
-        if (Game.interfaceMode == InterfaceModeEnum.CHARACTER) {
-            return Game.controlCharacterOnClick(mouseEvent);
+        if (!Game.initialized) {
+            return 1;
         }
-        else if (Game.interfaceMode == InterfaceModeEnum.DIALOGUE) {
+        if (!(mouseEvent instanceof MouseEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlMetaOnClick(${mouseEvent.button})`);
+        if (Game.interfaceMode == InterfaceModeEnum.DIALOGUE) {
             return Game.controlDialogueOnClick(mouseEvent);
         }
         else if (Game.interfaceMode == InterfaceModeEnum.MENU) {
             return Game.controlMenuOnClick(mouseEvent);
         }
-        console.error("Oops :V No click handler for this!");
+        return 0;
     }
-    static controlCharacterOnClick(mouseEvent) { // TODO: Fix when a click is pressed during another InterfaceMode and released when set to CHARACTER this is triggered
+    static controlMetaOnMouseDown(mouseEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(mouseEvent instanceof MouseEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlMetaOnMouseDown(${mouseEvent.button})`);
+        if (Game.interfaceMode == InterfaceModeEnum.CHARACTER) {
+            if (mouseEvent.button == 0) {
+                Game.mouseDownDate = new Date().getTime();
+                Game.mouseUpDate = Game.mouseDownDate + 1;
+            }
+        }
+        return 0;
+    }
+    static controlMetaOnMouseUp(mouseEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(mouseEvent instanceof MouseEvent)) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::controlMetaOnMouseUp(${mouseEvent.button})`);
+        if (Game.interfaceMode == InterfaceModeEnum.CHARACTER) {
+            if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+                return 2;
+            }
+            if (mouseEvent.button == 0) {
+                Game.mouseUpDate = new Date().getTime();
+                Game.actionAttackFunction(Game.player.getTarget(), Game.player);
+                Game.mouseDownDate = 0;
+                Game.mouseUpDate = 1;
+            }
+            else if (mouseEvent.button == 1) {}
+            else if (mouseEvent.button == 2) {
+                return Game.controlCharacterOnContext(mouseEvent);
+            }
+        }
+        return 0;
+    }
+    static controlCharacterOnClick(mouseEvent) {
         if (!Game.initialized) {
             return 1;
         }
@@ -1511,17 +1562,6 @@ class Game {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::controlCharacterOnClick(${mouseEvent.button})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
-            return 2;
-        }
-        if (mouseEvent.button == 1) {
-            return 0;
-        }
-        else if (mouseEvent.button == 2) {
-            Game.controlCharacterOnContext(mouseEvent);
-            return 0;
-        }
-        Game.actionAttackFunction(Game.player.getTarget(), Game.player);
         return 0;
     }
     static controlCharacterOnContext(mouseEvent) {
