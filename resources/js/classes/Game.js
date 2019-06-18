@@ -3052,7 +3052,6 @@ class Game {
         }
         let loadedMesh = Game.createCharacterMesh(characterEntity.getID(), characterEntity.getMeshID(), characterEntity.getMaterialID(), options, position, rotation, scaling);
         let characterController = new CharacterController(characterEntity.getID(), loadedMesh, characterEntity);
-        characterEntity.setController(characterController);
         switch (characterEntity.getSpecies()) {
             case SpeciesEnum.SKELETON: {
                 characterController.setDeathAnim("91_death99");
@@ -3157,8 +3156,6 @@ class Game {
         let yPosition = radius * (Math.sin(rotation.y * Math.PI / 180) | 0);
         let loadedMesh = Game.createMesh(id, meshID, textureID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, true);
         let doorController = new DoorController(id, loadedMesh, doorEntity);
-        doorEntity.setController(doorController);
-        doorEntity.setMeshID(loadedMesh);
         return doorController;
     }
     /**
@@ -3267,7 +3264,6 @@ class Game {
         let loadedMesh = Game.createMesh(id, furnitureEntity.getMeshID(), furnitureEntity.getTextureID(), position, rotation, scaling, true);
         loadedMesh.checkCollisions = true;
         let furnitureController = new FurnitureController(id, loadedMesh, furnitureEntity);
-        furnitureEntity.setController(furnitureController);
         if (furnitureEntity.hasAvailableAction(ActionEnum.OPEN)) {
             if (furnitureEntity.hasAvailableAction(ActionEnum.CLOSE)) {
                 furnitureEntity.addHiddenAvailableAction(ActionEnum.CLOSE);
@@ -3351,8 +3347,6 @@ class Game {
         let loadedMesh = Game.createMesh(id, mesh, texture, position, rotation, scaling, true)
         let lightingEntity = new LightingEntity(id, name, undefined, undefined, lightingType);
         let lightingController = new LightingController(id, loadedMesh, lightingEntity, lightingType, lightingPositionOffset);
-        lightingEntity.setController(lightingController);
-        lightingEntity.setMeshID(loadedMesh);
         lightingEntity.off(); // set because lighting is bad
         return lightingController;
     }
@@ -3496,7 +3490,6 @@ class Game {
         }
         let mesh = Game.createItemMesh(id, abstractEntity.getMeshID(), abstractEntity.getTextureID(), options, position, rotation, scaling);
         let itemController = new ItemController(id, mesh, abstractEntity);
-        abstractEntity.setController(itemController);
         return itemController;
     }
     /**

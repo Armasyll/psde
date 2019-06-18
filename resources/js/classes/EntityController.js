@@ -36,6 +36,10 @@ class EntityController {
         this._isAnimated = false;
         this.setMesh(_mesh);
         this.setEntity(_entity);
+        this.entity.setController(this);
+        if (this.entity instanceof Entity) {
+            this.entity.setMeshID(this.mesh.id);
+        }
         Game.setEntityController(this.id, this);
     }
     setID(_id) {
