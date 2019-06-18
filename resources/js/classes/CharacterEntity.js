@@ -1739,6 +1739,9 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
 
+    hasDialogue() {
+        return this.dialogue instanceof Dialogue;
+    }
     setDialogue(_dialogue) {
         _dialogue = Game.getDialogue(_dialogue);
         if (_dialogue instanceof Dialogue) {

@@ -4217,7 +4217,7 @@ class Game {
         if (!(subAbstractEntity instanceof CharacterEntity)) {
             return 2;
         }
-        if (!(abstractEntity.getDialogue() instanceof Dialogue)) {
+        if (!(abstractEntity.hasDialogue())) {
             return 2;
         }
         Game.gui.dialogueMenu.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
