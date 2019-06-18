@@ -29,6 +29,7 @@ class AbstractEntity {
         this._isEnabled = true;
         this._isLocked = false;
         this._isEssential = false;
+        Game.setAbstractEntity(this.id, this);
     }
 
     getID() {
@@ -197,6 +198,7 @@ class AbstractEntity {
                 this.availableActions[action].dispose();
             }
         }
+        Game.removeAbstractEntity(this.id);
         return undefined;
     }
 }

@@ -69,13 +69,13 @@ class CharacterEntity extends EntityWithStorage {
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * Base disposition this CharacterEntity has for others
-         * @type {Number}  Passion
-         * @type {Number}  Friendship
-         * @type {Number}  Playfulness
-         * @type {Number}  Soulmate
-         * @type {Number}  Familial
-         * @type {Number}  Obsession
-         * @type {Number}  Hate
+         * @type {number}  Passion
+         * @type {number}  Friendship
+         * @type {number}  Playfulness
+         * @type {number}  Soulmate
+         * @type {number}  Familial
+         * @type {number}  Obsession
+         * @type {number}  Hate
          */
         this.defaultDisposition = {
             passion:new BoundedNumber(0, 0, 100),
@@ -88,42 +88,42 @@ class CharacterEntity extends EntityWithStorage {
         };
         /**
          * Hunger; may affect health, stamina, and mana regeneration
-         * @type {Number} 0 to 100
+         * @type {number} 0 to 100
          */
         this.hunger = new BoundedNumber(0, 0, 100);
         /**
          * Physical power
-         * @type {Number}
+         * @type {number}
          */
         this.strength = new BoundedNumber(10, 1, 30);
         this.strengthOffset = new BoundedNumber(0, -100, 100);
         /**
          * Agility
-         * @type {Number}
+         * @type {number}
          */
         this.dexterity = new BoundedNumber(10, 1, 30);
         this.dexterityOffset = new BoundedNumber(0, -100, 100);
         /**
          * Endurance
-         * @type {Number}
+         * @type {number}
          */
         this.constitution = new BoundedNumber(10, 1, 30);
         this.constitutionOffset = new BoundedNumber(0, -100, 100);
         /**
          * Reasoning and memory
-         * @type {Number}
+         * @type {number}
          */
         this.intelligence = new BoundedNumber(10, 1, 30);
         this.intelligenceOffset = new BoundedNumber(0, -100, 100);
         /**
          * Perception and insight
-         * @type {Number}
+         * @type {number}
          */
         this.wisdom = new BoundedNumber(10, 1, 30);
         this.wisdomOffset = new BoundedNumber(0, -100, 100);
         /**
          * Force of personality
-         * @type {Number}
+         * @type {number}
          */
         this.charisma = new BoundedNumber(10, 1, 30);
         this.charismaOffset = new BoundedNumber(0, -100, 100);
@@ -140,17 +140,17 @@ class CharacterEntity extends EntityWithStorage {
         this.health.set(100, 0, 100);
         /**
          * Mana; should this ever be greater than 0, things will be revealed; updated by this.generateBaseStats()
-         * @type {Number} 0 to Number.MAX_SAFE_INTEGER
+         * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
         this.mana = new BoundedNumber(0, 0, 0);
         /**
          * Stamina; should this drop to 0, u unconscious; updated by this.generateBaseStats()
-         * @type {Number} 0 to 100
+         * @type {number} 0 to 100
          */
         this.stamina = new BoundedNumber(100, 0, 100);
         /**
          * Money
-         * @type {Number} 0 to Number.MAX_SAFE_INTEGER
+         * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
         this.money = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
         /**
@@ -160,52 +160,52 @@ class CharacterEntity extends EntityWithStorage {
         this.living = true;
         /**
          * Primary fur colour
-         * @type {String}
+         * @type {string}
          */
         this.furColourA = "orange";
         /**
          * Primary fur colour hex value
-         * @type {String}
+         * @type {string}
          */
         this.furColourAHex = undefined;
         /**
          * Sexondary fur colour
-         * @type {String}
+         * @type {string}
          */
         this.furColourB = "cream";
         /**
          * Secondary fur colour hex value
-         * @type {[type]}
+         * @type {string}
          */
         this.furColourBHex = undefined;
         /**
          * Average weight, in kilograms, of parent species; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this._baseWeight = 36;
         /**
          * Average height, in metres, of parent species; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this._baseHeight = 1.20;
         /**
          * Average width, in metres, of parent species; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this._baseWidth = 0.4;
         /**
          * Weight, in kilograms; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this.weight = 0;
         /**
          * Height, in mtres; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this.height = 1.2;
         /**
          * Width, in metres; updated by this.generateProperties()
-         * @type {Number}
+         * @type {number}
          */
         this.width = 0.34;
         /**
@@ -215,35 +215,35 @@ class CharacterEntity extends EntityWithStorage {
         this.predator = false;
         /**
          * Paw type
-         * @type {Number} (PawEnum)
+         * @type {number} (PawEnum)
          */
         this.pawType = PawEnum.PAD;
         /**
          * Eye type
-         * @type {String} (Game.kEyeTypes)
+         * @type {string} (Game.kEyeTypes)
          */
         this.eyeType = EyeEnum.CIRCLE;
         /**
          * Eye colour
-         * @type {String}
+         * @type {string}
          */
         this.eyeColour = "green";
         /**
          * Pelt type
-         * @type {String} (PeltEnum)
+         * @type {string} (PeltEnum)
          */
         this.peltType = PeltEnum.FUR;
         /**
          * Map of Characters and this Character's disposition for them
          * @type {Map} <Character, Object>
          * 
-         * @type {Number}  Passion
-         * @type {Number}  Friendship
-         * @type {Number}  Playfulness
-         * @type {Number}  Souldmate
-         * @type {Number}  Familial
-         * @type {Number}  Obsession
-         * @type {Number}  Hate
+         * @type {number}  Passion
+         * @type {number}  Friendship
+         * @type {number}  Playfulness
+         * @type {number}  Souldmate
+         * @type {number}  Familial
+         * @type {number}  Obsession
+         * @type {number}  Hate
          */
         this.characterDisposition = {};
         /**
@@ -449,36 +449,45 @@ class CharacterEntity extends EntityWithStorage {
         return 0;
     }
     unequip(_blob) {
-        if (ApparelSlotEnum.hasOwnProperty(_blob) || ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
-            return this.unequipBySlot(_blob);
+        if (_blob instanceof InstancedEntity) {
+            return this.unequipByInstancedEntity(_blob)
         }
-        else {
+        else if (_blob instanceof Entity) {
             return this.unequipByEntity(_blob);
         }
+        else if (typeof _blob == "string") {
+            if (Game.hasInstancedEntity(_blob)) {
+                return this.unequipByInstancedEntity(Game.getInstancedEntity(_blob));
+            }
+            else if (Game.hasEntity(_blob)) {
+                return this.unequipByEntity(Game.getEntity(_blob));
+            }
+            else if (ApparelSlotEnum.hasOwnProperty(_blob)) {
+                return this.unequipBySlot(ApparelSlotEnum[_blob]);
+            }
+        }
+        else if (typeof _blob == "number" && ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
+            return this.unequipBySlot(_blob);
+        }
+        return 2;
     }
-    unequipByEntity(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            let _tempEntity = Game.getInstancedItemEntity(_entity);
-            if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = this.getItem(_entity);
-                if (!(_tempEntity instanceof InstancedItemEntity)) {
-                    if (Game.debugMode) console.log(`\tThe entity (${_entity}) doesn't exist.`);
-                    return 2;
-                }
-            }
-            _entity = _tempEntity;
-        }
-        let _equipmentSlot = null;
-        for (let _slot in this.equipment) {
-            if (this.equipment[_slot] instanceof AbstractEntity && this.equipment[_slot] == _entity) {
-                _equipmentSlot = _slot;
+    unequipByInstancedEntity(instancedEntity, strict = false) {
+        for (let slot in this.equipment) {
+            if (this.equipment[slot] instanceof AbstractEntity && this.equipment[slot] == instancedEntity) {
+                return this.unequipBySlot(slot);
             }
         }
-        if (_equipmentSlot == null) {
-            if (Game.debugMode) console.log(`\tThe entity (${_entity.id}) was not equipped.`);
-            return 0;
+        if (Game.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not equipped.`);
+        return 0;
+    }
+    unequipByEntity(entity) {
+        for (let slot in this.equipment) {
+            if (this.equipment[slot] instanceof AbstractEntity && this.equipment[slot].getEntity() == entity) {
+                return this.unequipBySlot(slot);
+            }
         }
-        return this.unequipBySlot(_equipmentSlot);
+        if (Game.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
+        return 0;
     }
     unequipBySlot(_equipmentSlot) {
         if (typeof _equipmentSlot == "string") {
@@ -672,7 +681,7 @@ class CharacterEntity extends EntityWithStorage {
      */
     removeItem(_abstractEntity) {
         if (_abstractEntity instanceof AbstractEntity) {
-            this.unequipByEntity(_abstractEntity);
+            this.unequipByInstancedEntity(_abstractEntity);
             return super.removeItem(_abstractEntity);
         }
         let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
@@ -810,12 +819,12 @@ class CharacterEntity extends EntityWithStorage {
     }
     /**
      * Sets CharacterEntity attributes
-     * @param {Number} _str Strength, physical power
-     * @param {Number} _dex Dexterity, agility
-     * @param {Number} _con Constitution, endurance
-     * @param {Number} _int Intelligence, reasoning and memory
-     * @param {Number} _wis Wisdom, perception and insight
-     * @param {Number} _cha Charisma, force of personality
+     * @param {number} _str Strength, physical power
+     * @param {number} _dex Dexterity, agility
+     * @param {number} _con Constitution, endurance
+     * @param {number} _int Intelligence, reasoning and memory
+     * @param {number} _wis Wisdom, perception and insight
+     * @param {number} _cha Charisma, force of personality
      */
     setAttributes(_str = 10, _dex = 10, _con = 10, _int = 10, _wis = 12, _cha = 10) {
         this.setStrength(_str);
@@ -1323,6 +1332,9 @@ class CharacterEntity extends EntityWithStorage {
         this.setFurColourBHex(_colourB);
         return this;
     }
+    getSpecies() {
+        return this.species;
+    }
     setSpecies(_species) {
         if (isNaN(_species)) {
             return this;
@@ -1335,6 +1347,114 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this;
     }
+    getHeight() {
+        return this.height;
+    }
+    getWeight() {
+        return this.weight;
+    }
+    getWidth() {
+        return this.width;
+    }
+    getArmourClass() {
+        return this.armourClass;
+    }
+
+    addSpell(_spell) {
+        if (!(_spell instanceof Spell)) {
+            if (Game.hasSpellEntity(_spell))
+                _spell = Game.getSpellEntity(_spell);
+            else
+                return this;
+        }
+        this.spells.add(_spell);
+        return this;
+    }
+    removeSpell(_spell) {
+        if (!(_spell instanceof Spell)) {
+            if (Game.hasSpellEntity(_spell))
+                _spell = Game.getSpellEntity(_spell);
+            else
+                return this;
+        }
+        this.spells.delete(_spell);
+        return true;
+    }
+
+    addNewDisposition(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
+        this.characterDisposition[_character] = {
+            passion:_passionOffset + this.defaultDisposition.passion,
+            friendship:_friendshipOffset + this.defaultDisposition.friendship,
+            playfulness:_playfulnessOffset + this.defaultDisposition.playfulness,
+            soulmate:_soulmateOffset + this.defaultDisposition.soulmate,
+            familial:_familialOffset + this.defaultDisposition.familial,
+            obsession:_obsessionOffset + this.defaultDisposition.obsession,
+            hate:_hateOffset + this.defaultDisposition.hate
+        }
+        return this;
+    }
+
+    hasDialogue() {
+        return this.dialogue instanceof Dialogue;
+    }
+    setDialogue(_dialogue) {
+        _dialogue = Game.getDialogue(_dialogue);
+        if (_dialogue instanceof Dialogue) {
+            this.dialogue = _dialogue;
+            this.addAvailableAction(ActionEnum.TALK);
+            this.setDefaultAction(ActionEnum.TALK);
+        }
+        return this;
+    }
+    removeDialogue() {
+        this.dialogue = undefined;
+        this.removeAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.LOOK);
+        return this;
+    }
+    getDialogue() {
+        return this.dialogue;
+    }
+    setGodMode(_bool = true) {
+        this.godMode = _bool == true;
+    }
+    enableGodMode() {
+        this.setGodMode(true);
+    }
+    disableGodMode() {
+        this.setGodMode(false);
+    }
+    getGodMode() {
+        return this.godMode;
+    }
+    setLiving(_bool = true) {
+        this.living = _bool == true;
+    }
+    getLiving() {
+        return this.living;
+    }
+    isAlive() {
+        return this.living;
+    }
+    isDead() {
+        return !this.living;
+    }
+    isUndead() {
+        return !this.living && this.getHealth() > 0;
+    }
+    kill() {
+        this.setHealth(0);
+        return this;
+    }
+    resurrect(_health = 1) {
+        if (isNaN(_health) || _health < 1) {
+            _health = 1;
+        }
+        this.setHealth(_health);
+        this.living = true;
+        return this;
+    }
+
     generateProperties() {
         if (this.species == SpeciesEnum.FOX) {
             if (this.getSex() == SexEnum.MALE) {
@@ -1633,22 +1753,10 @@ class CharacterEntity extends EntityWithStorage {
         }
         /**
          * Width is 1/3rd(-ish) of height, times the ratio of weight to base weight
-         * @type {Number}
+         * @type {number}
          */
         this.width = (this.height / 3.5294) * (this.weight / this._baseWeight);
         return this;
-    }
-    getHeight() {
-        return this.height;
-    }
-    getWeight() {
-        return this.weight;
-    }
-    getWidth() {
-        return this.width;
-    }
-    getArmourClass() {
-        return this.armourClass;
     }
     generateBaseStats() {
         this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution()/10));
@@ -1700,104 +1808,6 @@ class CharacterEntity extends EntityWithStorage {
                 this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
             }
         }
-    }
-    getSpecies() {
-        return this.species;
-    }
-
-    addSpell(_spell) {
-        if (!(_spell instanceof Spell)) {
-            if (Game.hasSpellEntity(_spell))
-                _spell = Game.getSpellEntity(_spell);
-            else
-                return this;
-        }
-        this.spells.add(_spell);
-        return this;
-    }
-    removeSpell(_spell) {
-        if (!(_spell instanceof Spell)) {
-            if (Game.hasSpellEntity(_spell))
-                _spell = Game.getSpellEntity(_spell);
-            else
-                return this;
-        }
-        this.spells.delete(_spell);
-        return true;
-    }
-
-    addNewDisposition(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
-        this.characterDisposition[_character] = {
-            passion:_passionOffset + this.defaultDisposition.passion,
-            friendship:_friendshipOffset + this.defaultDisposition.friendship,
-            playfulness:_playfulnessOffset + this.defaultDisposition.playfulness,
-            soulmate:_soulmateOffset + this.defaultDisposition.soulmate,
-            familial:_familialOffset + this.defaultDisposition.familial,
-            obsession:_obsessionOffset + this.defaultDisposition.obsession,
-            hate:_hateOffset + this.defaultDisposition.hate
-        }
-        return this;
-    }
-
-    hasDialogue() {
-        return this.dialogue instanceof Dialogue;
-    }
-    setDialogue(_dialogue) {
-        _dialogue = Game.getDialogue(_dialogue);
-        if (_dialogue instanceof Dialogue) {
-            this.dialogue = _dialogue;
-            this.addAvailableAction(ActionEnum.TALK);
-            this.setDefaultAction(ActionEnum.TALK);
-        }
-        return this;
-    }
-    removeDialogue() {
-        this.dialogue = undefined;
-        this.removeAvailableAction(ActionEnum.TALK);
-        this.setDefaultAction(ActionEnum.LOOK);
-        return this;
-    }
-    getDialogue() {
-        return this.dialogue;
-    }
-    setGodMode(_bool = true) {
-        this.godMode = _bool == true;
-    }
-    enableGodMode() {
-        this.setGodMode(true);
-    }
-    disableGodMode() {
-        this.setGodMode(false);
-    }
-    getGodMode() {
-        return this.godMode;
-    }
-    setLiving(_bool = true) {
-        this.living = _bool == true;
-    }
-    getLiving() {
-        return this.living;
-    }
-    isAlive() {
-        return this.living;
-    }
-    isDead() {
-        return !this.living;
-    }
-    isUndead() {
-        return !this.living && this.getHealth() > 0;
-    }
-    kill() {
-        this.setHealth(0);
-        return this;
-    }
-    resurrect(_health = 1) {
-        if (isNaN(_health) || _health < 1) {
-            _health = 1;
-        }
-        this.setHealth(_health);
-        this.living = true;
-        return this;
     }
 
     dispose() {

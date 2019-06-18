@@ -547,6 +547,8 @@ class Game {
         Game.characterControllers = {};
         Game.itemControllers = {};
 
+        Game.abstractEntities = {};
+
         Game.entities = {};
         Game.furnitureEntities = {};
         Game.lightingEntities = {};
@@ -2571,75 +2573,79 @@ class Game {
         }
         entity.setLocked(true);
         entity.setEnabled(false);
-        if (entity instanceof Entity) {
-            Game.removeEntity(currentID);
-            if (entity instanceof CharacterEntity) {
-                Game.removeCharacterEntity(currentID);
-                Game.setCharacterEntity(newID, entity);
-            }
-            else if (entity instanceof DoorEntity) {
-                Game.removeDoorEntity(currentID);
-                Game.setDoorEntity(newID, entity);
-            }
-            else if (entity instanceof ItemEntity) {
-                Game.removeItemEntity(currentID);
-                Game.setItemEntity(newID, entity);
-                if (entity instanceof EquipmentEntity) {
-                    /*Game.removeEquipmentEntity(currentID);
-                    Game.setEquipmentEntity(newID, entity);*/
-                    if (entity instanceof ClothingEntity) {
-                        Game.removeClothingEntity(currentID);
-                        Game.setClothingEntity(newID, entity);
-                    }
-                    else if (entity instanceof WeaponEntity) {
-                        Game.removeWeaponEntity(currentID);
-                        Game.setWeaponEntity(newID, entity);
-                    }
+        if (entity instanceof AbstractEntity) {
+            Game.removeAbstract(currentID);
+            if (entity instanceof Entity) {
+                Game.removeEntity(currentID);
+                if (entity instanceof CharacterEntity) {
+                    Game.removeCharacterEntity(currentID);
+                    Game.setCharacterEntity(newID, entity);
                 }
-                else if (entity instanceof KeyEntity) {
-                    Game.removeKeyEntity(currentID);
-                    Game.setKeyEntity(newID, entity);
+                else if (entity instanceof DoorEntity) {
+                    Game.removeDoorEntity(currentID);
+                    Game.setDoorEntity(newID, entity);
                 }
-            }
-            else if (entity instanceof FurnitureEntity) {
-                Game.removeFurnitureEntity(currentID);
-                Game.setFurnitureEntity(newID, entity);
-                if (entity instanceof LightingEntity) {
-                    Game.removeLightingEntity(currentID);
-                    Game.setLightingEntity(newID, entity);
-                }
-            }
-            else if (entity instanceof SpellEntity) {
-                Game.removeSpellEntity(currentID);
-                Game.setSpellEntity(newID, entity);
-            }
-            entity.setID(newID);
-            Game.setEntity(newID, entity);
-        }
-        else if (entity instanceof InstancedEntity) {
-            Game.removeEntityInstance(currentID);
-            if (entity instanceof InstancedFurnitureEntity) {
-                Game.removeFurnitureInstance(currentID);
-                Game.setFurnitureInstance(newID, entity);
-            }
-            else if (entity instanceof InstancedItemEntity) {
-                Game.removeItemInstance(currentID);
-                Game.setItemInstance(newID, entity);
-                if (entity instanceof InstancedEquipmentEntity) {
-                    /*Game.removeEquipmentInstance(currentID);
-                    Game.setEquipmentInstance(newID, entity);*/
-                    if (entity instanceof InstancedClothingEntity) {
-                        Game.removeClothingInstance(currentID);
-                        Game.setClothingInstance(newID, entity);
+                else if (entity instanceof ItemEntity) {
+                    Game.removeItemEntity(currentID);
+                    Game.setItemEntity(newID, entity);
+                    if (entity instanceof EquipmentEntity) {
+                        /*Game.removeEquipmentEntity(currentID);
+                        Game.setEquipmentEntity(newID, entity);*/
+                        if (entity instanceof ClothingEntity) {
+                            Game.removeClothingEntity(currentID);
+                            Game.setClothingEntity(newID, entity);
+                        }
+                        else if (entity instanceof WeaponEntity) {
+                            Game.removeWeaponEntity(currentID);
+                            Game.setWeaponEntity(newID, entity);
+                        }
                     }
-                    else if (entity instanceof InstancedWeaponEntity) {
-                        Game.removeWeaponInstance(currentID);
-                        Game.setWeaponInstance(newID, entity);
+                    else if (entity instanceof KeyEntity) {
+                        Game.removeKeyEntity(currentID);
+                        Game.setKeyEntity(newID, entity);
                     }
                 }
+                else if (entity instanceof FurnitureEntity) {
+                    Game.removeFurnitureEntity(currentID);
+                    Game.setFurnitureEntity(newID, entity);
+                    if (entity instanceof LightingEntity) {
+                        Game.removeLightingEntity(currentID);
+                        Game.setLightingEntity(newID, entity);
+                    }
+                }
+                else if (entity instanceof SpellEntity) {
+                    Game.removeSpellEntity(currentID);
+                    Game.setSpellEntity(newID, entity);
+                }
+                entity.setID(newID);
+                Game.setEntity(newID, entity);
             }
-            entity.setID(newID);
-            Game.setEntityInstance(newID, entity);
+            else if (entity instanceof InstancedEntity) {
+                Game.removeEntityInstance(currentID);
+                if (entity instanceof InstancedFurnitureEntity) {
+                    Game.removeFurnitureInstance(currentID);
+                    Game.setFurnitureInstance(newID, entity);
+                }
+                else if (entity instanceof InstancedItemEntity) {
+                    Game.removeItemInstance(currentID);
+                    Game.setItemInstance(newID, entity);
+                    if (entity instanceof InstancedEquipmentEntity) {
+                        /*Game.removeEquipmentInstance(currentID);
+                        Game.setEquipmentInstance(newID, entity);*/
+                        if (entity instanceof InstancedClothingEntity) {
+                            Game.removeClothingInstance(currentID);
+                            Game.setClothingInstance(newID, entity);
+                        }
+                        else if (entity instanceof InstancedWeaponEntity) {
+                            Game.removeWeaponInstance(currentID);
+                            Game.setWeaponInstance(newID, entity);
+                        }
+                    }
+                }
+                entity.setID(newID);
+                Game.setEntityInstance(newID, entity);
+            }
+            Game.setAbstractEntity(newID, entity);
         }
         else {
             return 2;
@@ -4341,6 +4347,21 @@ class Game {
         return 0;
     }
 
+    static setAbstractEntity(id, abstractEntity) {
+        Game.abstractEntities[id] = abstractEntity;
+        return 0;
+    }
+    static removeAbstractEntity(id) {
+        delete Game.abstractEntities[id];
+        return 0;
+    }
+    static clearEntities() {
+        for (let i in Game.abstractEntities) {
+            Game.abstractEntities[i].dispose();
+        }
+        Game.abstractEntities = {};
+        return 0;
+    }
     static setEntity(id, entity) {
         Game.entities[id] = entity;
         return 0;
