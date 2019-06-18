@@ -82,7 +82,7 @@ class EntityController {
             }
             this.mesh.isPickable = true;
             this.propertiesChanged = true;
-            Game.setMeshToEntityController(this.mesh, this);
+            Game.setMeshToEntityController(this.mesh.id, this);
         }
         return this;
     }

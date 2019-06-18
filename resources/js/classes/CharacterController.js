@@ -624,6 +624,9 @@ class CharacterController extends EntityController {
     isAttacking() {
         return this._isAttacking;
     }
+    hasTarget() {
+        return this.targetController instanceof EntityController;
+    }
     setTarget(_controller, _updateChild = true) {
         if (!(_controller instanceof EntityController)) {
             return this;

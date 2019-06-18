@@ -752,7 +752,7 @@ class Game {
     }
     static _beforeRenderFunction() {
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
-            return null;
+            return 1;
         }
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
@@ -809,7 +809,7 @@ class Game {
             Game.camera.dispose();
         }
         if (!(Game.player.getController() instanceof EntityController) || !(Game.player.getController().getBoneByName("FOCUS") instanceof BABYLON.Bone) ) {
-            return;
+            return 1;
         }
         Game.camera = new BABYLON.ArcRotateCamera(
             "camera",
@@ -908,9 +908,6 @@ class Game {
         if (Game.player instanceof AbstractEntity) {
             Game.player.getController().detachFromFOCUS();
             Game.player.getController().getMesh().isPickable = true;
-            if (Game.godMode) {
-                Game.player.setGodMode(false);
-            }
         }
         else {
             Game.cameraFocus = Game.createMesh("cameraFocus", "cameraFocus", "collisionMaterial");
@@ -918,9 +915,6 @@ class Game {
         Game.player = characterEntity;
         Game.player.getController().attachToFOCUS(Game.cameraFocus); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
-        if (Game.godMode) {
-            Game.player.setGodMode(true);
-        }
         Game.gui.setPlayerPortrait(Game.player);
         Game.initFollowCamera();
         Game.initCastRayInterval();
@@ -1246,12 +1240,12 @@ class Game {
             return Game.meshLocations[meshID];
         }
         else {
-            return null;
+            return 2;
         }
     }
     static getMesh(meshID) {
         if (meshID == undefined) {
-            return null;
+            return 2;
         }
         else if (meshID instanceof BABYLON.AbstractMesh) {
             return meshID;
@@ -1267,16 +1261,17 @@ class Game {
                 return Game.instancedMeshes[meshID];
             }
         }
-        return null;
+        return 2;
     }
     static hasIcon(iconID) {
         return Game.iconLocations.hasOwnProperty(iconID);
     }
     static addIcon(iconID, location) {
         if (Game.hasIcon(iconID)) {
-            return null;
+            return 2;
         }
         Game.iconLocations[iconID] = location;
+        return 0;
     }
     static getIcon(iconID) {
         if (Game.hasIcon(iconID)) {
@@ -1287,21 +1282,22 @@ class Game {
         }
     }
     static importScript(file) {
-        var script = document.createElement("script");
+        let script = document.createElement("script");
         script.type = "text/javascript";
         script.src = file;
         script.onload = function(){
         };
         document.body.appendChild(script);
+        return 0;
     }
     static importItems() {
-        Game.importScript("resources/js/items.js");
+        return Game.importScript("resources/js/items.js");
     }
     static importCosmetics() {
-        Game.importScript("resources/js/cosmetics.js");
+        return Game.importScript("resources/js/cosmetics.js");
     }
     static importFurniture() {
-        Game.importScript("resources/js/furniture.js");
+        return Game.importScript("resources/js/furniture.js");
     }
     static controlCharacterOnKeyDown(keyboardEvent) {
         if (!Game.initialized) {
@@ -1353,15 +1349,15 @@ class Game {
                         Game.gui.setChatInputFocused(true);
                     }
                     else {
-                        var _text = Game.gui.getChatInput().text.trim();
-                        if (_text.length == 0) {
-                            return;
+                        let chatString = Game.gui.getChatInput().text.trim();
+                        if (chatString.length == 0) {
+                            return 1;
                         }
                         if (Client.isOnline()) {
-                            Client.sendChatMessage(_text);
+                            Client.sendChatMessage(chatString);
                         }
                         else {
-                            Game.chatParse(_text);
+                            Game.chatParse(chatString);
                         }
                         Game.gui.chatInputClear();
                     }
@@ -1369,15 +1365,15 @@ class Game {
                 break;
             }
             case Game.chatInputSubmitCode : {
-                var _text = Game.gui.getChatInput().text.trim();
-                if (_text.length == 0) {
-                    return;
+                let chatString = Game.gui.getChatInput().text.trim();
+                if (chatString.length == 0) {
+                    return 1;
                 }
                 if (Client.isOnline()) {
-                    Client.sendChatMessage(_text);
+                    Client.sendChatMessage(chatString);
                 }
                 else {
-                    Game.chatParse(_text);
+                    Game.chatParse(chatString);
                 }
                 Game.gui.chatInputClear();
                 Game.gui.setChatInputFocused(false);
@@ -1679,24 +1675,25 @@ class Game {
      * @param {number} yRotation 
      */
     static createCollisionWall(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
-        if (Game.debugMode) console.log("Running createCollisionWallX");
+        if (Game.debugMode) console.log("Running Game::createCollisionWallX");
         if (yRotation != 0 && Tools.isInt(yRotation)) {
             yRotation = BABYLON.Tools.ToRadians(yRotation);
         }
+        let wallWidth = 0.125;
         if (start.x == end.x) {
             yRotation += BABYLON.Tools.ToRadians(90);
-            var width = Math.abs(end.z - start.z);
+            wallWidth = Math.abs(end.z - start.z);
         }
         else if (start.z == end.z) {
-            var width = Math.abs(end.x - start.x);
+            wallWidth = Math.abs(end.x - start.x);
         }
         else {
-            return null;
+            return 1;
         }
         let xPosition = (start.x + end.x) / 2;
         let yPosition = (start.y + end.y) / 2;
         let zPosition = (start.z + end.z) / 2;
-        let wall = BABYLON.MeshBuilder.CreateBox("wall", {"height":end.y - start.y, "depth":0.125, "width":width}, Game.scene);
+        let wall = BABYLON.MeshBuilder.CreateBox("wall", {"height":end.y - start.y, "depth":0.125, "width":wallWidth}, Game.scene);
         wall.material = Game.loadedMaterials["collisionMaterial"];
         wall.position.set(xPosition,yPosition,zPosition);
         wall.rotation.y = yRotation;
@@ -1715,7 +1712,7 @@ class Game {
      * @param {number} yPosition 
      */
     static createCollisionPlane(start = {x:0, z:0}, end = {x:0, z:0}, yPosition = 0) {
-        if (Game.debugMode) console.log("Running createCollisionPlane");
+        if (Game.debugMode) console.log("Running Game::createCollisionPlane");
         if (start instanceof BABYLON.AbstractMesh) {
             let xRadius = start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x;
             let zRadius = start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z;
@@ -1751,15 +1748,16 @@ class Game {
      */
     static createCollisionRamp(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
         if (typeof start != "object" || typeof end != "object" || !start.hasOwnProperty("z") || !end.hasOwnProperty("z")) {
-            return null;
+            return 2;
         }
         if (start.x == end.x || start.y == end.y || start.z == end.z) {
-            return null;
+            return 1;
         }
+        if (Game.debugMode) console.log("Running Game::createCollisionRamp");
         if (start.y > end.y) {
-            var _temp = start;
+            let tempVector = start;
             start = end;
-            end = _temp;
+            end = tempVector;
         }
         let oppositeSide = end.y - start.y;
         let width = 0;
@@ -1787,7 +1785,7 @@ class Game {
         return ramp;
     }
     static assignPlanePhysicsToMesh(mesh) {
-        if (Game.debugMode) console.log("Running assignPlanePhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game::assignPlanePhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -1795,7 +1793,7 @@ class Game {
         return 0;
     }
     static assignCylinderPhysicsToMesh(mesh, options) {
-        if (Game.debugMode) console.log("Running assignCylinderPhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game::assignCylinderPhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -1806,7 +1804,7 @@ class Game {
         return 0;
     }
     static assignBoxPhysicsToMesh(mesh, options) {
-        if (Game.debugMode) console.log("Running assignBoxPhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game::assignBoxPhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -1817,7 +1815,7 @@ class Game {
         return 0;
     }
     static assignBoxPhysicsToBone(bone, options) {
-        if (Game.debugMode) console.log("Running assignBoxPhysicsToBone");
+        if (Game.debugMode) console.log("Running Game::assignBoxPhysicsToBone");
         if (!(bone instanceof BABYLON.Bone)) {
             return 2;
         }
@@ -1828,7 +1826,7 @@ class Game {
         return 2;
     }
     static assignBoxCollisionToMesh(mesh) {
-        if (Game.debugMode) console.log("Running assignBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running Game::assignBoxCollisionToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -1836,7 +1834,7 @@ class Game {
         return 0;
     }
     static assignBoundingBoxCollisionToMesh(mesh) {
-        if (Game.debugMode) console.log("Running assignBoundingBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running Game::assignBoundingBoxCollisionToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -1845,7 +1843,7 @@ class Game {
         collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
         collisionMesh.checkCollisions = true;
         collisionMesh.setParent(mesh);
-        let controller = Game.getMeshToEntityController(mesh);
+        let controller = Game.getMeshToEntityController(mesh.id);
         if (controller instanceof DoorController) {
             if (mesh.collisionMesh.scaling.x > mesh.collisionMesh.scaling.z) {
                 mesh.collisionMesh.scaling.z += mesh.collisionMesh.scaling.z * 0.1;
@@ -1866,7 +1864,7 @@ class Game {
         return 0;
     }
     static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), forceCreateClone = false) {
-        if (Game.debugMode) console.log("Running createItemMesh");
+        if (Game.debugMode) console.log("Running Game::createItemMesh");
         let instancedMesh = Game.createMesh(itemID, meshID, materialID, position, rotation, scaling, forceCreateClone);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
             return 2;
@@ -1877,7 +1875,7 @@ class Game {
         return instancedMesh;
     }
     static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), forceCreateClone = false, createCollisionMesh = true) {
-        if (Game.debugMode) console.log("Running createFurnitureMesh");
+        if (Game.debugMode) console.log("Running Game::createFurnitureMesh");
         let instancedMesh = Game.createMesh(furnitureID, meshID, materialID, position, rotation, scaling, forceCreateClone, createCollisionMesh);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
             return 2;
@@ -1885,7 +1883,7 @@ class Game {
         return instancedMesh;
     }
     static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", options = {}, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
-        if (Game.debugMode) console.log(`Running createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.log(`Running Game::createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
         if (typeof options != "object") {
             options = {mass:0.8,restitution:0.1};
         }
@@ -2046,7 +2044,7 @@ class Game {
         if (meshIndexID.length == 0) {
             meshIndexID = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running createMesh(${meshIndexID}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.log(`Running Game::createMesh(${meshIndexID}, ${meshID}, ${materialID})`);
         if (!(position instanceof BABYLON.Vector3)) {
             position = Tools.filterVector(position);
         }
@@ -2145,7 +2143,7 @@ class Game {
                 Game.assignBoxPhysicsToMesh(mesh);
             }
             else {
-                //Game.assignBoxCollisionToMesh(_mesh);
+                //Game.assignBoxCollisionToMesh(mesh);
                 mesh.checkCollisions = true;
             }
         }
@@ -2673,7 +2671,7 @@ class Game {
             }
             controller.setID(newID);
             Game.setEntityController(newID, controller);
-            Game.setMeshToEntityController(mesh, controller);
+            Game.setMeshToEntityController(mesh.id, controller);
         }
         entity.setEnabled(true);
         entity.setLocked(false);
@@ -2710,7 +2708,7 @@ class Game {
         }
         return 2;
     }
-    static hasFurnitureController(_id) {
+    static hasFurnitureController(id) {
         if (typeof id != "string") {
             return false;
         }
@@ -2758,7 +2756,7 @@ class Game {
         }
         return 2;
     }
-    static hasCharacterController(_id) {
+    static hasCharacterController(id) {
         if (typeof id != "string") {
             return false;
         }
@@ -3147,12 +3145,12 @@ class Game {
                 open = true;
             }
         }
-        var doorEntity = new DoorEntity(id, name, undefined, undefined, locked, key, opensInward, open);
-        var radius = Game.getMesh(meshID).getBoundingInfo().boundingBox.extendSize.x * scaling.x;
-        var xPosition = radius * (Math.cos(rotation.y * Math.PI / 180) | 0);
-        var yPosition = radius * (Math.sin(rotation.y * Math.PI / 180) | 0);
-        var loadedMesh = Game.createMesh(id, meshID, textureID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, true);
-        var doorController = new DoorController(id, loadedMesh, doorEntity);
+        let doorEntity = new DoorEntity(id, name, undefined, undefined, locked, key, opensInward, open);
+        let radius = Game.getMesh(meshID).getBoundingInfo().boundingBox.extendSize.x * scaling.x;
+        let xPosition = radius * (Math.cos(rotation.y * Math.PI / 180) | 0);
+        let yPosition = radius * (Math.sin(rotation.y * Math.PI / 180) | 0);
+        let loadedMesh = Game.createMesh(id, meshID, textureID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, true);
+        let doorController = new DoorController(id, loadedMesh, doorEntity);
         doorEntity.setController(doorController);
         doorEntity.setMeshID(loadedMesh);
         return doorController;
@@ -3283,7 +3281,7 @@ class Game {
             }
             furnitureController = Game.getFurnitureController(furnitureController);
         }
-        var mesh = furnitureController.getMesh();
+        let mesh = furnitureController.getMesh();
         furnitureController.entity.dispose();
         furnitureController.dispose();
         if (mesh instanceof BABYLON.InstancedMesh) {
@@ -3344,9 +3342,9 @@ class Game {
             Game.addLightingToCreate(id, name, mesh, texture, lightingType, options, position, rotation, scaling, lightingPositionOffset, createCollisionMesh);
             return 0;
         }
-        var loadedMesh = Game.createMesh(id, mesh, texture, position, rotation, scaling, true)
-        var lightingEntity = new LightingEntity(id, name, undefined, undefined, lightingType);
-        var lightingController = new LightingController(id, loadedMesh, lightingEntity, lightingType, lightingPositionOffset);
+        let loadedMesh = Game.createMesh(id, mesh, texture, position, rotation, scaling, true)
+        let lightingEntity = new LightingEntity(id, name, undefined, undefined, lightingType);
+        let lightingController = new LightingController(id, loadedMesh, lightingEntity, lightingType, lightingPositionOffset);
         lightingEntity.setController(lightingController);
         lightingEntity.setMeshID(loadedMesh);
         lightingEntity.off(); // set because lighting is bad
@@ -3410,10 +3408,10 @@ class Game {
                 break;
             }
             case ItemEnum.BOOK : {
-                //_entity = new BookEntity(_id, _name, _description, _icon); // TODO: this :v
+                //itemEntity = new BookEntity(id, name, description, iconID); // TODO: this :v
             }
             case ItemEnum.CONSUMABLE : {
-                //_entity = new ConsumableEntity(_id, _name, _description, _icon, _subType); // TODO: this :v
+                //itemEntity = new ConsumableEntity(id, name, description, iconID, subType); // TODO: this :v
             }
             default: {
                 itemEntity = new ItemEntity(id, name, description, iconID);
@@ -3587,89 +3585,94 @@ class Game {
     static enableHighlighting() {
         Game.highlightEnabled = true;
         Game.initHighlighting();
+        return 0;
     }
     static disableHighlighting() {
         Game.highlightEnabled = false;
+        return 0;
     }
     static initHighlighting() {
         Game.highlightLayer = new BABYLON.HighlightLayer("hl1", Game.scene);
         Game.highlightLayer.outerGlow = true;
         Game.highlightLayer.innerGlow = false;
+        return 0;
     }
-    static highlightMesh(_mesh) {
-        if (!(_mesh instanceof BABYLON.Mesh)) {
-            return;
+    static highlightMesh(mesh) {
+        if (!(mesh instanceof BABYLON.Mesh)) {
+            return 2;
         }
-        if (!Game.highlightEnabled || Game.highlightedMesh == _mesh) {
-            return;
+        if (!Game.highlightEnabled || Game.highlightedMesh == mesh) {
+            return 0;
         }
         if (Game.highlightedMesh != undefined) {
             Game.highlightLayer.removeMesh(Game.highlightedMesh);
         }
-        let _color = BABYLON.Color3.Gray();
-        let _controller = Game.getMeshToEntityController(_mesh);
-        if (_controller instanceof CharacterController) {
-            _color = BABYLON.Color3.White();
+        let color = BABYLON.Color3.Gray();
+        let controller = Game.getMeshToEntityController(mesh.id);
+        if (controller instanceof CharacterController) {
+            color = BABYLON.Color3.White();
         }
-        else if (_controller instanceof ItemController) {
-            if (_controller.getEntity().getOwner() != Game.player) {
-                _color = BABYLON.Color3.Red();
+        else if (controller instanceof ItemController) {
+            if (controller.getEntity().getOwner() != Game.player) {
+                color = BABYLON.Color3.Red();
             }
             else {
-                _color = BABYLON.Color3.White();
+                color = BABYLON.Color3.White();
             }
         }
-        Game.highlightLayer.addMesh(_mesh, BABYLON.Color3.White());
-        Game.highlightedMesh = _mesh;
+        Game.highlightLayer.addMesh(mesh, color);
+        Game.highlightedMesh = mesh;
+        return 0;
     }
     static clearHightlightMesh() {
         if (!(Game.highlightedMesh instanceof BABYLON.Mesh)) {
-            return;
+            return 0;
         }
         Game.highlightLayer.removeMesh(Game.highlightedMesh);
         Game.highlightedMesh = null;
+        return 0;
     }
-    static setPlayerTarget(_controller) {
-        if (!(Game.player.getController() instanceof CharacterController)) {
-            return false;
+    static setPlayerTarget(entityController) {
+        if (!(Game.player.getController() instanceof EntityController)) {
+            return 1;
         }
-        // Commented out for updating the 'dynamic' action tooltip
-        /*if (_controller == Game.player.getController().getTarget()) {
-            return null;
-        }*/
-        if (!(_controller instanceof EntityController) || !_controller.isEnabled()) {
-            return null;
+        if (!(entityController instanceof EntityController) || !entityController.isEnabled()) {
+            return 1;
         }
-        Game.highlightMesh(_controller.mesh);
-        Game.player.getController().setTarget(_controller);
-        Game.gui.setTargetPortrait(_controller.getEntity());
+        Game.highlightMesh(entityController.mesh);
+        Game.player.getController().setTarget(entityController);
+        Game.player.setTarget(entityController.getEntity());
+        Game.gui.setTargetPortrait(entityController.getEntity());
         Game.gui.showTargetPortrait();
-        Game.gui.setActionTooltip(ActionEnum.properties[_controller.getEntity().getDefaultAction()].name);
+        Game.gui.setActionTooltip(ActionEnum.properties[entityController.getEntity().getDefaultAction()].name);
         Game.gui.showActionTooltip();
+        return 0;
     }
     static clearPlayerTarget() {
         if (!(Game.player.getController() instanceof CharacterController)) {
-            return false;
+            return 1;
         }
-        if (Game.player.getController().getTarget() == undefined) {
-            return undefined;
+        if (!Game.player.getController().hasTarget()) {
+            return 0;
         }
         Game.clearHightlightMesh();
         Game.player.getController().clearTarget();
+        Game.player.clearTarget();
         Game.gui.hideTargetPortrait();
         Game.gui.hideActionTooltip();
+        return 0;
     }
     static castRayTarget() {
         if (!Game.player.hasController() || !Game.player.getController().hasMesh() || !Game.player.getController().hasSkeleton()) {
-            return false;
+            return 1;
         }
-        var _ray = Game.camera.getForwardRay(2 * Game.player.getController().getMesh().scaling.y, Game.camera.getWorldMatrix(), Game.player.getController().focus.getAbsolutePosition())
+        let ray = Game.camera.getForwardRay(2 * Game.player.getController().getMesh().scaling.y, Game.camera.getWorldMatrix(), Game.player.getController().focus.getAbsolutePosition())
         if (Game.player.getController().targetRay == undefined) {
-            Game.player.getController().targetRay = _ray;
+            Game.player.getController().targetRay = ray;
         }
         else {
-            Game.player.getController().targetRay.origin = _ray.origin;
-            Game.player.getController().targetRay.direction = _ray.direction;
+            Game.player.getController().targetRay.origin = ray.origin;
+            Game.player.getController().targetRay.direction = ray.direction;
         }
         if (Game.debugMode) {
             if (Game.player.getController().targetRayHelper != undefined) {
@@ -3678,12 +3681,12 @@ class Game {
             Game.player.getController().targetRayHelper = new BABYLON.RayHelper(Game.player.getController().targetRay);
             Game.player.getController().targetRayHelper.show(Game.scene);
         }
-        var _hit = Game.scene.pickWithRay(Game.player.getController().targetRay);
-        if (_hit.hit) {
-            let _controller = Game.getMeshToEntityController(_hit.pickedMesh);
-            if (_controller instanceof EntityController) {
-                if (_controller != Game.player.getController().getTarget()) {
-                    Game.setPlayerTarget(_controller);
+        let hit = Game.scene.pickWithRay(Game.player.getController().targetRay);
+        if (hit.hit) {
+            let entityController = Game.getMeshToEntityController(hit.pickedMesh.id);
+            if (entityController instanceof EntityController) {
+                if (entityController != Game.player.getController().getTarget()) {
+                    Game.setPlayerTarget(entityController);
                 }
             }
             else {
@@ -3693,63 +3696,69 @@ class Game {
         else {
             Game.clearPlayerTarget();
         }
+        return 0;
     }
     static initCastRayInterval() {
         clearInterval(Game.castRayTargetIntervalFunction);
         Game.castRayTargetIntervalFunction = setInterval(Game.castRayTarget, Game.castRayTargetInterval);
+        return 0;
     }
-    static setCastRayInterval(_interval = 250) {
-        if (_interval > 0) {
-            Game.castRayTargetInterval = _interval;
+    static setCastRayInterval(interval = 250) {
+        if (interval > 0) {
+            Game.castRayTargetInterval = interval;
         }
         Game.initCastRayInterval();
+        return 0;
     }
     static initPlayerPortraitStatsUpdateInterval() {
         clearInterval(Game.playerPortraitStatsUpdateIntervalFunction);
         Game.playerPortraitStatsUpdateIntervalFunction = setInterval(Game.gui.updatePlayerPortraitStats, Game.playerPortraitStatsUpdateInterval);
+        return 0;
     }
-    static setPlayerPortraitStatsUpdateInterval(_interval = 100) {
-        if (_interval > 0) {
-            Game.playerPortraitStatsUpdateInterval = _interval;
+    static setPlayerPortraitStatsUpdateInterval(interval = 100) {
+        if (interval > 0) {
+            Game.playerPortraitStatsUpdateInterval = interval;
         }
         Game.initPlayerPortraitStatsUpdateInterval();
+        return 0;
     }
-
-    static pointerLock(_event) {
+    static pointerLock(event) {
         if (Game.engine.isPointerLock) {
-            return;
+            return 0;
         }
         Game.canvas.requestPointerLock();
         Game.engine.isPointerLock = true;
         Game.pointerLockFunction = setTimeout(function() {document.addEventListener("pointerlockchange", Game.pointerRelease);}, 121);
+        return 0;
     }
-    static pointerRelease(_event) {
+    static pointerRelease(event) {
         clearTimeout(Game.pointerLockFunction);
         document.removeEventListener("pointerlockchange", Game.pointerRelease);
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
+        return 0;
     }
-    static chatParse(_string) {
-        if (_string.slice(0, 1) == "/") {
-            return Game.chatCommands(_string.slice(1));
+    static chatParse(chatString) {
+        if (chatString.slice(0, 1) == "/") {
+            return Game.chatCommands(chatString.slice(1));
         }
         else {
-            return Game.gui.chatOutputAppend(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.player.name}: ${_string}`);
+            return Game.gui.chatOutputAppend(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.player.name}: ${chatString}`);
         }
     }
-    static chatCommands(_command, ..._param) {
-        if (_command == undefined || typeof _command != "string") {
-            return undefined;
+    static chatCommands(command, ...parameters) {
+        if (command == undefined || typeof command != "string") {
+            return 2;
         }
-        if (_command.slice(0, 1) == "/") {
-            _command = _command.slice(1);
+        if (command.slice(0, 1) == "/") {
+            command = command.slice(1);
         }
-        _command = String(_command).toLowerCase();
-        let _commandSplit = _command.split(" ");
-        if (_commandSplit.length == 0) {
-            _commandSplit.push("help");
+        command = String(command).toLowerCase();
+        let commandArray = command.split(" ");
+        if (commandArray.length == 0) {
+            commandArray.push("help");
         }
-        switch (_commandSplit[0]) {
+        switch (commandArray[0]) {
             case "help" : {
                 Game.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
@@ -3800,15 +3809,15 @@ class Game {
                 break;
             }
             case "addmoney" : {
-                let _money = Tools.filterInt(_commandSplit[1]) || 1;
-                Game.player.addMoney(_money);
-                Game.gui.chatOutputAppend(`Added \$${_money} to your wallet.`);
+                let money = Tools.filterInt(commandArray[1]) || 1;
+                Game.player.addMoney(money);
+                Game.gui.chatOutputAppend(`Added \$${money} to your wallet.`);
                 break;
             }
             case "setmoney" : {
-                let _money = Tools.filterInt(_commandSplit[1]) || 1;
-                Game.player.setMoney(_money);
-                Game.gui.chatOutputAppend(`Set your wallet to \$${_money}.`);
+                let money = Tools.filterInt(commandArray[1]) || 1;
+                Game.player.setMoney(money);
+                Game.gui.chatOutputAppend(`Set your wallet to \$${money}.`);
                 break;
             }
             case "getmoney" : {
@@ -3816,11 +3825,10 @@ class Game {
                 break;
             }
             case "kill" : {
-                let _target = Game.player;
-                if (typeof _commandSplit[1] == "string" && Game.hasCharacterEntity(_commandSplit[1])) {
-                    _target = Game.getCharacterEntity(_commandSplit[1]);
+                if (typeof commandArray[1] == "string" && Game.hasCharacterEntity(commandArray[1])) {
+                    Game.player = Game.getCharacterEntity(commandArray[1]);
                 }
-                _target.setHealth(0);
+                Game.player.setHealth(0);
                 break;
             }
             case ":v" :
@@ -3831,17 +3839,18 @@ class Game {
                 break;
             }
             default : {
-                Game.gui.chatOutputAppend(`Command "${_command}" not found.\n`);
-                return;
+                Game.gui.chatOutputAppend(`Command "${command}" not found.\n`);
+                return 0;
             }
         }
+        return 0;
     }
     static updateCameraTarget() {
         if (!(Game.camera instanceof BABYLON.ArcRotateCamera)) {
-            return null;
+            return 2;
         }
         if (!Game.player.hasController() || !Game.player.getController().hasMesh() || !Game.player.getController().hasSkeleton()) {
-            return null;
+            return 1;
         }
         if (Game.enableFirstPerson && Game.camera.radius <= 0.5) {
             if (Game.player.getController().getMesh().isVisible) {
@@ -3857,6 +3866,7 @@ class Game {
             Game.camera.inertia = 0.9;
             Game.gui.hideCrosshair();
         }
+        return 0;
     }
     static doEntityAction(abstractEntity, subAbstractEntity = Game.player, actionID) {
         if (!(abstractEntity instanceof AbstractEntity)) {
@@ -3971,40 +3981,6 @@ class Game {
                 if (subEntity == Game.player && Game.player.hasTarget()) {
                     Game.gui.setTargetPortrait(Game.player.getTarget());
                 }
-            }
-        }
-        return 0;
-    }
-    static calculateDamage(defender, attacker) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
-        let attackRoll = Game.roll(1, 20);
-        let didHit = attackRoll > defender.getArmourClass();
-        if (didHit) {
-            let damageRollCount = 1;
-            let damageRoll = 0;
-            let damageType = DamageEnum.BLUDGEONING;
-            let unarmed = false;
-            if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
-                damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
-                damageType = attacker.getEquipment()["HAND_R"].getDamageType();
-            }
-            else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
-                damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
-                damageType = attacker.getEquipment()["HAND_L"].getDamageType();
-            }
-            else {
-                unarmed = true;
-            }
-            if (unarmed) {
-                damageRoll = 1 + Game.calculateAbilityModifier(attacker.getStrength());
-                if (damageRoll < 0) {
-                    damageRoll = 0;
-                }
-                return damageRoll;
-            }
-            else {
-                return Game.roll(damageRollCount, damageRoll);
             }
         }
         return 0;
@@ -4203,10 +4179,10 @@ class Game {
         if (!(subEntity instanceof CharacterEntity) || !(subEntity.getController() instanceof CharacterController)) {
             return 2;
         }
-        var _seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
-        var _seatingWidth = (_seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
+        let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+        let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
         subEntity.getController().setParent(entity.getController().getMesh());
-        subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
+        subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
         subEntity.getController().getMesh().rotation.set(0,0,0);
         return 0;
     }
@@ -4223,10 +4199,10 @@ class Game {
         if (!(subEntity instanceof CharacterEntity) || !(subEntity.getController() instanceof CharacterController)) {
             return 2;
         }
-        var _seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
-        var _seatingWidth = (_seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
+        let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+        let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
         subEntity.getController().setParent(entity.getController().getMesh());
-        subEntity.getController().getMesh().position.set(_seatingWidth / 2, 0.4, -0.0125);
+        subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
         subEntity.getController().getMesh().rotation.set(0,0,0);
         if (subEntity == Game.player && Game.camera.radius <= 0.5 && Game.enableFirstPerson) {
             Game.camera.alpha = entity.getController().getMesh().rotation.y - BABYLON.Tools.ToRadians(90);
@@ -4246,338 +4222,382 @@ class Game {
         }
         Game.gui.dialogueMenu.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
         Game.gui.dialogueMenu.show();
-        /*var _dialogue = _entity.getDialogue().getText();
-        if (typeof _dialogue == "string") {
-            Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue);
-        }
-        else if (typeof _dialogue == "function") {
-            Game.gui.chatOutputAppend(_entity.getFullName() + ": " + _dialogue(_entity, _subEntity));
-        }*/
         return 0;
     }
-    static setEntityController(_id, _entityController) {
-        Game.entityControllers[_id] = _entityController;
+    static setEntityController(id, entityController) {
+        Game.entityControllers[id] = entityController;
+        return 0;
     }
-    static removeEntityController(_id) {
-        delete Game.entityControllers[_id];
+    static removeEntityController(id) {
+        delete Game.entityControllers[id];
     }
     static clearControllers() {
-        for (var _i in Game.entityControllers) {
-            Game.entityControllers[_i].dispose();
+        for (let i in Game.entityControllers) {
+            Game.entityControllers[i].dispose();
         }
         Game.entityControllers = {};
+        return 0;
     }
-    static setCharacterController(_id, _characterController) {
-        Game.characterControllers[_id] = _characterController;
+    static setCharacterController(id, characterController) {
+        Game.characterControllers[id] = characterController;
+        return 0;
     }
-    static removeCharacterController(_id) {
-        delete Game.characterControllers[_id];
+    static removeCharacterController(id) {
+        delete Game.characterControllers[id];
+        return 0;
     }
     static clearCharacterControllers() {
-        for (var _i in Game.characterControllers) {
-            Game.characterControllers[_i].dispose();
+        for (let i in Game.characterControllers) {
+            Game.characterControllers[i].dispose();
         }
         Game.characterControllers = {};
+        return 0;
     }
-    static setFurnitureController(_id, _furnitureController) {
-        Game.furnitureControllers[_id] = _furnitureController;
+    static setFurnitureController(id, furnitureController) {
+        Game.furnitureControllers[id] = furnitureController;
+        return 0;
     }
-    static removeFurnitureController(_id) {
-        delete Game.furnitureControllers[_id];
+    static removeFurnitureController(id) {
+        delete Game.furnitureControllers[id];
+        return 0;
     }
     static clearFurnitureControllers() {
-        for (var _i in Game.furnitureControllers) {
-            Game.furnitureControllers[_i].dispose();
+        for (let i in Game.furnitureControllers) {
+            Game.furnitureControllers[i].dispose();
         }
         Game.furnitureControllers = {};
+        return 0;
     }
-    static setLightingController(_id, _lightController) {
-        Game.lightingControllers[_id] = _lightController;
+    static setLightingController(id, lightController) {
+        Game.lightingControllers[id] = lightController;
+        return 0;
     }
-    static removeLightingController(_id) {
-        delete Game.lightingControllers[_id];
+    static removeLightingController(id) {
+        delete Game.lightingControllers[id];
+        return 0;
     }
     static clearLightingControllers() {
-        for (var _i in Game.lightingControllers) {
-            Game.lightingControllers[_i].dispose();
+        for (let i in Game.lightingControllers) {
+            Game.lightingControllers[i].dispose();
         }
         Game.lightingControllers = {};
+        return 0;
     }
-    static setDoorController(_id, _doorController) {
-        Game.doorControllers[_id] = _doorController;
+    static setDoorController(id, doorController) {
+        Game.doorControllers[id] = doorController;
+        return 0;
     }
-    static removeDoorController(_id) {
-        delete Game.doorControllers[_id];
+    static removeDoorController(id) {
+        delete Game.doorControllers[id];
+        return 0;
     }
     static clearDoorControllers() {
-        for (var _i in Game.doorControllers) {
-            Game.doorControllers[_i].dispose();
+        for (let i in Game.doorControllers) {
+            Game.doorControllers[i].dispose();
         }
         Game.doorControllers = {};
+        return 0;
     }
-    static setItemController(_id, _itemController) {
-        Game.itemControllers[_id] = _itemController;
+    static setItemController(id, itemController) {
+        Game.itemControllers[id] = itemController;
+        return 0;
     }
-    static removeItemController(_id) {
-        delete Game.itemControllers[_id];
+    static removeItemController(id) {
+        delete Game.itemControllers[id];
+        return 0;
     }
     static clearItemControllers() {
-        for (var _i in Game.itemControllers) {
-            Game.itemControllers[_i].dispose();
+        for (let i in Game.itemControllers) {
+            Game.itemControllers[i].dispose();
         }
         Game.itemControllers = {};
+        return 0;
     }
-    static setMeshToEntityController(_mesh, _entityController) {
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.id;
-        }
-        Tools.filterID(_mesh);
-        if (!(_entityController instanceof EntityController)) {
-            return;
-        }
-        Game.meshToEntityController[_mesh] = _entityController;
+    static hasMeshToEntityController(meshID) {
+        return Game.meshToEntityController.hasOwnProperty(meshID);
     }
-    static getMeshToEntityController(_mesh) {
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.id;
+    static setMeshToEntityController(meshID, entityController) {
+        if (!Game.hasClonedMesh(meshID) && !Game.hasInstancedMesh) {
+            return 2;
         }
-        Tools.filterID(_mesh);
-        return Game.meshToEntityController[_mesh];
+        if (!(entityController instanceof EntityController)) {
+            return 2;
+        }
+        Game.meshToEntityController[meshID] = entityController;
+        return 0;
     }
-    static removeMeshToEntityController(_mesh) {
-        if (_mesh instanceof BABYLON.AbstractMesh) {
-            _mesh = _mesh.id;
+    static getMeshToEntityController(meshID) {
+        if (Game.hasMeshToEntityController(meshID)) {
+            return Game.meshToEntityController[meshID];
         }
-        Tools.filterID(_mesh);
-        delete Game.meshToEntityController[_mesh];
+        return 1;
+    }
+    static removeMeshToEntityController(meshID) {
+        delete Game.meshToEntityController[meshID];
+        return 0;
     }
     static clearMeshToEntityControllers() {
         Game.meshToEntityController = {};
+        return 0;
     }
 
-    static setEntity(_id, _entity) {
-        Game.entities[_id] = _entity;
+    static setEntity(id, entity) {
+        Game.entities[id] = entity;
+        return 0;
     }
-    static removeEntity(_id) {
-        delete Game.entities[_id];
+    static removeEntity(id) {
+        delete Game.entities[id];
+        return 0;
     }
     static clearEntities() {
-        for (var _i in Game.entities) {
-            Game.entities[_i].dispose();
+        for (let i in Game.entities) {
+            Game.entities[i].dispose();
         }
         Game.entities = {};
+        return 0;
     }
-    static setCharacterEntity(_id, _characterEntity) {
-        Game.characterEntities[_id] = _characterEntity;
+    static setCharacterEntity(id, characterEntity) {
+        Game.characterEntities[id] = characterEntity;
+        return 0;
     }
-    static removeCharacterEntity(_id) {
-        delete Game.characterEntities[_id];
+    static removeCharacterEntity(id) {
+        delete Game.characterEntities[id];
+        return 0;
     }
     static clearCharacterEntities() {
-        for (var _i in Game.characterEntities) {
-            Game.characterEntities[_i].dispose();
+        for (let i in Game.characterEntities) {
+            Game.characterEntities[i].dispose();
         }
         Game.characterEntities = {};
+        return 0;
     }
-    static setItemEntity(_id, _itemEntity) {
-        Game.itemEntities[_id] = _itemEntity;
+    static setItemEntity(id, itemEntity) {
+        Game.itemEntities[id] = itemEntity;
+        return 0;
     }
-    static removeItemEntity(_id) {
-        delete Game.itemEntities[_id];
+    static removeItemEntity(id) {
+        delete Game.itemEntities[id];
+        return 0;
     }
     static clearItemEntities() {
-        for (var _i in Game.itemEntities) {
-            Game.itemEntities[_i].dispose();
+        for (let i in Game.itemEntities) {
+            Game.itemEntities[i].dispose();
         }
         Game.itemEntities = {};
+        return 0;
     }
-    static setClothingEntity(_id, _clothingEntity) {
-        Game.clothingEntities[_id] = _clothingEntity;
+    static setClothingEntity(id, clothingEntity) {
+        Game.clothingEntities[id] = clothingEntity;
+        return 0;
     }
-    static removeClothingEntity(_id) {
-        delete Game.clothingEntities[_id];
+    static removeClothingEntity(id) {
+        delete Game.clothingEntities[id];
+        return 0;
     }
     static clearClothingEntities() {
-        for (var _i in Game.clothingEntities) {
-            Game.clothingEntities[_i].dispose();
+        for (let i in Game.clothingEntities) {
+            Game.clothingEntities[i].dispose();
         }
         Game.clothingEntities = {};
+        return 0;
     }
-    static setWeaponEntity(_id, _weaponEntity) {
-        Game.weaponEntities[_id] = _weaponEntity;
+    static setWeaponEntity(id, weaponEntity) {
+        Game.weaponEntities[id] = weaponEntity;
+        return 0;
     }
-    static removeWeaponEntity(_id) {
-        delete Game.weaponEntities[_id];
+    static removeWeaponEntity(id) {
+        delete Game.weaponEntities[id];
+        return 0;
     }
     static clearWeaponEntities() {
-        for (var _i in Game.weaponEntities) {
-            Game.weaponEntities[_i].dispose();
+        for (let i in Game.weaponEntities) {
+            Game.weaponEntities[i].dispose();
         }
         Game.weaponEntities = {};
+        return 0;
     }
-    static setFurnitureEntity(_id, _furnitureEntity) {
-        Game.furnitureEntities[_id] = _furnitureEntity;
+    static setFurnitureEntity(id, furnitureEntity) {
+        Game.furnitureEntities[id] = furnitureEntity;
+        return 0;
     }
-    static removeFurnitureEntity(_id) {
-        delete Game.furnitureEntities[_id];
+    static removeFurnitureEntity(id) {
+        delete Game.furnitureEntities[id];
+        return 0;
     }
     static clearFurnitureEntities() {
-        for (var _i in Game.furnitureEntities) {
-            Game.furnitureEntities[_i].dispose();
+        for (let i in Game.furnitureEntities) {
+            Game.furnitureEntities[i].dispose();
         }
         Game.furnitureEntities = {};
+        return 0;
     }
-    static setLightingEntity(_id, _lightEntity) {
-        Game.lightingEntities[_id] = _lightEntity;
+    static setLightingEntity(id, lightEntity) {
+        Game.lightingEntities[id] = lightEntity;
+        return 0;
     }
-    static removeLightingEntity(_id) {
-        delete Game.lightingEntities[_id];
+    static removeLightingEntity(id) {
+        delete Game.lightingEntities[id];
+        return 0;
     }
     static clearLightEntities() {
-        for (var _i in Game.lightingEntities) {
-            Game.lightingEntities[_i].dispose();
+        for (let i in Game.lightingEntities) {
+            Game.lightingEntities[i].dispose();
         }
         Game.lightingEntities = {};
+        return 0;
     }
-    static setDoorEntity(_id, _doorEntity) {
-        Game.doorEntities[_id] = _doorEntity;
+    static setDoorEntity(id, doorEntity) {
+        Game.doorEntities[id] = doorEntity;
+        return 0;
     }
-    static removeDoorEntity(_id) {
-        delete Game.doorEntities[_id];
+    static removeDoorEntity(id) {
+        delete Game.doorEntities[id];
+        return 0;
     }
     static clearDoorEntities() {
-        for (var _i in Game.doorEntities) {
-            Game.doorEntities[_i].dispose();
+        for (let i in Game.doorEntities) {
+            Game.doorEntities[i].dispose();
         }
         Game.doorEntities = {};
+        return 0;
     }
-    static setKeyEntity(_id, _keyEntity) {
-        Game.keyEntities[_id] = _keyEntity;
+    static setKeyEntity(id, keyEntity) {
+        Game.keyEntities[id] = keyEntity;
+        return 0;
     }
-    static removeKeyEntity(_id) {
-        delete Game.keyEntities[_id];
+    static removeKeyEntity(id) {
+        delete Game.keyEntities[id];
+        return 0;
     }
     static clearKeyEntities() {
-        for (var _i in Game.keyEntities) {
-            Game.keyEntities[_i].dispose();
+        for (let i in Game.keyEntities) {
+            Game.keyEntities[i].dispose();
         }
         Game.keyEntities = {};
+        return 0;
     }
-    static setSpellEntity(_id, _spellEntity) {
-        Game.spellEntities[_id] = _spellEntity;
+    static setSpellEntity(id, spellEntity) {
+        Game.spellEntities[id] = spellEntity;
+        return 0;
     }
-    static removeSpellEntity(_id) {
-        delete Game.spellEntities[_id];
+    static removeSpellEntity(id) {
+        delete Game.spellEntities[id];
+        return 0;
     }
     static clearSpellEntities() {
-        for (var _i in Game.spellEntities) {
-            Game.spellEntities[_i].dispose();
+        for (let i in Game.spellEntities) {
+            Game.spellEntities[i].dispose();
         }
         Game.spellEntities = {};
+        return 0;
     }
-    static hasSpell(_id) {
-        return Game.hasSpellEntity(_id);
+    static hasSpellEntity(id) {
+        return Game.spellEntities.hasOwnProperty(id);
     }
-    static hasSpellEntity(_id) {
-        return Game.spellEntities.hasOwnProperty(_id);
+    static hasSpell(id) {
+        return Game.hasSpellEntity(id);
     }
-    static getSpell(_id) {
-        return Game.getSpellEntity(_id);
-    }
-    static getSpellEntity(_id) {
-        if (Game.hasSpellEntity(_id)) {
-            return Game.spellEntities[_id];
+    static getSpellEntity(id) {
+        if (Game.hasSpellEntity(id)) {
+            return Game.spellEntities[id];
         }
-        return null;
+        return 1;
     }
-    static setEssentialEntity(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
-        }
-        if (!(_entity instanceof AbstractEntity)) {
-            return null;
-        }
-        _entity.setEssential(true);
-        Game.essentialEntities.add(_entity)
+    static getSpell(id) {
+        return Game.getSpellEntity(id);
     }
-    static removeEssentialEntity(_entity) {
-        if (!(_entity instanceof AbstractEntity)) {
-            _entity = Game.getInstancedEntity(_entity) || Game.getEntity(_entity);
-        }
-        if (!(_entity instanceof AbstractEntity)) {
-            return null;
-        }
-        _entity.setEssential(false);
-        Game.essentialEntities.delete(_entity);
+    static setEssentialEntity(abstractEntity) {
+        abstractEntity.setEssential(true);
+        Game.essentialEntities.add(abstractEntity)
+        return 0;
+    }
+    static removeEssentialEntity(abstractEntity) {
+        abstractEntity.setEssential(false);
+        Game.essentialEntities.delete(abstractEntity);
+        return 0;
     }
     static clearEssentialEntities() {
-        Game.essentialEntities.forEach(function(_entity) {
-            if (_entity instanceof AbstractEntity) {
-                _entity.setEssential(false);
-            }
+        Game.essentialEntities.forEach(function(abstractEntity) {
+            abstractEntity.setEssential(false);
         });
         Game.essentialEntities.clear();
+        return 0;
     }
 
-    static setEntityInstance(_id, _instancedEntity) {
-        Game.instancedEntities[_id] = _instancedEntity;
+    static setEntityInstance(id, instancedEntity) {
+        Game.instancedEntities[id] = instancedEntity;
+        return 0;
     }
-    static removeEntityInstance(_id) {
-        delete Game.instancedEntities[_id];
+    static removeEntityInstance(id) {
+        delete Game.instancedEntities[id];
+        return 0;
     }
     static clearEntityInstances() {
-        for (var _i in Game.instancedEntities) {
-            Game.instancedEntities[_i].dispose();
+        for (let i in Game.instancedEntities) {
+            Game.instancedEntities[i].dispose();
         }
         Game.instancedEntities = {};
+        return 0;
     }
-    static setItemInstance(_id, _instancedItemEntity) {
-        Game.instancedItemEntities[_id] = _instancedItemEntity;
+    static setItemInstance(id, instancedItemEntity) {
+        Game.instancedItemEntities[id] = instancedItemEntity;
+        return 0;
     }
-    static removeItemInstance(_id) {
-        delete Game.instancedItemEntities[_id];
+    static removeItemInstance(id) {
+        delete Game.instancedItemEntities[id];
+        return 0;
     }
     static clearItemInstances() {
-        for (var _i in Game.instancedItemEntities) {
-            Game.instancedItemEntities[_i].dispose();
+        for (let i in Game.instancedItemEntities) {
+            Game.instancedItemEntities[i].dispose();
         }
         Game.instancedItemEntities = {};
+        return 0;
     }
-    static setClothingInstance(_id, _instancedClothingEntity) {
-        Game.instancedClothingEntities[_id] = _instancedClothingEntity;
+    static setClothingInstance(id, instancedClothingEntity) {
+        Game.instancedClothingEntities[id] = instancedClothingEntity;
+        return 0;
     }
-    static removeClothingInstance(_id) {
-        delete Game.instancedClothingEntities[_id];
+    static removeClothingInstance(id) {
+        delete Game.instancedClothingEntities[id];
+        return 0;
     }
     static clearClothingInstances() {
-        for (var _i in Game.instancedClothingEntities) {
-            Game.instancedClothingEntities[_i].dispose();
+        for (let i in Game.instancedClothingEntities) {
+            Game.instancedClothingEntities[i].dispose();
         }
         Game.instancedClothingEntities = {};
+        return 0;
     }
-    static setWeaponInstance(_id, _instancedWeaponEntity) {
-        Game.instancedWeaponEntities[_id] = _instancedWeaponEntity;
+    static setWeaponInstance(id, instancedWeaponEntity) {
+        Game.instancedWeaponEntities[id] = instancedWeaponEntity;
+        return 0;
     }
-    static removeWeaponInstance(_id) {
-        delete Game.instancedWeaponEntities[_id];
+    static removeWeaponInstance(id) {
+        delete Game.instancedWeaponEntities[id];
+        return 0;
     }
     static clearWeaponInstances() {
-        for (var _i in Game.instancedWeaponEntities) {
-            Game.instancedWeaponEntities[_i].dispose();
+        for (let i in Game.instancedWeaponEntities) {
+            Game.instancedWeaponEntities[i].dispose();
         }
         Game.instancedWeaponEntities = {};
+        return 0;
     }
-    static setFurnitureInstance(_id, _instancedFurnitureEntity) {
-        Game.instancedFurnitureEntities[_id] = _instancedFurnitureEntity;
+    static setFurnitureInstance(id, instancedFurnitureEntity) {
+        Game.instancedFurnitureEntities[id] = instancedFurnitureEntity;
+        return 0;
     }
     static removeFurnitureInstance(instancedFurnitureEntity) {
         delete Game.instancedFurnitureEntities[instancedFurnitureEntity];
+        return 0;
     }
     static clearFurnitureInstances() {
-        for (var _i in Game.instancedFurnitureEntities) {
-            Game.instancedFurnitureEntities[_i].dispose();
+        for (let i in Game.instancedFurnitureEntities) {
+            Game.instancedFurnitureEntities[i].dispose();
         }
         Game.instancedFurnitureEntities = {};
+        return 0;
     }
     /**
      * Tries to set a Dialogue
@@ -4642,6 +4662,56 @@ class Game {
             Game.removeCosmetic(value);
         });
         return 0;
+    }
+    static setDebugMode(debugMode) {
+        Game.debugMode = debugMode == true;
+    }
+    static enableDebugMode() {
+        return Game.setDebugMode(true);
+    }
+    static disableDebugMode() {
+        return Game.setDebugMode(false);
+    }
+    static setInterfaceMode(interfaceMode = InterfaceModeEnum.NONE) {
+        if (Game.interfaceMode == interfaceMode) {
+            return 0;
+        }
+        if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) {}
+        else if (isNaN(interfaceMode) && InterfaceModeEnum.hasOwnProperty(interfaceMode)) {
+            interfaceMode = InterfaceModeEnum[interfaceMode];
+        }
+        else {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
+        Game.interfaceMode = interfaceMode;
+        switch (Game.interfaceMode) {
+            case InterfaceModeEnum.CHARACTER: {
+                Game.onKeyDownFunction = Game.controlCharacterOnKeyDown;
+                Game.onKeyUpFunction = Game.controlCharacterOnKeyUp;
+                Game.onContextFunction = Game.controlCharacterOnContext;
+                break;
+            }
+            case InterfaceModeEnum.DIALOGUE: {
+                Game.onKeyDownFunction = Game.controlDialogueOnKeyDown;
+                Game.onKeyUpFunction = Game.controlDialogueOnKeyUp;
+                Game.onContextFunction = Game.controlDialogueOnContext;
+                break;
+            }
+            case InterfaceModeEnum.MENU: {
+                Game.onKeyDownFunction = Game.controlMenuOnKeyDown;
+                Game.onKeyUpFunction = Game.controlMenuOnKeyUp;
+                Game.onContextFunction = Game.controlMenuOnContext;
+                break;
+            }
+            case InterfaceModeEnum.EDIT: {
+                break;
+            }
+        }
+        return 0;
+    }
+    static getInterfaceMode() {
+        return Game.interfaceMode;
     }
     static calculateAbilityModifier(score) {
         return Math.floor((score - 10) / 2);
@@ -4710,69 +4780,39 @@ class Game {
         }
         return 0;
     }
-    static setGodMode(characterEntity = Game.player, godMode = true) {
-        godMode = godMode == true;
-        if (characterEntity instanceof CharacterEntity) {
-            characterEntity.setGodMode(godMode);
-        }
-        Game.godMode = godMode;
-        return 0;
-    }
-    static enableGodMode() {
-        return Game.setGodMode(Game.player, true);
-    }
-    static disableGodMode() {
-        return Game.setGodMode(Game.player, false);
-    }
-    static setDebugMode(_bool) {
-        Game.debugMode = _bool == true;
-    }
-    static enableDebugMode() {
-        return Game.setDebugMode(true);
-    }
-    static disableDebugMode() {
-        return Game.setDebugMode(false);
-    }
-    static setInterfaceMode(interfaceMode = InterfaceModeEnum.NONE) {
-        if (Game.interfaceMode == interfaceMode) {
-            return 0;
-        }
-        if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) {}
-        else if (isNaN(interfaceMode) && InterfaceModeEnum.hasOwnProperty(interfaceMode)) {
-            interfaceMode = InterfaceModeEnum[interfaceMode];
-        }
-        else {
-            return 2;
-        }
-        if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
-        Game.interfaceMode = interfaceMode;
-        switch (Game.interfaceMode) {
-            case InterfaceModeEnum.CHARACTER: {
-                Game.onKeyDownFunction = Game.controlCharacterOnKeyDown;
-                Game.onKeyUpFunction = Game.controlCharacterOnKeyUp;
-                Game.onContextFunction = Game.controlCharacterOnContext;
-                break;
+    static calculateDamage(defender, attacker) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
+        let attackRoll = Game.roll(1, 20);
+        let didHit = attackRoll > defender.getArmourClass();
+        if (didHit) {
+            let damageRollCount = 1;
+            let damageRoll = 0;
+            let damageType = DamageEnum.BLUDGEONING;
+            let unarmed = false;
+            if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
+                damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
+                damageType = attacker.getEquipment()["HAND_R"].getDamageType();
             }
-            case InterfaceModeEnum.DIALOGUE: {
-                Game.onKeyDownFunction = Game.controlDialogueOnKeyDown;
-                Game.onKeyUpFunction = Game.controlDialogueOnKeyUp;
-                Game.onContextFunction = Game.controlDialogueOnContext;
-                break;
+            else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
+                damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
+                damageType = attacker.getEquipment()["HAND_L"].getDamageType();
             }
-            case InterfaceModeEnum.MENU: {
-                Game.onKeyDownFunction = Game.controlMenuOnKeyDown;
-                Game.onKeyUpFunction = Game.controlMenuOnKeyUp;
-                Game.onContextFunction = Game.controlMenuOnContext;
-                break;
+            else {
+                unarmed = true;
             }
-            case InterfaceModeEnum.EDIT: {
-                break;
+            if (unarmed) {
+                damageRoll = 1 + Game.calculateAbilityModifier(attacker.getStrength());
+                if (damageRoll < 0) {
+                    damageRoll = 0;
+                }
+                return damageRoll;
+            }
+            else {
+                return Game.roll(damageRollCount, damageRoll);
             }
         }
         return 0;
-    }
-    static getInterfaceMode() {
-        return Game.interfaceMode;
     }
     /**
      * Roll a die
