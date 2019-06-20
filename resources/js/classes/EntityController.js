@@ -40,6 +40,15 @@ class EntityController {
         if (this.entity instanceof Entity) {
             this.entity.setMeshID(this.mesh.id);
         }
+        Game.entityLocRotWorker.postMessage({
+            cmd:"set",
+            msg:[
+                this.entity.getID(),
+                new Date().getTime(),
+                this.mesh.position.asArray(),
+                this.mesh.rotation.asArray()
+            ]
+        });
         Game.setEntityController(this.id, this);
     }
     setID(_id) {

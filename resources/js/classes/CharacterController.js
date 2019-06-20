@@ -208,6 +208,15 @@ class CharacterController extends EntityController {
             this.isGrounded = false;
             this._idleFallTime = 0;
             anim = this.doMove(dt);
+            Game.entityLocRotWorker.postMessage({
+                cmd:"setLocRot",
+                msg:[
+                    this.entity.getID(),
+                    new Date().getTime(),
+                    this.mesh.position.asArray(),
+                    this.mesh.rotation.asArray()
+                ]
+            });
         }
         else if (!this.isFalling) {
             anim = this.doIdle(dt);

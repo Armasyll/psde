@@ -705,6 +705,10 @@ class Game {
         window.addEventListener("mouseup", Game.onMouseUpFunction);
         window.addEventListener("contextmenu", Game.onContextFunction);
 
+        Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
+        Game.entityLocRotWorker.onmessage = function(e) {
+            console.log(e.data);
+        }
         Game._filesToLoad -= 1;
         Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.initialized = true;
