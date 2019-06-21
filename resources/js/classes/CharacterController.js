@@ -350,74 +350,72 @@ class CharacterController extends EntityController {
         /*
          *  Jittering in the Y direction caused by _moveVector
          */
-        if (moving) {
-            if (this._moveVector.length() > 0.001) {
-                this.updateGroundRay();
-                let _hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
-                    if (_mesh.isPickable && _mesh.checkCollisions) {
-                        return true;
-                    }
-                    return false;
-                });
-                if (_hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.06125, 0.0125)) {
-                        this._moveVector.y = 0;
-                    }
+        if (moving && this._moveVector.length() > 0.001) {
+            this.updateGroundRay();
+            let _hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
+                if (_mesh.isPickable && _mesh.checkCollisions) {
+                    return true;
                 }
-                this.mesh.moveWithCollisions(this._moveVector);
-                if (this.mesh.position.y > this._avStartPos.y) {
-                    var actDisp = this.mesh.position.subtract(this._avStartPos);
-                    var _sl = Tools.verticalSlope(actDisp);
-                    if (_sl >= this._maxSlopeLimitRads) {
-                        if (this._stepOffset > 0) {
-                            if (this._vMoveTot == 0) {
-                                this._vMovStartPos.copyFrom(this._avStartPos);
-                            }
-                            this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this._avStartPos.y);
-                            if (this._vMoveTot > this._stepOffset) {
-                                this._vMoveTot = 0;
-                                this.mesh.position.copyFrom(this._vMovStartPos);
-                                this.endFreeFall();
-                            }
+                return false;
+            });
+            if (_hit.hit) {
+                if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                    this._moveVector.y = 0;
+                }
+            }
+            this.mesh.moveWithCollisions(this._moveVector);
+            if (this.mesh.position.y > this._avStartPos.y) {
+                var actDisp = this.mesh.position.subtract(this._avStartPos);
+                var _sl = Tools.verticalSlope(actDisp);
+                if (_sl >= this._maxSlopeLimitRads) {
+                    if (this._stepOffset > 0) {
+                        if (this._vMoveTot == 0) {
+                            this._vMovStartPos.copyFrom(this._avStartPos);
                         }
-                        else {
-                            this.mesh.position.copyFrom(this._avStartPos);
+                        this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this._avStartPos.y);
+                        if (this._vMoveTot > this._stepOffset) {
+                            this._vMoveTot = 0;
+                            this.mesh.position.copyFrom(this._vMovStartPos);
                             this.endFreeFall();
                         }
                     }
                     else {
-                        this._vMoveTot = 0;
-                        if (_sl > this._minSlopeLimitRads) {
-                            this._fallFrameCount = 0;
-                            this.isFalling = false;
-                        }
-                        else {
-                            this.endFreeFall();
-                        }
-                    }
-                }
-                else if ((this.mesh.position.y) < this._avStartPos.y) {
-                    let actDisp = this.mesh.position.subtract(this._avStartPos);
-                    if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
-                        if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
-                            this.endFreeFall();
-                        }
-                        else {
-                            this._fallFrameCount = 0;
-                            this.isFalling = false;
-                        }
-                    }
-                    else {
-                        this.isFalling = true;
-                        this._fallFrameCount++;
-                        if (this._fallFrameCount > this._fallFrameCountMin) {
-                            anim = this.fall;
-                        }
+                        this.mesh.position.copyFrom(this._avStartPos);
+                        this.endFreeFall();
                     }
                 }
                 else {
-                    this.endFreeFall();
+                    this._vMoveTot = 0;
+                    if (_sl > this._minSlopeLimitRads) {
+                        this._fallFrameCount = 0;
+                        this.isFalling = false;
+                    }
+                    else {
+                        this.endFreeFall();
+                    }
                 }
+            }
+            else if ((this.mesh.position.y) < this._avStartPos.y) {
+                let actDisp = this.mesh.position.subtract(this._avStartPos);
+                if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
+                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
+                        this.endFreeFall();
+                    }
+                    else {
+                        this._fallFrameCount = 0;
+                        this.isFalling = false;
+                    }
+                }
+                else {
+                    this.isFalling = true;
+                    this._fallFrameCount++;
+                    if (this._fallFrameCount > this._fallFrameCountMin) {
+                        anim = this.fall;
+                    }
+                }
+            }
+            else {
+                this.endFreeFall();
             }
         }
         if (!this.isAlive) {
