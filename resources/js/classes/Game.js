@@ -2587,7 +2587,7 @@ class Game {
         entity.setLocked(true);
         entity.setEnabled(false);
         if (entity instanceof AbstractEntity) {
-            Game.removeAbstract(currentID);
+            Game.removeAbstractEntity(currentID);
             if (entity instanceof Entity) {
                 Game.removeEntity(currentID);
                 if (entity instanceof CharacterEntity) {
