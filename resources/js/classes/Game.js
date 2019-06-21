@@ -657,7 +657,7 @@ class Game {
         Game.enableFirstPerson = true;
         Game.enableCameraAvatarRotation = true;
 
-        Game.postProcess = {};
+        Game.defaultPipeline = null;
 
         Game.highlightEnabled = false;
         Game.highlightLayer = undefined;
@@ -779,6 +779,9 @@ class Game {
                     Game.characterControllers[characterController].updateProperties();
                 }
             }
+        }
+        if (Game.defaultPipeline.imageProcessing.vignetteEnabled) {
+            Game.defaultPipeline.imageProcessing.vignetteWeight = 5 + (100 - (Game.player.getHealth() / Game.player.getMaxHealth() * 100));
         }
     }
     static _afterRenderFunction() {
@@ -998,8 +1001,14 @@ class Game {
         return 0;
     }
     static initPostProcessing() {
-        Game.postProcess["fxaa"] = new BABYLON.FxaaPostProcess("fxaa", 2.0, Game.camera);
-        //this.postProcess["tonemap"] = new BABYLON.TonemapPostProcess("tonemap", BABYLON.TonemappingOperator.Hable, 1.0, Game.camera); // Could be used for darkness, when using too many lights is an issue
+        if (Game.defaultPipeline instanceof BABYLON.PostProcessRenderPipeline) {
+            Game.defaultPipeline.dispose();
+        }
+        Game.defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", false, Game.scene, [Game.camera]);
+        Game.defaultPipeline.samples = 2;
+        Game.defaultPipeline.fxaaEnabled = true;
+        Game.defaultPipeline.cameraFov = Game.camera.fov;
+        Game.defaultPipeline.imageProcessing.vignetteEnabled = true;
         return 0;
     }
     static loadDefaultTextures() {
