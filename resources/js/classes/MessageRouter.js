@@ -157,7 +157,12 @@ class MessageRouter {
 				console.log(`S_DO_ENTITY_ACTION ${_data.content.join(',')}`);
 				let entity = Game.getEntity(_data.content[1]) || Game.getInstancedEntity(_data.content[1]);
 				let subEntity = Game.getEntity(_data.content[3]) || Game.getInstancedEntity(_data.content[3]);
-				Game.actionAttack(entity, subEntity, (_data.content[5] || 0));
+				if (_data.content[4] == ActionEnum.ATTACK) {
+					Game.actionAttack(entity, subEntity, (_data.content[5] || 0));
+				}
+				else {
+					Game.doEntityAction(entity, subEntity, _data.content[4]);
+				}
 				break;
 			}
 			default : {
