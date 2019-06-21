@@ -131,7 +131,6 @@ class MessageRouter {
 				break;
 			}
 			case "S_DO_ENTITY_ACTION" : {
-				console.log("S_DO_ENTITY_ACTION");
 				/*
 					0: EntityEnum Entity's EntityType
 					1: AbstractEntity Entity
@@ -155,6 +154,7 @@ class MessageRouter {
 					console.log(`\tAction (${_data.content[4]}) does not exist!`);
 					return 2;
 				}
+				console.log(`S_DO_ENTITY_ACTION ${_data.content.join(',')}`);
 				let entity = Game.getEntity(_data.content[1]) || Game.getInstancedEntity(_data.content[1]);
 				let subEntity = Game.getEntity(_data.content[3]) || Game.getInstancedEntity(_data.content[3]);
 				Game.actionAttack(entity, subEntity, (_data.content[5] || 0));
