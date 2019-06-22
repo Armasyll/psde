@@ -6,7 +6,7 @@ class AbstractNode {
      * @param {number} [weight] Weight
      * @param {Set<AbstractNode>} [connectedNode] Connected nodes
      */
-    constructor(id = "", position, weight = 20, connectedNode = []) {
+    constructor(id = "", position, weight = 20, connectedNodes = []) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -17,7 +17,11 @@ class AbstractNode {
         this.weight = 20;
         this.setWeight(weight);
         this.connectedNodes = new Set();
-        this.addNodes(connectedNodes);
+        this.connect(connectedNodes);
+        Game.setAbstractNode(this.id, this);
+    }
+    getID() {
+        return this.id;
     }
     /**
      * 
@@ -92,9 +96,10 @@ class AbstractNode {
         if (Symbol.iterator in Object(abstractNode)) {
             return this.addNodes(abstractNode, updateChild);
         }
-        else {
+        else if (abstractNode instanceof AbstractNode) {
             return this.addNode(abstractNode, updateChild);
         }
+        return this;
     }
     /**
      * 
@@ -134,9 +139,10 @@ class AbstractNode {
         if (Symbol.iterator in Object(abstractNode)) {
             return this.deleteNodes(abstractNode, updateChild);
         }
-        else {
+        else if (abstractNode instanceof AbstractNode) {
             return this.deleteNode(abstractNode, updateChild);
         }
+        return this;
     }
     /**
      * Returns whether or not this node is directly attached to the passed node.
