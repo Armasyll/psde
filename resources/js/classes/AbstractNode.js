@@ -17,16 +17,29 @@ class AbstractNode {
         this.weight = 20;
         this.setWeight(weight);
         this.connectedNodes = new Set();
+        this.addNodes(connectedNodes);
     }
+    /**
+     * 
+     * @param {BABYLON.Vector3} position 
+     */
     setPosition(position) {
         if (position instanceof BABYLON.Vector3) {
             this.position.copyFrom(position);
         }
         return this;
     }
+    /**
+     * 
+     * @returns {BABYLON.Vector3}
+     */
     getPosition() {
         return this.position;
     }
+    /**
+     * 
+     * @param {number} weight 
+     */
     setWeight(weight) {
         weight = Number.parseInt(weight);
         if (!isNaN(weight) || weight > 0) {
@@ -34,9 +47,18 @@ class AbstractNode {
         }
         return this;
     }
+    /**
+     * 
+     * @returns {number}
+     */
     getWeight() {
         return this.weight;
     }
+    /**
+     * 
+     * @param {AbstractNode} abstractNode 
+     * @param {boolean} updateChild 
+     */
     addNode(abstractNode, updateChild = true) {
         if (abstractNode instanceof AbstractNode) {
             this.connectedNodes.add(abstractNode);
@@ -46,9 +68,14 @@ class AbstractNode {
         }
         return this;
     }
-    addNodes(abstractNodeArray, updateChildren = true) {
-        if (Symbol.iterator in Object(abstractNodeArray)) {
-            abstractNodeArray.forEach(function(abstractNode) {
+    /**
+     * 
+     * @param {Set<AsbtractNode>} abstractNodes 
+     * @param {boolean} updateChildren 
+     */
+    addNodes(abstractNodes, updateChildren = true) {
+        if (Symbol.iterator in Object(abstractNodes)) {
+            abstractNodes.forEach(function(abstractNode) {
                 if (abstractNode instanceof AbstractNode) {
                     this.addNode(abstractNode, updateChildren);
                 }
@@ -56,9 +83,24 @@ class AbstractNode {
         }
         return this;
     }
+    /**
+     * 
+     * @param {any} abstractNode 
+     * @param {boolean} updateChild 
+     */
     connect(abstractNode, updateChild = true) {
-        return this.addNode(abstractNode, updateChild);
+        if (Symbol.iterator in Object(abstractNode)) {
+            return this.addNodes(abstractNode, updateChild);
+        }
+        else {
+            return this.addNode(abstractNode, updateChild);
+        }
     }
+    /**
+     * 
+     * @param {AbstractNode} abstractNode 
+     * @param {boolean} updateChild 
+     */
     deleteNode(abstractNode, updateChild = true) {
         if (abstractNode instanceof AbstractNode) {
             this.connectedNodes.delete(abstractNode);
@@ -68,9 +110,14 @@ class AbstractNode {
         }
         return this;
     }
-    deleteNodes(abstractNodeArray, updateChildren = true) {
-        if (Symbol.iterator in Object(abstractNodeArray)) {
-            abstractNodeArray.forEach(function(abstractNode) {
+    /**
+     * 
+     * @param {Set<AbstractNode>} abstractNodes 
+     * @param {boolean} updateChildren 
+     */
+    deleteNodes(abstractNodes, updateChildren = true) {
+        if (Symbol.iterator in Object(abstractNodes)) {
+            abstractNodes.forEach(function(abstractNode) {
                 if (abstractNode instanceof AbstractNode) {
                     this.deleteNode(abstractNode, updateChildren);
                 }
@@ -78,12 +125,30 @@ class AbstractNode {
         }
         return this;
     }
+    /**
+     * 
+     * @param {any} abstractNode 
+     * @param {boolean} updateChild 
+     */
     disconnect(abstractNode, updateChild = true) {
-        return this.deleteNode(abstractNode, updateChild);
+        if (Symbol.iterator in Object(abstractNode)) {
+            return this.deleteNodes(abstractNode, updateChild);
+        }
+        else {
+            return this.deleteNode(abstractNode, updateChild);
+        }
     }
+    /**
+     * Returns whether or not this node is directly attached to the passed node.
+     * @param {AbstractNode} abstractNode 
+     */
     hasNode(abstractNode) {
         return this.connectedNodes.has(abstractNode);
     }
+    /**
+     * Returns whether or not this node is directly attached to the passed node.
+     * @param {AbstractNode} abstractNode 
+     */
     connectedTo(abstractNode) {
         return this.hasNode(abstractNode);
     }
@@ -94,7 +159,5 @@ class AbstractNode {
         this.connectedNodes.clear();
         this.position.dispose();
         return undefined;
-    }
-    calculatePathTo(otherNode) { // TODO: this :u ughhh
     }
 }
