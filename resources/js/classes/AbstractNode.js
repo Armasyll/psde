@@ -1,5 +1,12 @@
 class AbstractNode {
-    construct(id = undefined, position, weight = 20, connectedNode = []) {
+    /**
+     * Creates an AbstractNode
+     * @param {string} [id] Unique ID, auto-generated if none given
+     * @param {BABYLON.Vector3} position Position
+     * @param {number} [weight] Weight
+     * @param {Set<AbstractNode>} [connectedNode] Connected nodes
+     */
+    constructor(id = "", position, weight = 20, connectedNode = []) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
