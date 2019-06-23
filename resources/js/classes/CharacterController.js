@@ -202,12 +202,14 @@ class CharacterController extends EntityController {
         let anim = this.idle;
         let dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.isFalling) {
+            this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
             this._idleFallTime = 0;
             anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.isFalling) {
+            this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
             this._idleFallTime = 0;
@@ -227,6 +229,7 @@ class CharacterController extends EntityController {
                 return this;
             }
             else {
+                this.entity.removeFurniture();
                 anim = this.doIdle(dt);
             }
         }

@@ -253,6 +253,8 @@ class CharacterEntity extends EntityWithStorage {
         this.dialogue = undefined;
         this.godMode = false;
 
+        this.furniture = null;
+
         this.setName(name);
         this.setIcon(icon);
         this.setClass(characterCless);
@@ -1453,6 +1455,21 @@ class CharacterEntity extends EntityWithStorage {
         this.setHealth(_health);
         this.living = true;
         return this;
+    }
+    setFurniture(instancedFurnitureEntity) {
+        if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
+            this.furniture = instancedFurnitureEntity;
+        }
+        return this;
+    }
+    getFurniture() {
+        return this.furniture;
+    }
+    hasFurniture() {
+        return this.furniture instanceof InstancedFurnitureEntity;
+    }
+    removeFurniture() {
+        this.furniture = null;
     }
 
     generateProperties() {

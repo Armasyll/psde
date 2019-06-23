@@ -163,11 +163,11 @@ class FurnitureEntity extends EntityWithStorage {
                 furnitureType = FurnitureEnum.NONE;
             }
         }
-        this.type = furnitureType;
+        this.furnitureType = furnitureType;
         return this;
     }
     getFurnitureType() {
-        return this.type;
+        return this.furnitureType;
     }
 
     clone(id = undefined) {

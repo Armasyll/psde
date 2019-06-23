@@ -642,7 +642,63 @@ class Game {
                 "eyelidBot.r",
                 "eyelidBot.l"
             ]
-        }
+        };
+        Game.meshProperties = {
+            "animatedCoffin01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
+                ]
+            },
+            "chair01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.44505, 0.375, -0.525), new BABYLON.Vector3(0.44505, 0.375, 0.1725)]
+                ]
+            },
+            "chair02": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
+                ]
+            },
+            "chair03": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
+                ]
+            },
+            "coffin01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
+                ]
+            },
+            "couch01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)], // Cushions
+                    [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)], // Left arm
+                    [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)] // Right arm
+                ]
+            },
+            "couch02": {
+                usableArea: [
+                    [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)],
+                    [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)],
+                    [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)]
+                ]
+            },
+            "lovesea01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.82005, 0.375, -0.525), new BABYLON.Vector3(0.82005, 0.375, 0.1725)]
+                ]
+            },
+            "mattress01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.575258, 0.195, -1.10144), new BABYLON.Vector3(0.575258, 0.195, 0.195)]
+                ]
+            },
+            "bedMattressFrame01": {
+                usableArea: [
+                    [new BABYLON.Vector3(-0.575258, 0.375, -1.10144), new BABYLON.Vector3(0.575258, 0.375, 0.195)]
+                ]
+            }
+        };
 
         Game._finishedInitializing = false;
         Game._finishedConfiguring = false;
@@ -4193,13 +4249,27 @@ class Game {
         if (!(subEntity instanceof CharacterEntity) || !(subEntity.getController() instanceof CharacterController)) {
             return 2;
         }
-        let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
-        let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
+        subEntity.setStance(StanceEnum.LAY);
         subEntity.getController().setParent(entity.getController().getMesh());
-        subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
+        if (Game.meshProperties.hasOwnProperty(entity.getController().getMesh().name)) {
+            let posArray = Game.meshProperties[entity.getController().getMesh().name]["usableArea"];
+            let newPos = new BABYLON.Vector3(0, posArray[0][0].y, 0);
+            if (entity.getFurnitureType() == FurnitureEnum.BED) {
+                newPos.x = posArray[0][1].x - (0.0625 + subEntity.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+            }
+            else if (entity.getFurnitureType() == FurnitureEnum.COUCH) {
+                newPos.x = posArray[0][1].x - (0.0625 + subEntity.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+            }
+            subEntity.getController().getMesh().position.copyFrom(newPos);
+        }
+        else {
+            let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
+            let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
+            subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, 0);
+        }
         subEntity.getController().getMesh().rotation.copyFrom(entity.getController().getMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
-        subEntity.setStance(StanceEnum.LAY)
         subEntity.getController().doLay();
+        subEntity.setFurniture(entity);
         return 0;
     }
     /**

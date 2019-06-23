@@ -7,8 +7,32 @@ class InstancedFurnitureEntity extends InstancedEntity {
         }
 
         this.setOwner(_owner);
+        this.characters = new Set();
 
         Game.setFurnitureInstance(this.id, this);
+    }
+
+    getFurnitureType() {
+        return this.entity.getFurnitureType();
+    }
+
+    getCharacters() {
+        return this.characters;
+    }
+    hasCharacters() {
+        return this.characters.size > 0;
+    }
+    addCharacter(characterEntity) {
+        if (characterEntity instanceof CharacterEntity) {
+            this.characters.add(characterEntity);
+        }
+        return this;
+    }
+    removeCharacter(characterEntity) {
+        if (characterEntity instanceof CharacterEntity) {
+            this.characters.remove(characterEntity);
+        }
+        return this;
     }
 
     clone(_id) {
