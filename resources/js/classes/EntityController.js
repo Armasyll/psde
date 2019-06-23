@@ -49,6 +49,7 @@ class EntityController {
                 this.mesh.rotation.asArray()
             ]
         });
+        this.mesh.alwaysSelectAsActiveMesh = true;
         Game.setEntityController(this.id, this);
     }
     setID(_id) {

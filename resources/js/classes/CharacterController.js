@@ -78,6 +78,7 @@ class CharacterController extends EntityController {
         this.attackThrust2H = new AnimData("attackThrust2H");
         this.attackSlash2H = new AnimData("attackSlash2H");
         this.attackChop2H = new AnimData("attackChop2H");
+        this.lieDown = new AnimData("lieDown");
         this.death = new AnimData("death");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
@@ -92,6 +93,7 @@ class CharacterController extends EntityController {
         this.setAnimData(this.attackPunchRH, "71_punch01", 1, false, false);
         this.setAnimData(this.attackRunningPunchRH, "71_runningPunch01", 1, false, false);
         this.setAnimData(this.attackThrustRH, "71_stab01", 1, false, false);
+        this.setAnimData(this.lieDown, "91_lieDown01", 1, false);
         this.setDeathAnim("91_death01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
@@ -200,11 +202,13 @@ class CharacterController extends EntityController {
         let anim = this.idle;
         let dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.isFalling) {
+            this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
             this._idleFallTime = 0;
             anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.isFalling) {
+            this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
             this._idleFallTime = 0;
             anim = this.doMove(dt);
@@ -219,7 +223,12 @@ class CharacterController extends EntityController {
             });
         }
         else if (!this.isFalling) {
-            anim = this.doIdle(dt);
+            if (this.entity.getStance() == StanceEnum.SIT || this.entity.getStance() == StanceEnum.LAY) {
+                return this;
+            }
+            else {
+                anim = this.doIdle(dt);
+            }
         }
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
@@ -621,6 +630,14 @@ class CharacterController extends EntityController {
         }
         this.isAlive = false;
         this.beginAnimation(this.death);
+        return true;
+    }
+    doLay(dt) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return false;
+        }
+        this.isSlee
+        this.beginAnimation(this.lieDown);
         return true;
     }
 
