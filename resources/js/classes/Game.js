@@ -547,6 +547,8 @@ class Game {
         Game.characterControllers = {};
         Game.itemControllers = {};
 
+        Game.abstractNodes = {};
+
         Game.abstractEntities = {};
 
         Game.entities = {};
@@ -4353,6 +4355,22 @@ class Game {
         return 0;
     }
 
+    static setAbstractNode(id, abstractNode) {
+        Game.abstractNodes[id] = abstractNode;
+        return 0;
+    }
+    static removeAbstractNode(id) {
+        delete Game.abstractNodes[id];
+        return 0;
+    }
+    static clearAbstractNodes() {
+        for (let i in Game.abstractNodes) {
+            Game.abstractNodes[i].dispose();
+        }
+        Game.abstractNodes = {};
+        return 0;
+    }
+
     static setAbstractEntity(id, abstractEntity) {
         Game.abstractEntities[id] = abstractEntity;
         return 0;
@@ -4361,7 +4379,7 @@ class Game {
         delete Game.abstractEntities[id];
         return 0;
     }
-    static clearEntities() {
+    static clearAbstractEntities() {
         for (let i in Game.abstractEntities) {
             Game.abstractEntities[i].dispose();
         }
