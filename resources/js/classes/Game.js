@@ -4199,7 +4199,6 @@ class Game {
         subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
         subEntity.getController().getMesh().rotation.copyFrom(entity.getController().getMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
         subEntity.setStance(StanceEnum.LAY)
-        subEntity.sleeping = true;
         subEntity.getController().doLay();
         return 0;
     }
