@@ -40,7 +40,7 @@ class Game {
 
         /**
          * Map of Mesh file locations per ID
-         * eg, {"foxM":"resources/data/characters.babylon"}
+         * eg, {"foxM":"resources/meshes/characters/fox.babylon"}
          * @type {<String, String>}
          */
         Game.meshLocations = {
@@ -157,10 +157,11 @@ class Game {
             "craftsmanCorner":"resources/data/craftsmanWalls.babylon",
             "craftsmanDoorway":"resources/data/craftsmanWalls.babylon",
             "craftsmanDoor":"resources/data/craftsmanWalls.babylon",
-            "spiritN":"resources/data/characters.babylon",
-            "foxF":"resources/data/characters.babylon",
-            "foxSkeletonN":"resources/data/characters.babylon",
-            "foxM":"resources/data/characters.babylon",
+            "aardwolfM":"resources/meshes/characters/aardwolf.babylon",
+            "spiritN":"resources/meshes/characters/spiritN.babylon",
+            "foxF":"resources/meshes/characters/fox.babylon",
+            "foxSkeletonN":"resources/meshes/characters/foxSkeletonN.babylon",
+            "foxM":"resources/meshes/characters/fox.babylon",
             "spider":"resources/meshes/arachnids.babylon",
             "borb":"resources/meshes/borb.babylon",
             "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
