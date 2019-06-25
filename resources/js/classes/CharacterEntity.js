@@ -1213,8 +1213,27 @@ class CharacterEntity extends EntityWithStorage {
     }
 
     setStance(stance = ActionEnum.STAND) {
+        if (this.stance == stance) {
+            return 0;
+        }
         if (ActionEnum.properties.hasOwnProperty(stance)) {
             this.stance = stance;
+            if (this.hasController()) {
+                if (this.stance == ActionEnum.LAY) {
+                    this.controller.setIdleAnim("90_idleLyingDown01", 1, true);
+                }
+                else if (this.stance == ActionEnum.SIT) {
+                    if (this.hasFurniture()) {
+                        this.controller.setIdleAnim("90_idleSittingInChair01", 1, true);
+                    }
+                    else {
+                        this.controller.setIdleAnim("90_idleSittingOnGround01", 1, true);
+                    }
+                }
+                else if (this.stance == ActionEnum.STAND) {
+                    this.controller.setIdleAnim("90_idle01", 1, true);
+                }
+            }
             return 0;
         }
         return 2;

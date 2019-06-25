@@ -225,13 +225,8 @@ class CharacterController extends EntityController {
             });
         }
         else if (!this.isFalling) {
-            if (this.entity.getStance() == StanceEnum.SIT || this.entity.getStance() == StanceEnum.LAY) {
-                return this;
-            }
-            else {
-                this.entity.removeFurniture();
-                anim = this.doIdle(dt);
-            }
+            this.entity.removeFurniture();
+            anim = this.doIdle(dt);
         }
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
@@ -639,8 +634,8 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        this.isSlee
-        this.beginAnimation(this.lieDown);
+        this.setLocked(true);
+        this.beginAnimation(this.lieDown, () => {this.setLocked(false)});
         return true;
     }
 

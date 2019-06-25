@@ -233,7 +233,7 @@ class EntityController {
             }
         }
     }
-    beginAnimation(_animData) {
+    beginAnimation(_animData, callback = null) {
         if (this._stopAnim) {
             return false;
         }
@@ -254,11 +254,11 @@ class EntityController {
             Have to cycle through all the bones just so I don't have to animate a handful :L
              */
             this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
-                Game.scene.beginAnimation(_bone, _animData.from, _animData.to, _animData.loop, _animData.rate);
+                Game.scene.beginAnimation(_bone, _animData.from, _animData.to, _animData.loop, _animData.rate, callback);
             });
         }
         else {
-            this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate);
+            this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate, callback);
         }
         this.prevAnim = _animData;
         return true;
