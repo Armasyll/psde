@@ -795,7 +795,7 @@ class Game {
                 }
                 else {
                     Client.initialize();
-                    Game.gui.resizeText();
+                    Game.gui.resize();
                     Game.gui.showCharacterChoiceMenu();
                     Game._finishedConfiguring = true;
                 }
@@ -983,7 +983,7 @@ class Game {
         Game.player = characterEntity;
         Game.player.getController().attachToFOCUS(Game.cameraFocus); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
-        Game.gui.setPlayerPortrait(Game.player);
+        Game.gui.playerPortrait.set(Game.player);
         Game.initFollowCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
@@ -3713,8 +3713,8 @@ class Game {
         Game.highlightMesh(entityController.mesh);
         Game.player.getController().setTarget(entityController);
         Game.player.setTarget(entityController.getEntity());
-        Game.gui.setTargetPortrait(entityController.getEntity());
-        Game.gui.showTargetPortrait();
+        Game.gui.targetPortrait.set(entityController.getEntity());
+        Game.gui.targetPortrait.show();
         Game.gui.setActionTooltip(ActionEnum.properties[entityController.getEntity().getDefaultAction()].name);
         Game.gui.showActionTooltip();
         return 0;
@@ -3729,7 +3729,7 @@ class Game {
         Game.clearHightlightMesh();
         Game.player.getController().clearTarget();
         Game.player.clearTarget();
-        Game.gui.hideTargetPortrait();
+        Game.gui.targetPortrait.hide();
         Game.gui.hideActionTooltip();
         return 0;
     }
@@ -3783,7 +3783,7 @@ class Game {
     }
     static initPlayerPortraitStatsUpdateInterval() {
         clearInterval(Game.playerPortraitStatsUpdateIntervalFunction);
-        Game.playerPortraitStatsUpdateIntervalFunction = setInterval(Game.gui.updatePlayerPortraitStats, Game.playerPortraitStatsUpdateInterval);
+        Game.playerPortraitStatsUpdateIntervalFunction = setInterval(Game.gui.playerPortrait.update, Game.playerPortraitStatsUpdateInterval);
         return 0;
     }
     static setPlayerPortraitStatsUpdateInterval(interval = 100) {
@@ -4050,7 +4050,7 @@ class Game {
                 }
                 entity.subtractHealth(damage);
                 if (subEntity == Game.player && Game.player.hasTarget()) {
-                    Game.gui.setTargetPortrait(Game.player.getTarget());
+                    Game.gui.targetPortrait.set(Game.player.getTarget());
                 }
             }
         }

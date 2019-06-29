@@ -682,6 +682,16 @@ Game.generateApartment = function() {
             }
         }
     );
+    new Dialogue(
+        "rinehartSayHi",
+        "Say 'Hi'",
+        "He says 'Hi' back."
+    );
+    new Dialogue(
+        "rinehartSayBye",
+        "Say 'Bye'",
+        "He says 'Bye' back."
+    );
     Game.getDialogue("charlieTalk").setOption("charlieKissOption", "charlieKiss");
     Game.getDialogue("charlieTalk").setOption("charlieHugOption", "charlieHug");
     Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
@@ -697,6 +707,8 @@ Game.generateApartment = function() {
             return false;
         }
     );
+    Game.getDialogue("rinehartTalk").setOption("rinehartHiOption", "rinehartSayHi");
+    Game.getDialogue("rinehartTalk").setOption("rinehartByeOption", "rinehartSayBye");
     Game.getCharacterEntity("rinehart").setDialogue("rinehartTalk");
     Game.getCharacterEntity("rinehart").addItem("mountainChocolateBar");
     Game.getCharacterEntity("rinehart").hold("mountainChocolateBar");
