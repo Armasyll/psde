@@ -21,6 +21,7 @@ class DialogueGameGUI {
         DialogueGameGUI.controller.height = String(Game.engine.getRenderHeight() * 2 / 3).concat("px");
             DialogueGameGUI.titleBar.width = String(DialogueGameGUI.controller.widthInPixels).concat("px");
             DialogueGameGUI.titleBar.height = String(GameGUI.getFontSize(2)).concat("px");
+                DialogueGameGUI.title.width = String(DialogueGameGUI.titleBar.widthInPixels - GameGUI.getFontSize(2)).concat("px");
                 DialogueGameGUI.closeButton.width = String(GameGUI.getFontSize(2)).concat("px");
                 DialogueGameGUI.closeButton.height = String(GameGUI.getFontSize(2)).concat("px");
             DialogueGameGUI.bodyContainer.width = String(DialogueGameGUI.controller.widthInPixels).concat("px");
@@ -46,19 +47,22 @@ class DialogueGameGUI {
             [----------------------------]
             [Options                     ]
          */
-        var controller = new BABYLON.GUI.Rectangle("dialogueContainer");
+        var controller = new BABYLON.GUI.StackPanel("dialogueContainer");
             controller.width = String(Game.engine.getRenderWidth() / 2).concat("px");
             controller.height = String(Game.engine.getRenderHeight() * 2 / 3).concat("px");
             controller.background = GameGUI.background;
             controller.thickness = 0;
+            controller.isVertical = true;
             controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            var titleBar = new BABYLON.GUI.Rectangle("dialogueTitleBar");
+            var titleBar = new BABYLON.GUI.StackPanel("dialogueTitleBar");
                 titleBar.width = String(controller.widthInPixels).concat("px");
                 titleBar.height = String(GameGUI.getFontSize(2)).concat("px");
                 titleBar.thickness = 0;
+                titleBar.isVertical = false;
                 titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                 var title = new BABYLON.GUI.TextBlock("dialogueTitle");
                     title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                    title.width = String(titleBar.widthInPixels - GameGUI.getFontSize(2)).concat("px");
                     title.color = GameGUI.color;
                     title.text = "Title :V";
                 var closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
@@ -71,7 +75,6 @@ class DialogueGameGUI {
                 bodyContainer.height = String(controller.heightInPixels - GameGUI.getFontSize(8)).concat("px");
                 bodyContainer.thickness = 0;
                 bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                bodyContainer.top = "-10%";
                 var body = new BABYLON.GUI.TextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
                     body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                     body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
