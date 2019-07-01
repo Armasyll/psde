@@ -271,6 +271,8 @@ class GameGUI {
         let buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
         let submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
         let submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
+        let urlLabel = new BABYLON.GUI.TextBlock("urlLabel");
+        let urlButton = BABYLON.GUI.Button.CreateSimpleButton("urlButton", "https://github.com/armasyll/psde");
         
         characterChoiceMenuContainer.zIndex = 90;
         characterChoiceMenuContainer.height = 0.6
@@ -284,10 +286,20 @@ class GameGUI {
         characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
         characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
         characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addRowDefinition(1.0, false);
+
+        urlLabel.text = "GitHub: ";
+        urlLabel.height = GameGUI.fontSizePx;
+        urlLabel.width = 1.0;
+        urlLabel.color = GameGUI.color;
+
+        urlButton.height = GameGUI.fontSizePx;
+        urlButton.width = 1.0;
+        urlButton.color = GameGUI.color;
 
         nameLabel.text = "Name: ";
         nameLabel.height = 1.0;
@@ -351,6 +363,9 @@ class GameGUI {
         });
         buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
             Game.initAzertyKeyboardControls();
+        });
+        urlButton.onPointerUpObservable.add(function() {
+            window.open('https://github.com/armasyll/psde', '_blank');
         });
         submitOnline.onPointerClickObservable.add(function() {
             let doNotPassGo = false;
@@ -434,6 +449,8 @@ class GameGUI {
             buttonKBLayoutContainer.addControl(buttonKBLayoutAzerty, 0, 2);
         characterChoiceMenuContainer.addControl(submitOffline, 3, 0);
         characterChoiceMenuContainer.addControl(submitOnline, 3, 1);
+        characterChoiceMenuContainer.addControl(urlLabel, 4, 0);
+        characterChoiceMenuContainer.addControl(urlButton, 4, 1);
         characterChoiceMenuContainer.isVisible = false;
         return characterChoiceMenuContainer;
     }
