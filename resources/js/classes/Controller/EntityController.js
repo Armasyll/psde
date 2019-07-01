@@ -38,7 +38,7 @@ class EntityController {
         this.setEntity(_entity);
         this.entity.setController(this);
         if (this.entity instanceof Entity) {
-            this.entity.setMeshID(this.mesh.id);
+            this.entity.setMeshID(this.mesh.name);
         }
         Game.entityLocRotWorker.postMessage({
             cmd:"set",

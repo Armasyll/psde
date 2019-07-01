@@ -162,6 +162,23 @@ class Game {
             "foxF":"resources/meshes/characters/fox.babylon",
             "foxSkeletonN":"resources/meshes/characters/foxSkeletonN.babylon",
             "foxM":"resources/meshes/characters/fox.babylon",
+            "hitbox.canine.head":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.neck":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.chest":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.upperArm.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.forearm.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.hand.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.upperArm.r":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.forearm.r":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.hand.r":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.spine":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.pelvis":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.this.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.shin.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.foot.l":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.this.r":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.shin.r":"resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.foot.r":"resources/meshes/hitboxes/canine.babylon",
             "spider":"resources/meshes/arachnids.babylon",
             "borb":"resources/meshes/borb.babylon",
             "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
@@ -1209,6 +1226,15 @@ class Game {
             return 0;
         }
         else if (Game.hasAvailableMesh(meshID)) {
+            switch (meshID) {
+                case "aardwolfM":
+                case "aardwolfF":
+                case "foxM":
+                case "foxF":
+                case "foxSkeletonN": {
+                    Game.importMeshes("resources/meshes/hitboxes/canine.babylon");
+                }
+            }
             Game.importMeshes(Game.meshLocations[meshID]);
             return 1;
         }
@@ -3033,6 +3059,7 @@ class Game {
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
+        if (Game.debugMode) console.log(`Running Game::createCharacter(${id}, ${name}, ${description}, ${iconID}, ${age}, ${sex}, ${species}, ${meshID}, ${materialID})`);
         let characterEntity = null;
         if (!Game.hasCharacterEntity(id)) {
             characterEntity = new CharacterEntity(id, name, description, iconID, undefined, age, sex, species);
@@ -3127,6 +3154,22 @@ class Game {
         switch (characterEntity.getSpecies()) {
             case SpeciesEnum.SKELETON: {
                 characterController.setDeathAnim("91_death99");
+            }
+        }
+        switch (characterEntity.getMeshID()) {
+            case "aardwolfM":
+            case "aardwolfF":
+            case "foxM":
+            case "foxF":
+            case "foxSkeletonN": {
+                characterController.attachToHead("hitbox.canine.head", "collisionMaterial");
+                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial");
+                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", "chest");
+                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", "hand.l");
+                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", "hand.r");
+                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", "spine");
+                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", "pelvis");
+                break;
             }
         }
         let newScaling = characterEntity.height/characterEntity._baseHeight;
