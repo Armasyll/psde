@@ -1224,7 +1224,7 @@ class CharacterEntity extends EntityWithStorage {
                 }
                 else if (this.stance == ActionEnum.SIT) {
                     if (this.hasFurniture()) {
-                        this.controller.setIdleAnim("90_idleSittingInChair01", 1, true);
+                        this.controller.setIdleAnim("90_idleSittingDown01", 1, true);
                     }
                     else {
                         this.controller.setIdleAnim("90_idleSittingOnGround01", 1, true);
