@@ -141,6 +141,7 @@ class Game {
             "foxhead02":"resources/data/items.babylon",
             "ring01":"resources/data/items.babylon",
             "foxhead03":"resources/data/items.babylon",
+            "sack01":"resources/data/items.babylon",
             "craftsmanDoorwayNoTrim":"resources/data/craftsmanWalls.babylon",
             "craftsmanWindowDouble":"resources/data/craftsmanWalls.babylon",
             "craftsmanWallNoTrim":"resources/data/craftsmanWalls.babylon",
