@@ -120,7 +120,7 @@ class CharacterController extends EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
-        this._attachedMeshes = new Set();
+        this._attachedMeshes = new Set([this.mesh]);
         this.generateOrganMeshes();
         this.generateCosmeticMeshes();
         this.generateEquippedMeshes();
@@ -833,6 +833,9 @@ class CharacterController extends EntityController {
             Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
             return this;
         }
+        if (materialID != "collisionMaterial") {
+            options["createClone"] = true;
+        }
         let loadedMesh = Game.createMesh(meshID.concat("Attachment").concat(this.id.capitalize()).concat(boneID), meshID, materialID, position, rotation, scaling, options);
         return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);
     }
@@ -899,7 +902,9 @@ class CharacterController extends EntityController {
             this.root = mesh;
             mesh.isVisible = false;
         }
-        this._attachedMeshes.add(mesh);
+        if (mesh.material.name != "collisionMaterial") {
+            this._attachedMeshes.add(mesh);
+        }
         return this;
     }
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {

@@ -3242,11 +3242,11 @@ class Game {
             case "foxSkeletonN": {
                 characterController.attachToHead("hitbox.canine.head", "collisionMaterial");
                 characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial");
-                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", "chest");
-                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", "hand.l");
-                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", "hand.r");
-                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", "spine");
-                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", "pelvis");
+                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial");
+                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial");
+                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial");
+                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial");
+                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial");
                 break;
             }
         }
@@ -3783,7 +3783,9 @@ class Game {
         return 0;
     }
     static disableHighlighting() {
+        Game.clearHighlightedController();
         Game.highlightEnabled = false;
+        Game.highlightLayer.dispose();
         return 0;
     }
     static initHighlighting() {
@@ -3791,6 +3793,15 @@ class Game {
         Game.highlightLayer.outerGlow = true;
         Game.highlightLayer.innerGlow = false;
         return 0;
+    }
+    static highlightEntity(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            return 2;
+        }
+        if (abstractEntity.hasController()) {
+            return highlightController(abstractEntity.getController());
+        }
+        return 2;
     }
     static highlightController(entityController) {
         if (!(entityController instanceof EntityController)) {
@@ -3812,7 +3823,9 @@ class Game {
             }
         }
         entityController.getMeshes().forEach(function(mesh) {
-            Game.highlightLayer.addMesh(mesh, color)
+            if (mesh instanceof BABYLON.Mesh) {
+                Game.highlightLayer.addMesh(mesh, color)
+            }
         });
         Game.highlightedController = entityController;
         return 0;
@@ -3853,7 +3866,7 @@ class Game {
             return 0;
         }
         if (Game.highlightEnabled) {
-            Game.clearHighlightMesh();
+            Game.clearHighlightedController();
         }
         Game.player.controller.clearTarget();
         Game.player.clearTarget();
