@@ -100,6 +100,10 @@ class EntityController {
         }
         return this;
     }
+    /**
+     * Returns the primary mesh associated with this controller.
+     * @returns {BABYLON.AbstractMesh}
+     */
     getMesh() {
         return this.mesh;
     }
@@ -284,6 +288,13 @@ class EntityController {
     }
     moveAV() {
         return this;
+    }
+    /**
+     * Returns all meshes associated with this controller.
+     * @returns {Set<BABYLON.AbstractMesh>}
+     */
+    getMeshes() {
+        return [this.mesh];
     }
 
     isEnabled() {

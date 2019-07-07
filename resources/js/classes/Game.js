@@ -737,7 +737,7 @@ class Game {
 
         Game.highlightEnabled = false;
         Game.highlightLayer = undefined;
-        Game.highlightedMesh = undefined;
+        Game.highlightedController = undefined;
 
         Game.loadDefaultTextures();
         Game.loadDefaultMaterials();
@@ -3792,50 +3792,52 @@ class Game {
         Game.highlightLayer.innerGlow = false;
         return 0;
     }
-    static highlightMesh(mesh) {
-        if (!(mesh instanceof BABYLON.Mesh)) {
+    static highlightController(entityController) {
+        if (!(entityController instanceof EntityController)) {
             return 2;
         }
-        if (!Game.highlightEnabled || Game.highlightedMesh == mesh) {
+        if (!Game.highlightEnabled || Game.highlightedController == entityController) {
             return 0;
         }
-        if (Game.highlightedMesh != undefined) {
-            Game.highlightLayer.removeMesh(Game.highlightedMesh);
-        }
         let color = BABYLON.Color3.Gray();
-        let controller = Game.getMeshToEntityController(mesh.id);
-        if (controller instanceof CharacterController) {
+        if (entityController instanceof CharacterController) {
             color = BABYLON.Color3.White();
         }
-        else if (controller instanceof ItemController) {
-            if (controller.getEntity().getOwner() != Game.player) {
+        else if (entityController instanceof ItemController) {
+            if (entityController.getEntity().getOwner() != Game.player) {
                 color = BABYLON.Color3.Red();
             }
             else {
                 color = BABYLON.Color3.White();
             }
         }
-        Game.highlightLayer.addMesh(mesh, color);
-        Game.highlightedMesh = mesh;
+        entityController.getMeshes().forEach(function(mesh) {
+            Game.highlightLayer.addMesh(mesh, color)
+        });
+        Game.highlightedController = entityController;
         return 0;
     }
-    static clearHightlightMesh() {
-        if (!(Game.highlightedMesh instanceof BABYLON.Mesh)) {
+    static clearHighlightedController() {
+        if (!Game.highlightEnabled || !(Game.highlightedController instanceof EntityController)) {
             return 0;
         }
-        Game.highlightLayer.removeMesh(Game.highlightedMesh);
-        Game.highlightedMesh = null;
+        for (let i in Game.highlightLayer._meshes) {
+            Game.highlightLayer.removeMesh(Game.highlightLayer._meshes[i]["mesh"]);
+        }
+        Game.highlightedController = null;
         return 0;
     }
     static setPlayerTarget(entityController) {
-        if (!(Game.player.getController() instanceof EntityController)) {
+        if (!(Game.player.hasController())) {
             return 1;
         }
         if (!(entityController instanceof EntityController) || !entityController.isEnabled()) {
             return 1;
         }
-        Game.highlightMesh(entityController.mesh);
-        Game.player.getController().setTarget(entityController);
+        if (Game.highlightEnabled) {
+            Game.highlightController(entityController);
+        }
+        Game.player.controller.setTarget(entityController);
         Game.player.setTarget(entityController.getEntity());
         Game.gui.targetPortrait.set(entityController.getEntity());
         Game.gui.targetPortrait.show();
@@ -3844,14 +3846,16 @@ class Game {
         return 0;
     }
     static clearPlayerTarget() {
-        if (!(Game.player.getController() instanceof CharacterController)) {
+        if (!(Game.player.hasController())) {
             return 1;
         }
-        if (!Game.player.getController().hasTarget()) {
+        if (!Game.player.controller.hasTarget()) {
             return 0;
         }
-        Game.clearHightlightMesh();
-        Game.player.getController().clearTarget();
+        if (Game.highlightEnabled) {
+            Game.clearHighlightMesh();
+        }
+        Game.player.controller.clearTarget();
         Game.player.clearTarget();
         Game.gui.targetPortrait.hide();
         Game.gui.hideActionTooltip();

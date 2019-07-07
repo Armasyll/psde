@@ -120,6 +120,7 @@ class CharacterController extends EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
+        this._attachedMeshes = new Set();
         this.generateOrganMeshes();
         this.generateCosmeticMeshes();
         this.generateEquippedMeshes();
@@ -135,57 +136,57 @@ class CharacterController extends EntityController {
     setStepOffset(stepOffset) {
         this._stepOffset = stepOffset;
     }
-    setWalkSpeed(_n) {
-        this.walkSpeed = _n;
+    setWalkSpeed(number) {
+        this.walkSpeed = number;
     }
-    setRunSpeed(_n) {
-        this.runSpeed = _n;
+    setRunSpeed(number) {
+        this.runSpeed = number;
     }
-    setJumpSpeed(_n) {
-        this.jumpSpeed = _n;
+    setJumpSpeed(number) {
+        this.jumpSpeed = number;
     }
-    setGravityScale(_n) {
-        this.gravityScale = _n;
+    setGravityScale(number) {
+        this.gravityScale = number;
         this._gravity = -Game.gravity.y * this.gravityScale;
     }
-    setWalkAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.walk, _rangeName, _rate, _loop, _standalone);
+    setWalkAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.walk, rangeName, rate, loop, standalone);
     }
-    setRunAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.run, _rangeName, _rate, _loop, _standalone);
+    setRunAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.run, rangeName, rate, loop, standalone);
     }
-    setWalkBackAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.walkBack, _rangeName, _rate, _loop, _standalone);
+    setWalkBackAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.walkBack, rangeName, rate, loop, standalone);
     }
-    setSlideBackAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.slideBack, _rangeName, _rate, _loop, _standalone);
+    setSlideBackAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.slideBack, rangeName, rate, loop, standalone);
     }
-    setIdleAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.idle, _rangeName, _rate, _loop, _standalone);
+    setIdleAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.idle, rangeName, rate, loop, standalone);
     }
-    setIdleJumpAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.idleJump, _rangeName, _rate, _loop, _standalone);
+    setIdleJumpAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.idleJump, rangeName, rate, loop, standalone);
     }
-    setTurnRightAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.turnRight, _rangeName, _rate, _loop, _standalone);
+    setTurnRightAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.turnRight, rangeName, rate, loop, standalone);
     }
-    setTurnLeftAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.turnLeft, _rangeName, _rate, _loop, _standalone);
+    setTurnLeftAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.turnLeft, rangeName, rate, loop, standalone);
     }
-    setStrafeRightAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.strafeRight, _rangeName, _rate, _loop, _standalone);
+    setStrafeRightAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.strafeRight, rangeName, rate, loop, standalone);
     }
-    setSrafeLeftAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.strafeLeft, _rangeName, _rate, _loop, _standalone);
+    setSrafeLeftAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.strafeLeft, rangeName, rate, loop, standalone);
     }
-    setRunJumpAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.runJump, _rangeName, _rate, _loop, _standalone);
+    setRunJumpAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.runJump, rangeName, rate, loop, standalone);
     }
-    setFallAnim(_rangeName, _rate, _loop, _standalone = true) {
-        this.setAnimData(this.fall, _rangeName, _rate, _loop, _standalone);
+    setFallAnim(rangeName, rate, loop, standalone = true) {
+        this.setAnimData(this.fall, rangeName, rate, loop, standalone);
     }
-    setDeathAnim(_rangeName, _rate, _loop = false, _standalone = false) {
-        this.setAnimData(this.death, _rangeName, _rate, _loop, _standalone);
+    setDeathAnim(rangeName, rate, loop = false, standalone = false) {
+        this.setAnimData(this.death, rangeName, rate, loop, standalone);
     }
     moveAV() {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
@@ -361,22 +362,22 @@ class CharacterController extends EntityController {
          */
         if (moving && this._moveVector.length() > 0.001) {
             this.updateGroundRay();
-            let _hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
+            let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
                 if (_mesh.isPickable && _mesh.checkCollisions) {
                     return true;
                 }
                 return false;
             });
-            if (_hit.hit) {
-                if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, _hit.pickedMesh.position.y+0.06125, 0.0125)) {
+            if (hit.hit) {
+                if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
                     this._moveVector.y = 0;
                 }
             }
             this.mesh.moveWithCollisions(this._moveVector);
             if (this.mesh.position.y > this._avStartPos.y) {
-                var actDisp = this.mesh.position.subtract(this._avStartPos);
-                var _sl = Tools.verticalSlope(actDisp);
-                if (_sl >= this._maxSlopeLimitRads) {
+                let actDisp = this.mesh.position.subtract(this._avStartPos);
+                let slope = Tools.verticalSlope(actDisp);
+                if (slope >= this._maxSlopeLimitRads) {
                     if (this._stepOffset > 0) {
                         if (this._vMoveTot == 0) {
                             this._vMovStartPos.copyFrom(this._avStartPos);
@@ -395,7 +396,7 @@ class CharacterController extends EntityController {
                 }
                 else {
                     this._vMoveTot = 0;
-                    if (_sl > this._minSlopeLimitRads) {
+                    if (slope > this._minSlopeLimitRads) {
                         this._fallFrameCount = 0;
                         this.isFalling = false;
                     }
@@ -498,21 +499,21 @@ class CharacterController extends EntityController {
     getMovementKey() {
         return this.key;
     }
-    setMovementKey(_key) {
-        if (typeof _key[0] == "boolean" && typeof _key[7] == "boolean") {
-            this.key.forward = _key[0];
-            this.key.shift = _key[1];
-            this.key.backward = _key[2];
-            this.key.strafeLeft = _key[3];
-            this.key.strafeRight = _key[4];
-            this.key.turnLeft = _key[5];
-            this.key.turnRight = _key[6];
-            this.key.jump = _key[7];
+    setMovementKey(key) {
+        if (typeof key[0] == "boolean" && typeof key[7] == "boolean") {
+            this.key.forward = key[0];
+            this.key.shift = key[1];
+            this.key.backward = key[2];
+            this.key.strafeLeft = key[3];
+            this.key.strafeRight = key[4];
+            this.key.turnLeft = key[5];
+            this.key.turnRight = key[6];
+            this.key.jump = key[7];
         }
         return this;
     }
-    keyMoveForward(_pressed = true) {
-        if (_pressed === true) {
+    keyMoveForward(pressed = true) {
+        if (pressed === true) {
             this.key.forward = true;
             this.key.backward = false;
         }
@@ -521,8 +522,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyShift(_pressed = true) {
-        if (_pressed === true) {
+    keyShift(pressed = true) {
+        if (pressed === true) {
             this.key.shift = true;
         }
         else {
@@ -530,8 +531,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyMoveBackward(_pressed = true) {
-        if (_pressed === true) {
+    keyMoveBackward(pressed = true) {
+        if (pressed === true) {
             this.key.backward = true;
             this.key.forward = false;
         }
@@ -540,8 +541,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyTurnLeft(_pressed = true) {
-        if (_pressed === true) {
+    keyTurnLeft(pressed = true) {
+        if (pressed === true) {
             this.key.turnLeft = true;
             this.key.turnRight = false;
         }
@@ -550,8 +551,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyTurnRight(_pressed = true) {
-        if (_pressed === true) {
+    keyTurnRight(pressed = true) {
+        if (pressed === true) {
             this.key.turnRight = true;
             this.key.turnLeft = false;
         }
@@ -560,8 +561,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyStrafeLeft(_pressed = true) {
-        if (_pressed === true) {
+    keyStrafeLeft(pressed = true) {
+        if (pressed === true) {
             this.key.strafeLeft = true;
             this.key.strafeRight = false;
         }
@@ -570,8 +571,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyStrafeRight(_pressed = true) {
-        if (_pressed === true) {
+    keyStrafeRight(pressed = true) {
+        if (pressed === true) {
             this.key.strafeLeft = false;
             this.key.strafeRight = true;
         }
@@ -580,8 +581,8 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    keyJump(_pressed = true) {
-        if (_pressed === true) {
+    keyJump(pressed = true) {
+        if (pressed === true) {
             this.key.jump = true;
         }
         else {
@@ -599,13 +600,13 @@ class CharacterController extends EntityController {
         this._isAttacking = true;
         setTimeout(() => {this._isAttacking = false;}, 800);
         if (this.isRunning) {
-            for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
-                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
+            for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
+                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
             }
         }
         else {
-            for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
-                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
+            for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
+                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
             }
         }
         return true;
@@ -619,8 +620,8 @@ class CharacterController extends EntityController {
         }
         this._isAttacking = true;
         setTimeout(() => {this._isAttacking = false;}, 800);
-        for (var _i = 0; _i < this.animationBones["rightArm"].length; _i++) {
-            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][_i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
+        for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
+            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
         }
         return true;
     }
@@ -649,8 +650,8 @@ class CharacterController extends EntityController {
         return true;
     }
 
-    setAttacking(_bool = true) {
-        this._isAttacking = _bool == true;
+    setAttacking(bool = true) {
+        this._isAttacking = bool == true;
         console.log(`running setAttacking(${this._isAttacking ? "true" : "false"})`);
     }
     isAttacking() {
@@ -659,26 +660,26 @@ class CharacterController extends EntityController {
     hasTarget() {
         return this.targetController instanceof EntityController;
     }
-    setTarget(_controller, _updateChild = true) {
-        if (!(_controller instanceof EntityController)) {
+    setTarget(controller, updateChild = true) {
+        if (!(controller instanceof EntityController)) {
             return this;
         }
-        this.targetController = _controller;
-        if (_updateChild) {
-            _controller.addTargetedBy(this, false);
+        this.targetController = controller;
+        if (updateChild) {
+            controller.addTargetedBy(this, false);
         }
-        this.entity.setTarget(_controller.getEntity());
+        this.entity.setTarget(controller.getEntity());
         return this;
     }
-    removeTarget(_updateChild = true) {
-        if (_updateChild && this.targetController instanceof EntityController) {
+    removeTarget(updateChild = true) {
+        if (updateChild && this.targetController instanceof EntityController) {
             this.targetController.removeTargetedBy(this, false);
         }
         this.targetController = null;
         this.entity.removeTarget();
         return this;
     }
-    clearTarget(_updateChild = true) {
+    clearTarget(updateChild = true) {
         this.removeTarget();
         return this;
     }
@@ -708,12 +709,12 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        for (var _bone in this._meshesAttachedToBones) {
-            if (_bone == "FOCUS" || _bone == "ROOT") {}
-            else if (this._showHelmet && _bone == "head") {}
-            for (var _mesh in this._meshesAttachedToBones[_bone]) {
-                if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones[_bone][_mesh].isVisible = false;
+        for (let bone in this._meshesAttachedToBones) {
+            if (bone == "FOCUS" || bone == "ROOT") {}
+            else if (this._showHelmet && bone == "head") {}
+            for (let mesh in this._meshesAttachedToBones[bone]) {
+                if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones[bone][mesh].isVisible = false;
                 }
             }
         }
@@ -723,13 +724,13 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        for (var _bone in this._meshesAttachedToBones) {
-            if (_bone == "FOCUS" || _bone == "ROOT") {}
-            else if (!this._showHelmet && _bone == "head") {}
+        for (let bone in this._meshesAttachedToBones) {
+            if (bone == "FOCUS" || bone == "ROOT") {}
+            else if (!this._showHelmet && bone == "head") {}
             else {
-                for (var _mesh in this._meshesAttachedToBones[_bone]) {
-                    if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
-                        this._meshesAttachedToBones[_bone][_mesh].isVisible = true;
+                for (let mesh in this._meshesAttachedToBones[bone]) {
+                    if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
+                        this._meshesAttachedToBones[bone][mesh].isVisible = true;
                     }
                 }
             }
@@ -741,9 +742,9 @@ class CharacterController extends EntityController {
             return this;
         }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
-            for (var _mesh in this._meshesAttachedToBones["head"]) {
-                if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones["head"][_mesh].isVisible = false;
+            for (let mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][mesh].isVisible = false;
                 }
             }
         }
@@ -755,9 +756,9 @@ class CharacterController extends EntityController {
             return this;
         }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
-            for (var _mesh in this._meshesAttachedToBones["head"]) {
-                if (this._meshesAttachedToBones["head"][_mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones["head"][_mesh].isVisible = true;
+            for (let mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][mesh].isVisible = true;
                 }
             }
         }
@@ -765,30 +766,30 @@ class CharacterController extends EntityController {
         return this;
     }
 
-    getBone(_bone) {
+    getBone(bone) {
         if (Game.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
-            if (_bone instanceof BABYLON.Bone) {
-                return _bone;
+            if (bone instanceof BABYLON.Bone) {
+                return bone;
             }
-            else if (typeof _bone == "string") {
-                return this.getBoneByName(_bone);
+            else if (typeof bone == "string") {
+                return this.getBoneByName(bone);
             }
-            else if (typeof _bone == "number") {
-                return this.getBoneByID(_bone);
+            else if (typeof bone == "number") {
+                return this.getBoneByID(bone);
             }
         }
         return null;
     }
-    getBoneByName(_string) {
+    getBoneByName(string) {
         if (this.skeleton instanceof BABYLON.Skeleton) {
-            return this.skeleton.bones[this.skeleton.getBoneIndexByName(_string)];
+            return this.skeleton.bones[this.skeleton.getBoneIndexByName(string)];
         }
         return null;
     }
-    getBoneByID(_int) {
+    getBoneByID(number) {
         if (this.skeleton instanceof BABYLON.Skeleton) {
-            return this.skeleton.bones[_int];
+            return this.skeleton.bones[number];
         }
         return null;
     }
@@ -801,7 +802,7 @@ class CharacterController extends EntityController {
      * @param  {BABYLON.Vector3} [rotation] Mesh rotation
      * @param  {BABYLON.Vector3} [scaling] Mesh scaling
      * @param  {object} [options] Options
-     * @return {CharacterController} This character controller.
+     * @returns {CharacterController} This character controller.
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (Game.debugMode) console.log("Running attachMeshIDToBone");
@@ -844,7 +845,7 @@ class CharacterController extends EntityController {
      * @param  {BABYLON.Vector3} [rotation] Mesh rotation
      * @param  {BABYLON.Vector3} [scaling] Mesh scaling
      * @param  {object} [options] Options; used
-     * @return {CharacterController} This character controller.
+     * @returns {CharacterController} This character controller.
      */
     attachCollisionMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (typeof options != "object") {
@@ -861,7 +862,7 @@ class CharacterController extends EntityController {
      * @param  {BABYLON.Vector3} [rotation] Mesh rotation
      * @param  {BABYLON.Vector3} [scaling] Mesh scaling
      * @param  {object} [options] Options; not used
-     * @return {CharacterController} This character controller.
+     * @returns {CharacterController} This character controller.
      */
     attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
@@ -898,108 +899,92 @@ class CharacterController extends EntityController {
             this.root = mesh;
             mesh.isVisible = false;
         }
+        this._attachedMeshes.add(mesh);
         return this;
     }
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
         this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
     }
-    detachFromBone(_bone, _destroyMesh = true) {
-        return this.detachAllFromBone(_bone, _destroyMesh);
+    detachFromBone(bone, destroyMesh = true) {
+        return this.detachAllFromBone(bone, destroyMesh);
     }
-    detachAllFromBone(_bone, _destroyMesh = true) {
+    detachAllFromBone(bone, destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        _bone = this.getBone(_bone);
-        if (!(_bone instanceof BABYLON.Bone)) {
+        bone = this.getBone(bone);
+        if (!(bone instanceof BABYLON.Bone)) {
             return this;
         }
-        if (!(this._meshesAttachedToBones.hasOwnProperty(_bone.id))) {
+        if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
             return this;
         }
-        let _meshes = new Array();
-        for (let _mesh in this._meshesAttachedToBones[_bone.id]) {
-            if (this._meshesAttachedToBones[_bone.id][_mesh] instanceof BABYLON.AbstractMesh) {
-                this._meshesAttachedToBones[_bone.id][_mesh].detachFromBone();
-                if (_destroyMesh) {
-                    Game.removeMesh(this._meshesAttachedToBones[_bone.id][_mesh]);
-                }
-                else {
-                    _meshes.push(this._meshesAttachedToBones[_bone.id][_mesh]);
-                }
-                delete this._bonesAttachedToMeshes[_mesh][_bone.id];
+        let meshes = new Array();
+        for (let meshID in this._meshesAttachedToBones[bone.id]) {
+            if (this._meshesAttachedToBones[bone.id][meshID] instanceof BABYLON.AbstractMesh) {
+                this._meshesAttachedToBones[bone.id][meshID].detachFromBone();
+                meshes.push(this._meshesAttachedToBones[bone.id][meshID]);
+                this._attachedMeshes.delete(this._meshesAttachedToBones[bone.id][meshID]);
+                delete this._bonesAttachedToMeshes[meshID][bone.id];
             }
         }
-        delete this._meshesAttachedToBones[_bone.id];
-        if (_destroyMesh) {
-            return this;
+        delete this._meshesAttachedToBones[bone.id];
+        if (destroyMesh) {
+            meshes.forEach(function(mesh) {
+                Game.removeMesh(mesh);
+            });
+            return [];
         }
-        return _meshes;
+        return meshes;
     }
-    detachMesh(_mesh, _destroyMesh = true) {
-        return this.detachMeshFromBone(_mesh, undefined, _destroyMesh);
+    detachMesh(mesh, destroyMesh = true) {
+        return this.detachMeshFromBone(mesh, undefined, destroyMesh);
     }
-    detachMeshFromBone(_mesh, _bone = undefined, _destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
+    detachMeshFromBone(mesh, bone = undefined, destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        if (!(_mesh instanceof AbstractMesh)) {
-            _mesh = Game.getMesh(_mesh);
-            if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+        if (!(mesh instanceof AbstractMesh)) {
+            mesh = Game.getMesh(mesh);
+            if (!(mesh instanceof BABYLON.AbstractMesh)) {
                 return this;
             }
         }
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(_mesh.id))) {
+        if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
             return this;
         }
-        _bone = this.getBone(_bone);
-        let _meshes = new Array();
-        if (_bone instanceof BABYLON.Bone) {
-            delete this._meshesAttachedToBones[_bone.id][_mesh.id];
+        bone = this.getBone(bone);
+        if (bone instanceof BABYLON.Bone) {
+            delete this._meshesAttachedToBones[bone.id][mesh.id];
         }
         else {
-            for (let _boneWithAttachment in this._bonesAttachedToMeshes[_mesh.id]) {
-                if (this._bonesAttachedToMeshes[_mesh.id][_boneWithAttachment] instanceof BABYLON.Bone) {
-                    delete this._meshesAttachedToBones[_boneWithAttachment][_mesh.id];
+            for (let boneWithAttachment in this._bonesAttachedToMeshes[mesh.id]) {
+                if (this._bonesAttachedToMeshes[mesh.id][boneWithAttachment] instanceof BABYLON.Bone) {
+                    delete this._meshesAttachedToBones[boneWithAttachment][mesh.id];
                 }
             }
         }
-        _mesh.detachFromBone();
-        delete this._bonesAttachedToMeshes[_mesh.id];
-        if (_destroyMesh) {
-            Game.removeMesh(_mesh);
-            return this;
+        mesh.detachFromBone();
+        delete this._bonesAttachedToMeshes[mesh.id];
+        this._attachedMeshes.delete(mesh);
+        if (destroyMesh) {
+            Game.removeMesh(mesh);
+            return [];
         }
-        _meshes.push(_mesh);
-        return _meshes;
+        return new Array(mesh);
     }
-    detachFromAllBones(_destroyMesh = true) {
+    detachFromAllBones(destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        let _meshes = new Array();
-        for (let _bone in this._meshesAttachedToBones) {
-            if (_bone == "FOCUS" || _bone == "ROOT") {}
+        let meshes = new Array();
+        for (let bone in this._meshesAttachedToBones) {
+            if (bone == "FOCUS" || bone == "ROOT") {}
             else {
-                for (let _mesh in this._meshesAttachedToBones[_bone]) {
-                    if (this._meshesAttachedToBones[_bone][_mesh] instanceof BABYLON.AbstractMesh) {
-                        this._meshesAttachedToBones[_bone][_mesh].detachFromBone();
-                        if (_destroyMesh) {
-                            Game.removeMesh(this._meshesAttachedToBones[_bone][_mesh]);
-                        }
-                        else {
-                            _meshes.push(this._meshesAttachedToBones[_bone][_mesh]);
-                        }
-                        delete this._bonesAttachedToMeshes[_mesh][_bone];
-                    }
-                }
-                delete this._meshesAttachedToBones[_bone];
+                meshes.push(...this.detachAllFromBone(bone, destroyMesh));
             }
         }
-        if (_destroyMesh) {
-            return this;
-        }
-        return _meshes;
+        return meshes;
     }
     attachToFOCUS(mesh) {
         if (mesh instanceof BABYLON.AbstractMesh) {
@@ -1109,7 +1094,7 @@ class CharacterController extends EntityController {
     }
     /**
      * Generates attached organ meshes :V
-     * @return {null} null
+     * @returns {null} null
      */
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
@@ -1164,7 +1149,7 @@ class CharacterController extends EntityController {
     }
     /**
      * Generates attached cosmetic meshes according to entity's cosmetics
-     * @return {null} null
+     * @returns {null} null
      */
     generateCosmeticMeshes() { // TODO
         if (!this.hasSkeleton()) {
@@ -1174,7 +1159,7 @@ class CharacterController extends EntityController {
     }
     /**
      * Generated attached equipment meshes according to entity's equipment
-     * @return {null} null
+     * @returns {null} null
      */
     generateEquippedMeshes() {
         if (!this.hasSkeleton()) {
@@ -1255,6 +1240,13 @@ class CharacterController extends EntityController {
             }
         }
         return this;
+    }
+    /**
+     * Returns all meshes associated with this controller.
+     * @returns {Set<BABYLON.AbstractMesh>}
+     */
+    getMeshes() {
+        return this._attachedMeshes;
     }
 
     dispose() {
