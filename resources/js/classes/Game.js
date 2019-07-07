@@ -3858,25 +3858,25 @@ class Game {
         return 0;
     }
     static castRayTarget() {
-        if (!Game.player.hasController() || !Game.player.getController().hasMesh() || !Game.player.getController().hasSkeleton()) {
+        if (!Game.player.hasController() || !Game.player.controller.hasMesh() || !Game.player.controller.hasSkeleton()) {
             return 1;
         }
-        let ray = Game.camera.getForwardRay(2 * Game.player.getController().getMesh().scaling.y, Game.camera.getWorldMatrix(), Game.player.getController().focus.getAbsolutePosition())
-        if (Game.player.getController().targetRay == undefined) {
-            Game.player.getController().targetRay = ray;
+        let ray = Game.camera.getForwardRay(2 * Game.player.controller.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.player.controller.focus.getAbsolutePosition())
+        if (Game.player.controller.targetRay == undefined) {
+            Game.player.controller.targetRay = ray;
         }
         else {
-            Game.player.getController().targetRay.origin = ray.origin;
-            Game.player.getController().targetRay.direction = ray.direction;
+            Game.player.controller.targetRay.origin = ray.origin;
+            Game.player.controller.targetRay.direction = ray.direction;
         }
         if (Game.debugMode) {
-            if (Game.player.getController().targetRayHelper != undefined) {
-                Game.player.getController().targetRayHelper.dispose();
+            if (Game.player.controller.targetRayHelper != undefined) {
+                Game.player.controller.targetRayHelper.dispose();
             }
-            Game.player.getController().targetRayHelper = new BABYLON.RayHelper(Game.player.getController().targetRay);
-            Game.player.getController().targetRayHelper.show(Game.scene);
+            Game.player.controller.targetRayHelper = new BABYLON.RayHelper(Game.player.controller.targetRay);
+            Game.player.controller.targetRayHelper.show(Game.scene);
         }
-        let hit = Game.scene.pickWithRay(Game.player.getController().targetRay, function(pickedMesh) {
+        let hit = Game.scene.pickWithRay(Game.player.controller.targetRay, function(pickedMesh) {
             if (pickedMesh.parent instanceof BABYLON.Bone && pickedMesh.parent.getSkeleton() == Game.player.controller.skeleton || pickedMesh == Game.player.controller.mesh) {
                 return false;
             }
@@ -3891,7 +3891,7 @@ class Game {
                 entityController = Game.getMeshToEntityController(hit.pickedMesh.id);
             }
             if (entityController instanceof EntityController) {
-                if (entityController != Game.player.getController().getTarget()) {
+                if (entityController != Game.player.controller.target) {
                     Game.setPlayerTarget(entityController);
                 }
             }
