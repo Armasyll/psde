@@ -7,51 +7,45 @@ $ worker.postMessage({cmd:"getTCount"})
 undefined
 [MessageEvent].data.{...}
 */
-let loc = {x:0.0,y:0.0,z:0.0};
-let rot = {y:0.0};
-let tCount = 0;
+let currentTime = 1499088900;
+let gameTimeMultiplier = 10;
+let roundTime = 6 * gameTimeMultiplier;
+let turnTime = 60 * gameTimeMultiplier;
 
-setInterval(
-    function() {
-        tCount++;
-    },
-    50
-);
+function tickFunction() {
+    currentTime++;
+    if (currentTime % 86400 == 0) {
+        postMessage("newDay");
+    }
+    if (currentTime % turnTime == 0) {
+        postMessage("turn");
+    }
+    else if (currentTime % roundTime == 0) {
+        postMessage("round");
+    }
+}
+let tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
 addEventListener('message', function(event) {
     switch (event.data.cmd) {
-        case "close": {
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"close","msg":"bye"}});
-            close();
+        case "getDate": {
+            postMessage(new Date(currentTime * 1000));
             break;
         }
-        case "open": {
-            loc = {x:0.0,y:0.0,z:0.0};
-            rot = {y:0.0};
+        case "getEpoch":
+        case "getUnixTimestamp": {
+            postMessage(currentTime * 1000);
             break;
         }
-        case "setLoc": {
-            loc = event.data.msg;
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"setLoc","msg":loc}});
-            break;
-        }
-        case "getLoc": {
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"getLoc","msg":loc}});
-            break;
-        }
-        case "setRot": {
-            rot = event.data.msg;
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"setRot","msg":rot}});
-            break;
-        }
-        case "getRot": {
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"getRot","msg":rot}});
-            break;
-        }
-        case "getTCount": {
-            postMessage({"meta":{"status":200,"msg":"OK"},"response":{"cmd":"getTCount", "msg":tCount}});
-            break;
-        }
-        default: {
+        case "setGameTimeMutliplier": {
+            if (!event.data.hasOwnProperty("msg") || typeof event.data.msg != "array" || isNaN(event.data.msg[0])) {
+                break;
+            }
+            if (event.data.msg[0] == gameTimeMultiplier) {
+                break;
+            }
+            gameTimeMultiplier = event.data.msg[0];
+            clearInterval(tickInterval);
+            tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
         }
     };
 }, false);

@@ -1781,3 +1781,202 @@ RollEnum = {
         },
     }
 }
+ConditionEnum = {
+    NONE: 0,
+    ABILITY_DAMAGED: 1,
+    ABILITY_DRAINED: 2,
+    BLINDED: 3,
+    BLOWN_AWAY: 4,
+    CHECKED: 5,
+    CONFUSED: 6,
+    COWERING: 7,
+    DAZED: 8,
+    DAZZLED: 9,
+    DEAD: 10,
+    DEAFENED: 11,
+    DISABLED: 12,
+    DYING: 13,
+    ENERGY_DRAINED: 14,
+    ENTANGLED: 15,
+    EXHAUSTED: 16,
+    FASCINATED: 17,
+    FATIGUED: 18,
+    FLAT_FOOTED: 19,
+    FRIGHTENED: 20,
+    GRAPPLING: 21,
+    HELPLESS: 22,
+    INCORPOREAL: 23,
+    INVISIBLE: 24,
+    KNOCKED_DOWN: 25,
+    NAUSEATED: 26,
+    PANICKED: 27,
+    PARALYZED: 28,
+    PETRIFIED: 29,
+    PINNED: 30,
+    PRONE: 31,
+    SHAKEN: 32,
+    SICKENED: 33,
+    STABLE: 34,
+    STAGGERED: 35,
+    STUNNED: 36,
+    TURNED: 37,
+    UNCONSCIOUS: 38,
+    properties: {
+        0: {
+            name: "None",
+            value: 0
+        },
+        1: {
+            name: "Ability Damaged",
+            value: 1
+        },
+        2: {
+            name: "Ability Drained",
+            value: 2
+        },
+        3: {
+            name: "Blinded",
+            value: 3
+        },
+        4: {
+            name: "Blown Away",
+            value: 4
+        },
+        5: {
+            name: "Checked",
+            value: 5
+        },
+        6: {
+            name: "Confused",
+            value: 6
+        },
+        7: {
+            name: "Cowering",
+            value: 7
+        },
+        8: {
+            name: "Dazed",
+            value: 8
+        },
+        9: {
+            name: "Dazzled",
+            value: 9
+        },
+        10: {
+            name: "Dead",
+            value: 10
+        },
+        11: {
+            name: "Deafened",
+            value: 11
+        },
+        12: {
+            name: "Disabled",
+            value: 12
+        },
+        13: {
+            name: "Dying",
+            value: 13
+        },
+        14: {
+            name: "Energy Drained",
+            value: 14
+        },
+        15: {
+            name: "Entangled",
+            value: 15
+        },
+        16: {
+            name: "Exhausted",
+            value: 16
+        },
+        17: {
+            name: "Fascinated",
+            value: 17
+        },
+        18: {
+            name: "Fatigued",
+            value: 18
+        },
+        19: {
+            name: "Flat-Footed",
+            value: 19
+        },
+        20: {
+            name: "Frightened",
+            value: 20
+        },
+        21: {
+            name: "Grappling",
+            value: 21
+        },
+        22: {
+            name: "Helpless",
+            value: 22
+        },
+        23: {
+            name: "Incorporeal",
+            value: 23
+        },
+        24: {
+            name: "Invisible",
+            value: 24
+        },
+        25: {
+            name: "Knocked Down",
+            value: 25
+        },
+        26: {
+            name: "Nauseated",
+            value: 26
+        },
+        27: {
+            name: "Panicked",
+            value: 27
+        },
+        28: {
+            name: "Paralyzed",
+            value: 28
+        },
+        29: {
+            name: "Petrified",
+            value: 29
+        },
+        30: {
+            name: "Pinned",
+            value: 30
+        },
+        31: {
+            name: "Prone",
+            value: 31
+        },
+        32: {
+            name: "Shaken",
+            value: 32
+        },
+        33: {
+            name: "Sickened",
+            value: 33
+        },
+        34: {
+            name: "Stable",
+            value: 34
+        },
+        35: {
+            name: "Staggered",
+            value: 35
+        },
+        36: {
+            name: "Stunned",
+            value: 36
+        },
+        37: {
+            name: "Turned",
+            value: 37
+        },
+        38: {
+            name: "Unconscious",
+            value: 38
+        }
+    }
+}
