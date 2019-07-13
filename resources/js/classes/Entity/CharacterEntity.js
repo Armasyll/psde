@@ -4,13 +4,13 @@ class CharacterEntity extends EntityWithStorage {
      * @param  {string} id Unique ID
      * @param  {string} name Name
      * @param  {string} [description] Description
-     * @param  {string} [icon] Icon ID
-     * @param  {CharacterClassEnum} [characterCless] CharacterClassEnum
+     * @param  {string} [iconID] Icon ID
+     * @param  {CharacterClassEnum} [characterClass] CharacterClassEnum
      * @param  {number} [age] Age
      * @param  {SexEnum} [sex] SexEnum
      * @param  {SpeciesEnum} [species] SpeciesEnum
      */
-    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", icon = "genericCharacterIcon", characterCless = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, species = SpeciesEnum.FOX) {
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", characterClass = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, species = SpeciesEnum.FOX) {
         super(id);
         this.entityType = EntityEnum.CHARACTER;
         this.name = "";
@@ -256,8 +256,8 @@ class CharacterEntity extends EntityWithStorage {
         this.furniture = null;
 
         this.setName(name);
-        this.setIcon(icon);
-        this.setClass(characterCless);
+        this.setIcon(iconID);
+        this.setClass(characterClass);
         this.setAge(age);
         this.setSex(sex);
         this.setGender(sex);
