@@ -729,6 +729,7 @@ class Game {
         Game._finishedConfiguring = false;
 
         Game.player = undefined;
+        Game.cell = undefined;
         Game.castRayTargetIntervalFunction = undefined;
         Game.castRayTargetInterval = 250;
         Game.pointerLockFunction = undefined;
@@ -751,6 +752,8 @@ class Game {
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
         Game.loadDefaultItems();
+
+        Game.skybox = BABYLON.MeshBuilder.CreateBox("skybox", {size:2048.0}, Game.scene);
 
         /*
             Which function handles the function of the key presses;
@@ -889,6 +892,9 @@ class Game {
             if (Game._filesToLoad == 0) {
                 Game.hasBackloggedEntities = false;
             }
+        }
+        if (Game.cell instanceof Cell && Game.cell.hasBackloggedAdditions) {
+            Game.cell.createBackloggedAdditions();
         }
         if (Client.isOnline()) {
             if (Client.hasPlayerToCreate()) {
@@ -1284,6 +1290,8 @@ class Game {
         if (!(mesh instanceof BABYLON.Mesh)) {
             return 2;
         }
+        mesh.isVisible = false;
+        mesh.setEnabled(false);
         Game.loadedMeshes[meshID] = mesh;
         return 0;
     }
@@ -2253,17 +2261,12 @@ class Game {
             options["createClone"] = false;
         }
         if (!Game.hasLoadedMaterial(materialID)) {
-            if (Game.hasAvailableTexture(materialID)) {
-                if (!Game.hasLoadedTexture(materialID)) {
-                    Game.loadTexture(materialID);
-                }
-                Game.loadMaterial(materialID, materialID);
-            }
-            else {
+            if (!Game.hasAvailableTexture(materialID) && !Game.hasLoadedTexture(materialID)) {
+                if (Game.debugMode) console.log(`\tMaterial ${materialID} doesn't exist`);
                 materialID = "missingMaterial";
             }
         }
-        if (!Game.hasAvailableMesh(meshID)) {
+        if (!Game.hasAvailableMesh(meshID) && !Game.hasLoadedMesh(meshID)) {
             if (Game.debugMode) console.log(`\tMesh ${meshID} doesn't exist`);
             meshID = "missingMesh";
         }
@@ -2290,6 +2293,20 @@ class Game {
         }
         if (meshID == "missingMesh") {
             return 1;
+        }
+        if (!Game.hasLoadedMaterial(materialID)) {
+            if (Game.hasAvailableTexture(materialID)) {
+                if (!Game.hasLoadedTexture(materialID)) {
+                    Game.loadTexture(materialID);
+                }
+                Game.loadMaterial(materialID, materialID);
+            }
+            else if (Game.hasLoadedTexture(materialID)) {
+                Game.loadMaterial(materialID, materialID);
+            }
+            else {
+                materialID = "missingMaterial";
+            }
         }
         if (!Game.hasLoadedMesh(meshID)) {
             if (Game.debugMode) console.log(`\tMesh ${meshID} exists and will be loaded`);
@@ -4781,6 +4798,15 @@ class Game {
         return 0;
     }
 
+    static hasCell(id) {
+        return this.cells.hasOwnProperty(id);
+    }
+    static getCell(id) {
+        if (Game.hasCell(id)) {
+            return this.cells[id];
+        }
+        return 1;
+    }
     static setCell(id, cell) {
         Game.cells[id] = cell;
         return 0;

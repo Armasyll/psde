@@ -1980,3 +1980,22 @@ ConditionEnum = {
         }
     }
 }
+CellTypeEnum = {
+    NONE: 0,
+    OVERWORLD: 1,
+    LIMBO: 2,
+    properties: {
+        0: {
+            name: "None",
+            value: 0
+        },
+        1: {
+            name: "Overworld",
+            value: 1
+        },
+        2: {
+            name: "Limbo",
+            value: 2
+        }
+    }
+}

@@ -737,18 +737,15 @@ Game.generateWallScene = function() {
     Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
 
     let cell = new Cell("networkTestCell");
-        cell.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
-    let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
-        skybox.material = new BABYLON.SkyMaterial("skyMaterial", Game.scene);
-        skybox.material.backFaceCulling = false;
-        skybox.material.azimuth = 0;
-        skybox.material.inclination = 0;
-    var _ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
-        _ambientLight.intensity = 0.9;
+    Game.cell = cell;
+    cell.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+    cell.setSkybox(new BABYLON.SkyMaterial("skyMaterial", Game.scene));
+    cell.skyboxMaterial.backFaceCulling = false;
+    cell.skyboxMaterial.azimuth = 0;
+    cell.skyboxMaterial.inclination = 0;
 
-    var outsideFloorStone = BABYLON.MeshBuilder.CreateTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene);
-        outsideFloorStone.material = Game.getLoadedMaterial("stoneTexture01");
-        outsideFloorStone.position.set(-5, 0, -25);
+    Game.setLoadedMesh("floor16x16", BABYLON.MeshBuilder.CreateTiledGround("stoneFloor", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene));
+    cell.addMesh("stoneFloor", "floor16x16", "stoneTexture01", new BABYLON.Vector3(-5, 0, -25));
 
     cell.addCollidableMesh("greenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -22), new BABYLON.Vector3(0, 180, 0));
     cell.addCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -22), new BABYLON.Vector3(0, 180, 0));

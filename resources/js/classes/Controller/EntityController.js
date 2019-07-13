@@ -50,6 +50,7 @@ class EntityController {
             ]
         });
         this.mesh.alwaysSelectAsActiveMesh = true;
+        this.currentCell = null;
         Game.setEntityController(this.id, this);
     }
     setID(_id) {
@@ -295,6 +296,24 @@ class EntityController {
      */
     getMeshes() {
         return [this.mesh];
+    }
+    setCell(cell) {
+        if (cell instanceof Cell) {
+            this.cell = cell;
+        }
+        else if (Game.hasCell(cell)) {
+            this.cell = Game.getCell(cell);
+        }
+        else {
+            return 2;
+        }
+        return 0;
+    }
+    getCell() {
+        return this.cell;
+    }
+    hasCell() {
+        return this.cell instanceof Cell;
     }
 
     isEnabled() {
