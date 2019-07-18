@@ -1262,9 +1262,6 @@ class CharacterController extends EntityController {
         this.setEnabled(false);
         this.detachFromAllBones();
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         Game.removeCharacterController(this.id);
         return undefined;
     }

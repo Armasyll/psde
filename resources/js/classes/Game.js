@@ -45,7 +45,7 @@ class Game {
         /**
          * Map of Mesh file locations per ID
          * eg, {"foxM":"resources/meshes/characters/fox.babylon"}
-         * @type {<String, String>}
+         * @type {<string, String>}
          */
         Game.meshLocations = {
             "missingMesh":null,
@@ -266,13 +266,13 @@ class Game {
         /**
          * Map of Meshes per ID
          * eg, {"ring01":{ring01 Mesh}, "ring02":{...}}
-         * @type {<String, BABYLON.Mesh>}
+         * @type {<string, BABYLON.Mesh>}
          */
         Game.loadedMeshes = {};
         /**
          * Map of Texture file locations per ID
          * eg, {"foxRed":"resources/images/textures/characters/foxRed.svg"}
-         * @type {<String, String>}
+         * @type {<string, String>}
          */
         Game.textureLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
@@ -361,18 +361,18 @@ class Game {
         /**
          * Map of Textures per ID
          * eg, {"ring01Silver":{ring01Silver Texture}, "ring01Gold":{...}}
-         * @type {<String, BABYLON.Texture>}
+         * @type {<string, BABYLON.Texture>}
          */
         Game.loadedTextures = {};
         /**
          * Map of Materials per ID
-         * @type {<String, BABYLON.Material>}
+         * @type {<string, BABYLON.Material>}
          */
         Game.loadedMaterials = {};
         /**
          * Map of Icon file locations per ID
          * eg, {"rosie":"resources/images/icons/characters/rosie.png"}
-         * @type {<String, String>}
+         * @type {<string, String>}
          */
         Game.iconLocations = {
             "rosieIcon":"resources/images/icons/characters/rosie.png",
@@ -487,9 +487,9 @@ class Game {
             "cudgel01Icon":"resources/images/icons/items/cudgel01.png"
         };
         /**
-         * Map of Sound file locations per ID
+         * Map of Sound file locations per ID; one to one
          * eg, {"openDoor":"resources/sounds/Open Door.mp3"}
-         * @type {<String, String>}
+         * @type {<string, String>}
          */
         Game.soundLocations = {
             "openDoor":"resources/sounds/Open Door.mp3",
@@ -497,60 +497,65 @@ class Game {
             "slice":"resources/sounds/Slice.mp3"
         };
         /**
-         * Map of Sounds per ID
-         * @type {<String, BABYLON.Sound>}
+         * Map of Sounds per ID; one to one
+         * @type {<string, BABYLON.Sound>}
          */
         Game.loadedSounds = {};
         /**
-         * Map of Meshes per Texture IDs per Mesh IDs
+         * Map of Meshes per Texture IDs per Mesh IDs; one to many
          * eg, {"ring01":{"ring01Silver":{ring01 Mesh with ring01Silver Texture}, "ring01Gold":{ring01 Mesh with ring01Gold Texture}}, "ring02":{...}}
-         * @type {<String, <String, BABYLON.Mesh>>}
+         * @type {<string, <string, BABYLON.Mesh>>}
          */
         Game.loadedMeshMaterials = {};
         /**
-         * Map of Instanced Meshes per ID
-         * @type {<String, BABYLON.InstancedMesh>}
+         * Map of Instanced Meshes per ID; one to one
+         * @type {<string, BABYLON.InstancedMesh>}
          */
         Game.instancedMeshes = {};
         /**
-         * Map cloned Meshes per ID
-         * @type {<String, BABYLON.Mesh>}
+         * Map cloned Meshes per ID; one to one
+         * @type {<string, BABYLON.Mesh>}
          */
         Game.clonedMeshes = {};
         /**
-         * Map of Meshes that are waiting to be created
-         * @type {<String, <Objects...>>}
+         * Map of meshMaterials to cloned and instanced meshes; one to many
+         * @type {<string, <string, BABYLON.AbstractMesh>>}
          */
-        Game.meshesToCreateCounter = 0;
+        Game.meshMaterialMeshes = {};
+        /**
+         * Map of Meshes that are waiting to be created; one to many
+         * @type {<string, <Objects...>>}
+         */
         Game.meshesToCreate = {};
-        Game.texturesToCreateCounter = 0;
+        Game.meshesToCreateCounter = 0;
         Game.texturesToCreate = {};
-        Game.materialsToCreateCounter = 0;
+        Game.texturesToCreateCounter = 0;
         Game.materialsToCreate = {};
+        Game.materialsToCreateCounter = 0;
         /**
          * Map of Furniture that are waiting to be created
-         * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
          */
         Game.furnitureToCreateCounter = 0;
         Game.furnitureToCreate = {};
         /**
          * Map of Lighting that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<String, <String:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
          */
         Game.lightingToCreateCounter = 0;
         Game.lightingToCreate = {};
         /**
          * Map of Doors that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<String, <String:id, String:name, Forgot:to, String:mesh, String:texture, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, String:name, Forgot:to, String:mesh, String:texture, String:position, String:rotation, String:scaling, object:options>}
          */
         Game.doorsToCreateCounter = 0;
         Game.doorsToCreate = {};
         /**
          * Map of Characters that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<String, <String:id, String:name, String:description, String:icon, Number:age, Number:sex, String:species, String:mesh, String:texture, String:options, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, String:name, String:description, String:icon, Number:age, Number:sex, String:species, String:mesh, String:texture, String:options, String:rotation, String:scaling, object:options>}
          */
         Game.charactersToCreateCounter = 0;
         Game.charactersToCreate = {};
@@ -570,7 +575,7 @@ class Game {
         Game.characterControllers = {};
         Game.itemControllers = {};
 
-        Game.cells = {};
+        Game.playerCells = {};
 
         Game.abstractNodes = {};
 
@@ -729,7 +734,7 @@ class Game {
         Game._finishedConfiguring = false;
 
         Game.player = undefined;
-        Game.cell = undefined;
+        Game.playerCell = undefined;
         Game.castRayTargetIntervalFunction = undefined;
         Game.castRayTargetInterval = 250;
         Game.pointerLockFunction = undefined;
@@ -893,8 +898,8 @@ class Game {
                 Game.hasBackloggedEntities = false;
             }
         }
-        if (Game.cell instanceof Cell && Game.cell.hasBackloggedAdditions) {
-            Game.cell.createBackloggedAdditions();
+        if (Game.playerCell instanceof Cell && Game.playerCell.hasBackloggedAdditions) {
+            Game.playerCell.createBackloggedAdditions();
         }
         if (Client.isOnline()) {
             if (Client.hasPlayerToCreate()) {
@@ -1378,6 +1383,29 @@ class Game {
     }
     static hasInstancedMesh(meshID) {
         return Game.instancedMeshes.hasOwnProperty(meshID);
+    }
+    static addMeshMaterialMeshes(meshID, materialID, childMesh) {
+        if (!Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
+            Game.meshMaterialMeshes[meshID] = {};
+            Game.meshMaterialMeshes[meshID][materialID] = {};
+        }
+        else if (!Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
+            Game.meshMaterialMeshes[meshID][materialID] = {};
+        }
+        Game.meshMaterialMeshes[meshID][materialID][childMesh.id] = childMesh;
+        return 0;
+    }
+    static removeMeshMaterialMeshes(meshID, materialID, childMeshID) {
+        if (!Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
+            return 1;
+        }
+        if (!Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
+            return 1;
+        }
+        if (Game.debugMode) console.log(`Running Game::removeMeshMaterialMeshes(${meshID},${materialID},${childMeshID})`);
+        Game.meshMaterialMeshes[meshID][materialID][childMeshID] = null;
+        delete Game.meshMaterialMeshes[meshID][materialID][childMeshID];
+        return 0;
     }
     static getMeshLocation(meshID) {
         if (Game.meshLocations.hasOwnProperty(meshID)) {
@@ -2088,6 +2116,16 @@ class Game {
         return Game.removeMesh(abstractMesh);
     }
     static removeMesh(abstractMesh) {
+        if (!abstractMesh instanceof BABYLON.AbstractMesh) {
+            return 2;
+        }
+        if (Game.debugMode) console.log(`Running Game::removeMesh(${abstractMesh.id}`);
+        if (Game.meshMaterialMeshes.hasOwnProperty(abstractMesh.name)) {
+            if (Game.meshMaterialMeshes[abstractMesh.name].hasOwnProperty(abstractMesh.material.name)) {
+                abstractMesh = Game.meshMaterialMeshes[abstractMesh.name][abstractMesh.material.name][abstractMesh.id];
+                Game.removeMeshMaterialMeshes(abstractMesh.name, abstractMesh.material.name, abstractMesh.id)
+            }
+        }
         if (abstractMesh instanceof BABYLON.InstancedMesh) {
             delete Game.instancedMeshes[abstractMesh.id];
             abstractMesh.dispose();
@@ -2345,11 +2383,11 @@ class Game {
             if (options["createClone"]) {
                 if (Game.debugMode) console.log("  Creating clone...");
                 mesh = Game.loadedMeshMaterials[meshID][materialID].clone(id);
-                mesh.makeGeometryUnique();
                 mesh.id = id;
                 mesh.material = material;
                 mesh.name = meshID;
                 Game.addClonedMesh(mesh, id);
+                Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
             else {
                 if (Game.debugMode) console.log(`  Creating instance of Mesh:(${meshID}), Material:(${materialID})...`);
@@ -2357,6 +2395,7 @@ class Game {
                 mesh.id = id;
                 mesh.name = meshID;
                 Game.addInstancedMesh(mesh, id);
+                Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
         }
         mesh.isVisible = true;
@@ -3360,8 +3399,11 @@ class Game {
             return 1;
         }
         let mesh = characterController.getMesh();
-        characterController.entity.dispose();
-        characterController.dipose();
+        let entity = characterController.getEntity();
+        characterController.dispose();
+        if (entity instanceof AbstractEntity) {
+            entity.dispose();
+        }
         if (mesh instanceof BABYLON.InstancedMesh) {
             Game.removeMesh(mesh);
         }
@@ -3919,8 +3961,11 @@ class Game {
             itemController = Game.getItemController(itemController);
         }
         let mesh = itemController.getMesh();
-        itemController.entity.dispose();
+        let entity = itemController.getEntity();
         itemController.dispose();
+        if (entity instanceof AbstractEntity) {
+            entity.dispose();
+        }
         if (mesh instanceof BABYLON.InstancedMesh) {
             Game.removeMesh(mesh);
         }
@@ -4808,18 +4853,18 @@ class Game {
         return 1;
     }
     static setCell(id, cell) {
-        Game.cells[id] = cell;
+        Game.playerCells[id] = cell;
         return 0;
     }
     static removeCell(id) {
-        delete Game.cells[id];
+        delete Game.playerCells[id];
         return 0;
     }
     static clearCells() {
-        for (let i in Game.cells) {
-            Game.cells[i].dispose();
+        for (let i in Game.playerCells) {
+            Game.playerCells[i].dispose();
         }
-        Game.cells = {};
+        Game.playerCells = {};
         return 0;
     }
 
@@ -5056,10 +5101,6 @@ class Game {
         Game.instancedItemEntities[id] = instancedItemEntity;
         return 0;
     }
-    static removeItemInstance(id) {
-        delete Game.instancedItemEntities[id];
-        return 0;
-    }
     static clearItemInstances() {
         for (let i in Game.instancedItemEntities) {
             Game.instancedItemEntities[i].dispose();
@@ -5175,6 +5216,30 @@ class Game {
             Game.removeCosmetic(value);
         });
         return 0;
+    }
+    static setPlayerCell(cell) {
+        if (cell instanceof Cell) {}
+        else if (Game.hasCell(cell)) {
+            cell = Game.getCell(cell);
+        }
+        else {
+            return 2;
+        }
+        if (Game.playerCell instanceof Cell) {
+            let meshesToRemove = cell.meshIDDifference(Game.playerCell);
+            meshesToRemove.forEach(function(meshID) {
+                for (let i in Game.meshMaterialMeshes) {
+                    if (i == meshID) {
+                        for (let j in Game.meshMaterialMeshes[i]) {
+                            for (let k in Game.meshMaterialMeshes[i][j]) {
+                                Game.removeMesh(Game.meshMaterialMeshes[i][j][k]);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        Game.playerCell = cell;
     }
     static setDebugMode(debugMode) {
         Game.debugMode = debugMode == true;

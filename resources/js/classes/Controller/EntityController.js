@@ -340,15 +340,15 @@ class EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.animations.forEach(function(animData) {
-            animData.dipose();
-        });
+        this.propertiesChanged = false;
         this.animations.clear();
         if (Game.player.getController().targetController == this) {
             Game.clearPlayerTarget()
         }
         this.clearTargetedBy();
-        this.entity.removeController();
+        if (this.hasEntity) {
+            this.entity.removeController();
+        }
         if (this.mesh instanceof BABYLON.AbstractMesh) {
             Game.removeMeshToEntityController(this.mesh.id);
             Game.removeMesh(this.mesh);
@@ -360,7 +360,6 @@ class EntityController {
         for (var _var in this) {
             this[_var] = null;
         }
-        this.propertiesChanged = false;
         Game.removeEntityController(this.id);
         return null;
     }

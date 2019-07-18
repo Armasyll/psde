@@ -10,8 +10,8 @@ class Entity extends AbstractEntity {
     constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItem", entityType = EntityEnum.ENTITY) {
         super(id, name, description, iconID);
         this.entityType = entityType;;
-        this.weight = new BoundedNumber(1, 0, Number.MAX_SAFE_INTEGER);
-        this.price = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER);
+        this.weight = 0;
+        this.price = 0;
         this.health = new BoundedNumber(100, 0, 100);
         this.meshID = "missingMesh";
         this.textureID = "missingTexture";
@@ -25,19 +25,19 @@ class Entity extends AbstractEntity {
     }
 
     setWeight(weight) {
-        this.weight.set(weight);
+        this.weight = weight;
         return this;
     }
     getWeight() {
-        return this.weight.getValue();
+        return this.weight;
     }
 
     setPrice(price) {
-        this.price.set(price);
+        this.price = price;
         return this;
     }
     getPrice() {
-        return this.price.getValue();
+        return this.price;
     }
 
     setHealth(health) {
@@ -286,9 +286,6 @@ class Entity extends AbstractEntity {
         return new InstancedEntity(id, this);
     }
     dispose() {
-        this.weight.dispose();
-        this.height.dispose();
-        this.price.dispose();
         Game.removeEntity(this.id);
         super.dispose();
         return undefined;

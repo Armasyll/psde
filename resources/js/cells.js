@@ -1,12 +1,11 @@
 Game.generateApartment = function() {
     console.log("Initializing apartment...");
-
+    Game.loadMaterial("stoneMaterial01", "stoneTexture01", "stoneTexture01-NORMAL");
     Game.loadTexture("greenWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("yellowWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("pinkWallpaperPlainWood", {"hasAlpha":true});
     Game.loadTexture("greenWallpaper");
     Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
-    Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
 
     let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
     skybox.material = new BABYLON.SkyMaterial("skyMaterial", Game.scene);
@@ -734,43 +733,42 @@ Game.generateApartment = function() {
 }
 
 Game.generateWallScene = function() {
-    Game.loadMaterial("stoneTexture01", "stoneTexture01", "stoneTexture01-NORMAL");
+    Game.loadMaterial("stoneMaterial01", "stoneTexture01", "stoneTexture01-NORMAL");
+    Game.setLoadedMesh("floor16x16", BABYLON.MeshBuilder.CreateTiledGround("floor16x16", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene));
 
-    let cell = new Cell("networkTestCell");
-    Game.cell = cell;
-    cell.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
-    cell.setSkybox(new BABYLON.SkyMaterial("skyMaterial", Game.scene));
-    cell.skyboxMaterial.backFaceCulling = false;
-    cell.skyboxMaterial.azimuth = 0;
-    cell.skyboxMaterial.inclination = 0;
+    let networkTestCell = new Cell("networkTestCell");
+    networkTestCell.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+    networkTestCell.setSkybox(new BABYLON.SkyMaterial("skyMaterial", Game.scene));
+    networkTestCell.skyboxMaterial.backFaceCulling = false;
+    networkTestCell.skyboxMaterial.azimuth = 0;
+    networkTestCell.skyboxMaterial.inclination = 0;
 
-    Game.setLoadedMesh("floor16x16", BABYLON.MeshBuilder.CreateTiledGround("stoneFloor", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene));
-    cell.addMesh("stoneFloor", "floor16x16", "stoneTexture01", new BABYLON.Vector3(-5, 0, -25));
+    networkTestCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", new BABYLON.Vector3(-5, 0, -25));
 
-    cell.addCollidableMesh("greenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -22), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -22), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("pinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -22), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("greenDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -20), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("secondGreenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-1, 0, -20), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-3, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Third green wall
-    cell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-5, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Forth green wall
-    cell.addCollidableMesh("yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -20), new BABYLON.Vector3(0, 180, 0));
-    cell.addCollidableMesh("secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(7, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("greenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -22), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -22), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("pinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -22), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("greenDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(1, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("secondGreenWall", "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-1, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-3, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Third green wall
+    networkTestCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", new BABYLON.Vector3(-5, 0, -20), new BABYLON.Vector3(0, 180, 0)); // Forth green wall
+    networkTestCell.addCollidableMesh("yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", new BABYLON.Vector3(5, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCollidableMesh("secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", new BABYLON.Vector3(7, 0, -20), new BABYLON.Vector3(0, 180, 0));
     
-    cell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(1, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:true});
-    cell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(3, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:false});
-    cell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(5, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {open:true, opensInward:true});
+    networkTestCell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(1, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:true});
+    networkTestCell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(3, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:false});
+    networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(5, 0, -21), new BABYLON.Vector3(0, 180, 0), undefined, {open:true, opensInward:true});
     
-    cell.addCollidableMesh(undefined, "stick01", "stick01", new BABYLON.Vector3(0, 0, -17), undefined, new BABYLON.Vector3(10, 10, 10));
+    networkTestCell.addCollidableMesh(undefined, "stick01", "stick01", new BABYLON.Vector3(0, 0, -17), undefined, new BABYLON.Vector3(10, 10, 10));
     
-    cell.addCollidableMesh(undefined, "stopSign", "stopSign", new BABYLON.Vector3(3, 0, -14));
+    networkTestCell.addCollidableMesh(undefined, "stopSign", "stopSign", new BABYLON.Vector3(3, 0, -14));
     
-    cell.addLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(6, 0, -17));
+    networkTestCell.addLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(6, 0, -17));
     
-    cell.addCharacter("rinehart", Game.getCharacterEntity("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCharacter("rinehart", Game.getCharacterEntity("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
 
-    cell.addItem("cheeseWedgeInstance01", "cheeseWedge", new BABYLON.Vector3(3, 0, -17));
-    cell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", new BABYLON.Vector3(3, 0, -17));
-    cell.createBackloggedAdditions();
+    networkTestCell.addItem("cheeseWedgeInstance01", "cheeseWedge", new BABYLON.Vector3(3, 0, -17));
+    networkTestCell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", new BABYLON.Vector3(3, 0, -17));
+    Game.setPlayerCell(networkTestCell);
 }

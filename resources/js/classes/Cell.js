@@ -36,6 +36,8 @@ class Cell {
         this.hasBackloggedCharacters = false;
         this.backloggedItems = [];
         this.hasBackloggedItems = false;
+        this.meshes = new Set();
+        this.collisionMeshes = new Set();
 
         Game.setCell(this.id, this);
     }
@@ -107,8 +109,11 @@ class Cell {
     }
 
     addCollisionWall(...parameters) {
-        if (Game.cell == this) {
-            Game.createCollisionWall(...parameters);
+        if (Game.playerCell == this) {
+            let mesh = Game.createCollisionWall(...parameters);
+            if (mesh instanceof BABYLON.AbstractMesh) {
+                this.collisionMeshes.add(mesh.id);
+            }
             return 0;
         }
         this.backloggedCollisionWalls.push(parameters);
@@ -117,8 +122,11 @@ class Cell {
         return 1;
     }
     addCollisionPlane(...parameters) {
-        if (Game.cell == this) {
-            Game.createCollisionPlane(...parameters);
+        if (Game.playerCell == this) {
+            let mesh = Game.createCollisionPlane(...parameters);
+            if (mesh instanceof BABYLON.AbstractMesh) {
+                this.collisionMeshes.add(mesh.id);
+            }
             return 0;
         }
         this.backloggedCollisionPlanes.push(parameters);
@@ -127,8 +135,11 @@ class Cell {
         return 1;
     }
     addCollisionRamp(...parameters) {
-        if (Game.cell == this) {
-            Game.createCollisionRamp(...parameters);
+        if (Game.playerCell == this) {
+            let mesh = Game.createCollisionRamp(...parameters);
+            if (mesh instanceof BABYLON.AbstractMesh) {
+                this.collisionMeshes.add(mesh.id);
+            }
             return 0;
         }
         this.backloggedCollisionRamps.push(parameters);
@@ -148,8 +159,13 @@ class Cell {
      * @return {number} Integer status code
      */
     addMesh(...parameters) {
+        if (Game.debugMode) console.log(`Running Cell(${this.id}).addMesh(${parameters})`);
         parameters = Game.filterCreateMesh(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number") {
+            return 2;
+        }
+        this.meshes.add(parameters[1]);
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1])) {
                 Game.createMesh(...parameters);
                 return 0;
@@ -176,7 +192,11 @@ class Cell {
      */
     addCollidableMesh(...parameters) {
         parameters = Game.filterCreateMesh(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number") {
+            return 2;
+        }
+        this.meshes.add(parameters[1]);
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1])) {
                 Game.createCollidableMesh(...parameters);
                 return 0;
@@ -203,7 +223,10 @@ class Cell {
      */
     addCharacter(...parameters) {
         parameters = Game.filterCreateCharacterInstance(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number" || !(parameters[1] instanceof CharacterEntity)) {
+            return 2;
+        }
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 Game.createCharacterInstance(...parameters);
                 return 0;
@@ -232,7 +255,11 @@ class Cell {
      */
     addDoor(...parameters) {
         parameters = Game.filterCreateDoor(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number") {
+            return 2;
+        }
+        this.meshes.add(parameters[3]);
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[3])) {
                 Game.createDoor(...parameters);
                 return 0;
@@ -258,7 +285,11 @@ class Cell {
      */
     addFurniture(...parameters) {
         parameters = Game.filterCreateFurnitureInstance(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number" || !(parameters[1] instanceof FurnitureEntity)) {
+            return 2;
+        }
+        this.meshes.add(parameters[1].getMeshID());
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 Game.createFurnitureInstance(...parameters);
                 return 0;
@@ -287,7 +318,11 @@ class Cell {
      */
     addLighting(...parameters) {
         parameters = Game.filterCreateLighting(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number") {
+            return 2;
+        }
+        this.meshes.add(parameters[2]);
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[2])) {
                 Game.createLighting(...parameters);
                 return 0;
@@ -313,7 +348,11 @@ class Cell {
      */
     addItem(...parameters) {
         parameters = Game.filterCreateItemInstance(...parameters);
-        if (Game.cell == this) {
+        if (typeof parameters == "number" || !(parameters[1] instanceof ItemEntity)) {
+            return 2;
+        }
+        this.meshes.add(parameters[1].getMeshID());
+        if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 Game.createItemInstance(...parameters);
                 return 0;
@@ -396,6 +435,24 @@ class Cell {
                 array.clear();
             }
         }
+    }
+    getMeshIDs() {
+        return this.meshes;
+    }
+    getCollisionMeshIDs() {
+        return this.collisionMeshes;
+    }
+    meshIDDifference(cell) {
+        return new Set([cell.getMeshIDs()].filter(meshID => !this.meshes.has(meshID)));
+    }
+    meshIDIntersection(cell) {
+        return new Set([cell.getMeshIDs()].filter(meshID => this.meshes.has(meshID)));
+    }
+    static MeshIDDifference(cellA, cellB) {
+        return cellA.meshIDDifference(cellB);
+    }
+    static MeshIDIntersection(cellA, cellB) {
+        return cellA.meshIDIntersection(cellB);
     }
 
     dispose() {
