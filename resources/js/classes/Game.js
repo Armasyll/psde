@@ -575,7 +575,7 @@ class Game {
         Game.characterControllers = {};
         Game.itemControllers = {};
 
-        Game.playerCells = {};
+        Game.cells = {};
 
         Game.abstractNodes = {};
 
@@ -1273,6 +1273,7 @@ class Game {
             return 0;
         }
         else if (Game.hasAvailableMesh(meshID)) {
+            if (Game.debugMode) console.log(`Running Game::loadMesh(${meshID})`);
             switch (meshID) {
                 case "aardwolfM":
                 case "aardwolfF":
@@ -3327,6 +3328,28 @@ class Game {
         if (id.length == 0) {
             id = characterEntity.getID();
         }
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
+        }
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            if (typeof rotation == "number") {
+                rotation = new BABYLON.Vector3(0, rotation, 0);
+            }
+            else {
+                rotation = Tools.filterVector(rotation);
+            }
+        }
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            if (typeof scaling == "number") {
+                scaling = new BABYLON.Vector3(scaling, scaling, scaling);
+            }
+            else {
+                scaling = Tools.filterVector(scaling);
+            }
+        }
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
+        }
         if (typeof options != "object") {
             options = {};
         }
@@ -4844,27 +4867,27 @@ class Game {
     }
 
     static hasCell(id) {
-        return this.cells.hasOwnProperty(id);
+        return Game.cells.hasOwnProperty(id);
     }
     static getCell(id) {
         if (Game.hasCell(id)) {
-            return this.cells[id];
+            return Game.cells[id];
         }
         return 1;
     }
     static setCell(id, cell) {
-        Game.playerCells[id] = cell;
+        Game.cells[id] = cell;
         return 0;
     }
     static removeCell(id) {
-        delete Game.playerCells[id];
+        delete Game.cells[id];
         return 0;
     }
     static clearCells() {
-        for (let i in Game.playerCells) {
-            Game.playerCells[i].dispose();
+        for (let i in Game.cells) {
+            Game.cells[i].dispose();
         }
-        Game.playerCells = {};
+        Game.cells = {};
         return 0;
     }
 
@@ -5240,6 +5263,41 @@ class Game {
             });
         }
         Game.playerCell = cell;
+        return 0;
+    }
+    static unloadCell(cell) {
+        if (!(cell instanceof Cell)) {
+            if (Game.hasCell(cell)) {
+                cell = Game.getCell(cell);
+            }
+            else {
+                return 2;
+            }
+        }
+        cell.getMeshIDs().forEach(function(meshID) {
+            for (let i in Game.meshMaterialMeshes) {
+                if (i == meshID) {
+                    for (let j in Game.meshMaterialMeshes[i]) {
+                        for (let k in Game.meshMaterialMeshes[i][j]) {
+                            Game.removeMesh(Game.meshMaterialMeshes[i][j][k]);
+                        }
+                    }
+                }
+            }
+        });
+        return 0;
+    }
+    static loadCell(cell) {
+        if (!(cell instanceof Cell)) {
+            if (Game.hasCell(cell)) {
+                cell = Game.getCell(cell);
+            }
+            else {
+                return 2;
+            }
+        }
+        cell.createBackloggedAdditions();
+        return 0;
     }
     static setDebugMode(debugMode) {
         Game.debugMode = debugMode == true;

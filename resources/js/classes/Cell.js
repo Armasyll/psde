@@ -222,7 +222,12 @@ class Cell {
      * @return {number} Integer status code
      */
     addCharacter(...parameters) {
-        parameters = Game.filterCreateCharacterInstance(...parameters);
+        if (this.backloggedCharacters.indexOf(parameters[0]) != -1) {
+            return 1;
+        }
+        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
+            parameters = Game.filterCreateCharacterInstance(...parameters);
+        }
         if (typeof parameters == "number" || !(parameters[1] instanceof CharacterEntity)) {
             return 2;
         }
@@ -254,7 +259,12 @@ class Cell {
      * @return {number} Integer status code
      */
     addDoor(...parameters) {
-        parameters = Game.filterCreateDoor(...parameters);
+        if (this.backloggedDoors.indexOf(parameters[0]) != -1) {
+            return 1;
+        }
+        if (typeof parameters[8] != "object" || !parameters[8].hasOwnProperty("filtered")) {
+            parameters = Game.filterCreateDoor(...parameters);
+        }
         if (typeof parameters == "number") {
             return 2;
         }
@@ -284,7 +294,12 @@ class Cell {
      * @return {number} Integer status code
      */
     addFurniture(...parameters) {
-        parameters = Game.filterCreateFurnitureInstance(...parameters);
+        if (this.backloggedFurniture.indexOf(parameters[0]) != -1) {
+            return 1;
+        }
+        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
+            parameters = Game.filterCreateFurnitureInstance(...parameters);
+        }
         if (typeof parameters == "number" || !(parameters[1] instanceof FurnitureEntity)) {
             return 2;
         }
@@ -317,7 +332,12 @@ class Cell {
      * @returns {number} Integer status code
      */
     addLighting(...parameters) {
-        parameters = Game.filterCreateLighting(...parameters);
+        if (this.backloggedLighting.indexOf(parameters[0]) != -1) {
+            return 1;
+        }
+        if (typeof parameters[8] != "object" || !parameters[8].hasOwnProperty("filtered")) {
+            parameters = Game.filterCreateLighting(...parameters);
+        }
         if (typeof parameters == "number") {
             return 2;
         }
@@ -347,19 +367,18 @@ class Cell {
      * @returns {number} Integer status code
      */
     addItem(...parameters) {
-        parameters = Game.filterCreateItemInstance(...parameters);
-        if (typeof parameters == "number" || !(parameters[1] instanceof ItemEntity)) {
+        if (this.backloggedItems.indexOf(parameters[0]) != -1) {
+            return 1;
+        }
+        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
+            parameters = Game.filterCreateItemInstance(...parameters);
+        }
+        if (typeof parameters == "number" || !(parameters[1] instanceof InstancedItemEntity)) {
             return 2;
         }
-        this.meshes.add(parameters[1].getMeshID());
         if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
-                Game.createItemInstance(...parameters);
-                return 0;
-            }
-            else {
-                Game.loadMesh(parameters[1].getMeshID());
-            }
+            Game.createItemInstance(...parameters);
+            return 0;
         }
         this.backloggedItems.push(parameters);
         this.hasBackloggedItems = true;
