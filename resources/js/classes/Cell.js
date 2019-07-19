@@ -49,11 +49,11 @@ class Cell {
         return this.cellType;
     }
     setType(cellType) {
-        if (cellTypeEnum.properties.hasOwnProperty(cellType)) {
+        if (CellTypeEnum.properties.hasOwnProperty(cellType)) {
             this.cellType = cellType;
         }
         else {
-            this.cellType = cellType.NONE;
+            this.cellType = CellTypeEnum.NONE;
         }
         return 0;
     }
