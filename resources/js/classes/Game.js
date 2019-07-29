@@ -4462,7 +4462,7 @@ class Game {
         if (!(subEntity instanceof CharacterEntity)) {
             return 2;
         }
-        if (subEntity.getController().isAttacking()) {
+        if (subEntity.getController().isAttacking) {
             return 1;
         }
         if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {

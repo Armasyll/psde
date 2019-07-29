@@ -15,12 +15,10 @@ class CharacterController extends EntityController {
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
         this.groundRay = new BABYLON.Ray(mesh.position, mesh.position.add(BABYLON.Vector3.Down()), 0.01);
-        this.gravityScale = 1.0;
-        this._gravity = -Game.scene.gravity.y * this.gravityScale;
-        this.minSlopeLimit = 30;
-        this.maxSlopeLimit = 50;
-        this._minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
-        this._maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
+        this._gravityScale = 1.0;
+        this._gravity = -Game.scene.gravity.y * this._gravityScale;
+        this._minSlopeLimit = BABYLON.Tools.ToRadians(30);
+        this._maxSlopeLimit = BABYLON.Tools.ToRadians(50);
         this._stepOffset = 0.25;
         this._vMoveTot = 0;
         this._vMovStartPos = BABYLON.Vector3.Zero();
@@ -41,25 +39,31 @@ class CharacterController extends EntityController {
         this._groundFrameMax = 10;
         this.isGrounded = false;
         this.isFalling = false;
+        this.isStanding = true;
         this.isCrouching = false;
+        this.isSitting = false;
+        this.isLyingDown = false;
         this.isClimbing = false; // Ladder
-        this.isProne = false;
-        this.isWalking = false;
-        this.isRunning = false;
-        this.isSprinting = false;
-        this._isAttacking = false; // While crouching, walking, or running
+        this.isWalking = false; // While Standing or Crouching
+        this.isRunning = false; // While Standing
+        this.isSprinting = false; // While Standing
+        this.isAttacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
         this.isAlive = true;
+        this.canTransition = true;
 
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
+        this.walkAnim = null;
         this.idle = new AnimData("idle");
         this.idleJump = new AnimData("idleJump");
+        this.idleAnim = null;
         this.fall = new AnimData("fall");
         this.fallLong = new AnimData("fallLong");
         this.land = new AnimData("land");
         this.landHard = new AnimData("landHard");
         this.rollForward = new AnimData("rollForward");
         this.run = new AnimData("run");
+        this.runAnim = null;
         this.runJump = new AnimData("runJump");
         this.turnLeft = new AnimData("turnLeft");
         this.turnRight = new AnimData("turnRight");
@@ -83,13 +87,13 @@ class CharacterController extends EntityController {
         this.death = new AnimData("death");
         this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
+        this.setIdleAnim("90_idle01", 1, true);
+        this.setIdleJumpAnim("95_jump", 1, false);
         this.setWalkAnim("93_walkingKneesBent", 1.2, true);
         this.setRunAnim("94_runningKneesBent", 2, true);
         this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
-        this.setIdleAnim("90_idle01", 1, true);
         this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
-        this.setIdleJumpAnim("95_jump", 1, false);
         this.setRunJumpAnim("95_jump", 1, false);
         this.setAnimData(this.attackPunchRH, "71_punch01", 1, false, false);
         this.setAnimData(this.attackRunningPunchRH, "71_runningPunch01", 1, false, false);
@@ -101,6 +105,9 @@ class CharacterController extends EntityController {
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.checkAnims(this.skeleton);
             this._isAnimated = true;
+            this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
+            this.skeleton.animationPropertiesOverride.enableBlending = true;
+            this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
         }
         else {
             this._isAnimated = false;
@@ -124,14 +131,18 @@ class CharacterController extends EntityController {
         this.generateOrganMeshes();
         this.generateCosmeticMeshes();
         this.generateEquippedMeshes();
+        /*
+        Standing Idle, Standing Walk, Standing Run
+        Crouching Idle, Crouching Walk
+        Standing Idle to Crouching Idle
+        Crouching Idle to Standing Idle
+        */
         Game.setCharacterController(this.id, this);
     }
 
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
-        this.minSlopeLimit = minSlopeLimit;
-        this.maxSlopeLimit = maxSlopeLimit;
-        this._minSlopeLimitRads = BABYLON.Tools.ToRadians(this.minSlopeLimit);
-        this._maxSlopeLimitRads = BABYLON.Tools.ToRadians(this.maxSlopeLimit);
+        this._minSlopeLimit = this.minSlopeLimitDegrees;
+        this._maxSlopeLimit = this.maxSlopeLimitDegrees;
     }
     setStepOffset(stepOffset) {
         this._stepOffset = stepOffset;
@@ -146,14 +157,18 @@ class CharacterController extends EntityController {
         this.jumpSpeed = number;
     }
     setGravityScale(number) {
-        this.gravityScale = number;
-        this._gravity = -Game.gravity.y * this.gravityScale;
+        this._gravityScale = number;
+        this._gravity = -Game.gravity.y * this._gravityScale;
     }
     setWalkAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.walk, rangeName, rate, loop, standalone);
     }
     setRunAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.run, rangeName, rate, loop, standalone);
+        /*if (this.run instanceof AnimData && this.run.exist) {
+            this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.run.from, this.run.to, 0.0, this.run.loop, this.run.rate);
+            //this.runAnim.syncWith(this.idleAnim);
+        }*/
     }
     setWalkBackAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.walkBack, rangeName, rate, loop, standalone);
@@ -163,6 +178,9 @@ class CharacterController extends EntityController {
     }
     setIdleAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.idle, rangeName, rate, loop, standalone);
+        /*if (this.idle instanceof AnimData && this.idle.exist) {
+            this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 0.0, this.idle.loop, this.idle.rate);
+        }*/
     }
     setIdleJumpAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.idleJump, rangeName, rate, loop, standalone);
@@ -201,10 +219,10 @@ class CharacterController extends EntityController {
         if (this.getParent() != undefined) {
             this.removeParent();
         }
-        this._avStartPos.copyFrom(this.mesh.position);
         let anim = this.idle;
         let dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.isFalling) {
+            this._avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
@@ -212,6 +230,7 @@ class CharacterController extends EntityController {
             anim = this.doJump(dt);
         }
         else if (this.anyMovement() || this.isFalling) {
+            this._avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
@@ -228,9 +247,49 @@ class CharacterController extends EntityController {
             });
         }
         else if (!this.isFalling) {
+            this._avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             anim = this.doIdle(dt);
         }
+        /*if (anim == this.idle) {
+            if (this.idleAnim != null) {
+                this.idleAnim.weight = 1.0;
+            }
+            if (this.walkAnim != null) {
+                this.walkAnim.weight = 0.0;
+            }
+            if (this.runAnim != null) {
+                this.runAnim.weight = 0.0;
+            }
+            this.prevAnim = this.idle;
+        }
+        else if (anim == this.walk) {
+            if (this.idleAnim != null) {
+                this.idleAnim.weight = 0.0001;
+            }
+            if (this.walkAnim != null) {
+                this.walkAnim.weight = 1.0;
+            }
+            if (this.runAnim != null) {
+                this.runAnim.weight = 0.0;
+            }
+            this.prevAnim = this.walk;
+        }
+        else if (anim == this.run) {
+            if (this.idleAnim != null) {
+                this.idleAnim.weight = 0.0001;
+            }
+            if (this.walkAnim != null) {
+                this.walkAnim.weight = 0.0;
+            }
+            if (this.runAnim != null) {
+                this.runAnim.weight = 1.0;
+            }
+            this.prevAnim = this.run;
+        }
+        else {
+            this.beginAnimation(anim);
+        }*/
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
             Game.updateCameraTarget();
@@ -278,7 +337,7 @@ class CharacterController extends EntityController {
             else if (this.mesh.position.y < this._jumpStartPosY) {
                 let actDisp = this.mesh.position.subtract(this._avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
+                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
                         this.endJump();
                     }
                 }
@@ -309,19 +368,31 @@ class CharacterController extends EntityController {
         }
         else {
             this._moveVector.set(0,0,0);
-            this.isWalking = false;
-            this.isRunning = false;
-            this.isSprinting = false;
             let dist = 0;
             let atan = -Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90);
-            if (this.key.shift) {
-                dist = this.sprintSpeed * dt;
+            if (this.isStanding) {
+                if (this.key.shift) {
+                    dist = this.sprintSpeed * dt;
+                    this.isWalking = false;
+                    this.isRunning = false;
+                    this.isSprinting = true;
+                    moving = true;
+                }
+                else {
+                    dist = this.runSpeed * dt;
+                    anim = this.run;
+                    this.isWalking = false;
+                    this.isRunning = true;
+                    this.isSprinting = false;
+                    moving = true;
+                }
             }
-            else {
-                dist = this.runSpeed * dt;
-                anim = this.run;
-                this.isRunning = true;
-                moving = true;
+            else if (this.isCrouching) {
+                dist = this.crouchSpeed * dt;
+                anim = this.crouch;
+                this.isWalking = true;
+                this.isRunning = false;
+                this.isSprinting = false;
             }
             if (this.key.forward) {
                 if (this.key.strafeRight && !this.key.strafeLeft) {
@@ -377,7 +448,7 @@ class CharacterController extends EntityController {
             if (this.mesh.position.y > this._avStartPos.y) {
                 let actDisp = this.mesh.position.subtract(this._avStartPos);
                 let slope = Tools.verticalSlope(actDisp);
-                if (slope >= this._maxSlopeLimitRads) {
+                if (slope >= this._maxSlopeLimit) {
                     if (this._stepOffset > 0) {
                         if (this._vMoveTot == 0) {
                             this._vMovStartPos.copyFrom(this._avStartPos);
@@ -396,7 +467,7 @@ class CharacterController extends EntityController {
                 }
                 else {
                     this._vMoveTot = 0;
-                    if (slope > this._minSlopeLimitRads) {
+                    if (slope > this._minSlopeLimit) {
                         this._fallFrameCount = 0;
                         this.isFalling = false;
                     }
@@ -408,7 +479,7 @@ class CharacterController extends EntityController {
             else if ((this.mesh.position.y) < this._avStartPos.y) {
                 let actDisp = this.mesh.position.subtract(this._avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
-                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
+                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
                         this.endFreeFall();
                     }
                     else {
@@ -467,7 +538,7 @@ class CharacterController extends EntityController {
         else if (this.mesh.position.y < this._avStartPos.y) {
             let actDisp = this.mesh.position.subtract(this._avStartPos);
             if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                if (Tools.verticalSlope(actDisp) <= this._minSlopeLimitRads) {
+                if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
                     this.groundIt();
                     this.mesh.position.copyFrom(this._avStartPos);
                 }
@@ -594,11 +665,11 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this._isAttacking) {
+        if (this.isAttacking) {
             return false;
         }
-        this._isAttacking = true;
-        setTimeout(() => {this._isAttacking = false;}, 800);
+        this.isAttacking = true;
+        setTimeout(() => {this.isAttacking = false;}, 800);
         if (this.isRunning) {
             for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
                 Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
@@ -615,11 +686,11 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this._isAttacking) {
+        if (this.isAttacking) {
             return false;
         }
-        this._isAttacking = true;
-        setTimeout(() => {this._isAttacking = false;}, 800);
+        this.isAttacking = true;
+        setTimeout(() => {this.isAttacking = false;}, 800);
         for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
         }
@@ -637,6 +708,10 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
+        this.isStanding = false;
+        this.isCrouching = false;
+        this.isSitting = false;
+        this.isLyingDown = true;
         this.setLocked(true);
         this.beginAnimation(this.lieDown, () => {this.setLocked(false)});
         return true;
@@ -645,17 +720,40 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
+        this.isStanding = false;
+        this.isCrouching = false;
+        this.isSitting = true;
+        this.isLyingDown = false;
         this.setLocked(true);
         this.beginAnimation(this.sitDown, () => {this.setLocked(false)});
         return true;
     }
+    doStand(dt) {
+        if (this.isStanding) {
+            return true;
+        }
+        this.isStanding = true;
+        this.isCrouching = false;
+        this.isSitting = false;
+        this.isLyingDown = false;
+        this.setLocked(true);
+        this.beginAnimation(this.stand, () => {this.setLocked(false)});
+    }
+    doCrouch(dt) {
+        if (this.isCrouching) {
+            return this;
+        }
+        this.isStanding = false;
+        this.isCrouching = true;
+        this.isSitting = false;
+        this.isLyingDown = false;
+        this.setLocked(true);
+        this.beginAnimation(this.crouch, () => {this.setLocked(false)});
+    }
 
     setAttacking(bool = true) {
-        this._isAttacking = bool == true;
-        console.log(`running setAttacking(${this._isAttacking ? "true" : "false"})`);
-    }
-    isAttacking() {
-        return this._isAttacking;
+        this.isAttacking = bool == true;
+        console.log(`running setAttacking(${this.isAttacking ? "true" : "false"})`);
     }
     hasTarget() {
         return this.targetController instanceof EntityController;
