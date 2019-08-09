@@ -30,6 +30,7 @@ class AbstractEntity {
         this.enabled = true;
         this.locked = false;
         this.essential = false;
+        this.traits = new Set();
         Game.setAbstractEntity(this.id, this);
     }
 
@@ -212,6 +213,24 @@ class AbstractEntity {
         this.setHealth(number);
         this.living = true;
         return 0;
+    }
+
+    addTrait(trait) {
+        this.traits.add(trait);
+        return 0;
+    }
+    removeTrait(trait) {
+        this.traits.delete(trait);
+        return 0;
+    }
+    applyTraits() { // TODO: this
+        this.traits.forEach((trait) => {
+            for (let modifier in trait.modifiers) {
+                if (this.hasOwnProperty(modifier)) {
+                    this[modifier] = trait.modifiers[modifier](this[modifier]);
+                }
+            }
+        });
     }
 
     dispose() {

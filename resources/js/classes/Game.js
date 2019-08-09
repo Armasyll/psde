@@ -579,6 +579,8 @@ class Game {
 
         Game.abstractNodes = {};
 
+        Game.traits = {};
+
         Game.abstractEntities = {};
 
         Game.entities = {};
@@ -798,11 +800,11 @@ class Game {
 
         Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = function(e) {
-            console.log(e.data);
+            //console.log(e.data);
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
         Game.entityLocRotWorker.onmessage = function(e) {
-            console.log(e.data);
+            //console.log(e.data);
         }
         Game.gameTimeMultiplier = 10;
         Game.roundTime = 6;
@@ -820,6 +822,7 @@ class Game {
             if (Game._filesToLoad == 0) {
                 if (!Game._finishedInitializing) {
                     if (Game.debugMode) console.log("Finished loading assets.");
+                    Game.importTraits();
                     Game.importItems();
                     Game.importCosmetics();
                     Game.importFurniture();
@@ -1462,6 +1465,9 @@ class Game {
         };
         document.body.appendChild(script);
         return 0;
+    }
+    static importTraits() {
+        return Game.importScript("resources/js/traits.js");
     }
     static importItems() {
         return Game.importScript("resources/js/items.js");
@@ -3030,6 +3036,28 @@ class Game {
             return false;
         }
         return Game.characterControllers.hasOwnProperty(id);
+    }
+    /**
+     * Tries to return a Trait based on its ID
+     * @param {string} id Trait ID
+     * @returns {(Trait|number)} A Trait or an integer status code
+     */
+    static getTrait(id) {
+        if (Game.hasTrait(id)) {
+            return Game.traits[id];
+        }
+        return 2;
+    }
+    /**
+     * Whether or not a Trait exists
+     * @param {string} id Trait ID
+     * @returns {boolean}
+     */
+    static hasTrait(id) {
+        if (typeof id != "string") {
+            return false;
+        }
+        return Game.traits.hasOwnProperty(id);
     }
     /**
      * Tries to return an Entity based on its ID
@@ -4904,6 +4932,11 @@ class Game {
             Game.abstractNodes[i].dispose();
         }
         Game.abstractNodes = {};
+        return 0;
+    }
+
+    static setTrait(id, trait) {
+        Game.traits[id] = trait;
         return 0;
     }
 
