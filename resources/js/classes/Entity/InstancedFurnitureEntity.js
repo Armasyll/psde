@@ -35,12 +35,8 @@ class InstancedFurnitureEntity extends InstancedEntity {
         return this;
     }
 
-    clone(_id) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
-        }
-        return new InstancedFurnitureEntity(_id, this.entity, this.owner);
+    clone(id = "") {
+        return new InstancedFurnitureEntity(id, this.entity, this.owner);
     }
     dispose() {
         Game.removeFurnitureInstance(this.id);

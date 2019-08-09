@@ -127,10 +127,6 @@ class ClothingEntity extends EquipmentEntity {
      * @return {ClothingEntity}     new ClothingEntity
      */
     clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
         let clothingEntity = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
         clothingEntity.availableActions = Object.assign({}, this.availableActions);
@@ -153,13 +149,13 @@ class ClothingEntity extends EquipmentEntity {
      * @return {InstancedClothingEntity}     new InstancedClothingEntity
      */
     createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedClothingEntity(id, this);
+        let instance = new InstancedClothingEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
     }
 	dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         this.physicalProtection.dispose();
         this.magickProtection.dispose();
         Game.removeClothingEntity(this.id);

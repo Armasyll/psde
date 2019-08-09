@@ -6,13 +6,13 @@ class KeyEntity extends ItemEntity {
 
         Game.setKeyEntity(this.id, this);
     }
-    
+
     dispose() {
-        delete Game.keyEntities[this.id];
+        this.setLocked(true);
+        this.setEnabled(false);
+        Game.removeKeyEntity(this.id);
+        delete this.itemType;
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
     }
 }

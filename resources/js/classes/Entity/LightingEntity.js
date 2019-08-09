@@ -18,7 +18,7 @@ class LightingEntity extends FurnitureEntity {
     }
 
     on() {
-        if (this._isLocked) {
+        if (this.locked) {
             return this.lightOn;
         }
         this.lightOn = true;
@@ -29,7 +29,7 @@ class LightingEntity extends FurnitureEntity {
         }
     }
     off() {
-        if (this._isLocked) {
+        if (this.locked) {
             return this.lightOn;
         }
         this.lightOn = false;
@@ -40,7 +40,7 @@ class LightingEntity extends FurnitureEntity {
         }
     }
     toggle() {
-        if (this._isLocked) {
+        if (this.locked) {
             return this.lightOn;
         }
         if (this.lightOn) {
@@ -54,14 +54,12 @@ class LightingEntity extends FurnitureEntity {
     }
     
     clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
         return new LightingEntity(id, this.name, this.description, this.icon);
     }
     dispose() {
         this.off();
+        this.setLocked(true);
+        this.setEnabled(false);
         Game.removeLightingEntity(this.id);
         super.dispose();
         return undefined;

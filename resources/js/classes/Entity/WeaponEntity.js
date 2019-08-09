@@ -367,14 +367,14 @@ class WeaponEntity extends EquipmentEntity {
         return this.weaponType;
     }
     addWeaponProperty(weaponProperty) {
-        if (!WeaponPropertiesEnum.properties.hasOwnProperty(weaponProperty)) {
+        if (!WeaponPropertyEnum.properties.hasOwnProperty(weaponProperty)) {
             return 2;
         }
         this.weaponProperties.add(weaponProperty);
         return 0;
     }
     addWeaponProperty(weaponProperty) {
-        if (!WeaponPropertiesEnum.properties.hasOwnProperty(weaponProperty)) {
+        if (!WeaponPropertyEnum.properties.hasOwnProperty(weaponProperty)) {
             return 2;
         }
         this.weaponProperties.remove(weaponProperty);
@@ -389,12 +389,8 @@ class WeaponEntity extends EquipmentEntity {
      * @param  {string} id ID
      * @return {ClothingEntity}     new WeaponEntity
      */
-    clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        var weaponEntity = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
+    clone(id = "") {
+        let weaponEntity = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
         weaponEntity.availableActions = Object.assign({}, this.availableActions);
         weaponEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
@@ -415,19 +411,16 @@ class WeaponEntity extends EquipmentEntity {
      * @param  {string} id ID
      * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
-    createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedWeaponEntity(id, this);
+    createInstance(id = "") {
+        let instance = new InstancedWeaponEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
     }
-    dispose() { // TODO: what about the instances :v
+    dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         this.weaponProperties.clear();
         Game.removeWeaponEntity(this.id);
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
     }
 }

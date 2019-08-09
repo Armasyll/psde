@@ -2,7 +2,7 @@ class DoorEntity extends Entity {
     constructor(id = undefined, name = undefined, description = undefined, iconID = "plainDoorIcon", locked = false, key = undefined, opensInward = false, open = false) {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.DOOR;
-        this._isDoorLocked = false;
+        this.doorLocked = false;
         this.key = null;
         this.open = false;
         this.opensInward = false;
@@ -24,10 +24,10 @@ class DoorEntity extends Entity {
      * @param {boolean} isDoorLocked 
      */
 	setDoorLocked(isDoorLocked) {
-		this._isDoorLocked = isDoorLocked == true;
+		this.doorLocked = isDoorLocked == true;
 	}
 	isDoorLocked() {
-		return this._isDoorLocked;
+		return this.doorLocked;
 	}
 	setKey(itemEntity) {
         if (!(itemEntity instanceof ItemEntity)) {
@@ -98,6 +98,8 @@ class DoorEntity extends Entity {
     }
 
 	dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         Game.removeDoorEntity(this.id);
         super.dispose();
         return undefined;

@@ -90,69 +90,68 @@ class CharacterEntity extends EntityWithStorage {
          * Hunger; may affect health, stamina, and mana regeneration
          * @type {number} 0 to 100
          */
-        this.hunger = new BoundedNumber(0, 0, 100);
+        this.hunger = 0;
         /**
          * Physical power
          * @type {number}
          */
-        this.strength = new BoundedNumber(10, 1, 30);
-        this.strengthOffset = new BoundedNumber(0, -100, 100);
+        this.strength = 10;
+        this.strengthOffset = 0;
         /**
          * Agility
          * @type {number}
          */
-        this.dexterity = new BoundedNumber(10, 1, 30);
-        this.dexterityOffset = new BoundedNumber(0, -100, 100);
+        this.dexterity = 10;
+        this.dexterityOffset = 0;
         /**
          * Endurance
          * @type {number}
          */
-        this.constitution = new BoundedNumber(10, 1, 30);
-        this.constitutionOffset = new BoundedNumber(0, -100, 100);
+        this.constitution = 10;
+        this.constitutionOffset = 0;
         /**
          * Reasoning and memory
          * @type {number}
          */
-        this.intelligence = new BoundedNumber(10, 1, 30);
-        this.intelligenceOffset = new BoundedNumber(0, -100, 100);
+        this.intelligence = 10;
+        this.intelligenceOffset = 0;
         /**
          * Perception and insight
          * @type {number}
          */
-        this.wisdom = new BoundedNumber(10, 1, 30);
-        this.wisdomOffset = new BoundedNumber(0, -100, 100);
+        this.wisdom = 10;
+        this.wisdomOffset = 0;
         /**
          * Force of personality
          * @type {number}
          */
-        this.charisma = new BoundedNumber(10, 1, 30);
-        this.charismaOffset = new BoundedNumber(0, -100, 100);
+        this.charisma = 10;
+        this.charismaOffset = 0;
 
         this.magickMultiplier = 0;
         this.armourClass = 0;
 
         this.experienceLevel = 0;
-        this.experiencePoints = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
-        /**
-         * Health; should this drops to 0, u gon' die; updated by this.generateBaseStats()
-         * @type {BoundedNumber} 0 to 100
-         */
-        this.health.set(100, 0, 100);
+        this.experiencePoints = 0;
         /**
          * Mana; should this ever be greater than 0, things will be revealed; updated by this.generateBaseStats()
          * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.mana = new BoundedNumber(0, 0, 0);
+        this.mana = 0;
+        this.manaMax = 0;
+        this.manaMaxOffset = 0;
         /**
          * Stamina; should this drop to 0, u unconscious; updated by this.generateBaseStats()
          * @type {number} 0 to 100
          */
-        this.stamina = new BoundedNumber(100, 0, 100);
+        this.stamina = 1;
+        this.staminaMax = 1;
+        this.staminaMaxOffset = 0;
         /**
          * Money
          * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
-        this.money = new BoundedNumber(0, 0, Number.MAX_SAFE_INTEGER - 1);
+        this.money = 0;
         /**
          * Living; updated by this.setHealth()
          * @type {Boolean} True - alive, false - dead
@@ -182,17 +181,17 @@ class CharacterEntity extends EntityWithStorage {
          * Average weight, in kilograms, of parent species; updated by this.generateProperties()
          * @type {number}
          */
-        this._baseWeight = 36;
+        this.baseWeight = 36;
         /**
          * Average height, in metres, of parent species; updated by this.generateProperties()
          * @type {number}
          */
-        this._baseHeight = 1.20;
+        this.baseHeight = 1.20;
         /**
          * Average width, in metres, of parent species; updated by this.generateProperties()
          * @type {number}
          */
-        this._baseWidth = 0.4;
+        this.baseWidth = 0.4;
         /**
          * Weight, in kilograms; updated by this.generateProperties()
          * @type {number}
@@ -251,7 +250,6 @@ class CharacterEntity extends EntityWithStorage {
          * @type {Dialogue}
          */
         this.dialogue = undefined;
-        this.godMode = false;
 
         this.furniture = null;
 
@@ -268,7 +266,7 @@ class CharacterEntity extends EntityWithStorage {
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
         this.generateProperties();
-        this.generateBaseStats();
+        this.generateBaseStats(true);
         this.generateAdditionalStats();
         Game.setCharacterEntity(this.id, this);
     }
@@ -698,321 +696,400 @@ class CharacterEntity extends EntityWithStorage {
         return 1;
     }
 
-    setAge(age) {
-        this.age = Game.Tools.filterInt(age);
-        return 0;
+    setAge(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.age = number;
+        return this;
     }
-    addAge(int) {
-        return this.age += Game.Tools.filterInt(int);
+    addAge(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        return this.age += number;
     }
     getAge() {
         return this.age;
     }
 
-    setHunger(_int) {
-        this.hunger.setValue(_int);
+    setHunger(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 0;}
+        else {number = number|0}
+        this.hunger = number;
         return this;
     }
-    addHunger(_int) {
-        return this.hunger.inc(_int);
+    addHunger(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.hunger -= number;
+        return this;
     }
-    subtractHunger(_int) {
-        return this.hunger.dec(_int);
+    subtractHunger(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.hunger -= number;
+        return this;
     }
     getHunger() {
-        return this.hunger.getValue();
+        return this.hunger;
     }
 
-    setStrength(_int) {
-        this.strength.setValue(_int);
+    setStrength(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.strength = number;
         return this;
     }
-    addStrength(_int) {
-        return this.strength.inc(_int);
+    addStrength(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.strength += number;
+        return this;
     }
-    subtractStrength(_int) {
-        return this.strength.dec(_int);
+    subtractStrength(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.strength -= number;
+        return this;
     }
     getStrength() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.strength.getValue() + this.strengthOffset.getValue();
+        return this.strength + this.strengthOffset;
     }
-    setDexterity(_int) {
-        this.dexterity.setValue(_int);
+    setDexterity(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.dexterity = number;
         return this;
     }
-    addDexterity(_int) {
-        return this.dexterity.inc(_int);
+    addDexterity(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.dexterity += number;
+        return this;
     }
-    subtractDexterity(_int) {
-        return this.dexterity.dec(_int);
+    subtractDexterity(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.dexterity -= number;
+        return this;
     }
     getDexterity() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.dexterity.getValue() + this.dexterityOffset.getValue();
+        return this.dexterity + this.dexterityOffset;
     }
-    setConstitution(_int) {
-        this.constitution.setValue(_int);
+    setConstitution(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.constitution = number;
         return this;
     }
-    addConstitution(_int) {
-        return this.constitution.inc(_int);
+    addConstitution(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.constitution += number;
+        return this;
     }
-    subtractConstitution(_int) {
-        return this.constitution.dec(_int);
+    subtractConstitution(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.constitution -= number;
+        return this;
     }
     getConstitution() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.constitution.getValue() + this.constitutionOffset.getValue();
+        return this.constitution + this.constitutionOffset;
     }
-    setIntelligence(_int) {
-        this.intelligence.setValue(_int);
+    setIntelligence(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.intelligence = number;
         return this;
     }
-    addIntelligence(_int) {
-        return this.intelligence.inc(_int);
+    addIntelligence(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.intelligence += number;
+        return this;
     }
-    subtractIntelligence(_int) {
-        return this.intelligence.dec(_int);
+    subtractIntelligence(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.intelligence -= number;
+        return this;
     }
     getIntelligence() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.intelligence.getValue() + this.intelligenceOffset.getValue();
+        return this.intelligence + this.intelligenceOffset;
     }
-    setWisdom(_int) {
-        this.wisdom.setValue(_int);
+    setWisdom(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.wisdom = number
         return this;
     }
-    addWisdom(_int) {
-        return this.wisdom.inc(_int);
+    addWisdom(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.wisdom += number;
+        return this;
     }
-    subtractWisdom(_int) {
-        return this.wisdom.dec(_int);
+    subtractWisdom(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.wisdom -= number;
+        return this;
     }
     getWisdom() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.wisdom.getValue() + this.wisdomOffset.getValue();
+        return this.wisdom + this.wisdomOffset;
     }
-    setCharisma(_int) {
-        this.charisma.setValue(_int);
+    setCharisma(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
+        else {number = number|0}
+        this.charisma = number;
         return this;
     }
-    addCharisma(_int) {
-        return this.charisma.inc(_int);
+    addCharisma(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.charisma += number;
+        return this;
     }
-    subtractCharisma(_int) {
-        return this.charisma.dec(_int);
+    subtractCharisma(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.charisma -= number;
+        return this;
     }
     getCharisma() {
         if (this.godMode) {
             return Number.MAX_SAFE_INTEGER;
         }
-        return this.charisma.getValue() + this.charismaOffset.getValue();
+        return this.charisma + this.charismaOffset;
     }
     /**
-     * Sets CharacterEntity attributes
-     * @param {number} _str Strength, physical power
-     * @param {number} _dex Dexterity, agility
-     * @param {number} _con Constitution, endurance
-     * @param {number} _int Intelligence, reasoning and memory
-     * @param {number} _wis Wisdom, perception and insight
-     * @param {number} _cha Charisma, force of personality
+     * Sets CharacterEntity ability scores
+     * @param {number} strength Strength, physical power
+     * @param {number} dexterity Dexterity, agility
+     * @param {number} constitution Constitution, endurance
+     * @param {number} intelligence Intelligence, reasoning and memory
+     * @param {number} wisdom Wisdom, perception and insight
+     * @param {number} charisma Charisma, force of personality
      */
-    setAttributes(_str = 10, _dex = 10, _con = 10, _int = 10, _wis = 12, _cha = 10) {
-        this.setStrength(_str);
-        this.setDexterity(_dex);
-        this.setConstitution(_con);
-        this.setIntelligence(_int);
-        this.setWisdom(_wis);
-        this.setCharisma(_cha);
+    setAbilityScores(strength = 10, dexterity = 10, intelligence = 10, constitution = 10, wisdom = 12, charisma = 10) {
+        this.setStrength(strength);
+        this.setDexterity(dexterity);
+        this.setConstitution(constitution);
+        this.setIntelligence(intelligence);
+        this.setWisdom(wisdom);
+        this.setCharisma(charisma);
         return this;
     }
-    getAttributes() {
-        return {strength: this.strength.getValue(), dexterity: this.dexterity.getValue(), constitution: this.constitution.getValue(), intelligence: this.intelligence.getValue(), wisdom: this.wisdom.getValue(), charisma: this.charisma.getValue()};
+    getAbilityScores() {
+        return {
+            strength: this.strength,
+            dexterity: this.dexterity,
+            constitution: this.constitution,
+            intelligence: this.intelligence,
+            wisdom: this.wisdom,
+            charisma: this.charisma
+        };
     }
 
     getLevel() {
-        return Game.calculateLevel(this.experiencePoints.getValue())
+        return this.level;
     }
-    setXP(_int = 0) {
-        this.experiencePoints.setValue(_int);
-        this.level = Game.calculateLevel(this.experiencePoints.getValue());
+    setXP(number = 0) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.experiencePoints = number;
+        this.level = Game.calculateLevel(this.experiencePoints);
         return this;
     }
-    addXP(_int) {
-        return this.setXP(this.experiencePoints.getValue() + Game.Tools.filterInt(_int));
+    addXP(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setXP(this.experiencePoints + number);
+        }
+        return this;
     }
-    subtractXP(_int) {
-        return this.setXP(this.experiencePoints.getValue() - Game.Tools.filterInt(_int));
+    subtractXP(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setXP(this.experiencePoints - number);
+        }
+        return this;
     }
     getXP() {
-        if (this.godMode) {
-            return this.experiencePoints.getMax();
-        }
-        return this.experiencePoints.getValue();
+        return this.experiencePoints;
     }
 
-    setHealth(_int) {
+    setMana(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
         if (this.godMode) {
+            this.mana = this.getMaxMana();
             return this;
         }
-        this.health.setValue(_int);
-        if (this._isEssential) {
-            if (this.health.getValue() < 1) {
-                this.health.setValue(1);
-            }
+        if (number + this.mana > this.manaMax) {
+            number = this.manaMax;
         }
-        if (this.health.getValue() <= 0) {
-            this.living = false;
-            if (this.hasController()) {
-                this.controller.doDeath();
-            }
+        else if (number + this.mana < 0) {
+            number = 0;
+        }
+        this.mana = number;
+        return this;
+    }
+    addMana(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMana(this.mana + number);
         }
         return this;
     }
-    addHealth(_int = 1) {
-        if (this.godMode) {
-            return this.health.getValue();
-        }
-        return this.setHealth(this.health.getValue() + Game.Tools.filterInt(_int));
-    }
-    subtractHealth(_int = 1) {
-        if (this.godMode) {
-            return this.health.getValue();
-        }
-        return this.setHealth(this.health.getValue() - Game.Tools.filterInt(_int));
-    }
-    getHealth() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.health.getValue();
-    }
-
-    setMaxHealth(_int) {
-        if (this.godMode) {
-            return this;
-        }
-        this.health.setMax(_int);
-        if (this._isEssential) {
-            if (this.health.getMax() < 1) {
-                this.health.setMax(1);
-            }
+    subtractMana(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMana(this.mana - number);
         }
         return this;
-    }
-    addMaxHealth(_int = 1) {
-        if (this.godMode) {
-            return this.health.getMax();
-        }
-        return this.setMaxHealth(this.health.getMax() + Game.Tools.filterInt(_int));
-    }
-    subtractMaxHealth(_int = 1) {
-        if (this.godMode) {
-            return this.health.getMax();
-        }
-        return this.setMaxHealth(this.health.getMax() - Game.Tools.filterInt(_int));
-    }
-    getMaxHealth() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.health.getMax();
-    }
-
-    setMana(_int) {
-        this.mana.setValue(_int);
-        return this;
-    }
-    addMana(_int = 1) {
-        return this.setMana(this.mana.getValue() + Game.Tools.filterInt(_int));
-    }
-    subtractMana(_int = 1) {
-        return this.setMana(this.mana.getValue() - Game.Tools.filterInt(_int));
     }
     getMana() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.mana.getValue();
+        return this.mana;
     }
 
-    setMaxMana(_int) {
-        this.mana.setMax(_int);
+    setMaxMana(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (number <= 0) {
+            number = 1;
+        }
+        this.manaMax = number;
+        if (this.mana > this.getMaxMana()) {
+            this.mana = this.getMaxMana();
+        }
         return this;
     }
-    addMaxMana(_int = 1) {
-        return this.setMaxMana(this.mana.getMax() + Game.Tools.filterInt(_int));
+    addMaxMana(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxMana(this.manaMax + number);
+        }
+        return this;
     }
-    subtractMaxMana(_int = 1) {
-        return this.setMaxMana(this.mana.getMax() - Game.Tools.filterInt(_int));
+    subtractMaxMana(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxMana(this.manaMax - number);
+        }
+        return this;
     }
     getMaxMana() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.mana.getMax();
+        return this.manaMax + this.manaMaxOffset;
     }
 
-    setStamina(_int) {
-        this.stamina.setValue(_int);
+    setStamina(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (this.godMode) {
+            this.stamina = this.getMaxStamina();
+            return this;
+        }
+        if (number + this.stamina > this.staminaMax) {
+            number = this.staminaMax;
+        }
+        else if (number + this.stamina < 0) {
+            number = 0;
+        }
+        this.stamina = number;
         return this;
     }
-    addStamina(_int) {
-        return this.setStamina(this.stamina.getValue() + Game.Tools.filterInt(_int));
+    addStamina(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setStamina(this.stamina + number);
+        }
+        return this;
     }
-    subtractStamina(_int) {
-        return this.setStamina(this.stamina.getValue() - Game.Tools.filterInt(_int));
+    subtractStamina(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setStamina(this.stamina - number);
+        }
+        return this;
     }
     getStamina() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.stamina.getValue();
+        return this.stamina;
     }
 
-    setMaxStamina(_int) {
-        this.stamina.setMax(_int);
+    setMaxStamina(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (number <= 0) {
+            number = 1;
+        }
+        this.staminaMax = number;
+        if (this.stamina > this.getMaxStamina()) {
+            this.stamina = this.getMaxStamina();
+        }
         return this;
     }
-    addMaxStamina(_int = 1) {
-        return this.setMaxStamina(this.stamina.getMax() + Game.Tools.filterInt(_int));
+    addMaxStamina(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxStamina(this.staminaMax + number);
+        }
+        return this;
     }
-    subtractMaxStamina(_int) {
-        return this.setMaxStamina(this.stamina.getMax() - Game.Tools.filterInt(_int));
+    subtractMaxStamina(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxStamina(this.staminaMax - number);
+        }
+        return this;
     }
     getMaxStamina() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.stamina.getMax();
+        return this.staminaMax + this.staminaMaxOffset;
     }
 
-    setMoney(_int) {
-        this.money.setValue(_int);
+    setMoney(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.money = number;
         return this;
     }
-    addMoney(_int) {
-        return this.setMoney(this.money.getValue() + Game.Tools.filterInt(_int));
+    addMoney(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        return this.setMoney(this.money + number);
     }
-    subtractMoney(_int) {
-        return this.setMoney(this.money.getValue() - Game.Tools.filterInt(_int));
+    subtractMoney(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        return this.setMoney(this.money - number);
     }
     getMoney() {
-        if (this.godMode) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.money.getValue();
+        return this.money;
     }
 
     setSex(sex = SexEnum.MALE) {
@@ -1067,8 +1144,8 @@ class CharacterEntity extends EntityWithStorage {
 
         return this;
     }
-    setCharacterPassion(_character, _int) {
-        return this.characterDisposition[_character]["passion"] = _int;
+    setCharacterPassion(_character, number) {
+        return this.characterDisposition[_character]["passion"] = number;
     }
     getCharacterPassion(_character) {
         if (this.godMode) {
@@ -1076,8 +1153,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["passion"];
     }
-    setCharacterFriendship(_character, _int) {
-        return this.characterDisposition[_character]["friendship"] = _int;
+    setCharacterFriendship(_character, number) {
+        return this.characterDisposition[_character]["friendship"] = number;
     }
     getCharacterFriendship(_character) {
         if (this.godMode) {
@@ -1085,8 +1162,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["friendship"];
     }
-    setCharacterPlayfulness(_character, _int) {
-        return this.characterDisposition[_character]["playfulness"] = _int;
+    setCharacterPlayfulness(_character, number) {
+        return this.characterDisposition[_character]["playfulness"] = number;
     }
     getCharacterPlayfulness(_character) {
         if (this.godMode) {
@@ -1094,8 +1171,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["playfulness"];
     }
-    setCharacterSoulmate(_character, _int) {
-        return this.characterDisposition[_character]["soulmate"] = _int;
+    setCharacterSoulmate(_character, number) {
+        return this.characterDisposition[_character]["soulmate"] = number;
     }
     getCharacterSoulmate(_character) {
         if (this.godMode) {
@@ -1103,8 +1180,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["soulmate"];
     }
-    setCharacterFamilial(_character, _int) {
-        return this.characterDisposition[_character]["familial"] = _int;
+    setCharacterFamilial(_character, number) {
+        return this.characterDisposition[_character]["familial"] = number;
     }
     getCharacterFamilial(_character) {
         if (this.godMode) {
@@ -1112,8 +1189,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["familial"];
     }
-    setCharacterObsession(_character, _int) {
-        return this.characterDisposition[_character]["obsession"] = _int;
+    setCharacterObsession(_character, number) {
+        return this.characterDisposition[_character]["obsession"] = number;
     }
     getCharacterObsession(_character) {
         if (this.godMode) {
@@ -1121,8 +1198,8 @@ class CharacterEntity extends EntityWithStorage {
         }
         return this.characterDisposition[_character]["obsession"];
     }
-    setCharacterHate(_character, _int) {
-        return this.characterDisposition[_character]["hate"] = _int;
+    setCharacterHate(_character, number) {
+        return this.characterDisposition[_character]["hate"] = number;
     }
     getCharacterHate(_character) {
         if (this.godMode) {
@@ -1404,13 +1481,13 @@ class CharacterEntity extends EntityWithStorage {
 
     addNewDisposition(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
         this.characterDisposition[_character] = {
-            passion:_passionOffset + this.defaultDisposition.passion,
-            friendship:_friendshipOffset + this.defaultDisposition.friendship,
-            playfulness:_playfulnessOffset + this.defaultDisposition.playfulness,
-            soulmate:_soulmateOffset + this.defaultDisposition.soulmate,
-            familial:_familialOffset + this.defaultDisposition.familial,
-            obsession:_obsessionOffset + this.defaultDisposition.obsession,
-            hate:_hateOffset + this.defaultDisposition.hate
+            passion:passionOffset + this.defaultDisposition.passion,
+            friendship:friendshipOffset + this.defaultDisposition.friendship,
+            playfulness:playfulnessOffset + this.defaultDisposition.playfulness,
+            soulmate:soulmateOffset + this.defaultDisposition.soulmate,
+            familial:familialOffset + this.defaultDisposition.familial,
+            obsession:obsessionOffset + this.defaultDisposition.obsession,
+            hate:hateOffset + this.defaultDisposition.hate
         }
         return this;
     }
@@ -1436,20 +1513,9 @@ class CharacterEntity extends EntityWithStorage {
     getDialogue() {
         return this.dialogue;
     }
-    setGodMode(_bool = true) {
-        this.godMode = _bool == true;
-    }
-    enableGodMode() {
-        this.setGodMode(true);
-    }
-    disableGodMode() {
-        this.setGodMode(false);
-    }
-    getGodMode() {
-        return this.godMode;
-    }
-    setLiving(_bool = true) {
-        this.living = _bool == true;
+    setLiving(boolean = true) {
+        this.living = boolean == true;
+        return this;
     }
     getLiving() {
         return this.living;
@@ -1463,23 +1529,11 @@ class CharacterEntity extends EntityWithStorage {
     isUndead() {
         return !this.living && this.getHealth() > 0;
     }
-    kill() {
-        this.setHealth(0);
-        return this;
-    }
-    resurrect(_health = 1) {
-        if (isNaN(_health) || _health < 1) {
-            _health = 1;
-        }
-        this.setHealth(_health);
-        this.living = true;
-        return this;
-    }
     setFurniture(instancedFurnitureEntity) {
         if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
             this.furniture = instancedFurnitureEntity;
         }
-        return this;
+        return 0;
     }
     getFurniture() {
         return this.furniture;
@@ -1489,19 +1543,20 @@ class CharacterEntity extends EntityWithStorage {
     }
     removeFurniture() {
         this.furniture = null;
+        return 0;
     }
 
     generateProperties() {
         if (this.species == SpeciesEnum.FOX) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 36;
-                this._baseHeight = 1.20;
-                this._baseWidth = 0.4;
+                this.baseWeight = 36;
+                this.baseHeight = 1.20;
+                this.baseWidth = 0.4;
             }
             else {
-                this._baseWeight = 32;
-                this._baseHeight = 1.12;
-                this._baseWidth = 0.37;
+                this.baseWeight = 32;
+                this.baseHeight = 1.12;
+                this.baseWidth = 0.37;
             }
 
             this.predator = true;
@@ -1511,14 +1566,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.SHEEP) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 34;
-                this._baseHeight = 1.35;
-                this._baseWidth = 0.45;
+                this.baseWeight = 34;
+                this.baseHeight = 1.35;
+                this.baseWidth = 0.45;
             }
             else {
-                this._baseWeight = 28;
-                this._baseHeight = 1.0;
-                this._baseWidth = 0.33;
+                this.baseWeight = 28;
+                this.baseHeight = 1.0;
+                this.baseWidth = 0.33;
             }
             
             this.predator = false;
@@ -1528,13 +1583,13 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.WOLF) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseHeight = 1.9;
-                this._baseWidth = 0.63;
+                this.baseHeight = 1.9;
+                this.baseWidth = 0.63;
             }
             else {
-                this._baseWeight = 66;
-                this._baseHeight = 1.8;
-                this._baseWidth = 0.6;
+                this.baseWeight = 66;
+                this.baseHeight = 1.8;
+                this.baseWidth = 0.6;
             }
 
             this.predator = true;
@@ -1544,14 +1599,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.AARDWOLF) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 32;
-                this._baseHeight = 1.10;
-                this._baseWidth = 0.36;
+                this.baseWeight = 32;
+                this.baseHeight = 1.10;
+                this.baseWidth = 0.36;
             }
             else {
-                this._baseWeight = 28;
-                this._baseHeight = 1.02;
-                this._baseWidth = 0.34;
+                this.baseWeight = 28;
+                this.baseHeight = 1.02;
+                this.baseWidth = 0.34;
             }
 
             this.predator = true;
@@ -1561,14 +1616,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HYENA) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 58;
-                this._baseHeight = 1.6;
-                this._baseWidth = 0.53;
+                this.baseWeight = 58;
+                this.baseHeight = 1.6;
+                this.baseWidth = 0.53;
             }
             else {
-                this._baseWeight = 62;
-                this._baseHeight = 1.75;
-                this._baseWidth = 0.58;
+                this.baseWeight = 62;
+                this.baseHeight = 1.75;
+                this.baseWidth = 0.58;
             }
 
             this.predator = true;
@@ -1578,14 +1633,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.STOAT) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 10;
-                this._baseHeight = 0.6;
-                this._baseWidth = 0.2;
+                this.baseWeight = 10;
+                this.baseHeight = 0.6;
+                this.baseWidth = 0.2;
             }
             else {
-                this._baseWeight = 8;
-                this._baseHeight = 0.5;
-                this._baseWidth = 0.16;
+                this.baseWeight = 8;
+                this.baseHeight = 0.5;
+                this.baseWidth = 0.16;
             }
 
             this.predator = true;
@@ -1595,14 +1650,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.DEER) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 78;
-                this._baseHeight = 2.2;
-                this._baseWidth = 0.7;
+                this.baseWeight = 78;
+                this.baseHeight = 2.2;
+                this.baseWidth = 0.7;
             }
             else {
-                this._baseWeight = 60;
-                this._baseHeight = 1.9;
-                this._baseWidth = 0.6;
+                this.baseWeight = 60;
+                this.baseHeight = 1.9;
+                this.baseWidth = 0.6;
             }
             
             this.predator = false;
@@ -1612,14 +1667,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.RABBIT) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 22;
-                this._baseHeight = 0.95;
-                this._baseWidth = 0.34;
+                this.baseWeight = 22;
+                this.baseHeight = 0.95;
+                this.baseWidth = 0.34;
             }
             else {
-                this._baseWeight = 14.9;
-                this._baseHeight = 0.81;
-                this._baseWidth = 0.3;
+                this.baseWeight = 14.9;
+                this.baseHeight = 0.81;
+                this.baseWidth = 0.3;
             }
             
             this.predator = false;
@@ -1629,14 +1684,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.JACKAL) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 55;
-                this._baseHeight = 1.6;
-                this._baseWidth = 0.53;
+                this.baseWeight = 55;
+                this.baseHeight = 1.6;
+                this.baseWidth = 0.53;
             }
             else {
-                this._baseWeight = 51;
-                this._baseHeight = 1.55;
-                this._baseWidth = 0.5;
+                this.baseWeight = 51;
+                this.baseHeight = 1.55;
+                this.baseWidth = 0.5;
             }
             
             this.predator = true;
@@ -1646,14 +1701,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.COYOTE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 36;
-                this._baseHeight = 1.20;
-                this._baseWidth = 0.4;
+                this.baseWeight = 36;
+                this.baseHeight = 1.20;
+                this.baseWidth = 0.4;
             }
             else {
-                this._baseWeight = 32;
-                this._baseHeight = 1.12;
-                this._baseWidth = 0.37;
+                this.baseWeight = 32;
+                this.baseHeight = 1.12;
+                this.baseWidth = 0.37;
             }
             
             this.predator = true;
@@ -1663,14 +1718,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.TIGER) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 88;
-                this._baseHeight = 2.2;
-                this._baseWidth = 0.73;
+                this.baseWeight = 88;
+                this.baseHeight = 2.2;
+                this.baseWidth = 0.73;
             }
             else {
-                this._baseWeight = 82;
-                this._baseHeight = 2.0;
-                this._baseWidth = 0.66;
+                this.baseWeight = 82;
+                this.baseHeight = 2.0;
+                this.baseWidth = 0.66;
             }
             
             this.predator = true;
@@ -1680,14 +1735,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.ANTELOPE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 68;
-                this._baseHeight = 2.0;
-                this._baseWidth = 0.66;
+                this.baseWeight = 68;
+                this.baseHeight = 2.0;
+                this.baseWidth = 0.66;
             }
             else {
-                this._baseWeight = 60;
-                this._baseHeight = 1.9;
-                this._baseWidth = 0.63;
+                this.baseWeight = 60;
+                this.baseHeight = 1.9;
+                this.baseWidth = 0.63;
             }
             
             this.predator = false;
@@ -1697,14 +1752,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.PIG) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 46;
-                this._baseHeight = 1.3;
-                this._baseWidth = 0.54;
+                this.baseWeight = 46;
+                this.baseHeight = 1.3;
+                this.baseWidth = 0.54;
             }
             else {
-                this._baseWeight = 44;
-                this._baseHeight = 1.2;
-                this._baseWidth = 0.5;
+                this.baseWeight = 44;
+                this.baseHeight = 1.2;
+                this.baseWidth = 0.5;
             }
             
             this.predator = false;
@@ -1714,14 +1769,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.HORSE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 82;
-                this._baseHeight = 2.0;
-                this._baseWidth = 0.66;
+                this.baseWeight = 82;
+                this.baseHeight = 2.0;
+                this.baseWidth = 0.66;
             }
             else {
-                this._baseWeight = 78;
-                this._baseHeight = 1.9;
-                this._baseWidth = 0.63;
+                this.baseWeight = 78;
+                this.baseHeight = 1.9;
+                this.baseWidth = 0.63;
             }
             
             this.predator = false;
@@ -1731,14 +1786,14 @@ class CharacterEntity extends EntityWithStorage {
         }
         else if (this.species == SpeciesEnum.MOUSE) {
             if (this.getSex() == SexEnum.MALE) {
-                this._baseWeight = 0.4;
-                this._baseHeight = 0.16;
-                this._baseWidth = 0.05;
+                this.baseWeight = 0.4;
+                this.baseHeight = 0.16;
+                this.baseWidth = 0.05;
             }
             else {
-                this._baseWeight = 0.4;
-                this._baseHeight = 0.15;
-                this._baseWidth = 0.05;
+                this.baseWeight = 0.4;
+                this.baseHeight = 0.15;
+                this.baseWidth = 0.05;
             }
             
             this.predator = false;
@@ -1747,60 +1802,69 @@ class CharacterEntity extends EntityWithStorage {
             this.setPelt(PeltEnum.FUR);
         }
         if (this.age > 19) {
-            this.height = this._baseHeight;
+            this.height = this.baseHeight;
         }
         else {
-            let _addition = 0;
+            let ageBasedMultiplier = 0;
             if (this.age > 17) {
-                _addition = .45;
+                ageBasedMultiplier = .45;
             }
             else if (this.age > 15) {
-                _addition = .35;
+                ageBasedMultiplier = .35;
             }
             else if (this.age > 13) {
-                _addition = .25;
+                ageBasedMultiplier = .25;
             }
             else if (this.age > 11) {
-                _addition = .15;
+                ageBasedMultiplier = .15;
             }
             /* I just bullshitted the weight :v */
-            let _tempWeight = this._baseWeight*(this.age/25);
-            _tempWeight = _tempWeight + (_tempWeight * _addition);
-            if (_tempWeight < this._baseWeight/6) {
-                this.weight = this._baseHeight/6;
+            let tempWeight = this.baseWeight*(this.age/25);
+            tempWeight = tempWeight + (tempWeight * ageBasedMultiplier);
+            if (tempWeight < this.baseWeight/6) {
+                this.weight = this.baseHeight/6;
             }
-            else if (_tempWeight > this._baseWeight) {
-                this.weight = this._baseWeight;
-            }
-            else {
-                this.weight = _tempWeight;
-            }
-            let _tempHeight = this._baseHeight*(this.age/25);
-            _tempHeight = _tempHeight + (_tempHeight * _addition);
-            if (_tempHeight < this._baseHeight/6) {
-                this.height = this._baseHeight/6;
-            }
-            else if (_tempHeight > this._baseHeight) {
-                this.height = this._baseHeight;
+            else if (tempWeight > this.baseWeight) {
+                this.weight = this.baseWeight;
             }
             else {
-                this.height = _tempHeight;
+                this.weight = tempWeight;
+            }
+            let tempHeight = this.baseHeight*(this.age/25);
+            tempHeight = tempHeight + (tempHeight * ageBasedMultiplier);
+            if (tempHeight < this.baseHeight/6) {
+                this.height = this.baseHeight/6;
+            }
+            else if (tempHeight > this.baseHeight) {
+                this.height = this.baseHeight;
+            }
+            else {
+                this.height = tempHeight;
             }
         }
         /**
          * Width is 1/3rd(-ish) of height, times the ratio of weight to base weight
          * @type {number}
          */
-        this.width = (this.height / 3.5294) * (this.weight / this._baseWeight);
-        return this;
+        this.width = (this.height / 3.5294) * (this.weight / this.baseWeight);
+        return 0;
     }
-    generateBaseStats() {
+    generateBaseStats(firstTime = false) {
+        let healthFraction = 1;
+        let manaFraction = 1;
+        let staminaFraction = 1;
+        if (!firstTime) {
+            healthFraction = this.getHealth() / this.getMaxHealth();
+            manaFraction = this.getMana() / this.getMaxMana();
+            staminaFraction = this.getStamina() / this.getMaxStamina();
+        }
         this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution()/10));
         this.setMaxMana(this.getIntelligence() * this.magickMultiplier);
         this.setMaxStamina(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
-        this.setHealth(this.getMaxHealth());
-        this.setMana(this.getMaxMana());
-        this.setStamina(this.getMaxStamina());
+        this.setHealth(this.getMaxHealth() * healthFraction);
+        this.setMana(this.getMaxMana() * manaFraction);
+        this.setStamina(this.getMaxStamina() * staminaFraction);
+        return 0;
     }
     /**
      * Generates protections and multipliers; to be run after status effects and equipment are changed
@@ -1844,12 +1908,15 @@ class CharacterEntity extends EntityWithStorage {
                 this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
             }
         }
+        return 0;
     }
 
     dispose() {
-        if (this == Game.player.entity) {
+        if (this == Game.player) {
             return false;
         }
+        this.setLocked(true);
+        this.setEnabled(false);
         Game.removeCharacterEntity(this.id);
         super.dispose();
         for (var _var in this) {

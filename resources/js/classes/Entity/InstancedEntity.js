@@ -1,35 +1,38 @@
 class InstancedEntity extends AbstractEntity {
     /**
      * Creates an InstancedEntity
-     * @param  {stirng} _id Unique ID, auto-generated if none given
-     * @param  {Entity} _entity Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
-     * @param  {string} _name Name
+     * @param  {stirng} id Unique ID, auto-generated if none given
+     * @param  {Entity} entity Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
+     * @param  {string} name Name
      * @param  {CharacterEntity} _owner Owner
      * @param  {number} _price Price, defaults to 0
      * @param  {number} _weight Weight, defaults to 0.001
      * @param  {number} _health Health, defaults to 1
      * @param  {number} _healthMax Max health, defaults to 1
      */
-    constructor(_id, _entity, _name = undefined, _description = undefined, _icon = undefined) {
-        super(_id, _name, _description);
-        if (!(_entity instanceof Entity)) {
-            _entity = Game.getEntity(_entity);
-            if (!(_entity instanceof Entity)) {
+    constructor(id, entity, name = undefined, description = undefined, iconID = undefined) {
+        super(id, name, description);
+        if (!(entity instanceof Entity)) {
+            entity = Game.getEntity(entity);
+            if (!(entity instanceof Entity)) {
                 return undefined;
             }
         }
-        this.entity = _entity;
-        this.setName(_name || this.entity.getName());
-        this.setDescription(_description || this.entity.getDescription());
-        this.setIcon(_icon || this.entity.getIcon());
+        this.entity = entity;
+        this.setName(name || this.entity.getName());
+        this.setDescription(description || this.entity.getDescription());
+        this.setIcon(iconID || this.entity.getIcon());
         this.entityType = this.entity.entityType;
-        this.health = this.entity.health.clone();
+        this.health = this.entity.health;
 
         this._useOwnAvailableActions = false;
+        this.availableActions = null;
         this._useOwnHiddenAvailableActions = false;
+        this.hiddenAvailableActions = null;
         this.defaultAction = this.entity.getDefaultAction();
         this._useOwnDefaultAction = false;
         this._useOwnSpecialProperties = false;
+        this.specialProperties = null;
 
         Game.setEntityInstance(this.id, this);
     }
@@ -138,6 +141,7 @@ class InstancedEntity extends AbstractEntity {
         if (!this.hasEntity()) {
             return this;
         }
+        this.availableActions = [];
         for (var _action in this.entity.getAvailableActions()) {
             var _availableAction = this.entity.getAvailableAction(_action);
             if (_availableAction instanceof ActionData) {
@@ -218,6 +222,7 @@ class InstancedEntity extends AbstractEntity {
         if (!this.hasEntity()) {
             return this;
         }
+        this.hiddenAvailableActions = [];
         for (var _action in this.entity.getHiddenAvailableActions()) {
             var _availableAction = this.entity.getHiddenAvailableAction(_action);
             if (_availableAction instanceof ActionData) {
@@ -330,25 +335,43 @@ class InstancedEntity extends AbstractEntity {
         }
     }
     
-    clone(_id) {
+    clone(id = "") {
         if (!this.hasEntity()) {
             return this;
         }
-        _instancedEntity = new InstancedEntity(_id, this.entity, this.name, this.description, this.icon);
-        _instancedEntity.health = this.health.clone();
-        _instancedEntity.specialProperties = new Set(this.specialProperties);
-        return _instancedEntity;
+        let instancedEntity = new InstancedEntity(id, this.entity, this.name, this.description, this.icon);
+        instancedEntity.health = this.health.clone();
+        instancedEntity.specialProperties = new Set(this.specialProperties);
+        return instancedEntity;
     }
     dispose() {
-        if (!this.hasEntity()) {
-            return this;
-        }
-        for (var _action in this.availableActions) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
-            }
+        this.setLocked(true);
+        this.setEnabled(false);
+        if (this.hasController) {
+            this.controller.dispose();
         }
         Game.removeEntityInstance(this.id);
+        if (this._useOwnAvailableActions) {
+            for (let action in this.availableActions) {
+                if (this.availableActions[action] instanceof ActionData) {
+                    this.availableActions[action].dispose();
+                }
+                delete this.availableActions[action];
+            }
+            delete this.availableActions;
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            for (let action in this.hiddenAvailableActions) {
+                if (this.hiddenAvailableActions[action] instanceof ActionData) {
+                    this.hiddenAvailableActions[action].dispose();
+                }
+                delete this.hiddenAvailableActions[action];
+            }
+            delete this.hiddenAvailableActions;
+        }
+        if (this._useOwnSpecialProperties) {
+            delete this.specialProperties.clear();
+        }
         super.dispose();
         return undefined;
     }

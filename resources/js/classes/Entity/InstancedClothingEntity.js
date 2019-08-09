@@ -20,10 +20,10 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
 
     clone(id) {
         id = Tools.filterID(id);
-        if (typeof id != "string") {
+        if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        return new InstancedClothingEntity(id, this.entity);
+        return new InstancedClothingEntity(id, this.entity, owner);
     }
     dispose() {
         Game.removeClothingInstance(this.id);

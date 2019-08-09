@@ -31,11 +31,7 @@ class ItemEntity extends Entity {
         return this.itemType;
     }
 
-    clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
+    clone(id = "") {
         let itemEntity = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
         // variables from AbstractEntity
         itemEntity.availableActions = Object.assign({}, this.availableActions);
@@ -49,13 +45,13 @@ class ItemEntity extends Entity {
         return itemEntity;
     }
     createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedItemEntity(id, this);
+        let instance = new InstancedItemEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
     }
-    dispose() { // TODO: what about the instances :v
+    dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         Game.removeItemEntity(this.id);
         super.dispose();
         return undefined;

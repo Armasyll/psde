@@ -255,13 +255,14 @@ class EntityWithStorage extends Entity {
         if (this == Game.player.entity) {
             return false;
         }
-        this.storage.forEach(function(val, key) {
+        this.setLocked(true);
+        this.setEnabled(false);
+        this.storage.forEach((val, key) => {
             val.dispose();
-            this.items.delete(key);
+            this.storage.delete(key);
         });
         this.storage.clear();
-        delete this.storageWeight;
-        delete this.maxStorageSlots;
+        delete this.storage;
         super.dispose();
         return undefined;
     }

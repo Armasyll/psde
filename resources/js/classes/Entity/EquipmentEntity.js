@@ -35,12 +35,8 @@ class EquipmentEntity extends ItemEntity {
      * @param  {string} id ID
      * @return {EquipmentEntity}     new EquipmentEntity
      */
-    clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        var itemEntity = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
+    clone(id = "") {
+        let itemEntity = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
         itemEntity.availableActions = Object.assign({}, this.availableActions);
         itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
@@ -60,17 +56,15 @@ class EquipmentEntity extends ItemEntity {
      * @return {InstancedEquipmentEntity}     new InstancedEquipmentEntity
      */
     createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedEquipmentEntity(id, this);
+        let instance = new InstancedEquipmentEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
     }
-    dispose() { // TODO: what about the instances :v
+    dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
+        delete this.equipmentSlot;
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
     }
 }

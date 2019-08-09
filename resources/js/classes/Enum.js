@@ -1607,7 +1607,7 @@ WeaponEnum = {
         },
     }
 }
-WeaponPropertiesEnum = {
+WeaponPropertyEnum = {
     NONE: 0,
     AMMUNITION: 1,
     FINESSE: 2,
@@ -1996,6 +1996,40 @@ CellTypeEnum = {
         2: {
             name: "Limbo",
             value: 2
+        }
+    }
+}
+AbilityScoreEnum = {
+    STRENGTH: 0,
+    DEXTERITY: 1,
+    CONSTITUTION: 2,
+    INTELLIGENCE: 3,
+    WISDOM: 4,
+    CHARISMA: 5,
+    properties: {
+        0: {
+            name: "Strength",
+            value: 0
+        },
+        1: {
+            name: "Dexterity",
+            value: 1
+        },
+        2: {
+            name: "Constitution",
+            value: 2
+        },
+        3: {
+            name: "Intelligence",
+            value: 3
+        },
+        4: {
+            name: "Wisdom",
+            value: 4
+        },
+        5: {
+            name: "Charisma",
+            value: 5
         }
     }
 }

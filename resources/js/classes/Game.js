@@ -3402,7 +3402,7 @@ class Game {
                 break;
             }
         }
-        let newScaling = characterEntity.height/characterEntity._baseHeight;
+        let newScaling = characterEntity.height/characterEntity.baseHeight;
         loadedMesh.scaling.set(newScaling,newScaling,newScaling);
         return characterEntity;
     }
@@ -5416,9 +5416,17 @@ class Game {
         }
         return 0;
     }
-    static calculateDamage(defender, attacker) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
+    static calculateDamage(defender, attacker, abilityType = AbilityEnum.STRENGTH) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
         let attackRoll = Game.roll(1, 20);
-        let didHit = attackRoll > defender.getArmourClass();
+        let didHit = false;
+        if (attackRoll == 1) {}
+        else if (attackRoll == 20) {
+            didHit = true;
+        }
+        else {
+            didHit = true;
+            attackRoll > defender.getArmourClass();
+        }
         if (didHit) {
             let damageRollCount = 1;
             let damageRoll = 0;

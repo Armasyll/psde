@@ -27,11 +27,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         return this.entity.getWeaponProperties();
     }
 
-    clone(id) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
+    clone(id = "") {
         return new InstancedWeaponEntity(id, this.entity, this.owner);
     }
     dispose() {

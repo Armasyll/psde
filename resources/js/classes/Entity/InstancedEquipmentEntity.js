@@ -13,12 +13,8 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
         return this.entity.getEquipmentSlot();
     }
 
-    clone(_id) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
-        }
-        return new InstancedEquipmentEntity(_id, this.entity, this.owner);
+    clone(id = "") {
+        return new InstancedEquipmentEntity(id, this.entity, this.owner);
     }
     dispose() {
         super.dispose()

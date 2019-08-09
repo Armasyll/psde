@@ -12,10 +12,14 @@ class Entity extends AbstractEntity {
         this.entityType = entityType;;
         this.weight = 0;
         this.price = 0;
-        this.health = new BoundedNumber(100, 0, 100);
+        this.health = 10;
+        this.healthMax = 10;
+        this.healthMaxOffset = 0;
         this.meshID = "missingMesh";
         this.textureID = "missingTexture";
         this.materialID = "missingMaterial";
+
+        this.instances = {};
 
         this.addAvailableAction(ActionEnum.LOOK);
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
@@ -24,48 +28,103 @@ class Entity extends AbstractEntity {
         Game.setEntity(this.id, this);
     }
 
-    setWeight(weight) {
-        this.weight = weight;
+    setWeight(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.weight = number;
         return this;
     }
     getWeight() {
         return this.weight;
     }
 
-    setPrice(price) {
-        this.price = price;
+    setPrice(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.price = number;
         return this;
     }
     getPrice() {
         return this.price;
     }
 
-    setHealth(health) {
-        this.health.set(health);
+    setHealth(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (this.godMode) {
+            this.health = this.getMaxHealth();
+            return this;
+        }
+        if (number + this.health > this.healthMax) {
+            number = this.healthMax;
+        }
+        else if (number + this.health < 0) {
+            number = 0;
+        }
+        if (this.essential) {
+            if (number < 1) {
+                number = 1;
+            }
+        }
+        this.health = number;
+        if (this.health <= 0) {
+            this.living = false;
+            if (this.hasController()) {
+                this.controller.doDeath();
+            }
+        }
         return this;
     }
-    addHealth(int = 1) {
-        return this.health.inc(int);
+    addHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setHealth(this.health + number);
+        }
+        return this;
     }
-    subtractHealth(int = 1) {
-        return this.health.dec(int);
+    subtractHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setHealth(this.health - number);
+        }
+        return this;
     }
     getHealth() {
-        return this.health.getValue();
+        return this.health;
     }
 
-    setMaxHealth(int) {
-        this.health.setMax(int);
+    setMaxHealth(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (number <= 0) {
+            number = 1;
+        }
+        this.healthMax = number;
+        if (this.health > this.getMaxHealth()) {
+            this.health = this.getMaxHealth();
+        }
         return this;
     }
-    addMaxHealth(int = 1) {
-        return this.health.incMax(int);
+    addMaxHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxHealth(this.healthMax + number);
+        }
+        return this;
     }
-    subtractMaxHealth(int = 1) {
-        return this.health.decMax(int);
+    subtractMaxHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxHealth(this.healthMax - number);
+        }
+        return this;
     }
     getMaxHealth() {
-        return this.health.getMax();
+        return this.healthMax + this.healthMaxOffset;
     }
 
     setMeshID(meshID) {
@@ -262,10 +321,6 @@ class Entity extends AbstractEntity {
     }
 
     clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
         let entity = new Entity(id, this.name, this.description, this.icon, this.entityType);
         // variables from AbstractEntity
         entity.availableActions = Object.assign({}, this.availableActions);
@@ -273,19 +328,34 @@ class Entity extends AbstractEntity {
         entity.specialProperties = new Set(this.specialProperties);
         entity.defaultAction = this.defaultAction;
         // variables from Entity
-        entity.weight.copyFrom(this.weight);
-        entity.price.copyFrom(this.price);
-        entity.health.copyFrom(this.health);
+        entity.weight = this.weight;
+        entity.price = this.price;
+        entity.health = this.health;
         return entity;
     }
-    createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedEntity(id, this);
+    createInstance(id = "") {
+        let instance = new InstancedEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
+    }
+    addInstance(instancedEntity) {
+        this.instances[instancedEntity.getID()] = instance;
+        return 0;
+    }
+    getInstances() {
+        return this.instances;
     }
     dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
+        for (let instanceID in this.instances) {
+            if (this.instances[instanceID] instanceof InstancedEntity) {
+                this.instances[instanceID].dispose();
+            }
+        }
+        if (this.hasController) {
+            this.controller.dispose();
+        }
         Game.removeEntity(this.id);
         super.dispose();
         return undefined;

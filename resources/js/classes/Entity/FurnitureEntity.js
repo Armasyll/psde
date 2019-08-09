@@ -170,22 +170,19 @@ class FurnitureEntity extends EntityWithStorage {
         return this.furnitureType;
     }
 
-    clone(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
+    clone(id = "") {
         return new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
     }
-    createInstance(id = undefined) {
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return new InstancedFurnitureEntity(id, this);
+    createInstance(id = "") {
+        let instance = new InstancedFurnitureEntity(id, this);
+        this.instances[instance.getID()] = instance;
+        return instance;
     }
-    dispose() { // TODO: what about the instances :v
+    dispose() {
+        this.setLocked(true);
+        this.setEnabled(false);
         Game.removeFurnitureEntity(this.id);
+        delete this.furnitureType;
         super.dispose();
         return undefined;
     }

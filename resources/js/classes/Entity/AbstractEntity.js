@@ -26,9 +26,10 @@ class AbstractEntity {
         this.hiddenAvailableActions = {};
         this.specialProperties = new Set();
         this.defaultAction = null;
-        this._isEnabled = true;
-        this._isLocked = false;
-        this._isEssential = false;
+        this.godMode = false;
+        this.enabled = true;
+        this.locked = false;
+        this.essential = false;
         Game.setAbstractEntity(this.id, this);
     }
 
@@ -36,13 +37,14 @@ class AbstractEntity {
         return this.id;
     }
     setID(id) {
-        if (this._isLocked) {
+        if (this.locked) {
             id = Tools.filterID(id);
             if (id.length > 0) {
                 this.id = id;
             }
+            return 0;
         }
-        return this.id;
+        return 1;
     }
     getType() {
         return this.entityType;
@@ -74,19 +76,35 @@ class AbstractEntity {
         return this.icon;
     }
 
+    setGodMode(boolean = true) {
+        this.godMode = boolean == true;
+        return this;
+    }
+    enableGodMode() {
+        this.setGodMode(true);
+        return this;
+    }
+    disableGodMode() {
+        this.setGodMode(false);
+        return this;
+    }
+    getGodMode() {
+        return this.godMode;
+    }
+
     isEnabled() {
-        return this._isEnabled == true;
+        return this.enabled == true;
     }
     setEnabled(isEnabled = true) {
-        this._isEnabled = (isEnabled == true);
+        this.enabled = (isEnabled == true);
         return 0;
     }
 
     isLocked() {
-        return this._isLocked == true;
+        return this.locked == true;
     }
     setLocked(isLocked = true) {
-        this._isLocked = (isLocked == true);
+        this.locked = (isLocked == true);
         return 0;
     }
 
@@ -171,8 +189,8 @@ class AbstractEntity {
     }
 
     setEssential(isEssential = true) {
-        this._isEssential = isEssential == true;
-        if (this._isEssential) {
+        this.essential = isEssential == true;
+        if (this.essential) {
             Game.setEssentialEntity(this);
         }
         else {
@@ -181,7 +199,19 @@ class AbstractEntity {
         return 0;
     }
     isEssential() {
-        return this._isEssential;
+        return this.essential;
+    }
+
+    kill() {
+        this.setHealth(0);
+        return 0;
+    }
+    resurrect(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 1;}
+        else {number = Math.abs(number|0)||1}
+        this.setHealth(number);
+        this.living = true;
+        return 0;
     }
 
     dispose() {

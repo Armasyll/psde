@@ -15,12 +15,8 @@ class InstancedItemEntity extends InstancedEntity {
         return this.entity.getItemType();
     }
 
-    clone(_id) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
-        }
-        return new InstancedItemEntity(_id, this.entity, this.owner);
+    clone(id = "") {
+        return new InstancedItemEntity(id, this.entity, this.owner);
     }
     dispose() {
         Game.removeItemInstance(this.id);
