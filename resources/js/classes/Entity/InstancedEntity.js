@@ -1,14 +1,10 @@
 class InstancedEntity extends AbstractEntity {
     /**
      * Creates an InstancedEntity
-     * @param  {stirng} id Unique ID, auto-generated if none given
-     * @param  {Entity} entity Entity, String ID of Entity, InstancedEntity, or String ID of InstancedEntity
-     * @param  {string} name Name
-     * @param  {CharacterEntity} _owner Owner
-     * @param  {number} _price Price, defaults to 0
-     * @param  {number} _weight Weight, defaults to 0.001
-     * @param  {number} _health Health, defaults to 1
-     * @param  {number} _healthMax Max health, defaults to 1
+     * @param  {string} id           Unique ID
+     * @param  {string} name         Name
+     * @param  {string} description  Description
+     * @param  {string} iconID       Icon ID
      */
     constructor(id, entity, name = undefined, description = undefined, iconID = undefined) {
         super(id, name, description);
@@ -23,16 +19,11 @@ class InstancedEntity extends AbstractEntity {
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
         this.entityType = this.entity.entityType;
-        this.health = this.entity.health;
-
         this._useOwnAvailableActions = false;
-        this.availableActions = null;
-        this._useOwnHiddenAvailableActions = false;
-        this.hiddenAvailableActions = null;
-        this.defaultAction = this.entity.getDefaultAction();
         this._useOwnDefaultAction = false;
+        this._useOwnHiddenAvailableActions = false;
         this._useOwnSpecialProperties = false;
-        this.specialProperties = null;
+        this._useOwnTraits = false;
 
         Game.setEntityInstance(this.id, this);
     }
@@ -314,13 +305,13 @@ class InstancedEntity extends AbstractEntity {
         }
     }
 
-    setDefaultAction(_action) {
+    setDefaultAction(action) {
         if (!this.hasEntity()) {
             return this;
         }
-        if (this.hasAvailableAction(_action)) {
+        if (this.hasAvailableAction(action)) {
             this._useOwnDefaultAction = true;
-            this.defaultAction = _action;
+            this.defaultAction = action;
         }
     }
     getDefaultAction() {
@@ -334,14 +325,55 @@ class InstancedEntity extends AbstractEntity {
             return this.entity.getDefaultAction();
         }
     }
+
+    addTrait(...blob) {
+        if (!this._useOwnTraits) {
+            this.traits = entity.cloneTraits();
+            this._useOwnTraits = true;
+        }
+        return super.addTrait(...blob);
+    }
+    removeTrait(...blob) {
+        if (!this._useOwnTraits) {
+            this.traits = entity.cloneTraits();
+            this._useOwnTraits = true;
+        }
+        return super.removeTrait(...blob);
+    }
+    getTraits() {
+        if (this._useOwnTraits) {
+            return this.traits;
+        }
+        else {
+            return this.entity.getTraits();
+        }
+    }
     
     clone(id = "") {
         if (!this.hasEntity()) {
             return this;
         }
-        let instancedEntity = new InstancedEntity(id, this.entity, this.name, this.description, this.icon);
-        instancedEntity.health = this.health.clone();
-        instancedEntity.specialProperties = new Set(this.specialProperties);
+        let instancedEntity = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
+        // variables from AbstractEntity
+        if (this._useOwnAvailableActions) {
+            instancedEntity.availableActions = Object.assign({}, this.availableActions);
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            instancedEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        }
+        if (this._useOwnSpecialProperties) {
+            instancedEntity.specialProperties = new Set(this.specialProperties);
+        }
+        if (this._useOwnDefaultAction) {
+            instancedEntity.defaultAction = this.defaultAction;
+        }
+        if (this._useOwnTraits) {
+            instancedEntity.traits = this.cloneTraits();
+        }
+        instancedEntity.health = this.health;
+        instancedEntity.healthOffset = this.healthOffset;
+        instancedEntity.healthMax = this.healthMax;
+        instancedEntity.healthMaxOffset = this.healthMaxOffset;
         return instancedEntity;
     }
     dispose() {

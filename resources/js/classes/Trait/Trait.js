@@ -11,7 +11,7 @@ class Trait {
         this.modifiers = {};
         this.priority = 1000;
         this.hidden = false;
-        this.stack = 1;
+        this.stackCount = 1;
         Game.setTrait(this.id, this);
     }
     addModifier(property, modification) { // TODO: what about unmodifying?
@@ -27,6 +27,9 @@ class Trait {
             return this.modifiers[property];
         }
         return 1;
+    }
+    hasModifier(property) {
+        return this.modifiers.hasOwnProperty(property);
     }
     getModifiers() {
         return this.modifiers;
@@ -44,13 +47,13 @@ class Trait {
         this.isHidden = boolean == true;
         return this;
     }
-    getStack() {
-        return this.stack;
+    getStackCount() {
+        return this.stackCount;
     }
-    setStack(number) {
+    setStackCount(number) {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
-        this.stack = number;
+        this.stackCount = number;
         return this;
     }
     static allowedProperties() {

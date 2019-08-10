@@ -17,11 +17,15 @@ class AbstractEntity {
         this.setName(name);
         this.description = null;
         this.setDescription(description);
-        this.icon = null;
+        this.iconID = null;
         this.setIcon(iconID);
         this.controller = null;
         this.owner = null;
         this.target = null;
+        this.health = 10;
+        this.healthOffset = 0;
+        this.healthMax = 10;
+        this.healthMaxOffset = 0;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.specialProperties = new Set();
@@ -30,7 +34,11 @@ class AbstractEntity {
         this.enabled = true;
         this.locked = false;
         this.essential = false;
-        this.traits = new Set();
+        /**
+         * Object<number, Map<Trait, number>>
+         * <Priority, <Trait, Stack>>
+         */
+        this.traits = new Map();
         Game.setAbstractEntity(this.id, this);
     }
 
@@ -66,15 +74,94 @@ class AbstractEntity {
     }
     setIcon(iconID) {
         if (Game.hasIcon(iconID)) {
-            this.icon = iconID;
+            this.iconID = iconID;
         }
         else {
-            this.icon = "missingIcon";
+            this.iconID = "missingIcon";
         }
         return 0;
     }
     getIcon() {
-        return this.icon;
+        return this.iconID;
+    }
+
+    setHealth(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (this.godMode) {
+            this.health = this.getMaxHealth();
+            return this;
+        }
+        if (number + this.health > this.healthMax) {
+            number = this.healthMax;
+        }
+        else if (number + this.health < 0) {
+            number = 0;
+        }
+        if (this.essential) {
+            if (number < 1) {
+                number = 1;
+            }
+        }
+        this.health = number;
+        if (this.health <= 0) {
+            this.living = false;
+            if (this.hasController()) {
+                this.controller.doDeath();
+            }
+        }
+        return this;
+    }
+    addHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setHealth(this.health + number);
+        }
+        return this;
+    }
+    subtractHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setHealth(this.health - number);
+        }
+        return this;
+    }
+    getHealth() {
+        return this.health + this.healthOffset;
+    }
+
+    setMaxHealth(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        if (number <= 0) {
+            number = 1;
+        }
+        this.healthMax = number;
+        if (this.health > this.getMaxHealth()) {
+            this.health = this.getMaxHealth();
+        }
+        return this;
+    }
+    addMaxHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxHealth(this.healthMax + number);
+        }
+        return this;
+    }
+    subtractMaxHealth(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (number > 0) {
+            this.setMaxHealth(this.healthMax - number);
+        }
+        return this;
+    }
+    getMaxHealth() {
+        return this.healthMax + this.healthMaxOffset;
     }
 
     setGodMode(boolean = true) {
@@ -208,29 +295,67 @@ class AbstractEntity {
         return 0;
     }
     resurrect(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 1;}
-        else {number = Math.abs(number|0)||1}
+        if (typeof number != "number") { number = Number.parseInt(number) | 1; }
+        else { number = Math.abs(number | 0) || 1 }
         this.setHealth(number);
         this.living = true;
         return 0;
     }
 
     addTrait(trait) {
-        this.traits.add(trait);
+        let i = trait.getPriority();
+        if (!this.traits.hasOwnProperty(i)) {
+            this.traits[i] = new Map();
+        }
+        if (this.traits[i].has(trait)) {
+            if (this.traits[i].get(trait) < trait.getStackCount()) {
+                this.traits[i].get(trait)++;
+            }
+        }
+        else {
+            this.traits[i].set(trait, 1);
+        }
         return 0;
     }
     removeTrait(trait) {
-        this.traits.delete(trait);
-        return 0;
-    }
-    applyTraits() { // TODO: this
-        this.traits.forEach((trait) => {
-            for (let modifier in trait.modifiers) {
-                if (this.hasOwnProperty(modifier)) {
-                    this[modifier] = trait.modifiers[modifier](this[modifier]);
+        let i = trait.getPriority();
+        if (this.traits.hasOwnProperty(i)) {
+            if (this.traits[i].has(trait)) {
+                if (this.traits[i].get(trait) == 1) {
+                    this.traits[i].remove(trait);
+                    if (Object.keys(this.traits[i]).length == 0) {
+                        delete this.traits[i];
+                    }
+                }
+                else {
+                    this.traits[i].get(trait)--;
                 }
             }
-        });
+        }
+        return 0;
+    }
+    applyTraits() {
+        for (let priority in this.traits) {
+            this.traits[priority].forEach((stackCount, trait) => {
+                for (let modifier in trait.getModifiers()) {
+                    if (this.hasOwnProperty(modifier)) {
+                        for (let i = 0; i < stackCount; i++) {
+                            this[modifier] = trait.getModifier(modifier)(this[modifier]);
+                        }
+                    }
+                }
+            });
+        }
+    }
+    getTraits() {
+        return this.traits;
+    }
+    cloneTraits() {
+        let obj = {};
+        for (let priority in this.traits) {
+            obj[priority] = new Map(this.traits[priority]);
+        }
+        return obj;
     }
 
     dispose() {

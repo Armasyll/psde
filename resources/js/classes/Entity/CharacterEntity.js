@@ -91,6 +91,7 @@ class CharacterEntity extends EntityWithStorage {
          * @type {number} 0 to 100
          */
         this.hunger = 0;
+        this.hungerOffset = 0;
         /**
          * Physical power
          * @type {number}
@@ -138,6 +139,7 @@ class CharacterEntity extends EntityWithStorage {
          * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
         this.mana = 0;
+        this.manaOffset = 0;
         this.manaMax = 0;
         this.manaMaxOffset = 0;
         /**
@@ -145,6 +147,7 @@ class CharacterEntity extends EntityWithStorage {
          * @type {number} 0 to 100
          */
         this.stamina = 1;
+        this.staminaOffset = 0;
         this.staminaMax = 1;
         this.staminaMaxOffset = 0;
         /**
@@ -730,7 +733,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getHunger() {
-        return this.hunger;
+        return this.hunger + this.hungerOffset;
     }
 
     setStrength(number) {
@@ -969,7 +972,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getMana() {
-        return this.mana;
+        return this.mana + this.manaOffset;
     }
 
     setMaxMana(number) {
@@ -1037,7 +1040,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getStamina() {
-        return this.stamina;
+        return this.stamina + this.staminaOffset;
     }
 
     setMaxStamina(number) {

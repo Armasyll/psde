@@ -4,7 +4,7 @@ class Entity extends AbstractEntity {
      * @param  {string} id           Unique ID
      * @param  {string} name         Name
      * @param  {string} description  Description
-     * @param  {string}  iconID       Image ID
+     * @param  {string} iconID       Icon ID
      * @param  {EntityEnum} entityType EntityEnum
      */
     constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItem", entityType = EntityEnum.ENTITY) {
@@ -12,9 +12,6 @@ class Entity extends AbstractEntity {
         this.entityType = entityType;;
         this.weight = 0;
         this.price = 0;
-        this.health = 10;
-        this.healthMax = 10;
-        this.healthMaxOffset = 0;
         this.meshID = "missingMesh";
         this.textureID = "missingTexture";
         this.materialID = "missingMaterial";
@@ -46,85 +43,6 @@ class Entity extends AbstractEntity {
     }
     getPrice() {
         return this.price;
-    }
-
-    setHealth(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        if (this.godMode) {
-            this.health = this.getMaxHealth();
-            return this;
-        }
-        if (number + this.health > this.healthMax) {
-            number = this.healthMax;
-        }
-        else if (number + this.health < 0) {
-            number = 0;
-        }
-        if (this.essential) {
-            if (number < 1) {
-                number = 1;
-            }
-        }
-        this.health = number;
-        if (this.health <= 0) {
-            this.living = false;
-            if (this.hasController()) {
-                this.controller.doDeath();
-            }
-        }
-        return this;
-    }
-    addHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setHealth(this.health + number);
-        }
-        return this;
-    }
-    subtractHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setHealth(this.health - number);
-        }
-        return this;
-    }
-    getHealth() {
-        return this.health;
-    }
-
-    setMaxHealth(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        if (number <= 0) {
-            number = 1;
-        }
-        this.healthMax = number;
-        if (this.health > this.getMaxHealth()) {
-            this.health = this.getMaxHealth();
-        }
-        return this;
-    }
-    addMaxHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMaxHealth(this.healthMax + number);
-        }
-        return this;
-    }
-    subtractMaxHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMaxHealth(this.healthMax - number);
-        }
-        return this;
-    }
-    getMaxHealth() {
-        return this.healthMax + this.healthMaxOffset;
     }
 
     setMeshID(meshID) {
@@ -327,10 +245,13 @@ class Entity extends AbstractEntity {
         entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
         entity.specialProperties = new Set(this.specialProperties);
         entity.defaultAction = this.defaultAction;
+        entity.health = this.health;
+        entity.healthOffset = this.healthOffset;
+        entity.healthMax = this.healthMax;
+        entity.healthMaxOffset = this.healthMaxOffset;
         // variables from Entity
         entity.weight = this.weight;
         entity.price = this.price;
-        entity.health = this.health;
         return entity;
     }
     createInstance(id = "") {
