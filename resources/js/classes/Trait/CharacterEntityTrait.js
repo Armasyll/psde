@@ -11,13 +11,10 @@ class CharacterEntityTrait extends EntityTrait {
             "intelligenceOffset",
             "wisdomOffset",
             "charismaOffset",
-            "magickMultiplier",
-            "armourClass",
             "manaOffset",
             "manaMaxOffset",
             "staminaOffset",
-            "staminaMaxOffset",
-            "weight"
+            "staminaMaxOffset"
         ]);
     }
     allowedProperty(property) {

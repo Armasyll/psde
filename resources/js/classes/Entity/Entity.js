@@ -11,7 +11,9 @@ class Entity extends AbstractEntity {
         super(id, name, description, iconID);
         this.entityType = entityType;;
         this.weight = 0;
+        this.weightOffset = 0;
         this.price = 0;
+        this.priceOffset = 0;
         this.meshID = "missingMesh";
         this.textureID = "missingTexture";
         this.materialID = "missingMaterial";
@@ -32,7 +34,7 @@ class Entity extends AbstractEntity {
         return this;
     }
     getWeight() {
-        return this.weight;
+        return this.weight + this.weightOffset;
     }
 
     setPrice(number) {
@@ -42,7 +44,7 @@ class Entity extends AbstractEntity {
         return this;
     }
     getPrice() {
-        return this.price;
+        return this.price + this.priceOffset;
     }
 
     setMeshID(meshID) {
@@ -236,6 +238,12 @@ class Entity extends AbstractEntity {
     }
     getDefaultAction() {
         return this.defaultAction;
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.weightOffset = 0;
+        this.priceOffset = 0;
     }
 
     clone(id = undefined) {

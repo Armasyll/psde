@@ -4,10 +4,8 @@ class EntityTrait extends Trait {
     }
     static allowedProperties() {
         return super.allowedProperties().concat([
-            "weight",
-            "price",
-            "health",
-            "healthMaxOffset"
+            "weightOffset",
+            "priceOffset"
         ]);
     }
     allowedProperty(property) {

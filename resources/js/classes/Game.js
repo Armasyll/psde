@@ -2785,6 +2785,19 @@ class Game {
         }
     }
 
+    static importBabylon(file, callback = undefined) {
+        BABYLON.SceneLoader.ImportMesh(
+            undefined,
+            file.substr(0, file.lastIndexOf("/")+1),
+            file.substr(file.lastIndexOf("/")+1),
+            Game.scene,
+            function(meshes, particleSystems, skeletons) {
+                if (typeof callback == "function") {
+                    callback(meshes);
+                }
+            }
+        );
+    }
     static importMeshes(file, meshIDs = undefined, callback = undefined) {
         if (Game.loadedFiles.has(file)) {
             return 0;

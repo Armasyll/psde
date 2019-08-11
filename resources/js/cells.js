@@ -737,7 +737,7 @@ Game.generateWallScene = function() {
     Game.setLoadedMesh("floor16x16", BABYLON.MeshBuilder.CreateTiledGround("floor16x16", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene));
 
     let networkTestCell = new Cell("networkTestCell");
-    networkTestCell.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+    networkTestCell.addCollisionPlane({x:-5,z:-25}, {x:11,z:-9}, 0);
     networkTestCell.setSkybox(new BABYLON.SkyMaterial("skyMaterial", Game.scene));
     networkTestCell.skyboxMaterial.backFaceCulling = false;
     networkTestCell.skyboxMaterial.azimuth = 0;

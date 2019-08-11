@@ -31,14 +31,16 @@ class AbstractEntity {
         this.specialProperties = new Set();
         this.defaultAction = null;
         this.godMode = false;
+        this.godModeOffset = false;
         this.enabled = true;
         this.locked = false;
         this.essential = false;
+        this.essentialOffset = false;
         /**
          * Object<number, Map<Trait, number>>
          * <Priority, <Trait, Stack>>
          */
-        this.traits = new Map();
+        this.traits = {};
         Game.setAbstractEntity(this.id, this);
     }
 
@@ -88,7 +90,7 @@ class AbstractEntity {
     setHealth(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
-        if (this.godMode) {
+        if (this.getGodMode()) {
             this.health = this.getMaxHealth();
             return this;
         }
@@ -98,7 +100,7 @@ class AbstractEntity {
         else if (number + this.health < 0) {
             number = 0;
         }
-        if (this.essential) {
+        if (this.isEssential()) {
             if (number < 1) {
                 number = 1;
             }
@@ -177,7 +179,7 @@ class AbstractEntity {
         return this;
     }
     getGodMode() {
-        return this.godMode;
+        return this.godMode || this.godModeOffset;
     }
 
     isEnabled() {
@@ -287,7 +289,7 @@ class AbstractEntity {
         return 0;
     }
     isEssential() {
-        return this.essential;
+        return this.essential || this.essentialOffset;
     }
 
     kill() {
@@ -303,6 +305,19 @@ class AbstractEntity {
     }
 
     addTrait(trait) {
+        if (!(trait instanceof Trait)) {
+            if (Game.hasTrait(trait)) {
+                trait = Game.getTrait(trait);
+            }
+            else {
+                return 2;
+            }
+        }
+        for (let property in trait.getModifiers()) {
+            if (!this.hasOwnProperty(property)) {
+                return 1;
+            }
+        }
         let i = trait.getPriority();
         if (!this.traits.hasOwnProperty(i)) {
             this.traits[i] = new Map();
@@ -315,14 +330,23 @@ class AbstractEntity {
         else {
             this.traits[i].set(trait, 1);
         }
+        this.applyTraits();
         return 0;
     }
     removeTrait(trait) {
+        if (!(trait instanceof Trait)) {
+            if (Game.hasTrait(trait)) {
+                trait = Game.getTrait(trait);
+            }
+            else {
+                return 2;
+            }
+        }
         let i = trait.getPriority();
         if (this.traits.hasOwnProperty(i)) {
             if (this.traits[i].has(trait)) {
                 if (this.traits[i].get(trait) == 1) {
-                    this.traits[i].remove(trait);
+                    this.traits[i].delete(trait);
                     if (Object.keys(this.traits[i]).length == 0) {
                         delete this.traits[i];
                     }
@@ -332,20 +356,23 @@ class AbstractEntity {
                 }
             }
         }
+        this.applyTraits();
         return 0;
     }
     applyTraits() {
+        this.resetOffsets();
         for (let priority in this.traits) {
             this.traits[priority].forEach((stackCount, trait) => {
                 for (let modifier in trait.getModifiers()) {
                     if (this.hasOwnProperty(modifier)) {
                         for (let i = 0; i < stackCount; i++) {
-                            this[modifier] = trait.getModifier(modifier)(this[modifier]);
+                            this[modifier] = trait.getModifier(modifier)(this);
                         }
                     }
                 }
             });
         }
+        return 0;
     }
     getTraits() {
         return this.traits;
@@ -356,6 +383,20 @@ class AbstractEntity {
             obj[priority] = new Map(this.traits[priority]);
         }
         return obj;
+    }
+    clearTraits() {
+        for (let priority in this.traits) {
+            obj[priority].clear();
+            delete obj[priority];
+        }
+        this.resetOffsets();
+        return 0;
+    }
+    resetOffsets() {
+        this.godModeOffset = false;
+        this.essentialOffset = false;
+        this.healthOffset = 0;
+        this.healthMaxOffset = 0;
     }
 
     dispose() {

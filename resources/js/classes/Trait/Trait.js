@@ -8,6 +8,9 @@ class Trait {
         this.name = name;
         this.description = description;
         this.iconID = iconID;
+        /**
+         * Object<string, function>
+         */
         this.modifiers = {};
         this.priority = 1000;
         this.hidden = false;
@@ -59,7 +62,9 @@ class Trait {
     static allowedProperties() {
         return [
             "godMode",
-            "essential"
+            "essential",
+            "health",
+            "healthMaxOffset"
         ];
     }
     allowedProperty(property) {

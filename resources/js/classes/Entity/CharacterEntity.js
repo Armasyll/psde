@@ -755,7 +755,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getStrength() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.strength + this.strengthOffset;
@@ -779,7 +779,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getDexterity() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.dexterity + this.dexterityOffset;
@@ -803,7 +803,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getConstitution() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.constitution + this.constitutionOffset;
@@ -827,7 +827,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getIntelligence() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.intelligence + this.intelligenceOffset;
@@ -851,7 +851,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getWisdom() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.wisdom + this.wisdomOffset;
@@ -875,7 +875,7 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
     getCharisma() {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.charisma + this.charismaOffset;
@@ -942,7 +942,7 @@ class CharacterEntity extends EntityWithStorage {
     setMana(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        if (this.godMode) {
+        if (this.getGodMode()) {
             this.mana = this.getMaxMana();
             return this;
         }
@@ -1010,7 +1010,7 @@ class CharacterEntity extends EntityWithStorage {
     setStamina(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        if (this.godMode) {
+        if (this.getGodMode()) {
             this.stamina = this.getMaxStamina();
             return this;
         }
@@ -1151,7 +1151,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["passion"] = number;
     }
     getCharacterPassion(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["passion"];
@@ -1160,7 +1160,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["friendship"] = number;
     }
     getCharacterFriendship(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["friendship"];
@@ -1169,7 +1169,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["playfulness"] = number;
     }
     getCharacterPlayfulness(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["playfulness"];
@@ -1178,7 +1178,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["soulmate"] = number;
     }
     getCharacterSoulmate(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["soulmate"];
@@ -1187,7 +1187,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["familial"] = number;
     }
     getCharacterFamilial(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["familial"];
@@ -1196,7 +1196,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["obsession"] = number;
     }
     getCharacterObsession(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["obsession"];
@@ -1205,7 +1205,7 @@ class CharacterEntity extends EntityWithStorage {
         return this.characterDisposition[_character]["hate"] = number;
     }
     getCharacterHate(_character) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER; // SO MUCH HATE >:VVVVV
         }
         return this.characterDisposition[_character]["hate"];
@@ -1231,7 +1231,7 @@ class CharacterEntity extends EntityWithStorage {
         }
     }
     hasCharacterDisposition(characterID) {
-        if (this.godMode) {
+        if (this.getGodMode()) {
             return true;
         }
         return this.characterDisposition.hasOwnProperty(characterID);
@@ -1547,6 +1547,21 @@ class CharacterEntity extends EntityWithStorage {
     removeFurniture() {
         this.furniture = null;
         return 0;
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.hungerOffset = 0;
+        this.strengthOffset = 0;
+        this.dexterityOffset = 0;
+        this.constitutionOffset = 0;
+        this.intelligenceOffset = 0;
+        this.wisdomOffset = 0;
+        this.charismaOffset = 0;
+        this.manaOffset = 0;
+        this.manaMaxOffset = 0;
+        this.staminaOffset = 0;
+        this.staminaMaxOffset = 0;
     }
 
     generateProperties() {
