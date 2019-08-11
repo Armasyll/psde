@@ -770,5 +770,6 @@ Game.generateWallScene = function() {
 
     networkTestCell.addItem("cheeseWedgeInstance01", "cheeseWedge", new BABYLON.Vector3(3, 0, -17));
     networkTestCell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", new BABYLON.Vector3(3, 0, -17));
+    Game.importBabylon("resources/data/_KF/KF.babylon");
     Game.setPlayerCell(networkTestCell);
 }
