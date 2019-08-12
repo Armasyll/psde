@@ -52,7 +52,6 @@ class CharacterController extends EntityController {
 
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
-        this.walkAnim = null;
         this.idle = new AnimData("idle");
         this.idleJump = new AnimData("idleJump");
         this.fall = new AnimData("fall");
@@ -103,8 +102,9 @@ class CharacterController extends EntityController {
             this._isAnimated = false;
         }
 
-        //this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.runAnim.from, this.runAnim.to, 1.0, this.runAnim.loop);
         //this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 1.0, this.idle.loop);
+        //this.walkAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.walk.from, this.walk.to, 0.0, this.walk.loop);
+        //this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.run.from, this.run.to, 0.0, this.run.loop);
 
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
