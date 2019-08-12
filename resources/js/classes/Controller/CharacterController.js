@@ -15,10 +15,9 @@ class CharacterController extends EntityController {
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
         this.groundRay = new BABYLON.Ray(mesh.position, mesh.position.add(BABYLON.Vector3.Down()), 0.01);
-        this._gravityScale = 1.0;
-        this._gravity = -Game.scene.gravity.y * this._gravityScale;
-        this._minSlopeLimit = BABYLON.Tools.ToRadians(30);
-        this._maxSlopeLimit = BABYLON.Tools.ToRadians(50);
+        this.gravity = -Game.scene.gravity.y;
+        this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
+        this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
         this._stepOffset = 0.25;
         this._vMoveTot = 0;
         this._vMovStartPos = BABYLON.Vector3.Zero();
@@ -26,17 +25,17 @@ class CharacterController extends EntityController {
         this.runSpeed = 3.2 * this.mesh.scaling.z;
         this.sprintSpeed = this.runSpeed * 2;
         this.jumpSpeed = this.mesh.scaling.y * 4;
-        this._moveVector = new BABYLON.Vector3();
-        this._avStartPos = BABYLON.Vector3.Zero();
-        this._fallDist = 0;
-        this._fallFrameCountMin = 50;
-        this._fallFrameCount = 0;
-        this._jumpStartPosY = 0;
-        this._jumpTime = 0;
-        this._movFallTime = 0;
-        this._idleFallTime = 0;
-        this._groundFrameCount = 0;
-        this._groundFrameMax = 10;
+        this.moveVector = new BABYLON.Vector3();
+        this.avStartPos = BABYLON.Vector3.Zero();
+        this.freeFallDist = 0;
+        this.fallFrameCountMin = 50;
+        this.fallFrameCount = 0;
+        this.jumpStartPosY = 0;
+        this.jumpTime = 0;
+        this.movFallTime = 0;
+        this.idleFallTime = 0;
+        this.groundFrameCount = 0;
+        this.groundFrameMax = 10;
         this.isGrounded = false;
         this.isFalling = false;
         this.isStanding = true;
@@ -56,14 +55,12 @@ class CharacterController extends EntityController {
         this.walkAnim = null;
         this.idle = new AnimData("idle");
         this.idleJump = new AnimData("idleJump");
-        this.idleAnim = null;
         this.fall = new AnimData("fall");
         this.fallLong = new AnimData("fallLong");
         this.land = new AnimData("land");
         this.landHard = new AnimData("landHard");
         this.rollForward = new AnimData("rollForward");
         this.run = new AnimData("run");
-        this.runAnim = null;
         this.runJump = new AnimData("runJump");
         this.turnLeft = new AnimData("turnLeft");
         this.turnRight = new AnimData("turnRight");
@@ -75,13 +72,6 @@ class CharacterController extends EntityController {
         this.attackThrustRH = new AnimData("attackThrustRH");
         this.attackSlashRH = new AnimData("attackSlashRH");
         this.attackChopRH = new AnimData("attackChopRH");
-        this.attackPunchLH = new AnimData("attachPunchLH");
-        this.attackThrustLH = new AnimData("attackThrustLH");
-        this.attackSlashLH = new AnimData("attackSlashLH");
-        this.attackChopLH = new AnimData("attackChopLH");
-        this.attackThrust2H = new AnimData("attackThrust2H");
-        this.attackSlash2H = new AnimData("attackSlash2H");
-        this.attackChop2H = new AnimData("attackChop2H");
         this.lieDown = new AnimData("lieDown");
         this.sitDown = new AnimData("sitDown");
         this.death = new AnimData("death");
@@ -113,6 +103,9 @@ class CharacterController extends EntityController {
             this._isAnimated = false;
         }
 
+        //this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.runAnim.from, this.runAnim.to, 1.0, this.runAnim.loop);
+        //this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 1.0, this.idle.loop);
+
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
         this._showHelmet = true;
@@ -141,8 +134,8 @@ class CharacterController extends EntityController {
     }
 
     setSlopeLimit(minSlopeLimit, maxSlopeLimit) {
-        this._minSlopeLimit = this.minSlopeLimitDegrees;
-        this._maxSlopeLimit = this.maxSlopeLimitDegrees;
+        this.minSlopeLimit = minSlopeLimit;
+        this.maxSlopeLimit = maxSlopeLimit;
     }
     setStepOffset(stepOffset) {
         this._stepOffset = stepOffset;
@@ -155,10 +148,6 @@ class CharacterController extends EntityController {
     }
     setJumpSpeed(number) {
         this.jumpSpeed = number;
-    }
-    setGravityScale(number) {
-        this._gravityScale = number;
-        this._gravity = -Game.gravity.y * this._gravityScale;
     }
     setWalkAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.walk, rangeName, rate, loop, standalone);
@@ -220,22 +209,21 @@ class CharacterController extends EntityController {
             this.removeParent();
         }
         let anim = this.idle;
-        let dt = Game.engine.getDeltaTime() / 1000;
         if (this.key.jump && !this.isFalling) {
-            this._avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
-            this._idleFallTime = 0;
-            anim = this.doJump(dt);
+            this.idleFallTime = 0;
+            anim = this.doJump();
         }
         else if (this.anyMovement() || this.isFalling) {
-            this._avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.isGrounded = false;
-            this._idleFallTime = 0;
-            anim = this.doMove(dt);
+            this.idleFallTime = 0;
+            anim = this.doMove();
             Game.entityLocRotWorker.postMessage({
                 cmd:"setLocRot",
                 msg:[
@@ -247,9 +235,9 @@ class CharacterController extends EntityController {
             });
         }
         else if (!this.isFalling) {
-            this._avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
-            anim = this.doIdle(dt);
+            anim = this.doIdle();
         }
         /*if (anim == this.idle) {
             if (this.idleAnim != null) {
@@ -296,14 +284,15 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    doJump(dt, power = 1.0) {
+    doJump(power = 1.0) {
+        let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.runJump;
-        if (this._jumpTime === 0) {
-            this._jumpStartPosY = this.mesh.position.y;
+        if (this.jumpTime === 0) {
+            this.jumpStartPosY = this.mesh.position.y;
         }
-        let js = this.jumpSpeed - this._gravity * this._jumpTime;
-        let jumpDist = js * dt * power - 0.5 * this._gravity * dt * dt;
-        this._jumpTime += dt;
+        let js = this.jumpSpeed - this.gravity * this.jumpTime;
+        let jumpDist = js * dt * power - 0.5 * this.gravity * dt * dt;
+        this.jumpTime += dt;
         let forwardDist = 0;
         let disp = BABYLON.Vector3.Zero();
         if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
@@ -319,7 +308,7 @@ class CharacterController extends EntityController {
             else if (this.isSprinting) {
                 forwardDist = this.sprintSpeed * dt;
             }
-            disp = this._moveVector.clone();
+            disp = this.moveVector.clone();
             disp.y = 0;
             disp = disp.normalize();
             disp.scaleToRef(forwardDist, disp);
@@ -331,13 +320,13 @@ class CharacterController extends EntityController {
         }
         this.mesh.moveWithCollisions(disp);
         if (jumpDist < 0) {
-            if ((this.mesh.position.y > this._avStartPos.y) || ((this.mesh.position.y === this._avStartPos.y) && (disp.length() > 0.001))) {
+            if ((this.mesh.position.y > this.avStartPos.y) || ((this.mesh.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
                 this.endJump();
             }
-            else if (this.mesh.position.y < this._jumpStartPosY) {
-                let actDisp = this.mesh.position.subtract(this._avStartPos);
+            else if (this.mesh.position.y < this.jumpStartPosY) {
+                let actDisp = this.mesh.position.subtract(this.avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
+                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endJump();
                     }
                 }
@@ -350,24 +339,25 @@ class CharacterController extends EntityController {
     }
     endJump() {
         this.key.jump = false;
-        this._jumpTime = 0;
+        this.jumpTime = 0;
         this.isWalking = false;
         this.isRunning = false;
         this.isSprinting = false;
     }
-    doMove(dt) {
+    doMove() {
+        let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.idle;
-        let u = this._movFallTime * this._gravity;
-        this._fallDist = u * dt + this._gravity * dt * dt / 2;
-        this._movFallTime = this._movFallTime + dt;
+        let u = this.movFallTime * this.gravity;
+        this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
+        this.movFallTime = this.movFallTime + dt;
         let moving = false;
         if (this.isFalling) {
-            this._moveVector.y = -this._fallDist;
+            this.moveVector.y = -this.freeFallDist;
             moving = true;
             anim = this.fall;
         }
         else {
-            this._moveVector.set(0,0,0);
+            this.moveVector.set(0,0,0);
             let dist = 0;
             let atan = -Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90);
             if (this.isStanding) {
@@ -426,12 +416,12 @@ class CharacterController extends EntityController {
                 moving = false;
                 dist = 0;
             }
-            this._moveVector = this.mesh.calcMovePOV(0, -this._fallDist, dist);
+            this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDist, dist);
         }
         /*
          *  Jittering in the Y direction caused by _moveVector
          */
-        if (moving && this._moveVector.length() > 0.001) {
+        if (moving && this.moveVector.length() > 0.001) {
             this.updateGroundRay();
             let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
                 if (_mesh.isPickable && _mesh.checkCollisions) {
@@ -440,20 +430,20 @@ class CharacterController extends EntityController {
                 return false;
             });
             if (hit.hit) {
-                if (Game.Tools.arePointsEqual(this.mesh.position.y + this._moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
-                    this._moveVector.y = 0;
+                if (Game.Tools.arePointsEqual(this.mesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                    this.moveVector.y = 0;
                 }
             }
-            this.mesh.moveWithCollisions(this._moveVector);
-            if (this.mesh.position.y > this._avStartPos.y) {
-                let actDisp = this.mesh.position.subtract(this._avStartPos);
+            this.mesh.moveWithCollisions(this.moveVector);
+            if (this.mesh.position.y > this.avStartPos.y) {
+                let actDisp = this.mesh.position.subtract(this.avStartPos);
                 let slope = Tools.verticalSlope(actDisp);
-                if (slope >= this._maxSlopeLimit) {
+                if (slope >= this.maxSlopeLimit) {
                     if (this._stepOffset > 0) {
                         if (this._vMoveTot == 0) {
-                            this._vMovStartPos.copyFrom(this._avStartPos);
+                            this._vMovStartPos.copyFrom(this.avStartPos);
                         }
-                        this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this._avStartPos.y);
+                        this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this.avStartPos.y);
                         if (this._vMoveTot > this._stepOffset) {
                             this._vMoveTot = 0;
                             this.mesh.position.copyFrom(this._vMovStartPos);
@@ -461,14 +451,14 @@ class CharacterController extends EntityController {
                         }
                     }
                     else {
-                        this.mesh.position.copyFrom(this._avStartPos);
+                        this.mesh.position.copyFrom(this.avStartPos);
                         this.endFreeFall();
                     }
                 }
                 else {
                     this._vMoveTot = 0;
-                    if (slope > this._minSlopeLimit) {
-                        this._fallFrameCount = 0;
+                    if (slope > this.minSlopeLimit) {
+                        this.fallFrameCount = 0;
                         this.isFalling = false;
                     }
                     else {
@@ -476,21 +466,21 @@ class CharacterController extends EntityController {
                     }
                 }
             }
-            else if ((this.mesh.position.y) < this._avStartPos.y) {
-                let actDisp = this.mesh.position.subtract(this._avStartPos);
-                if (!(Tools.areVectorsEqual(actDisp, this._moveVector, 0.001))) {
-                    if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
+            else if ((this.mesh.position.y) < this.avStartPos.y) {
+                let actDisp = this.mesh.position.subtract(this.avStartPos);
+                if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endFreeFall();
                     }
                     else {
-                        this._fallFrameCount = 0;
+                        this.fallFrameCount = 0;
                         this.isFalling = false;
                     }
                 }
                 else {
                     this.isFalling = true;
-                    this._fallFrameCount++;
-                    if (this._fallFrameCount > this._fallFrameCountMin) {
+                    this.fallFrameCount++;
+                    if (this.fallFrameCount > this.fallFrameCountMin) {
                         anim = this.fall;
                     }
                 }
@@ -505,42 +495,43 @@ class CharacterController extends EntityController {
         return anim;
     }
     endFreeFall() {
-        this._movFallTime = 0;
-        this._fallFrameCount = 0;
+        this.movFallTime = 0;
+        this.fallFrameCount = 0;
         this.isFalling = false;
     }
-    doIdle(dt) {
+    doIdle() {
         if (this.isGrounded) {
             return this.idle;
         }
+        let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.idle;
         this.isWalking = false;
         this.isRunning = false;
         this.isSprinting = false;
-        this._movFallTime = 0;
-        this._fallFrameCount = 0;
+        this.movFallTime = 0;
+        this.fallFrameCount = 0;
         if (dt === 0) {
-            this._fallDist = 5;
+            this.freeFallDist = 5;
         }
         else {
-            let u = this._idleFallTime * this._gravity;
-            this._fallDist = u * dt + this._gravity * dt * dt / 2;
-            this._idleFallTime = this._idleFallTime + dt;
+            let u = this.idleFallTime * this.gravity;
+            this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
+            this.idleFallTime = this.idleFallTime + dt;
         }
-        if (this._fallDist < 0.01) {
+        if (this.freeFallDist < 0.01) {
             return anim;
         }
-        let disp = new BABYLON.Vector3(0, -this._fallDist, 0);
+        let disp = new BABYLON.Vector3(0, -this.freeFallDist, 0);
         this.mesh.moveWithCollisions(disp);
-        if ((this.mesh.position.y > this._avStartPos.y) || (this.mesh.position.y === this._avStartPos.y)) {
+        if ((this.mesh.position.y > this.avStartPos.y) || (this.mesh.position.y === this.avStartPos.y)) {
             this.groundIt();
         }
-        else if (this.mesh.position.y < this._avStartPos.y) {
-            let actDisp = this.mesh.position.subtract(this._avStartPos);
+        else if (this.mesh.position.y < this.avStartPos.y) {
+            let actDisp = this.mesh.position.subtract(this.avStartPos);
             if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
-                if (Tools.verticalSlope(actDisp) <= this._minSlopeLimit) {
+                if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                     this.groundIt();
-                    this.mesh.position.copyFrom(this._avStartPos);
+                    this.mesh.position.copyFrom(this.avStartPos);
                 }
                 else {
                     this.unGroundIt();
@@ -554,15 +545,15 @@ class CharacterController extends EntityController {
         return anim;
     }
     groundIt() {
-        this._groundFrameCount++;
-        if (this._groundFrameCount > this._groundFrameMax) {
+        this.groundFrameCount++;
+        if (this.groundFrameCount > this.groundFrameMax) {
             this.isGrounded = true;
-            this._idleFallTime = 0;
+            this.idleFallTime = 0;
         }
     }
     unGroundIt() {
         this.isGrounded = false;
-        this._groundFrameCount = 0;
+        this.groundFrameCount = 0;
     }
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
@@ -661,7 +652,7 @@ class CharacterController extends EntityController {
         }
         return this;
     }
-    doPunchRH(dt) {
+    doPunchRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
@@ -682,7 +673,7 @@ class CharacterController extends EntityController {
         }
         return true;
     }
-    doThrustRH(dt) {
+    doThrustRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
@@ -696,7 +687,7 @@ class CharacterController extends EntityController {
         }
         return true;
     }
-    doDeath(dt) {
+    doDeath() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
@@ -704,7 +695,7 @@ class CharacterController extends EntityController {
         this.beginAnimation(this.death);
         return true;
     }
-    doLay(dt) {
+    doLay() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
@@ -716,7 +707,7 @@ class CharacterController extends EntityController {
         this.beginAnimation(this.lieDown, () => {this.setLocked(false)});
         return true;
     }
-    doSit(dt) {
+    doSit() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
@@ -728,7 +719,7 @@ class CharacterController extends EntityController {
         this.beginAnimation(this.sitDown, () => {this.setLocked(false)});
         return true;
     }
-    doStand(dt) {
+    doStand() {
         if (this.isStanding) {
             return true;
         }
@@ -739,7 +730,7 @@ class CharacterController extends EntityController {
         this.setLocked(true);
         this.beginAnimation(this.stand, () => {this.setLocked(false)});
     }
-    doCrouch(dt) {
+    doCrouch() {
         if (this.isCrouching) {
             return this;
         }
