@@ -1549,6 +1549,17 @@ class CharacterEntity extends EntityWithStorage {
         return 0;
     }
 
+    hasArmorProficiency(armourType) { // TODO: this
+
+    }
+    hasWeaponProficiency(weaponType) {
+
+    }
+    hasToolProficiency(toolEnum) {
+
+    }
+    hasSavingThrowProficiency(abilityScoreEnum)
+
     resetOffsets() {
         super.resetOffsets();
         this.hungerOffset = 0;

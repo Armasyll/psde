@@ -11,6 +11,15 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         Game.setWeaponInstance(this.id, this);
     }
 
+    getWeaponCategory() {
+        return this.entity.getWeaponCategory();
+    }
+    getThrownRange() {
+        return this.entity.getThrownRange();
+    }
+    getAmmunitionRange() {
+        return this.entity.getAmmunitionRange();
+    }
     getDamageType() {
         return this.entity.getDamageType();
     }

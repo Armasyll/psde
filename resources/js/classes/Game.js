@@ -5395,6 +5395,12 @@ class Game {
     static getInterfaceMode() {
         return Game.interfaceMode;
     }
+    static calculateProficiencyByLevel(level) {
+        return Math.floor((level + 7) / 4);
+    }
+    static calculateProficiencyByExperience(experience) {
+        return Game.calculateProficiencyByLevel(Game.calculateLevel(experience));;
+    }
     static calculateAbilityModifier(score) {
         return Math.floor((score - 10) / 2);
     }
@@ -5464,6 +5470,9 @@ class Game {
     }
     static calculateDamage(defender, attacker, abilityType = AbilityEnum.STRENGTH) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
         let attackRoll = Game.roll(1, 20);
+        if (attacker.hasProficiency(attacker.getMainWeapon())) {
+
+        }
         let didHit = false;
         if (attackRoll == 1) {}
         else if (attackRoll == 20) {

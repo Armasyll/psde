@@ -11,8 +11,10 @@ class ClothingEntity extends EquipmentEntity {
         super(id, name, description, iconID, equipmentSlot);
         this.itemType = ItemEnum.APPAREL;
 
+        this.armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
         this.armourType = ArmourEnum.NONE;
         this.armourClass = 0;
+        this.portionMultiplier = 0.1;
 
         this.setEquipmentSlot(equipmentSlot);
         this.setArmourType(armourType);
@@ -27,93 +29,121 @@ class ClothingEntity extends EquipmentEntity {
         }
         this.armourType = armourType;
     }
+    getArmourCategory() {
+        return this.armourCategory;
+    }
     getArmourType() {
         return this.armourType;
     }
     getArmourClass() {
         return this.armourClass;
     }
+    getPortionMultiplier() {
+        return this.portionMultiplier;
+    }
 
     generateProperties() {
-        let multiplier = 0;
         switch (this.equipmentSlot) {
             case ApparelSlotEnum.CHEST: {
-                multiplier = 0.3;
+                this.portionMultiplier = 0.3;
                 break;
             }
             case ApparelSlotEnum.HAND_L:
             case ApparelSlotEnum.HAND_R:
             case ApparelSlotEnum.HANDS: {
-                multiplier = 0.05;
+                this.portionMultiplier = 0.05;
                 break;
             }
             default: {
-                multiplier = 0.1;
+                this.portionMultiplier = 0.1;
                 break;
             }
         }
         switch (this.armourType) {
             case ArmourEnum.PADDED: {
-                this.armourClass = 11 * multiplier;
-                this.price = 50 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
+                this.armourClass = 11 * this.portionMultiplier;
+                this.price = 50 * this.portionMultiplier;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.LEATHER: {
-                this.armourClass = 11 * multiplier;
-                this.price = 100 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
+                this.armourClass = 11 * this.portionMultiplier;
+                this.price = 100 * this.portionMultiplier;
                 break;
             }
             case ArmourEnum.STUDDEDLEATHER: {
-                this.armourClass = 12 * multiplier;
-                this.price = 450 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
+                this.armourClass = 12 * this.portionMultiplier;
+                this.price = 450 * this.portionMultiplier;
                 break;
             }
             case ArmourEnum.HIDE: {
-                this.armourClass = 12 * multiplier;
-                this.price = 100 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.MEDIUM_ARMOUR;
+                this.armourClass = 12 * this.portionMultiplier;
+                this.price = 100 * this.portionMultiplier;
                 break;
             }
             case ArmourEnum.CHAINSHIRT: {
-                this.armourClass = 13 * multiplier;
-                this.price = 500 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.MEDIUM_ARMOUR;
+                this.armourClass = 13 * this.portionMultiplier;
+                this.price = 500 * this.portionMultiplier;
                 break;
             }
             case ArmourEnum.SCALEMAIL: {
-                this.armourClass = 14 * multiplier;
-                this.price = 500 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.MEDIUM_ARMOUR;
+                this.armourClass = 14 * this.portionMultiplier;
+                this.price = 500 * this.portionMultiplier;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.BREASTPLATE: {
-                this.armourClass = 14 * multiplier;
-                this.price = 4000 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.MEDIUM_ARMOUR;
+                this.armourClass = 14 * this.portionMultiplier;
+                this.price = 4000 * this.portionMultiplier;
                 break;
             }
             case ArmourEnum.HALFPLATE: {
-                this.armourClass = 15 * multiplier;
-                this.price = 7500 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.MEDIUM_ARMOUR;
+                this.armourClass = 15 * this.portionMultiplier;
+                this.price = 7500 * this.portionMultiplier;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.RINGMAIL: {
-                this.armourClass = 14 * multiplier;
-                this.price = 300 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
+                this.armourClass = 14 * this.portionMultiplier;
+                this.price = 300 * this.portionMultiplier;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.CHAINMAIL: {
-                this.armourClass = 16 * multiplier;
-                this.price = 750 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
+                this.armourClass = 16 * this.portionMultiplier;
+                this.price = 750 * this.portionMultiplier;
+                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 13;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.SPLINT: {
-                this.armourClass = 17 * multiplier;
-                this.price = 2000 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
+                this.armourClass = 17 * this.portionMultiplier;
+                this.price = 2000 * this.portionMultiplier;
+                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 15;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.PLATE: {
-                this.armourClass = 18 * multiplier;
-                this.price = 15000 * multiplier;
+                this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
+                this.armourClass = 18 * this.portionMultiplier;
+                this.price = 15000 * this.portionMultiplier;
+                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 15;
+                this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
             case ArmourEnum.SHIELD: {
+                this.armourCategory = ArmourCategoryEnum.SHIELD;
                 this.armourClass = 2;
                 this.price = 100;
                 break;
@@ -127,7 +157,7 @@ class ClothingEntity extends EquipmentEntity {
      * @return {ClothingEntity}     new ClothingEntity
      */
     clone(id = undefined) {
-        let clothingEntity = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
+        let clothingEntity = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
         // variables from AbstractEntity
         clothingEntity.availableActions = Object.assign({}, this.availableActions);
         clothingEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);

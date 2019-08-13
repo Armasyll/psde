@@ -1194,7 +1194,38 @@ SpellTypeEnum = {
         }
     }
 };
-
+ArmourCategoryEnum = {
+    LIGHT_ARMOUR: 0,
+    LIGHT_ARMOR: 0,
+    MEDIUM_ARMOUR: 1,
+    MEDIUM_ARMOR: 1,
+    HEAVY_ARMOUR: 2,
+    HEAVY_ARMOR: 2,
+    SHIELD: 3,
+    properties: {
+        0: {
+            name: "LIGHT_ARMOUR",
+            value: 0,
+            key: "LIGHT_ARMOUR"
+        },
+        1: {
+            name: "MEDIUM_ARMOUR",
+            value: 1,
+            key: "MEDIUM_ARMOUR"
+        },
+        2: {
+            name: "HEAVY_ARMOUR",
+            value: 2,
+            key: "HEAVY_ARMOUR"
+        },
+        3: {
+            name: "SHIELD",
+            value: 3,
+            key: "SHIELD"
+        }
+    }
+}
+ArmorCategoryEnum = ArmourCategoryEnum;
 ArmourEnum = {
     NONE: 0,
     PADDED: 1,
@@ -1269,6 +1300,7 @@ ArmourEnum = {
         }
     }
 }
+ArmorEnum = ArmourEnum;
 DamageEnum = {
     NONE: 0,
     ACID: 1,
@@ -1354,6 +1386,34 @@ DamageEnum = {
             name: "Thunder",
             value: 13,
             key: "THUNDER"
+        }
+    }
+}
+WeaponCategoryEnum = {
+    SIMPLE_MELEE: 0,
+    SIMPLE_RANGED: 1,
+    MARTIAL_MELEE: 2,
+    MARTIAL_RANGED: 3,
+    properties: {
+        0: {
+            name: "Simple Melee",
+            value: 0,
+            key: "SIMPLE_MELEE"
+        },
+        1: {
+            name: "Simple Ranged",
+            value: 1,
+            key: "SIMPLE_RANGED"
+        },
+        2: {
+            name: "Martial Melee",
+            value: 2,
+            key: "MARTIAL_MELEE"
+        },
+        3: {
+            name: "Martial Ranged",
+            value: 3,
+            key: "MARTIAL_RANGED"
         }
     }
 }
@@ -2030,6 +2090,724 @@ AbilityScoreEnum = {
         5: {
             name: "Charisma",
             value: 5
+        }
+    }
+}
+ProficiencyEnum = {
+    NONE: 0,
+    ABYSSAL: 1,
+    ACROBATICS: 2,
+    ALCHEMISTS_SUPPLIES: 3,
+    ANIMAL_HANDLING: 4,
+    ARCANA: 5,
+    ATHLETICS: 6,
+    BAGPIPES: 7,
+    BATTLEAXE: 8,
+    BLOWGUN: 9,
+    BREWERS_SUPPLIES: 10,
+    CALLIGRAPHERS_SUPPLIES: 11,
+    CARPENTERS_TOOLS: 12,
+    CARTOGRAPHERS_TOOLS: 13,
+    CELESTIAL: 14,
+    CLUB: 15,
+    COBBLERS_TOOLS: 16,
+    COMMON: 17,
+    COOKS_UTENSILS: 18,
+    DAGGER: 19,
+    DART: 20,
+    DECEPTION: 21,
+    DEEP_SPEECH: 22,
+    DICE_SET: 23,
+    DISGUISE_KIT: 24,
+    DRACONIC: 25,
+    DRAGONCHESS_SET: 26,
+    DRUM: 27,
+    DULCIMER: 28,
+    DWARVISH: 29,
+    ELVISH: 30,
+    FLAIL: 31,
+    FLUTE: 32,
+    FORGERY_KIT: 33,
+    GIANT: 34,
+    GLAIVE: 35,
+    GLASSBLOWERS_TOOLS: 36,
+    GNOMISH: 37,
+    GOBLIN: 38,
+    GREATAXE: 39,
+    GREATCLUB: 40,
+    GREATSWORD: 41,
+    HALBERD: 42,
+    HALFLING: 43,
+    HAND_CROSSBOW: 44,
+    HANDAXE: 45,
+    HEAVY_ARMOR: 46,
+    HEAVY_CROSSBOW: 47,
+    HERBALISM_KIT: 48,
+    HISTORY: 49,
+    HORN: 50,
+    IMPROVISED_WEAPON: 51,
+    INFERNAL: 52,
+    INSIGHT: 53,
+    INTIMIDATION: 54,
+    INVESTIGATION: 55,
+    JAVELIN: 56,
+    JEWELERS_TOOLS: 57,
+    LANCE: 58,
+    LAND_VEHICLES: 59,
+    LEATHERWORKERS_TOOLS: 60,
+    LIGHT_ARMOR: 61,
+    LIGHT_CROSSBOW: 62,
+    LIGHT_HAMMER: 63,
+    LONGBOW: 64,
+    LONGSWORD: 65,
+    LUTE: 66,
+    LYRE: 67,
+    MACE: 68,
+    MARTIAL_WEAPONS: 69,
+    MASONS_TOOLS: 70,
+    MAUL: 71,
+    MEDICINE: 72,
+    MEDIUM_ARMOR: 73,
+    MORNINGSTAR: 74,
+    NATURE: 75,
+    NAVIGATORS_TOOLS: 76,
+    NET: 77,
+    ORC: 78,
+    PAINTERS_SUPPLIES: 79,
+    PAN_FLUTE: 80,
+    PERCEPTION: 81,
+    PERFORMANCE: 82,
+    PERSUASION: 83,
+    PIKE: 84,
+    PLAYING_CARD_SET: 85,
+    POISONERS_KIT: 86,
+    POTTERS_TOOLS: 87,
+    PRIMORDIAL: 88,
+    QUARTERSTAFF: 89,
+    RAPIER: 90,
+    RELIGION: 91,
+    SCIMITAR: 92,
+    SHAWM: 93,
+    SHIELDS: 94,
+    SHORTBOW: 95,
+    SHORTSWORD: 96,
+    SICKLE: 97,
+    SIMPLE_WEAPONS: 98,
+    SLEIGHT_OF_HAND: 99,
+    SLING: 100,
+    SMITHS_TOOLS: 101,
+    SPEAR: 102,
+    STEALTH: 103,
+    SURVIVAL: 104,
+    SYLVAN: 105,
+    THIEVES_TOOLS: 106,
+    THREE_DRAGON_ANTE_SET:107,
+    TINKERS_TOOLS: 108,
+    TRIDENT: 109,
+    UNARMED_STRIKE: 110,
+    UNDERCOMMON: 111,
+    VIOL: 112,
+    WAR_PICK: 113,
+    WARHAMMER: 114,
+    WATER_VEHICLES: 115,
+    WEAVERS_TOOLS: 116,
+    WHIP: 117,
+    WOODCARVERS_TOOLS: 118,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        1: {
+            name: "Abyssal",
+            value: 1,
+            key: "ABYSSAL"
+        },
+        2: {
+            name: "Acrobatics",
+            value: 2,
+            key: "ACROBATICS"
+        },
+        3: {
+            name: "Alchemist's Supplies",
+            value: 3,
+            key: "ALCHEMISTS_SUPPLIES"
+        },
+        4: {
+            name: "Animal Handling",
+            value: 4,
+            key: "ANIMAL_HANDLING"
+        },
+        5: {
+            name: "Arcana",
+            value: 5,
+            key: "ARCANA"
+        },
+        6: {
+            name: "Athletics",
+            value: 6,
+            key: "ATHLETICS"
+        },
+        7: {
+            name: "Bagpipes",
+            value: 7,
+            key: "BAGPIPES"
+        },
+        8: {
+            name: "Battleaxe",
+            value: 8,
+            key: "BATTLEAXE"
+        },
+        9: {
+            name: "Blowgun",
+            value: 9,
+            key: "BLOWGUN"
+        },
+        10: {
+            name: "Brewer's Supplies",
+            value: 10,
+            key: "BREWERS_SUPPLIES"
+        },
+        11: {
+            name: "Calligrapher's Supplies",
+            value: 11,
+            key: "CALLIGRAPHERS_SUPPLIES"
+        },
+        12: {
+            name: "Carpenter's Tools",
+            value: 12,
+            key: "CARPENTERS_TOOLS"
+        },
+        13: {
+            name: "Cartographer's Tools",
+            value: 13,
+            key: "CARTOGRAPHERS_TOOLS"
+        },
+        14: {
+            name: "Celestial",
+            value: 14,
+            key: "CELESTIAL"
+        },
+        15: {
+            name: "Club",
+            value: 15,
+            key: "CLUB"
+        },
+        16: {
+            name: "Cobbler's Tools",
+            value: 16,
+            key: "COBBLERS_TOOLS"
+        },
+        17: {
+            name: "Common",
+            value: 17,
+            key: "COMMON"
+        },
+        18: {
+            name: "Cook's Utensils",
+            value: 18,
+            key: "COOKS_UTENSILS"
+        },
+        19: {
+            name: "Dagger",
+            value: 19,
+            key: "DAGGER"
+        },
+        20: {
+            name: "Dart",
+            value: 20,
+            key: "DART"
+        },
+        21: {
+            name: "Deception",
+            value: 21,
+            key: "DECEPTION"
+        },
+        22: {
+            name: "Deep Speech",
+            value: 22,
+            key: "DEEP_SPEECH"
+        },
+        23: {
+            name: "Dice Set",
+            value: 23,
+            key: "DICE_SET"
+        },
+        24: {
+            name: "Disguise Kit",
+            value: 24,
+            key: "DISGUISE_KIT"
+        },
+        25: {
+            name: "Draconic",
+            value: 25,
+            key: "DRACONIC"
+        },
+        26: {
+            name: "Dragonchess Set",
+            value: 26,
+            key: "DRAGONCHESS_SET"
+        },
+        27: {
+            name: "Drum",
+            value: 27,
+            key: "DRUM"
+        },
+        28: {
+            name: "Dulcimer",
+            value: 28,
+            key: "DULCIMER"
+        },
+        29: {
+            name: "Dwarvish",
+            value: 29,
+            key: "DWARVISH"
+        },
+        30: {
+            name: "Elvish",
+            value: 30,
+            key: "ELVISH"
+        },
+        31: {
+            name: "Flail",
+            value: 31,
+            key: "FLAIL"
+        },
+        32: {
+            name: "Flute",
+            value: 32,
+            key: "FLUTE"
+        },
+        33: {
+            name: "Forgery Kit",
+            value: 33,
+            key: "FORGERY_KIT"
+        },
+        34: {
+            name: "Giant",
+            value: 34,
+            key: "GIANT"
+        },
+        35: {
+            name: "Glaive",
+            value: 35,
+            key: "GLAIVE"
+        },
+        36: {
+            name: "Glassblower's Tools",
+            value: 36,
+            key: "GLASSBLOWERS_TOOLS"
+        },
+        37: {
+            name: "Gnomish",
+            value: 37,
+            key: "GNOMISH"
+        },
+        38: {
+            name: "Goblin",
+            value: 38,
+            key: "GOBLIN"
+        },
+        39: {
+            name: "Greataxe",
+            value: 39,
+            key: "GREATAXE"
+        },
+        40: {
+            name: "Greatclub",
+            value: 40,
+            key: "GREATCLUB"
+        },
+        41: {
+            name: "Greatsword",
+            value: 41,
+            key: "GREATSWORD"
+        },
+        42: {
+            name: "Halberd",
+            value: 42,
+            key: "HALBERD"
+        },
+        43: {
+            name: "Halfling",
+            value: 43,
+            key: "HALFLING"
+        },
+        44: {
+            name: "Hand Crossbow",
+            value: 44,
+            key: "HAND_CROSSBOW"
+        },
+        45: {
+            name: "Handaxe",
+            value: 45,
+            key: "HANDAXE"
+        },
+        46: {
+            name: "Heavy Armor",
+            value: 46,
+            key: "HEAVY_ARMOR"
+        },
+        47: {
+            name: "Heavy Crossbow",
+            value: 47,
+            key: "HEAVY_CROSSBOW"
+        },
+        48: {
+            name: "Herbalism Kit",
+            value: 48,
+            key: "HERBALISM_KIT"
+        },
+        49: {
+            name: "History",
+            value: 49,
+            key: "HISTORY"
+        },
+        50: {
+            name: "Horn",
+            value: 50,
+            key: "HORN"
+        },
+        51: {
+            name: "Improvised Weapon",
+            value: 51,
+            key: "IMPROVISED_WEAPON"
+        },
+        52: {
+            name: "Infernal",
+            value: 52,
+            key: "INFERNAL"
+        },
+        53: {
+            name: "Insight",
+            value: 53,
+            key: "INSIGHT"
+        },
+        54: {
+            name: "Intimidation",
+            value: 54,
+            key: "INTIMIDATION"
+        },
+        55: {
+            name: "Investigation",
+            value: 55,
+            key: "INVESTIGATION"
+        },
+        56: {
+            name: "Javelin",
+            value: 56,
+            key: "JAVELIN"
+        },
+        57: {
+            name: "Jeweler's Tools",
+            value: 57,
+            key: "JEWELERS_TOOLS"
+        },
+        58: {
+            name: "Lance",
+            value: 58,
+            key: "LANCE"
+        },
+        59: {
+            name: "Land Vehicles",
+            value: 59,
+            key: "LAND_VEHICLES"
+        },
+        60: {
+            name: "Leatherworker's Tools",
+            value: 60,
+            key: "LEATHERWORKERS_TOOLS"
+        },
+        61: {
+            name: "Light Armor",
+            value: 61,
+            key: "LIGHT_ARMOR"
+        },
+        62: {
+            name: "Light Crossbow",
+            value: 62,
+            key: "LIGHT_CROSSBOW"
+        },
+        63: {
+            name: "Light Hammer",
+            value: 63,
+            key: "LIGHT_HAMMER"
+        },
+        64: {
+            name: "Longbow",
+            value: 64,
+            key: "LONGBOW"
+        },
+        65: {
+            name: "Longsword",
+            value: 65,
+            key: "LONGSWORD"
+        },
+        66: {
+            name: "Lute",
+            value: 66,
+            key: "LUTE"
+        },
+        67: {
+            name: "Lyre",
+            value: 67,
+            key: "LYRE"
+        },
+        68: {
+            name: "Mace",
+            value: 68,
+            key: "MACE"
+        },
+        69: {
+            name: "Martial Weapons",
+            value: 69,
+            key: "MARTIAL_WEAPONS"
+        },
+        70: {
+            name: "Mason's Tools",
+            value: 70,
+            key: "MASONS_TOOLS"
+        },
+        71: {
+            name: "Maul",
+            value: 71,
+            key: "MAUL"
+        },
+        72: {
+            name: "Medicine",
+            value: 72,
+            key: "MEDICINE"
+        },
+        73: {
+            name: "Medium Armor",
+            value: 73,
+            key: "MEDIUM_ARMOR"
+        },
+        74: {
+            name: "Morningstar",
+            value: 74,
+            key: "MORNINGSTAR"
+        },
+        75: {
+            name: "Nature",
+            value: 75,
+            key: "NATURE"
+        },
+        76: {
+            name: "Navigator's Tools",
+            value: 76,
+            key: "NAVIGATORS_TOOLS"
+        },
+        77: {
+            name: "Net",
+            value: 77,
+            key: "NET"
+        },
+        78: {
+            name: "Orc",
+            value: 78,
+            key: "ORC"
+        },
+        79: {
+            name: "Painter's Supplies",
+            value: 79,
+            key: "PAINTERS_SUPPLIES"
+        },
+        80: {
+            name: "Pan Flute",
+            value: 80,
+            key: "PAN_FLUTE"
+        },
+        81: {
+            name: "Perception",
+            value: 81,
+            key: "PERCEPTION"
+        },
+        82: {
+            name: "Performance",
+            value: 82,
+            key: "PERFORMANCE"
+        },
+        83: {
+            name: "Persuasion",
+            value: 83,
+            key: "PERSUASION"
+        },
+        84: {
+            name: "Pike",
+            value: 84,
+            key: "PIKE"
+        },
+        85: {
+            name: "Playing Card Set",
+            value: 85,
+            key: "PLAYING_CARD_SET"
+        },
+        86: {
+            name: "Poisoner's kit",
+            value: 86,
+            key: "POISONERS_KIT"
+        },
+        87: {
+            name: "Potter's Tools",
+            value: 87,
+            key: "POTTERS_TOOLS"
+        },
+        88: {
+            name: "Primordial",
+            value: 88,
+            key: "PRIMORDIAL"
+        },
+        89: {
+            name: "Quarterstaff",
+            value: 89,
+            key: "QUARTERSTAFF"
+        },
+        90: {
+            name: "Rapier",
+            value: 90,
+            key: "RAPIER"
+        },
+        91: {
+            name: "Religion",
+            value: 91,
+            key: "RELIGION"
+        },
+        92: {
+            name: "Scimitar",
+            value: 92,
+            key: "SCIMITAR"
+        },
+        93: {
+            name: "Shawm",
+            value: 93,
+            key: "SHAWM"
+        },
+        94: {
+            name: "Shields",
+            value: 94,
+            key: "SHIELDS"
+        },
+        95: {
+            name: "Shortbow",
+            value: 95,
+            key: "SHORTBOW"
+        },
+        96: {
+            name: "Shortsword",
+            value: 96,
+            key: "SHORTSWORD"
+        },
+        97: {
+            name: "Sickle",
+            value: 97,
+            key: "SICKLE"
+        },
+        98: {
+            name: "Simple Weapons",
+            value: 98,
+            key: "SIMPLE_WEAPONS"
+        },
+        99: {
+            name: "Sleight of Hand",
+            value: 99,
+            key: "SLEIGHT_OF_HAND"
+        },
+        100: {
+            name: "Sling",
+            value: 100,
+            key: "SLING"
+        },
+        101: {
+            name: "Smith's Tools",
+            value: 101,
+            key: "SMITHS_TOOLS"
+        },
+        102: {
+            name: "Spear",
+            value: 102,
+            key: "SPEAR"
+        },
+        103: {
+            name: "Stealth",
+            value: 103,
+            key: "STEALTH"
+        },
+        104: {
+            name: "Survival",
+            value: 104,
+            key: "SURVIVAL"
+        },
+        105: {
+            name: "Sylvan",
+            value: 105,
+            key: "SYLVAN"
+        },
+        106: {
+            name: "Thieves' Tools",
+            value: 106,
+            key: "THIEVES_TOOLS"
+        },
+        107: {
+            name: "Three-Dragon Ante Set",
+            value: 107,
+            key: "THREE_DRAGON_ANTE_SET"
+        },
+        108: {
+            name: "Tinker's Tools",
+            value: 108,
+            key: "TINKERS_TOOLS"
+        },
+        109: {
+            name: "Trident",
+            value: 109,
+            key: "TRIDENT"
+        },
+        110: {
+            name: "Unarmed Strike",
+            value: 110,
+            key: "UNARMED_STRIKE"
+        },
+        111: {
+            name: "Undercommon",
+            value: 111,
+            key: "UNDERCOMMON"
+        },
+        112: {
+            name: "Viol",
+            value: 112,
+            key: "VIOL"
+        },
+        113: {
+            name: "War Pick",
+            value: 113,
+            key: "WAR_PICK"
+        },
+        114: {
+            name: "Warhammer",
+            value: 114,
+            key: "WARHAMMER"
+        },
+        115: {
+            name: "Water Vehicles",
+            value: 115,
+            key: "WATER_VEHICLES"
+        },
+        116: {
+            name: "Weaver's Tools",
+            value: 116,
+            key: "WEAVERS_TOOLS"
+        },
+        117: {
+            name: "Whip",
+            value: 117,
+            key: "WHIP"
+        },
+        118: {
+            name: "Woodcarver's Tools",
+            value: 118,
+            key: "WOODCARVERS_TOOLS"
         }
     }
 }

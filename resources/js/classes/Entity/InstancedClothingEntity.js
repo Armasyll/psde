@@ -11,11 +11,17 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
         Game.setClothingInstance(this.id, this);
     }
 
+    getArmourCategory() {
+        return this.entity.getArmourCategory();
+    }
     getArmourType() {
         return this.entity.getArmourType();
     }
     getArmourClass() {
         return this.entity.getArmourClass();
+    }
+    getPortionMultiplier() {
+        return this.entity.getPortionMultiplier();
     }
 
     clone(id) {

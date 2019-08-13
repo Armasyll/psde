@@ -12,6 +12,10 @@ class EquipmentEntity extends ItemEntity {
 
         this.equipmentSlot = ApparelSlotEnum.NONE;
 
+        this.abilityRequirements = {};
+        this.advantageOn = new Set();
+        this.disadvantageOn = new Set();
+
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);
         this.setEquipmentSlot(equipmentSlot);
@@ -28,6 +32,74 @@ class EquipmentEntity extends ItemEntity {
     }
     getEquipmentSlot() {
         return this.equipmentSlot;
+    }
+
+    hasAbilityScoreRequirement(abilityScoreEnum = undefined) {
+        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
+            return true;
+        }
+        else if (abilityScoreEnum == undefined) {
+            return Object.keys(this.abilityRequirements).length > 0;
+        }
+        return false;
+    }
+    getAbilityScoreRequirement(abilityScoreEnum) {
+        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
+            return this.abilityRequirements[abilityScoreEnum];
+        }
+        return 0;
+    }
+    addAbilityScoreRequirement(abilityScoreEnum, number) {
+        if (abilityScoreEnum.properties.hasOwnProperty(abilityScoreEnum)) {
+            if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+            else {number = number|0}
+            this.abilityRequirements[abilityScoreEnum] = number;
+        }
+        return this;
+    }
+    removeAbilityScoreRequirement(abilityScoreEnum) {
+        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
+            delete this.abilityRequirements[abilityScoreEnum];
+        }
+        return this;
+    }
+
+    hasAdvantageOn(proficiencyEnum) {
+        return this.advantageOn.has(proficiencyEnum);
+    }
+    getAdvantageOn() {
+        return this.advantageOn;
+    }
+    addAdvantageOn(proficiencyEnum) {
+        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            this.advantageOn.add(proficiencyEnum);
+        }
+        return this;
+    }
+    removeAdvantageOn(proficiencyEnum) {
+        if (this.advantageOn.has(proficiencyEnum)) {
+            this.advantageOn.remove(proficiencyEnum);
+        }
+        return this;
+    }
+
+    hasDisadvantageOn(proficiencyEnum) {
+        return this.disadvantageOn.has(proficiencyEnum);
+    }
+    getDisadvantageOn() {
+        return this.disadvantageOn;
+    }
+    addDisadvantageOn(proficiencyEnum) {
+        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            this.disadvantageOn.add(proficiencyEnum);
+        }
+        return this;
+    }
+    removeDisadvantageOn(proficiencyEnum) {
+        if (this.disadvantageOn.has(proficiencyEnum)) {
+            this.disadvantageOn.remove(proficiencyEnum);
+        }
+        return this;
     }
 
     /**
