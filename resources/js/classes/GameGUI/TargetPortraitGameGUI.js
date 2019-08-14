@@ -4,8 +4,6 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.targetIcon = null;
         TargetPortraitGameGUI.targetHealthBar = null;
         TargetPortraitGameGUI.targetHealthText = null;
-        TargetPortraitGameGUI.targetManaBar = null;
-        TargetPortraitGameGUI.targetManaText = null;
         TargetPortraitGameGUI.targetStaminaBar = null;
         TargetPortraitGameGUI.targetStaminaText = null;
         TargetPortraitGameGUI.controller = TargetPortraitGameGUI.generateController();
@@ -73,26 +71,6 @@ class TargetPortraitGameGUI {
                     portraitStatsHealthSlider.isEnabled = false;
                     portraitStatsHealthSlider.scaleX = -1;
                     portraitStatsHealthSlider.color = "red";
-                var portraitStatsManaContainer = new BABYLON.GUI.Rectangle("portraitStatsManaContainer");
-                portraitStatsManaContainer.height = GameGUI.fontSizePx;
-                portraitStatsManaContainer.width = 0.85;
-                portraitStatsManaContainer.thickness = 0;
-                    var portraitStatsManaText = new BABYLON.GUI.TextBlock("portraitStatsManaText");
-                    portraitStatsManaText.text = "";
-                    portraitStatsManaText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                    portraitStatsManaText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    portraitStatsManaText.color = GameGUI.color;
-                    var portraitStatsManaSlider = new BABYLON.GUI.Slider("portraitStatsManaSlider");
-                    portraitStatsManaSlider.minimum = 0;
-                    portraitStatsManaSlider.maximum = 100;
-                    portraitStatsManaSlider.isVertical = false;
-                    portraitStatsManaSlider.displayThumb = false;
-                    portraitStatsManaSlider.left = "16px";
-                    portraitStatsManaSlider.height = GameGUI.getFontSizePx(1.25);
-                    portraitStatsManaSlider.thumbWidth = 0;
-                    portraitStatsManaSlider.isEnabled = false;
-                    portraitStatsManaSlider.scaleX = -1;
-                    portraitStatsManaSlider.color = "blue";
                 var portraitStatsStaminaContainer = new BABYLON.GUI.Rectangle("portraitStatsStaminaContainer");
                 portraitStatsStaminaContainer.height = GameGUI.fontSizePx;
                 portraitStatsStaminaContainer.width = 0.85;
@@ -121,9 +99,6 @@ class TargetPortraitGameGUI {
         portraitStatsHealthContainer.addControl(portraitStatsHealthSlider);
         portraitStatsHealthContainer.addControl(portraitStatsHealthText);
         portraitStats.addControl(portraitStatsHealthContainer);
-        portraitStatsManaContainer.addControl(portraitStatsManaSlider);
-        portraitStatsManaContainer.addControl(portraitStatsManaText);
-        portraitStats.addControl(portraitStatsManaContainer);
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaSlider);
         portraitStatsStaminaContainer.addControl(portraitStatsStaminaText);
         portraitStats.addControl(portraitStatsStaminaContainer);
@@ -132,8 +107,6 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.targetIcon = portraitAvatar;
         TargetPortraitGameGUI.targetHealthBar = portraitStatsHealthSlider;
         TargetPortraitGameGUI.targetHealthText = portraitStatsHealthText;
-        TargetPortraitGameGUI.targetManaBar = portraitStatsManaSlider;
-        TargetPortraitGameGUI.targetManaText = portraitStatsManaText;
         TargetPortraitGameGUI.targetStaminaBar = portraitStatsStaminaSlider;
         TargetPortraitGameGUI.targetStaminaText = portraitStatsStaminaText;
         return portrait;
@@ -157,14 +130,6 @@ class TargetPortraitGameGUI {
         if (abstractEntity instanceof CharacterEntity) {
             TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
             TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-            if (abstractEntity.getMaxMana() == 0) {
-                TargetPortraitGameGUI.hideMana();
-            }
-            else {
-                TargetPortraitGameGUI.showMana();
-                TargetPortraitGameGUI.setManaSlider(abstractEntity.getMana()/abstractEntity.getMaxMana()*100);
-                TargetPortraitGameGUI.setManaText(abstractEntity.getMana() + "/" + abstractEntity.getMaxMana());
-            }
             TargetPortraitGameGUI.setStaminaSlider(abstractEntity.getStamina()/abstractEntity.getMaxStamina()*100);
             TargetPortraitGameGUI.setStaminaText(abstractEntity.getStamina() + "/" + abstractEntity.getMaxStamina());
             TargetPortraitGameGUI.showHealth();
@@ -172,7 +137,6 @@ class TargetPortraitGameGUI {
         }
         else {
             TargetPortraitGameGUI.hideHealth();
-            TargetPortraitGameGUI.hideMana();
             TargetPortraitGameGUI.hideStamina();
         }
         TargetPortraitGameGUI.setImage(abstractEntity.getIcon());
@@ -193,14 +157,6 @@ class TargetPortraitGameGUI {
         }
         TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        if (abstractEntity.getMaxMana() == 0) {
-            TargetPortraitGameGUI.hideMana();
-        }
-        else {
-            TargetPortraitGameGUI.showMana();
-            TargetPortraitGameGUI.setManaSlider(abstractEntity.getMana()/abstractEntity.getMaxMana()*100);
-            TargetPortraitGameGUI.setManaText(abstractEntity.getMana() + "/" + abstractEntity.getMaxMana());
-        }
         TargetPortraitGameGUI.setStaminaSlider(abstractEntity.getStamina()/abstractEntity.getMaxStamina()*100);
         TargetPortraitGameGUI.setStaminaText(abstractEntity.getStamina() + "/" + abstractEntity.getMaxStamina());
     }
@@ -233,18 +189,6 @@ class TargetPortraitGameGUI {
     }
     static setStaminaText(text = "") {
         TargetPortraitGameGUI.targetStaminaText.text = text;
-    }
-    static showMana() {
-        TargetPortraitGameGUI.targetManaBar.parent.isVisible = true;
-    }
-    static hideMana() {
-        TargetPortraitGameGUI.targetManaBar.parent.isVisible = false;
-    }
-    static setManaSlider(int = 100) {
-        TargetPortraitGameGUI.targetManaBar.value = int;
-    }
-    static setManaText(text = "") {
-        TargetPortraitGameGUI.targetManaText.text = text;
     }
     static getController() {
         return TargetPortraitGameGUI.controller;

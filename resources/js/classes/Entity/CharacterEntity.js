@@ -22,7 +22,12 @@ class CharacterEntity extends EntityWithStorage {
         this.gender = SexEnum.MALE;
         this.currentActions = {};
         this.stance = ActionEnum.STAND;
-        this.spells = new Set();
+        this.cantripsKnown = new Set();
+        this.cantripsKnownLimit = 0;
+        this.spellsKnown = new Set();
+        this.spellsKnownLimit = 0;
+        this.spellSlots = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+        this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
         this.handedness = HandednessEnum.RIGHT;
         /**
          * Attached cosmetics
@@ -87,7 +92,7 @@ class CharacterEntity extends EntityWithStorage {
             hate:new BoundedNumber(0, 0, 100)
         };
         /**
-         * Hunger; may affect health, stamina, and mana regeneration
+         * Hunger; may affect health and stamina regeneration
          * @type {number} 0 to 100
          */
         this.hunger = 0;
@@ -129,19 +134,10 @@ class CharacterEntity extends EntityWithStorage {
         this.charisma = 10;
         this.charismaOffset = 0;
 
-        this.magickMultiplier = 0;
         this.armourClass = 0;
 
         this.experienceLevel = 0;
         this.experiencePoints = 0;
-        /**
-         * Mana; should this ever be greater than 0, things will be revealed; updated by this.generateBaseStats()
-         * @type {number} 0 to Number.MAX_SAFE_INTEGER
-         */
-        this.mana = 0;
-        this.manaOffset = 0;
-        this.manaMax = 0;
-        this.manaMaxOffset = 0;
         /**
          * Stamina; should this drop to 0, u unconscious; updated by this.generateBaseStats()
          * @type {number} 0 to 100
@@ -255,6 +251,8 @@ class CharacterEntity extends EntityWithStorage {
         this.dialogue = undefined;
 
         this.furniture = null;
+
+        this.proficiencies = new Set();
 
         this.setName(name);
         this.setIcon(iconID);
@@ -939,74 +937,6 @@ class CharacterEntity extends EntityWithStorage {
         return this.experiencePoints;
     }
 
-    setMana(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (this.getGodMode()) {
-            this.mana = this.getMaxMana();
-            return this;
-        }
-        if (number + this.mana > this.manaMax) {
-            number = this.manaMax;
-        }
-        else if (number + this.mana < 0) {
-            number = 0;
-        }
-        this.mana = number;
-        return this;
-    }
-    addMana(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMana(this.mana + number);
-        }
-        return this;
-    }
-    subtractMana(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMana(this.mana - number);
-        }
-        return this;
-    }
-    getMana() {
-        return this.mana + this.manaOffset;
-    }
-
-    setMaxMana(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        if (number <= 0) {
-            number = 1;
-        }
-        this.manaMax = number;
-        if (this.mana > this.getMaxMana()) {
-            this.mana = this.getMaxMana();
-        }
-        return this;
-    }
-    addMaxMana(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMaxMana(this.manaMax + number);
-        }
-        return this;
-    }
-    subtractMaxMana(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMaxMana(this.manaMax - number);
-        }
-        return this;
-    }
-    getMaxMana() {
-        return this.manaMax + this.manaMaxOffset;
-    }
-
     setStamina(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
@@ -1340,12 +1270,9 @@ class CharacterEntity extends EntityWithStorage {
         return this.stance == ActionEnum.FLY;
     }
 
-    setPaws(_type) {
-        if (isNaN(_type)) {
-            return this;
-        }
-        if (PawEnum.properties.hasOwnProperty(_type)) {
-            this.pawType = _type;
+    setPaws(pawEnum = PawEnum.PAD) {
+        if (PawEnum.properties.hasOwnProperty(pawEnum)) {
+            this.pawType = pawEnum;
         }
         else {
             this.pawType = PawEnum.PAD;
@@ -1353,12 +1280,9 @@ class CharacterEntity extends EntityWithStorage {
         return this;
     }
 
-    setEyeType(_type) {
-        if (isNaN(_type)) {
-            return this;
-        }
-        if (EyeEnum.properties.hasOwnProperty(_type)) {
-            this.eyeType = _type;
+    setEyeType(eyeEnum = EyeEnum.CIRCLE) {
+        if (EyeEnum.properties.hasOwnProperty(eyeEnum)) {
+            this.eyeType = eyeEnum;
         }
         else {
             this.eyeType = EyeEnum.CIRCLE;
@@ -1368,80 +1292,74 @@ class CharacterEntity extends EntityWithStorage {
     getEyeType() {
         return this.eyeType;
     }
-    setEyeColour(_colour) {
-        if (typeof _colour != "string") {
-            _colour = "gray";
+    setEyeColour(colour = "brown") {
+        if (typeof colour != "string") {
+            colour = "gray";
         }
         else {
-            _colour = _colour.toLowerCase();
+            colour = colour.toLowerCase();
         }
-        this.eyeColour = _colour;
-        this.eyeColourHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+        this.eyeColour = colour;
+        this.eyeColourHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return this;
     }
     getEyeColour() {
         return this.eyeColour;
     }
-    setEyeColourHex(_hexColour) {
-        this.eyeColourHex = _hexColour;
+    setEyeColourHex(number) {
+        this.eyeColourHex = number;
         return this;
     }
 
-    setPelt(_type) {
-        if (isNaN(_type)) {
-            return this;
-        }
-        if (PeltEnum.properties.hasOwnProperty(_type)) {
-            this.peltType = _type;
+    setPelt(peltEnum = PeltEnum.FUR) {
+        if (PeltEnum.properties.hasOwnProperty(peltEnum)) {
+            this.peltType = peltEnum;
         }
         else {
             this.peltType = PeltEnum.FUR;
         }
         return this;
     }
-    setFurColourA(_colour) {
-        this.furColourA = _colour;
-        this.furColourAHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+    setFurColourA(colour = "red") {
+        this.furColourA = colour;
+        this.furColourAHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return this;
     }
-    setFurColourB(_colour) {
-        this.furColourB = _colour;
-        this.furColourBHex = Game.Tools.colourNameToHex(_colour.replace(/[^a-z]/g, ""));
+    setFurColourB(colour = "cream") {
+        this.furColourB = colour;
+        this.furColourBHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return this;
     }
-    setFurColour(_colourA, _colourB = undefined) {
-        if (typeof _colourB == 'undefined')
-            _colourB = _colourA;
+    setFurColour(colourA, colourB = undefined) {
+        if (typeof colourB == 'undefined')
+            colourB = colourA;
         
-        this.setFurColourA(_colourA);
-        this.setFurColourB(_colourB);
+        this.setFurColourA(colourA);
+        this.setFurColourB(colourB);
         return this;
     }
-    setFurColourAHex(_hexColour) {
-        this.furColourAHex = _hexColour;
+    setFurColourAHex(number) {
+        this.furColourAHex = number;
         return this;
     }
-    setFurColourBHex(_hexColour) {
-        this.furColourBHex = _hexColour;
+    setFurColourBHex(number) {
+        this.furColourBHex = number;
         return this;
     }
-    setFurColourHex(_colourA, _colourB = undefined) {
-        if (typeof _colourB == 'undefined')
-            _colourB = _colourA;
+    setFurColourHex(colourA, colourB = undefined) {
+        if (typeof colourB == 'undefined')
+            colourB = colourA;
         
-        this.setFurColourAHex(_colourA);
-        this.setFurColourBHex(_colourB);
+        this.setFurColourAHex(colourA);
+        this.setFurColourBHex(colourB);
         return this;
     }
     getSpecies() {
         return this.species;
     }
-    setSpecies(_species) {
-        if (isNaN(_species)) {
-            return this;
-        }
-        if (SpeciesEnum.properties.hasOwnProperty(_species)) {
-            this.species = _species;
+    setSpecies(speciesEnum) {
+        if (SpeciesEnum.properties.hasOwnProperty(speciesEnum)) {
+            this.species = speciesEnum;
         }
         else {
             this.species = SpeciesEnum.FOX;
@@ -1461,29 +1379,50 @@ class CharacterEntity extends EntityWithStorage {
         return this.armourClass;
     }
 
-    addSpell(_spell) {
-        if (!(_spell instanceof Spell)) {
-            if (Game.hasSpellEntity(_spell))
-                _spell = Game.getSpellEntity(_spell);
+    addCantrip(spell) {
+        if (!(spell instanceof Spell)) {
+            if (Game.hasSpellEntity(spell))
+                spell = Game.getSpellEntity(spell);
             else
                 return this;
         }
-        this.spells.add(_spell);
+        this.cantripsKnown.add(spell);
         return this;
     }
-    removeSpell(_spell) {
-        if (!(_spell instanceof Spell)) {
-            if (Game.hasSpellEntity(_spell))
-                _spell = Game.getSpellEntity(_spell);
+    removeSpell(spell) {
+        if (!(spell instanceof Spell)) {
+            if (Game.hasSpellEntity(spell))
+                spell = Game.getSpellEntity(spell);
             else
                 return this;
         }
-        this.spells.delete(_spell);
+        this.cantripsKnown.delete(spell);
         return true;
     }
 
-    addNewDisposition(_character, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
-        this.characterDisposition[_character] = {
+    addSpell(spell) {
+        if (!(spell instanceof Spell)) {
+            if (Game.hasSpellEntity(spell))
+                spell = Game.getSpellEntity(spell);
+            else
+                return this;
+        }
+        this.spellsKnown.add(spell);
+        return this;
+    }
+    removeSpell(spell) {
+        if (!(spell instanceof Spell)) {
+            if (Game.hasSpellEntity(spell))
+                spell = Game.getSpellEntity(spell);
+            else
+                return this;
+        }
+        this.spellsKnown.delete(spell);
+        return true;
+    }
+
+    addNewDisposition(characterEntity, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
+        this.characterDisposition[characterEntity] = {
             passion:passionOffset + this.defaultDisposition.passion,
             friendship:friendshipOffset + this.defaultDisposition.friendship,
             playfulness:playfulnessOffset + this.defaultDisposition.playfulness,
@@ -1498,10 +1437,10 @@ class CharacterEntity extends EntityWithStorage {
     hasDialogue() {
         return this.dialogue instanceof Dialogue;
     }
-    setDialogue(_dialogue) {
-        _dialogue = Game.getDialogue(_dialogue);
-        if (_dialogue instanceof Dialogue) {
-            this.dialogue = _dialogue;
+    setDialogue(dialogue) {
+        dialogue = Game.getDialogue(dialogue);
+        if (dialogue instanceof Dialogue) {
+            this.dialogue = dialogue;
             this.addAvailableAction(ActionEnum.TALK);
             this.setDefaultAction(ActionEnum.TALK);
         }
@@ -1549,16 +1488,80 @@ class CharacterEntity extends EntityWithStorage {
         return 0;
     }
 
-    hasArmorProficiency(armourType) { // TODO: this
-
+    addProficiency(proficiencyEnum) {
+        this.proficiencies.add(proficiencyEnum);
+        return 1;
     }
-    hasWeaponProficiency(weaponType) {
-
+    removeProficiency(proficiencyEnum) {
+        this.proficiencies.delete(proficiencyEnum);
+        return 0;
     }
-    hasToolProficiency(toolEnum) {
-
+    hasProficiency(proficiencyEnum) {
+        return this.proficiencies.has(proficiencyEnum);
     }
-    hasSavingThrowProficiency(abilityScoreEnum)
+    clearProficiencies() {
+        this.proficiencies.clear();
+        return 0;
+    }
+
+    setSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlots[spellSlot] = number;
+        return 0;
+    }
+    addSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlots[spellSlot] += number;
+        return 0;
+    }
+    removeSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlots[spellSlot] -= number;
+        return 0;
+    }
+
+    setUsedSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlotsUsed[spellSlot] = number;
+        return 0;
+    }
+    addUsedSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlotsUsed[spellSlot] += number;
+        return 0;
+    }
+    removeUsedSpellSlot(spellSlot, number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
+            return 2;
+        }
+        this.spellSlotsUsed[spellSlot] -= number;
+        return 0;
+    }
+    clearUsedSpellSlots() {
+        this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+    }
 
     resetOffsets() {
         super.resetOffsets();
@@ -1569,8 +1572,6 @@ class CharacterEntity extends EntityWithStorage {
         this.intelligenceOffset = 0;
         this.wisdomOffset = 0;
         this.charismaOffset = 0;
-        this.manaOffset = 0;
-        this.manaMaxOffset = 0;
         this.staminaOffset = 0;
         this.staminaMaxOffset = 0;
     }
@@ -1880,18 +1881,14 @@ class CharacterEntity extends EntityWithStorage {
     }
     generateBaseStats(firstTime = false) {
         let healthFraction = 1;
-        let manaFraction = 1;
         let staminaFraction = 1;
         if (!firstTime) {
             healthFraction = this.getHealth() / this.getMaxHealth();
-            manaFraction = this.getMana() / this.getMaxMana();
             staminaFraction = this.getStamina() / this.getMaxStamina();
         }
         this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution()/10));
-        this.setMaxMana(this.getIntelligence() * this.magickMultiplier);
         this.setMaxStamina(this.getStrength() + this.getWisdom() + this.getDexterity() + this.getConstitution());
         this.setHealth(this.getMaxHealth() * healthFraction);
-        this.setMana(this.getMaxMana() * manaFraction);
         this.setStamina(this.getMaxStamina() * staminaFraction);
         return 0;
     }

@@ -11,8 +11,6 @@ class CharacterEntityTrait extends EntityTrait {
             "intelligenceOffset",
             "wisdomOffset",
             "charismaOffset",
-            "manaOffset",
-            "manaMaxOffset",
             "staminaOffset",
             "staminaMaxOffset"
         ]);

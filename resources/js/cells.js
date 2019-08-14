@@ -625,7 +625,7 @@ Game.generateApartment = function() {
     Game.createCharacterInstance("charlie", Game.getCharacterEntity("charlie"), new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9));
     /*Game.getCharacterController("charlie").setIdleAnim("90_idleSquint01", 1, true);
     Game.getCharacterController("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);*/
-    Game.getCharacterEntity("charlie").setMaxMana("666").setMana("666").setHealth("66").setStamina("66");
+    Game.getCharacterEntity("charlie").setHealth("66").setStamina("66");
     new Dialogue(
         "charlieTalk",
         "Talk to Charlie",
