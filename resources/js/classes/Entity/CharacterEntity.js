@@ -153,7 +153,7 @@ class CharacterEntity extends EntityWithStorage {
          * Size
          * @type {SizeEnum}
          */
-        this.size = SizeEnum.MEDIUM;
+        this.size = SizeEnum.SMALL;
         this.armed = false;
         this.armedOffset = false;
         /**
