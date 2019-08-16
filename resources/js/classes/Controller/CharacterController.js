@@ -694,6 +694,7 @@ class CharacterController extends EntityController {
             return false;
         }
         this.isAlive = false;
+        this.setLocked(true);
         this.beginAnimation(this.death);
         return true;
     }

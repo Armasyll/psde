@@ -143,8 +143,12 @@ class PlayerPortraitGameGUI {
         }
         PlayerPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         PlayerPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        PlayerPortraitGameGUI.setStaminaSlider(abstractEntity.getStamina()/abstractEntity.getMaxStamina()*100);
-        PlayerPortraitGameGUI.setStaminaText(abstractEntity.getStamina() + "/" + abstractEntity.getMaxStamina());
+        PlayerPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
+        let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
+        if (number < 0) {
+            number = 0;
+        }
+        PlayerPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
     }
     static setImage(iconID = "genericCharacter") {
         PlayerPortraitGameGUI.playerIcon.domImage.setAttribute("src", Game.getIcon(iconID));

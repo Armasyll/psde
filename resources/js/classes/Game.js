@@ -5520,38 +5520,27 @@ class Game {
     static calculateDamage(defender, attacker, weapon, critical = false) {
         let damageRollCount = 1;
         let damageRoll = 0;
-        let damageType = DamageEnum.BLUDGEONING;
-        let unarmed = false;
         if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
             damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
             damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
-            damageType = attacker.getEquipment()["HAND_R"].getDamageType();
+            return Game.roll(damageRollCount, damageRoll);
         }
         else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
             damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
             damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
-            damageType = attacker.getEquipment()["HAND_L"].getDamageType();
+            return Game.roll(damageRollCount, damageRoll);
         }
         else {
-            unarmed = true;
-        }
-        if (unarmed) {
-            let nonLethalDamage = 0;
             switch (attacker.getSize()) {
                 case SizeEnum.FINE:
-                case SizeEnum.DIMINUTIVE: {nonLethalDamage = 0;}
-                case SizeEnum.SMALL: {nonLethalDamage = Game.roll(1, 2)}
-                case SizeEnum.MEDIUM: {nonLethalDamage = Game.roll(1, 3)}
-                case SizeEnum.LARGE: {nonLethalDamage = Game.roll(1, 4)}
-                case SizeEnum.HUGE: {nonLethalDamage = Game.roll(1, 6)}
-                case SizeEnum.GARGANTUAN: {nonLethalDamage = Game.roll(1, 8)}
-                case SizeEnum.COLOSSAL: {nonLethalDamage = Game.roll(2, 6)}
+                case SizeEnum.DIMINUTIVE: {return 0;}
+                case SizeEnum.SMALL: {return Game.roll(1, 2)}
+                case SizeEnum.MEDIUM: {return Game.roll(1, 3)}
+                case SizeEnum.LARGE: {return Game.roll(1, 4)}
+                case SizeEnum.HUGE: {return Game.roll(1, 6)}
+                case SizeEnum.GARGANTUAN: {return Game.roll(1, 8)}
+                case SizeEnum.COLOSSAL: {return Game.roll(2, 6)}
             }
-            defender.addNonLethalDamage(nonLethalDamage);
-            return 0;
-        }
-        else {
-            return Game.roll(damageRollCount, damageRoll);
         }
         return 0;
     }

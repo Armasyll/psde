@@ -130,8 +130,8 @@ class TargetPortraitGameGUI {
         if (abstractEntity instanceof CharacterEntity) {
             TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
             TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-            TargetPortraitGameGUI.setStaminaSlider(abstractEntity.getStamina()/abstractEntity.getMaxStamina()*100);
-            TargetPortraitGameGUI.setStaminaText(abstractEntity.getStamina() + "/" + abstractEntity.getMaxStamina());
+            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
+            TargetPortraitGameGUI.setStaminaText((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage()) + "/" + abstractEntity.getHealth());
             TargetPortraitGameGUI.showHealth();
             TargetPortraitGameGUI.showStamina();
         }
@@ -157,8 +157,12 @@ class TargetPortraitGameGUI {
         }
         TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        TargetPortraitGameGUI.setStaminaSlider(abstractEntity.getStamina()/abstractEntity.getMaxStamina()*100);
-        TargetPortraitGameGUI.setStaminaText(abstractEntity.getStamina() + "/" + abstractEntity.getMaxStamina());
+        TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
+        let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
+        if (number < 0) {
+            number = 0;
+        }
+        TargetPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
     }
     static setImage(iconID = "genericItem") {
         TargetPortraitGameGUI.targetIcon.domImage.setAttribute("src", Game.getIcon(iconID));

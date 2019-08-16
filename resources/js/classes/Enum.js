@@ -2903,3 +2903,31 @@ SizeEnum = {
         }
     }
 }
+SexualOrientationEnum = {
+    STRAIGHT: 0,
+    GAY: 1,
+    BISEXUAL: 2,
+    ASEXUAL: 3,
+    properties: {
+        0: {
+            name: "Straight",
+            value: 0,
+            key: "STRAIGHT"
+        },
+        1: {
+            name: "Gay",
+            value: 1,
+            key: "GAY"
+        },
+        2: {
+            name: "Bisexual",
+            value: 2,
+            key: "BISEXUAL"
+        },
+        3: {
+            name: "Asexual",
+            value: 3,
+            key: "ASEXUAL"
+        }
+    }
+}
