@@ -94,10 +94,10 @@ class AbstractEntity {
             this.health = this.getMaxHealth();
             return this;
         }
-        if (number + this.health > this.healthMax) {
+        if (number > this.healthMax) {
             number = this.healthMax;
         }
-        else if (number + this.health < 0) {
+        else if (number < 0) {
             number = 0;
         }
         if (this.isEssential()) {

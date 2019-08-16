@@ -205,7 +205,7 @@ class InventoryGameGUI {
                     break;
                 }
                 case ActionEnum.EQUIP : {
-                    if (Game.player.hasEquipment(instancedItemEntity) && !Game.player.hasHeldItem(instancedItemEntity)) {
+                    if (Game.player.hasEquipment(instancedItemEntity)) {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.UNEQUIP].name);
                         actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateSelectedWith);});
                     }

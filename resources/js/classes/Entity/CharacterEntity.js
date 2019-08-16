@@ -337,7 +337,9 @@ class CharacterEntity extends EntityWithStorage {
         /*
         Get an apparel slot out of whatever _equipmentSlot is, otherwise fail
          */
-        if (this.equipment.hasOwnProperty(equipmentSlot)) {}
+        if (this.equipment.hasOwnProperty(equipmentSlot)) {
+            equipmentSlot = Number.parseInt(equipmentSlot);
+        }
         else if (ApparelSlotEnum.properties.hasOwnProperty(instancedItemEntity.getEquipmentSlot())) {
             equipmentSlot = instancedItemEntity.getEquipmentSlot();
             if (equipmentSlot == ApparelSlotEnum.HANDS) {
@@ -516,7 +518,9 @@ class CharacterEntity extends EntityWithStorage {
         return 0;
     }
     unequipBySlot(equipmentSlot) {
-        if (this.equipment.hasOwnProperty(equipmentSlot)) {}
+        if (this.equipment.hasOwnProperty(equipmentSlot)) {
+            equipmentSlot = Number.parseInt(equipmentSlot);
+        }
         else if (ApparelSlotEnum.hasOwnProperty(equipmentSlot)) {
             if (equipmentSlot == ApparelSlotEnum.HANDS) {
                 this.unequipBySlot(ApparelSlotEnum.HAND_L);
@@ -534,7 +538,7 @@ class CharacterEntity extends EntityWithStorage {
             if (Game.debugMode) console.log(`\tNo equipment slot was defined.`);
             return 2;
         }
-        if (this.equipment[equipmentSlot]) {
+        if (this.equipment[equipmentSlot] == null) {
             return 0;
         }
         let instancedItemEntity = this.equipment[equipmentSlot];

@@ -4509,17 +4509,17 @@ class Game {
         if (defender instanceof CharacterEntity && attacker instanceof CharacterEntity) {
             if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
                 let weapon = null;
-                if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()["HAND_R"];
+                if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
                 }
-                else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()["HAND_L"];
+                else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
                 }
-                else if (attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()["HAND_R"];
+                else if (attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
                 }
-                else if (attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()["HAND_L"];
+                else if (attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
                 }
                 let attackRoll = Game.calculateAttack(attacker, weapon);
                 if (attackRoll == 1) {}
@@ -5492,17 +5492,17 @@ class Game {
             return 1;
         }
         if (weapon == undefined) {
-            if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()["HAND_R"];
+            if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
             }
-            else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()["HAND_L"];
+            else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
             }
-            else if (attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()["HAND_R"];
+            else if (attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
             }
-            else if (attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()["HAND_L"];
+            else if (attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
             }
         }
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
@@ -5521,14 +5521,14 @@ class Game {
     static calculateDamage(defender, attacker, weapon, critical = false) {
         let damageRollCount = 1;
         let damageRoll = 0;
-        if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-            damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
-            damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
+        if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
+            damageRollCount = attacker.getEquipment()[ApparelSlotEnum.HAND_R].getDamageRollCount();
+            damageRoll = attacker.getEquipment()[ApparelSlotEnum.HAND_R].getDamageRoll();
             return Game.roll(damageRollCount, damageRoll);
         }
-        else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-            damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
-            damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
+        else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+            damageRollCount = attacker.getEquipment()[ApparelSlotEnum.HAND_L].getDamageRollCount();
+            damageRoll = attacker.getEquipment()[ApparelSlotEnum.HAND_L].getDamageRoll();
             return Game.roll(damageRollCount, damageRoll);
         }
         else {
