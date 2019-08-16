@@ -134,7 +134,7 @@ class CharacterEntity extends EntityWithStorage {
 
         this.armourClass = 0;
 
-        this.experienceLevel = 0;
+        this.level = 1;
         this.experiencePoints = 0;
         this.nonLethalDamage = 0;
         /**
