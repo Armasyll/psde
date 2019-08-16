@@ -4496,40 +4496,42 @@ class Game {
         }
         return 1;
     }
-    static actionAttack(entity = Game.player.getTarget(), subEntity = Game.player, damage = 0, callback = undefined) {
-        if (!(entity instanceof AbstractEntity)) {
-            entity = null;
+    static actionAttack(defender = Game.player.getTarget(), attacker = Game.player, callback = undefined) {
+        if (!(defender instanceof AbstractEntity)) {
+            defender = null;
         }
-        if (!(subEntity instanceof CharacterEntity)) {
+        if (!(attacker instanceof CharacterEntity)) {
             return 2;
         }
-        if (subEntity.getController().isAttacking) {
+        if (attacker.getController().isAttacking) {
             return 1;
         }
-        if (entity instanceof CharacterEntity && subEntity instanceof CharacterEntity) {
-            if (damage == 0 && Game.withinRange(subEntity, entity) && Game.inFrontOf(subEntity, entity)) {
-                damage = Game.calculateDamage(entity, subEntity);
-            }
-            if (damage > 0) {
-                if (subEntity.getMainWeapon() instanceof InstancedItemEntity) {
-                    switch (subEntity.getMainWeapon().getDamageType()) {
-                        case DamageEnum.PIERCING: {
-                            subEntity.controller.doThrustRH();
-                            Game.playSound("slice");
-                        }
-                        default: {
-                            subEntity.controller.doPunchRH();
-                            Game.playSound("hit");
-                        }
+        if (defender instanceof CharacterEntity && attacker instanceof CharacterEntity) {
+            if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
+                let weapon = null;
+                if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()["HAND_R"];
+                }
+                else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()["HAND_L"];
+                }
+                else if (attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()["HAND_R"];
+                }
+                else if (attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                    weapon = attacker.getEquipment()["HAND_L"];
+                }
+                let attackRoll = Game.calculateAttack(attacker, weapon);
+                if (attackRoll > defender.getArmourClass()) {
+                    if (weapon instanceof InstancedWeaponEntity) {
+                        defender.subtractHealth(Game.calculateDamage(defender, attacker, weapon, attackRoll == 20));
                     }
-                }
-                else {
-                    subEntity.controller.doPunchRH();
-                    Game.playSound("hit");
-                }
-                entity.subtractHealth(damage);
-                if (subEntity == Game.player && Game.player.hasTarget()) {
-                    Game.gui.targetPortrait.set(Game.player.getTarget());
+                    else if (attacker.isArmed()) { // TODO: what about being armed (unarmed) but willing not wanting to damage?
+                        defender.subtractHealth(Game.calculateDamage(defender, attacker, undefined, attackRoll == 20));
+                    }
+                    else {
+                        defender.addNonLethalDamage(Game.calculateDamage(defender, attacker, weapon, attackRoll == 20));
+                    }
                 }
             }
         }
@@ -5468,50 +5470,93 @@ class Game {
         }
         return 0;
     }
-    static calculateDamage(defender, attacker, abilityType = AbilityEnum.STRENGTH) { // TODO: Rewrite to include whether or not the left or right handed weapon is used
+    static calculateAttack(attacker, weapon = undefined, advantage = undefined) {
         let attackRoll = Game.roll(1, 20);
-        if (attacker.hasProficiency(attacker.getMainWeapon())) {
-
+        if (advantage === true) {
+            let tempRoll = Game.roll(1, 20);
+            if (tempRoll > attackRoll) {
+                attackRoll = tempRoll;
+            }
         }
-        let didHit = false;
-        if (attackRoll == 1) {}
-        else if (attackRoll == 20) {
-            didHit = true;
+        else if (advantage === false) {
+            let tempRoll = Game.roll(1, 20);
+            if (tempRoll < attackRoll) {
+                attackRoll = tempRoll;
+            }
         }
-        else {
-            didHit = true;
-            attackRoll > defender.getArmourClass();
+        if (attackRoll == 20) {
+            return 20;
         }
-        if (didHit) {
-            let damageRollCount = 1;
-            let damageRoll = 0;
-            let damageType = DamageEnum.BLUDGEONING;
-            let unarmed = false;
+        else if (attackRoll == 1) {
+            return 1;
+        }
+        if (weapon == undefined) {
             if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
-                damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
-                damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
-                damageType = attacker.getEquipment()["HAND_R"].getDamageType();
+                weapon = attacker.getEquipment()["HAND_R"];
             }
             else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
-                damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
-                damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
-                damageType = attacker.getEquipment()["HAND_L"].getDamageType();
+                weapon = attacker.getEquipment()["HAND_L"];
             }
-            else {
-                unarmed = true;
+            else if (attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()["HAND_R"];
             }
-            if (unarmed) {
-                damageRoll = 1 + Game.calculateAbilityModifier(attacker.getStrength());
-                if (damageRoll < 0) {
-                    damageRoll = 0;
-                }
-                return damageRoll;
-            }
-            else {
-                return Game.roll(damageRollCount, damageRoll);
+            else if (attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+                weapon = attacker.getEquipment()["HAND_L"];
             }
         }
+        if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
+            if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+                attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            }
+            else {
+                attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            if (attacker.hasProficiency(weapon)) {
+                attackRoll += attacker.getProficiencyBonus();
+            }
+        }
+        return attackRoll;
+    }
+    static calculateDamage(defender, attacker, weapon, critical = false) {
+        let damageRollCount = 1;
+        let damageRoll = 0;
+        let damageType = DamageEnum.BLUDGEONING;
+        let unarmed = false;
+        if (attacker.isRightHanded() && attacker.getEquipment()["HAND_R"] instanceof InstancedWeaponEntity) {
+            damageRollCount = attacker.getEquipment()["HAND_R"].getDamageRollCount();
+            damageRoll = attacker.getEquipment()["HAND_R"].getDamageRoll();
+            damageType = attacker.getEquipment()["HAND_R"].getDamageType();
+        }
+        else if (attacker.isLeftHanded() && attacker.getEquipment()["HAND_L"] instanceof InstancedWeaponEntity) {
+            damageRollCount = attacker.getEquipment()["HAND_L"].getDamageRollCount();
+            damageRoll = attacker.getEquipment()["HAND_L"].getDamageRoll();
+            damageType = attacker.getEquipment()["HAND_L"].getDamageType();
+        }
+        else {
+            unarmed = true;
+        }
+        if (unarmed) {
+            let nonLethalDamage = 0;
+            switch (attacker.getSize()) {
+                case SizeEnum.FINE:
+                case SizeEnum.DIMINUTIVE: {nonLethalDamage = 0;}
+                case SizeEnum.SMALL: {nonLethalDamage = Game.roll(1, 2)}
+                case SizeEnum.MEDIUM: {nonLethalDamage = Game.roll(1, 3)}
+                case SizeEnum.LARGE: {nonLethalDamage = Game.roll(1, 4)}
+                case SizeEnum.HUGE: {nonLethalDamage = Game.roll(1, 6)}
+                case SizeEnum.GARGANTUAN: {nonLethalDamage = Game.roll(1, 8)}
+                case SizeEnum.COLOSSAL: {nonLethalDamage = Game.roll(2, 6)}
+            }
+            defender.addNonLethalDamage(nonLethalDamage);
+            return 0;
+        }
+        else {
+            return Game.roll(damageRollCount, damageRoll);
+        }
         return 0;
+    }
+    static calculateNonLethalDamage(defender, attacker, weapon, advantage = undefined) {
+
     }
     /**
      * Roll a die

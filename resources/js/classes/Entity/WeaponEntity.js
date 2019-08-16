@@ -468,7 +468,7 @@ class WeaponEntity extends EquipmentEntity {
         if (!WeaponPropertyEnum.properties.hasOwnProperty(weaponProperty)) {
             return 2;
         }
-        this.weaponProperties.remove(weaponProperty);
+        this.weaponProperties.delete(weaponProperty);
         return 0;
     }
     getWeaponProperties() {

@@ -109,4 +109,9 @@ class Tools {
         }
         return "#000000";
     }
+    static mapToObj(map) {
+        let obj = {};
+        map.forEach ((val, key) => {obj[key] = val});
+        return obj;
+    }
 }

@@ -5,6 +5,7 @@ class CharacterEntityTrait extends EntityTrait {
     static allowedProperties() {
         return super.allowedProperties().concat([
             "hungerOffset",
+            "proficiencyOffset",
             "strengthOffset",
             "dexterityOffset",
             "constitutionOffset",

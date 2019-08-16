@@ -349,16 +349,16 @@ class EntityController {
         if (this.hasEntity) {
             this.entity.removeController();
         }
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
+        /*if (this.mesh instanceof BABYLON.AbstractMesh) {
             Game.removeMeshToEntityController(this.mesh.id);
             Game.removeMesh(this.mesh);
         }
         else {
             Game.removeMeshToEntityController(this.entity.getMeshID());
             Game.removeMesh(this.mesh);
-        }
-        for (var _var in this) {
-            this[_var] = null;
+        }*/
+        for (let val in this) {
+            this[val] = null;
         }
         Game.removeEntityController(this.id);
         return null;

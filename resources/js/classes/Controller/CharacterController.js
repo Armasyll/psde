@@ -1,6 +1,8 @@
 /**
  * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
  * It's great :v you should check it out.
+ * 
+ * TODO: Rotate towards velocity
  */
 class CharacterController extends EntityController {
     constructor(id, mesh, entity) {

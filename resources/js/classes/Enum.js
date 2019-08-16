@@ -2811,3 +2811,95 @@ ProficiencyEnum = {
         }
     }
 }
+SpellComponentEnum = {
+    NONE: 0,
+    VERBAL: 1,
+    SOMATIC: 2,
+    MATERIAL: 3,
+    properties: {
+        0: {
+            name: "None",
+            value: 0,
+            key: "NONE"
+        },
+        1: {
+            name: "Verbal",
+            value: 1,
+            key: "VERBAL"
+        },
+        2: {
+            name: "Somatic",
+            value: 2,
+            key: "SOMATIC"
+        },
+        3: {
+            name: "Material",
+            value: 3,
+            key: "MATERIAL"
+        },
+    }
+}
+SizeEnum = {
+    FINE: 0,
+    DIMINUTIVE: 1,
+    TINY: 2,
+    SMALL: 3,
+    MEDIUM: 4,
+    LARGE: 5,
+    FLUFFY: 5,
+    HUGE: 6,
+    GARGANTUAN: 7,
+    COLOSSAL: 8,
+    properties: {
+        0: {
+            name: "Fine",
+            value: 0,
+            key: "FINE"
+        },
+        1: {
+            name: "Diminutive",
+            value: 1,
+            key: "DIMINUTIVE"
+        },
+        2: {
+            name: "Tiny",
+            value: 2,
+            key: "TINY"
+        },
+        3: {
+            name: "Small",
+            value: 3,
+            key: "SMALL"
+        },
+        4: {
+            name: "Medium",
+            value: 4,
+            key: "MEDIUM"
+        },
+        5: {
+            name: "Large",
+            value: 5,
+            key: "LARGE"
+        },
+        5: {
+            name: "Fluffy",
+            value: 5,
+            key: "FLUFFY"
+        },
+        6: {
+            name: "Huge",
+            value: 6,
+            key: "HUGE"
+        },
+        7: {
+            name: "Gargantuan",
+            value: 7,
+            key: "GARGANTUAN"
+        },
+        8: {
+            name: "Colossal",
+            value: 8,
+            key: "COLOSSAL"
+        }
+    }
+}
