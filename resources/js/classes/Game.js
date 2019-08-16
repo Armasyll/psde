@@ -4522,11 +4522,12 @@ class Game {
                     weapon = attacker.getEquipment()["HAND_L"];
                 }
                 let attackRoll = Game.calculateAttack(attacker, weapon);
-                if (attackRoll > defender.getArmourClass()) {
+                if (attackRoll == 1) {}
+                else if (attackRoll > defender.getArmourClass()) {
                     if (weapon instanceof InstancedWeaponEntity) {
                         defender.subtractHealth(Game.calculateDamage(defender, attacker, weapon, attackRoll == 20));
                     }
-                    else if (attacker.isArmed()) { // TODO: what about being armed (unarmed) but willing not wanting to damage?
+                    else if (attacker.isArmed()) {
                         defender.subtractHealth(Game.calculateDamage(defender, attacker, undefined, attackRoll == 20));
                     }
                     else {
@@ -5543,9 +5544,6 @@ class Game {
             }
         }
         return 0;
-    }
-    static calculateNonLethalDamage(defender, attacker, weapon, advantage = undefined) {
-
     }
     /**
      * Roll a die
