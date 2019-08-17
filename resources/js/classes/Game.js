@@ -2055,7 +2055,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"createClone":false, "checkCollisions": true}) {
+    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
         if (Game.debugMode) console.log("Running Game::createItemMesh");
         let instancedMesh = Game.createMesh(itemID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
@@ -2076,7 +2076,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"createClone":false, "checkCollisions": true}) {
+    static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
         if (Game.debugMode) console.log("Running Game::createFurnitureMesh");
         let instancedMesh = Game.createMesh(furnitureID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
@@ -2094,7 +2094,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"createClone":false, "checkCollisions": true}) {
+    static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
         if (Game.debugMode) console.log(`Running Game::createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
         if (typeof options != "object") {
             options = {mass:0.8,restitution:0.1};
@@ -2107,12 +2107,15 @@ class Game {
             Game.assignBoxPhysicsToMesh(instancedMesh, options);
         }
         else {
-            instancedMesh.checkCollisions = true;
+            if (options.hasOwnProperty("checkCollisions")) {
+                //Game.assignBoxCollisionToMesh(instancedMesh);
+                instancedMesh.checkCollisions = true;
+            }
             /*
                 Using X for Z size 'cause the tail throws my collision box size off
              */
-            instancedMesh.ellipsoid = new BABYLON.Vector3(instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.x, instancedMesh.getBoundingInfo().boundingBox.extendSize.y * scaling.y, instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.z);
-            instancedMesh.ellipsoidOffset = new BABYLON.Vector3(0, instancedMesh.ellipsoid.y, -0.1);
+            instancedMesh.ellipsoid.set(instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.x, instancedMesh.getBoundingInfo().boundingBox.extendSize.y * scaling.y, instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.z);
+            instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
         }
         return instancedMesh;
     }
@@ -2536,7 +2539,7 @@ class Game {
             }
         }
     }
-    static addLightingToCreate(lightingIndexID, name = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": true, "lightPositionOffset": BABYLON.Vector3.Zero()}) {
+    static addLightingToCreate(lightingIndexID, name = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {checkCollisions: true, lightPositionOffset: BABYLON.Vector3.Zero()}) {
         if (Game.hasLightingToCreate(lightingIndexID)) {
             return true;
         }
