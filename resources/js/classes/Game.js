@@ -4510,16 +4510,10 @@ class Game {
             if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
                 let weapon = null;
                 if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R] || attacker.getEquipment()[ApparelSlotEnum.HAND_L];
                 }
                 else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
-                }
-                else if (attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
-                }
-                else if (attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
+                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L] || attacker.getEquipment()[ApparelSlotEnum.HAND_R];
                 }
                 let attackRoll = Game.calculateAttack(attacker, weapon);
                 if (attackRoll == 1) {}
@@ -5493,16 +5487,10 @@ class Game {
         }
         if (weapon == undefined) {
             if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R] || attacker.getEquipment()[ApparelSlotEnum.HAND_L];
             }
             else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
-            }
-            else if (attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
-            }
-            else if (attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
+                weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L] || attacker.getEquipment()[ApparelSlotEnum.HAND_R];
             }
         }
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
