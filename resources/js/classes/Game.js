@@ -2109,6 +2109,9 @@ class Game {
         else {
             if (options.hasOwnProperty("checkCollisions")) {
                 //Game.assignBoxCollisionToMesh(instancedMesh);
+                instancedMesh.checkCollisions = options["checkCollisions"] == true;
+            }
+            else {
                 instancedMesh.checkCollisions = true;
             }
             /*
