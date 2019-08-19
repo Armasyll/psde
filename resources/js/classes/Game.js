@@ -274,7 +274,7 @@ class Game {
          * eg, {"foxRed":"resources/images/textures/characters/foxRed.svg"}
          * @type {<string, String>}
          */
-        Game.textureLocations = {
+        Game.imageLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
             "carpetPink01":"resources/images/textures/static/carpetPink01.png",
             "noooo":"resources/images/textures/static/noooo.jpg",
@@ -358,6 +358,8 @@ class Game {
             "oblongEyeGreen":"resources/images/textures/items/oblongEyeGreen.svg",
             "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg"
         };
+        Game.loadedSVGDocuments = {};
+        Game.loadedImages = {};
         /**
          * Map of Textures per ID
          * eg, {"ring01Silver":{ring01Silver Texture}, "ring01Gold":{...}}
@@ -754,6 +756,9 @@ class Game {
         Game.highlightLayer = undefined;
         Game.highlightedController = undefined;
 
+        Game.xhr = new XMLHttpRequest();
+        Game.parser = new DOMParser();
+        Game.serializer = new XMLSerializer();
         Game.loadDefaultTextures();
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
@@ -1137,6 +1142,13 @@ class Game {
         Game.defaultPipeline.imageProcessing.vignetteEnabled = true;
         return 0;
     }
+    static loadDefaultImages() {
+        Game.loadSVG("missingTexture");
+        Game.loadSVG("circularEye");
+        Game.loadSVG("feralEye");
+        Game.loadSVG("oblongEye");
+        return 0;
+    }
     static loadDefaultTextures() {
         Game.loadedTextures["default"] = new BABYLON.Texture(null, Game.scene);
         Game.loadTexture("missingTexture");
@@ -1196,6 +1208,56 @@ class Game {
         return 1;
     }
     /**
+     * Loads and creates an XML(SVG)Document
+     * @param {string} imageID Image ID to load, and set the new XML(SVG)Document to
+     * @returns {number} Integer status code
+     */
+    static loadSVG(imageID) {
+        Game.xhr.open("GET", Game.imageLocations[imageID], true);
+        Game.xhr.overrideMimeType("image/svg+xml");
+        Game.xhr.onload = (e) => {
+            if (e.target.status == 200) {
+                Game.loadedSVGDocuments[imageID] = Game.parser.parseFromString(e.target.response, "image/svg+xml");
+                Game.loadedSVGDocuments[imageID].nodeName = imageID;
+            }
+            else {
+                Game.imageLocations[imageID] = Game.imageLocations["missingTexture"];
+            }
+        };
+        Game.xhr.onerror = (e) => {
+            if (e.target.status == 404) {
+                Game.imageLocations[imageID] = Game.imageLocations["missingTexture"];
+            }
+        };
+        Game.xhr.send();
+        return 0;
+    }
+    /**
+     * Modifies a given SVG Document, by ID, and create an IMG
+     * @param {string} imageID SVG Document ID
+     * @param {string} newImageID new Image ID
+     * @param {object} elementStyles eg. {iris:{background:green}, sclera:{background:#fff}}
+     * @returns 
+     */
+    static modifySVG(imageID, newImageID, elementStyles) {
+        if (!Game.loadedSVGDocuments.hasOwnProperty(imageID)) {
+            return 2;
+        }
+        let newImage = Game.loadedImages[imageID].cloneNode(true);
+        newImage.nodeName = newImageID;
+        for (let element in elementStyles) {
+            if (newImage.hasChildNodes(element)) {
+                for (style in element) {
+                    if (newImage[element].style.hasOwnProperty(style)) {
+                        newImage[element].style[style] = elementStyles[element][style];
+                    }
+                }
+            }
+        }
+        Game.loadedImages[newImageID] = Game.serializer.serializeToString(newImage);
+        return Game.loadedImages[newImageID];
+    }
+    /**
      * Loads and creates a BABYLON.Texture
      * @param {string} textureID Texture ID
      * @param {object} options Options
@@ -1210,7 +1272,7 @@ class Game {
             return 0;
         }
         else if (Game.hasAvailableTexture(textureID)) {
-            let loadedTexture = new BABYLON.Texture(Game.textureLocations[textureID], Game.scene);
+            let loadedTexture = new BABYLON.Texture(Game.imageLocations[textureID], Game.scene);
             loadedTexture.name = textureID;
             if (options.hasOwnProperty("hasAlpha")) {
                 loadedTexture.hasAlpha = options["hasAlpha"] == true;
@@ -2232,7 +2294,7 @@ class Game {
         return 0;
     }
     static hasAvailableTexture(textureID) {
-        return Game.textureLocations.hasOwnProperty(textureID);
+        return Game.imageLocations.hasOwnProperty(textureID);
     }
     static hasLoadedTexture(textureID) {
         return Game.loadedTextures.hasOwnProperty(textureID);
