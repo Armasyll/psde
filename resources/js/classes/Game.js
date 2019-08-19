@@ -1218,7 +1218,6 @@ class Game {
         Game.xhr.onload = (e) => {
             if (e.target.status == 200) {
                 Game.loadedSVGDocuments[imageID] = Game.parser.parseFromString(e.target.response, "image/svg+xml");
-                Game.loadedSVGDocuments[imageID].nodeName = imageID;
             }
             else {
                 Game.imageLocations[imageID] = Game.imageLocations["missingTexture"];
@@ -1243,14 +1242,13 @@ class Game {
         if (!Game.loadedSVGDocuments.hasOwnProperty(imageID)) {
             return 2;
         }
-        let newSVGDocument = Game.loadedImages[imageID].cloneNode(true);
-        newSVGDocument.nodeName = newImageID;
+        let newSVGDocument = Game.loadedSVGDocuments[imageID].cloneNode(true);
         for (let element in elementStyles) {
+            console.log(`Element:${element}`);
             if (newSVGDocument.hasChildNodes(element)) {
-                for (style in element) {
-                    if (newSVGDocument[element].style.hasOwnProperty(style)) {
-                        newSVGDocument[element].style[style] = elementStyles[element][style];
-                    }
+                for (let style in elementStyles[element]) {
+                    console.log(`Style:${style}:${elementStyles[element][style]}`);
+                    newSVGDocument.getElementById(element).style.setProperty(style, elementStyles[element][style]);
                 }
             }
         }
