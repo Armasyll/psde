@@ -1244,10 +1244,8 @@ class Game {
         }
         let newSVGDocument = Game.loadedSVGDocuments[imageID].cloneNode(true);
         for (let element in elementStyles) {
-            console.log(`Element:${element}`);
             if (newSVGDocument.hasChildNodes(element)) {
                 for (let style in elementStyles[element]) {
-                    console.log(`Style:${style}:${elementStyles[element][style]}`);
                     newSVGDocument.getElementById(element).style.setProperty(style, elementStyles[element][style]);
                 }
             }
