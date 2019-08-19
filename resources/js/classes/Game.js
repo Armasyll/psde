@@ -1243,19 +1243,22 @@ class Game {
         if (!Game.loadedSVGDocuments.hasOwnProperty(imageID)) {
             return 2;
         }
-        let newImage = Game.loadedImages[imageID].cloneNode(true);
-        newImage.nodeName = newImageID;
+        let newSVGDocument = Game.loadedImages[imageID].cloneNode(true);
+        newSVGDocument.nodeName = newImageID;
         for (let element in elementStyles) {
-            if (newImage.hasChildNodes(element)) {
+            if (newSVGDocument.hasChildNodes(element)) {
                 for (style in element) {
-                    if (newImage[element].style.hasOwnProperty(style)) {
-                        newImage[element].style[style] = elementStyles[element][style];
+                    if (newSVGDocument[element].style.hasOwnProperty(style)) {
+                        newSVGDocument[element].style[style] = elementStyles[element][style];
                     }
                 }
             }
         }
-        Game.loadedImages[newImageID] = Game.serializer.serializeToString(newImage);
-        return Game.loadedImages[newImageID];
+        let markup = Game.serializer.serializeToString(newSVGDocument);
+        let newImage = new Image();
+        newImage.src = 'data:image/svg+xml,' + encodeURIComponent(markup);
+        Game.loadedImages[newImageID] = newImage;
+        return newImage;
     }
     /**
      * Loads and creates a BABYLON.Texture
