@@ -2,5 +2,5 @@
 <svg id="svg2" width="1024" height="512" version="1.1" viewBox="0 0 1024 512" xmlns="http://www.w3.org/2000/svg">
  <rect id="sclera" y="-2.6412e-14" width="1024" height="512" fill="#fafafa"/>
  <circle id="iris" cx="240" cy="256" r="120" fill="#666" fill-rule="evenodd"/>
- <path id="pupil" d="m270 256c0 16.569-14.528 30-30 30s-30-13.431-30-30c0-15.89 14.528-30 30-30s30 13.431 30 30z" fill-rule="evenodd"/>
+ <path id="pupil" d="m240 233.07c28.739-2e-5 81.872-17.347 81.872 23.035 2e-5 39.761-53.133 23.034-81.872 23.034-28.739-2e-5 -81.872 16.726-81.872-23.034 0-40.386 53.133-23.035 81.872-23.035z" fill-rule="evenodd"/>
 </svg>
