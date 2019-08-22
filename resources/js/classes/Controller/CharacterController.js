@@ -353,6 +353,7 @@ class CharacterController extends EntityController {
         this.freeFallDist = u * dt + this.gravity * dt * dt / 2;
         this.movFallTime = this.movFallTime + dt;
         let moving = false;
+        let direction = 0;
         if (this.isFalling) {
             this.moveVector.y = -this.freeFallDist;
             moving = true;
@@ -361,7 +362,6 @@ class CharacterController extends EntityController {
         else {
             this.moveVector.set(0,0,0);
             let dist = 0;
-            let atan = -Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90);
             if (this.isStanding) {
                 if (this.key.shift) {
                     dist = this.sprintSpeed * dt;
@@ -388,31 +388,31 @@ class CharacterController extends EntityController {
             }
             if (this.key.forward) {
                 if (this.key.strafeRight && !this.key.strafeLeft) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(45);
+                    direction = BABYLON.Tools.ToRadians(45);
                 }
                 else if (this.key.strafeLeft && !this.key.strafeRight) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(315);
+                    direction = BABYLON.Tools.ToRadians(315);
                 }
                 else {
-                    this.mesh.rotation.y = atan;
+                    direction = 0;
                 }
             }
             else if (this.key.backward) {
                 if (this.key.strafeRight && !this.key.strafeLeft) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(135);
+                    direction = BABYLON.Tools.ToRadians(135);
                 }
                 else if (this.key.strafeLeft && !this.key.strafeRight) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(225);
+                    direction = BABYLON.Tools.ToRadians(225);
                 }
                 else {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(180);
+                    direction = BABYLON.Tools.ToRadians(180);
                 }
             }
             else if (this.key.strafeRight && !this.key.strafeLeft) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(90);
+                direction = BABYLON.Tools.ToRadians(90);
             }
             else if (this.key.strafeLeft && !this.key.strafeRight) {
-                    this.mesh.rotation.y = atan + BABYLON.Tools.ToRadians(270);
+                direction = BABYLON.Tools.ToRadians(270);
             }
             else {
                 moving = false;
@@ -420,6 +420,7 @@ class CharacterController extends EntityController {
             }
             this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDist, dist);
         }
+        this.mesh.rotation.y = direction + (-Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90));
         /*
          *  Jittering in the Y direction caused by _moveVector
          */
