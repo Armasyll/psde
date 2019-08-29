@@ -4436,10 +4436,11 @@ class Game {
                 break;
             }
             case "kill" : {
+                let target = Game.player;
                 if (typeof commandArray[1] == "string" && Game.hasCharacterEntity(commandArray[1])) {
-                    Game.player = Game.getCharacterEntity(commandArray[1]);
+                    target = Game.getCharacterEntity(commandArray[1]);
                 }
-                Game.player.setHealth(0);
+                target.setHealth(0);
                 break;
             }
             case ":v" :
