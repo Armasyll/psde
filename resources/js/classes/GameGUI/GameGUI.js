@@ -27,6 +27,7 @@ class GameGUI {
 
         GameGUI._chat = undefined;
         GameGUI._actionTooltip = undefined;
+        GameGUI.actionTooltipLocked = false;
         GameGUI._actionsMenu = undefined;
         GameGUI._actionsMenuOptions = new Array();
         GameGUI.dialogueMenu = undefined;
@@ -565,13 +566,23 @@ class GameGUI {
      * Show the action tooltip.
      */
     static showActionTooltip() {
-        GameGUI._actionTooltip.isVisible = true;
+        if (!GameGUI.actionTooltipLocked) {
+            GameGUI._actionTooltip.isVisible = true;
+        }
     }
     /**
      * Hide the action tooltip.
      */
     static hideActionTooltip() {
-        GameGUI._actionTooltip.isVisible = false;
+        if (!GameGUI.actionTooltipLocked) {
+            GameGUI._actionTooltip.isVisible = false;
+        }
+    }
+    static lockActionTooltip() {
+        GameGUI.actionTooltipLocked = true;
+    }
+    static unlockActionTooltip() {
+        GameGUI.actionTooltipLocked = false;
     }
     /**
      * A group of circular buttons arranged in a circle.
@@ -643,6 +654,7 @@ class GameGUI {
     static showActionsMenu(pointerRelease = true, updateChild = true) {
         if (updateChild) {
             GameGUI.hideActionTooltip();
+            GameGUI.lockActionTooltip();
         }
         GameGUI._actionsMenu.isVisible = true;
         if (pointerRelease) {
@@ -652,6 +664,7 @@ class GameGUI {
     static hideActionsMenu(pointerLock = true, updateChild = true) {
         GameGUI._actionsMenu.isVisible = false;
         if (updateChild) {
+            GameGUI.unlockActionTooltip();
             GameGUI.showActionTooltip();
         }
         if (pointerLock) {
