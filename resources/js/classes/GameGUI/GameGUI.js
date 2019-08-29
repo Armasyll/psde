@@ -25,7 +25,6 @@ class GameGUI {
 
         GameGUI.pointerLockEventFunction = GameGUI.pointerLockEvent
 
-        GameGUI._chat = undefined;
         GameGUI._actionTooltip = undefined;
         GameGUI.actionTooltipLocked = false;
         GameGUI._actionsMenu = undefined;
@@ -37,20 +36,19 @@ class GameGUI {
         GameGUI.inventoryMenu = undefined;
         GameGUI._initMenu();
 
-        GameGUI._chatWasFocused = false;
-
         GameGUI.initialized = true;
     }
     static _initHUD() {
         GameGUI._crosshair = GameGUI._generateCrosshair();
-        GameGUI._chat = GameGUI._generateChat();
         GameGUI._actionTooltip = GameGUI._generateTargetActionTooltip();
         GameGUI._actionsMenu = GameGUI._generateActionsRadialMenu();
         GameGUI._hud.addControl(GameGUI._crosshair);
-        GameGUI._hud.addControl(GameGUI._chat);
         GameGUI._hud.addControl(GameGUI._actionsMenu);
         GameGUI._hud.addControl(GameGUI._actionTooltip);
 
+        GameGUI.chat = ChatGameGUI;
+        GameGUI.chat.initialize();
+        GameGUI._hud.addControl(GameGUI.chat.getController());
         GameGUI.dialogueMenu = DialogueGameGUI;
         GameGUI.dialogueMenu.initialize();
         GameGUI._hud.addControl(GameGUI.dialogueMenu.getController());
@@ -180,83 +178,6 @@ class GameGUI {
     }
     static hideCrosshair() {
         GameGUI._crosshair.isVisible = false;
-    }
-    static _generateChat() {
-        var chatBox = new BABYLON.GUI.Rectangle("chatBox");
-        chatBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        chatBox.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        chatBox.height = 0.3;
-        chatBox.width = GameGUI.getFontSizePx(24);
-        chatBox.isVertical = true;
-            var chatOutputContainer = new BABYLON.GUI.Rectangle("chatOutputContainer");
-            chatOutputContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-            chatOutputContainer.height = 0.8;
-            chatOutputContainer.width = 1.0;
-            chatOutputContainer.background = GameGUI.background;
-            chatOutputContainer.thickness = 0;
-            chatOutputContainer.alpha = 0.75;
-                var chatOutput = new BABYLON.GUI.TextBlock("chatOutput");
-                chatOutput.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                chatOutput.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                chatOutput.height = 1.0;
-                chatOutput.width = 1.0;
-                chatOutput.color = GameGUI.color;
-                chatOutput.textWrapping = true;
-            var chatInput = new BABYLON.GUI.InputText("chatInput");
-            chatInput.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-            chatInput.height = 0.2;
-            chatInput.width = 1.0;
-            chatInput.background = GameGUI.background;
-            chatInput.focusedBackground = GameGUI.focusedBackground;
-            chatInput.color = GameGUI.color;
-            chatInput.text = "";
-            chatInput.thickness = 1;
-            chatInput.alpha = 0.75;
-        chatOutputContainer.addControl(chatOutput);
-        chatBox.addControl(chatOutputContainer);
-        chatBox.addControl(chatInput);
-        // TODO: replace with onKeyboardEventProcessedObservable when it becomes available; until then, out-of-focus enters
-        // TODO: add support for escape key; until then, you can only enter :v
-        chatInput.onBlurObservable.add(function() {
-            GameGUI._chatWasFocused = false;
-            Game.controlCharacterOnKeyDown(Game.chatInputSubmitCode);
-        });
-        chatBox.zIndex = 90;
-        return chatBox;
-    }
-    static getChatOutput() {
-        return GameGUI._chat.children[0].children[0];
-    }
-    static getChatInput() {
-        return GameGUI._chat.children[1];
-    }
-    static chatInputClear() {
-        GameGUI.getChatInput().text = "";
-    }
-    static chatOutputClear() {
-        GameGUI.getChatOutput().text = "";
-    }
-    static chatOutputAppend(_string) {
-        GameGUI.getChatOutput().text += _string + "\n";
-    }
-    static chatOutputSet(_string) {
-        GameGUI._chatOutputClear();
-        GameGUI._chatOutputAppend(_string);
-    }
-    static setChatInputFocused(_boolean) {
-        GameGUI._chatWasFocused = false;
-        if (_boolean === true) {
-            GameGUI._hud.moveFocusToControl(GameGUI._chat.children[1]);
-        }
-        else {
-            GameGUI._hud.moveFocusToControl(null);
-        }
-    }
-    static getChatInputFocused() {
-        if (GameGUI._chatWasFocused) {
-            return true;
-        }
-        return GameGUI._hud.focusedControl == GameGUI._chat.children[1];
     }
     static _generateCharacterChoiceMenu() {
         if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");

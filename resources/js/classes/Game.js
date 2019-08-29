@@ -1588,38 +1588,17 @@ class Game {
             }
             case Game.chatInputFocusCode : {
                 if (Game.gui.getHudVisible()) {
-                    if (!Game.gui.getChatInputFocused()) {
-                        Game.gui.setChatInputFocused(true);
+                    if (!Game.gui.chat.isFocused()) {
+                        Game.gui.chat.setFocused(true);
                     }
                     else {
-                        let chatString = Game.gui.getChatInput().text.trim();
-                        if (chatString.length == 0) {
-                            return 1;
-                        }
-                        if (Client.isOnline()) {
-                            Client.sendChatMessage(chatString);
-                        }
-                        else {
-                            Game.chatParse(chatString);
-                        }
-                        Game.gui.chatInputClear();
+                        Game.sendChatMessage();
                     }
                 }
                 break;
             }
             case Game.chatInputSubmitCode : {
-                let chatString = Game.gui.getChatInput().text.trim();
-                if (chatString.length == 0) {
-                    return 1;
-                }
-                if (Client.isOnline()) {
-                    Client.sendChatMessage(chatString);
-                }
-                else {
-                    Game.chatParse(chatString);
-                }
-                Game.gui.chatInputClear();
-                Game.gui.setChatInputFocused(false);
+                Game.sendChatMessage();
                 break;
             }
             case Game.useTargetedEntityCode : {
@@ -4355,13 +4334,28 @@ class Game {
         Game.engine.isPointerLock = false;
         return 0;
     }
-    static chatParse(chatString) {
+    static parseChat(chatString) {
         if (chatString.slice(0, 1) == "/") {
             return Game.chatCommands(chatString.slice(1));
         }
         else {
-            return Game.gui.chatOutputAppend(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.player.name}: ${chatString}`);
+            return Game.gui.chat.appendOutput(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.player.name}: ${chatString}`);
         }
+    }
+    static sendChatMessage() {
+        let chatString = Game.gui.chat.getInput();
+        if (chatString.length == 0) {
+            return 1;
+        }
+        if (Client.isOnline()) {
+            Client.sendChatMessage(chatString);
+        }
+        else {
+            Game.parseChat(chatString);
+        }
+        Game.gui.chat.clearInput();
+        Game.gui.chat.setFocused(false);
+        return 0;
     }
     static chatCommands(command, ...parameters) {
         if (command == undefined || typeof command != "string") {
@@ -4377,11 +4371,11 @@ class Game {
         }
         switch (commandArray[0]) {
             case "help" : {
-                Game.gui.chatOutputAppend("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
+                Game.gui.chat.appendOutput("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
             }
             case "clear" : {
-                Game.gui.chatOutputClear();
+                Game.gui.chat.clearOutput();
                 break;
             }
             case "menu" : {
@@ -4428,17 +4422,17 @@ class Game {
             case "addmoney" : {
                 let money = Tools.filterInt(commandArray[1]) || 1;
                 Game.player.addMoney(money);
-                Game.gui.chatOutputAppend(`Added \$${money} to your wallet.`);
+                Game.gui.chat.appendOutput(`Added \$${money} to your wallet.`);
                 break;
             }
             case "setmoney" : {
                 let money = Tools.filterInt(commandArray[1]) || 1;
                 Game.player.setMoney(money);
-                Game.gui.chatOutputAppend(`Set your wallet to \$${money}.`);
+                Game.gui.chat.appendOutput(`Set your wallet to \$${money}.`);
                 break;
             }
             case "getmoney" : {
-                Game.gui.chatOutputAppend(`You have \$${Game.player.getMoney()} in your wallet.`);
+                Game.gui.chat.appendOutput(`You have \$${Game.player.getMoney()} in your wallet.`);
                 break;
             }
             case "kill" : {
@@ -4452,11 +4446,11 @@ class Game {
             case "v:" :
             case ":V" :
             case "V:" : {
-                Game.gui.chatOutputAppend("\n    :V\n");
+                Game.gui.chat.appendOutput("\n    :V\n");
                 break;
             }
             default : {
-                Game.gui.chatOutputAppend(`Command "${command}" not found.\n`);
+                Game.gui.chat.appendOutput(`Command "${command}" not found.\n`);
                 return 0;
             }
         }
