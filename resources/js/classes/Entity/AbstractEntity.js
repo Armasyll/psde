@@ -324,7 +324,7 @@ class AbstractEntity {
         }
         if (this.traits[i].has(trait)) {
             if (this.traits[i].get(trait) < trait.getStackCount()) {
-                this.traits[i].get(trait)++;
+                this.traits[i].set(trait, this.traits[i].get(trait) + 1);
             }
         }
         else {
@@ -352,7 +352,7 @@ class AbstractEntity {
                     }
                 }
                 else {
-                    this.traits[i].get(trait)--;
+                    this.traits[i].set(trait, this.traits[i].get(trait) - 1);
                 }
             }
         }
