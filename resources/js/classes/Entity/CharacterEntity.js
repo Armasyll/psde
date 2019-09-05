@@ -89,6 +89,7 @@ class CharacterEntity extends EntityWithStorage {
             obsession:new BoundedNumber(0, 0, 100),
             hate:new BoundedNumber(0, 0, 100)
         };
+        this.alerted = false;
         /**
          * Hunger; may affect health regeneration
          * @type {number} 0 to 100
