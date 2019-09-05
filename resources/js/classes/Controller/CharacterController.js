@@ -49,7 +49,6 @@ class CharacterController extends EntityController {
         this.isRunning = false; // While Standing
         this.isSprinting = false; // While Standing
         this.isAttacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
-        this.isAlive = true;
         this.canTransition = true;
 
         this.walk = new AnimData("walk");
@@ -204,7 +203,7 @@ class CharacterController extends EntityController {
         if (this._isLocked) {
             return this;
         }
-        if (!this.isAlive) {
+        if (!this.entity.living) {
             return this;
         }
         if (this.getParent() != undefined) {
@@ -334,7 +333,7 @@ class CharacterController extends EntityController {
                 }
             }
         }
-        if (!this.isAlive) {
+        if (!this.entity.living) {
             return null;
         }
         return anim;
@@ -492,7 +491,7 @@ class CharacterController extends EntityController {
                 this.endFreeFall();
             }
         }
-        if (!this.isAlive) {
+        if (!this.entity.living) {
             return null;
         }
         return anim;
@@ -542,7 +541,7 @@ class CharacterController extends EntityController {
                 }
             }
         }
-        if (!this.isAlive) {
+        if (!this.entity.living) {
             return null;
         }
         return anim;
@@ -694,7 +693,6 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        this.isAlive = false;
         this.setLocked(true);
         this.beginAnimation(this.death);
         return true;

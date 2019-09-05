@@ -145,7 +145,7 @@ class CharacterEntity extends EntityWithStorage {
         this.money = 0;
         /**
          * Living; updated by this.setHealth()
-         * @type {boolean} True - alive, false - dead
+         * @type {boolean} True - living, false - dead
          */
         this.living = true;
         this.conscious = true;
@@ -1468,17 +1468,11 @@ class CharacterEntity extends EntityWithStorage {
         this.living = boolean == true;
         return this;
     }
-    getLiving() {
-        return this.living;
-    }
-    isAlive() {
+    isLiving() {
         return this.living;
     }
     isDead() {
         return !this.living;
-    }
-    isUndead() {
-        return !this.living && this.getHealth() > 0;
     }
     getSize() {
         return this.size;
@@ -1945,6 +1939,10 @@ class CharacterEntity extends EntityWithStorage {
     }
     isArmed() {
         return this.armed || this.armedOffset;
+    }
+
+    isAlerted() {
+        return this.alerted;
     }
 
     dispose() {
