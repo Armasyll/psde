@@ -7,10 +7,6 @@ Game.generateApartment = function() {
     Game.loadTexture("greenWallpaper");
     Game.loadMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
 
-    let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
-    skybox.material = new BABYLON.SkyMaterial("skyMaterial", Game.scene);
-    skybox.material.backFaceCulling = false;
-    Game.skyMaterial = skybox.material;
     /*var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", Game.scene);
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("resources/images/textures/skyboxes/m/skybox", Game.scene, ["_px.svg", "_py.svg", "_pz.svg", "_nx.svg", "_ny.svg", "_nz.svg"]);
@@ -738,10 +734,6 @@ Game.generateWallScene = function() {
 
     let networkTestCell = new Cell("networkTestCell");
     networkTestCell.addCollisionPlane({x:-5,z:-25}, {x:11,z:-9}, 0);
-    networkTestCell.setSkybox(new BABYLON.SkyMaterial("skyMaterial", Game.scene));
-    networkTestCell.skyboxMaterial.backFaceCulling = false;
-    networkTestCell.skyboxMaterial.azimuth = 0;
-    networkTestCell.skyboxMaterial.inclination = 0;
 
     networkTestCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", new BABYLON.Vector3(-5, 0, -25));
 

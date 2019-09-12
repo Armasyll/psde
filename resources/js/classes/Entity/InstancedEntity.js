@@ -19,6 +19,8 @@ class InstancedEntity extends AbstractEntity {
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
         this.entityType = this.entity.entityType;
+        this.weightOffset = 0;
+        this.priceOffset = 0;
         this._useOwnAvailableActions = false;
         this._useOwnDefaultAction = false;
         this._useOwnHiddenAvailableActions = false;
@@ -55,13 +57,13 @@ class InstancedEntity extends AbstractEntity {
         if (!this.hasEntity()) {
             return 0;
         }
-        return this.entity.getWeight();
+        return this.entity.getWeight() + this.weightOffset;
     }
     getPrice() {
         if (!this.hasEntity()) {
             return 0;
         }
-        return this.entity.getPrice();
+        return this.entity.getPrice() + this.priceOffset;
     }
 
     _createOwnSpecialProperties() {

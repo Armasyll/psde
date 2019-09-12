@@ -14,7 +14,12 @@ class Cell {
         this.setName(name);
         this.cellType = CellTypeEnum.NONE;
         this.owner = null;
-        this.skyboxMaterial = null;
+        this.skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
+        this.skyboxMaterial = new BABYLON.SkyMaterial("skyMaterial", Game.scene);
+        this.skyboxMaterial.backFaceCulling = false;
+        this.skyboxMaterial.azimuth = 0.25;
+        this.skyboxMaterial.inclination = 0.0;
+        this.skybox.material = this.skyboxMaterial;
         this.ambientLight = new BABYLON.HemisphericLight("cellAmbientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
         this.ambientLight.intensity = 0.9;
         this.hasBackloggedAdditions = false;

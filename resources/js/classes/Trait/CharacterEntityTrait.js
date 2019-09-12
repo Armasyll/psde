@@ -11,9 +11,7 @@ class CharacterEntityTrait extends EntityTrait {
             "constitutionOffset",
             "intelligenceOffset",
             "wisdomOffset",
-            "charismaOffset",
-            "staminaOffset",
-            "staminaMaxOffset"
+            "charismaOffset"
         ]);
     }
     allowedProperty(property) {

@@ -35,6 +35,7 @@ class GameGUI {
         GameGUI._characterChoiceMenu = undefined;
         GameGUI.inventoryMenu = undefined;
         GameGUI._initMenu();
+        GameGUI.debugMenu = undefined;
 
         GameGUI.initialized = true;
     }
@@ -46,6 +47,9 @@ class GameGUI {
         GameGUI._hud.addControl(GameGUI._actionsMenu);
         GameGUI._hud.addControl(GameGUI._actionTooltip);
 
+        GameGUI.debugMenu = DebugGameGUI;
+        GameGUI.debugMenu.initialize();
+        GameGUI._hud.addControl(GameGUI.debugMenu.getSkyboxController());
         GameGUI.chat = ChatGameGUI;
         GameGUI.chat.initialize();
         GameGUI._hud.addControl(GameGUI.chat.getController());

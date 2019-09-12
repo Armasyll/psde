@@ -31,6 +31,10 @@ class ItemEntity extends Entity {
         return this.itemType;
     }
 
+    resetOffsets() {
+        super.resetOffsets();
+    }
+
     clone(id = "") {
         let itemEntity = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
         // variables from AbstractEntity

@@ -15,10 +15,13 @@ class WeaponEntity extends EquipmentEntity {
         this.weaponCategory = WeaponCategoryEnum.SIMPLE_MELEE;
         this.weaponType = WeaponEnum.CLUB;
         this.damageRollCount = 1;
+        this.damageRollCountOffset = 0;
         this.damageRoll = 1;
+        this.damageRollOffset = 0;
         this.damageType = DamageEnum.NONE;
         this.weaponProperties = new Set();
         this.silvered = false;
+        this.silveredOffset = false;
         this.thrownRange = [0,0];
         this.ammunitionRange = [0,0]
         this.versatileRollCount = 1;
@@ -442,10 +445,10 @@ class WeaponEntity extends EquipmentEntity {
         return this.damageType;
     }
     getDamageRoll() {
-        return this.damageRoll;
+        return (this.damageRoll + this.damageRollOffset);
     }
     getDamageRollCount() {
-        return this.damageRollCount;
+        return (this.damageRollCount + this.damageRollCountOffset);
     }
 
     setWeaponType(weaponType) {
@@ -473,6 +476,16 @@ class WeaponEntity extends EquipmentEntity {
     }
     getWeaponProperties() {
         return Array.from(this.weaponProperties);
+    }
+    isSilvered() {
+        return (this.silvered || this.silveredOffset);
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.damageRollCountOffset = 0;
+        this.damageRollOffset = 0;
+        this.silveredOffset = false;
     }
 
     /**

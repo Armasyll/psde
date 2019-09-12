@@ -6,34 +6,37 @@ class EntityWithStorage extends Entity {
          */
         this.storage = new Map();
         this.storageWeight = 0;
+        this.storageWeightOffset = 0;
         this.maxStorageWeight = 10;
+        this.maxStorageWeightOffset = 0;
         this.maxStorageSlots = 9;
+        this.maxStorageSlotsOffset = 0;
     }
     setMaxStorageWeight(maxStorageWeight) {
         this.maxStorageWeight = maxStorageWeight
         return this;
     }
     getMaxStorageWeight() {
-        return this.maxStorageWeight;
-    }
-    getAvailableStorageWeight() {
-        return this.maxStorageWeight - this.storageWeight;
+        return this.maxStorageWeight + this.maxStorageWeightOffset;
     }
     setMaxStorageSlots(maxStorageSlots) {
         this.maxStorageSlots = maxStorageSlots;
         return this;
     }
     getMaxStorageSlots() {
-        return this.maxStorageSlots;
-    }
-    getAvailableStorageSlots() {
-        return this.maxStorageSlots - this.storage.size;
+        return this.maxStorageSlots + this.maxStorageSlotsOffset;
     }
     getStorageSlots() {
         return this.storage.size;
     }
     getStorageWeight() {
-        return this.storageWeight;
+        return this.storageWeight + this.storageWeightOffset;
+    }
+    getAvailableStorageSlots() {
+        return this.getMaxStorageSlots() - this.storage.size;
+    }
+    getAvailableStorageWeight() {
+        return this.getMaxStorageWeight() - this.getStorageWeight();
     }
     calculateUsedStorageWeight() {
         let weight = 0;
@@ -135,30 +138,35 @@ class EntityWithStorage extends Entity {
     getStorageSlotByItem(any) {
         let slot = -1;
         if (any instanceof InstancedEntity) {
-            slot = this.storage.flip().get(any);
-            if (slot == undefined) {
-                return -1;
-            }
+            this.storage.forEach((val, key) => {
+                if (val == any) {
+                    slot = key;
+                    return true;
+                }
+            });
         }
         else if (any instanceof Entity) {
-            this.storage.forEach(function(val, key) {
+            this.storage.forEach((val, key) => {
                 if (val.getEntity() == any) {
                     slot = key;
+                    return true;
                 }
             });
         }
         else if (typeof any == "string") {
             if (Game.hasInstancedEntity(any)) {
-                this.storage.forEach(function(val, key) {
+                this.storage.forEach((val, key) => {
                     if (val.getID() == any) {
                         slot = key;
+                        return true;
                     }
                 });
             }
             else if (Game.hasEntity(any)) {
-                this.storage.forEach(function(val, key) {
+                this.storage.forEach((val, key) => {
                     if (val.getEntity().getID() == any) {
                         slot = key;
+                        return true;
                     }
                 });
             }
@@ -171,85 +179,61 @@ class EntityWithStorage extends Entity {
      * @return {InstancedItemEntity} The InstancedItemEntity that is found, or null if it isn't
      */
     getItem(any) {
-        let foundItem = false;
         let item = null;
         if (any instanceof InstancedEntity) {
-            this.storage.forEach(function(val) {
+            this.storage.forEach((val) => {
                 if (val == any) {
-                    foundItem = true;
                     item = val;
+                    return true;
                 }
             });
         }
         else if (any instanceof Entity) {
-            this.storage.forEach(function(val) {
+            this.storage.forEach((val) => {
                 if (val.getEntity() == any) {
-                    foundItem = true;
                     item = val;
+                    return true;
                 }
             });
         }
         else if (typeof any == "string") {
             if (Game.hasInstancedEntity(any)) {
-                this.storage.forEach(function(val) {
+                this.storage.forEach((val) => {
                     if (val.getID() == any) {
-                        foundItem = true;
                         item = val;
+                        return true;
                     }
                 });
             }
             else if (Game.hasEntity(any)) {
-                this.storage.forEach(function(val) {
+                this.storage.forEach((val) => {
                     if (val.getEntity().getID() == any) {
-                        foundItem = true;
                         item = val;
+                        return true;
                     }
                 });
             }
-            else {
-                return 2;
-            }
         }
-        else {
-            return 2;
-        }
-        if (foundItem) {
+        if (item instanceof AbstractEntity) {
             return item;
         }
         return 1;
     }
     hasItem(any) {
-        let foundItem = false;
-        if (any instanceof InstancedEntity) {
-            foundItem = this.storage.flip().has(any);
-        }
-        else if (any instanceof Entity) {
-            this.storage.forEach(function(val) {
-                if (val.getEntity() == any) {
-                    foundItem = true;
-                }
-            }, this);
-        }
-        else if (typeof any == "string") {
-            if (Game.hasInstancedEntity(any)) {
-                this.storage.forEach(function(val) {
-                    if (val.getID() == any) {
-                        foundItem = true;
-                    }
-                });
-            }
-            else if (Game.hasEntity(any)) {
-                this.storage.forEach(function(val) {
-                    if (val.getEntity().getID() == any) {
-                        foundItem = true;
-                    }
-                });
-            }
-        }
-        return foundItem;
+        return (this.getItem(any) instanceof AbstractEntity);
     }
     getItems() {
         return this.storage;
+    }
+    getWeight() {
+        return super.getWeight() + this.getStorageWeight();
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.storageWeightOffset = 0;
+        this.maxStorageWeightOffset = 0;
+        this.maxStorageSlotsOffset = 0;
     }
     dispose() {
         if (this == Game.player.entity) {

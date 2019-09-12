@@ -13,6 +13,7 @@ class EquipmentEntity extends ItemEntity {
         this.equipmentSlot = ApparelSlotEnum.NONE;
 
         this.abilityRequirements = {};
+        this.abilityRequirementsOffset = {};
         this.advantageOn = new Set();
         this.disadvantageOn = new Set();
 
@@ -24,18 +25,17 @@ class EquipmentEntity extends ItemEntity {
     setEquipmentSlot(equipmentSlot) {
         if (ApparelSlotEnum.properties.hasOwnProperty(equipmentSlot)) {
             this.equipmentSlot = equipmentSlot;
+            return 0;
         }
-        else {
-            this.equipmentSlot = ApparelSlotEnum.NONE;
-        }
-        return this;
+        this.equipmentSlot = ApparelSlotEnum.NONE;
+        return 1;
     }
     getEquipmentSlot() {
         return this.equipmentSlot;
     }
 
     hasAbilityScoreRequirement(abilityScoreEnum = undefined) {
-        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
+        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum) || this.abilityRequirementsOffset.hasOwnProperty(abilityScoreEnum)) {
             return true;
         }
         else if (abilityScoreEnum == undefined) {
@@ -44,24 +44,30 @@ class EquipmentEntity extends ItemEntity {
         return false;
     }
     getAbilityScoreRequirement(abilityScoreEnum) {
+        let score = 0;
         if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
-            return this.abilityRequirements[abilityScoreEnum];
+            score = this.abilityRequirements[abilityScoreEnum];
         }
-        return 0;
+        if (this.abilityRequirementsOffset.hasOwnProperty(abilityScoreEnum)) {
+            score += this.abilityRequirementsOffset[abilityScoreEnum];
+        }
+        return score;
     }
     addAbilityScoreRequirement(abilityScoreEnum, number) {
         if (abilityScoreEnum.properties.hasOwnProperty(abilityScoreEnum)) {
             if (typeof number != "number") {number = Number.parseInt(number) || 0;}
             else {number = number|0}
             this.abilityRequirements[abilityScoreEnum] = number;
+            return 0;
         }
-        return this;
+        return 1;
     }
     removeAbilityScoreRequirement(abilityScoreEnum) {
         if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
             delete this.abilityRequirements[abilityScoreEnum];
+            return 0;
         }
-        return this;
+        return 1;
     }
 
     hasAdvantageOn(proficiencyEnum) {
@@ -73,14 +79,16 @@ class EquipmentEntity extends ItemEntity {
     addAdvantageOn(proficiencyEnum) {
         if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
             this.advantageOn.add(proficiencyEnum);
+            return 0;
         }
-        return this;
+        return 1;
     }
     removeAdvantageOn(proficiencyEnum) {
         if (this.advantageOn.has(proficiencyEnum)) {
             this.advantageOn.remove(proficiencyEnum);
+            return 0;
         }
-        return this;
+        return 1;
     }
 
     hasDisadvantageOn(proficiencyEnum) {
@@ -92,14 +100,21 @@ class EquipmentEntity extends ItemEntity {
     addDisadvantageOn(proficiencyEnum) {
         if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
             this.disadvantageOn.add(proficiencyEnum);
+            return 0;
         }
-        return this;
+        return 1;
     }
     removeDisadvantageOn(proficiencyEnum) {
         if (this.disadvantageOn.has(proficiencyEnum)) {
             this.disadvantageOn.remove(proficiencyEnum);
+            return 0;
         }
-        return this;
+        return 1;
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.abilityRequirementsOffset = {};
     }
 
     /**

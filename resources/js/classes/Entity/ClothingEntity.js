@@ -14,6 +14,7 @@ class ClothingEntity extends EquipmentEntity {
         this.armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
         this.armourType = ArmourEnum.NONE;
         this.armourClass = 0;
+        this.armourClassOffset = 0;
         this.portionMultiplier = 0.1;
 
         this.setEquipmentSlot(equipmentSlot);
@@ -36,7 +37,7 @@ class ClothingEntity extends EquipmentEntity {
         return this.armourType;
     }
     getArmourClass() {
-        return this.armourClass;
+        return this.armourClass + this.armourClassOffset;
     }
     getPortionMultiplier() {
         return this.portionMultiplier;
@@ -149,6 +150,11 @@ class ClothingEntity extends EquipmentEntity {
                 break;
             }
         }
+    }
+
+    resetOffsets() {
+        super.resetOffsets();
+        this.armourClassOffset = 0;
     }
 
     /**

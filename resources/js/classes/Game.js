@@ -4450,6 +4450,10 @@ class Game {
                 Game.gui.chat.appendOutput("\n    :V\n");
                 break;
             }
+            case "showdebug" : {
+                DebugGameGUI.show();
+                break;
+            }
             default : {
                 Game.gui.chat.appendOutput(`Command "${command}" not found.\n`);
                 return 0;
