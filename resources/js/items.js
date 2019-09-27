@@ -25,12 +25,12 @@ Game.createItemEntity("bracer01r", "Right Bracer", "Right iron bracer.", undefin
 Game.createItemEntity("pauldron01l", "Left Pauldron", "Left iron pauldron.", undefined, "pauldron01.l", undefined, ItemEnum.APPAREL, ApparelSlotEnum.SHOULDER_L);
 Game.createItemEntity("pauldron01r", "Right Pauldron", "Right iron pauldron.", undefined, "pauldron01.r", undefined, ItemEnum.APPAREL, ApparelSlotEnum.SHOULDER_R);
 
-Game.createItemEntity("ring01Silver", "Silver Ring", "A simple silver ring.", "ring01SilverIcon", "ring01", "ring02Silver", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
-Game.createItemEntity("ring01Gold", "Gold Ring", "A simple gold ring.", "ring01GoldIcon", "ring01", "ring02Gold", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
-Game.createItemEntity("ring02SilverRuby", "Silver Ruby Ring", "A silver ring with an inset ruby.", "ring02SilverIcon", "ring02", "ring02Silver", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
-Game.createItemEntity("ring02GoldRuby", "Gold Ruby Ring", "A gold ring with an inset ruby.", "ring02GoldIcon", "ring02", "ring02Gold", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
-Game.createItemEntity("ring03SilverDRuby", "Damaged Silver Ruby Ring", "A silver ring with a damaged inset ruby.", "ring03SilverDRubyIcon", "ring03", "ring02SilverBrokenRuby", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
-Game.createItemEntity("ring03GoldDRuby", "Damaged Gold Ruby Ring", "A gold ring with a damaged inset ruby.", "ring03GoldDRubyIcon", "ring03", "ring02GoldBrokenRuby", ItemEnum.APPRAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring01Silver", "Silver Ring", "A simple silver ring.", "ring01SilverIcon", "ring01", "ring02Silver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring01Gold", "Gold Ring", "A simple gold ring.", "ring01GoldIcon", "ring01", "ring02Gold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring02SilverRuby", "Silver Ruby Ring", "A silver ring with an inset ruby.", "ring02SilverIcon", "ring02", "ring02Silver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring02GoldRuby", "Gold Ruby Ring", "A gold ring with an inset ruby.", "ring02GoldIcon", "ring02", "ring02Gold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring03SilverDRuby", "Damaged Silver Ruby Ring", "A silver ring with a damaged inset ruby.", "ring03SilverDRubyIcon", "ring03", "ring02SilverBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+Game.createItemEntity("ring03GoldDRuby", "Damaged Gold Ruby Ring", "A gold ring with a damaged inset ruby.", "ring03GoldDRubyIcon", "ring03", "ring02GoldBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
 
 Game.createItemEntity("bottle01", "Bottle", "A simple bottle.", "bottle01Icon", "bottle01", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("cup01", "Cup", "A simple cup.", "cup01Icon", "cup01", undefined, ItemEnum.GENERAL);
@@ -74,6 +74,9 @@ Game.createItemEntity("stick04", "Long Stick", "A long stick.", "stick04Icon", "
 Game.createItemEntity("stick02", "Broad Stick", "A broad stick.", "stick02Icon", "stick02", "woodenMallet", ItemEnum.WEAPON);
 Game.createItemEntity("sticc", "Stick", "A stick.", "stick01Icon", "stick01", "stick01", ItemEnum.WEAPON);
 Game.createItemEntity("rocc", "Rock", "A rock.", "rock01Icon", "rock01", "rock01", ItemEnum.WEAPON);
+Game.createItemEntity("kokiriSword", "Small Sword", "A treasured sword.", undefined, "kokiriSword", "kokiriSword", ItemEnum.WEAPON);
+
+Game.createItemEntity("dekuShield", "Small Shield", "A wooden shield.", undefined, "dekuShield", "dekuShield", ItemEnum.SHIELD);
 
 Game.createItemEntity("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03Icon", "gem03", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04Icon", "gem04", undefined, ItemEnum.GENERAL);

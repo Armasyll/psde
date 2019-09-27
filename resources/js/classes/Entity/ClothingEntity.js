@@ -24,17 +24,23 @@ class ClothingEntity extends EquipmentEntity {
         Game.setClothingEntity(this.id, this);
     }
 
-    setArmourType(armourType) {
+    setArmourType(armourType = ArmourEnum.NONE) {
         if (!ArmourEnum.properties.hasOwnProperty(armourType)) {
             armourType = ArmourEnum.NONE;
         }
         this.armourType = armourType;
     }
-    getArmourCategory() {
-        return this.armourCategory;
-    }
     getArmourType() {
         return this.armourType;
+    }
+    setArmourCategory(armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR) {
+        if (!ArmourCategoryEnum.properties.hasOwnProperty(armourCategory)) {
+            armourCategory = ArmourCategoryEnum.LIGHT_ARMOUR;
+        }
+        this.armourCategory = armourCategory;
+    }
+    getArmourCategory() {
+        return this.armourCategory;
     }
     getArmourClass() {
         return this.armourClass + this.armourClassOffset;
@@ -173,10 +179,6 @@ class ClothingEntity extends EquipmentEntity {
         clothingEntity.weight.copyFrom(this.weight);
         clothingEntity.price.copyFrom(this.price);
         clothingEntity.health.copyFrom(this.health);
-        // variables from ItemEntity
-        clothingEntity.setItemType(this.itemType);
-        // variables from EquipmentEntity
-        clothingEntity.setEquipmentSlot(this.equipmentSlot);
         return clothingEntity;
     }
     /**

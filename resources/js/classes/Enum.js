@@ -133,6 +133,7 @@ ItemEnum = {
     CONSUMABLE: 5,
     BOOK: 6,
     TRASH: 7,
+    SHIELD: 8,
     properties: {
         0: {
             name: "None",
@@ -173,6 +174,11 @@ ItemEnum = {
             name: "Trash",
             value: 7,
             key: "TRASH"
+        },
+        8: {
+            name: "Shield",
+            value: 8,
+            kay: "SHIELD"
         }
     }
 };
@@ -1204,22 +1210,22 @@ ArmourCategoryEnum = {
     SHIELD: 3,
     properties: {
         0: {
-            name: "LIGHT_ARMOUR",
+            name: "Light Armour",
             value: 0,
             key: "LIGHT_ARMOUR"
         },
         1: {
-            name: "MEDIUM_ARMOUR",
+            name: "Medium Armour",
             value: 1,
             key: "MEDIUM_ARMOUR"
         },
         2: {
-            name: "HEAVY_ARMOUR",
+            name: "Heavy Armour",
             value: 2,
             key: "HEAVY_ARMOUR"
         },
         3: {
-            name: "SHIELD",
+            name: "Shield",
             value: 3,
             key: "SHIELD"
         }

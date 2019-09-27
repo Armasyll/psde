@@ -197,6 +197,8 @@ class Game {
             "chair03":"resources/meshes/furniture.babylon",
             "grass01":"resources/meshes/nature.babylon",
             "mushroom01":"resources/meshes/nature.babylon",
+            "mushroom02":"resources/meshes/nature.babylon",
+            "mushroom03":"resources/meshes/nature.babylon",
             "tombstone03":"resources/meshes/graveyard.babylon",
             "graveyardWallCap01":"resources/meshes/graveyard.babylon",
             "graveyardWallEndShortHalf01":"resources/meshes/graveyard.babylon",
@@ -235,6 +237,11 @@ class Game {
             "axe02":"resources/meshes/weapons.babylon",
             "axe01":"resources/meshes/weapons.babylon",
             "sword01":"resources/meshes/weapons.babylon",
+            "sword01Broken00":"resources/meshes/weapons.babylon",
+            "sword01Broken01":"resources/meshes/weapons.babylon",
+            "sword01Broken02":"resources/meshes/weapons.babylon",
+            "sword01Broken03":"resources/meshes/weapons.babylon",
+            "scythe03":"resources/meshes/weapons.babylon",
             "glaive01":"resources/meshes/weapons.babylon",
             "forgeHammer01":"resources/meshes/weapons.babylon",
             "forgeHammer02":"resources/meshes/weapons.babylon",
@@ -261,7 +268,9 @@ class Game {
             "wand02":"resources/meshes/weapons.babylon",
             "wand03":"resources/meshes/weapons.babylon",
             "animatedChest01":"resources/meshes/animatedChest01.babylon",
-            "apple01":"resources/meshes/fruits.babylon"
+            "apple01":"resources/meshes/fruits.babylon",
+            "dekuShield":"resources/meshes/items/dekuShield.babylon",
+            "kokiriSword":"resources/meshes/items/kokiriSword.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -274,7 +283,7 @@ class Game {
          * eg, {"foxRed":"resources/images/textures/characters/foxRed.svg"}
          * @type {<string, String>}
          */
-        Game.imageLocations = {
+        Game.textureLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
             "carpetPink01":"resources/images/textures/static/carpetPink01.png",
             "noooo":"resources/images/textures/static/noooo.jpg",
@@ -356,7 +365,9 @@ class Game {
             "oblongEyeBrown":"resources/images/textures/items/oblongEyeBrown.svg",
             "oblongEyeBlue":"resources/images/textures/items/oblongEyeBlue.svg",
             "oblongEyeGreen":"resources/images/textures/items/oblongEyeGreen.svg",
-            "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg"
+            "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg",
+            "dekuShield":"resources/images/textures/items/dekuShield.png",
+            "kokiriSword":"resources/images/textures/items/kokiriSword.svg"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -593,6 +604,7 @@ class Game {
         Game.itemEntities = {};
         Game.clothingEntities = {};
         Game.weaponEntities = {};
+        Game.shieldEntities = {};
         Game.keyEntities = {};
         Game.spellEntities = {};
         Game.essentialEntities = new Set();
@@ -601,6 +613,7 @@ class Game {
         Game.instancedItemEntities = {};
         Game.instancedClothingEntities = {};
         Game.instancedWeaponEntities = {};
+        Game.instancedShieldEntities = {};
         Game.instancedFurnitureEntities = {};
 
         Game.dialogues = new Map();
@@ -1213,19 +1226,19 @@ class Game {
      * @returns {number} Integer status code
      */
     static loadSVG(imageID) {
-        Game.xhr.open("GET", Game.imageLocations[imageID], true);
+        Game.xhr.open("GET", Game.textureLocations[imageID], true);
         Game.xhr.overrideMimeType("image/svg+xml");
         Game.xhr.onload = (e) => {
             if (e.target.status == 200) {
                 Game.loadedSVGDocuments[imageID] = Game.parser.parseFromString(e.target.response, "image/svg+xml");
             }
             else {
-                Game.imageLocations[imageID] = Game.imageLocations["missingTexture"];
+                Game.textureLocations[imageID] = Game.textureLocations["missingTexture"];
             }
         };
         Game.xhr.onerror = (e) => {
             if (e.target.status == 404) {
-                Game.imageLocations[imageID] = Game.imageLocations["missingTexture"];
+                Game.textureLocations[imageID] = Game.textureLocations["missingTexture"];
             }
         };
         Game.xhr.send();
@@ -1271,7 +1284,7 @@ class Game {
             return 0;
         }
         else if (Game.hasAvailableTexture(textureID)) {
-            let loadedTexture = new BABYLON.Texture(Game.imageLocations[textureID], Game.scene);
+            let loadedTexture = new BABYLON.Texture(Game.textureLocations[textureID], Game.scene);
             loadedTexture.name = textureID;
             if (options.hasOwnProperty("hasAlpha")) {
                 loadedTexture.hasAlpha = options["hasAlpha"] == true;
@@ -2272,7 +2285,7 @@ class Game {
         return 0;
     }
     static hasAvailableTexture(textureID) {
-        return Game.imageLocations.hasOwnProperty(textureID);
+        return Game.textureLocations.hasOwnProperty(textureID);
     }
     static hasLoadedTexture(textureID) {
         return Game.loadedTextures.hasOwnProperty(textureID);
@@ -3944,6 +3957,10 @@ class Game {
                 itemEntity = new WeaponEntity(id, name, description, iconID, subType);
                 break;
             }
+            case ItemEnum.SHIELD : {
+                itemEntity = new ShieldEntity(id, name, description, iconID);
+                break;
+            }
             case ItemEnum.KEY : {
                 itemEntity = new KeyEntity(id, name, description, iconID);
                 break;
@@ -5106,6 +5123,21 @@ class Game {
         Game.weaponEntities = {};
         return 0;
     }
+    static setShieldEntity(id, shieldEntity) {
+        Game.shieldEntities[id] = shieldEntity;
+        return 0;
+    }
+    static removeShieldEntity(id) {
+        delete Game.shieldEntities[id];
+        return 0;
+    }
+    static clearShieldEntities() {
+        for (let i in Game.shieldEntities) {
+            Game.shieldEntities[i].dispose();
+        }
+        Game.shieldEntities = {};
+        return 0;
+    }
     static setFurnitureEntity(id, furnitureEntity) {
         Game.furnitureEntities[id] = furnitureEntity;
         return 0;
@@ -5268,6 +5300,21 @@ class Game {
             Game.instancedWeaponEntities[i].dispose();
         }
         Game.instancedWeaponEntities = {};
+        return 0;
+    }
+    static setShieldInstance(id, instancedShieldEntity) {
+        Game.instancedShieldEntities[id] = instancedShieldEntity;
+        return 0;
+    }
+    static removeShieldInstance(id) {
+        delete Game.instancedShieldEntities[id];
+        return 0;
+    }
+    static clearShieldInstances() {
+        for (let i in Game.instancedShieldEntities) {
+            Game.instancedShieldEntities[i].dispose();
+        }
+        Game.instancedShieldEntities = {};
         return 0;
     }
     static setFurnitureInstance(id, instancedFurnitureEntity) {
