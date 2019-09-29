@@ -167,6 +167,7 @@ class Game {
             "foxF":"resources/meshes/characters/fox.babylon",
             "foxSkeletonN":"resources/meshes/characters/foxSkeletonN.babylon",
             "foxM":"resources/meshes/characters/fox.babylon",
+            "hitbox.canine":"resources/meshes/hitboxes/canine.babylon",
             "hitbox.canine.head":"resources/meshes/hitboxes/canine.babylon",
             "hitbox.canine.neck":"resources/meshes/hitboxes/canine.babylon",
             "hitbox.canine.chest":"resources/meshes/hitboxes/canine.babylon",
@@ -3492,6 +3493,7 @@ class Game {
             case "foxM":
             case "foxF":
             case "foxSkeletonN": {
+                characterController.attachToROOT("hitbox.canine", "collisionMaterial");
                 characterController.attachToHead("hitbox.canine.head", "collisionMaterial");
                 characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial");
                 characterController.attachToChest("hitbox.canine.chest", "collisionMaterial");

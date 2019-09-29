@@ -1082,6 +1082,15 @@ class CharacterController extends EntityController {
         }
         return meshes;
     }
+    attachToROOT(mesh) {
+        if (mesh instanceof BABYLON.AbstractMesh) {
+            return this.attachMeshToBone(mesh, this.getBone("ROOT"));
+        }
+        return this.attachMeshIDToBone(mesh, undefined, "ROOT");
+    }
+    detachFromROOT() {
+        return this.detachFromBone("ROOT", false)[0];
+    }
     attachToFOCUS(mesh) {
         if (mesh instanceof BABYLON.AbstractMesh) {
             return this.attachMeshToBone(mesh, this.getBone("FOCUS"));
