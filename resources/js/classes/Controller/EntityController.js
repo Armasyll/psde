@@ -17,8 +17,6 @@ class EntityController {
         this.mesh = undefined;
         this.networkID = null;
         this.propertiesChanged = true;
-        this.targetController = null;
-        this.targetedByControllers = new Set();
         this.animations = new Array();
         this.started = false;
         this._stopAnim = false;
@@ -148,47 +146,6 @@ class EntityController {
     }
     getMeshSkeleton() {
         return this.skeleton;
-    }
-    addTargetedBy(_controller, _updateChild = true) {
-        if (!this._isEnabled) {
-            return this;
-        }
-        if (!(_controller instanceof EntityController)) {
-            return this;
-        }
-        this.targetedByControllers.add(_controller);
-        if (_updateChild) {
-            _controller.setTarget(this, false);
-        }
-        return this;
-    }
-    removeTargetedBy(_controller, _updateChild = true) {
-        if (!this._isEnabled) {
-            return this;
-        }
-        if (!(_controller instanceof EntityController)) {
-            return this;
-        }
-        this.targetedByControllers.delete(_controller);
-        if (_updateChild) {
-            _controller.removeTarget(this, false);
-        }
-        return this;
-    }
-    clearTargetedBy() {
-        this.targetedByControllers.forEach(function(_controller) {
-            if (_controller instanceof CharacterController && _controller.targetController == this) {
-                _controller.removeTarget(false);
-            }
-        }, this);
-        if (!this._isEnabled) {
-            return this;
-        }
-        this.targetedByControllers.clear();
-        return this;
-    }
-    getTargetedBy() {
-        return this.targetedByControllers;
     }
     updateProperties() {
         this.propertiesChanged = false;
@@ -342,10 +299,6 @@ class EntityController {
         this.setEnabled(false);
         this.propertiesChanged = false;
         this.animations.clear();
-        if (Game.player.getController().targetController == this) {
-            Game.clearPlayerTarget()
-        }
-        this.clearTargetedBy();
         if (this.hasEntity) {
             this.entity.removeController();
         }

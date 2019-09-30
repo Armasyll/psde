@@ -10,6 +10,7 @@ class Game {
         Game.startTime = new Date("2017-07-03T17:35:00.000Z");
         Game.currentTime = new Date(Game.startTime);
         Game.initialized = false;
+        Game.useRigidBodies = false;
         Game.debugMode = false;
         Game.godMode = false;
         Game.physicsEnabled = false;
@@ -751,8 +752,9 @@ class Game {
         Game._finishedInitializing = false;
         Game._finishedConfiguring = false;
 
-        Game.player = undefined;
-        Game.playerCell = undefined;
+        Game.player = null;
+        Game.playerController = null;
+        Game.playerCell = null;
         Game.castRayTargetIntervalFunction = undefined;
         Game.castRayTargetInterval = 250;
         Game.pointerLockFunction = undefined;
@@ -862,19 +864,6 @@ class Game {
                     Game._finishedConfiguring = true;
                 }
             }
-            let url = new URL(window.location.href);
-            let urlMap = new Map(url.searchParams);
-            urlMap.forEach(function(val, key) {
-                switch(key) {
-                    case "debug": {
-                        Game.debugMode = true;
-                        break;
-                    }
-                    case "tgm": {
-                        Game.toggleGodMode();
-                    }
-                }
-            });
         }
     }
     static _beforeRenderFunction() {
@@ -1067,6 +1056,7 @@ class Game {
             Game.cameraFocus = Game.createMesh("cameraFocus", "cameraFocus", "collisionMaterial");
         }
         Game.player = characterEntity;
+        Game.playerController = Game.player.getController();
         Game.player.getController().attachToFOCUS(Game.cameraFocus); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
         Game.gui.playerPortrait.set(Game.player);
@@ -3481,7 +3471,13 @@ class Game {
             return [id, characterEntity, position, rotation, scaling, options];
         }
         let loadedMesh = Game.createCharacterMesh(characterEntity.getID(), characterEntity.getMeshID(), characterEntity.getMaterialID(), position, rotation, scaling, options);
-        let characterController = new CharacterController(characterEntity.getID(), loadedMesh, characterEntity);
+        let characterController = null;
+        if (Game.useRigidBodies) {
+            characterController = new CharacterControllerRigidBody(characterEntity.getID(), loadedMesh, characterEntity);
+        }
+        else {
+            characterController = new CharacterControllerTransform(characterEntity.getID(), loadedMesh, characterEntity);
+        }
         switch (characterEntity.getSpecies()) {
             case SpeciesEnum.SKELETON: {
                 characterController.setDeathAnim("91_death99");
@@ -4242,7 +4238,6 @@ class Game {
         if (Game.highlightEnabled) {
             Game.highlightController(entityController);
         }
-        Game.player.controller.setTarget(entityController);
         Game.player.setTarget(entityController.getEntity());
         Game.gui.targetPortrait.set(entityController.getEntity());
         Game.gui.targetPortrait.show();
@@ -4254,13 +4249,12 @@ class Game {
         if (!(Game.player.hasController())) {
             return 1;
         }
-        if (!Game.player.controller.hasTarget()) {
+        if (!Game.player.hasTarget()) {
             return 0;
         }
         if (Game.highlightEnabled) {
             Game.clearHighlightedController();
         }
-        Game.player.controller.clearTarget();
         Game.player.clearTarget();
         Game.gui.targetPortrait.hide();
         Game.gui.hideActionTooltip();
