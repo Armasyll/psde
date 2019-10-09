@@ -765,3 +765,14 @@ Game.generateWallScene = function() {
     Game.importBabylon("resources/data/_KF/KF.babylon");
     Game.setPlayerCell(networkTestCell);
 }
+
+Game.debugMovementScene = function() {
+    Game.loadMaterial("stoneMaterial01", "stoneTexture01", "stoneTexture01-NORMAL");
+    Game.setLoadedMesh("floor16x16", BABYLON.MeshBuilder.CreateTiledGround("floor16x16", {xmin:0, zmin:0, xmax: 16, zmax: 16, subdivisions: {w:16, h:16}}, Game.scene));
+
+    let debugMovementCell = new Cell("debugMovementCell");
+    debugMovementCell.addCollisionPlane({x:-5,z:-25}, {x:11,z:-9}, 0);
+
+    debugMovementCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", new BABYLON.Vector3(-5, 0, -25));
+    Game.setPlayerCell(debugMovementCell);
+}

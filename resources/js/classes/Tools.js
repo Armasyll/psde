@@ -16,21 +16,25 @@ class Tools {
         }
         return uuid.toUpperCase();
     }
+    static toFixed(number, decimals) {
+        decimals = Math.pow(10, decimals);
+        return Math.round(number * decimals) / decimals;
+    }
     static moduloDegrees(_float) {
-        if (_float > 359.99) {
-            return _float%360;
+        if (_float > 359.9999) {
+            return Tools.toFixed(_float%360, 4);
         }
         else if (_float < 0) {
-            return _float%360+360;
+            return Tools.toFixed(_float%360+360, 4);
         }
         return _float;
     }
     static moduloRadians(_float) {
-        if (_float > 6.28301077) {
-            return _float%6.28318530;
+        if (_float > 6.28318529) {
+            return Tools.toFixed(_float%6.28318530, 4);
         }
         else if (_float < 0) {
-            return _float%6.28318530+6.28318530;
+            return Tools.toFixed(_float%6.28318530+6.28318530, 4);
         }
         return _float;
     }

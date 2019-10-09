@@ -7,6 +7,16 @@ class Game {
     static initialize() {
         Game.SECONDS_IN_DAY = 86400;
         Game.SECONDS_IN_HOUR = 3600;
+        Game.RAD_0 = 0.0;
+        Game.RAD_1_HALF = BABYLON.Tools.ToRadians(1/2);
+        Game.RAD_1_3RD = BABYLON.Tools.ToRadians(1/3);
+        Game.RAD_1_4TH = BABYLON.Tools.ToRadians(1/4);
+        Game.RAD_1 = BABYLON.Tools.ToRadians(1);
+        Game.RAD_45 = BABYLON.Tools.ToRadians(45);
+        Game.RAD_90 = BABYLON.Tools.ToRadians(90);
+        Game.RAD_180 = BABYLON.Tools.ToRadians(180);
+        Game.RAD_270 = BABYLON.Tools.ToRadians(270);
+        Game.RAD_360 = 6.28318529;
         Game.startTime = new Date("2017-07-03T17:35:00.000Z");
         Game.currentTime = new Date(Game.startTime);
         Game.initialized = false;
@@ -860,7 +870,6 @@ class Game {
                 else {
                     Client.initialize();
                     Game.gui.resize();
-                    Game.gui.showCharacterChoiceMenu();
                     Game._finishedConfiguring = true;
                 }
             }
