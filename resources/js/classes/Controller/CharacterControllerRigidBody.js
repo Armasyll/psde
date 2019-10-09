@@ -39,19 +39,20 @@ class CharacterControllerRigidBody extends CharacterController {
             if (moving) {
                 if (!Game.Tools.arePointsEqual(yDirection, this.mesh.rotation.y, Game.RAD_1*2)) {
                     let rotation = Game.Tools.moduloRadians(this.turnSpeed / Game.engine._deltaTime);
-                    
-                    if (!(Game.Tools.moduloRadians(this.mesh.rotation.y - Game.RAD_180) < yDirection) && (yDirection > this.mesh.rotation.y || (Game.Tools.moduloRadians(yDirection - Game.RAD_180) < this.mesh.rotation.y))) {
-                        this.mesh.rotation.y += rotation;
-                    }
-                    else {
-                        this.mesh.rotation.y -= rotation;
-                    }
-                    
+                    this.tempRotatePerFrame(rotation);
                 }
                 else {
                     this.mesh.rotation.y = yDirection;
                 }
             }
+        }
+    }
+    tempRotatePerFrame() {
+        if (!(Game.Tools.moduloRadians(this.mesh.rotation.y - Game.RAD_180) < yDirection) && (yDirection > this.mesh.rotation.y || (Game.Tools.moduloRadians(yDirection - Game.RAD_180) < this.mesh.rotation.y))) {
+            this.mesh.rotation.y += rotation;
+        }
+        else {
+            this.mesh.rotation.y -= rotation;
         }
     }
     getAlpha() {
