@@ -47,7 +47,7 @@ class CharacterControllerRigidBody extends CharacterController {
         }
     }
     tempRotatePerFrame(intendedDirection) {
-        this.mesh.rotation.y = this.mesh.rotation.y + intendedDirection % RAD_360
+        this.mesh.rotation.y = this.mesh.rotation.y + intendedDirection % Game.RAD_360
     }
     getAlpha() {
         if (this == Game.playerController) {
