@@ -52,12 +52,7 @@ class CharacterControllerRigidBody extends CharacterController {
      */
     tempRotatePerFrame(intendedDirection) {
         let rotation = Game.Tools.moduloRadians(this.turnSpeed / Game.engine._deltaTime);
-        if (intendedDirection < this.mesh.rotation.y) {
-            this.mesh.rotation.y += rotation;
-        }
-        else {
-            this.mesh.rotation.y -= rotation;
-        }
+        this.mesh.rotation.y = this.mesh.rotation.y + rotation % RAD_360
     }
     getAlpha() {
         if (this == Game.playerController) {
