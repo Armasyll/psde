@@ -47,7 +47,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
     }
-    tempRotatePerFrame() {
+    tempRotatePerFrame(rotation) {
         if (!(Game.Tools.moduloRadians(this.mesh.rotation.y - Game.RAD_180) < yDirection) && (yDirection > this.mesh.rotation.y || (Game.Tools.moduloRadians(yDirection - Game.RAD_180) < this.mesh.rotation.y))) {
             this.mesh.rotation.y += rotation;
         }
