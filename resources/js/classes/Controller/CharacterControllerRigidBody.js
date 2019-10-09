@@ -38,8 +38,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             if (moving) {
                 if (!Game.Tools.arePointsEqual(yDirection, this.mesh.rotation.y, Game.RAD_1*2)) {
-                    let rotation = Game.Tools.moduloRadians(this.turnSpeed / Game.engine._deltaTime);
-                    this.tempRotatePerFrame(rotation);
+                    this.tempRotatePerFrame(yDirection);
                 }
                 else {
                     this.mesh.rotation.y = yDirection;
@@ -47,8 +46,9 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
     }
-    tempRotatePerFrame(rotation) {
-        if (!(Game.Tools.moduloRadians(this.mesh.rotation.y - Game.RAD_180) < yDirection) && (yDirection > this.mesh.rotation.y || (Game.Tools.moduloRadians(yDirection - Game.RAD_180) < this.mesh.rotation.y))) {
+    tempRotatePerFrame(intendedDirection) {
+        let rotation = Game.Tools.moduloRadians(this.turnSpeed / Game.engine._deltaTime);
+        if (!(Game.Tools.moduloRadians(this.mesh.rotation.y - Game.RAD_180) < intendedDirection) && (intendedDirection > this.mesh.rotation.y || (Game.Tools.moduloRadians(intendedDirection - Game.RAD_180) < this.mesh.rotation.y))) {
             this.mesh.rotation.y += rotation;
         }
         else {
