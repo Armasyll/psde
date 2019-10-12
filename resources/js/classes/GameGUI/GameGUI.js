@@ -37,6 +37,7 @@ class GameGUI {
         GameGUI._initMenu();
         GameGUI.debugMenu = undefined;
 
+        GameGUI.locked = false;
         GameGUI.initialized = true;
     }
     static _initHUD() {
@@ -108,6 +109,9 @@ class GameGUI {
     }
     static showHUD(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showHUD");
+        if (GameGUI.locked) {
+            return;
+        }
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         if (_updateChild === true) {
             GameGUI.hideMenu(false);
@@ -117,6 +121,9 @@ class GameGUI {
     }
     static hideHUD(_updateChild = false) {
         if (Game.debugMode) console.log("Running GameGUI::hideHUD");
+        if (GameGUI.locked) {
+            return;
+        }
         if (_updateChild === true) {
             GameGUI.showMenu(false);
         }
@@ -126,6 +133,9 @@ class GameGUI {
         return GameGUI._hud.rootContainer.isVisible;
     }
     static setHudVisible(_boolean) {
+        if (GameGUI.locked) {
+            return;
+        }
         if (_boolean === true) {
             GameGUI._hud.rootContainer.isVisible = true;
         }
@@ -135,6 +145,9 @@ class GameGUI {
     }
     static showMenu(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showMenu");
+        if (GameGUI.locked) {
+            return;
+        }
         Game.setInterfaceMode(InterfaceModeEnum.MENU);
         if (_updateChild === true) {
             GameGUI.hideHUD(false);
@@ -143,6 +156,9 @@ class GameGUI {
     }
     static hideMenu(_updateChild = false) {
         if (Game.debugMode) console.log("Running GameGUI::hideMenu");
+        if (GameGUI.locked) {
+            return;
+        }
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         if (_updateChild === true) {
             GameGUI.showHUD(false);
@@ -158,6 +174,9 @@ class GameGUI {
         return GameGUI._menu.rootContainer.isVisible;
     }
     static setMenuVisible(_boolean) {
+        if (GameGUI.locked) {
+            return;
+        }
         if (_boolean === true) {
             GameGUI._menu.rootContainer.isVisible = true;
         }
@@ -178,9 +197,15 @@ class GameGUI {
         return crosshair;
     }
     static showCrosshair() {
+        if (GameGUI.locked) {
+            return;
+        }
         GameGUI._crosshair.isVisible = true;
     }
     static hideCrosshair() {
+        if (GameGUI.locked) {
+            return;
+        }
         GameGUI._crosshair.isVisible = false;
     }
     static _generateCharacterChoiceMenu() {
@@ -382,12 +407,18 @@ class GameGUI {
     }
     static showCharacterChoiceMenu() {
         if (Game.debugMode) console.log("Running GameGUI::showCharacterChoiceMenu");
+        if (GameGUI.locked) {
+            return;
+        }
         GameGUI.hideHUD()
         GameGUI.showMenu();
         GameGUI._hideMenuChildren();
         GameGUI._characterChoiceMenu.isVisible = true;
     }
     static hideCharacterChoiceMenu() {
+        if (GameGUI.locked) {
+            return;
+        }
         GameGUI.pointerLock();
         GameGUI._characterChoiceMenu.isVisible = false;
     }
@@ -491,6 +522,9 @@ class GameGUI {
      * Show the action tooltip.
      */
     static showActionTooltip() {
+        if (GameGUI.locked) {
+            return;
+        }
         if (!GameGUI.actionTooltipLocked) {
             GameGUI._actionTooltip.isVisible = true;
         }
@@ -499,6 +533,9 @@ class GameGUI {
      * Hide the action tooltip.
      */
     static hideActionTooltip() {
+        if (GameGUI.locked) {
+            return;
+        }
         if (!GameGUI.actionTooltipLocked) {
             GameGUI._actionTooltip.isVisible = false;
         }
@@ -577,6 +614,9 @@ class GameGUI {
         return true;
     }
     static showActionsMenu(pointerRelease = true, updateChild = true) {
+        if (GameGUI.locked) {
+            return;
+        }
         if (updateChild) {
             GameGUI.hideActionTooltip();
             GameGUI.lockActionTooltip();
@@ -587,6 +627,9 @@ class GameGUI {
         }
     }
     static hideActionsMenu(pointerLock = true, updateChild = true) {
+        if (GameGUI.locked) {
+            return;
+        }
         GameGUI._actionsMenu.isVisible = false;
         if (updateChild) {
             GameGUI.unlockActionTooltip();
@@ -630,5 +673,17 @@ class GameGUI {
                 GameGUI._actionsMenu.addControl(button);
             }
         }
+    }
+    static lock() {
+        GameGUI.locked = true;
+    }
+    static unlock() {
+        GameGUI.locked = false;
+    }
+    static setLocked(locked) {
+        if (locked == true) {
+            return GameGUI.lock();
+        }
+        return GameGUI.unlock();
     }
 }

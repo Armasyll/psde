@@ -29,9 +29,10 @@ window.addEventListener("DOMContentLoaded", function() {
                     Game.debugMovementScene();
                     Game.createPlayer("00000000-0000-0000-0000-000000000000", "Player", undefined, undefined, 18, SexEnum.MALE, SpeciesEnum.FOX, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
-                GameGUI.hideCharacterChoiceMenu();
-                GameGUI.hideMenu();
-                GameGUI.showHUD();
+                GameGUI.hideCharacterChoiceMenu(false);
+                GameGUI.hideMenu(false);
+                GameGUI.hideHUD(false);
+                GameGUI.lock();
             }
         }
     });
