@@ -39,6 +39,9 @@ class CharacterControllerRigidBody extends CharacterController {
             if (moving) {
                 let pointDifference = Math.abs(yDirection - this.mesh.rotation.y);
                 if (pointDifference > BABYLON.Tools.ToRadians(2)) {
+                    /*
+                    Anon_11487
+                    */
                     let difference = (yDirection - this.mesh.rotation.y + BABYLON.Tools.ToRadians(180)) - BABYLON.Tools.ToRadians(180);
                     if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
                         difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
@@ -70,7 +73,7 @@ class CharacterControllerRigidBody extends CharacterController {
     }
     getAlpha() {
         if (this == Game.playerController) {
-            return Game.Tools.moduloRadians(Game.RAD_90 - Game.camera.alpha);
+            return Game.Tools.moduloRadians(Game.RAD_90 - Game.camera.alpha); // Anon_11487
         }
         else {
             return 0;
