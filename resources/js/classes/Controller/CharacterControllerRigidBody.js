@@ -70,7 +70,7 @@ class CharacterControllerRigidBody extends CharacterController {
     }
     getAlpha() {
         if (this == Game.playerController) {
-            return Game.Tools.moduloRadians(Game.camera.alpha + Game.RAD_270);
+            return Game.Tools.moduloRadians(Game.RAD_90 - Game.camera.alpha);
         }
         else {
             return 0;
