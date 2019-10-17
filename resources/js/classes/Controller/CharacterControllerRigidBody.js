@@ -12,33 +12,40 @@ class CharacterControllerRigidBody extends CharacterController {
             let yDirection = this.getAlpha();
             if (this.key.forward) {
                 if (this.key.strafeRight) {
-                    yDirection = Game.Tools.moduloRadians(yDirection + Game.RAD_45);
+                    yDirection += Game.RAD_45;
                 }
                 else if (this.key.strafeLeft) {
-                    yDirection = Game.Tools.moduloRadians(yDirection - Game.RAD_45);
+                    yDirection -= Game.RAD_45;
                 }
             }
             else if (this.key.backward) {
-                yDirection = Game.Tools.moduloRadians(yDirection + Game.RAD_180);
+                yDirection += Game.RAD_180;
                 if (this.key.strafeRight) {
-                    yDirection = Game.Tools.moduloRadians(yDirection - Game.RAD_45);
+                    yDirection -= Game.RAD_45;
                 }
                 else if (this.key.strafeLeft) {
-                    yDirection = Game.Tools.moduloRadians(yDirection + Game.RAD_45);
+                    yDirection += Game.RAD_45;
                 }
             }
             else if (this.key.strafeRight) {
-                yDirection = Game.Tools.moduloRadians(yDirection + Game.RAD_90);
+                yDirection += Game.RAD_90;
             }
             else if (this.key.strafeLeft) {
-                yDirection = Game.Tools.moduloRadians(yDirection - Game.RAD_90);
+                yDirection -= Game.RAD_90;
             }
             else {
                 moving = false;
             }
             if (moving) {
-                if (!Game.Tools.arePointsEqual(yDirection, this.mesh.rotation.y, Game.RAD_1*2)) {
-                    this.tempRotatePerFrame(yDirection);
+                let pointDifference = Math.abs(yDirection - this.mesh.rotation.y);
+                if (pointDifference > BABYLON.Tools.ToRadians(2)) {
+                    let difference = (yDirection - this.mesh.rotation.y + BABYLON.Tools.ToRadians(180)) - BABYLON.Tools.ToRadians(180);
+                    if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
+                        difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
+                    }
+                    this.mesh.rotation.y += difference * (this.turnSpeed / Game.scene.getEngine().getDeltaTime()) + BABYLON.Tools.ToRadians(180);
+                    this.mesh.rotation.y %= BABYLON.Tools.ToRadians(360);
+                    this.mesh.rotation.y -= BABYLON.Tools.ToRadians(180);
                 }
                 else {
                     this.mesh.rotation.y = yDirection;
