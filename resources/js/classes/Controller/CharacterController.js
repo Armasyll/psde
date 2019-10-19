@@ -14,18 +14,18 @@ class CharacterController extends EntityController {
         this.root = undefined;
         this.targetRay = undefined;
         this.targetRayHelper = undefined;
-        this.isGrounded = false;
-        this.isJumping = false;
-        this.isFalling = false;
-        this.isStanding = true;
-        this.isCrouching = false;
-        this.isSitting = false;
-        this.isLyingDown = false;
-        this.isClimbing = false; // Ladder
-        this.isWalking = false; // While Standing or Crouching
-        this.isRunning = false; // While Standing
-        this.isSprinting = false; // While Standing
-        this.isAttacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
+        this.grounded = false;
+        this.jumping = false;
+        this.falling = false;
+        this.standing = true;
+        this.crouching = false;
+        this.sitting = false;
+        this.lying = false;
+        this.climbing = false; // Ladder
+        this.walking = false; // While Standing or Crouching
+        this.running = false; // While Standing
+        this.sprinting = false; // While Standing
+        this.attacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
         this.canTransition = true;
 
         this.walk = new AnimData("walk");
@@ -258,12 +258,12 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this.isAttacking) {
+        if (this.attacking) {
             return false;
         }
-        this.isAttacking = true;
-        setTimeout(() => {this.isAttacking = false;}, 800);
-        if (this.isRunning) {
+        this.attacking = true;
+        setTimeout(() => {this.attacking = false;}, 800);
+        if (this.running) {
             for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
                 Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
             }
@@ -279,11 +279,11 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        if (this.isAttacking) {
+        if (this.attacking) {
             return false;
         }
-        this.isAttacking = true;
-        setTimeout(() => {this.isAttacking = false;}, 800);
+        this.attacking = true;
+        setTimeout(() => {this.attacking = false;}, 800);
         for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
             Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
         }
@@ -301,10 +301,10 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        this.isStanding = false;
-        this.isCrouching = false;
-        this.isSitting = false;
-        this.isLyingDown = true;
+        this.standing = false;
+        this.crouching = false;
+        this.sitting = false;
+        this.lying = true;
         this.setLocked(true);
         this.beginAnimation(this.lieDown, () => {this.setLocked(false)});
         return true;
@@ -313,40 +313,40 @@ class CharacterController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        this.isStanding = false;
-        this.isCrouching = false;
-        this.isSitting = true;
-        this.isLyingDown = false;
+        this.standing = false;
+        this.crouching = false;
+        this.sitting = true;
+        this.lying = false;
         this.setLocked(true);
         this.beginAnimation(this.sitDown, () => {this.setLocked(false)});
         return true;
     }
     doStand() {
-        if (this.isStanding) {
+        if (this.standing) {
             return true;
         }
-        this.isStanding = true;
-        this.isCrouching = false;
-        this.isSitting = false;
-        this.isLyingDown = false;
+        this.standing = true;
+        this.crouching = false;
+        this.sitting = false;
+        this.lying = false;
         this.setLocked(true);
         this.beginAnimation(this.stand, () => {this.setLocked(false)});
     }
     doCrouch() {
-        if (this.isCrouching) {
+        if (this.crouching) {
             return this;
         }
-        this.isStanding = false;
-        this.isCrouching = true;
-        this.isSitting = false;
-        this.isLyingDown = false;
+        this.standing = false;
+        this.crouching = true;
+        this.sitting = false;
+        this.lying = false;
         this.setLocked(true);
         this.beginAnimation(this.crouch, () => {this.setLocked(false)});
     }
 
     setAttacking(bool = true) {
-        this.isAttacking = bool == true;
-        console.log(`running setAttacking(${this.isAttacking ? "true" : "false"})`);
+        this.attacking = bool == true;
+        console.log(`running setAttacking(${this.attacking ? "true" : "false"})`);
     }
 
     hideMesh() {

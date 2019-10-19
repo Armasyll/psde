@@ -38,19 +38,19 @@ class CharacterControllerTransform extends CharacterController {
             this.removeParent();
         }
         let anim = this.idle;
-        if (this.key.jump && !this.isFalling) {
+        if (this.key.jump && !this.falling) {
             this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
-            this.isGrounded = false;
+            this.grounded = false;
             this.idleFallTime = 0;
             anim = this.doJump();
         }
-        else if (this.anyMovement() || this.isFalling) {
+        else if (this.anyMovement() || this.falling) {
             this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
-            this.isGrounded = false;
+            this.grounded = false;
             this.idleFallTime = 0;
             anim = this.doMove();
             Game.entityLocRotWorker.postMessage({
@@ -63,7 +63,7 @@ class CharacterControllerTransform extends CharacterController {
                 ]
             });
         }
-        else if (!this.isFalling) {
+        else if (!this.falling) {
             this.avStartPos.copyFrom(this.mesh.position);
             this.entity.removeFurniture();
             anim = this.doIdle();
@@ -127,14 +127,14 @@ class CharacterControllerTransform extends CharacterController {
         if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
             this.mesh.rotation.y = -4.69 - Game.camera.alpha;
         }
-        if (this.isSprinting || this.isRunning || this.isWalking) {
-            if (this.isRunning) {
+        if (this.sprinting || this.running || this.walking) {
+            if (this.running) {
                 forwardDist = this.runSpeed * dt;
             }
-            else if (this.isWalking) {
+            else if (this.walking) {
                 forwardDist = this.walkSpeed * dt;
             }
-            else if (this.isSprinting) {
+            else if (this.sprinting) {
                 forwardDist = this.sprintSpeed * dt;
             }
             disp = this.moveVector.clone();
@@ -169,9 +169,9 @@ class CharacterControllerTransform extends CharacterController {
     endJump() {
         this.key.jump = false;
         this.jumpTime = 0;
-        this.isWalking = false;
-        this.isRunning = false;
-        this.isSprinting = false;
+        this.walking = false;
+        this.running = false;
+        this.sprinting = false;
     }
     doMove() {
         let dt = Game.engine.getDeltaTime() / 1000;
@@ -181,7 +181,7 @@ class CharacterControllerTransform extends CharacterController {
         this.movFallTime = this.movFallTime + dt;
         let moving = false;
         let direction = 0;
-        if (this.isFalling) {
+        if (this.falling) {
             this.moveVector.y = -this.freeFallDist;
             moving = true;
             anim = this.fall;
@@ -189,29 +189,29 @@ class CharacterControllerTransform extends CharacterController {
         else {
             this.moveVector.set(0,0,0);
             let dist = 0;
-            if (this.isStanding) {
+            if (this.standing) {
                 if (this.key.shift) {
                     dist = this.sprintSpeed * dt;
-                    this.isWalking = false;
-                    this.isRunning = false;
-                    this.isSprinting = true;
+                    this.walking = false;
+                    this.running = false;
+                    this.sprinting = true;
                     moving = true;
                 }
                 else {
                     dist = this.runSpeed * dt;
                     anim = this.run;
-                    this.isWalking = false;
-                    this.isRunning = true;
-                    this.isSprinting = false;
+                    this.walking = false;
+                    this.running = true;
+                    this.sprinting = false;
                     moving = true;
                 }
             }
-            else if (this.isCrouching) {
+            else if (this.crouching) {
                 dist = this.crouchSpeed * dt;
                 anim = this.crouch;
-                this.isWalking = true;
-                this.isRunning = false;
-                this.isSprinting = false;
+                this.walking = true;
+                this.running = false;
+                this.sprinting = false;
             }
             if (this.key.forward) {
                 if (this.key.strafeRight && !this.key.strafeLeft) {
@@ -289,7 +289,7 @@ class CharacterControllerTransform extends CharacterController {
                     this._vMoveTot = 0;
                     if (slope > this.minSlopeLimit) {
                         this.fallFrameCount = 0;
-                        this.isFalling = false;
+                        this.falling = false;
                     }
                     else {
                         this.endFreeFall();
@@ -304,11 +304,11 @@ class CharacterControllerTransform extends CharacterController {
                     }
                     else {
                         this.fallFrameCount = 0;
-                        this.isFalling = false;
+                        this.falling = false;
                     }
                 }
                 else {
-                    this.isFalling = true;
+                    this.falling = true;
                     this.fallFrameCount++;
                     if (this.fallFrameCount > this.fallFrameCountMin) {
                         anim = this.fall;
@@ -327,17 +327,17 @@ class CharacterControllerTransform extends CharacterController {
     endFreeFall() {
         this.movFallTime = 0;
         this.fallFrameCount = 0;
-        this.isFalling = false;
+        this.falling = false;
     }
     doIdle() {
-        if (this.isGrounded) {
+        if (this.grounded) {
             return this.idle;
         }
         let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.idle;
-        this.isWalking = false;
-        this.isRunning = false;
-        this.isSprinting = false;
+        this.walking = false;
+        this.running = false;
+        this.sprinting = false;
         this.movFallTime = 0;
         this.fallFrameCount = 0;
         if (dt === 0) {
@@ -377,12 +377,12 @@ class CharacterControllerTransform extends CharacterController {
     groundIt() {
         this.groundFrameCount++;
         if (this.groundFrameCount > this.groundFrameMax) {
-            this.isGrounded = true;
+            this.grounded = true;
             this.idleFallTime = 0;
         }
     }
     unGroundIt() {
-        this.isGrounded = false;
+        this.grounded = false;
         this.groundFrameCount = 0;
     }
     updateGroundRay() {

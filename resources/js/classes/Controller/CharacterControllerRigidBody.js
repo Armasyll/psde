@@ -4,45 +4,70 @@ class CharacterControllerRigidBody extends CharacterController {
         this.gravity = -9.8;
         this.velocity = new BABYLON.Vector3();
         this.turnSpeed = Game.RAD_90; // degrees per second
+        this.moving = false;
+        this.turning = false;
+        this.intendedDirection = 0.0;
     }
 
     moveAV() {
         if (this.anyMovement()) {
-            let moving = true;
-            let yDirection = this.getAlpha();
             if (this.key.forward) {
                 if (this.key.strafeRight) {
-                    yDirection += Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() + Game.RAD_45;
                 }
                 else if (this.key.strafeLeft) {
-                    yDirection -= Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() - Game.RAD_45;
                 }
+                else {
+                    this.intendedDirection = this.getAlpha();
+                }
+                this.moving = true;
             }
             else if (this.key.backward) {
-                yDirection += Game.RAD_180;
                 if (this.key.strafeRight) {
-                    yDirection -= Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() + Game.RAD_135;
                 }
                 else if (this.key.strafeLeft) {
-                    yDirection += Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() + Game.RAD_225;
                 }
+                else {
+                    this.intendedDirection = this.getAlpha() + Game.RAD_180;
+                }
+                this.moving = true;
             }
             else if (this.key.strafeRight) {
-                yDirection += Game.RAD_90;
+                this.intendedDirection = this.getAlpha() + Game.RAD_90;
+                this.moving = true;
             }
             else if (this.key.strafeLeft) {
-                yDirection -= Game.RAD_90;
+                this.intendedDirection = this.getAlpha() - Game.RAD_90;
+                this.moving = true;
             }
             else {
-                moving = false;
+                this.moving = false;
             }
-            if (moving) {
-                let pointDifference = Math.abs(yDirection - this.mesh.rotation.y);
-                if (pointDifference > BABYLON.Tools.ToRadians(2)) {
+            if (this.moving) {
+                if (this.key.shift) {
+                    if (!this.standing) { // TODO: stall until transition from crouching/lying/sitting complete
+                        return this.doStand();
+                    }
+                    this.walking = false;
+                    this.running = true;
+                }
+                else {
+                    this.running = false;
+                }
+                /*
+                lying + walking = crawling
+                crouching + walking = spycrabing
+                standing + walking = walking
+                standing + running = running
+                */
+                if (Math.abs(this.intendedDirection - this.mesh.rotation.y) > BABYLON.Tools.ToRadians(0.5)) {
                     /*
                     Anon_11487
                     */
-                    let difference = (yDirection - this.mesh.rotation.y + BABYLON.Tools.ToRadians(180)) - BABYLON.Tools.ToRadians(180);
+                    let difference = (this.intendedDirection - this.mesh.rotation.y + BABYLON.Tools.ToRadians(180)) - BABYLON.Tools.ToRadians(180);
                     if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
                         difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
                     }
@@ -51,8 +76,9 @@ class CharacterControllerRigidBody extends CharacterController {
                     this.mesh.rotation.y -= BABYLON.Tools.ToRadians(180);
                 }
                 else {
-                    this.mesh.rotation.y = yDirection;
+                    this.mesh.rotation.y = this.intendedDirection;
                 }
+                this.moving = false;
             }
         }
     }

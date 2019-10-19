@@ -14,8 +14,11 @@ class Game {
         Game.RAD_1 = BABYLON.Tools.ToRadians(1);
         Game.RAD_45 = BABYLON.Tools.ToRadians(45);
         Game.RAD_90 = BABYLON.Tools.ToRadians(90);
+        Game.RAD_135 = BABYLON.Tools.ToRadians(135);
         Game.RAD_180 = BABYLON.Tools.ToRadians(180);
+        Game.RAD_225 = BABYLON.Tools.ToRadians(225);
         Game.RAD_270 = BABYLON.Tools.ToRadians(270);
+        Game.RAD_315 = BABYLON.Tools.ToRadians(315);
         Game.RAD_360 = 6.28318529;
         Game.startTime = new Date("2017-07-03T17:35:00.000Z");
         Game.currentTime = new Date(Game.startTime);
