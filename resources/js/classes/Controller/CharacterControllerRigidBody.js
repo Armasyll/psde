@@ -11,7 +11,25 @@ class CharacterControllerRigidBody extends CharacterController {
     }
 
     moveAV() {
-        this.startPosition.copyFrom(this.mesh.position);
+        if (!(this.mesh instanceof BABYLON.Mesh)) {
+            return this;
+        }
+        if (this._isLocked) {
+            return this;
+        }
+        let anim = this.idle;
+        if (this.anyMovement() || this.falling) {
+            this.startPosition.copyFrom(this.mesh.position);
+            anim = this.doMove();
+        }
+        this.beginAnimation(anim);
+        if (Game.player == this.entity) {
+            Game.updateCameraTarget();
+        }
+        return this;
+    }
+    doMove() {
+        let anim = this.idle;
         if (this.anyMovement()) {
             if (this.key.forward) {
                 if (this.key.strafeRight) {
@@ -82,9 +100,13 @@ class CharacterControllerRigidBody extends CharacterController {
                 }
                 this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -9.8, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
                 this.mesh.moveWithCollisions(this.intendedMovement);
+                if (!Game.Tools.areVectorsEqual(this.mesh.position, this.startPosition, 0.001)) {
+                    anim = this.run;
+                }
                 this.moving = false;
             }
         }
+        return anim;
     }
     /**
      * Rotates character from this.mesh.rotation.y towards intendedDirection
