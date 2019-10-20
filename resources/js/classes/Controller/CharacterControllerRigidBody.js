@@ -1,15 +1,17 @@
 class CharacterControllerRigidBody extends CharacterController {
     constructor(id, mesh, entity) {
         super(id, mesh, entity);
-        this.gravity = -9.8;
-        this.velocity = new BABYLON.Vector3();
         this.turnSpeed = Game.RAD_90; // degrees per second
         this.moving = false;
         this.turning = false;
+        this.startPosition = this.mesh.position.clone();
         this.intendedDirection = 0.0;
+        this.intendedMovement = new BABYLON.Vector3();
+        this.runSpeed = 3.2 * this.mesh.scaling.z; // if it's a fox mesh
     }
 
     moveAV() {
+        this.startPosition.copyFrom(this.mesh.position);
         if (this.anyMovement()) {
             if (this.key.forward) {
                 if (this.key.strafeRight) {
@@ -67,7 +69,7 @@ class CharacterControllerRigidBody extends CharacterController {
                     /*
                     Anon_11487
                     */
-                    let difference = (this.intendedDirection - this.mesh.rotation.y + BABYLON.Tools.ToRadians(180)) - BABYLON.Tools.ToRadians(180);
+                    let difference = this.intendedDirection - this.mesh.rotation.y;
                     if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
                         difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
                     }
@@ -78,6 +80,8 @@ class CharacterControllerRigidBody extends CharacterController {
                 else {
                     this.mesh.rotation.y = this.intendedDirection;
                 }
+                this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -9.8, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+                this.mesh.moveWithCollisions(this.intendedMovement);
                 this.moving = false;
             }
         }
