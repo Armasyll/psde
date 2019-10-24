@@ -819,8 +819,6 @@ class Game {
         Game.actionTakeFunction = Game.actionTake;
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
-        Game.mouseDownDate = 0;
-        Game.mouseUpDate = 1;
         // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
         Game.gui = GameGUI;
         Game.gui.initialize();
@@ -1757,8 +1755,6 @@ class Game {
         if (Game.debugMode) console.log(`Running Game::controlMetaOnMouseDown(${mouseEvent.button})`);
         if (Game.interfaceMode == InterfaceModeEnum.CHARACTER) {
             if (mouseEvent.button == 0) {
-                Game.mouseDownDate = new Date().getTime();
-                Game.mouseUpDate = Game.mouseDownDate + 1;
             }
         }
         return 0;
@@ -1776,10 +1772,7 @@ class Game {
                 return 2;
             }
             if (mouseEvent.button == 0) {
-                Game.mouseUpDate = new Date().getTime();
                 Game.actionAttackFunction(Game.player.getTarget(), Game.player);
-                Game.mouseDownDate = 0;
-                Game.mouseUpDate = 1;
             }
             else if (mouseEvent.button == 1) {}
             else if (mouseEvent.button == 2) {
