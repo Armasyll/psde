@@ -7,18 +7,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="256"
-   height="256"
-   viewBox="0 0 256 256"
-   version="1.1"
-   id="svg312"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="craftsmanDoor.svg"
-   inkscape:export-filename="/home/www/psde.equus.et/html/resources/data/craftsmanDoor.svg.png"
-   inkscape:export-xdpi="96"
-   inkscape:export-ydpi="96"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   id="svg4115"
+   version="1.1"
+   viewBox="0 0 1024 1024"
+   height="1024"
+   width="1024">
   <metadata
-     id="metadata318">
+     id="metadata4121">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -29,61 +26,91 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs316" />
+     id="defs4119" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     id="namedview314"
-     showgrid="false"
-     inkscape:zoom="3.1905518"
-     inkscape:cx="90.213727"
-     inkscape:cy="87.026783"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
+     inkscape:current-layer="svg4115"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg312" />
+     inkscape:window-y="24"
+     inkscape:window-x="0"
+     inkscape:cy="663.43853"
+     inkscape:cx="402.98172"
+     inkscape:zoom="0.5640152"
+     showgrid="false"
+     id="namedview4117"
+     inkscape:window-height="1056"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <desc
-     id="desc2">'craftsmanWalls.blend', craftsmanDoor.001, (Blender 2.79 (sub 0))</desc>
+     id="desc3717">craftsmanWalls.blend, (Blender 2.82 (sub 1))</desc>
+  <rect
+     style="opacity:1;vector-effect:none;fill:#28170b;fill-opacity:1;stroke:none;stroke-width:16.60024261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect5091"
+     width="1024"
+     height="1024"
+     x="0"
+     y="1.4210855e-14" />
   <path
-     style="fill:#28170b;fill-opacity:1;stroke:none"
-     d="m 175,1 c 0,96.406819 0,170.80431 0,254 h 6 c 0,-86.47657 0,-176.714753 0,-254 z"
-     id="polygon4"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc" />
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 740 120 L 740 172 L 740 412 L 740 512 L 740 752 L 740 804 L 764 804 L 764 752 L 764 512 L 764 412 L 764 172 L 764 120 L 740 120 z "
+     id="polygon3723" />
   <path
-     style="fill:#28170b;fill-opacity:1;stroke:none"
-     d="m 1,1 c 0,85.702452 0,171.43517 0,254 63.785722,0 116.38418,0 170,0 0,-87.38506 0,-169.814202 0,-254 C 113.01396,1 52.758019,1 1,1 Z"
-     id="polygon6"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc" />
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 700 4 L 700 56 L 700 412 L 700 512 L 700 920 L 700 1020 L 724 1020 L 724 920 L 724 512 L 724 412 L 724 56 L 724 4 L 700 4 z "
+     id="polygon3719" />
   <path
-     style="fill:#28170b;fill-opacity:1;stroke:none"
-     d="m 185,30 c 0,58.940323 0,120.27607 0,171 h 6 c 0,-57 0,-114 0,-171 z"
-     id="polygon8"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc" />
+     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     d="m 777.49995,-0.8 v 33.6 33.6 33.6 33.6 33.6 33.6 H 882.502 V 167.2 133.6 100 66.4 32.8 -0.8 Z"
+     id="polygon4027"
+     inkscape:connector-curvature="0" />
   <path
-     style="fill:#371f0f;fill-opacity:1;stroke:none"
-     d="M 105 20 L 105 97 L 153 97 L 153 20 L 105 20 z "
-     id="polygon248" />
+     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     d="M 919.34736,103.30527 893.54238,148 l 25.80498,44.69473 h 51.60997 L 996.76231,148 970.95733,103.30527 Z"
+     id="polygon4041"
+     inkscape:connector-curvature="0" />
   <path
-     style="fill:#371f0f;fill-opacity:1;stroke:none"
-     d="M 105 134 L 105 224 L 153 224 L 153 134 L 105 134 z "
-     id="polygon250" />
+     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     d="m 919.34736,7.3345215 -25.80498,44.6947265 25.80498,44.696777 h 51.60997 L 996.76231,52.029248 970.95733,7.3345215 Z"
+     id="polygon4035"
+     inkscape:connector-curvature="0" />
+  <rect
+     style="opacity:0;vector-effect:none;fill:#28170b;fill-opacity:1;stroke:none;stroke-width:16.54777908;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect1217"
+     width="680"
+     height="1016"
+     x="4"
+     y="4" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#371f0f;fill-opacity:1;stroke:none;stroke-width:19.36321449;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect1342"
+     width="680"
+     height="1016"
+     x="4"
+     y="4" />
   <path
-     style="fill:#371f0f;fill-opacity:1;stroke:none"
-     d="M 19 20 L 19 97 L 67 97 L 67 20 L 19 20 z "
-     id="polygon252" />
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 100 104 L 100 364 L 244 364 L 244 104 L 100 104 z "
+     id="polygon3843" />
   <path
-     style="fill:#371f0f;fill-opacity:1;stroke:none"
-     d="M 19 134 L 19 224 L 67 224 L 67 134 L 19 134 z "
-     id="polygon280" />
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 444 560 L 444 872 L 588 872 L 588 560 L 444 560 z "
+     id="polygon3845" />
+  <path
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 444 104 L 444 364 L 588 364 L 588 104 L 444 104 z "
+     id="polygon3847" />
+  <path
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 100 560 L 100 872 L 244 872 L 244 560 L 100 560 z "
+     id="polygon3841" />
+  <path
+     style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
+     d="M 4 4 L 4 55.998047 L 4 412 L 4 511.99805 L 4 920 L 4 1020 L 52 1020 L 292 1020 L 396 1020 L 636 1020 L 684 1020 L 684 920 L 684 511.99805 L 684 412 L 684 55.998047 L 684 4 L 636 4 L 396 4 L 292 4 L 52 4 L 4 4 z M 52 55.998047 L 292 55.998047 L 292 412 L 52 412 L 52 55.998047 z M 396 55.998047 L 636 55.998047 L 636 412 L 396 412 L 396 55.998047 z M 52 511.99805 L 292 511.99805 L 292 920 L 52 920 L 52 511.99805 z M 396 511.99805 L 636 511.99805 L 636 920 L 396 920 L 396 511.99805 z "
+     id="polygon3721" />
 </svg>
