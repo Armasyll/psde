@@ -1,4 +1,4 @@
-class CharacterEntity extends EntityWithStorage {
+class CharacterEntity extends Entity {
     /**
      * Creates a CharacterEntity
      * @param  {string} id Unique ID
@@ -270,6 +270,7 @@ class CharacterEntity extends EntityWithStorage {
         this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
+        this.createInventory();
         this.generateProperties();
         this.generateBaseStats(true);
         this.generateAdditionalStats();

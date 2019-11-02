@@ -14,7 +14,7 @@ class LightingEntity extends FurnitureEntity {
         this.addAvailableAction(ActionEnum.USE);
         this.setDefaultAction(ActionEnum.USE);
 
-        Game.setLightingEntity(this.id, this);
+        LightingEntity.set(this.id, this);
     }
 
     on() {
@@ -60,8 +60,37 @@ class LightingEntity extends FurnitureEntity {
         this.off();
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeLightingEntity(this.id);
+        LightingEntity.remove(this.id);
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        LightingEntity.lightingEntityList = {};
+    }
+    static get(id) {
+        if (LightingEntity.has(id)) {
+            return LightingEntity[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return LightingEntity.lightningEntityList.hasOwnProperty(id);
+    }
+    static set(id, lightEntity) {
+        LightingEntity.lightingEntityList[id] = lightEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete LightingEntity.lightingEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in LightingEntity.lightingEntityList) {
+            LightingEntity.lightingEntityList[i].dispose();
+        }
+        LightingEntity.lightingEntityList = {};
+        return 0;
+    }
 }
+LightingEntity.initialize();

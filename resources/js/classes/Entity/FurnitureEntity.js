@@ -1,4 +1,4 @@
-class FurnitureEntity extends EntityWithStorage {
+class FurnitureEntity extends Entity {
     /**
      * Creats Furniture
      * @param  {string}  id            Unique ID
@@ -15,7 +15,7 @@ class FurnitureEntity extends EntityWithStorage {
 
         this.setFurnitureType(furnitureType);
 
-        Game.setFurnitureEntity(this.id, this);
+        FurnitureEntity.set(this.id, this);
     }
 
     setFurnitureType(furnitureType) {
@@ -181,9 +181,38 @@ class FurnitureEntity extends EntityWithStorage {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeFurnitureEntity(this.id);
+        FurnitureEntity.remove(this.id);
         delete this.furnitureType;
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        FurnitureEntity.furnitureEntityList = {};
+    }
+    static get(id) {
+        if (FurnitureEntity.has(id)) {
+            return FurnitureEntity.furnitureEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return FurnitureEntity.furnitureEntityList.hasOwnProperty(id);
+    }
+    static set(id, furnitureEntity) {
+        FurnitureEntity.furnitureEntityList[id] = furnitureEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete FurnitureEntity.furnitureEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in FurnitureEntity.furnitureEntityList) {
+            FurnitureEntity.furnitureEntityList[i].dispose();
+        }
+        FurnitureEntity.furnitureEntityList = {};
+        return 0;
+    }
 }
+FurnitureEntity.initialize();

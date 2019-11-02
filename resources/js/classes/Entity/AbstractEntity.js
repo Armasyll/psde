@@ -36,6 +36,7 @@ class AbstractEntity {
         this.locked = false;
         this.essential = false;
         this.essentialOffset = false;
+        this.inventory = null;
         /**
          * Object<number, Map<Trait, number>>
          * <Priority, <Trait, Stack>>
@@ -392,6 +393,82 @@ class AbstractEntity {
         this.resetOffsets();
         return 0;
     }
+
+    hasInventory() {
+        return this.inventory instanceof Inventory;
+    }
+    getInventory() {
+        return this.inventory;
+    }
+    setInventory(inventory, updateChild = true) {
+        if (this instanceof CharacterEntity || this instanceof InstancedFurnitureEntity) {
+            if (inventory instanceof Inventory) {
+                this.inventory = inventory;
+                if (updateChild) {
+                    inventory.addEntity(this);
+                }
+                return 0;
+            }
+            return 1;
+        }
+        else {
+            if (Game.debugMode) console.log(`Running <${EntityEnum.properties[this.entityType].name}Entity> ${this.id}.setInventory(${inventory.id}, ${updateChild ? "true" : "false"})`);
+            return 1;
+        }
+    }
+    removeInventory(updateChild = true) {
+        if (!this.hasInventory()) {
+            return 1;
+        }
+        this.inventory.dispose();
+        this.inventory = null;
+        if (updateChild) {
+            this.inventory.removeEntity(this, false);
+        }
+        return 0;
+    }
+    createInventory(maxSize = 9, maxWeight = 10) {
+        if (this instanceof CharacterEntity || this instanceof InstancedFurnitureEntity) {
+            return this.setInventory(new Inventory(this.id + "Inventory", "Inventory", maxSize, maxWeight));
+        }
+        else {
+            if (Game.debugMode) console.log(`Running <${EntityEnum.properties[this.entityType].name}Entity> ${this.id}.createInventory(${maxSize}, ${maxWeight})`);
+            return 1;
+        }
+    }
+    addItem(...parameters) {
+        if (!this.hasInventory()) {
+            if (this.createInventory() != 0) {
+                return 1;
+            }
+        }
+        return this.inventory.addItem(...parameters);
+    }
+    removeItem(...parameters) {
+        if (!this.hasInventory) {
+            return 1;
+        }
+        return this.inventory.removeItem(...parameters);
+    }
+    hasItem(...parameters) {
+        if (!this.hasInventory) {
+            return false;
+        }
+        return this.inventory.hasItem(...parameters);
+    }
+    getItem(...parameters) {
+        if (!this.hasInventory) {
+            return 1;
+        }
+        return this.inventory.getItem(...parameters);
+    }
+    getItems() {
+        if (!this.hasInventory) {
+            return 1;
+        }
+        return this.inventory.getItems();
+    }
+
     resetOffsets() {
         this.godModeOffset = false;
         this.essentialOffset = false;
@@ -407,6 +484,9 @@ class AbstractEntity {
             this.controller.setLocked(true);
             this.controller.setEnabled(false);
             this.controller.dispose();
+        }
+        if (this.hasInventory()) {
+            this.inventory.removeEntity(this);
         }
         for (let action in this.availableActions) {
             if (this.availableActions[action] instanceof ActionData) {

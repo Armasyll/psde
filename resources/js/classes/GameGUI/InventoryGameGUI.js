@@ -136,7 +136,7 @@ class InventoryGameGUI {
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
-     * @param {EntityWithStorage} entityWithStorage The Entity with the inventory.
+     * @param {AbstractEntity} entityWithStorage The Entity with the inventory.
      */
     static updateWith(entityWithStorage = Game.player) {
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
@@ -234,7 +234,7 @@ class InventoryGameGUI {
                     if (playerEntity != Game.player) {
                         break;
                     }
-                    else if (targetEntity instanceof EntityWithStorage) {
+                    else if (targetEntity instanceof Entity && targetEntity.hasInventory()) {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
                     }
                     break;

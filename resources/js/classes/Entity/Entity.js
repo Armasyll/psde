@@ -282,7 +282,7 @@ class Entity extends AbstractEntity {
                 this.instances[instanceID].dispose();
             }
         }
-        if (this.hasController) {
+        if (this.hasController()) {
             this.controller.dispose();
         }
         Game.removeEntity(this.id);

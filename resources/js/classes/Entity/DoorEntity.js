@@ -16,7 +16,7 @@ class DoorEntity extends Entity {
         this.setOpensInward(opensInward);
         this.setOpen(open);
 
-        Game.setDoorEntity(this.id, this);
+        DoorEntity.set(this.id, this);
 	}
 
     /**
@@ -100,8 +100,37 @@ class DoorEntity extends Entity {
 	dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeDoorEntity(this.id);
+        DoorEntity.remove(this.id);
         super.dispose();
         return undefined;
-	}
+    }
+
+    static initialize() {
+        DoorEntity.doorEntityList = {};
+    }
+    static get(id) {
+        if (FurnitureEntity.has(id)) {
+            return DoorEntity.doorEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return DoorEntity.doorEntityList.hasOwnProperty(id);
+    }
+    static set(id, doorEntity) {
+        DoorEntity.doorEntityList[id] = doorEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete DoorEntity.doorEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in DoorEntity.doorEntityList) {
+            DoorEntity.doorEntityList[i].dispose();
+        }
+        DoorEntity.doorEntityList = {};
+        return 0;
+    }
 }
+DoorEntity.initialize();

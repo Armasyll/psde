@@ -612,9 +612,6 @@ class Game {
         Game.abstractEntities = {};
 
         Game.entities = {};
-        Game.furnitureEntities = {};
-        Game.lightingEntities = {};
-        Game.doorEntities = {};
         Game.characterEntities = {};
         Game.itemEntities = {};
         Game.clothingEntities = {};
@@ -2571,8 +2568,8 @@ class Game {
                     Game.setCharacterEntity(newID, entity);
                 }
                 else if (entity instanceof DoorEntity) {
-                    Game.removeDoorEntity(currentID);
-                    Game.setDoorEntity(newID, entity);
+                    DoorEntity.remove(currentID);
+                    DoorEntity.set(newID, entity);
                 }
                 else if (entity instanceof ItemEntity) {
                     Game.removeItemEntity(currentID);
@@ -2595,11 +2592,11 @@ class Game {
                     }
                 }
                 else if (entity instanceof FurnitureEntity) {
-                    Game.removeFurnitureEntity(currentID);
-                    Game.setFurnitureEntity(newID, entity);
+                    FurnitureEntity.remove(currentID);
+                    FurnitureEntity.set(newID, entity);
                     if (entity instanceof LightingEntity) {
-                        Game.removeLightingEntity(currentID);
-                        Game.setLightingEntity(newID, entity);
+                        LightingEntity.remove(currentID);
+                        LightingEntity.set(newID, entity);
                     }
                 }
                 else if (entity instanceof SpellEntity) {
@@ -2888,28 +2885,6 @@ class Game {
             return false;
         }
         return Game.characterEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return a FurnitureEntity based on its ID
-     * @param {string} id FurnitureEntity ID
-     * @returns {(FurnitureEntity|number)} An FurnitureEntity or an integer status code
-     */
-    static getFurnitureEntity(id) {
-        if (Game.hasFurnitureEntity(id)) {
-            return Game.furnitureEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not a FurnitureEntity exists
-     * @param {string} id FurnitureEntity ID
-     * @returns {boolean}
-     */
-    static hasFurnitureEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.furnitureEntities.hasOwnProperty(id);
     }
     /**
      * Tries to return an InstancedFurnitureEntity based on its ID
@@ -3381,8 +3356,8 @@ class Game {
         else if (furnitureEntity instanceof InstancedFurnitureEntity) {
             furnitureEntity = furnitureEntity.clone(id);
         }
-        else if (typeof furnitureEntity == "string" && Game.hasFurnitureEntity(furnitureEntity)) {
-            furnitureEntity = Game.getFurnitureEntity(furnitureEntity).createInstance(id);
+        else if (typeof furnitureEntity == "string" && FurnitureEntity.has(furnitureEntity)) {
+            furnitureEntity = FurnitureEntity.get(furnitureEntity).createInstance(id);
         }
         else if (typeof furnitureEntity == "string" && Game.hasInstancedFurnitureEntity(furnitureEntity)) {
             furnitureEntity = Game.getInstancedFurnitureEntity(furnitureEntity).clone(id);
@@ -3475,7 +3450,7 @@ class Game {
         return 0;
     }
     /**
-     * Filters the creation of a LightingEntity, LightingEntity, and BABYLON.InstancedMesh
+     * Filters the creation of a LightingController, LightingEntity, and BABYLON.InstancedMesh
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} meshID Mesh ID
@@ -3528,7 +3503,7 @@ class Game {
         return [id, name, meshID, materialID, lightingType, position, rotation, scaling, options];
     }
     /**
-     * Creates a LightingEntity, LightingEntity, and BABYLON.InstancedMesh
+     * Creates a LightingController, LightingEntity, and BABYLON.InstancedMesh
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} meshID Mesh ID
@@ -4223,7 +4198,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (subEntity.addItem(instancedItemEntity) == 0) {
@@ -4272,7 +4247,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (!subEntity.hasItem(instancedItemEntity)) {
@@ -4329,7 +4304,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (!subEntity.hasItem(instancedItemEntity)) {
@@ -4352,7 +4327,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (!subEntity.hasItem(instancedItemEntity)) {
@@ -4375,7 +4350,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (!subEntity.hasItem(instancedItemEntity)) {
@@ -4398,7 +4373,7 @@ class Game {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             return 2;
         }
-        if (!(subEntity instanceof EntityWithStorage)) {
+        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
         if (!subEntity.hasItem(instancedItemEntity)) {
@@ -4789,51 +4764,6 @@ class Game {
             Game.shieldEntities[i].dispose();
         }
         Game.shieldEntities = {};
-        return 0;
-    }
-    static setFurnitureEntity(id, furnitureEntity) {
-        Game.furnitureEntities[id] = furnitureEntity;
-        return 0;
-    }
-    static removeFurnitureEntity(id) {
-        delete Game.furnitureEntities[id];
-        return 0;
-    }
-    static clearFurnitureEntities() {
-        for (let i in Game.furnitureEntities) {
-            Game.furnitureEntities[i].dispose();
-        }
-        Game.furnitureEntities = {};
-        return 0;
-    }
-    static setLightingEntity(id, lightEntity) {
-        Game.lightingEntities[id] = lightEntity;
-        return 0;
-    }
-    static removeLightingEntity(id) {
-        delete Game.lightingEntities[id];
-        return 0;
-    }
-    static clearLightEntities() {
-        for (let i in Game.lightingEntities) {
-            Game.lightingEntities[i].dispose();
-        }
-        Game.lightingEntities = {};
-        return 0;
-    }
-    static setDoorEntity(id, doorEntity) {
-        Game.doorEntities[id] = doorEntity;
-        return 0;
-    }
-    static removeDoorEntity(id) {
-        delete Game.doorEntities[id];
-        return 0;
-    }
-    static clearDoorEntities() {
-        for (let i in Game.doorEntities) {
-            Game.doorEntities[i].dispose();
-        }
-        Game.doorEntities = {};
         return 0;
     }
     static setKeyEntity(id, keyEntity) {
