@@ -12,7 +12,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onKeyDown(keyboardEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onKeyDown(keyboardEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onKeyDown(keyboardEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onKeyDown(keyboardEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onKeyDown(keyboardEvent);
             default: return 0;
         }
     }
@@ -29,7 +29,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onKeyUp(keyboardEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onKeyUp(keyboardEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onKeyUp(keyboardEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onKeyUp(keyboardEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onKeyUp(keyboardEvent);
             default: return 0;
         }
     }
@@ -46,7 +46,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onKeyPress(keyboardEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onKeyPress(keyboardEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onKeyPress(keyboardEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onKeyPress(keyboardEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onKeyPress(keyboardEvent);
             default: return 0;
         }
     }
@@ -63,7 +63,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onMouseDown(mouseEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onMouseDown(mouseEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onMouseDown(mouseEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onMouseDown(mouseEvent);
             default: return 0;
         }
     }
@@ -80,7 +80,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onMouseUp(mouseEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onMouseDown(mouseEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onMouseUp(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onMouseUp(mouseEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onMouseUp(mouseEvent);
             default: return 0;
         }
     }
@@ -97,7 +97,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onClick(mouseEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onClick(mouseEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onClick(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onClick(mouseEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onClick(mouseEvent);
             default: return 0;
         }
     }
@@ -114,7 +114,7 @@ class AbstractControls {
             case InterfaceModeEnum.DIALOGUE: return DialogueControls.onContext(mouseEvent);
             case InterfaceModeEnum.MENU: return MenuControls.onContext(mouseEvent);
             case InterfaceModeEnum.EDIT: return EditControls.onContext(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControl.onContext(mouseEvent);
+            case InterfaceModeEnum.WRITING: return WritingControls.onContext(mouseEvent);
             default: return 0;
         }
     }
