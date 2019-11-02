@@ -8,7 +8,7 @@ class InstancedItemEntity extends InstancedEntity {
 
         this.setOwner(owner);
 
-        Game.setItemInstance(this.id, this);
+        InstancedItemEntity.set(this.id, this);
     }
 
     getItemType() {
@@ -19,11 +19,40 @@ class InstancedItemEntity extends InstancedEntity {
         return new InstancedItemEntity(id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeItemInstance(this.id);
+        InstancedItemEntity.remove(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
         }
         return undefined;
     }
+
+    static initialize() {
+        InstancedItemEntity.instancedItemEntityList = {};
+    }
+    static get(id) {
+        if (InstancedItemEntity.has(id)) {
+            return InstancedItemEntity.instancedItemEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return InstancedItemEntity.instancedItemEntityList.hasOwnProperty(id);
+    }
+    static set(id, instancedItemEntity) {
+        InstancedItemEntity.instancedItemEntityList[id] = instancedItemEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete InstancedItemEntity.instancedItemEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in InstancedItemEntity.instancedItemEntityList) {
+            InstancedItemEntity.instancedItemEntityList[i].dispose();
+        }
+        InstancedItemEntity.instancedItemEntityList = {};
+        return 0;
+    }
 }
+InstancedItemEntity.initialize();

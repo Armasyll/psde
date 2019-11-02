@@ -15,7 +15,7 @@ class Node {
         this.weight = 20;
         this.setPosition(position);
         this.setWeight(weight);
-        Game.setAbstractNode(this.id, this);
+        Node.set(this.id, this);
     }
     getID() {
         return this.id;
@@ -59,6 +59,36 @@ class Node {
     }
     dispose() {
         this.position.dispose();
+        Node.remove(this.id);
         return undefined;
     }
+
+    static initialize() {
+        Node.nodeList = {};
+    }
+    static get(id) {
+        if (Node.has(id)) {
+            return Node.nodeList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return Node.nodeList.hasOwnProperty(id);
+    }
+    static set(id, abstractNode) {
+        Node.nodeList[id] = abstractNode;
+        return 0;
+    }
+    static remove(id) {
+        delete Node.nodeList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in Node.nodeList) {
+            Node.nodeList[i].dispose();
+        }
+        Node.nodeList = {};
+        return 0;
+    }
 }
+Node.initialize();

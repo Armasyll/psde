@@ -10,7 +10,7 @@ class ShieldEntity extends ClothingEntity {
         super(id, name, description, iconID, ApparelSlotEnum.HANDS, ArmourEnum.SHIELD);
         this.itemType = ItemEnum.SHIELD;
 
-        Game.setShieldEntity(this.id, this);
+        ShieldEntity.set(this.id, this);
     }
 
     /**
@@ -44,8 +44,37 @@ class ShieldEntity extends ClothingEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeShieldEntity(this.id);
+        ShieldEntity.remove(this.id);
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        ShieldEntity.shieldEntityList = {};
+    }
+    static get(id) {
+        if (ShieldEntity.has(id)) {
+            return ShieldEntity.shieldEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return ShieldEntity.shieldEntityList.hasOwnProperty(id);
+    }
+    static set(id, shieldEntity) {
+        ShieldEntity.shieldEntityList[id] = shieldEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete ShieldEntity.shieldEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in ShieldEntity.shieldEntityList) {
+            ShieldEntity.shieldEntityList[i].dispose();
+        }
+        ShieldEntity.shieldEntityList = {};
+        return 0;
+    }
 }
+ShieldEntity.initialize();

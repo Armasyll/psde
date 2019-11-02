@@ -9,7 +9,7 @@ class InstancedFurnitureEntity extends InstancedEntity {
         this.setOwner(_owner);
         this.characters = new Set();
 
-        Game.setFurnitureInstance(this.id, this);
+        InstancedFurnitureEntity.set(this.id, this);
     }
 
     getFurnitureType() {
@@ -39,11 +39,40 @@ class InstancedFurnitureEntity extends InstancedEntity {
         return new InstancedFurnitureEntity(id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeFurnitureInstance(this.id);
+        InstancedFurnitureEntity.remove(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
         }
         return undefined;
     }
+
+    static initialize() {
+        InstancedFurnitureEntity.instancedFurnitureEntityList = {};
+    }
+    static get(id) {
+        if (InstancedFurnitureEntity.has(id)) {
+            return InstancedFurnitureEntity.instancedFurnitureEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return InstancedFurnitureEntity.instancedFurnitureEntityList.hasOwnProperty(id);
+    }
+    static set(id, instancedFurnitureEntity) {
+        InstancedFurnitureEntity.instancedFurnitureEntityList[id] = instancedFurnitureEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete InstancedFurnitureEntity.instancedFurnitureEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in InstancedFurnitureEntity.instancedFurnitureEntityList) {
+            InstancedFurnitureEntity.instancedFurnitureEntityList[i].dispose();
+        }
+        InstancedFurnitureEntity.instancedFurnitureEntityList = {};
+        return 0;
+    }
 }
+InstancedFurnitureEntity.initialize();

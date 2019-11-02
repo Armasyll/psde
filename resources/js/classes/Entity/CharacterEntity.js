@@ -274,7 +274,7 @@ class CharacterEntity extends Entity {
         this.generateProperties();
         this.generateBaseStats(true);
         this.generateAdditionalStats();
-        Game.setCharacterEntity(this.id, this);
+        CharacterEntity.set(this.id, this);
     }
     
     setName(name = "") {
@@ -328,8 +328,8 @@ class CharacterEntity extends Entity {
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
         */
         if (!(instancedItemEntity instanceof AbstractEntity)) {
-            if (Game.hasInstancedItemEntity(instancedItemEntity)) {
-                instancedItemEntity = Game.getInstancedItemEntity(instancedItemEntity);
+            if (InstancedItemEntity.has(instancedItemEntity)) {
+                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
             }
             else {
                 return 2;
@@ -486,11 +486,11 @@ class CharacterEntity extends Entity {
             return this.unequipByEntity(_blob);
         }
         else if (typeof _blob == "string") {
-            if (Game.hasInstancedEntity(_blob)) {
-                return this.unequipByInstancedEntity(Game.getInstancedEntity(_blob));
+            if (InstancedEntity.has(_blob)) {
+                return this.unequipByInstancedEntity(InstancedEntity.get(_blob));
             }
-            else if (Game.hasEntity(_blob)) {
-                return this.unequipByEntity(Game.getEntity(_blob));
+            else if (Entity.has(_blob)) {
+                return this.unequipByEntity(Entity.get(_blob));
             }
             else if (ApparelSlotEnum.hasOwnProperty(_blob)) {
                 return this.unequipBySlot(ApparelSlotEnum[_blob]);
@@ -614,9 +614,9 @@ class CharacterEntity extends Entity {
     }
     hasEquipment(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            let _tempEntity = Game.getInstancedItemEntity(abstractEntity);
+            let _tempEntity = InstancedItemEntity.get(abstractEntity);
             if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = Game.getItemEntity(abstractEntity);
+                _tempEntity = ItemEntity.get(abstractEntity);
                 if (!(_tempEntity instanceof ItemEntity)) {
                     return null;
                 }
@@ -641,9 +641,9 @@ class CharacterEntity extends Entity {
     }
     hasHeldItem(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            let _tempEntity = Game.getInstancedItemEntity(abstractEntity);
+            let _tempEntity = InstancedItemEntity.get(abstractEntity);
             if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = Game.getItemEntity(abstractEntity);
+                _tempEntity = ItemEntity.get(abstractEntity);
                 if (!(_tempEntity instanceof ItemEntity)) {
                     return null;
                 }
@@ -668,7 +668,7 @@ class CharacterEntity extends Entity {
     }
     attachCosmetic(cosmetic, slot) {
         if (!(cosmetic instanceof Cosmetic)) {
-            cosmetic = Game.getCosmetic(cosmetic);
+            cosmetic = Cosmetic.get(cosmetic);
             if (!(cosmetic instanceof Cosmetic)) {
                 return 2;
             }
@@ -699,7 +699,7 @@ class CharacterEntity extends Entity {
     }
     detachCosmetic(cosmetic, slot = undefined) {
         if (!(cosmetic instanceof Cosmetic)) {
-            cosmetic = Game.getCosmetic(cosmetic);
+            cosmetic = Cosmetic.get(cosmetic);
             if (!(cosmetic instanceof Cosmetic)) {
                 return 2;
             }
@@ -732,11 +732,11 @@ class CharacterEntity extends Entity {
             this.unequipByInstancedEntity(_abstractEntity);
             return super.removeItem(_abstractEntity);
         }
-        let _instancedItem = Game.getInstancedItemEntity(_abstractEntity);
+        let _instancedItem = InstancedItemEntity.get(_abstractEntity);
         if (_instancedItem instanceof InstancedItemEntity) {
             return this.removeItem(_instancedItem);
         }
-        _instancedItem = Game.getItemEntity(_abstractEntity);
+        _instancedItem = ItemEntity.get(_abstractEntity);
         if (_instancedItem instanceof ItemEntity) {
             return this.removeItem(_instancedItem);
         }
@@ -1152,7 +1152,7 @@ class CharacterEntity extends Entity {
     }
     getCharacterDisposition(characterID) {
         if (Game.enableDebug) console.log("Running getCharacterDisposition");
-        if (!(Game.hasCharacterEntity(characterID))) {
+        if (!(CharacterEntity.has(characterID))) {
             return 2;
         }
         if (this.hasCharacterDisposition(characterID)) {
@@ -1391,8 +1391,8 @@ class CharacterEntity extends Entity {
 
     addCantrip(spell) {
         if (!(spell instanceof Spell)) {
-            if (Game.hasSpellEntity(spell))
-                spell = Game.getSpellEntity(spell);
+            if (SpellEntity.has(spell))
+                spell = SpellEntity.get(spell);
             else
                 return this;
         }
@@ -1401,8 +1401,8 @@ class CharacterEntity extends Entity {
     }
     removeSpell(spell) {
         if (!(spell instanceof Spell)) {
-            if (Game.hasSpellEntity(spell))
-                spell = Game.getSpellEntity(spell);
+            if (SpellEntity.has(spell))
+                spell = SpellEntity.get(spell);
             else
                 return this;
         }
@@ -1412,8 +1412,8 @@ class CharacterEntity extends Entity {
 
     addSpell(spell) {
         if (!(spell instanceof Spell)) {
-            if (Game.hasSpellEntity(spell))
-                spell = Game.getSpellEntity(spell);
+            if (SpellEntity.has(spell))
+                spell = SpellEntity.get(spell);
             else
                 return this;
         }
@@ -1422,8 +1422,8 @@ class CharacterEntity extends Entity {
     }
     removeSpell(spell) {
         if (!(spell instanceof Spell)) {
-            if (Game.hasSpellEntity(spell))
-                spell = Game.getSpellEntity(spell);
+            if (SpellEntity.has(spell))
+                spell = SpellEntity.get(spell);
             else
                 return this;
         }
@@ -1448,7 +1448,7 @@ class CharacterEntity extends Entity {
         return this.dialogue instanceof Dialogue;
     }
     setDialogue(dialogue) {
-        dialogue = Game.getDialogue(dialogue);
+        dialogue = Dialogue.get(dialogue);
         if (dialogue instanceof Dialogue) {
             this.dialogue = dialogue;
             this.addAvailableAction(ActionEnum.TALK);
@@ -1952,11 +1952,40 @@ class CharacterEntity extends Entity {
         }
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeCharacterEntity(this.id);
+        CharacterEntity.remove(this.id);
         super.dispose();
         for (var _var in this) {
             this[_var] = null;
         }
         return undefined;
     }
+
+    static initialize() {
+        CharacterEntity.characterEntityList = {};
+    }
+    static get(id) {
+        if (CharacterEntity.has(id)) {
+            return CharacterEntity.characterEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return CharacterEntity.characterEntityList.hasOwnProperty(id);
+    }
+    static set(id, characterEntity) {
+        CharacterEntity.characterEntityList[id] = characterEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete CharacterEntity.characterEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in CharacterEntity.characterEntityList) {
+            CharacterEntity.characterEntityList[i].dispose();
+        }
+        CharacterEntity.characterEntityList = {};
+        return 0;
+    }
 }
+CharacterEntity.initialize();

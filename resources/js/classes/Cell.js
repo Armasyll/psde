@@ -44,7 +44,7 @@ class Cell {
         this.meshes = new Set();
         this.collisionMeshes = new Set();
 
-        Game.setCell(this.id, this);
+        Cell.set(this.id, this);
     }
 
     getID() {
@@ -86,11 +86,11 @@ class Cell {
      */
     setOwner(characterEntity) {
         if (!(characterEntity instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(characterEntity)) {
-                characterEntity = Game.getInstancedEntity(characterEntity);
+            if (InstancedEntity.has(characterEntity)) {
+                characterEntity = InstancedEntity.get(characterEntity);
             }
-            else if (Game.hasEntity(characterEntity)) {
-                characterEntity = Game.getEntity(characterEntity);
+            else if (Entity.has(characterEntity)) {
+                characterEntity = Entity.get(characterEntity);
             }
             else {
                 return 2;
@@ -472,15 +472,45 @@ class Cell {
     meshIDIntersection(cell) {
         return new Set([cell.getMeshIDs()].filter(meshID => this.meshes.has(meshID)));
     }
+
+    dispose() {
+        Cell.remove(this.id);
+        return undefined;
+    }
+
+    static initialize() {
+        Cell.cellList = {};
+    }
+    static get(id) {
+        if (Cell.has(id)) {
+            return Cell.cellList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return Cell.cellList.hasOwnProperty(id);
+    }
+    static set(id, cell) {
+        Cell.cellList[id] = cell;
+        return 0;
+    }
+    static remove(id) {
+        delete Cell.cellList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in Cell.cellList) {
+            Cell.cellList[i].dispose();
+        }
+        Cell.cellList = {};
+        return 0;
+    }
+
     static MeshIDDifference(cellA, cellB) {
         return cellA.meshIDDifference(cellB);
     }
     static MeshIDIntersection(cellA, cellB) {
         return cellA.meshIDIntersection(cellB);
     }
-
-    dispose() {
-        Game.removeCell(this.id);
-        return undefined;
-    }
 }
+Cell.initialize();

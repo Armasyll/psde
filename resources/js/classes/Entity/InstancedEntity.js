@@ -9,7 +9,7 @@ class InstancedEntity extends AbstractEntity {
     constructor(id, entity, name = undefined, description = undefined, iconID = undefined) {
         super(id, name, description);
         if (!(entity instanceof Entity)) {
-            entity = Game.getEntity(entity);
+            entity = Entity.get(entity);
             if (!(entity instanceof Entity)) {
                 return undefined;
             }
@@ -27,7 +27,7 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnSpecialProperties = false;
         this._useOwnTraits = false;
 
-        Game.setEntityInstance(this.id, this);
+        InstancedEntity.set(this.id, this);
     }
     getEntity() {
         return this.entity;
@@ -384,7 +384,7 @@ class InstancedEntity extends AbstractEntity {
         if (this.hasController) {
             this.controller.dispose();
         }
-        Game.removeEntityInstance(this.id);
+        InstancedEntity.remove(this.id);
         if (this._useOwnAvailableActions) {
             for (let action in this.availableActions) {
                 if (this.availableActions[action] instanceof ActionData) {
@@ -409,4 +409,33 @@ class InstancedEntity extends AbstractEntity {
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        InstancedEntity.instancedEntityList = {};
+    }
+    static get(id) {
+        if (InstancedEntity.has(id)) {
+            return InstancedEntity.instancedEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return InstancedEntity.instancedEntityList.hasOwnProperty(id);
+    }
+    static set(id, instancedEntity) {
+        InstancedEntity.instancedEntityList[id] = instancedEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete InstancedEntity.instancedEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in InstancedEntity.instancedEntityList) {
+            InstancedEntity.instancedEntityList[i].dispose();
+        }
+        InstancedEntity.instancedEntityList = {};
+        return 0;
+    }
 }
+InstancedEntity.initialize();

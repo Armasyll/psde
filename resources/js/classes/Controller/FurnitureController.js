@@ -20,7 +20,7 @@ class FurnitureController extends EntityController {
             this._isAnimated = true;
         }
 
-        Game.setFurnitureController(this.id, this);
+        FurnitureController.set(this.id, this);
     }
 
     moveAV() { // animate it :V
@@ -34,8 +34,40 @@ class FurnitureController extends EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
+        FurnitureController.remove(this.id);
         super.dispose();
-        Game.removeFurnitureController(this.id);
         return undefined;
     }
+
+    static initialize() {
+        FurnitureController.furnitureControllerList = {};
+    }
+    static get(id) {
+        if (FurnitureController.has(id)) {
+            return FurnitureController.furnitureControllerList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return FurnitureController.furnitureControllerList.hasOwnProperty(id);
+    }
+    static set(id, furnitureController) {
+        FurnitureController.furnitureControllerList[id] = furnitureController;
+        return 0;
+    }
+    static remove(id) {
+        delete FurnitureController.furnitureControllerList[id];
+        return 0;
+    }
+    static list() {
+        return FurnitureController.furnitureControllerList;
+    }
+    static clear() {
+        for (let i in FurnitureController.furnitureControllerList) {
+            FurnitureController.furnitureControllerList[i].dispose();
+        }
+        FurnitureController.furnitureControllerList = {};
+        return 0;
+    }
 }
+FurnitureController.initialize();

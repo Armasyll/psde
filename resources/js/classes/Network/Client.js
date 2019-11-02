@@ -251,12 +251,12 @@ class Client {
         console.log("Client::updateBackloggedPlayers()");
         Client.lockBackloggedPlayerToInitialize = true;
         for (let i in Client.playersToInitialize) {
-            if (Game.hasCharacterEntity(Client.playersToInitialize[i][0]) && Game.getCharacterEntity(Client.playersToInitialize[i][0]).hasController()) {
+            if (CharacterEntity.has(Client.playersToInitialize[i][0]) && CharacterEntity.get(Client.playersToInitialize[i][0]).hasController()) {
                 let oldID = Client.playersToInitialize[i][0];
                 let newID = Client.playersToInitialize[i][1];
                 let networkID = Client.playersToInitialize[i][2];
-                let abstractEntity = Game.getCharacterEntity(oldID);
-				Game.setEntityID(oldID, newID);
+                let abstractEntity = CharacterEntity.get(oldID);
+				Game.updateEntityID(oldID, newID);
                 if (abstractEntity == Game.player) {
                     Client.setPlayerEntry(networkID);
                 }
@@ -300,8 +300,8 @@ class Client {
         }
         Client.lockBackloggedPlayerCreation = true;
         for (let i in Client.playersToCreate) {
-            if (Game.hasCharacterEntity(Client.playersToCreate[i][0])) {
-                let characterEntity = Game.getCharacterEntity(Client.playersToCreate[i][0]);
+            if (CharacterEntity.has(Client.playersToCreate[i][0])) {
+                let characterEntity = CharacterEntity.get(Client.playersToCreate[i][0]);
                 if (characterEntity.hasController()) {
                     Client.setEntry(Client.playersToCreate[i][1], characterEntity);
                     Client.removePlayerToCreate(i);

@@ -21,7 +21,7 @@ class DoorController extends EntityController {
             this.doClose();
         }
 
-        Game.setDoorController(this.id, this);
+        DoorController.set(this.id, this);
     }
     setOpensOutward() {
         this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
@@ -40,8 +40,37 @@ class DoorController extends EntityController {
         this.setEnabled(false);
         this.avStartRot.dispose();
         this.avEndRot.dispose();
-        Game.removeDoorController(this.id);
+        DoorController.remove(this.id);
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        DoorController.doorControllerList = {};
+    }
+    static get(id) {
+        if (DoorController.has(id)) {
+            return DoorController.doorControllerList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return DoorController.doorControllerList.hasOwnProperty(id);
+    }
+    static set(id, doorController) {
+        DoorController.doorControllerList[id] = doorController;
+        return 0;
+    }
+    static remove(id) {
+        delete DoorController.doorControllerList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in DoorController.doorControllerList) {
+            DoorController.doorControllerList[i].dispose();
+        }
+        DoorController.doorControllerList = {};
+        return 0;
+    }
 }
+DoorController.initialize();

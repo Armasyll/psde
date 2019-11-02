@@ -169,13 +169,13 @@ class InventoryGameGUI {
                 InventoryGameGUI.clearSelected;
                 return 0;
             }
-            instancedItemEntity = Game.getInstancedItemEntity(instancedItemEntity);
+            instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
         if (!(targetEntity instanceof AbstractEntity)) {
-            targetEntity = Game.getEntity(targetEntity);
+            targetEntity = Entity.get(targetEntity);
         }
         if (!(playerEntity instanceof AbstractEntity)) {
-            playerEntity = Game.getEntity(playerEntity);
+            playerEntity = Entity.get(playerEntity);
             if (!(playerEntity instanceof AbstractEntity)) {
                 playerEntity = Game.player;
             }

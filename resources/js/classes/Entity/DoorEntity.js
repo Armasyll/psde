@@ -31,8 +31,8 @@ class DoorEntity extends Entity {
 	}
 	setKey(itemEntity) {
         if (!(itemEntity instanceof ItemEntity)) {
-            if (Game.hasItemEntity(itemEntity)) {
-                itemEntity = Game.getItemEntity(itemEntity);
+            if (ItemEntity.has(itemEntity)) {
+                itemEntity = ItemEntity.get(itemEntity);
             }
             else {
                 return 2;

@@ -8,7 +8,7 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
 
         this.setOwner(owner);
 
-        Game.setClothingInstance(this.id, this);
+        InstancedClothingEntity.set(this.id, this);
     }
 
     getArmourCategory() {
@@ -32,8 +32,37 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
         return new InstancedClothingEntity(id, this.entity, owner);
     }
     dispose() {
-        Game.removeClothingInstance(this.id);
+        InstancedClothingEntity.remove(this.id);
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        InstancedClothingEntity.instancedClothingEntityList = {};
+    }
+    static get(id) {
+        if (InstancedClothingEntity.has(id)) {
+            return InstancedClothingEntity.instancedClothingEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return InstancedClothingEntity.instancedClothingEntityList.hasOwnProperty(id);
+    }
+    static set(id, instancedClothingEntity) {
+        InstancedClothingEntity.instancedClothingEntityList[id] = instancedClothingEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete InstancedClothingEntity.instancedClothingEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in InstancedClothingEntity.instancedClothingEntityList) {
+            InstancedClothingEntity.instancedClothingEntityList[i].dispose();
+        }
+        InstancedClothingEntity.instancedClothingEntityList = {};
+        return 0;
+    }
 }
+InstancedClothingEntity.initialize();

@@ -19,7 +19,7 @@ class Cosmetic {
         this.setMaterialID(materialID);
         this.setApparelSlot(equipmentSlot);
 
-        Game.setCosmetic(this);
+        Cosmetic.set(this);
     }
     getID() {
         return this.id;
@@ -88,7 +88,36 @@ class Cosmetic {
         return this.equipmentSlot;
     }
     dispose() {
-        Game.removeCosmetic(this);
+        Cosmetic.remove(this.id);
+        return 0;
+    }
+
+    static initialize() {
+        Cosmetic.cosmeticList = {};
+    }
+    static get(id) {
+        if (Cosmetic.has(id)) {
+            return Cosmetic.cosmeticList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return Cosmetic.cosmeticList.hasOwnProperty(id);
+    }
+    static set(id, lightCosmetic) {
+        Cosmetic.cosmeticList[id] = lightCosmetic;
+        return 0;
+    }
+    static remove(id) {
+        delete Cosmetic.cosmeticList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in Cosmetic.cosmeticList) {
+            Cosmetic.cosmeticList[i].dispose();
+        }
+        Cosmetic.cosmeticList = {};
         return 0;
     }
 }
+Cosmetic.initialize();

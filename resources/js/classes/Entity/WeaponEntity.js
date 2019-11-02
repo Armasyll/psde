@@ -30,7 +30,7 @@ class WeaponEntity extends EquipmentEntity {
         this.setWeaponType(weaponType);
         this.generateProperties();
 
-        Game.setWeaponEntity(this.id, this);
+        WeaponEntity.set(this.id, this);
     }
 
     generateProperties() {
@@ -524,7 +524,36 @@ class WeaponEntity extends EquipmentEntity {
         this.setLocked(true);
         this.setEnabled(false);
         this.weaponProperties.clear();
-        Game.removeWeaponEntity(this.id);
+        WeaponEntity.remove(this.id);
         return undefined;
     }
+
+    static initialize() {
+        WeaponEntity.weaponEntityList = {};
+    }
+    static get(id) {
+        if (WeaponEntity.has(id)) {
+            return WeaponEntity.weaponEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return WeaponEntity.weaponEntityList.hasOwnProperty(id);
+    }
+    static set(id, weaponEntity) {
+        WeaponEntity.weaponEntityList[id] = weaponEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete WeaponEntity.weaponEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in WeaponEntity.weaponEntityList) {
+            WeaponEntity.weaponEntityList[i].dispose();
+        }
+        WeaponEntity.weaponEntityList = {};
+        return 0;
+    }
 }
+WeaponEntity.initialize();

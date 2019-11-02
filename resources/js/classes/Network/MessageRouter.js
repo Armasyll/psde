@@ -59,7 +59,7 @@ class MessageRouter {
 					let characterController = Client.getController(_data.content[1]).getController();
 					characterController.setMovementKey(_data.content["movementKeys"]);
 					if (characterController.getID() != _data.content[0]) {
-						Game.setEntityID(characterController.getID(), _data.content[0]);
+						Game.updateEntityID(characterController.getID(), _data.content[0]);
 					}
 					characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[8]));
 					characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[9]));
@@ -121,7 +121,7 @@ class MessageRouter {
 			}
 			case "S_CHAT_MESSAGE" : {
 				var _timestamp = new Date(_data.content.time * 1000).toLocaleTimeString({ hour12: false });
-				var _name = Game.getCharacterEntity(_data.content.from).name;
+				var _name = CharacterEntity.get(_data.content.from).name;
 				GameGUI.chatOutputAppend(`${_timestamp} ${_name}: ${_data.content.message}`);
 				break;
 			}
@@ -142,11 +142,11 @@ class MessageRouter {
 				let entityType = Number.parseInt(_data.content[0]);
 				let subEntityType = Number.parseInt(_data.content[2]);
 				let actionID = Number.parseInt(_data.content[4]);
-				if (!Game.hasEntity(_data.content[1]) && !Game.hasInstancedEntity(_data.content[1])) {
+				if (!Entity.has(_data.content[1]) && !InstancedEntity.has(_data.content[1])) {
 					console.log(`\tEntity (${EntityEnum.properties[_data.content[0]].key}:${_data.content[1]}) does not exist!`);
 					return 2;
 				}
-				if (!Game.hasEntity(_data.content[3]) && !Game.hasInstancedEntity(_data.content[3])) {
+				if (!Entity.has(_data.content[3]) && !InstancedEntity.has(_data.content[3])) {
 					console.log(`\tSub-Entity (${EntityEnum.properties[_data.content[3]].key}:${_data.content[3]}) does not exist!`);
 					return 2;
 				}
@@ -155,8 +155,8 @@ class MessageRouter {
 					return 2;
 				}
 				console.log(`S_DO_ENTITY_ACTION ${_data.content.join(',')}`);
-				let entity = Game.getEntity(_data.content[1]) || Game.getInstancedEntity(_data.content[1]);
-				let subEntity = Game.getEntity(_data.content[3]) || Game.getInstancedEntity(_data.content[3]);
+				let entity = Entity.get(_data.content[1]) || InstancedEntity.get(_data.content[1]);
+				let subEntity = Entity.get(_data.content[3]) || InstancedEntity.get(_data.content[3]);
 				if (_data.content[4] == ActionEnum.ATTACK) {
 					Game.actionAttack(entity, subEntity, (_data.content[5] || 0));
 				}

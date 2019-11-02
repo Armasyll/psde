@@ -4,15 +4,44 @@ class KeyEntity extends ItemEntity {
 
         this.itemType = ItemEnum.KEY;
 
-        Game.setKeyEntity(this.id, this);
+        KeyEntity.set(this.id, this);
     }
 
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeKeyEntity(this.id);
+        KeyEntity.remove(this.id);
         delete this.itemType;
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        KeyEntity.keyEntityList = {};
+    }
+    static get(id) {
+        if (KeyEntity.has(id)) {
+            return KeyEntity.keyEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return KeyEntity.keyEntityList.hasOwnProperty(id);
+    }
+    static set(id, keyEntity) {
+        KeyEntity.keyEntityList[id] = keyEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete KeyEntity.keyEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in KeyEntity.keyEntityList) {
+            KeyEntity.keyEntityList[i].dispose();
+        }
+        KeyEntity.keyEntityList = {};
+        return 0;
+    }
 }
+KeyEntity.initialize();

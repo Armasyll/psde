@@ -592,44 +592,12 @@ class Game {
         Game.itemsToCreate = {};
         Game.attachmentsToCreateCounter = 0;
         Game.attachmentsToCreate = {};
-        
+
         Game.hasBackloggedEntities = false;
 
         Game.meshToEntityController = {};
-        Game.entityControllers = {};
-        Game.furnitureControllers = {};
-        Game.lightingControllers = {};
-        Game.doorControllers = {};
-        Game.characterControllers = {};
-        Game.itemControllers = {};
 
-        Game.cells = {};
-
-        Game.abstractNodes = {};
-
-        Game.traits = {};
-
-        Game.abstractEntities = {};
-
-        Game.entities = {};
-        Game.characterEntities = {};
-        Game.itemEntities = {};
-        Game.clothingEntities = {};
-        Game.weaponEntities = {};
-        Game.shieldEntities = {};
-        Game.keyEntities = {};
-        Game.spellEntities = {};
         Game.essentialEntities = new Set();
-
-        Game.instancedEntities = {};
-        Game.instancedItemEntities = {};
-        Game.instancedClothingEntities = {};
-        Game.instancedWeaponEntities = {};
-        Game.instancedShieldEntities = {};
-        Game.instancedFurnitureEntities = {};
-
-        Game.dialogues = new Map();
-        Game.cosmetics = new Map();
 
         Game.entityAnimationBones = {
             "rightArm":[
@@ -884,11 +852,11 @@ class Game {
         if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
             Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
         }
-        for (let characterController in Game.characterControllers) {
-            if (Game.characterControllers[characterController]._isAnimated) {
-                Game.characterControllers[characterController].moveAV();
-                if (Game.characterControllers[characterController].propertiesChanged) {
-                    Game.characterControllers[characterController].updateProperties();
+        for (let characterController in CharacterController.characterControllerList) {
+            if (CharacterController.characterControllerList[characterController]._isAnimated) {
+                CharacterController.characterControllerList[characterController].moveAV();
+                if (CharacterController.characterControllerList[characterController].propertiesChanged) {
+                    CharacterController.characterControllerList[characterController].updateProperties();
                 }
             }
         }
@@ -983,7 +951,7 @@ class Game {
         if (Game.hasPlayerToCreate()) {
             return 0;
         }
-        if (Game.characterEntities.hasOwnProperty(characterID)) {
+        if (CharacterEntity.has(characterID)) {
             Game.playerToCreate = characterID;
             return 0;
         }
@@ -998,10 +966,10 @@ class Game {
     }
     static createBackloggedPlayer() {
         if (Game.hasPlayerToCreate()) {
-            if (!Game.hasCharacterEntity(Game.playerToCreate)) {
+            if (!CharacterEntity.has(Game.playerToCreate)) {
                 return 2;
             }
-            if (Game.assignPlayer(Game.getCharacterEntity(Game.playerToCreate)) == 0) {
+            if (Game.assignPlayer(CharacterEntity.get(Game.playerToCreate)) == 0) {
                 Game.removePlayerToCreate();
             }
         }
@@ -2195,8 +2163,8 @@ class Game {
         if (Game.hasFurnitureToCreate(furnitureInstanceID)) {
             return true;
         }
-        if (!(furnitureInstance instanceof InstancedFurnitureEntity) && Game.hasInstancedFurnitureEntity(furnitureInstance)) {
-            furnitureInstance = Game.getInstancedFurnitureEntity(furnitureInstance);
+        if (!(furnitureInstance instanceof InstancedFurnitureEntity) && InstancedFurnitureEntity.has(furnitureInstance)) {
+            furnitureInstance = InstancedFurnitureEntity.get(furnitureInstance);
         }
         Game.loadMesh(furnitureInstance.getMeshID());
         Game.furnitureToCreate[furnitureInstanceID] = {
@@ -2546,13 +2514,13 @@ class Game {
     }
 
     static setPlayerID(id) {
-        Game.setEntityID(Game.player.getID(), id);
+        Entity.setID(Game.player.getID(), id);
     }
-    static setEntityID(currentID, newID) {
-        if (!Game.hasEntity(currentID)) {
+    static updateEntityID(currentID, newID) {
+        if (!Entity.has(currentID)) {
             return 1;
         }
-        let entity = Game.getEntity(currentID);
+        let entity = Entity.get(currentID);
         if (entity.hasController()) {
             entity.getController().setLocked(true);
             entity.getController().setEnabled(false);
@@ -2560,35 +2528,35 @@ class Game {
         entity.setLocked(true);
         entity.setEnabled(false);
         if (entity instanceof AbstractEntity) {
-            Game.removeAbstractEntity(currentID);
+            AbstractEntity.remove(currentID);
             if (entity instanceof Entity) {
-                Game.removeEntity(currentID);
+                Entity.remove(currentID);
                 if (entity instanceof CharacterEntity) {
-                    Game.removeCharacterEntity(currentID);
-                    Game.setCharacterEntity(newID, entity);
+                    CharacterEntity.remove(currentID);
+                    CharacterEntity.set(newID, entity);
                 }
                 else if (entity instanceof DoorEntity) {
                     DoorEntity.remove(currentID);
                     DoorEntity.set(newID, entity);
                 }
                 else if (entity instanceof ItemEntity) {
-                    Game.removeItemEntity(currentID);
-                    Game.setItemEntity(newID, entity);
+                    ItemEntity.remove(currentID);
+                    ItemEntity.set(newID, entity);
                     if (entity instanceof EquipmentEntity) {
-                        /*Game.removeEquipmentEntity(currentID);
-                        Game.setEquipmentEntity(newID, entity);*/
+                        /*EquipmentEntity.remove(currentID);
+                        EquipmentEntity.set(newID, entity);*/
                         if (entity instanceof ClothingEntity) {
-                            Game.removeClothingEntity(currentID);
-                            Game.setClothingEntity(newID, entity);
+                            ClothingEntity.remove(currentID);
+                            ClothingEntity.set(newID, entity);
                         }
                         else if (entity instanceof WeaponEntity) {
-                            Game.removeWeaponEntity(currentID);
-                            Game.setWeaponEntity(newID, entity);
+                            WeaponEntity.remove(currentID);
+                            WeaponEntity.set(newID, entity);
                         }
                     }
                     else if (entity instanceof KeyEntity) {
-                        Game.removeKeyEntity(currentID);
-                        Game.setKeyEntity(newID, entity);
+                        KeyEntity.remove(currentID);
+                        KeyEntity.set(newID, entity);
                     }
                 }
                 else if (entity instanceof FurnitureEntity) {
@@ -2600,38 +2568,38 @@ class Game {
                     }
                 }
                 else if (entity instanceof SpellEntity) {
-                    Game.removeSpellEntity(currentID);
-                    Game.setSpellEntity(newID, entity);
+                    SpellEntity.remove(currentID);
+                    SpellEntity.set(newID, entity);
                 }
                 entity.setID(newID);
-                Game.setEntity(newID, entity);
+                Entity.set(newID, entity);
             }
             else if (entity instanceof InstancedEntity) {
-                Game.removeEntityInstance(currentID);
+                InstancedEntity.remove(currentID);
                 if (entity instanceof InstancedFurnitureEntity) {
-                    Game.removeFurnitureInstance(currentID);
-                    Game.setFurnitureInstance(newID, entity);
+                    InstancedFurnitureEntity.remove(currentID);
+                    InstancedFurnitureEntity.set(newID, entity);
                 }
                 else if (entity instanceof InstancedItemEntity) {
-                    Game.removeItemInstance(currentID);
-                    Game.setItemInstance(newID, entity);
+                    InstancedItemEntity.remove(currentID);
+                    InstancedItemEntity.set(newID, entity);
                     if (entity instanceof InstancedEquipmentEntity) {
-                        /*Game.removeEquipmentInstance(currentID);
-                        Game.setEquipmentInstance(newID, entity);*/
+                        /*InstancedEquipmentEntity.remove(currentID);
+                        InstancedEquipmentEntity.set(newID, entity);*/
                         if (entity instanceof InstancedClothingEntity) {
-                            Game.removeClothingInstance(currentID);
-                            Game.setClothingInstance(newID, entity);
+                            InstancedClothingEntity.remove(currentID);
+                            InstancedClothingEntity.set(newID, entity);
                         }
                         else if (entity instanceof InstancedWeaponEntity) {
-                            Game.removeWeaponInstance(currentID);
-                            Game.setWeaponInstance(newID, entity);
+                            InstancedWeaponEntity.remove(currentID);
+                            InstancedWeaponEntity.set(newID, entity);
                         }
                     }
                 }
                 entity.setID(newID);
-                Game.setEntityInstance(newID, entity);
+                Entity.setInstance(newID, entity);
             }
-            Game.setAbstractEntity(newID, entity);
+            AbstractEntity.set(newID, entity);
         }
         else {
             return 2;
@@ -2640,29 +2608,29 @@ class Game {
             let controller = entity.getController();
             let mesh = controller.getMesh();
             Game.removeMeshToEntityController(mesh.id);
-            Game.removeEntityController(controller.getID());
+            EntityController.remove(controller.getID());
             if (controller instanceof CharacterController) {
-                Game.removeCharacterController(controller.getID());
-                Game.setCharacterController(newID, controller);
+                CharacterController.remove(controller.getID());
+                CharacterController.set(newID, controller);
             }
             else if (controller instanceof DoorController) {
-                Game.removeDoorController(controller.getID());
-                Game.setDoorController(newID, controller);
+                DoorController.remove(controller.getID());
+                DoorController.set(newID, controller);
             }
             else if (controller instanceof FurnitureController) {
-                Game.removeFurnitureController(controller.getID());
-                Game.setFurnitureController(newID, controller);
+                FurnitureController.remove(controller.getID());
+                FurnitureController.set(newID, controller);
                 if (controller instanceof LightingController) {
-                    Game.removeLightingController(controller.getID());
-                    Game.setLightingController(newID, controller);
+                    LightingController.remove(controller.getID());
+                    LightingController.set(newID, controller);
                 }
             }
             else if (controller instanceof ItemController) {
-                Game.removeItemController(controller.getID());
-                Game.setItemController(newID, controller);
+                ItemController.remove(controller.getID());
+                ItemController.set(newID, controller);
             }
             controller.setID(newID);
-            Game.setEntityController(newID, controller);
+            Entity.setController(newID, controller);
             Game.setMeshToEntityController(mesh.id, controller);
         }
         entity.setEnabled(true);
@@ -2672,258 +2640,6 @@ class Game {
             entity.getController().setLocked(false);
         }
         return 0;
-    }
-    static getEntityController(id) {
-        if (Game.hasEntityController(id)) {
-            return Game.entityControllers[id];
-        }
-        return 2;
-    }
-    static hasEntityController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.entityControllers.hasOwnProperty(id);
-    }
-    /*static getNetworkedCharacterController(id) {
-        if (Game.hasNetworkedCharacterController(id)) {
-            return Game.networkedCharacterControllers[id];
-        }
-        return 2;
-    }
-    static hasNetworkedCharacterController(id) {
-        return Game.networkedCharacterControllers.hasOwnProperty(id);
-    }*/
-    static getFurnitureController(id) {
-        if (Game.hasFurnitureController(id)) {
-            return Game.furnitureControllers[id];
-        }
-        return 2;
-    }
-    static hasFurnitureController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.furnitureControllers.hasOwnProperty(id);
-    }
-    static getLightingController(id) {
-        if (Game.hasLightingController(id)) {
-            return Game.lightingControllers[id];
-        }
-        return 2;
-    }
-    static hasLightingController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.lightingControllers.hasOwnProperty(id);
-    }
-    static getDoorController(id) {
-        if (Game.hasDoorController(id)) {
-            return Game.doorControllers[id];
-        }
-        return 2;
-    }
-    static hasDoorController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.doorControllers.hasOwnProperty(id);
-    }
-    static getItemController(id) {
-        if (Game.hasItemController(id)) {
-            return Game.itemControllers[id];
-        }
-        return 2;
-    }
-    static hasItemController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.itemControllers.hasOwnProperty(id);
-    }
-    static getCharacterController(id) {
-        if (Game.hasCharacterController(id)) {
-            return Game.characterControllers[id];
-        }
-        return 2;
-    }
-    static hasCharacterController(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.characterControllers.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return a Trait based on its ID
-     * @param {string} id Trait ID
-     * @returns {(Trait|number)} A Trait or an integer status code
-     */
-    static getTrait(id) {
-        if (Game.hasTrait(id)) {
-            return Game.traits[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not a Trait exists
-     * @param {string} id Trait ID
-     * @returns {boolean}
-     */
-    static hasTrait(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.traits.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return an Entity based on its ID
-     * @param {string} id Entity ID
-     * @returns {(Entity|number)} An Entity or an integer status code
-     */
-    static getEntity(id) {
-        if (Game.hasEntity(id)) {
-            return Game.entities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not an Entity exists
-     * @param {string} id Entity ID
-     * @returns {boolean}
-     */
-    static hasEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.entities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return an InstancedEntity based on its ID
-     * @param {string} id InstancedEntity ID
-     * @returns {(InstancedEntity|number)} An InstancedEntity or an integer status code
-     */
-    static getInstancedEntity(id) {
-        if (Game.hasInstancedEntity(id)) {
-            return Game.instancedEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not an InstancedEntity exists
-     * @param {string} id InstancedEntity ID
-     * @returns {boolean}
-     */
-    static hasInstancedEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.instancedEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return an ItemEntity based on its ID
-     * @param {string} id ItemEntity ID
-     * @returns {(ItemEntity|number)} An ItemEntity or an integer status code
-     */
-    static getItemEntity(id) {
-        if (Game.hasItemEntity(id)) {
-            return Game.itemEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not an ItemEntity exists
-     * @param {string} id ItemEntity ID
-     * @returns {boolean}
-     */
-    static hasItemEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.itemEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return an InstancedItemEntity based on its ID
-     * @param {string} id InstancedItemEntity ID
-     * @returns {(InstancedItemEntity|number)} An InstancedItemEntity or an integer status code
-     */
-    static getInstancedItemEntity(id) {
-        if (Game.hasInstancedItemEntity(id)) {
-            return Game.instancedItemEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not an InstancedItemEntity exists
-     * @param {string} id InstancedItemEntity ID
-     * @returns {boolean}
-     */
-    static hasInstancedItemEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.instancedItemEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return a CharacterEntity based on its ID
-     * @param {string} id CharacterEntity ID
-     * @returns {(CharacterEntity|number)} An CharacterEntity or an integer status code
-     */
-    static getCharacterEntity(id) {
-        if (Game.hasCharacterEntity(id)) {
-            return Game.characterEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not a CharacterEntity exists
-     * @param {string} id CharacterEntity ID
-     * @returns {boolean}
-     */
-    static hasCharacterEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.characterEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return an InstancedFurnitureEntity based on its ID
-     * @param {string} id InstancedFurnitureEntity ID
-     * @returns {(InstancedFurnitureEntity|number)} An InstancedFurnitureEntity or an integer status code
-     */
-    static getInstancedFurnitureEntity(id) {
-        if (Game.hasInstancedFurnitureEntity(id)) {
-            return Game.instancedFurnitureEntities[id];
-        }
-        return 2;
-    }
-    /**
-     * Whether or not an InstancedFurnitureEntity exists
-     * @param {string} id InstancedFurnitureEntity ID
-     * @returns {boolean}
-     */
-    static hasInstancedFurnitureEntity(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.instancedFurnitureEntities.hasOwnProperty(id);
-    }
-    /**
-     * Tries to return a Dialogue based on its ID
-     * @param {string} id Unique ID
-     * @returns {(Dialogue|number)} A Dialogue or an integer status code
-     */
-    static getDialogue(id) {
-        if (Game.hasDialogue(id)) {
-            return Game.dialogues.get(id);
-        }
-        return 2;
-    }
-    static hasDialogue(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.dialogues.has(id);
     }
     /**
      * 
@@ -3040,8 +2756,8 @@ class Game {
      */
     static filterCreateCharacterInstance(id, characterEntity, position, rotation, scaling, options) {
         if (!(characterEntity instanceof CharacterEntity)) {
-            if (Game.hasCharacterEntity(characterEntity)) {
-                characterEntity = Game.getCharacterEntity(characterEntity);
+            if (CharacterEntity.has(characterEntity)) {
+                characterEntity = CharacterEntity.get(characterEntity);
             }
             else {
                 return 2;
@@ -3143,10 +2859,10 @@ class Game {
      */
     static removeCharacter(characterController) {
         if (!(characterController instanceof CharacterController)) {
-            if (!Game.hasCharacterController(characterController)) {
+            if (!CharacterController.has(characterController)) {
                 return 2;
             }
-            characterController = Game.getCharacterController(characterController);
+            characterController = CharacterController.get(characterController);
         }
         if (characterController == Game.player.getController()) {
             return 1;
@@ -3230,8 +2946,8 @@ class Game {
         }
         if (options.hasOwnProperty("key")) {
             if (options["key"] instanceof ItemEntity) {}
-            else if (Game.hasItemEntity(options["key"])) {
-                options["key"] = Game.getItemEntity(options["key"]);
+            else if (ItemEntity.has(options["key"])) {
+                options["key"] = ItemEntity.get(options["key"]);
             }
             else {
                 options["key"] = null;
@@ -3295,10 +3011,10 @@ class Game {
      */
     static removeDoor(doorController) {
         if (!(doorController instanceof DoorController)) {
-            if (!Game.hasDoorController(doorController)) {
+            if (!DoorController.has(doorController)) {
                 return 2;
             }
-            doorController = Game.getEntityController(doorController);
+            doorController = Entity.getController(doorController);
         }
         let mesh = doorController.getMesh();
         doorController.entity.dispose();
@@ -3359,8 +3075,8 @@ class Game {
         else if (typeof furnitureEntity == "string" && FurnitureEntity.has(furnitureEntity)) {
             furnitureEntity = FurnitureEntity.get(furnitureEntity).createInstance(id);
         }
-        else if (typeof furnitureEntity == "string" && Game.hasInstancedFurnitureEntity(furnitureEntity)) {
-            furnitureEntity = Game.getInstancedFurnitureEntity(furnitureEntity).clone(id);
+        else if (typeof furnitureEntity == "string" && InstancedFurnitureEntity.has(furnitureEntity)) {
+            furnitureEntity = InstancedFurnitureEntity.get(furnitureEntity).clone(id);
         }
         else {
             return 2;
@@ -3436,10 +3152,10 @@ class Game {
      */
     static removeFurniture(furnitureController) {
         if (!(furnitureController instanceof FurnitureController)) {
-            if (!Game.hasFurnitureController(furnitureController)) {
+            if (!FurnitureController.has(furnitureController)) {
                 return 2;
             }
-            furnitureController = Game.getFurnitureController(furnitureController);
+            furnitureController = FurnitureController.get(furnitureController);
         }
         let mesh = furnitureController.getMesh();
         furnitureController.entity.dispose();
@@ -3541,10 +3257,10 @@ class Game {
      */
     static removeLighting(lightingController) {
         if (!(lightingController instanceof LightingController)) {
-            if (!(Game.hasLightingController(lightingController))) {
+            if (!(LightingController.has(lightingController))) {
                 return 2;
             }
-            lightingController = Game.getLightingController(lightingController);
+            lightingController = LightingController.get(lightingController);
         }
         let mesh = lightingController.getMesh();
         lightingController.entity.dispose();
@@ -3632,11 +3348,11 @@ class Game {
             abstractEntity = abstractEntity.createInstance(id);
         }
         else if (typeof abstractEntity == "string" ) {
-            if (Game.hasItemEntity(abstractEntity)) {
-                abstractEntity = Game.getItemEntity(abstractEntity).createInstance(id);
+            if (ItemEntity.has(abstractEntity)) {
+                abstractEntity = ItemEntity.get(abstractEntity).createInstance(id);
             }
-            else if (Game.hasInstancedItemEntity(abstractEntity)) {
-                abstractEntity = Game.getInstancedItemEntity(abstractEntity);
+            else if (InstancedItemEntity.has(abstractEntity)) {
+                abstractEntity = InstancedItemEntity.get(abstractEntity);
             }
             else {
                 if (Game.debugMode) console.log(`\tThe abstract entity (${abstractEntity}) couldn't be found.`);
@@ -3712,10 +3428,10 @@ class Game {
      */
     static removeItemInstance(itemController) {
         if (!(itemController instanceof ItemController)) {
-            if (!Game.hasItemController(itemController)) {
+            if (!ItemController.has(itemController)) {
                 return 2;
             }
-            itemController = Game.getItemController(itemController);
+            itemController = ItemController.get(itemController);
         }
         let mesh = itemController.getMesh();
         let entity = itemController.getEntity();
@@ -3738,7 +3454,7 @@ class Game {
             if (!Game.hasInstancedItem(instancedItemEntity)) {
                 return 2;
             }
-            instancedItemEntity = Game.getInstancedItemEntity(instancedItemEntity);
+            instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
         if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) {
             Game.removeMesh(instancedItemEntity.getController().getMesh());
@@ -4082,8 +3798,8 @@ class Game {
             }
             case "kill" : {
                 let target = Game.player;
-                if (typeof commandArray[1] == "string" && Game.hasCharacterEntity(commandArray[1])) {
-                    target = Game.getCharacterEntity(commandArray[1]);
+                if (typeof commandArray[1] == "string" && CharacterEntity.has(commandArray[1])) {
+                    target = CharacterEntity.get(commandArray[1]);
                 }
                 target.setHealth(0);
                 break;
@@ -4131,13 +3847,13 @@ class Game {
     }
     static doEntityAction(abstractEntity, subAbstractEntity = Game.player, actionID) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            abstractEntity = Game.getInstancedItemEntity(abstractEntity) || Game.getEntity(abstractEntity);
+            abstractEntity = InstancedItemEntity.get(abstractEntity) || Entity.get(abstractEntity);
             if (!(abstractEntity instanceof AbstractEntity)) {
                 return 2;
             }
         }
         if (!(subAbstractEntity instanceof AbstractEntity)) {
-            subAbstractEntity = Game.getInstancedItemEntity(subAbstractEntity) || Game.getEntity(subAbstractEntity);
+            subAbstractEntity = InstancedItemEntity.get(subAbstractEntity) || Entity.get(subAbstractEntity);
             if (!(subAbstractEntity instanceof AbstractEntity)) {
                 return 2;
             }
@@ -4498,95 +4214,7 @@ class Game {
         Game.gui.dialogueMenu.show();
         return 0;
     }
-    static setEntityController(id, entityController) {
-        Game.entityControllers[id] = entityController;
-        return 0;
-    }
-    static removeEntityController(id) {
-        delete Game.entityControllers[id];
-    }
-    static clearControllers() {
-        for (let i in Game.entityControllers) {
-            Game.entityControllers[i].dispose();
-        }
-        Game.entityControllers = {};
-        return 0;
-    }
-    static setCharacterController(id, characterController) {
-        Game.characterControllers[id] = characterController;
-        return 0;
-    }
-    static removeCharacterController(id) {
-        delete Game.characterControllers[id];
-        return 0;
-    }
-    static clearCharacterControllers() {
-        for (let i in Game.characterControllers) {
-            Game.characterControllers[i].dispose();
-        }
-        Game.characterControllers = {};
-        return 0;
-    }
-    static setFurnitureController(id, furnitureController) {
-        Game.furnitureControllers[id] = furnitureController;
-        return 0;
-    }
-    static removeFurnitureController(id) {
-        delete Game.furnitureControllers[id];
-        return 0;
-    }
-    static clearFurnitureControllers() {
-        for (let i in Game.furnitureControllers) {
-            Game.furnitureControllers[i].dispose();
-        }
-        Game.furnitureControllers = {};
-        return 0;
-    }
-    static setLightingController(id, lightController) {
-        Game.lightingControllers[id] = lightController;
-        return 0;
-    }
-    static removeLightingController(id) {
-        delete Game.lightingControllers[id];
-        return 0;
-    }
-    static clearLightingControllers() {
-        for (let i in Game.lightingControllers) {
-            Game.lightingControllers[i].dispose();
-        }
-        Game.lightingControllers = {};
-        return 0;
-    }
-    static setDoorController(id, doorController) {
-        Game.doorControllers[id] = doorController;
-        return 0;
-    }
-    static removeDoorController(id) {
-        delete Game.doorControllers[id];
-        return 0;
-    }
-    static clearDoorControllers() {
-        for (let i in Game.doorControllers) {
-            Game.doorControllers[i].dispose();
-        }
-        Game.doorControllers = {};
-        return 0;
-    }
-    static setItemController(id, itemController) {
-        Game.itemControllers[id] = itemController;
-        return 0;
-    }
-    static removeItemController(id) {
-        delete Game.itemControllers[id];
-        return 0;
-    }
-    static clearItemControllers() {
-        for (let i in Game.itemControllers) {
-            Game.itemControllers[i].dispose();
-        }
-        Game.itemControllers = {};
-        return 0;
-    }
+
     static hasMeshToEntityController(meshID) {
         return Game.meshToEntityController.hasOwnProperty(meshID);
     }
@@ -4615,202 +4243,6 @@ class Game {
         return 0;
     }
 
-    static hasCell(id) {
-        return Game.cells.hasOwnProperty(id);
-    }
-    static getCell(id) {
-        if (Game.hasCell(id)) {
-            return Game.cells[id];
-        }
-        return 1;
-    }
-    static setCell(id, cell) {
-        Game.cells[id] = cell;
-        return 0;
-    }
-    static removeCell(id) {
-        delete Game.cells[id];
-        return 0;
-    }
-    static clearCells() {
-        for (let i in Game.cells) {
-            Game.cells[i].dispose();
-        }
-        Game.cells = {};
-        return 0;
-    }
-
-    static setAbstractNode(id, abstractNode) {
-        Game.abstractNodes[id] = abstractNode;
-        return 0;
-    }
-    static removeAbstractNode(id) {
-        delete Game.abstractNodes[id];
-        return 0;
-    }
-    static clearAbstractNodes() {
-        for (let i in Game.abstractNodes) {
-            Game.abstractNodes[i].dispose();
-        }
-        Game.abstractNodes = {};
-        return 0;
-    }
-
-    static setTrait(id, trait) {
-        Game.traits[id] = trait;
-        return 0;
-    }
-
-    static setAbstractEntity(id, abstractEntity) {
-        Game.abstractEntities[id] = abstractEntity;
-        return 0;
-    }
-    static removeAbstractEntity(id) {
-        delete Game.abstractEntities[id];
-        return 0;
-    }
-    static clearAbstractEntities() {
-        for (let i in Game.abstractEntities) {
-            Game.abstractEntities[i].dispose();
-        }
-        Game.abstractEntities = {};
-        return 0;
-    }
-    static setEntity(id, entity) {
-        Game.entities[id] = entity;
-        return 0;
-    }
-    static removeEntity(id) {
-        delete Game.entities[id];
-        return 0;
-    }
-    static clearEntities() {
-        for (let i in Game.entities) {
-            Game.entities[i].dispose();
-        }
-        Game.entities = {};
-        return 0;
-    }
-    static setCharacterEntity(id, characterEntity) {
-        Game.characterEntities[id] = characterEntity;
-        return 0;
-    }
-    static removeCharacterEntity(id) {
-        delete Game.characterEntities[id];
-        return 0;
-    }
-    static clearCharacterEntities() {
-        for (let i in Game.characterEntities) {
-            Game.characterEntities[i].dispose();
-        }
-        Game.characterEntities = {};
-        return 0;
-    }
-    static setItemEntity(id, itemEntity) {
-        Game.itemEntities[id] = itemEntity;
-        return 0;
-    }
-    static removeItemEntity(id) {
-        delete Game.itemEntities[id];
-        return 0;
-    }
-    static clearItemEntities() {
-        for (let i in Game.itemEntities) {
-            Game.itemEntities[i].dispose();
-        }
-        Game.itemEntities = {};
-        return 0;
-    }
-    static setClothingEntity(id, clothingEntity) {
-        Game.clothingEntities[id] = clothingEntity;
-        return 0;
-    }
-    static removeClothingEntity(id) {
-        delete Game.clothingEntities[id];
-        return 0;
-    }
-    static clearClothingEntities() {
-        for (let i in Game.clothingEntities) {
-            Game.clothingEntities[i].dispose();
-        }
-        Game.clothingEntities = {};
-        return 0;
-    }
-    static setWeaponEntity(id, weaponEntity) {
-        Game.weaponEntities[id] = weaponEntity;
-        return 0;
-    }
-    static removeWeaponEntity(id) {
-        delete Game.weaponEntities[id];
-        return 0;
-    }
-    static clearWeaponEntities() {
-        for (let i in Game.weaponEntities) {
-            Game.weaponEntities[i].dispose();
-        }
-        Game.weaponEntities = {};
-        return 0;
-    }
-    static setShieldEntity(id, shieldEntity) {
-        Game.shieldEntities[id] = shieldEntity;
-        return 0;
-    }
-    static removeShieldEntity(id) {
-        delete Game.shieldEntities[id];
-        return 0;
-    }
-    static clearShieldEntities() {
-        for (let i in Game.shieldEntities) {
-            Game.shieldEntities[i].dispose();
-        }
-        Game.shieldEntities = {};
-        return 0;
-    }
-    static setKeyEntity(id, keyEntity) {
-        Game.keyEntities[id] = keyEntity;
-        return 0;
-    }
-    static removeKeyEntity(id) {
-        delete Game.keyEntities[id];
-        return 0;
-    }
-    static clearKeyEntities() {
-        for (let i in Game.keyEntities) {
-            Game.keyEntities[i].dispose();
-        }
-        Game.keyEntities = {};
-        return 0;
-    }
-    static setSpellEntity(id, spellEntity) {
-        Game.spellEntities[id] = spellEntity;
-        return 0;
-    }
-    static removeSpellEntity(id) {
-        delete Game.spellEntities[id];
-        return 0;
-    }
-    static clearSpellEntities() {
-        for (let i in Game.spellEntities) {
-            Game.spellEntities[i].dispose();
-        }
-        Game.spellEntities = {};
-        return 0;
-    }
-    static hasSpellEntity(id) {
-        return Game.spellEntities.hasOwnProperty(id);
-    }
-    static hasSpell(id) {
-        return Game.hasSpellEntity(id);
-    }
-    static getSpellEntity(id) {
-        if (Game.hasSpellEntity(id)) {
-            return Game.spellEntities[id];
-        }
-        return 1;
-    }
-    static getSpell(id) {
-        return Game.getSpellEntity(id);
-    }
     static setEssentialEntity(abstractEntity) {
         abstractEntity.setEssential(true);
         Game.essentialEntities.add(abstractEntity)
@@ -4829,156 +4261,6 @@ class Game {
         return 0;
     }
 
-    static setEntityInstance(id, instancedEntity) {
-        Game.instancedEntities[id] = instancedEntity;
-        return 0;
-    }
-    static removeEntityInstance(id) {
-        delete Game.instancedEntities[id];
-        return 0;
-    }
-    static clearEntityInstances() {
-        for (let i in Game.instancedEntities) {
-            Game.instancedEntities[i].dispose();
-        }
-        Game.instancedEntities = {};
-        return 0;
-    }
-    static setItemInstance(id, instancedItemEntity) {
-        Game.instancedItemEntities[id] = instancedItemEntity;
-        return 0;
-    }
-    static clearItemInstances() {
-        for (let i in Game.instancedItemEntities) {
-            Game.instancedItemEntities[i].dispose();
-        }
-        Game.instancedItemEntities = {};
-        return 0;
-    }
-    static setClothingInstance(id, instancedClothingEntity) {
-        Game.instancedClothingEntities[id] = instancedClothingEntity;
-        return 0;
-    }
-    static removeClothingInstance(id) {
-        delete Game.instancedClothingEntities[id];
-        return 0;
-    }
-    static clearClothingInstances() {
-        for (let i in Game.instancedClothingEntities) {
-            Game.instancedClothingEntities[i].dispose();
-        }
-        Game.instancedClothingEntities = {};
-        return 0;
-    }
-    static setWeaponInstance(id, instancedWeaponEntity) {
-        Game.instancedWeaponEntities[id] = instancedWeaponEntity;
-        return 0;
-    }
-    static removeWeaponInstance(id) {
-        delete Game.instancedWeaponEntities[id];
-        return 0;
-    }
-    static clearWeaponInstances() {
-        for (let i in Game.instancedWeaponEntities) {
-            Game.instancedWeaponEntities[i].dispose();
-        }
-        Game.instancedWeaponEntities = {};
-        return 0;
-    }
-    static setShieldInstance(id, instancedShieldEntity) {
-        Game.instancedShieldEntities[id] = instancedShieldEntity;
-        return 0;
-    }
-    static removeShieldInstance(id) {
-        delete Game.instancedShieldEntities[id];
-        return 0;
-    }
-    static clearShieldInstances() {
-        for (let i in Game.instancedShieldEntities) {
-            Game.instancedShieldEntities[i].dispose();
-        }
-        Game.instancedShieldEntities = {};
-        return 0;
-    }
-    static setFurnitureInstance(id, instancedFurnitureEntity) {
-        Game.instancedFurnitureEntities[id] = instancedFurnitureEntity;
-        return 0;
-    }
-    static removeFurnitureInstance(instancedFurnitureEntity) {
-        delete Game.instancedFurnitureEntities[instancedFurnitureEntity];
-        return 0;
-    }
-    static clearFurnitureInstances() {
-        for (let i in Game.instancedFurnitureEntities) {
-            Game.instancedFurnitureEntities[i].dispose();
-        }
-        Game.instancedFurnitureEntities = {};
-        return 0;
-    }
-    /**
-     * Tries to set a Dialogue
-     * @param {Dialogue} dialogue 
-     */
-    static setDialogue(dialogue) {
-        if (!(dialogue instanceof Dialogue)) {
-            return 2;
-        }
-        Game.dialogues.set(dialogue.id, dialogue);
-        return 0;
-    }
-    /**
-     * Tries to remove a Dialogue
-     * @param {Dialogue} dialogue 
-     */
-    static removeDialogue(dialogue) {
-        if (typeof dialogue == "string" && Game.dialogues.has(dialogue)) {
-            dialogue = Game.dialogues.get(id);
-        }
-        else if (!(dialogue instanceof Dialogue)) {
-            return 2;
-        }
-        dialogue.dispose();
-        Game.dialogues.delete(dialogue.id);
-        return 0;
-    }
-    static clearDialogues() {
-        Game.dialogues.forEach(function(value) {
-            Game.removeDialogue(value);
-        });
-        return 0;
-    }
-    /**
-     * Tries to set a Cosmetic
-     * @param {Cosmetic} cosmetic 
-     */
-    static setCosmetic(cosmetic) {
-        if (!(cosmetic instanceof Cosmetic)) {
-            return 2;
-        }
-        Game.cosmetics.set(cosmetic.id, cosmetic);
-        return 0;
-    }
-    /**
-     * Tries to remove a Cosmetic
-     * @param {Cosmetic} cosmetic 
-     */
-    static removeCosmetic(cosmetic) {
-        if (typeof cosmetic == "string" && Game.cosmetics.has(cosmetic)) {
-            cosmetic = Game.cosmetics.get(id);
-        }
-        else if (!(cosmetic instanceof Cosmetic)) {
-            return 2;
-        }
-        cosmetic.dispose();
-        Game.cosmetics.delete(cosmetic.id);
-        return 0;
-    }
-    static clearCosmetics() {
-        Game.cosmetics.forEach(function(value) {
-            Game.removeCosmetic(value);
-        });
-        return 0;
-    }
     static setPlayerCell(cell) {
         if (cell instanceof Cell) {}
         else if (Game.hasCell(cell)) {
@@ -5280,13 +4562,13 @@ class Game {
      */
     static withinRange(entityA, entityB, distance = 0.6) {
         if (!(entityA instanceof AbstractEntity)) {
-            entityA = Game.getInstancedEntity(entityA) || Game.getInstancedEntity(entityA);
+            entityA = InstancedEntity.get(entityA) || InstancedEntity.get(entityA);
             if (!(entityA instanceof AbstractEntity)) {
                 return false;
             }
         }
         if (!(entityB instanceof AbstractEntity)) {
-            entityB = Game.getInstancedEntity(entityB) || Game.getInstancedEntity(entityB);
+            entityB = InstancedEntity.get(entityB) || InstancedEntity.get(entityB);
             if (!(entityB instanceof AbstractEntity)) {
                 return false;
             }
@@ -5315,13 +4597,13 @@ class Game {
      */
     static inFrontOf(entityA, entityB, epsilon = 0.3926991) {
         if (!(entityA instanceof AbstractEntity)) {
-            entityA = Game.getInstancedEntity(entityA) || Game.getInstancedEntity(entityA);
+            entityA = InstancedEntity.get(entityA) || InstancedEntity.get(entityA);
             if (!(entityA instanceof AbstractEntity)) {
                 return false;
             }
         }
         if (!(entityB instanceof AbstractEntity)) {
-            entityB = Game.getInstancedEntity(entityB) || Game.getInstancedEntity(entityB);
+            entityB = InstancedEntity.get(entityB) || InstancedEntity.get(entityB);
             if (!(entityB instanceof AbstractEntity)) {
                 return false;
             }

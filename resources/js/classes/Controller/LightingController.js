@@ -16,7 +16,7 @@ class LightingController extends FurnitureController {
         this.light = light;
         this.light.range = Tools.filterFloat(lightRange);
 
-        Game.setLightingController(this.id, this);
+        LightingController.set(this.id, this);
     }
 
     getLight() {
@@ -30,8 +30,37 @@ class LightingController extends FurnitureController {
         this.setLocked(true);
         this.setEnabled(false);
         this.light.dispose();
+        LightingController.remove(this.id);
         super.dispose();
-        Game.removeLightingController(this.id);
         return undefined;
     }
+
+    static initialize() {
+        LightingController.lightingControllerList = {};
+    }
+    static get(id) {
+        if (LightingController.has(id)) {
+            return LightingController.lightingControllerList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return LightingController.lightingControllerList.hasOwnProperty(id);
+    }
+    static set(id, lightingController) {
+        LightingController.lightingControllerList[id] = lightingController;
+        return 0;
+    }
+    static remove(id) {
+        delete LightingController.lightingControllerList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in LightingController.lightingControllerList) {
+            LightingController.lightingControllerList[i].dispose();
+        }
+        LightingController.lightingControllerList = {};
+        return 0;
+    }
 }
+LightingController.initialize();

@@ -70,7 +70,7 @@ class LightingEntity extends FurnitureEntity {
     }
     static get(id) {
         if (LightingEntity.has(id)) {
-            return LightingEntity[id];
+            return LightingEntity.lightingEntityList[id];
         }
         return 1;
     }

@@ -42,7 +42,7 @@ class AbstractEntity {
          * <Priority, <Trait, Stack>>
          */
         this.traits = {};
-        Game.setAbstractEntity(this.id, this);
+        AbstractEntity.set(this.id, this);
     }
 
     getID() {
@@ -223,11 +223,11 @@ class AbstractEntity {
      */
     setOwner(characterEntity) {
         if (!(characterEntity instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(characterEntity)) {
-                characterEntity = Game.getInstancedEntity(characterEntity);
+            if (InstancedEntity.has(characterEntity)) {
+                characterEntity = InstancedEntity.get(characterEntity);
             }
-            else if (Game.hasEntity(characterEntity)) {
-                characterEntity = Game.getEntity(characterEntity);
+            else if (Entity.has(characterEntity)) {
+                characterEntity = Entity.get(characterEntity);
             }
             else {
                 return 2;
@@ -252,11 +252,11 @@ class AbstractEntity {
 
     setTarget(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(abstractEntity)) {
-                abstractEntity = Game.getInstancedEntity(characterEntity);
+            if (InstancedEntity.has(abstractEntity)) {
+                abstractEntity = InstancedEntity.get(characterEntity);
             }
-            else if (Game.hasEntity(characterEntity)) {
-                abstractEntity = Game.getEntity(abstractEntity);
+            else if (Entity.has(characterEntity)) {
+                abstractEntity = Entity.get(abstractEntity);
             }
             else {
                 return 2;
@@ -307,8 +307,8 @@ class AbstractEntity {
 
     addTrait(trait) {
         if (!(trait instanceof Trait)) {
-            if (Game.hasTrait(trait)) {
-                trait = Game.getTrait(trait);
+            if (Trait.has(trait)) {
+                trait = Trait.get(trait);
             }
             else {
                 return 2;
@@ -336,8 +336,8 @@ class AbstractEntity {
     }
     removeTrait(trait) {
         if (!(trait instanceof Trait)) {
-            if (Game.hasTrait(trait)) {
-                trait = Game.getTrait(trait);
+            if (Trait.has(trait)) {
+                trait = Trait.get(trait);
             }
             else {
                 return 2;
@@ -493,7 +493,36 @@ class AbstractEntity {
                 this.availableActions[action].dispose();
             }
         }
-        Game.removeAbstractEntity(this.id);
+        AbstractEntity.remove(this.id);
         return undefined;
     }
+
+    static initialize() {
+        AbstractEntity.abstractEntityList = {};
+    }
+    static get(id) {
+        if (AbstractEntity.has(id)) {
+            return AbstractEntity.abstractEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return AbstractEntity.abstractEntityList.hasOwnProperty(id);
+    }
+    static set(id, abstractEntity) {
+        AbstractEntity.abstractEntityList[id] = abstractEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete AbstractEntity.abstractEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in AbstractEntity.abstractEntityList) {
+            AbstractEntity.abstractEntityList[i].dispose();
+        }
+        AbstractEntity.abstractEntityList = {};
+        return 0;
+    }
 }
+AbstractEntity.initialize();

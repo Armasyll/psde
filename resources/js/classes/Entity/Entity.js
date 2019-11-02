@@ -24,7 +24,7 @@ class Entity extends AbstractEntity {
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
         this.setDefaultAction(ActionEnum.LOOK);
 
-        Game.setEntity(this.id, this);
+        Entity.set(this.id, this);
     }
 
     setWeight(number) {
@@ -285,8 +285,37 @@ class Entity extends AbstractEntity {
         if (this.hasController()) {
             this.controller.dispose();
         }
-        Game.removeEntity(this.id);
+        Entity.remove(this.id);
         super.dispose();
         return undefined;
     }
+
+    static initialize() {
+        Entity.entityList = {};
+    }
+    static get(id) {
+        if (Entity.has(id)) {
+            return Entity.entityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return Entity.entityList.hasOwnProperty(id);
+    }
+    static set(id, entity) {
+        Entity.entityList[id] = entity;
+        return 0;
+    }
+    static remove(id) {
+        delete Entity.entityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in Entity.entityList) {
+            Entity.entityList[i].dispose();
+        }
+        Entity.entityList = {};
+        return 0;
+    }
 }
+Entity.initialize();

@@ -616,12 +616,12 @@ Game.generateApartment = function() {
     Game.createMesh(undefined, "twoByFourByThree", undefined,                                       new BABYLON.Vector3(2.9, 0, -29.15), new BABYLON.Vector3(30, 33, -5));
 
     // Misc
-    Game.createCharacterInstance("rinehart", Game.getCharacterEntity("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
-    Game.createCharacterInstance("rosie", Game.getCharacterEntity("rosie"), new BABYLON.Vector3(2, 0, -4.5));
-    Game.createCharacterInstance("charlie", Game.getCharacterEntity("charlie"), new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9));
-    /*Game.getCharacterController("charlie").setIdleAnim("90_idleSquint01", 1, true);
-    Game.getCharacterController("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);*/
-    Game.getCharacterEntity("charlie").setHealth("66");
+    Game.createCharacterInstance("rinehart", CharacterEntity.get("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    Game.createCharacterInstance("rosie", CharacterEntity.get("rosie"), new BABYLON.Vector3(2, 0, -4.5));
+    Game.createCharacterInstance("charlie", CharacterEntity.get("charlie"), new BABYLON.Vector3(2, 0, -5), new BABYLON.Vector3(0,180,0), new BABYLON.Vector3(0.9,0.9,0.9));
+    /*CharacterController.get("charlie").setIdleAnim("90_idleSquint01", 1, true);
+    CharacterController.get("charlie").setRunAnim("94_runningKneesBentSquint", 1, true);*/
+    CharacterEntity.get("charlie").setHealth("66");
     new Dialogue(
         "charlieTalk",
         "Talk to Charlie",
@@ -689,11 +689,11 @@ Game.generateApartment = function() {
         "Say 'Bye'",
         "He says 'Bye' back."
     );
-    Game.getDialogue("charlieTalk").setOption("charlieKissOption", "charlieKiss");
-    Game.getDialogue("charlieTalk").setOption("charlieHugOption", "charlieHug");
-    Game.getCharacterEntity("charlie").setDialogue("charlieTalk");
-    Game.getCharacterEntity("rosie").setDialogue("rosieTalk");
-    Game.getDialogue("rinehartTalk").setOption(
+    Dialogue.get("charlieTalk").setOption("charlieKissOption", "charlieKiss");
+    Dialogue.get("charlieTalk").setOption("charlieHugOption", "charlieHug");
+    CharacterEntity.get("charlie").setDialogue("charlieTalk");
+    CharacterEntity.get("rosie").setDialogue("rosieTalk");
+    Dialogue.get("rinehartTalk").setOption(
         "rinehartTakeChocolateOption",
         "rinehartTakeChocolate",
         undefined,
@@ -704,11 +704,11 @@ Game.generateApartment = function() {
             return false;
         }
     );
-    Game.getDialogue("rinehartTalk").setOption("rinehartHiOption", "rinehartSayHi");
-    Game.getDialogue("rinehartTalk").setOption("rinehartByeOption", "rinehartSayBye");
-    Game.getCharacterEntity("rinehart").setDialogue("rinehartTalk");
-    Game.getCharacterEntity("rinehart").addItem("mountainChocolateBar");
-    Game.getCharacterEntity("rinehart").hold("mountainChocolateBar");
+    Dialogue.get("rinehartTalk").setOption("rinehartHiOption", "rinehartSayHi");
+    Dialogue.get("rinehartTalk").setOption("rinehartByeOption", "rinehartSayBye");
+    CharacterEntity.get("rinehart").setDialogue("rinehartTalk");
+    CharacterEntity.get("rinehart").addItem("mountainChocolateBar");
+    CharacterEntity.get("rinehart").hold("mountainChocolateBar");
     /*
     // Create fire material
     var fire = new BABYLON.FireMaterial("fire", Game.scene);
@@ -758,7 +758,7 @@ Game.generateWallScene = function() {
     
     networkTestCell.addLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined, new BABYLON.Vector3(6, 0, -17));
     
-    networkTestCell.addCharacter("rinehart", Game.getCharacterEntity("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
+    networkTestCell.addCharacter("rinehart", CharacterEntity.get("rinehart"), new BABYLON.Vector3(3, 0, -20), new BABYLON.Vector3(0, 180, 0));
 
     networkTestCell.addItem("cheeseWedgeInstance01", "cheeseWedge", new BABYLON.Vector3(3, 0, -17));
     networkTestCell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", new BABYLON.Vector3(3, 0, -17));

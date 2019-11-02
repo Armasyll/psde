@@ -21,7 +21,7 @@ class ClothingEntity extends EquipmentEntity {
         this.setArmourType(armourType);
         this.generateProperties();
 
-        Game.setClothingEntity(this.id, this);
+        ClothingEntity.set(this.id, this);
     }
 
     setArmourType(armourType = ArmourEnum.NONE) {
@@ -196,8 +196,37 @@ class ClothingEntity extends EquipmentEntity {
         this.setEnabled(false);
         this.physicalProtection.dispose();
         this.magickProtection.dispose();
-        Game.removeClothingEntity(this.id);
+        ClothingEntity.remove(this.id);
         super.dispose();
         return undefined;
-	}
+    }
+
+    static initialize() {
+        ClothingEntity.clothingEntityList = {};
+    }
+    static get(id) {
+        if (ClothingEntity.has(id)) {
+            return ClothingEntity.clothingEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return ClothingEntity.clothingEntityList.hasOwnProperty(id);
+    }
+    static set(id, clothingEntity) {
+        ClothingEntity.clothingEntityList[id] = clothingEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete ClothingEntity.clothingEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in ClothingEntity.clothingEntityList) {
+            ClothingEntity.clothingEntityList[i].dispose();
+        }
+        ClothingEntity.clothingEntityList = {};
+        return 0;
+    }    
 }
+ClothingEntity.initialize();

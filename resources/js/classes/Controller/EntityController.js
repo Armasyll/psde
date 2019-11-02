@@ -1,16 +1,16 @@
 class EntityController {
-    constructor(_id, _mesh, _entity) {
-        _id = Tools.filterID(_id);
-        if (typeof _id != "string") {
-            _id = Tools.genUUIDv4();
+    constructor(id, mesh, entity) {
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
         }
-        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return null;
         }
-        if (!(_entity instanceof AbstractEntity)) {
+        if (!(entity instanceof AbstractEntity)) {
             return null;
         }
-        this.id = _id;
+        this.id = id;
         this.entity = undefined;
         this.texture = null;
         this.material = null;
@@ -32,8 +32,8 @@ class EntityController {
         this._isEnabled = true;
         this._isLocked = false;
         this._isAnimated = false;
-        this.setMesh(_mesh);
-        this.setEntity(_entity);
+        this.setMesh(mesh);
+        this.setEntity(entity);
         this.entity.setController(this);
         if (this.entity instanceof Entity) {
             this.entity.setMeshID(this.mesh.name);
@@ -49,7 +49,7 @@ class EntityController {
         });
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.currentCell = null;
-        Game.setEntityController(this.id, this);
+        EntityController.set(this.id, this);
     }
     setID(_id) {
         this.id = _id;
@@ -310,10 +310,43 @@ class EntityController {
             Game.removeMeshToEntityController(this.entity.getMeshID());
             Game.removeMesh(this.mesh);
         }*/
-        for (let val in this) {
-            this[val] = null;
+        for (let animation in this.animations) {
+            this.animations[animation] = null;
+            delete this.animations[animation]
         }
-        Game.removeEntityController(this.id);
+        EntityController.remove(this.id);
         return null;
     }
+
+    static initialize() {
+        EntityController.entityControllerList = {};
+    }
+    static get(id) {
+        if (EntityController.has(id)) {
+            return EntityController.entityControllerList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return EntityController.entityControllerList.hasOwnProperty(id);
+    }
+    static set(id, entityController) {
+        EntityController.entityControllerList[id] = entityController;
+        return 0;
+    }
+    static remove(id) {
+        delete EntityController.entityControllerList[id];
+        return 0;
+    }
+    static list() {
+        return EntityController.entityControllerList;
+    }
+    static clear() {
+        for (let i in EntityController.entityControllerList) {
+            EntityController.entityControllerList[i].dispose();
+        }
+        EntityController.entityControllerList = {};
+        return 0;
+    }
 }
+EntityController.initialize();

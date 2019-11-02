@@ -33,7 +33,7 @@ class Dialogue {
         this.setTitle(title);
         this.setText(text);
 
-        Game.setDialogue(this);
+        Dialogue.set(this.id, this);
     }
     getID() {
         return this.id;
@@ -70,16 +70,16 @@ class Dialogue {
         }
         else if (typeof this.text == "function") {
             if (!(them instanceof AbstractEntity)) {
-                if (Game.hasEntity(them)) {
-                    them = Game.getEntity(them);
+                if (Entity.has(them)) {
+                    them = Entity.get(them);
                 }
                 else {
                     them = undefined;
                 }
             }
             if (!(you instanceof AbstractEntity)) {
-                if (Game.hasEntity(you)) {
-                    you = Game.getEntity(you);
+                if (Entity.has(you)) {
+                    you = Entity.get(you);
                 }
             }
             return this.text(them, you);
@@ -163,10 +163,39 @@ class Dialogue {
             this.options[option].dispose();
             delete this.options[option];
         }
-        Game.removeDialogue(this);
+        Dialogue.remove(this.id);
+        return 0;
+    }
+
+    static initialize() {
+        Dialogue.dialogueList = {};
+    }
+    static get(id) {
+        if (Dialogue.has(id)) {
+            return Dialogue.dialogueList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return Dialogue.dialogueList.hasOwnProperty(id);
+    }
+    static set(id, dialogue) {
+        Dialogue.dialogueList[id] = dialogue;
+        return 0;
+    }
+    static remove(id) {
+        delete Dialogue.dialogueList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in Dialogue.dialogueList) {
+            Dialogue.dialogueList[i].dispose();
+        }
+        Dialogue.dialogueList = {};
         return 0;
     }
 }
+Dialogue.initialize();
 class DialogueOption {
     constructor(id = undefined, dialogue, title = undefined, condition = undefined) {
         id = Tools.filterID(id);
@@ -194,8 +223,8 @@ class DialogueOption {
     }
     setDialogue(dialogue) {
         if (!(dialogue instanceof Dialogue)) {
-            if (Game.hasDialogue(dialogue)) {
-                dialogue = Game.getDialogue(dialogue);
+            if (Dialogue.has(dialogue)) {
+                dialogue = Dialogue.get(dialogue);
             }
             else {
                 return 2;
@@ -251,7 +280,10 @@ class DialogueOption {
     dispose() {
         this._isEnabled = false;
         delete this.condition;
+        this.dialogue.removeOption(this);
+        return undefined;
     }
+
     static createFromArray(oArray) {
         if (!(oArray instanceof Array)) {
             return;
@@ -262,8 +294,8 @@ class DialogueOption {
         if (oArray[0] instanceof Dialogue) {
             var tempDialogue = oArray[0];
         }
-        else if (typeof oArray[0] == "string" && Game.hasDialogue(oArray[0])) {
-            var tempDialogue = Game.getDialogue(oArray[0]);
+        else if (typeof oArray[0] == "string" && Dialogue.has(oArray[0])) {
+            var tempDialogue = Dialogue.get(oArray[0]);
         }
         else {
             return 2;
@@ -288,13 +320,14 @@ class DialogueOption {
         return tempDialogueOption;
     }
 }
+
 __checkDialogue = function() {
     var _exampleA = new Dialogue("exampleA", "Example A", "This is a test!");
     var _exampleB = new Dialogue("exampleB", "Example B", "This is another test!");
     var _exampleC = new Dialogue("exampleC", "Example C", "This is yet another test!", "exampleA", ["exampleB", function(){return true;}]);
 
     console.log("Checking if the first inserted option's title in Dialogue exampleC is equal to exampleA's title, which it should be.");
-    console.log(Game.getDialogue("exampleC").getOptions()[0].getTitle() == _exampleA.getTitle() ? "It is." : "It isn't.");
+    console.log(Dialogue.get("exampleC").getOptions()[0].getTitle() == _exampleA.getTitle() ? "It is." : "It isn't.");
     console.log("Checking if the second inserted option's title in Dialogue exampleC is equal to exampleB's title, which it should be.");
-    console.log(Game.getDialogue("exampleC").getOptions()[1].getTitle() == _exampleB.getTitle() ? "It is." : "It isn't.");
+    console.log(Dialogue.get("exampleC").getOptions()[1].getTitle() == _exampleB.getTitle() ? "It is." : "It isn't.");
 }

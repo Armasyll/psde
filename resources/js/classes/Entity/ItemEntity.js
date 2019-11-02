@@ -17,7 +17,7 @@ class ItemEntity extends Entity {
         this.addAvailableAction(ActionEnum.TAKE);
         this.setItemType(itemType);
 
-        Game.setItemEntity(this.id, this);
+        ItemEntity.set(this.id, this);
     }
 
     setItemType(itemType) {
@@ -56,8 +56,37 @@ class ItemEntity extends Entity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Game.removeItemEntity(this.id);
+        ItemEntity.remove(this.id);
         super.dispose();
         return undefined;
 	}
+
+    static initialize() {
+        ItemEntity.itemEntityList = {};
+    }
+    static get(id) {
+        if (ItemEntity.has(id)) {
+            return ItemEntity.itemEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return ItemEntity.itemEntityList.hasOwnProperty(id);
+    }
+    static set(id, itemEntity) {
+        ItemEntity.itemEntityList[id] = itemEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete ItemEntity.itemEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in ItemEntity.itemEntityList) {
+            ItemEntity.itemEntityList[i].dispose();
+        }
+        ItemEntity.itemEntityList = {};
+        return 0;
+    }
 }
+ItemEntity.initialize();

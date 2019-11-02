@@ -25,7 +25,7 @@ class Spell extends AbstractEntity {
         this.setSpellSlots(spellSlots);
         this.setRitual(ritual);
 
-        Game.setSpellEntity(this.id, this);
+        SpellEntity.set(this.id, this);
     }
     setSpellType(spellType) {
         if (!SpellTypeEnum.properties.hasOwnProperty(spellType)) {
@@ -112,6 +112,35 @@ class Spell extends AbstractEntity {
         }
     }
     dispose() {
-        Game.removeSpellEntity(this.id);
+        SpellEntity.remove(this.id);
+    }
+
+    static initialize() {
+        SpellEntity.spellEntityList = {};
+    }
+    static get(id) {
+        if (SpellEntity.has(id)) {
+            return SpellEntity.spellEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return SpellEntity.spellEntityList.hasOwnProperty(id);
+    }
+    static set(id, spellEntity) {
+        SpellEntity.spellEntityList[id] = spellEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete SpellEntity.spellEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in SpellEntity.spellEntityList) {
+            SpellEntity.spellEntityList[i].dispose();
+        }
+        SpellEntity.spellEntityList = {};
+        return 0;
     }
 }
+SpellEntity.initialize();

@@ -108,7 +108,7 @@ class CharacterController extends EntityController {
         Standing Idle to Crouching Idle
         Crouching Idle to Standing Idle
         */
-        Game.setCharacterController(this.id, this);
+        CharacterController.set(this.id, this);
     }
 
     setWalkAnim(rangeName, rate, loop, standalone = true) {
@@ -924,8 +924,40 @@ class CharacterController extends EntityController {
         this.setLocked(true);
         this.setEnabled(false);
         this.detachFromAllBones();
+        CharacterController.remove(this.id);
         super.dispose();
-        Game.removeCharacterController(this.id);
         return undefined;
     }
+
+    static initialize() {
+        CharacterController.characterControllerList = {};
+    }
+    static get(id) {
+        if (CharacterController.has(id)) {
+            return CharacterController.characterControllerList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return CharacterController.characterControllerList.hasOwnProperty(id);
+    }
+    static set(id, characterController) {
+        CharacterController.characterControllerList[id] = characterController;
+        return 0;
+    }
+    static remove(id) {
+        delete CharacterController.characterControllerList[id];
+        return 0;
+    }
+    static list() {
+        return CharacterController.characterControllerList;
+    }
+    static clear() {
+        for (let i in CharacterController.characterControllerList) {
+            CharacterController.characterControllerList[i].dispose();
+        }
+        CharacterController.characterControllerList = {};
+        return 0;
+    }
 }
+CharacterController.initialize();

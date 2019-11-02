@@ -94,11 +94,11 @@ class Inventory {
             return this.addItemToSlot(any.createInstance(), this.getAvailableSlot());
         }
         else if (typeof any == "string") {
-            if (Game.hasInstancedEntity(any)) {
-                return this.addItemToSlot(Game.getInstancedEntity(any), this.getAvailableSlot());
+            if (InstancedEntity.has(any)) {
+                return this.addItemToSlot(InstancedEntity.get(any), this.getAvailableSlot());
             }
-            else if (Game.hasEntity(any)) {
-                return this.addItemToSlot(Game.getEntity(any).createInstance(), this.getAvailableSlot());
+            else if (Entity.has(any)) {
+                return this.addItemToSlot(Entity.get(any).createInstance(), this.getAvailableSlot());
             }
         }
         if (Game.debugMode) console.log(`Failed to add item ${any} to ${this.id}`);
@@ -170,7 +170,7 @@ class Inventory {
             });
         }
         else if (typeof any == "string") {
-            if (Game.hasInstancedEntity(any)) {
+            if (InstancedEntity.has(any)) {
                 this.inventory.forEach((val, key) => {
                     if (val.getID() == any) {
                         slot = key;
@@ -178,7 +178,7 @@ class Inventory {
                     }
                 });
             }
-            else if (Game.hasEntity(any)) {
+            else if (Entity.has(any)) {
                 this.inventory.forEach((val, key) => {
                     if (val.getEntity().getID() == any) {
                         slot = key;
@@ -213,7 +213,7 @@ class Inventory {
             });
         }
         else if (typeof any == "string") {
-            if (Game.hasInstancedEntity(any)) {
+            if (InstancedEntity.has(any)) {
                 this.inventory.forEach((val) => {
                     if (val.getID() == any) {
                         item = val;
@@ -221,7 +221,7 @@ class Inventory {
                     }
                 });
             }
-            else if (Game.hasEntity(any)) {
+            else if (Entity.has(any)) {
                 this.inventory.forEach((val) => {
                     if (val.getEntity().getID() == any) {
                         item = val;
@@ -295,7 +295,7 @@ class Inventory {
     }
     static get(id) {
         if (Inventory.has(id)) {
-            return Inventory[id];
+            return Inventory.inventoryList[id];
         }
         return 1;
     }

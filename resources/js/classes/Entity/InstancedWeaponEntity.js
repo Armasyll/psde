@@ -8,7 +8,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
 
         this.setOwner(owner);
 
-        Game.setWeaponInstance(this.id, this);
+        InstancedWeaponEntity.set(this.id, this);
     }
 
     getWeaponCategory() {
@@ -40,11 +40,40 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         return new InstancedWeaponEntity(id, this.entity, this.owner);
     }
     dispose() {
-        Game.removeWeaponInstance(this.id);
+        InstancedWeaponEntity.remove(this.id);
         super.dispose()
         for (var _var in this) {
             this[_var] = null;
         }
         return undefined;
     }
+
+    static initialize() {
+        InstancedWeaponEntity.instancedWeaponEntityList = {};
+    }
+    static get(id) {
+        if (InstancedWeaponEntity.has(id)) {
+            return InstancedWeaponEntity.instancedWeaponEntityList[id];
+        }
+        return 1;
+    }
+    static has(id) {
+        return InstancedWeaponEntity.instancedWeaponEntityList.hasOwnProperty(id);
+    }
+    static set(id, instancedWeaponEntity) {
+        InstancedWeaponEntity.instancedWeaponEntityList[id] = instancedWeaponEntity;
+        return 0;
+    }
+    static remove(id) {
+        delete InstancedWeaponEntity.instancedWeaponEntityList[id];
+        return 0;
+    }
+    static clear() {
+        for (let i in InstancedWeaponEntity.instancedWeaponEntityList) {
+            InstancedWeaponEntity.instancedWeaponEntityList[i].dispose();
+        }
+        InstancedWeaponEntity.instancedWeaponEntityList = {};
+        return 0;
+    }
 }
+InstancedWeaponEntity.initialize();

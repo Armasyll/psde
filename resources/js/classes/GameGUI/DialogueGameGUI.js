@@ -161,28 +161,28 @@ class DialogueGameGUI {
         if (Game.debugMode) console.log("Running DialogueGameGUI::setDialogue");
         DialogueGameGUI.clear();
         if (!(dialogue instanceof Dialogue)) {
-            dialogue = Game.getDialogue(dialogue);
+            dialogue = Dialogue.get(dialogue);
             if (!(dialogue instanceof Dialogue)) {
                 return 2;
             }
         }
         if (!(them instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(them)) {
-                them = Game.getInstancedEntity(them)
+            if (InstancedEntity.has(them)) {
+                them = InstancedEntity.get(them)
             }
-            else if (Game.hasEntity(them)) {
-                them = Game.getEntity(them);
+            else if (Entity.has(them)) {
+                them = Entity.get(them);
             }
             else {
                 return 2;
             }
         }
         if (!(you instanceof AbstractEntity)) {
-            if (Game.hasInstancedEntity(you)) {
-                you = Game.getInstancedEntity(you)
+            if (InstancedEntity.has(you)) {
+                you = InstancedEntity.get(you)
             }
-            else if (Game.hasEntity(you)) {
-                you = Game.getEntity(you);
+            else if (Entity.has(you)) {
+                you = Entity.get(you);
             }
             else {
                 return 2;
