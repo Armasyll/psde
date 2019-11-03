@@ -191,7 +191,7 @@ class ClothingEntity extends EquipmentEntity {
         this.instances[instance.getID()] = instance;
         return instance;
     }
-	dispose() {
+    dispose() {
         this.setLocked(true);
         this.setEnabled(false);
         this.physicalProtection.dispose();

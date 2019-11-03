@@ -1259,7 +1259,7 @@ class CharacterEntity extends Entity {
         return 2;
     }
     getStance() {
-    	return this.stance;
+        return this.stance;
     }
     isCrouching() {
         return this.stance == ActionEnum.CROUCH;

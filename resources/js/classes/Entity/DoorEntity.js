@@ -17,19 +17,19 @@ class DoorEntity extends Entity {
         this.setOpen(open);
 
         DoorEntity.set(this.id, this);
-	}
+    }
 
     /**
      * Door lock, not to be confused with the functionality lock.
      * @param {boolean} isDoorLocked 
      */
-	setDoorLocked(isDoorLocked) {
-		this.doorLocked = isDoorLocked == true;
-	}
-	isDoorLocked() {
-		return this.doorLocked;
-	}
-	setKey(itemEntity) {
+    setDoorLocked(isDoorLocked) {
+        this.doorLocked = isDoorLocked == true;
+    }
+    isDoorLocked() {
+        return this.doorLocked;
+    }
+    setKey(itemEntity) {
         if (!(itemEntity instanceof ItemEntity)) {
             if (ItemEntity.has(itemEntity)) {
                 itemEntity = ItemEntity.get(itemEntity);
@@ -40,10 +40,10 @@ class DoorEntity extends Entity {
         }
         this.key = itemEntity;
         return 0;
-	}
-	getKey() {
-		return this.key;
-	}
+    }
+    getKey() {
+        return this.key;
+    }
     setOpen(open = true) {
         this.open = open == true;
         if (this.open) {
@@ -97,7 +97,7 @@ class DoorEntity extends Entity {
         return this.opensInward;
     }
 
-	dispose() {
+    dispose() {
         this.setLocked(true);
         this.setEnabled(false);
         DoorEntity.remove(this.id);

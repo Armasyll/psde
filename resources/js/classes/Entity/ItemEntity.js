@@ -59,7 +59,7 @@ class ItemEntity extends Entity {
         ItemEntity.remove(this.id);
         super.dispose();
         return undefined;
-	}
+    }
 
     static initialize() {
         ItemEntity.itemEntityList = {};

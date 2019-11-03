@@ -1,5 +1,5 @@
 class Client {
-	static initialize() {
+    static initialize() {
         /**
          * Map of Network IDs to CharacterControllers
          * @type {String: CharacterController}
@@ -17,14 +17,14 @@ class Client {
         Client.hasBackloggedPlayersToInitialize = true;
         Client.lockBackloggedPlayerToInitialize = false;
         Client.networkID = "";
-	}
-	static connect() {
-		if (!Client.initialized) {
+    }
+    static connect() {
+        if (!Client.initialized) {
             Client.initialize();
         }
-		NetworkController.initialize();
-	}
-	static disconnect(_updateChild = true) {
+        NetworkController.initialize();
+    }
+    static disconnect(_updateChild = true) {
         var _timestamp = new Date().toLocaleTimeString({ hour12: false });
         Client.removeAllPlayers();
         Client.setOnline(false);
@@ -46,14 +46,14 @@ class Client {
         Game.actionTakeFunction = Game.actionTake;
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
-	}
+    }
     static isOnline() {
         return Client._isOnline;
     }
-	static setOnline(isOnline) {
+    static setOnline(isOnline) {
         Client._isOnline = (isOnline == true);
         return 0;
-	}
+    }
     static setPlayerEntry(networkID) {
         console.log(`Client::setPlayerEntry(${networkID})`);
         Client.networkID = networkID;
@@ -117,11 +117,11 @@ class Client {
             JSON.stringify(messageObject)
         );
         if (Client.sendCount >= Number.MAX_SAFE_INTEGER) {
-        	Client.sendCount = 1;
+            Client.sendCount = 1;
         }
         else {
-	        Client.sendCount++;
-	    }
+            Client.sendCount++;
+        }
     }
     static requestJoinServer() {
         if (!Client._isOnline) {
@@ -163,7 +163,7 @@ class Client {
             type: "P_INIT_SELF",
             content: [
                 Game.player.getID(),
-            	Game.player.getName(),
+                Game.player.getName(),
                 Game.player.getAge(),
                 Game.player.getSex(),
                 Game.player.getSpecies(),
@@ -172,8 +172,8 @@ class Client {
                 Game.player.controller.mesh.position.asArray(),
                 Game.player.controller.mesh.rotation.asArray(),
                 Game.player.controller.mesh.scaling.asArray(),
-            	Game.player.controller.key.toBinary()
-			]
+                Game.player.controller.key.toBinary()
+            ]
         });
         return 0;
     }
@@ -256,7 +256,7 @@ class Client {
                 let newID = Client.playersToInitialize[i][1];
                 let networkID = Client.playersToInitialize[i][2];
                 let abstractEntity = CharacterEntity.get(oldID);
-				Game.updateEntityID(oldID, newID);
+                Game.updateEntityID(oldID, newID);
                 if (abstractEntity == Game.player) {
                     Client.setPlayerEntry(networkID);
                 }
