@@ -3612,7 +3612,7 @@ class Game {
         if (!Game.player.hasController() || !Game.player.controller.hasMesh() || !Game.player.controller.hasSkeleton()) {
             return 1;
         }
-        let ray = Game.camera.getForwardRay(2 * Game.player.controller.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.player.controller.focus.getAbsolutePosition())
+        let ray = Game.camera.getForwardRay(2 * Game.player.controller.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.player.controller.focus.getAbsolutePosition());
         if (Game.player.controller.targetRay == undefined) {
             Game.player.controller.targetRay = ray;
         }

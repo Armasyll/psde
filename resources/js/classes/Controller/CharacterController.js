@@ -12,7 +12,7 @@ class CharacterController extends EntityController {
         }
         this.focus = undefined;
         this.root = undefined;
-        this.targetRay = undefined;
+        this.targetRay = new BABYLON.Ray(this.getBoneByName("head").getAbsolutePosition(), this.getBoneByName("head").getAbsolutePosition().add(this.mesh.calcMovePOV(0,0,1)), 2 * this.mesh.scaling.y);
         this.targetRayHelper = undefined;
         this.grounded = false;
         this.jumping = false;

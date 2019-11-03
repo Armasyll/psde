@@ -8,6 +8,18 @@ class CharacterControllerRigidBody extends CharacterController {
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
         this.runSpeed = 3.2 * this.mesh.scaling.z; // if it's a fox mesh
+        this.lookAtCtl = new BABYLON.BoneLookController(
+            this.mesh,
+            this.getBoneByName("head"),
+            this.targetRay.direction.add(this.targetRay.origin),
+            {
+                slerpAmount:0.05,
+                minPitch:BABYLON.Tools.ToRadians(-45),
+                maxPitch:BABYLON.Tools.ToRadians(45),
+                minYaw:BABYLON.Tools.ToRadians(-45),
+                maxYaw:BABYLON.Tools.ToRadians(45),
+            }
+        );
     }
 
     moveAV() {
@@ -22,6 +34,8 @@ class CharacterControllerRigidBody extends CharacterController {
             this.startPosition.copyFrom(this.mesh.position);
             anim = this.doMove();
         }
+        this.lookAtCtl.target = this.targetRay.origin.add(this.targetRay.direction);
+        this.lookAtCtl.update();
         this.beginAnimation(anim);
         if (Game.player == this.entity) {
             Game.updateCameraTarget();
