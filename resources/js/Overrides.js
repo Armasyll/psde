@@ -1,6 +1,20 @@
 // General functions
+Object.defineProperty(BABYLON.AbstractMesh.prototype, "controller", {
+    get: function () {
+        return this._controller;
+    },
+    set: function (value) {
+        if (value && value instanceof EntityController) {
+            this._controller = value;
+        }
+        else {
+            this._controller = null;
+        }
+    },
+    enumerable: true,
+    configurable: true
+});
 BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
-
     if (!this.isEnabled()) return;
 
     this.refreshBoundingInfo();    
@@ -30,6 +44,8 @@ BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
     }
 
     sphere.visibility = .1;
+
+    return this;
 }
 if (!String.prototype.format) {
     String.prototype.format = function() {
