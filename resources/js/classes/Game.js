@@ -814,6 +814,7 @@ class Game {
             if (Game._filesToLoad == 0) {
                 if (!Game._finishedInitializing) {
                     if (Game.debugMode) console.log("Finished loading assets.");
+                    Game.importMaterials();
                     Game.importTraits();
                     Game.importItems();
                     Game.importCosmetics();
@@ -1500,6 +1501,9 @@ class Game {
         };
         document.body.appendChild(script);
         return 0;
+    }
+    static importMaterials() {
+        return Game.importScript("resources/js/materials.js");
     }
     static importTraits() {
         return Game.importScript("resources/js/traits.js");
