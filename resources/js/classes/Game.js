@@ -3484,6 +3484,43 @@ class Game {
         }
         return 2;
     }
+    static createMirror(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {width:5, height:5}) {
+        //Creation of a glass plane
+        let abstractMesh = BABYLON.MeshBuilder.CreatePlane("glass", {width: options["width"], height: options["height"]}, Game.scene);
+        abstractMesh.position.copyFrom(position);
+        abstractMesh.rotation.copyFrom(rotation);
+        abstractMesh.scaling.copyFrom(scaling);
+    
+        //Ensure working with new values for glass by computing and obtaining its worldMatrix
+        abstractMesh.computeWorldMatrix(true);
+    
+        return Game.createMirrorFrom(abstractMesh, Game.scene.meshes, options);
+    }
+    static createMirrorFrom(abstractMesh, renderList = [], options = {}) {
+        if (abstractMesh instanceof BABYLON.AbstractMesh) {}
+        else {
+            return 2;
+        }
+        //Obtain normals for plane and assign one of them as the normal
+        let glass_vertexData = abstractMesh.getVerticesData("normal");
+        let glassNormal = new BABYLON.Vector3(glass_vertexData[0], glass_vertexData[1], glass_vertexData[2]);	
+        //Use worldMatrix to transform normal into its current value
+        glassNormal = new BABYLON.Vector3.TransformNormal(glassNormal, abstractMesh.getWorldMatrix())
+    
+        //Create reflecting surface for mirror surface
+        let reflector = new BABYLON.Plane.FromPositionAndNormal(abstractMesh.position, glassNormal.scale(-1));
+    
+        //Create the mirror material
+        let mirrorMaterial = new BABYLON.StandardMaterial("mirror", Game.scene);
+        mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, Game.scene, true);
+        mirrorMaterial.reflectionTexture.mirrorPlane = reflector;
+        mirrorMaterial.reflectionTexture.renderList = options["renderList"];
+        mirrorMaterial.reflectionTexture.level = 1;
+    
+        abstractMesh.material = mirrorMaterial;
+        
+        return abstractMesh;
+    }
     static enableHighlighting() {
         Game.highlightEnabled = true;
         Game.initHighlighting();
