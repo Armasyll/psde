@@ -3484,35 +3484,6 @@ class Game {
         }
         return 2;
     }
-    /**
-     * Tries to return a Cosmetic based on its ID
-     * @param {string} id Unique ID
-     * @returns {(Cosmetic|number)} A Cosmetic or an integer status code
-     */
-    static getCosmetic(id) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            return 2;
-        }
-        else if (id instanceof Cosmetic) {
-            return id;
-        }
-        else if (typeof id == "string" && Game.cosmetics.has(id)) {
-            return Game.cosmetics.get(id);
-        }
-        return 1;
-    }
-    /**
-     * Whether or not a Cosmetic exists
-     * @param {string} id Cosmetic ID
-     * @returns {boolean}
-     */
-    static hasCosmetic(id) {
-        if (typeof id != "string") {
-            return false;
-        }
-        return Game.cosmetics.has(id);
-    }
     static enableHighlighting() {
         Game.highlightEnabled = true;
         Game.initHighlighting();
