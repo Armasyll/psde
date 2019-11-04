@@ -3485,8 +3485,12 @@ class Game {
         return 2;
     }
     static createMirror(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {width:5, height:5}) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
         //Creation of a glass plane
-        let abstractMesh = BABYLON.MeshBuilder.CreatePlane("glass", {width: options["width"], height: options["height"]}, Game.scene);
+        let abstractMesh = BABYLON.MeshBuilder.CreatePlane(id, {width: options["width"], height: options["height"]}, Game.scene);
         abstractMesh.position.copyFrom(position);
         abstractMesh.rotation.copyFrom(rotation);
         abstractMesh.scaling.copyFrom(scaling);
@@ -3514,7 +3518,7 @@ class Game {
         let mirrorMaterial = new BABYLON.StandardMaterial("mirror", Game.scene);
         mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, Game.scene, true);
         mirrorMaterial.reflectionTexture.mirrorPlane = reflector;
-        mirrorMaterial.reflectionTexture.renderList = options["renderList"];
+        mirrorMaterial.reflectionTexture.renderList = renderList;
         mirrorMaterial.reflectionTexture.level = 1;
     
         abstractMesh.material = mirrorMaterial;
