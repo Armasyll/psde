@@ -20,6 +20,15 @@ class CharacterControllerRigidBody extends CharacterController {
                 maxYaw:BABYLON.Tools.ToRadians(45),
             }
         );
+
+        this.fallTime = 0;
+        this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
+        this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
+        this.stepOffset = 0.25;
+        this.yDifference = 0
+        this.yDifferencePosition = new BABYLON.Vector3.Zero();
+        this.fallFrameCount = 0;
+        this.fallDistance = 0
     }
 
     moveAV() {
@@ -43,8 +52,17 @@ class CharacterControllerRigidBody extends CharacterController {
         return this;
     }
     doMove() {
+        let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.idle;
-        if (this.anyMovement()) {
+        let u = this.fallTime * -Game.scene.gravity.y;
+        this.fallDistance = u * dt + -Game.scene.gravity.y * dt * dt / 2;
+        this.fallTime = this.fallTime + dt;
+        if (this.falling) {
+            this.intendedMovement.y = -this.fallDistance;
+            this.moving = true;
+            anim = this.fall;
+        }
+        else if (this.anyMovement()) {
             if (this.key.forward) {
                 if (this.key.strafeRight) {
                     this.intendedDirection = this.getAlpha() + Game.RAD_45;
@@ -80,47 +98,95 @@ class CharacterControllerRigidBody extends CharacterController {
             else {
                 this.moving = false;
             }
-            if (this.moving) {
-                if (this.key.shift) {
-                    if (!this.standing) { // TODO: stall until transition from crouching/lying/sitting complete
-                        return this.doStand();
-                    }
-                    this.walking = false;
-                    this.running = true;
+        }
+        if (this.moving) {
+            if (this.key.shift) {
+                if (!this.standing) { // TODO: stall until transition from crouching/lying/sitting complete
+                    return this.doStand();
                 }
-                else {
-                    this.running = false;
-                }
-                /*
-                lying + walking = crawling
-                crouching + walking = spycrabing
-                standing + walking = walking
-                standing + running = running
-                */
-                if (Math.abs(this.intendedDirection - this.mesh.rotation.y) > BABYLON.Tools.ToRadians(0.5)) {
-                    /*
-                    Anon_11487
-                    */
-                    let difference = this.intendedDirection - this.mesh.rotation.y;
-                    if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
-                        difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
-                    }
-                    this.mesh.rotation.y += difference * (this.turnSpeed / Game.scene.getEngine().getDeltaTime()) + BABYLON.Tools.ToRadians(180);
-                    this.mesh.rotation.y %= BABYLON.Tools.ToRadians(360);
-                    this.mesh.rotation.y -= BABYLON.Tools.ToRadians(180);
-                }
-                else {
-                    this.mesh.rotation.y = this.intendedDirection;
-                }
-                this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -9.8, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
-                this.mesh.moveWithCollisions(this.intendedMovement);
-                if (!Game.Tools.areVectorsEqual(this.mesh.position, this.startPosition, 0.001)) {
-                    anim = this.run;
-                }
-                this.moving = false;
+                this.walking = false;
+                this.running = true;
             }
+            else {
+                this.running = false;
+            }
+            /*
+            lying + walking = crawling
+            crouching + walking = spycrabing
+            standing + walking = walking
+            standing + running = running
+            */
+            if (Math.abs(this.intendedDirection - this.mesh.rotation.y) > BABYLON.Tools.ToRadians(0.5)) {
+                /*
+                Anon_11487
+                */
+                let difference = this.intendedDirection - this.mesh.rotation.y;
+                if (Math.abs(difference) > BABYLON.Tools.ToRadians(180)) {
+                    difference -= Math.sign(difference) * BABYLON.Tools.ToRadians(360);
+                }
+                this.mesh.rotation.y += difference * (this.turnSpeed / Game.scene.getEngine().getDeltaTime()) + BABYLON.Tools.ToRadians(180);
+                this.mesh.rotation.y %= BABYLON.Tools.ToRadians(360);
+                this.mesh.rotation.y -= BABYLON.Tools.ToRadians(180);
+            }
+            else {
+                this.mesh.rotation.y = this.intendedDirection;
+            }
+            this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            this.mesh.moveWithCollisions(this.intendedMovement);
+            if (this.mesh.position.y > this.startPosition.y) {
+                let actDisp = this.mesh.position.subtract(this.startPosition);
+                let slope = Game.Tools.verticalSlope(actDisp);
+                if (slope >= this.maxSlopeLimit) {
+                    if (this.yDifference == 0) {
+                        this.yDifferencePosition.copyFrom(this.startPosition);
+                    }
+                    this.yDifference = this.yDifference + (this.mesh.position.y - this.startPosition.y);
+                }
+                else {
+                    this.yDifference = 0;
+                    if (slope > this.minSlopeLimit) {
+                        this.fallFrameCount = 0;
+                        this.falling = false;
+                    }
+                    else {
+                        this.endFreeFall();
+                    }
+                }
+            }
+            else if ((this.mesh.position.y) < this.startPosition.y) {
+                let actDisp = this.mesh.position.subtract(this.startPosition);
+                if (!(Game.Tools.areVectorsEqual(actDisp, this.intendedMovement, 0.001))) {
+                    if (Game.Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
+                        this.endFreeFall();
+                    }
+                    else {
+                        this.fallFrameCount = 0;
+                        this.falling = false;
+                    }
+                }
+                else {
+                    this.falling = true;
+                    this.fallFrameCount++;
+                    if (this.fallFrameCount > this.fallFrameCountMin) {
+                        anim = this.fall;
+                    }
+                }
+            }
+            else {
+                this.endFreeFall();
+            }
+            if (!Game.Tools.areVectorsEqual(this.mesh.position, this.startPosition, 0.001)) {
+                anim = this.run;
+            }
+            this.moving = false;
         }
         return anim;
+    }
+    endFreeFall() {
+        this.fallTime = 0;
+        this.fallFrameCount = 0;
+        this.falling = false;
+        return 0;
     }
     getAlpha() {
         if (this == Game.playerController) {
