@@ -127,7 +127,7 @@ class CharacterControllerRigidBody extends CharacterController {
             return Game.Tools.moduloRadians(Game.RAD_90 - Game.camera.alpha); // Anon_11487
         }
         else {
-            return 0;
+            return Game.RAD_90;
         }
     }
     getBeta() {
@@ -135,7 +135,7 @@ class CharacterControllerRigidBody extends CharacterController {
             return Game.Tools.moduloRadians(Game.camera.beta - Game.RAD_90);
         }
         else {
-            return 0;
+            return Game.RAD_270;
         }
     }
 
