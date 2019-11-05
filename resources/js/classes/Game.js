@@ -176,6 +176,7 @@ class Game {
             "craftsmanCorner":"resources/data/craftsmanWalls.babylon",
             "craftsmanDoorway":"resources/data/craftsmanWalls.babylon",
             "craftsmanDoor":"resources/data/craftsmanWalls.babylon",
+            "stairsCollision":"resources/data/craftsmanWalls.babylon",
             "aardwolfM":"resources/meshes/characters/aardwolf.babylon",
             "spiritN":"resources/meshes/characters/spiritN.babylon",
             "foxF":"resources/meshes/characters/fox.babylon",
@@ -2028,6 +2029,10 @@ class Game {
             else {
                 materialID = "missingMaterial";
             }
+        }
+        if (meshID == "craftsmanStairs") {
+            Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, {checkCollisions:true});
+            options["checkCollisions"] = false;
         }
         if (!Game.hasLoadedMesh(meshID)) {
             if (Game.debugMode) console.log(`\tMesh ${meshID} exists and will be loaded`);
