@@ -768,5 +768,6 @@ Game.debugMovementScene = function() {
     debugMovementCell.addCollisionPlane({x:-5,z:-25}, {x:11,z:-9}, 0);
 
     debugMovementCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", new BABYLON.Vector3(-5, 0, -25));
+    debugMovementCell.addCollidableMesh(undefined, "craftsmanStairs", undefined, new BABYLON.Vector3(2, 0, -20), new BABYLON.Vector3(0, 180, 0));
     Game.setPlayerCell(debugMovementCell);
 }
