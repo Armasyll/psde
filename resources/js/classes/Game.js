@@ -301,7 +301,11 @@ class Game {
          */
         Game.textureLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
-            "carpetPink01":"resources/images/textures/static/carpetPink01.png",
+            "carpetPink01":"resources/images/textures/static/carpet/carpetPink01.png",
+            "carpetBlack01":"resources/images/textures/static/carpet/carpetBlack01.png",
+            "carpet02-pink":"resources/images/textures/static/carpet/Carpet13_pink.png",
+            "carpet02-black":"resources/images/textures/static/carpet/Carpet13_black.png",
+            "carpet02-NORMAL":"resources/images/textures/static/carpet/Carpet13_nrm.png",
             "noooo":"resources/images/textures/static/noooo.jpg",
             "packStreetChapter23":"resources/images/textures/items/packStreetChapter23.svg",
             "packStreetChapter24":"resources/images/textures/items/packStreetChapter24.svg",
@@ -348,7 +352,6 @@ class Game {
             "stopSign":"resources/images/textures/items/stopSign.svg",
             "blackWallpaperPlainWood":"resources/images/textures/static/blackWallpaperPlainWood.png",
             "blueWallpaperPlainWood":"resources/images/textures/static/blueWallpaperPlainWood.png",
-            "carpetBlack01":"resources/images/textures/static/carpetBlack01.png",
             "checkerLinoleumFloor01":"resources/images/textures/static/checkerLinoleumFloor01.png",
             "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
             "whitePanelGrayStone":"resources/images/textures/static/whitePanelGrayStone.png",
@@ -815,7 +818,8 @@ class Game {
             if (Game._filesToLoad == 0) {
                 if (!Game._finishedInitializing) {
                     if (Game.debugMode) console.log("Finished loading assets.");
-                    Game.importMaterials();
+                    Game.importDefaultMaterials();
+                    Game.importDefaultMeshes();
                     Game.importTraits();
                     Game.importItems();
                     Game.importCosmetics();
@@ -1293,7 +1297,7 @@ class Game {
         loadedMaterial.specularColor.set(0,0,0);
         if (typeof options == "object") {
             if (options.hasOwnProperty("specularColor")) {
-                loadedMaterial.specularColor.set(Tools.filterVector(options["specularColor"]));
+                loadedMaterial.specularColor.copyFrom(options["specularColor"]);
             }
         }
         Game.setLoadedMaterial(materialID, loadedMaterial);
@@ -1503,8 +1507,11 @@ class Game {
         document.body.appendChild(script);
         return 0;
     }
-    static importMaterials() {
+    static importDefaultMaterials() {
         return Game.importScript("resources/js/materials.js");
+    }
+    static importDefaultMeshes() {
+        return Game.importScript("resources/js/meshes.js");
     }
     static importTraits() {
         return Game.importScript("resources/js/traits.js");
