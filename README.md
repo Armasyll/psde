@@ -26,9 +26,9 @@ Install Apache2
 
 Install and enable Apache2 mods...
 
-- security2
+- mod_header or security2
     
-- setenvif
+- mod_mime
 
 Configure Apache2 site-specific config for...
 
