@@ -23,15 +23,25 @@ It uses `Babylon.JS 3.3.0` (https://github.com/BabylonJS/Babylon.js), models cre
 ## How To Install
 
 Install Apache2
+
 Install and enable Apache2 mods...
-    security2
-    setenvif
+
+-security2
+    
+-setenvif
+
 Configure Apache2 site-specific config for...
-    AllowOverride FileInfo
-    Require all granted
+
+-AllowOverride FileInfo
+
+-Require all granted
+
 Drop files in publically accessible web directory
+
 Go there
+
 ???
+
 It works :V
 
 ## Object Hierarchy
