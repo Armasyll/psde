@@ -26,15 +26,15 @@ Install Apache2
 
 Install and enable Apache2 mods...
 
--security2
+- security2
     
--setenvif
+- setenvif
 
 Configure Apache2 site-specific config for...
 
--AllowOverride FileInfo
+- AllowOverride FileInfo
 
--Require all granted
+- Require all granted
 
 Drop files in publically accessible web directory
 
