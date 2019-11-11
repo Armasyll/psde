@@ -119,8 +119,6 @@ Game.generateApartment = function() {
     apartmentCell.addCollisionWall(new BABYLON.Vector3(5, 0, -7), new BABYLON.Vector3(9, 3, -7)); // Front wall between Landlord's bathroom and Landlord's and Ozzy's kitchenettes
     apartmentCell.addCollisionWall(new BABYLON.Vector3(5, 0, -13), new BABYLON.Vector3(9, 3, -13)); // Front wall between Landlord's kitchenette and Landlord's entrance
 
-    apartmentCell.addCollisionWall(new BABYLON.Vector3(1, 0, -23), new BABYLON.Vector3(1, 3, -19)); // Side wall between Commons and lower stairwell; blocks railing
-
     apartmentCell.addCollisionWall(new BABYLON.Vector3(-1, 0, -13), new BABYLON.Vector3(3, 3, -13)); // Front wall between Commons and Ozzy's apartment
     apartmentCell.addCollisionWall(new BABYLON.Vector3(5, 0, -13), new BABYLON.Vector3(5, 3, -15)); // Side wall between Commons and Landlord's apartment
     apartmentCell.addCollisionWall(new BABYLON.Vector3(5, 0, -17), new BABYLON.Vector3(15, 3, -17)); // Front wall between Commons and Landlord's apartment

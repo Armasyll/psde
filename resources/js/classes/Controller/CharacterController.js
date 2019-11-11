@@ -44,8 +44,8 @@ class CharacterController extends EntityController {
         this.strafeLeft = new AnimData("strafeLeft");
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
-        this.attackPunchRH = new AnimData("attachPunchRH");
-        this.attackRunningPunchRH = new AnimData("attachPunchRH");
+        this.attackPunchRH = new AnimData("attackPunchRH");
+        this.attackRunningPunchRH = new AnimData("attackPunchRH");
         this.attackThrustRH = new AnimData("attackThrustRH");
         this.attackSlashRH = new AnimData("attackSlashRH");
         this.attackChopRH = new AnimData("attackChopRH");
@@ -529,6 +529,7 @@ class CharacterController extends EntityController {
             return 2;
         }
         mesh.attachToBone(bone, this.mesh);
+        mesh.controller = this;
         mesh.position.copyFrom(position);
         mesh.rotation.copyFrom(rotation);
         if (!(scaling instanceof BABYLON.Vector3)) {
@@ -583,6 +584,7 @@ class CharacterController extends EntityController {
             if (this._meshesAttachedToBones[bone.id][meshID] instanceof BABYLON.AbstractMesh) {
                 this._meshesAttachedToBones[bone.id][meshID].detachFromBone();
                 meshes.push(this._meshesAttachedToBones[bone.id][meshID]);
+                this._meshesAttachedToBones[bone.id][meshID].controller = this;
                 this._attachedMeshes.delete(this._meshesAttachedToBones[bone.id][meshID]);
                 delete this._bonesAttachedToMeshes[meshID][bone.id];
             }
@@ -614,15 +616,18 @@ class CharacterController extends EntityController {
         }
         bone = this.getBone(bone);
         if (bone instanceof BABYLON.Bone) {
+            this._meshesAttachedToBones[bone.id][mesh.id].controller = null;
             delete this._meshesAttachedToBones[bone.id][mesh.id];
         }
         else {
             for (let boneWithAttachment in this._bonesAttachedToMeshes[mesh.id]) {
                 if (this._bonesAttachedToMeshes[mesh.id][boneWithAttachment] instanceof BABYLON.Bone) {
+                    this._meshesAttachedToBones[boneWithAttachment][mesh.id].controller = null;
                     delete this._meshesAttachedToBones[boneWithAttachment][mesh.id];
                 }
             }
         }
+        mesh.controller = null;
         mesh.detachFromBone();
         delete this._bonesAttachedToMeshes[mesh.id];
         this._attachedMeshes.delete(mesh);

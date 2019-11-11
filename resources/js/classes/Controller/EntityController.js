@@ -94,8 +94,8 @@ class EntityController {
                 this.setSkeleton(this.mesh.skeleton);
             }
             this.mesh.isPickable = true;
+            this.mesh.controller = this;
             this.propertiesChanged = true;
-            Game.setMeshToEntityController(this.mesh.id, this);
         }
         return this;
     }
@@ -303,11 +303,7 @@ class EntityController {
             this.entity.removeController();
         }
         /*if (this.mesh instanceof BABYLON.AbstractMesh) {
-            Game.removeMeshToEntityController(this.mesh.id);
-            Game.removeMesh(this.mesh);
-        }
-        else {
-            Game.removeMeshToEntityController(this.entity.getMeshID());
+            this.mesh.controller = null;
             Game.removeMesh(this.mesh);
         }*/
         for (let animation in this.animations) {

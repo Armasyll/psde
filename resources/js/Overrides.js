@@ -14,6 +14,16 @@ Object.defineProperty(BABYLON.AbstractMesh.prototype, "controller", {
     enumerable: true,
     configurable: true
 });
+Object.defineProperty(BABYLON.AbstractMesh.prototype, "isHitbox", {
+    get: function () {
+        return this._isHitbox === true;
+    },
+    set: function (value) {
+        this._isHitbox = value === true;
+    },
+    enumerable: true,
+    configurable: true
+});
 BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
     if (!this.isEnabled()) return;
 

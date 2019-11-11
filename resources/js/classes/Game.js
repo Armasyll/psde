@@ -1703,7 +1703,7 @@ class Game {
         collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
         collisionMesh.checkCollisions = true;
         collisionMesh.setParent(mesh);
-        let controller = Game.getMeshToEntityController(mesh.id);
+        let controller = collisionMesh.controller;
         if (controller instanceof DoorController) {
             if (mesh.collisionMesh.scaling.x > mesh.collisionMesh.scaling.z) {
                 mesh.collisionMesh.scaling.z += mesh.collisionMesh.scaling.z * 0.1;
@@ -2106,6 +2106,9 @@ class Game {
                 //Game.assignBoxCollisionToMesh(mesh);
                 mesh.checkCollisions = true;
             }
+        }
+        if (options["isHitbox"]) {
+            mesh.isHitbox = options["isHitbox"];
         }
         return mesh;
     }
@@ -2623,7 +2626,7 @@ class Game {
         if (entity.hasController()) {
             let controller = entity.getController();
             let mesh = controller.getMesh();
-            Game.removeMeshToEntityController(mesh.id);
+            mesh.controller = null;
             EntityController.remove(controller.getID());
             if (controller instanceof CharacterController) {
                 CharacterController.remove(controller.getID());
@@ -2647,7 +2650,7 @@ class Game {
             }
             controller.setID(newID);
             Entity.setController(newID, controller);
-            Game.setMeshToEntityController(mesh.id, controller);
+            mesh.controller = controller;
         }
         entity.setEnabled(true);
         entity.setLocked(false);
@@ -2854,13 +2857,13 @@ class Game {
             case "foxF":
             case "foxSkeletonN": {
                 characterController.attachToROOT("hitbox.canine", "collisionMaterial");
-                characterController.attachToHead("hitbox.canine.head", "collisionMaterial");
-                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial");
-                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial");
-                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial");
-                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial");
-                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial");
-                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial");
+                characterController.attachToHead("hitbox.canine.head", "collisionMaterial", {isHitbox:true});
+                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial", {isHitbox:true});
+                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", {isHitbox:true});
+                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", {isHitbox:true});
+                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", {isHitbox:true});
+                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", {isHitbox:true});
+                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", {isHitbox:true});
                 break;
             }
         }
@@ -3608,6 +3611,9 @@ class Game {
         if (!(Game.player.hasController())) {
             return 1;
         }
+        if (entityController.getEntity() == Game.player.getTarget()) {
+            return 0;
+        }
         if (!(entityController instanceof EntityController) || !entityController.isEnabled()) {
             return 1;
         }
@@ -3656,27 +3662,13 @@ class Game {
             Game.player.controller.targetRayHelper.show(Game.scene);
         }
         let hit = Game.scene.pickWithRay(Game.player.controller.targetRay, function(pickedMesh) {
-            if (pickedMesh.parent instanceof BABYLON.Bone && pickedMesh.parent.getSkeleton() == Game.player.controller.skeleton || pickedMesh == Game.player.controller.mesh) {
+            if (pickedMesh.controller == null || pickedMesh.controller == Game.playerController) {
                 return false;
             }
             return true;
         });
         if (hit.hit) {
-            let entityController = null;
-            if (hit.pickedMesh.parent instanceof BABYLON.Bone) {
-                entityController = Game.getMeshToEntityController(hit.pickedMesh.parent.getSkeleton().id);
-            }
-            else {
-                entityController = Game.getMeshToEntityController(hit.pickedMesh.id);
-            }
-            if (entityController instanceof EntityController) {
-                if (entityController != Game.player.controller.target) {
-                    Game.setPlayerTarget(entityController);
-                }
-            }
-            else {
-                Game.clearPlayerTarget();
-            }
+            Game.setPlayerTarget(hit.pickedMesh.controller);
         }
         else {
             Game.clearPlayerTarget();
@@ -4240,34 +4232,6 @@ class Game {
         }
         Game.gui.dialogueMenu.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
         Game.gui.dialogueMenu.show();
-        return 0;
-    }
-
-    static hasMeshToEntityController(meshID) {
-        return Game.meshToEntityController.hasOwnProperty(meshID);
-    }
-    static setMeshToEntityController(meshID, entityController) {
-        if (!Game.hasClonedMesh(meshID) && !Game.hasInstancedMesh) {
-            return 2;
-        }
-        if (!(entityController instanceof EntityController)) {
-            return 2;
-        }
-        Game.meshToEntityController[meshID] = entityController;
-        return 0;
-    }
-    static getMeshToEntityController(meshID) {
-        if (Game.hasMeshToEntityController(meshID)) {
-            return Game.meshToEntityController[meshID];
-        }
-        return 1;
-    }
-    static removeMeshToEntityController(meshID) {
-        delete Game.meshToEntityController[meshID];
-        return 0;
-    }
-    static clearMeshToEntityControllers() {
-        Game.meshToEntityController = {};
         return 0;
     }
 

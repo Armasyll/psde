@@ -16,6 +16,10 @@ window.addEventListener("DOMContentLoaded", function() {
                 Game.debugMode = true;
                 break;
             }
+            case "showCollisionBoxes": {
+                Game.getLoadedMaterial("collisionMaterial").dispose();
+                Game.setLoadedMaterial("collisionMaterial", new BABYLON.StandardMaterial("collisionMaterial", Game.scene));
+            }
             case "tgm": {
                 Game.toggleGodMode();
                 break;
