@@ -22,7 +22,7 @@ Object.defineProperty(BABYLON.AbstractMesh.prototype, "isHitbox", {
         this._isHitbox = value === true;
     },
     enumerable: true,
-    configurable: true
+    configurable: false
 });
 BABYLON.Mesh.prototype.showEllipsoid = function(scene) {
     if (!this.isEnabled()) return;
