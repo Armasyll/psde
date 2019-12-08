@@ -65,6 +65,14 @@ addEventListener('message', (event) => {
             sendTimestamp();
             break;
         }
+        case "setTimestamp": {
+            let number = Number.parseInt(event.data.msg);
+            if (isNaN(number) || number == currentTime) {
+                break;
+            }
+            currentTime = number;
+            sendTimestamp();
+        }
         case "setRoundTimeInSeconds":
         case "setRoundTime": {
             let number = Number.parseInt(event.data.msg);
