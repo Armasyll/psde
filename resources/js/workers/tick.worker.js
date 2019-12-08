@@ -7,10 +7,12 @@ $ worker.postMessage({cmd:"getTCount"})
 undefined
 [MessageEvent].data.{...}
 */
-let currentTime = 1499088900;
+let currentTime = 1499088900; // Seconds, 10 digits; not milliseconds, 13 digits
 let gameTimeMultiplier = 10;
 let roundTime = 6 * gameTimeMultiplier;
-let turnTime = 60 * gameTimeMultiplier;
+let roundsPerTurn = 10;
+let turnTime = roundTime * roundsPerTurn;
+let tickInterval = null;
 
 function tickFunction() {
     currentTime++;
@@ -24,28 +26,78 @@ function tickFunction() {
         postMessage("round");
     }
 }
-let tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
-addEventListener('message', function(event) {
+function stopFunction() {
+    clearInterval(tickInterval);
+}
+function startFunction() {
+    tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
+}
+
+startFunction();
+addEventListener('message', (event) => {
     switch (event.data.cmd) {
         case "getDate": {
             postMessage(new Date(currentTime * 1000));
             break;
         }
+        case "getSeconds":
+        case "getTimestamp": {
+            postMessage(currentTime);
+            break;
+        }
+        case "getMilliseconds":
         case "getEpoch":
         case "getUnixTimestamp": {
             postMessage(currentTime * 1000);
             break;
         }
+        case "setRoundTimeInSeconds":
+        case "setRoundTime": {
+            let number = Number.parseInt(event.data.msg);
+            if (isNaN(number) || number == roundTime) {
+                break;
+            }
+            roundTime = number * gameTimeMultiplier;
+            turnTime = roundTime * roundsPerTurn;
+            break;
+        }
+        case "setTurnTimeInRounds":
+        case "setTurnTime": {
+            let number = Number.parseInt(event.data.msg);
+            if (isNaN(number) || number == roundsPerTurn) {
+                break;
+            }
+            roundsPerTurn = number;
+            if (roundsPerTurn < 6) {
+                roundsPerTurn = 6;
+            }
+            turnTime = roundTime * roundsPerTurn;
+            break;
+        }
         case "setGameTimeMutliplier": {
-            if (!event.data.hasOwnProperty("msg") || typeof event.data.msg != "array" || isNaN(event.data.msg[0])) {
+            if (!event.data.hasOwnProperty("msg")) {
                 break;
             }
-            if (event.data.msg[0] == gameTimeMultiplier) {
+            let number = Number.parseInt(event.data.msg);
+            if (isNaN(number) || number == gameTimeMultiplier) {
                 break;
             }
-            gameTimeMultiplier = event.data.msg[0];
-            clearInterval(tickInterval);
-            tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
+            gameTimeMultiplier = number;
+            if (gameTimeMultiplier < 1) {
+                gameTimeMultiplier = 1;
+            }
+            stopFunction();
+            startFunction();
+            break;
+        }
+        case "stop": {
+            stopFunction();
+            break;
+        }
+        case "start": {
+            stopFunction();
+            startFunction();
+            break;
         }
     };
 }, false);
