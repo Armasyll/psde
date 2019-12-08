@@ -1,4 +1,4 @@
-class WeaponEntityTrait extends EquipmentEntityTrait {
+class EquipmentEntityEffect extends ItemEntityEffect {
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         super(id, name, description, iconID);
     }
@@ -10,6 +10,6 @@ class WeaponEntityTrait extends EquipmentEntityTrait {
         ]);
     }
     allowedProperty(property) {
-        return WeaponEntityTrait.allowedProperties().indexOf(property) != -1;
+        return EquipmentEntityEffect.allowedProperties().indexOf(property) != -1;
     }
 }

@@ -796,7 +796,7 @@ class Game {
 
         Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = function(e) {
-            //console.log(e.data);
+            console.log(e.data);
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
         Game.entityLocRotWorker.onmessage = function(e) {
@@ -820,7 +820,7 @@ class Game {
                     if (Game.debugMode) console.log("Finished loading assets.");
                     Game.importDefaultMaterials();
                     Game.importDefaultMeshes();
-                    Game.importTraits();
+                    Game.importEffects();
                     Game.importItems();
                     Game.importCosmetics();
                     Game.importFurniture();
@@ -1513,8 +1513,8 @@ class Game {
     static importDefaultMeshes() {
         return Game.importScript("resources/js/meshes.js");
     }
-    static importTraits() {
-        return Game.importScript("resources/js/traits.js");
+    static importEffects() {
+        return Game.importScript("resources/js/effects.js");
     }
     static importItems() {
         return Game.importScript("resources/js/items.js");
@@ -3943,36 +3943,46 @@ class Game {
         }
         return 1;
     }
-    static actionAttack(defender = Game.player.getTarget(), attacker = Game.player, callback = undefined) {
+    static actionAttack(defender = Game.player.getTarget(), attacker = Game.player, weapon = null, callback = undefined) {
         if (!(defender instanceof AbstractEntity)) {
             defender = null;
         }
-        if (!(attacker instanceof CharacterEntity)) {
+        if (!(attacker instanceof AbstractEntity)) {
             return 2;
         }
         if (attacker.getController().isAttacking) {
             return 1;
         }
+        if (weapon == null) {
+            let weaponL = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
+            let weaponR = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
+            if (attacker.isLeftHanded() && weaponL instanceof InstancedWeaponEntity) {
+                weapon = weaponL;
+            }
+            else if (weaponR instanceof InstancedWeaponEntity) {
+                weapon = weaponR;
+            }
+            else {
+                weapon = WeaponEntity.get("weaponHand");
+            }
+        }
+        else {
+            weapon = WeaponEntity.get("weaponHand");
+        }
         if (defender instanceof CharacterEntity && attacker instanceof CharacterEntity) {
             if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
-                let weapon = null;
-                if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_R] || attacker.getEquipment()[ApparelSlotEnum.HAND_L];
-                }
-                else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-                    weapon = attacker.getEquipment()[ApparelSlotEnum.HAND_L] || attacker.getEquipment()[ApparelSlotEnum.HAND_R];
-                }
                 let attackRoll = Game.calculateAttack(attacker, weapon);
                 if (attackRoll == 1) {}
                 else if (attackRoll > defender.getArmourClass()) {
-                    if (weapon instanceof InstancedWeaponEntity) {
-                        defender.subtractHealth(Game.calculateDamage(defender, attacker, weapon, attackRoll == 20));
+                    let damage = Game.calculateDamage(attacker, weapon, attackRoll >= 20);
+                    if (weapon instanceof AbstractEntity) {
+                        defender.subtractHealth(damage);
                     }
                     else if (attacker.isArmed()) {
-                        defender.subtractHealth(Game.calculateDamage(defender, attacker, undefined, attackRoll == 20));
+                        defender.subtractHealth(damage);
                     }
                     else {
-                        defender.addNonLethalDamage(Game.calculateDamage(defender, attacker, weapon, attackRoll == 20));
+                        defender.addNonLethalDamage(damage);
                     }
                 }
             }
@@ -4459,30 +4469,49 @@ class Game {
             }
         }
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
-            if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-                attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
-            }
-            else {
-                attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-            }
             if (attacker.hasProficiency(weapon)) {
                 attackRoll += attacker.getProficiencyBonus();
+            }
+            if (weapon.isFinesse()) {
+                if (attacker.getDexterity() > attacker.getStrength()) {
+                    attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else {
+                    attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+            else if (weapon.isRange()) {
+                attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+                attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
             }
         }
         return attackRoll;
     }
-    static calculateDamage(defender, attacker, weapon, critical = false) {
-        let damageRollCount = 1;
+    static calculateDamage(attacker, weapon, critical = false) {
         let damageRoll = 0;
-        if (attacker.isRightHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity) {
-            damageRollCount = attacker.getEquipment()[ApparelSlotEnum.HAND_R].getDamageRollCount();
-            damageRoll = attacker.getEquipment()[ApparelSlotEnum.HAND_R].getDamageRoll();
-            return Game.roll(damageRollCount, damageRoll);
+        if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
+            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
+            if (weapon.isFinesse()) {
+                if (attacker.getDexterity() > attacker.getStrength()) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+            else if (weapon.isRange()) {
+                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            }
+            return damageRoll;
         }
-        else if (attacker.isLeftHanded() && attacker.getEquipment()[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
-            damageRollCount = attacker.getEquipment()[ApparelSlotEnum.HAND_L].getDamageRollCount();
-            damageRoll = attacker.getEquipment()[ApparelSlotEnum.HAND_L].getDamageRoll();
-            return Game.roll(damageRollCount, damageRoll);
+        else if (weapon instanceof SpellEntity) {
+            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
+            damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
         }
         else {
             switch (attacker.getSize()) {

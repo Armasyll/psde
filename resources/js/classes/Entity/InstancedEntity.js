@@ -25,7 +25,7 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnDefaultAction = false;
         this._useOwnHiddenAvailableActions = false;
         this._useOwnSpecialProperties = false;
-        this._useOwnTraits = false;
+        this._useOwnEffects = false;
 
         InstancedEntity.set(this.id, this);
     }
@@ -328,26 +328,26 @@ class InstancedEntity extends AbstractEntity {
         }
     }
 
-    addTrait(...blob) {
-        if (!this._useOwnTraits) {
-            this.traits = entity.cloneTraits();
-            this._useOwnTraits = true;
+    addEffect(...blob) {
+        if (!this._useOwnEffects) {
+            this.effects = entity.cloneEffects();
+            this._useOwnEffects = true;
         }
-        return super.addTrait(...blob);
+        return super.addEffect(...blob);
     }
-    removeTrait(...blob) {
-        if (!this._useOwnTraits) {
-            this.traits = entity.cloneTraits();
-            this._useOwnTraits = true;
+    removeEffect(...blob) {
+        if (!this._useOwnEffects) {
+            this.effects = entity.cloneEffects();
+            this._useOwnEffects = true;
         }
-        return super.removeTrait(...blob);
+        return super.removeEffect(...blob);
     }
-    getTraits() {
-        if (this._useOwnTraits) {
-            return this.traits;
+    getEffects() {
+        if (this._useOwnEffects) {
+            return this.effects;
         }
         else {
-            return this.entity.getTraits();
+            return this.entity.getEffects();
         }
     }
     
@@ -369,8 +369,8 @@ class InstancedEntity extends AbstractEntity {
         if (this._useOwnDefaultAction) {
             instancedEntity.defaultAction = this.defaultAction;
         }
-        if (this._useOwnTraits) {
-            instancedEntity.traits = this.cloneTraits();
+        if (this._useOwnEffects) {
+            instancedEntity.effects = this.cloneEffects();
         }
         instancedEntity.health = this.health;
         instancedEntity.healthOffset = this.healthOffset;

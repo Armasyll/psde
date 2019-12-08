@@ -38,10 +38,15 @@ class AbstractEntity {
         this.essentialOffset = false;
         this.inventory = null;
         /**
-         * Object<number, Map<Trait, number>>
-         * <Priority, <Trait, Stack>>
+         * Object<>
+         * <Effect, <0:Stack, 1:TimeStart, 2:TimeEnd>>
          */
-        this.traits = {};
+        this.effects = {};
+        this.effectsPriority = {};
+        /**
+         * Object<Target, <ActionEnum, Effect>>
+         */
+        this.actionEffects = {};
         AbstractEntity.set(this.id, this);
     }
 
@@ -305,69 +310,77 @@ class AbstractEntity {
         return 0;
     }
 
-    addTrait(trait) {
-        if (!(trait instanceof Trait)) {
-            if (Trait.has(trait)) {
-                trait = Trait.get(trait);
+    addEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
             }
             else {
                 return 2;
             }
         }
-        for (let property in trait.getModifiers()) {
+        for (let property in effect.getModifiers()) {
             if (!this.hasOwnProperty(property)) {
                 return 1;
             }
         }
-        let i = trait.getPriority();
-        if (!this.traits.hasOwnProperty(i)) {
-            this.traits[i] = new Map();
+        if (this.effects.hasOwnProperty(effect)) {
+            this.effects[effect][0] += 1;
         }
-        if (this.traits[i].has(trait)) {
-            if (this.traits[i].get(trait) < trait.getStackCount()) {
-                this.traits[i].set(trait, this.traits[i].get(trait) + 1);
+        else {
+            this.effects[effect][0] = 1;
+            this.effects[effect][1] = 0;
+            this.effects[effect][2] = 0;
+        }
+        let i = effect.getPriority();
+        if (!this.effects.hasOwnProperty(i)) {
+            this.effects[i] = new Map();
+        }
+        if (this.effects[i].has(effect)) {
+            if (this.effects[i].get(effect) < effect.getStackCount()) {
+                this.effects[i].set(effect, this.effects[i].get(effect) + 1);
             }
         }
         else {
-            this.traits[i].set(trait, 1);
+            this.effects[i].set(effect, 1);
         }
-        this.applyTraits();
+        this.applyEffects();
         return 0;
     }
-    removeTrait(trait) {
-        if (!(trait instanceof Trait)) {
-            if (Trait.has(trait)) {
-                trait = Trait.get(trait);
+    removeEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
             }
             else {
                 return 2;
             }
         }
-        let i = trait.getPriority();
-        if (this.traits.hasOwnProperty(i)) {
-            if (this.traits[i].has(trait)) {
-                if (this.traits[i].get(trait) == 1) {
-                    this.traits[i].delete(trait);
-                    if (Object.keys(this.traits[i]).length == 0) {
-                        delete this.traits[i];
+        let i = effect.getPriority();
+        if (this.effects.hasOwnProperty(i)) {
+            if (this.effects[i].has(effect)) {
+                if (this.effects[i].get(effect) == 1) {
+                    this.effects[i].delete(effect);
+                    if (Object.keys(this.effects[i]).length == 0) {
+                        delete this.effects[i];
                     }
                 }
                 else {
-                    this.traits[i].set(trait, this.traits[i].get(trait) - 1);
+                    this.effects[i].set(effect, this.effects[i].get(effect) - 1);
                 }
             }
         }
-        this.applyTraits();
+        this.applyEffects();
         return 0;
     }
-    applyTraits() {
+    applyEffects() {
         this.resetOffsets();
-        for (let priority in this.traits) {
-            this.traits[priority].forEach((stackCount, trait) => {
-                for (let modifier in trait.getModifiers()) {
+        for (let priority in this.effects) {
+            this.effects[priority].forEach((stackCount, effect) => {
+                for (let modifier in effect.getModifiers()) {
                     if (this.hasOwnProperty(modifier)) {
                         for (let i = 0; i < stackCount; i++) {
-                            this[modifier] = trait.getModifier(modifier)(this);
+                            this[modifier] = effect.getModifier(modifier)(this);
                         }
                     }
                 }
@@ -375,18 +388,18 @@ class AbstractEntity {
         }
         return 0;
     }
-    getTraits() {
-        return this.traits;
+    getEffects() {
+        return this.effects;
     }
-    cloneTraits() {
+    cloneEffects() {
         let obj = {};
-        for (let priority in this.traits) {
-            obj[priority] = new Map(this.traits[priority]);
+        for (let priority in this.effects) {
+            obj[priority] = new Map(this.effects[priority]);
         }
         return obj;
     }
-    clearTraits() {
-        for (let priority in this.traits) {
+    clearEffects() {
+        for (let priority in this.effects) {
             obj[priority].clear();
             delete obj[priority];
         }

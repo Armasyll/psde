@@ -1,4 +1,4 @@
-class CharacterEntityTrait extends EntityTrait {
+class CharacterEntityEffect extends EntityEffect {
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         super(id, name, description, iconID);
     }
@@ -15,6 +15,6 @@ class CharacterEntityTrait extends EntityTrait {
         ]);
     }
     allowedProperty(property) {
-        return CharacterEntityTrait.allowedProperties().indexOf(property) != -1;
+        return CharacterEntityEffect.allowedProperties().indexOf(property) != -1;
     }
 }

@@ -1,4 +1,4 @@
-class Spell extends AbstractEntity {
+class SpellEntity extends AbstractEntity {
     /**
      * Creates a Spell
      * @param  {string} id          Unique ID
@@ -12,21 +12,42 @@ class Spell extends AbstractEntity {
         this.entityType = EntityEnum.SPELL;
         this.spellType = SpellTypeEnum.NONE;
         this.spellLevel = 0;
-        this.spellSlots = 1;
-        this.ritual = false;
-        this.castingTime = 1; // In actions?
+        this.spellSlot = 1;
+        this.prepared = false;
+        this.cantrip = false;
+        this.ritual = false; // If true, caster's used spellSlot cannot be higher than spell's
+        this.castingTime = 0; // In actions; 0 is instant
         this.reaction = false;
         this.range = 0;
         this.spellComponents = {};
-        this.duration = 1; // In actions?
+        this.duration = 0; // In actions; 0 is instant
+        this.damageRollCount = 0;
+        this.damageRollCountOffset = 0;
+        this.damageRoll = 0;
+        this.damageRollOffset = 0;
+        this.damageType = DamageEnum.NONE;
+        this.bonusAction = false; // If this is true, ignore castingTime
+        this.concentration = false;
+        /* 
+            If your strength is greater than or equal to 5, you're unaffected; AbilityEnum.STRENGTH, 5, 1.0
+        */
+        this.savingAbility = AbilityEnum.NONE;
+        this.savingAbilityScore = 0;
+        this.savingAbilityMultiplier = 0.0;
 
         this.setSpellType(spellType);
         this.setSpellLevel(spellLevel);
         this.setSpellSlots(spellSlots);
         this.setRitual(ritual);
 
+        this.generateProperties();
+
         SpellEntity.set(this.id, this);
     }
+
+    generateProperties() {
+    }
+
     setSpellType(spellType) {
         if (!SpellTypeEnum.properties.hasOwnProperty(spellType)) {
             spellType = SpellTypeEnum.NONE;
@@ -49,11 +70,11 @@ class Spell extends AbstractEntity {
     setSpellSlots(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.spellSlots = number;
+        this.spellSlot = number;
         return 0;
     }
     getSpellSlots() {
-        return this.spellSlots;
+        return this.spellSlot;
     }
     setRitual(boolean = true) {
         this.ritual = boolean == true;
@@ -77,9 +98,19 @@ class Spell extends AbstractEntity {
         this.range = number;
         return 0;
     }
-    getRange(number) {
+    getRange() {
         return this.range;
     }
+    getDamageType() {
+        return this.damageType;
+    }
+    getDamageRoll() {
+        return (this.damageRoll + this.damageRollOffset);
+    }
+    getDamageRollCount() {
+        return (this.damageRollCount + this.damageRollCountOffset);
+    }
+
     /**
      * 
      * @param {SpellComponentEnum} spellComponent 

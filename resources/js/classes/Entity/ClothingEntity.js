@@ -129,7 +129,7 @@ class ClothingEntity extends EquipmentEntity {
                 this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
                 this.armourClass = 16 * this.portionMultiplier;
                 this.price = 750 * this.portionMultiplier;
-                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 13;
+                this.abilityScoreRequirements[AbilityEnum.STRENGTH] = 13;
                 this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
@@ -137,7 +137,7 @@ class ClothingEntity extends EquipmentEntity {
                 this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
                 this.armourClass = 17 * this.portionMultiplier;
                 this.price = 2000 * this.portionMultiplier;
-                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 15;
+                this.abilityScoreRequirements[AbilityEnum.STRENGTH] = 15;
                 this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }
@@ -145,7 +145,7 @@ class ClothingEntity extends EquipmentEntity {
                 this.armourCategory = ArmourCategoryEnum.HEAVY_ARMOUR;
                 this.armourClass = 18 * this.portionMultiplier;
                 this.price = 15000 * this.portionMultiplier;
-                this.abilityScoreRequirements[AbilityScoreEnum.STRENGTH] = 15;
+                this.abilityScoreRequirements[AbilityEnum.STRENGTH] = 15;
                 this.disadvantageOn.add(ProficiencyEnum.STEALTH);
                 break;
             }

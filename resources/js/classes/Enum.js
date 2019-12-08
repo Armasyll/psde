@@ -2065,37 +2065,49 @@ CellTypeEnum = {
         }
     }
 }
-AbilityScoreEnum = {
-    STRENGTH: 0,
-    DEXTERITY: 1,
-    CONSTITUTION: 2,
-    INTELLIGENCE: 3,
-    WISDOM: 4,
-    CHARISMA: 5,
+AbilityEnum = {
+    NONE: 0,
+    STRENGTH: 1,
+    DEXTERITY: 2,
+    CONSTITUTION: 3,
+    INTELLIGENCE: 4,
+    WISDOM: 5,
+    CHARISMA: 6,
     properties: {
         0: {
-            name: "Strength",
-            value: 0
+            name: "None",
+            value: 0,
+            key: "NONE"
         },
         1: {
-            name: "Dexterity",
-            value: 1
+            name: "Strength",
+            value: 1,
+            key: "STRENGTH"
         },
         2: {
-            name: "Constitution",
-            value: 2
+            name: "Dexterity",
+            value: 2,
+            key: "DEXTERITY"
         },
         3: {
-            name: "Intelligence",
-            value: 3
+            name: "Constitution",
+            value: 3,
+            key: "CONSTITUTION"
         },
         4: {
-            name: "Wisdom",
-            value: 4
+            name: "Intelligence",
+            value: 4,
+            key: "INTELLIGENCE"
         },
         5: {
+            name: "Wisdom",
+            value: 5,
+            key: "WISDOM"
+        },
+        6: {
             name: "Charisma",
-            value: 5
+            value: 6,
+            key: "CHARISMA"
         }
     }
 }

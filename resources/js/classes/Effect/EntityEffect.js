@@ -1,4 +1,4 @@
-class EntityTrait extends Trait {
+class EntityEffect extends Effect {
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         super(id, name, description, iconID);
     }
@@ -9,6 +9,6 @@ class EntityTrait extends Trait {
         ]);
     }
     allowedProperty(property) {
-        return EntityTrait.allowedProperties().indexOf(property) != -1;
+        return EntityEffect.allowedProperties().indexOf(property) != -1;
     }
 }

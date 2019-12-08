@@ -5,7 +5,7 @@ class WeaponEntity extends EquipmentEntity {
      * @param  {string}  name        Name
      * @param  {string}  description Description
      * @param  {string}  iconID       Image ID
-     * @param  {WeaponEnum}  weaponType        weaponType
+     * @param  {WeaponEnum}  weaponType        WeaponEnum
      */
     constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, weaponType = WeaponEnum.CLUB) {
         super(id, name, description, iconID);
@@ -13,21 +13,31 @@ class WeaponEntity extends EquipmentEntity {
 
         this.equipmentSlot = ApparelSlotEnum.HANDS;
         this.weaponCategory = WeaponCategoryEnum.SIMPLE_MELEE;
-        this.weaponType = WeaponEnum.CLUB;
+        this.weaponType = WeaponEnum.NONE;
         this.damageRollCount = 1;
         this.damageRollCountOffset = 0;
         this.damageRoll = 1;
         this.damageRollOffset = 0;
         this.damageType = DamageEnum.NONE;
-        this.weaponProperties = new Set();
         this.silvered = false;
         this.silveredOffset = false;
-        this.thrownRange = [0,0];
-        this.ammunitionRange = [0,0]
+        this.range = [0,0];
         this.versatileRollCount = 1;
         this.versatileRoll = 0;
 
+        this.ammunition = false;
+        this.finesse = false;
+        this.heavy = false;
+        this.light = false;
+        this.loading = false;
+        this.reach = false;
+        this.special = false;
+        this.thrown = false;
+        this.twoHanded = false;
+        this.versatile = false;
+
         this.setWeaponType(weaponType);
+
         this.generateProperties();
 
         WeaponEntity.set(this.id, this);
@@ -40,7 +50,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 1;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
+                this.light = true;
                 break;
             }
             case WeaponEnum.DAGGER: {
@@ -48,10 +58,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 20;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
-                this.setThrownRange(6, 18);
+                this.light = true;
+                this.thrown = true;
+                this.finesse = true;
+                this.setRange(6, 18);
                 break;
             }
             case WeaponEnum.GREATCLUB: {
@@ -59,7 +69,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 2;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.HANDAXE: {
@@ -67,9 +77,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 50;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.setThrownRange(6, 18);
+                this.light = true;
+                this.thrown = true;
+                this.setRange(6, 18);
                 break;
             }
             case WeaponEnum.JAVELIN: {
@@ -77,8 +87,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 5;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.setThrownRange(18, 36);
+                this.thrown = true;
+                this.setRange(18, 36);
                 break;
             }
             case WeaponEnum.LIGHTHAMMER: {
@@ -86,9 +96,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 20;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.setThrownRange(6, 48);
+                this.light = true;
+                this.thrown = true;
+                this.setRange(6, 48);
                 break;
             }
             case WeaponEnum.MACE: {
@@ -103,7 +113,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 2;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.versatile = true;
                 this.versatileRoll = 8;
                 break;
             }
@@ -112,7 +122,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 10;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
+                this.light = true;
                 break;
             }
             case WeaponEnum.SPEAR: {
@@ -120,10 +130,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 10;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.thrown = true;
+                this.versatile = true;
                 this.versatileRoll = 8;
-                this.setThrownRange(6, 18);
+                this.setRange(6, 18);
                 break;
             }
             case WeaponEnum.LIGHTCROSSBOW: {
@@ -131,10 +141,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 250;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.AMMUNITION);
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setThrownRange(24, 97);
+                this.ammunition = true;
+                this.loading = true;
+                this.twoHanded = true;
+                this.setRange(24, 97);
                 break;
             }
             case WeaponEnum.DART: {
@@ -142,9 +152,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = .5;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.setThrownRange(6, 18);
+                this.finesse = true;
+                this.thrown = true;
+                this.setRange(6, 18);
                 break;
             }
             case WeaponEnum.SHORTBOW: {
@@ -152,9 +162,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 250;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.AMMUNITION);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setThrownRange(24, 97);
+                this.ammunition = true;
+                this.twoHanded = true;
+                this.setRange(24, 97);
                 break;
             }
             case WeaponEnum.SLING: {
@@ -162,8 +172,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 1;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.AMMUNITION);
-                this.setThrownRange(18, 36);
+                this.ammunition = true;
+                this.setRange(18, 36);
                 break;
             }
             case WeaponEnum.HANDGUN: {
@@ -171,8 +181,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 400;
                 this.damageRoll = 20;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.AMMUNITION);
-                this.setAmmunitionRange(0, 100);
+                this.ammunition = true;
+                this.setRange(0, 100);
                 break;
             }
             case WeaponEnum.BATTLEAXE: {
@@ -180,7 +190,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 100;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.versatile = true;
                 this.versatileRoll = 10;
                 break;
             }
@@ -196,9 +206,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 200;
                 this.damageRoll = 10;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.REACH);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.reach = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.GREATAXE: {
@@ -206,8 +216,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 300;
                 this.damageRoll = 12;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.GREATSWORD: {
@@ -215,8 +225,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 500;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.HALBERD: {
@@ -224,9 +234,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 200;
                 this.damageRoll = 10;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.REACH);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.reach = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.LANCE: {
@@ -234,8 +244,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 100;
                 this.damageRoll = 12;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.REACH);
-                this.addWeaponProperty(WeaponPropertyEnum.SPECIAL);
+                this.reach = true;
+                this.special = true;
                 break;
             }
             case WeaponEnum.LONGSWORD: {
@@ -243,7 +253,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 150;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.versatile = true;
                 this.versatileRoll = 10;
                 break;
             }
@@ -252,8 +262,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 100;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.MORNINGSTAR: {
@@ -268,9 +278,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 50;
                 this.damageRoll = 10;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.REACH);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
+                this.heavy = true;
+                this.reach = true;
+                this.twoHanded = true;
                 break;
             }
             case WeaponEnum.RAPIER: {
@@ -278,7 +288,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 250;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
+                this.finesse = true;
                 break;
             }
             case WeaponEnum.SCIMITAR: {
@@ -286,8 +296,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 250;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
+                this.finesse = true;
+                this.light = true;
                 break;
             }
             case WeaponEnum.SHORTSWORD: {
@@ -295,8 +305,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 100;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
+                this.finesse = true;
+                this.light = true;
                 break;
             }
             case WeaponEnum.TRIDENT: {
@@ -304,10 +314,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 50;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.thrown = true;
+                this.versatile = true;
                 this.versatileRoll = 8;
-                this.setThrownRange(6, 18);
+                this.setRange(6, 18);
                 break;
             }
             case WeaponEnum.WARPICK: {
@@ -322,7 +332,7 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 150;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.BLUDGEONING;
-                this.addWeaponProperty(WeaponPropertyEnum.VERSATILE);
+                this.versatile = true;
                 this.versatileRoll = 10;
                 break;
             }
@@ -331,8 +341,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 20;
                 this.damageRoll = 4;
                 this.damageType = DamageEnum.SLASHING;
-                this.addWeaponProperty(WeaponPropertyEnum.FINESSE);
-                this.addWeaponProperty(WeaponPropertyEnum.REACH);
+                this.finesse = true;
+                this.reach = true;
                 break;
             }
             case WeaponEnum.BLOWGUN: {
@@ -340,8 +350,8 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 100;
                 this.damageRoll = 1;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.setAmmunitionRange(7, 30);
+                this.loading = true;
+                this.setRange(7, 30);
                 break;
             }
             case WeaponEnum.HANDCROSSBOW: {
@@ -349,9 +359,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 750;
                 this.damageRoll = 6;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.LIGHT);
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.setAmmunitionRange(9, 36);
+                this.light = true;
+                this.loading = true;
+                this.setRange(9, 36);
                 break;
             }
             case WeaponEnum.HEAVYCROSSBOW: {
@@ -359,10 +369,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 500;
                 this.damageRoll = 10;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setAmmunitionRange(30, 122);
+                this.heavy = true;
+                this.loading = true;
+                this.twoHanded = true;
+                this.setRange(30, 122);
                 break;
             }
             case WeaponEnum.LONGBOW: {
@@ -370,9 +380,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 500;
                 this.damageRoll = 8;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setAmmunitionRange(45, 183);
+                this.heavy = true;
+                this.twoHanded = true;
+                this.setRange(45, 183);
                 break;
             }
             case WeaponEnum.NET: {
@@ -380,9 +390,9 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 10;
                 this.damageRoll = 0;
                 this.damageType = DamageEnum.NONE;
-                this.addWeaponProperty(WeaponPropertyEnum.SPECIAL);
-                this.addWeaponProperty(WeaponPropertyEnum.THROWN);
-                this.setThrownRange(1, 4);
+                this.special = true;
+                this.thrown = true;
+                this.setRange(1, 4);
                 break;
             }
             case WeaponEnum.RIFLE: {
@@ -390,10 +400,10 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 1400;
                 this.damageRoll = 50;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setAmmunitionRange(1, 600);
+                this.loading = true;
+                this.heavy = true;
+                this.twoHanded = true;
+                this.setRange(1, 600);
                 break;
             }
             case WeaponEnum.SHOTGUN: {
@@ -401,14 +411,14 @@ class WeaponEntity extends EquipmentEntity {
                 this.price = 500;
                 this.damageRoll = 25;
                 this.damageType = DamageEnum.PIERCING;
-                this.addWeaponProperty(WeaponPropertyEnum.HEAVY);
-                this.addWeaponProperty(WeaponPropertyEnum.LOADING);
-                this.addWeaponProperty(WeaponPropertyEnum.TWOHANDED);
-                this.setAmmunitionRange(1, 45);
+                this.heavy = true;
+                this.loading = true;
+                this.twoHanded = true;
+                this.setRange(1, 45);
                 break;
             }
             default: {
-                this.weaponType = WeaponEnum.CLUB;
+                this.weaponType = WeaponEnum.NONE;
                 this.weaponCategory = WeaponCategoryEnum.SIMPLE_MELEE;
                 this.damageType = DamageEnum.BLUDGEONING;
                 this.damageRoll = 1;
@@ -424,21 +434,13 @@ class WeaponEntity extends EquipmentEntity {
     getWeaponCategory() {
         return this.weaponCategory;
     }
-    setThrownRange(min = 0, max = 0) {
-        this.thrownRange[0] = min;
-        this.thrownRange[1] = max;
+    setRange(min = 0, max = 0) {
+        this.range[0] = min;
+        this.range[1] = max;
         return this;
     }
-    getThrownRange() {
-        return this.thrownRange;
-    }
-    setAmmunitionRange(min = 0, max = 0) {
-        this.ammunitionRange[0] = min;
-        this.ammunitionRange[1] = max;
-        return this;
-    }
-    getAmmunitionRange() {
-        return this.ammunitionRange;
+    getRange() {
+        return this.range;
     }
 
     getDamageType() {
@@ -460,22 +462,36 @@ class WeaponEntity extends EquipmentEntity {
     getWeaponType() {
         return this.weaponType;
     }
-    addWeaponProperty(weaponProperty) {
-        if (!WeaponPropertyEnum.properties.hasOwnProperty(weaponProperty)) {
-            return 2;
-        }
-        this.weaponProperties.add(weaponProperty);
-        return 0;
+
+    isAmmunition() {
+        return this.ammunition;
     }
-    addWeaponProperty(weaponProperty) {
-        if (!WeaponPropertyEnum.properties.hasOwnProperty(weaponProperty)) {
-            return 2;
-        }
-        this.weaponProperties.delete(weaponProperty);
-        return 0;
+    isFinesse() {
+        return this.finesse;
     }
-    getWeaponProperties() {
-        return Array.from(this.weaponProperties);
+    isHeavy() {
+        return this.heavy;
+    }
+    isLight() {
+        return this.light;
+    }
+    isLoading() {
+        return this.loading;
+    }
+    isReach() {
+        return this.reach;
+    }
+    isSpecial() {
+        return this.special;
+    }
+    isThrown() {
+        return this.thrown;
+    }
+    isTwoHanded() {
+        return this.twoHanded;
+    }
+    isVersatile() {
+        return this.versatile;
     }
     isSilvered() {
         return (this.silvered || this.silveredOffset);

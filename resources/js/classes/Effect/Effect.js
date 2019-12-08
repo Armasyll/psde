@@ -1,4 +1,4 @@
-class Trait {
+class Effect {
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         id = Tools.filterID(id);
         if (id.length == 0) {
@@ -15,7 +15,7 @@ class Trait {
         this.priority = 1000;
         this.hidden = false;
         this.stackCount = 1;
-        Trait.set(this.id, this);
+        Effect.set(this.id, this);
     }
     addModifier(property, modification) { // TODO: what about unmodifying?
         if (this.allowedProperty(property)) {
@@ -68,35 +68,35 @@ class Trait {
         ];
     }
     allowedProperty(property) {
-        return Trait.allowedProperties().indexOf(property) != -1;
+        return Effect.allowedProperties().indexOf(property) != -1;
     }
 
     static initialize() {
-        Trait.traitList = {};
+        Effect.effectList = {};
     }
     static get(id) {
-        if (Trait.has(id)) {
-            return Trait.traitList[id];
+        if (Effect.has(id)) {
+            return Effect.effectList[id];
         }
         return 1;
     }
     static has(id) {
-        return Trait.traitList.hasOwnProperty(id);
+        return Effect.effectList.hasOwnProperty(id);
     }
-    static set(id, trait) {
-        Trait.traitList[id] = trait;
+    static set(id, effect) {
+        Effect.effectList[id] = effect;
         return 0;
     }
     static remove(id) {
-        delete Trait.traitList[id];
+        delete Effect.effectList[id];
         return 0;
     }
     static clear() {
-        for (let i in Trait.traitList) {
-            Trait.traitList[i].dispose();
+        for (let i in Effect.effectList) {
+            Effect.effectList[i].dispose();
         }
-        Trait.traitList = {};
+        Effect.effectList = {};
         return 0;
     }
 }
-Trait.initialize();
+Effect.initialize();

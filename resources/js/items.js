@@ -39,6 +39,7 @@ Game.createItemEntity("plate01", "Plate", "A simple plate.", "plate01Icon", "pla
 Game.createItemEntity("trumpet01", "Trumpet", "A simple trumpet.", "trumpet01Icon", "trumpet01", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("dice01", "Die", "A beige die.", "dice01Icon", "cube", "dice01Texture", ItemEnum.GENERAL);
 
+Game.createItemEntity("weaponHand", "Hand", "A hand.", undefined, undefined, undefined, ItemEnum.WEAPON, WeaponEnum.NONE);
 Game.createItemEntity("axe03", "Cheap Axe", "", "axe03Icon", "axe03", "metalTool01", ItemEnum.WEAPON, WeaponEnum.HANDAXE);
 Game.createItemEntity("axe01", "Axe", "", "axe01Icon", "axe01", "metalTool01", ItemEnum.WEAPON, WeaponEnum.HANDAXE);
 Game.createItemEntity("axe02", "Curved Axe", "", "axe02Icon", "axe02", "metalTool01", ItemEnum.WEAPON, WeaponEnum.HANDAXE);

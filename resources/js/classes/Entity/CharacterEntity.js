@@ -1390,7 +1390,7 @@ class CharacterEntity extends Entity {
     }
 
     addCantrip(spell) {
-        if (!(spell instanceof Spell)) {
+        if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
@@ -1400,7 +1400,7 @@ class CharacterEntity extends Entity {
         return this;
     }
     removeSpell(spell) {
-        if (!(spell instanceof Spell)) {
+        if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
@@ -1411,7 +1411,7 @@ class CharacterEntity extends Entity {
     }
 
     addSpell(spell) {
-        if (!(spell instanceof Spell)) {
+        if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
@@ -1421,7 +1421,7 @@ class CharacterEntity extends Entity {
         return this;
     }
     removeSpell(spell) {
-        if (!(spell instanceof Spell)) {
+        if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else

@@ -6,6 +6,9 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
             return undefined;
         }
 
+        this.silvered = this.entity.silvered;
+        this.silveredOffset = this.entity.silveredOffset;
+
         this.setOwner(owner);
 
         InstancedWeaponEntity.set(this.id, this);
@@ -14,11 +17,8 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
     getWeaponCategory() {
         return this.entity.getWeaponCategory();
     }
-    getThrownRange() {
-        return this.entity.getThrownRange();
-    }
-    getAmmunitionRange() {
-        return this.entity.getAmmunitionRange();
+    getRange() {
+        return this.entity.getRange();
     }
     getDamageType() {
         return this.entity.getDamageType();
@@ -32,8 +32,38 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
     getWeaponType() {
         return this.entity.getWeaponType();
     }
-    getWeaponProperties() {
-        return this.entity.getWeaponProperties();
+    isAmmunition() {
+        return this.entity.isAmmunition();
+    }
+    isFinesse() {
+        return this.entity.isFinesse();
+    }
+    isHeavy() {
+        return this.entity.isHeavy();
+    }
+    isLight() {
+        return this.entity.isLight();
+    }
+    isLoading() {
+        return this.entity.isLoading();
+    }
+    isReach() {
+        return this.entity.isReach();
+    }
+    isSpecial() {
+        return this.entity.isSpecial();
+    }
+    isThrown() {
+        return this.entity.isThrown();
+    }
+    isTwoHanded() {
+        return this.entity.isTwoHanded();
+    }
+    isVersatile() {
+        return this.entity.isVersatile();
+    }
+    isSilvered() {
+        return (this.silvered || this.silveredOffset);
     }
 
     clone(id = "") {
