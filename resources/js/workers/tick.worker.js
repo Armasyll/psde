@@ -72,6 +72,7 @@ addEventListener('message', (event) => {
             }
             currentTime = number;
             sendTimestamp();
+            break;
         }
         case "setRoundTimeInSeconds":
         case "setRoundTime": {
