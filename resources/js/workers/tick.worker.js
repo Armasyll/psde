@@ -13,42 +13,56 @@ let roundTime = 6 * gameTimeMultiplier;
 let roundsPerTurn = 10;
 let turnTime = roundTime * roundsPerTurn;
 let tickInterval = null;
+let paused = false;
 
 function tickFunction() {
     currentTime++;
+    sendTimestamp();
     if (currentTime % 86400 == 0) {
-        postMessage("newDay");
+        // new day
     }
     if (currentTime % turnTime == 0) {
-        postMessage("turn");
+        // turn
     }
     else if (currentTime % roundTime == 0) {
-        postMessage("round");
+        // round
     }
 }
 function stopFunction() {
+    paused = true;
     clearInterval(tickInterval);
 }
 function startFunction() {
     tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
+    paused = false;
+}
+function sendInfo() {
+    postMessage({"cmd":"sendInfo", "msg":{"currentTime":currentTime, "gameTimeMultiplier":gameTimeMultiplier, "roundTime":roundTime, "roundsPerTurn":roundsPerTurn, "turnTime":turnTime}});
+}
+function sendDate() {
+    postMessage({"cmd":"sendDate", "msg":new Date(currentTime * 1000)});
+}
+function sendTimestamp() {
+    postMessage({"cmd":"sendTimestamp", "msg":currentTime});
+}
+function sendPaused() {
+    postMessage({"cmd":"sendPaused", "msg":paused});
 }
 
 startFunction();
 addEventListener('message', (event) => {
     switch (event.data.cmd) {
+        case "getInfo": {
+            sendInfo();
+            break;
+        }
         case "getDate": {
-            postMessage(new Date(currentTime * 1000));
+            sendDate();
             break;
         }
         case "getSeconds":
         case "getTimestamp": {
-            postMessage(currentTime);
-            break;
-        }
-        case "getMilliseconds":
-        case "getEpoch":
-        case "getUnixTimestamp": {
-            postMessage(currentTime * 1000);
+            sendTimestamp();
             break;
         }
         case "setRoundTimeInSeconds":
@@ -56,6 +70,9 @@ addEventListener('message', (event) => {
             let number = Number.parseInt(event.data.msg);
             if (isNaN(number) || number == roundTime) {
                 break;
+            }
+            if (number < 1) {
+                number = 1;
             }
             roundTime = number * gameTimeMultiplier;
             turnTime = roundTime * roundsPerTurn;
@@ -92,11 +109,13 @@ addEventListener('message', (event) => {
         }
         case "stop": {
             stopFunction();
+            postMessage({"cmd":"stop"});
             break;
         }
         case "start": {
             stopFunction();
             startFunction();
+            postMessage({"cmd":"start"});
             break;
         }
     };

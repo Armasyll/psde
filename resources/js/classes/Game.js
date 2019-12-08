@@ -20,8 +20,7 @@ class Game {
         Game.RAD_270 = BABYLON.Tools.ToRadians(270);
         Game.RAD_315 = BABYLON.Tools.ToRadians(315);
         Game.RAD_360 = 6.28318529;
-        Game.startTime = new Date("2017-07-03T17:35:00.000Z");
-        Game.currentTime = new Date(Game.startTime);
+        Game.currentTime = 0;
         Game.initialized = false;
         Game.useRigidBodies = false;
         Game.debugMode = false;
@@ -796,7 +795,15 @@ class Game {
 
         Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = function(e) {
-            console.log(e.data);
+            if (!e.data.hasOwnProperty("cmd")) {
+                return 2;
+            }
+            switch (e.data.cmd) {
+                case "sendTimestamp": {
+                    Game.currentTime = e.data["msg"];
+                    break;
+                }
+            }
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
         Game.entityLocRotWorker.onmessage = function(e) {
@@ -4645,27 +4652,5 @@ class Game {
             return true;
         }
         return false;
-    }
-    static setGameTimeMultiplier(number) {
-        Game.gameTimeMultiplier = Number.parseFloat(number);
-        Game.roundTime = Game.gameTimeMultiplier * 6;
-        Game.turnTime = Game.gameTimeMultiplier * 60;
-    }
-    static timeToGameTime(date = new Date()) {
-        let seconds = date.getSeconds();
-        seconds += date.getMinutes() * 60;
-        seconds += date.getHours() * 3600;
-        seconds = seconds % (Game.SECONDS_IN_DAY / Game.gameTimeMultiplier) * Game.gameTimeMultiplier;
-        let hours = seconds / 3600 | 0;
-        seconds -= hours * 3600;
-        let minutes = seconds / 60 | 0;
-        seconds -= minutes * 60;
-        seconds += date.getMilliseconds() / 100 | 0;
-        date.setHours(hours);
-        date.setMinutes(minutes);
-        date.setSeconds(seconds);
-        date.setMilliseconds(0);
-        console.log(String(`${hours.toString().length == 1 ? "0" : ""}${hours}:${minutes.toString().length == 1 ? "0" : ""}${minutes}:${seconds.toString().length == 1 ? "0" : ""}${seconds}`));
-        return date;
     }
 }
