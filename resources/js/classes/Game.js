@@ -801,9 +801,8 @@ class Game {
             switch (e.data.cmd) {
                 case "sendTimestamp": {
                     Game.currentTime = e.data["msg"];
-                    if (Game.playerCell.skybox.material instanceof BABYLON.SkyMaterial) {
-                        Game.playerCell.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
-                        Game.playerCell.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
+                    if (Game.playerCell instanceof Cell) {
+                        Game.playerCell.updateSkybox();
                     }
                     break;
                 }

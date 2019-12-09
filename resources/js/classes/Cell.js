@@ -501,6 +501,13 @@ class Cell {
         return new Set([cell.getMeshIDs()].filter(meshID => this.meshIDs.has(meshID)));
     }
 
+    updateSkybox() {
+        if (this.skybox instanceof BABYLON.AbstractMesh && this.skybox.material instanceof BABYLON.SkyMaterial) {
+            this.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
+            this.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
+        }
+    }
+
     dispose() {
         Cell.remove(this.id);
         return undefined;
