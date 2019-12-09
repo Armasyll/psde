@@ -8,6 +8,7 @@ undefined
 [MessageEvent].data.{...}
 */
 let currentTime = 1499088900; // Seconds, 10 digits; not milliseconds, 13 digits
+let incrementor = 1;
 let gameTimeMultiplier = 10;
 let roundTime = 6 * gameTimeMultiplier;
 let roundsPerTurn = 10;
@@ -16,7 +17,7 @@ let tickInterval = null;
 let paused = false;
 
 function tickFunction() {
-    currentTime++;
+    currentTime += incrementor;
     sendTimestamp();
     if (currentTime % 86400 == 0) {
         // new day
