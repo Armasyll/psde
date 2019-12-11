@@ -1,51 +1,45 @@
 EntityEnum = {
-    NONE: 0,
-    ABSTRACT: 1,
-    ENTIY: 2,
-    CHARACTER: 3,
-    ITEM: 4,
-    FURNITURE: 5,
-    DOOR: 6,
-    SPELL: 7,
+    ABSTRACT: 0,
+    ENTIY: 1,
+    CHARACTER: 2,
+    ITEM: 3,
+    FURNITURE: 4,
+    DOOR: 5,
+    SPELL: 6,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "Abstract",
-            value: 1,
+            value: 0,
             key: "ABSTRACT"
         },
-        2: {
+        1: {
             name: "Entity",
-            value: 2,
+            value: 1,
             key: "ENTITY"
         },
-        3: {
+        2: {
             name: "Character",
-            value: 3,
+            value: 2,
             key: "CHARACTER"
         },
-        4: {
+        3: {
             name: "Item",
-            value: 4,
+            value: 3,
             key: "ITEM"
         },
-        5: {
+        4: {
             name: "Furniture",
-            value: 5,
+            value: 4,
             key: "FURNITURE"
         },
-        6: {
+        5: {
             name: "Door",
-            value: 6,
+            value: 5,
             key: "DOOR"
         },
-        7: {
+        6: {
             name: "Spell",
-            value: 7,
+            value: 6,
             key: "SPELL"
         }
     }
@@ -73,111 +67,99 @@ SexEnum = {
     }
 };
 StanceEnum = {
-    NONE: 0,
-    LAY: 1,
-    SIT: 2,
-    CROUCH: 3,
-    STAND: 4,
-    FLY: 5,
-    FALL: 6,
-    SWIM: 7,
+    LAY: 0,
+    SIT: 1,
+    CROUCH: 2,
+    STAND: 3,
+    FLY: 4,
+    FALL: 5,
+    SWIM: 6,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "Lay",
-            value: 1,
+            value: 0,
             key: "LAY"
         },
-        2: {
+        1: {
             name: "Sit",
-            value: 2,
+            value: 1,
             key: "SIT"
         },
-        3: {
+        2: {
             name: "Crouch",
-            value: 3,
+            value: 2,
             key: "CROUCH"
         },
-        4: {
+        3: {
             name: "Stand",
-            value: 4,
+            value: 3,
             key: "STAND"
         },
-        5: {
+        4: {
             name: "Fly",
-            value: 5,
+            value: 4,
             key: "FLY"
         },
-        6: {
+        5: {
             name: "Fall",
-            value: 6,
+            value: 5,
             key: "FALL"
         },
-        7: {
+        6: {
             name: "Swim",
-            value: 7,
+            value: 6,
             key: "SWIM"
         }
     }
 };
 ItemEnum = {
-    NONE: 0,
-    GENERAL: 1,
-    APPAREL: 2,
-    KEY: 3,
-    WEAPON: 4,
-    CONSUMABLE: 5,
-    BOOK: 6,
-    TRASH: 7,
-    SHIELD: 8,
+    GENERAL: 0,
+    APPAREL: 1,
+    KEY: 2,
+    WEAPON: 3,
+    CONSUMABLE: 4,
+    BOOK: 5,
+    TRASH: 6,
+    SHIELD: 7,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "General",
-            value: 1,
+            value: 0,
             key: "GENERAL"
         },
-        2: {
+        1: {
             name: "Apparel",
-            value: 2,
+            value: 1,
             key: "APPAREL"
         },
-        3: {
+        2: {
             name: "Key",
-            value: 3,
+            value: 2,
             key: "KEY"
         },
-        4: {
+        3: {
             name: "Weapon",
-            value: 4,
+            value: 3,
             key: "WEAPON"
         },
-        5: {
+        4: {
             name: "Consumable",
-            value: 5,
+            value: 4,
             key: "CONSUMABLE"
         },
-        6: {
+        5: {
             name: "Book",
-            value: 6,
+            value: 5,
             key: "BOOK"
         },
-        7: {
+        6: {
             name: "Trash",
-            value: 7,
+            value: 6,
             key: "TRASH"
         },
-        8: {
+        7: {
             name: "Shield",
-            value: 8,
+            value: 7,
             kay: "SHIELD"
         }
     }
@@ -328,6 +310,7 @@ SpeciesEnum = {
     NONE: 0,
     SKELETON: 1,
     FOX: 2,
+    SHEEP: 3,
     properties: {
         0: {
             name: "None",
@@ -343,6 +326,11 @@ SpeciesEnum = {
             name: "Fox",
             value: 2,
             key: "FOX"
+        },
+        3: {
+            name: "Sheep",
+            value: 3,
+            key: "SHEEP"
         }
     }
 };
@@ -375,7 +363,7 @@ ApparelSlotEnum = {
     WRIST_R: 25,
     WRISTS: 26,
     FOREARM_L: 27,
-    FOREARM_R:28,
+    FOREARM_R: 28,
     FOREARMS: 29,
     THUMB_L: 40,
     INDEX_L: 41,
@@ -851,36 +839,29 @@ ActionEnum = {
     }
 };
 ConsumableEnum = {
-    NONE: 0,
-    FOOD: 1,
-    DRINK: 2,
-    MEDICINE: 3,
+    FOOD: 0,
+    DRINK: 1,
+    MEDICINE: 2,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "Food",
-            value: 1,
+            value: 0,
             key: "FOOD"
         },
-        2: {
+        1: {
             name: "Drink",
-            value: 2,
+            value: 1,
             key: "DRINK"
         },
-        3: {
+        2: {
             name: "Medicine",
-            value: 3,
+            value: 2,
             key: "MEDICINE"
         }
     }
 };
 SpecialPropertyEnum = {
-    NONE: 0,
-    EXISTS: 1,
+    EXISTS: 0,
     LIVING: 2,
     DEAD: 3,
     MIRROR: 4,
@@ -909,13 +890,8 @@ SpecialPropertyEnum = {
     POISON: 27,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "Exists",
-            value: 1,
+            value: 0,
             key: "EXISTS"
         },
         2: {
@@ -1050,12 +1026,8 @@ SpecialPropertyEnum = {
         }
     }
 };
-/**
- * Classless should be a broad description for commoner, expert, and noble; it shouldn't be used, unless I'm lazy.
- * @type {Set}
- */
 CharacterClassEnum = {
-    NONE: 0,
+    CLASSLESS: 0,
     BARD: 1,
     CLERIC: 2,
     DRUID: 3,
@@ -1064,15 +1036,14 @@ CharacterClassEnum = {
     SORCERER: 6,
     WARLOCK: 7,
     WIZARD: 8,
-    CLASSLESS: 9,
-    COMMONER: 10,
-    EXPERT: 11,
-    NOBLE: 12,
+    COMMONER: 9,
+    EXPERT: 10,
+    NOBLE: 11,
     properties: {
         0: {
-            name: "None",
+            name: "Classless",
             value: 0,
-            key: "NONE"
+            key: "CLASSLESS"
         },
         1: {
             name: "Bard",
@@ -1115,29 +1086,24 @@ CharacterClassEnum = {
             key: "WIZARD"
         },
         9: {
-            name: "Classless",
-            value: 9,
-            key: "CLASSLESS"
-        },
-        10: {
             name: "Commoner",
-            value: 10,
+            value: 9,
             key: "COMMONER"
         },
-        11: {
+        10: {
             name: "Expert",
-            value: 11,
+            value: 10,
             key: "EXPERT"
         },
-        12: {
+        11: {
             name: "Noble",
-            value: 12,
+            value: 11,
             key: "NOBLE"
         }
     }
 };
 SpellTypeEnum = {
-    NONE: 0,
+    UNIVERSAL: 9,
     ABJURATION: 1,
     CONJURATION: 2,
     DIVINATION: 3,
@@ -1146,12 +1112,11 @@ SpellTypeEnum = {
     ILLUSION: 6,
     NECROMANCY: 7,
     TRANSMUTATION: 8,
-    UNIVERSAL: 9,
     properties: {
         0: {
-            name: "None",
+            name: "Universal",
             value: 0,
-            key: "NONE"
+            key: "UNIVERSAL"
         },
         1: {
             name: "Abjuration",
@@ -1192,11 +1157,6 @@ SpellTypeEnum = {
             name: "Transmutation",
             value: 8,
             key: "TRANSMUTATION"
-        },
-        9: {
-            name: "Universal",
-            value: 9,
-            key: "UNIVERSAL"
         }
     }
 };
@@ -1308,25 +1268,24 @@ ArmourEnum = {
 }
 ArmorEnum = ArmourEnum;
 DamageEnum = {
-    NONE: 0,
+    BLUDGEONING: 0,
     ACID: 1,
-    BLUDGEONING: 2,
-    COLD: 3,
-    FIRE: 4,
-    FORCE: 5,
-    LIGHTNING: 6,
-    NECROTIC: 7,
-    PIERCING: 8,
-    POISON: 9,
-    PSYCHIC: 10,
-    RADIANT: 11,
-    SLASHING: 12,
-    THUNDER: 13,
+    COLD: 2,
+    FIRE: 3,
+    FORCE: 4,
+    LIGHTNING: 5,
+    NECROTIC: 6,
+    PIERCING: 7,
+    POISON: 8,
+    PSYCHIC: 9,
+    RADIANT: 10,
+    SLASHING: 11,
+    THUNDER: 12,
     properties: {
         0: {
-            name: "None",
+            name: "Bludgeoning",
             value: 0,
-            key: "NONE"
+            key: "BLUDGEONING"
         },
         1: {
             name: "Acid",
@@ -1334,63 +1293,58 @@ DamageEnum = {
             key: "ACID"
         },
         2: {
-            name: "Bludgeoning",
-            value: 2,
-            key: "BLUDGEONING"
-        },
-        3: {
             name: "Cold",
-            value: 3,
+            value: 2,
             key: "COLD"
         },
-        4: {
+        3: {
             name: "Fire",
-            value: 4,
+            value: 3,
             key: "FIRE"
         },
-        5: {
+        4: {
             name: "Force",
-            value: 5,
+            value: 4,
             key: "FORCE"
         },
-        6: {
+        5: {
             name: "Lightning",
-            value: 6,
+            value: 5,
             key: "LIGHTNING"
         },
-        7: {
+        6: {
             name: "Necrotic",
-            value: 7,
+            value: 6,
             key: "NECROTIC"
         },
-        8: {
+        7: {
             name: "Piercing",
-            value: 8,
+            value: 7,
             key: "PIERCING"
         },
-        9: {
+        8: {
             name: "Poison",
-            value: 9,
+            value: 8,
             key: "POISON"
         },
-        10: {
+        9: {
             name: "Psychic",
-            value: 10,
+            value: 9,
             key: "PSYCHIC"
         },
-        11: {
+        10: {
             name: "Radiant",
-            value: 11,
+            value: 10,
             key: "RADIANT"
         },
-        12: {
+        11: {
             name: "Slashing",
-            value: 12,
+            value: 11,
             key: "SLASHING"
         },
-        13: {
+        12: {
             name: "Thunder",
-            value: 13,
+            value: 12,
             key: "THUNDER"
         }
     }
@@ -1427,15 +1381,15 @@ WeaponEnum = {
     NONE: 0,
     CLUB: 1,
     DAGGER: 2,
-    GREATCLUB: 3,
+    GREAT_CLUB: 3,
     HANDAXE: 4,
     JAVELIN: 5,
-    LIGHTHAMMER: 6,
+    LIGHT_HAMMER: 6,
     MACE: 7,
     QUARTERSTAFF: 8,
     SICKLE: 9,
     SPEAR: 10,
-    LIGHTCROSSBOW: 11,
+    LIGHT_CROSSBOW: 11,
     DART: 12,
     SHORTBOW: 13,
     SLING: 14,
@@ -1459,8 +1413,8 @@ WeaponEnum = {
     WARHAMMER: 32,
     WHIP: 33,
     BLOWGUN: 34,
-    HANDCROSSBOW: 35,
-    HEAVYCROSSBOW: 36,
+    HAND_CROSSBOW: 35,
+    HEAVY_CROSSBOW: 36,
     LONGBOW: 37,
     NET: 38,
     RIFLE: 39,
@@ -1484,7 +1438,7 @@ WeaponEnum = {
         3: {
             name: "Great Club",
             value: 3,
-            key: "GREATCLUB"
+            key: "GREAT_CLUB"
         },
         4: {
             name: "Handaxe",
@@ -1499,7 +1453,7 @@ WeaponEnum = {
         6: {
             name: "Light Hammer",
             value: 6,
-            key: "LIGHTHAMMER"
+            key: "LIGHT_HAMMER"
         },
         7: {
             name: "Mace",
@@ -1524,7 +1478,7 @@ WeaponEnum = {
         11: {
             name: "Light Crossbow",
             value: 11,
-            key: "LIGHTCROSSBOW"
+            key: "LIGHT_CROSSBOW"
         },
         12: {
             name: "Dart",
@@ -1644,12 +1598,12 @@ WeaponEnum = {
         35: {
             name: "Hand Crossbow",
             value: 35,
-            key: "HANDCROSSBOW"
+            key: "HAND_CROSSBOW"
         },
         36: {
             name: "Heavy Crossbow",
             value: 36,
-            key: "HEAVYCROSSBOW"
+            key: "HEAVY_CROSSBOW"
         },
         37: {
             name: "Longbow",
@@ -2066,47 +2020,41 @@ CellTypeEnum = {
     }
 }
 AbilityEnum = {
-    NONE: 0,
-    STRENGTH: 1,
-    DEXTERITY: 2,
-    CONSTITUTION: 3,
-    INTELLIGENCE: 4,
-    WISDOM: 5,
-    CHARISMA: 6,
+    STRENGTH: 0,
+    DEXTERITY: 1,
+    CONSTITUTION: 2,
+    INTELLIGENCE: 3,
+    WISDOM: 4,
+    CHARISMA: 5,
     properties: {
         0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
             name: "Strength",
-            value: 1,
+            value: 0,
             key: "STRENGTH"
         },
-        2: {
+        1: {
             name: "Dexterity",
-            value: 2,
+            value: 1,
             key: "DEXTERITY"
         },
-        3: {
+        2: {
             name: "Constitution",
-            value: 3,
+            value: 2,
             key: "CONSTITUTION"
         },
-        4: {
+        3: {
             name: "Intelligence",
-            value: 4,
+            value: 3,
             key: "INTELLIGENCE"
         },
-        5: {
+        4: {
             name: "Wisdom",
-            value: 5,
+            value: 4,
             key: "WISDOM"
         },
-        6: {
+        5: {
             name: "Charisma",
-            value: 6,
+            value: 5,
             key: "CHARISMA"
         }
     }
@@ -2152,7 +2100,7 @@ ProficiencyEnum = {
     GNOMISH: 37,
     GOBLIN: 38,
     GREATAXE: 39,
-    GREATCLUB: 40,
+    GREAT_CLUB: 40,
     GREATSWORD: 41,
     HALBERD: 42,
     HALFLING: 43,
@@ -2219,7 +2167,7 @@ ProficiencyEnum = {
     SURVIVAL: 104,
     SYLVAN: 105,
     THIEVES_TOOLS: 106,
-    THREE_DRAGON_ANTE_SET:107,
+    THREE_DRAGON_ANTE_SET: 107,
     TINKERS_TOOLS: 108,
     TRIDENT: 109,
     UNARMED_STRIKE: 110,
@@ -2435,7 +2383,7 @@ ProficiencyEnum = {
         40: {
             name: "Greatclub",
             value: 40,
-            key: "GREATCLUB"
+            key: "GREAT_CLUB"
         },
         41: {
             name: "Greatsword",
