@@ -181,6 +181,8 @@ class Game {
             "foxF":"resources/meshes/characters/fox.babylon",
             "foxSkeletonN":"resources/meshes/characters/foxSkeletonN.babylon",
             "foxM":"resources/meshes/characters/fox.babylon",
+            "sheepF":"resources/meshes/characters/sheep.babylon",
+            "sheepM":"resources/meshes/characters/sheep.babylon",
             "hitbox.canine":"resources/meshes/hitboxes/canine.babylon",
             "hitbox.canine.head":"resources/meshes/hitboxes/canine.babylon",
             "hitbox.canine.neck":"resources/meshes/hitboxes/canine.babylon",
@@ -330,6 +332,7 @@ class Game {
             "metalIron01":"resources/images/textures/items/metalIron01.png",
             "foxRed":"resources/images/textures/characters/foxRed.svg",
             "foxRinehart":"resources/images/textures/characters/foxRinehart.svg",
+            "sheepWhite":"resources/images/textures/characters/sheepWhite.svg",
             "dice":"resources/images/textures/items/dice.svg",
             "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
             "missingTexture":"resources/images/textures/static/missingTexture.svg",
@@ -586,7 +589,7 @@ class Game {
         /**
          * Map of Characters that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<string, <string:id, String:name, String:description, String:icon, Number:age, Number:sex, String:species, String:mesh, String:texture, String:options, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, String:name, String:description, String:icon, Number:age, Number:sex, String:creatureType, String:creatureSubType, String:mesh, String:texture, String:options, String:rotation, String:scaling, object:options>}
          */
         Game.charactersToCreateCounter = 0;
         Game.charactersToCreate = {};
@@ -999,7 +1002,8 @@ class Game {
      * @param {string} [iconID] Icon ID
      * @param {number} age 
      * @param {SexEnum} sex 
-     * @param {SpeciesEnum} species 
+     * @param {CreatureTypeEnum} creatureType Creature Type
+     * @param {CreatureSubTypeEnum} creatureSubType Creture Sub-Type
      * @param {string} meshID Mesh ID
      * @param {string} [materialID] Material ID
      * @param {BABYLON.Vector3} position 
@@ -1007,13 +1011,13 @@ class Game {
      * @param {BABYLON.Vector3} [scaling] 
      * @param {object} [options] 
      */
-    static createPlayer(id = "", name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+    static createPlayer(id = "", name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (Game.debugMode) console.log("Running createPlayer");
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let characterEntity = Game.createCharacterEntity(id, name, description, iconID, age, sex, species, meshID, materialID, options);
+        let characterEntity = Game.createCharacterEntity(id, name, description, iconID, age, sex, creatureType, creatureSubType, meshID, materialID, options);
         let characterController = Game.createCharacterInstance(id, characterEntity, position, rotation, scaling, options);
         if (characterController instanceof CharacterEntity && characterController.hasController() && characterController.getController().hasMesh()) {
             Game.assignPlayer(characterEntity);
@@ -2678,18 +2682,19 @@ class Game {
      * @param {string} [iconID] Icon ID
      * @param {number} [age] Age
      * @param {SexEnum} [sex] SexEnum
-     * @param {SpeciesEnum} [species] SpeciesEnum
+     * @param {CreatureTypeEnum} [creatureType] Creature Type
+     * @param {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type
      * @param {string} meshID Mesh ID
      * @param {string} materialID Material ID
      * @param {object} [options] Options
      */
-    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", age = 18, sex = SexEnum.MALE, species = SpeciesEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}) {
+    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", age = 18, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}) {
         id = Tools.filterID(id);
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${age}, ${sex}, ${species}, ${meshID}, ${materialID})`);
-        let characterEntity = new CharacterEntity(id, name, description, iconID, undefined, age, sex, species);
+        if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${age}, ${sex}, ${creatureType}, ${creatureSubType}, ${meshID}, ${materialID})`);
+        let characterEntity = new CharacterEntity(id, name, description, iconID, undefined, age, sex, creatureType, creatureSubType);
         if (typeof options == "object") {
             for (let i in options) {
                 switch (i) {
@@ -2716,20 +2721,27 @@ class Game {
             characterEntity.setMeshID(meshID);
         }
         else {
-            switch (characterEntity.getSpecies()) {
-                case SpeciesEnum.FOX: {
+            if (characterEntity.getCreatureType() == CreatureTypeEnum.HUMANOID) {
+                if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.FOX) {
                     if (characterEntity.getSex() == SexEnum.MALE) {
                         characterEntity.setMeshID("foxM");
                     }
                     else {
                         characterEntity.setMeshID("foxF");
                     }
-                    break;
                 }
-                case SpeciesEnum.SKELETON:
-                default : {
+                else if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SHEEP) {
+                    if (characterEntity.getSex() == SexEnum.MALE) {
+                        characterEntity.setMeshID("sheepM");
+                    }
+                    else {
+                        characterEntity.setMeshID("sheepF");
+                    }
+                }
+            }
+            else if (characterEntity.getCreatureType() == CreatureTypeEnum.UNDEAD) {
+                if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SKELETON) {
                     characterEntity.setMeshID("foxSkeletonN");
-                    break;
                 }
             }
         }
@@ -2749,19 +2761,17 @@ class Game {
         }
         else {
             let textureID = "";
-            switch (characterEntity.getSpecies()) {
-                case SpeciesEnum.FOX: {
+            if (characterEntity.getCreatureType() == CreatureTypeEnum.HUMANOID) {
+                if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.FOX) {
                     textureID = "foxRed";
-                    break;
                 }
-                case SpeciesEnum.CORSAC_FOX: {
-                    textureID = "foxCorsac";
-                    break;
+                else if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SHEEP) {
+                    textureID = "sheepWhite";
                 }
-                case SpeciesEnum.SKELETON:
-                default : {
+            }
+            else if (characterEntity.getCreatureType() == CreatureTypeEnum.UNDEAD) {
+                if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SKELETONFOX) {
                     textureID = "bone01";
-                    break;
                 }
             }
             if (!Game.hasLoadedTexture(textureID)) {
@@ -2855,10 +2865,8 @@ class Game {
         else {
             characterController = new CharacterControllerTransform(characterEntity.getID(), loadedMesh, characterEntity);
         }
-        switch (characterEntity.getSpecies()) {
-            case SpeciesEnum.SKELETON: {
-                characterController.setDeathAnim("91_death99");
-            }
+        if (characterEntity.getCreatureType() == CreatureTypeEnum.UNDEAD && characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SKELETON) {
+            characterController.setDeathAnim("91_death99");
         }
         switch (characterEntity.getMeshID()) {
             case "aardwolfM":

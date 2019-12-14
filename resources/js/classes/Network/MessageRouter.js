@@ -78,10 +78,11 @@ class MessageRouter {
                         _data.content[5],
                         _data.content[6],
                         _data.content[7],
-                        {mass:0.8,restitution:0.1},
                         _data.content[8],
+                        {mass:0.8,restitution:0.1},
                         _data.content[9],
-                        _data.content[10]
+                        _data.content[10],
+                        _data.content[11]
                     );
                     Client.addPlayerToCreate(_data.content[1], _data.content[0]);
                 }

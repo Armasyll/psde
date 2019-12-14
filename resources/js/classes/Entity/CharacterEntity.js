@@ -8,9 +8,10 @@ class CharacterEntity extends Entity {
      * @param  {CharacterClassEnum} [characterClass] CharacterClassEnum
      * @param  {number} [age] Age
      * @param  {SexEnum} [sex] SexEnum
-     * @param  {SpeciesEnum} [species] SpeciesEnum
+     * @param  {CreatureTypeEnum} [creatureType] Creature Type
+     * @param  {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type; dependant upon creatureType
      */
-    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", characterClass = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, species = SpeciesEnum.FOX) {
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", characterClass = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX) {
         super(id);
         this.entityType = EntityEnum.CHARACTER;
         this.name = "";
@@ -20,6 +21,25 @@ class CharacterEntity extends Entity {
         this.age = 18;
         this.sex = SexEnum.MALE;
         this.gender = SexEnum.MALE;
+        this.creatureType = 0;
+        this.creatureSubType = 0;
+        /*
+         Undead Fox Skeleton is a little hard to write out programatically.
+        think of it like a Gnoll: Humanoid, Gnoll, or a Dragon: Dragon, Gold.
+        now make the gnoll a zombie; Undead, Zombie, (Gnoll), or Undead, Dragon, (Gold)
+        how do I program that without redefining what a zombie is for each race?
+        */
+        /*
+         If creatureType is undead, 
+        this should be the creatureType this was before it became undead
+        */
+        this.specialCreatureType = 0;
+        /*
+         If the creatureType is undead and creatureSubType is 
+        ghost, ghoul, skeleton, or zombie, 
+        this should be the creatureSubType it was before it became undead
+        */
+        this.specialCreatureSubType = 0;
         this.currentActions = {};
         this.stance = ActionEnum.STAND;
         this.cantripsKnown = new Set();
@@ -81,13 +101,13 @@ class CharacterEntity extends Entity {
          * @type {number}  Hate
          */
         this.defaultDisposition = {
-            passion:new BoundedNumber(0, 0, 100),
-            friendship:new BoundedNumber(0, 0, 100),
-            playfulness:new BoundedNumber(0, 0, 100),
-            soulmate:new BoundedNumber(0, 0, 100),
-            familial:new BoundedNumber(0, 0, 100),
-            obsession:new BoundedNumber(0, 0, 100),
-            hate:new BoundedNumber(0, 0, 100)
+            passion:0,
+            friendship:0,
+            playfulness:0,
+            soulmate:0,
+            familial:0,
+            obsession:0,
+            hate:0
         };
         this.alerted = false;
         /**
@@ -178,17 +198,17 @@ class CharacterEntity extends Entity {
          */
         this.furColourBHex = undefined;
         /**
-         * Average weight, in kilograms, of parent species; updated by this.generateProperties()
+         * Average weight, in kilograms, of creature; updated by this.generateProperties()
          * @type {number}
          */
         this.baseWeight = 36;
         /**
-         * Average height, in metres, of parent species; updated by this.generateProperties()
+         * Average height, in metres, of creature; updated by this.generateProperties()
          * @type {number}
          */
         this.baseHeight = 1.20;
         /**
-         * Average width, in metres, of parent species; updated by this.generateProperties()
+         * Average width, in metres, of creature; updated by this.generateProperties()
          * @type {number}
          */
         this.baseWidth = 0.4;
@@ -196,7 +216,7 @@ class CharacterEntity extends Entity {
          * Weight, in kilograms; updated by this.generateProperties()
          * @type {number}
          */
-        this.weight = 0;
+        this.weight = 36;
         /**
          * Height, in mtres; updated by this.generateProperties()
          * @type {number}
@@ -211,7 +231,7 @@ class CharacterEntity extends Entity {
          * Whether or not this CharacterEntity is a predator
          * @type {boolean} True - predator, false - prey
          */
-        this.predator = false;
+        this.predator = true;
         /**
          * Paw type
          * @type {number} (PawEnum)
@@ -250,7 +270,9 @@ class CharacterEntity extends Entity {
          * @type {Dialogue}
          */
         this.dialogue = undefined;
-
+        /**
+         * @type {InstancedFurnitureEntity}
+         */
         this.furniture = null;
 
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
@@ -264,7 +286,7 @@ class CharacterEntity extends Entity {
         this.setAge(age);
         this.setSex(sex);
         this.setGender(sex);
-        this.setSpecies(species);
+        this.setCreatureType(creatureType);
         this.addAvailableAction(ActionEnum.ATTACK);
         this.addAvailableAction(ActionEnum.HOLD);
         this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
@@ -1057,34 +1079,14 @@ class CharacterEntity extends Entity {
         return this.gender;
     }
 
-    setDefaultDisposition(_passion = 0, _friendship = 0, _playfulness = 0, _soulmate = 0, _familial = 0, _obsession = 0, _hate = 0) {
-        if (!(this.defaultDisposition instanceof Object))
-            this.defaultDisposition = {passion:0,friendship:0,playfulness:0,soulmate:0,familial:0,obsession:0,hate:0};
-        else if (_passion instanceof Object) {
-            this.defaultDisposition = {
-                passion:(Number.parseInt(_passion.passion) || 0),
-                friendship:(Number.parseInt(_passion.friendship) || 0),
-                playfulness:(Number.parseInt(_passion.playfulness) || 0),
-                soulmate:(Number.parseInt(_passion.soulmate) || 0),
-                familial:(Number.parseInt(_passion.familial) || 0),
-                obsession:(Number.parseInt(_passion.obsession) || 0),
-                hate:(Number.parseInt(_passion.hate) || 0)
-            };
-        }
-        else if (isNaN(_passion) && this.defaultDisposition.hasOwnProperty(_passion) && typeof Number.parseInt(_friendship) == "number")
-            this.defaultDisposition[_passion] = Number.parseInt(_friendship);
-        else {
-            this.defaultDisposition = {
-                passion:(Number.parseInt(_passion) || this.defaultDisposition.passion),
-                friendship:(Number.parseInt(_friendship) || this.defaultDisposition.friendship),
-                playfulness:(Number.parseInt(_playfulness) || this.defaultDisposition.playfulness),
-                soulmate:(Number.parseInt(_soulmate) || this.defaultDisposition.soulmate),
-                familial:(Number.parseInt(_familial) || this.defaultDisposition.familial),
-                obsession:(Number.parseInt(_obsession) || this.defaultDisposition.obsession),
-                hate:(Number.parseInt(_hate) || this.defaultDisposition.hate)
-            };
-        }
-
+    setDefaultDisposition(passion = 0, friendship = 0, playfulness = 0, soulmate = 0, familial = 0, obsession = 0, hate = 0) {
+        this.defaultDisposition["passion"] = Number.parseInt(passion) || 0;
+        this.defaultDisposition["friendship"] = Number.parseInt(friendship) || 0;
+        this.defaultDisposition["playfulness"] = Number.parseInt(playfulness) || 0;
+        this.defaultDisposition["soulmate"] = Number.parseInt(soulmate) || 0;
+        this.defaultDisposition["familial"] = Number.parseInt(familial) || 0;
+        this.defaultDisposition["obsession"] = Number.parseInt(obsession) || 0;
+        this.defaultDisposition["hate"] = Number.parseInt(hate) || 0;
         return this;
     }
     setCharacterPassion(_character, number) {
@@ -1364,15 +1366,41 @@ class CharacterEntity extends Entity {
         this.setFurColourBHex(colourB);
         return this;
     }
-    getSpecies() {
-        return this.species;
+    getCreatureType() {
+        return this.creatureType;
     }
-    setSpecies(speciesEnum) {
-        if (SpeciesEnum.properties.hasOwnProperty(speciesEnum)) {
-            this.species = speciesEnum;
+    setCreatureType(creatureType) {
+        if (CreatureTypeEnum.properties.hasOwnProperty(creatureType)) {
+            this.creatureType = creatureType;
         }
         else {
-            this.species = SpeciesEnum.FOX;
+            this.creatureType = CreatureTypeEnum.HUMANOID;
+        }
+        return this;
+    }
+    getCreatureSubType() {
+        return this.creatureSubType;
+    }
+    setCreatureSubType(creatureSubType) {
+        switch (this.creatureType) {
+            case CreatureTypeEnum.HUMANOID: {
+                if (CreatureSubTypeEnum.properties.hasOwnProperty(creatureSubType)) {
+                    this.creatureSubType = creatureSubType;
+                }
+                else {
+                    this.creatureSubType = CreatureSubTypeEnum.FOX;
+                }
+                break;
+            }
+            case CreatureTypeEnum.UNDEAD: {
+                if (CreatureSubTypeEnum.properties.hasOwnProperty(creatureSubType)) {
+                    this.creatureSubType = creatureSubType;
+                }
+                else {
+                    this.creatureSubType = CreatureSubTypeEnum.FOX;
+                }
+                break;
+            }
         }
         return this;
     }
@@ -1430,17 +1458,28 @@ class CharacterEntity extends Entity {
         this.spellsKnown.delete(spell);
         return true;
     }
-
+    /**
+     * Adds a new disposition this character has for the specified character, by their ID.
+     * @param {string} characterEntity Character ID
+     * @param {number} [passionOffset] 
+     * @param {number} [friendshipOffset] 
+     * @param {number} [playfulnessOffset] 
+     * @param {number} [soulmateOffset] 
+     * @param {number} [familialOffset] 
+     * @param {number} [obsessionOffset] 
+     * @param {number} [hateOffset] 
+     */
     addNewDisposition(characterEntity, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
-        this.characterDisposition[characterEntity] = {
-            passion:passionOffset + this.defaultDisposition.passion,
-            friendship:friendshipOffset + this.defaultDisposition.friendship,
-            playfulness:playfulnessOffset + this.defaultDisposition.playfulness,
-            soulmate:soulmateOffset + this.defaultDisposition.soulmate,
-            familial:familialOffset + this.defaultDisposition.familial,
-            obsession:obsessionOffset + this.defaultDisposition.obsession,
-            hate:hateOffset + this.defaultDisposition.hate
+        if (characterEntity instanceof CharacterEntity) {
+            characterEntity = characterEntity.getID();
         }
+        this.characterDisposition[characterEntity]["passion"] = passionOffset + this.defaultDisposition["passion"];
+        this.characterDisposition[characterEntity]["friendship"] = friendshipOffset + this.defaultDisposition["friendship"];
+        this.characterDisposition[characterEntity]["playfulness"] = playfulnessOffset + this.defaultDisposition["playfulness"];
+        this.characterDisposition[characterEntity]["soulmate"] = soulmateOffset + this.defaultDisposition["soulmate"];
+        this.characterDisposition[characterEntity]["familial"] = familialOffset + this.defaultDisposition["familial"];
+        this.characterDisposition[characterEntity]["obsession"] = obsessionOffset + this.defaultDisposition["obsession"];
+        this.characterDisposition[characterEntity]["hate"] = hateOffset + this.defaultDisposition["hate"];
         return this;
     }
 
@@ -1583,259 +1622,275 @@ class CharacterEntity extends Entity {
     }
 
     generateProperties() {
-        if (this.species == SpeciesEnum.FOX) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 36;
-                this.baseHeight = 1.20;
-                this.baseWidth = 0.4;
+        switch(this.creatureSubType) {
+            case CreatureSubTypeEnum.FOX: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 36;
+                    this.baseHeight = 1.20;
+                    this.baseWidth = 0.4;
+                }
+                else {
+                    this.baseWeight = 32;
+                    this.baseHeight = 1.12;
+                    this.baseWidth = 0.37;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            else {
-                this.baseWeight = 32;
-                this.baseHeight = 1.12;
-                this.baseWidth = 0.37;
+            case CreatureSubTypeEnum.SHEEP: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 34;
+                    this.baseHeight = 1.35;
+                    this.baseWidth = 0.45;
+                }
+                else {
+                    this.baseWeight = 28;
+                    this.baseHeight = 1.0;
+                    this.baseWidth = 0.33;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = false;
+                this.setPaws(PawEnum.HOOF);
+                this.setEyeType(EyeEnum.OBLONG);
+                this.setPelt(PeltEnum.WOOL);
+                break;
             }
-            this.size = SizeEnum.SMALL;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.SHEEP) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 34;
-                this.baseHeight = 1.35;
-                this.baseWidth = 0.45;
+            case CreatureSubTypeEnum.WOLF: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseHeight = 1.9;
+                    this.baseWidth = 0.63;
+                }
+                else {
+                    this.baseWeight = 66;
+                    this.baseHeight = 1.8;
+                    this.baseWidth = 0.6;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            else {
-                this.baseWeight = 28;
-                this.baseHeight = 1.0;
-                this.baseWidth = 0.33;
+            case CreatureSubTypeEnum.AARDWOLF: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 32;
+                    this.baseHeight = 1.10;
+                    this.baseWidth = 0.36;
+                }
+                else {
+                    this.baseWeight = 28;
+                    this.baseHeight = 1.02;
+                    this.baseWidth = 0.34;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            this.size = SizeEnum.SMALL;
-            this.predator = false;
-            this.setPaws(PawEnum.HOOF);
-            this.setEyeType(EyeEnum.OBLONG);
-            this.setPelt(PeltEnum.WOOL);
-        }
-        else if (this.species == SpeciesEnum.WOLF) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseHeight = 1.9;
-                this.baseWidth = 0.63;
+            case CreatureSubTypeEnum.HYENA: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 58;
+                    this.baseHeight = 1.6;
+                    this.baseWidth = 0.53;
+                }
+                else {
+                    this.baseWeight = 62;
+                    this.baseHeight = 1.75;
+                    this.baseWidth = 0.58;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            else {
-                this.baseWeight = 66;
-                this.baseHeight = 1.8;
-                this.baseWidth = 0.6;
+            case CreatureSubTypeEnum.STOAT: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 10;
+                    this.baseHeight = 0.6;
+                    this.baseWidth = 0.2;
+                }
+                else {
+                    this.baseWeight = 8;
+                    this.baseHeight = 0.5;
+                    this.baseWidth = 0.16;
+                }
+                this.size = SizeEnum.TINY;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.AARDWOLF) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 32;
-                this.baseHeight = 1.10;
-                this.baseWidth = 0.36;
+            case CreatureSubTypeEnum.DEER: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 78;
+                    this.baseHeight = 2.2;
+                    this.baseWidth = 0.7;
+                }
+                else {
+                    this.baseWeight = 60;
+                    this.baseHeight = 1.9;
+                    this.baseWidth = 0.6;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = false;
+                this.setPaws(PawEnum.HOOF);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.WOOL);
+                break;
             }
-            else {
-                this.baseWeight = 28;
-                this.baseHeight = 1.02;
-                this.baseWidth = 0.34;
+            case CreatureSubTypeEnum.RABBIT: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 22;
+                    this.baseHeight = 0.95;
+                    this.baseWidth = 0.34;
+                }
+                else {
+                    this.baseWeight = 14.9;
+                    this.baseHeight = 0.81;
+                    this.baseWidth = 0.3;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = false;
+                this.setPaws(PawEnum.FUR);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            this.size = SizeEnum.SMALL;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.HYENA) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 58;
-                this.baseHeight = 1.6;
-                this.baseWidth = 0.53;
+            case CreatureSubTypeEnum.JACKAL: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 55;
+                    this.baseHeight = 1.6;
+                    this.baseWidth = 0.53;
+                }
+                else {
+                    this.baseWeight = 51;
+                    this.baseHeight = 1.55;
+                    this.baseWidth = 0.5;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            else {
-                this.baseWeight = 62;
-                this.baseHeight = 1.75;
-                this.baseWidth = 0.58;
+            case CreatureSubTypeEnum.COYOTE: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 36;
+                    this.baseHeight = 1.20;
+                    this.baseWidth = 0.4;
+                }
+                else {
+                    this.baseWeight = 32;
+                    this.baseHeight = 1.12;
+                    this.baseWidth = 0.37;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.STOAT) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 10;
-                this.baseHeight = 0.6;
-                this.baseWidth = 0.2;
+            case CreatureSubTypeEnum.TIGER: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 88;
+                    this.baseHeight = 2.2;
+                    this.baseWidth = 0.73;
+                }
+                else {
+                    this.baseWeight = 82;
+                    this.baseHeight = 2.0;
+                    this.baseWidth = 0.66;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = true;
+                this.setPaws(PawEnum.PAD);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
+                break;
             }
-            else {
-                this.baseWeight = 8;
-                this.baseHeight = 0.5;
-                this.baseWidth = 0.16;
+            case CreatureSubTypeEnum.ANTELOPE: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 68;
+                    this.baseHeight = 2.0;
+                    this.baseWidth = 0.66;
+                }
+                else {
+                    this.baseWeight = 60;
+                    this.baseHeight = 1.9;
+                    this.baseWidth = 0.63;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = false;
+                this.setPaws(PawEnum.HOOF);
+                this.setEyeType(EyeEnum.OBLONG);
+                this.setPelt(PeltEnum.HAIR);
+                break;
             }
-            this.size = SizeEnum.TINY;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.DEER) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 78;
-                this.baseHeight = 2.2;
-                this.baseWidth = 0.7;
+            case CreatureSubTypeEnum.PIG: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 46;
+                    this.baseHeight = 1.3;
+                    this.baseWidth = 0.54;
+                }
+                else {
+                    this.baseWeight = 44;
+                    this.baseHeight = 1.2;
+                    this.baseWidth = 0.5;
+                }
+                this.size = SizeEnum.SMALL;
+                this.predator = false;
+                this.setPaws(PawEnum.HOOF);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.SKIN);
+                break;
             }
-            else {
-                this.baseWeight = 60;
-                this.baseHeight = 1.9;
-                this.baseWidth = 0.6;
+            case CreatureSubTypeEnum.HORSE: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 82;
+                    this.baseHeight = 2.0;
+                    this.baseWidth = 0.66;
+                }
+                else {
+                    this.baseWeight = 78;
+                    this.baseHeight = 1.9;
+                    this.baseWidth = 0.63;
+                }
+                this.size = SizeEnum.MEDIUM;
+                this.predator = false;
+                this.setPaws(PawEnum.HOOF);
+                this.setEyeType(EyeEnum.OBLONG);
+                this.setPelt(PeltEnum.HAIR);
+                break;
             }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = false;
-            this.setPaws(PawEnum.HOOF);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.WOOL);
-        }
-        else if (this.species == SpeciesEnum.RABBIT) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 22;
-                this.baseHeight = 0.95;
-                this.baseWidth = 0.34;
+            case CreatureSubTypeEnum.MOUSE: {
+                if (this.sex == SexEnum.MALE) {
+                    this.baseWeight = 0.4;
+                    this.baseHeight = 0.16;
+                    this.baseWidth = 0.05;
+                }
+                else {
+                    this.baseWeight = 0.4;
+                    this.baseHeight = 0.15;
+                    this.baseWidth = 0.05;
+                }
+                this.size = SizeEnum.DIMINUTIVE;
+                this.predator = false;
+                this.setPaws(PawEnum.SKIN);
+                this.setEyeType(EyeEnum.CIRCLE);
+                this.setPelt(PeltEnum.FUR);
             }
-            else {
-                this.baseWeight = 14.9;
-                this.baseHeight = 0.81;
-                this.baseWidth = 0.3;
-            }
-            this.size = SizeEnum.SMALL;
-            this.predator = false;
-            this.setPaws(PawEnum.FUR);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.JACKAL) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 55;
-                this.baseHeight = 1.6;
-                this.baseWidth = 0.53;
-            }
-            else {
-                this.baseWeight = 51;
-                this.baseHeight = 1.55;
-                this.baseWidth = 0.5;
-            }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.COYOTE) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 36;
-                this.baseHeight = 1.20;
-                this.baseWidth = 0.4;
-            }
-            else {
-                this.baseWeight = 32;
-                this.baseHeight = 1.12;
-                this.baseWidth = 0.37;
-            }
-            this.size = SizeEnum.SMALL;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.TIGER) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 88;
-                this.baseHeight = 2.2;
-                this.baseWidth = 0.73;
-            }
-            else {
-                this.baseWeight = 82;
-                this.baseHeight = 2.0;
-                this.baseWidth = 0.66;
-            }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = true;
-            this.setPaws(PawEnum.PAD);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
-        }
-        else if (this.species == SpeciesEnum.ANTELOPE) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 68;
-                this.baseHeight = 2.0;
-                this.baseWidth = 0.66;
-            }
-            else {
-                this.baseWeight = 60;
-                this.baseHeight = 1.9;
-                this.baseWidth = 0.63;
-            }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = false;
-            this.setPaws(PawEnum.HOOF);
-            this.setEyeType(EyeEnum.OBLONG);
-            this.setPelt(PeltEnum.HAIR);
-        }
-        else if (this.species == SpeciesEnum.PIG) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 46;
-                this.baseHeight = 1.3;
-                this.baseWidth = 0.54;
-            }
-            else {
-                this.baseWeight = 44;
-                this.baseHeight = 1.2;
-                this.baseWidth = 0.5;
-            }
-            this.size = SizeEnum.SMALL;
-            this.predator = false;
-            this.setPaws(PawEnum.HOOF);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.SKIN);
-        }
-        else if (this.species == SpeciesEnum.HORSE) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 82;
-                this.baseHeight = 2.0;
-                this.baseWidth = 0.66;
-            }
-            else {
-                this.baseWeight = 78;
-                this.baseHeight = 1.9;
-                this.baseWidth = 0.63;
-            }
-            this.size = SizeEnum.MEDIUM;
-            this.predator = false;
-            this.setPaws(PawEnum.HOOF);
-            this.setEyeType(EyeEnum.OBLONG);
-            this.setPelt(PeltEnum.HAIR);
-        }
-        else if (this.species == SpeciesEnum.MOUSE) {
-            if (this.sex == SexEnum.MALE) {
-                this.baseWeight = 0.4;
-                this.baseHeight = 0.16;
-                this.baseWidth = 0.05;
-            }
-            else {
-                this.baseWeight = 0.4;
-                this.baseHeight = 0.15;
-                this.baseWidth = 0.05;
-            }
-            this.size = SizeEnum.DIMINUTIVE;
-            this.predator = false;
-            this.setPaws(PawEnum.SKIN);
-            this.setEyeType(EyeEnum.CIRCLE);
-            this.setPelt(PeltEnum.FUR);
         }
         if (this.age > 19) {
             this.height = this.baseHeight;

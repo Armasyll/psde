@@ -306,34 +306,6 @@ FurnitureEnum = {
         }
     }
 };
-SpeciesEnum = {
-    NONE: 0,
-    SKELETON: 1,
-    FOX: 2,
-    SHEEP: 3,
-    properties: {
-        0: {
-            name: "None",
-            value: 0,
-            key: "NONE"
-        },
-        1: {
-            name: "Skeleton",
-            value: 1,
-            key: "SKELETON"
-        },
-        2: {
-            name: "Fox",
-            value: 2,
-            key: "FOX"
-        },
-        3: {
-            name: "Sheep",
-            value: 3,
-            key: "SHEEP"
-        }
-    }
-};
 ApparelSlotEnum = {
     NONE: 0,
     HEAD: 1,
@@ -2894,6 +2866,116 @@ SexualOrientationEnum = {
             name: "Asexual",
             value: 3,
             key: "ASEXUAL"
+        }
+    }
+}
+let CreatureTypeEnum = {
+    HUMANOID: 0,
+    ABERRATION: 1,
+    BEAST: 2,
+    CELESTIAL: 3,
+    CONSTRUCT: 4,
+    DRAGON: 5,
+    ELEMENTAL: 6,
+    FEY: 7,
+    FIEND: 8,
+    GIANT: 9,
+    MONSTROSITY: 10,
+    OOZE: 11,
+    PLANT: 12,
+    UNDEAD: 13,
+    properties: {
+        0: {
+            name: "Humanoid",
+            value: 0,
+            key: "HUMANOID"
+        },
+        1: {
+            name: "Aberration",
+            value: 1,
+            key: "ABERRATION"
+        },
+        2: {
+            name: "Beast",
+            value: 2,
+            key: "BEAST"
+        },
+        3: {
+            name: "Celestial",
+            value: 3,
+            key: "CELESTIAL"
+        },
+        4: {
+            name: "Construct",
+            value: 4,
+            key: "CONSTRUCT"
+        },
+        5: {
+            name: "Dragon",
+            value: 5,
+            key: "DRAGON"
+        },
+        6: {
+            name: "Elemental",
+            value: 6,
+            key: "ELEMENTAL"
+        },
+        7: {
+            name: "Fey",
+            value: 7,
+            key: "FEY"
+        },
+        8: {
+            name: "Fiend",
+            value: 8,
+            key: "FIEND"
+        },
+        9: {
+            name: "Giant",
+            value: 9,
+            key: "GIANT"
+        },
+        10: {
+            name: "Monstrosity",
+            value: 10,
+            key: "MONSTROSITY"
+        },
+        11: {
+            name: "Ooze",
+            value: 11,
+            key: "OOZE"
+        },
+        12: {
+            name: "Plant",
+            value: 12,
+            key: "PLANT"
+        },
+        13: {
+            name: "Undead",
+            value: 13,
+            key: "UNDEAD"
+        }
+    }
+}
+let CreatureSubTypeEnum = {
+    FOX: 0,
+    SKELETON: 1,
+    SHEEP: 2,
+    properties: {
+        0: {
+            name: "Fox",
+            value: 0,
+            key: "FOX"
+        },
+        1: {
+            name: "Skeleton",
+            value: 1,
+            key: "SKELETON"
+        },
+        2: {
+            name: "Sheep",
+            value: 2,
+            key: "SHEEP"
         }
     }
 }
