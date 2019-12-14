@@ -1,4 +1,4 @@
-EntityEnum = {
+let EntityEnum = {
     ABSTRACT: 0,
     ENTIY: 1,
     CHARACTER: 2,
@@ -44,7 +44,7 @@ EntityEnum = {
         }
     }
 };
-SexEnum = {
+let SexEnum = {
     NONE: 0,
     MALE: 1,
     FEMALE: 2,
@@ -66,7 +66,7 @@ SexEnum = {
         }
     }
 };
-StanceEnum = {
+let StanceEnum = {
     LAY: 0,
     SIT: 1,
     CROUCH: 2,
@@ -112,7 +112,7 @@ StanceEnum = {
         }
     }
 };
-ItemEnum = {
+let ItemEnum = {
     GENERAL: 0,
     APPAREL: 1,
     KEY: 2,
@@ -164,7 +164,7 @@ ItemEnum = {
         }
     }
 };
-FurnitureEnum = {
+let FurnitureEnum = {
     NONE: 0,
     CHAIR: 1,
     LOVESEAT: 2,
@@ -306,7 +306,7 @@ FurnitureEnum = {
         }
     }
 };
-ApparelSlotEnum = {
+let ApparelSlotEnum = {
     NONE: 0,
     HEAD: 1,
     EAR_L: 2,
@@ -556,7 +556,7 @@ ApparelSlotEnum = {
         }
     }
 };
-HandednessEnum = {
+let HandednessEnum = {
     NONE: 0,
     LEFT: 14,
     RIGHT: 15,
@@ -577,8 +577,8 @@ HandednessEnum = {
             key: "RIGHT"
         }
     }
-}
-PawEnum = {
+};
+let PawEnum = {
     NONE: 0,
     FUR: 1,
     PAD: 2,
@@ -612,7 +612,7 @@ PawEnum = {
         }
     }
 };
-EyeEnum = {
+let EyeEnum = {
     NONE: 0,
     CIRCLE: 1,
     SLIT: 2,
@@ -640,7 +640,7 @@ EyeEnum = {
         }
     }
 };
-PeltEnum = {
+let PeltEnum = {
     NONE: 0,
     SKIN: 1,
     FUR: 2,
@@ -674,7 +674,7 @@ PeltEnum = {
         }
     }
 };
-ActionEnum = {
+let ActionEnum = {
     NONE: 0,
     LAY: 1,
     SIT: 2,
@@ -810,7 +810,7 @@ ActionEnum = {
         }
     }
 };
-ConsumableEnum = {
+let ConsumableEnum = {
     FOOD: 0,
     DRINK: 1,
     MEDICINE: 2,
@@ -832,7 +832,7 @@ ConsumableEnum = {
         }
     }
 };
-SpecialPropertyEnum = {
+let SpecialPropertyEnum = {
     EXISTS: 0,
     LIVING: 2,
     DEAD: 3,
@@ -998,7 +998,7 @@ SpecialPropertyEnum = {
         }
     }
 };
-CharacterClassEnum = {
+let CharacterClassEnum = {
     CLASSLESS: 0,
     BARD: 1,
     CLERIC: 2,
@@ -1074,7 +1074,7 @@ CharacterClassEnum = {
         }
     }
 };
-SpellTypeEnum = {
+let SpellTypeEnum = {
     UNIVERSAL: 9,
     ABJURATION: 1,
     CONJURATION: 2,
@@ -1132,7 +1132,7 @@ SpellTypeEnum = {
         }
     }
 };
-ArmourCategoryEnum = {
+let ArmourCategoryEnum = {
     LIGHT_ARMOUR: 0,
     LIGHT_ARMOR: 0,
     MEDIUM_ARMOUR: 1,
@@ -1162,9 +1162,9 @@ ArmourCategoryEnum = {
             key: "SHIELD"
         }
     }
-}
-ArmorCategoryEnum = ArmourCategoryEnum;
-ArmourEnum = {
+};
+let ArmorCategoryEnum = ArmourCategoryEnum;
+let ArmourEnum = {
     NONE: 0,
     PADDED: 1,
     LEATHER: 2,
@@ -1237,9 +1237,9 @@ ArmourEnum = {
             value: 13,
         }
     }
-}
-ArmorEnum = ArmourEnum;
-DamageEnum = {
+};
+let ArmorEnum = ArmourEnum;
+let DamageEnum = {
     BLUDGEONING: 0,
     ACID: 1,
     COLD: 2,
@@ -1320,8 +1320,8 @@ DamageEnum = {
             key: "THUNDER"
         }
     }
-}
-WeaponCategoryEnum = {
+};
+let WeaponCategoryEnum = {
     SIMPLE_MELEE: 0,
     SIMPLE_RANGED: 1,
     MARTIAL_MELEE: 2,
@@ -1348,8 +1348,8 @@ WeaponCategoryEnum = {
             key: "MARTIAL_RANGED"
         }
     }
-}
-WeaponEnum = {
+};
+let WeaponEnum = {
     NONE: 0,
     CLUB: 1,
     DAGGER: 2,
@@ -1598,8 +1598,8 @@ WeaponEnum = {
             key: "SHOTGUN"
         },
     }
-}
-WeaponPropertyEnum = {
+};
+let WeaponPropertyEnum = {
     NONE: 0,
     AMMUNITION: 1,
     FINESSE: 2,
@@ -1674,8 +1674,8 @@ WeaponPropertyEnum = {
             key: "VERSATILE"
         }
     }
-}
-ArcaneFocusEnum = {
+};
+let ArcaneFocusEnum = {
     NONE: 0,
     CRYSTAL: 1,
     ORB: 2,
@@ -1714,8 +1714,8 @@ ArcaneFocusEnum = {
             key: "WAND"
         }
     }
-}
-InterfaceModeEnum = {
+};
+let InterfaceModeEnum = {
     NONE: 0,
     CHARACTER: 1,
     DIALOGUE: 2,
@@ -1748,8 +1748,8 @@ InterfaceModeEnum = {
             value: 5
         }
     }
-}
-RollEnum = {
+};
+let RollEnum = {
     TOTAL: 0,
     MIN: 1,
     AVG: 2,
@@ -1772,8 +1772,8 @@ RollEnum = {
             value: 3
         },
     }
-}
-ConditionEnum = {
+};
+let ConditionEnum = {
     NONE: 0,
     ABILITY_DAMAGED: 1,
     ABILITY_DRAINED: 2,
@@ -1971,8 +1971,8 @@ ConditionEnum = {
             value: 38
         }
     }
-}
-CellTypeEnum = {
+};
+let CellTypeEnum = {
     NONE: 0,
     OVERWORLD: 1,
     LIMBO: 2,
@@ -1990,8 +1990,8 @@ CellTypeEnum = {
             value: 2
         }
     }
-}
-AbilityEnum = {
+};
+let AbilityEnum = {
     STRENGTH: 0,
     DEXTERITY: 1,
     CONSTITUTION: 2,
@@ -2030,8 +2030,8 @@ AbilityEnum = {
             key: "CHARISMA"
         }
     }
-}
-ProficiencyEnum = {
+};
+let ProficiencyEnum = {
     NONE: 0,
     ABYSSAL: 1,
     ACROBATICS: 2,
@@ -2748,8 +2748,8 @@ ProficiencyEnum = {
             key: "WOODCARVERS_TOOLS"
         }
     }
-}
-SpellComponentEnum = {
+};
+let SpellComponentEnum = {
     NONE: 0,
     VERBAL: 1,
     SOMATIC: 2,
@@ -2776,8 +2776,8 @@ SpellComponentEnum = {
             key: "MATERIAL"
         },
     }
-}
-SizeEnum = {
+};
+let SizeEnum = {
     FINE: 0,
     DIMINUTIVE: 1,
     TINY: 2,
@@ -2840,8 +2840,8 @@ SizeEnum = {
             key: "COLOSSAL"
         }
     }
-}
-SexualOrientationEnum = {
+};
+let SexualOrientationEnum = {
     STRAIGHT: 0,
     GAY: 1,
     BISEXUAL: 2,
@@ -2868,7 +2868,7 @@ SexualOrientationEnum = {
             key: "ASEXUAL"
         }
     }
-}
+};
 let CreatureTypeEnum = {
     HUMANOID: 0,
     ABERRATION: 1,
@@ -2956,7 +2956,7 @@ let CreatureTypeEnum = {
             key: "UNDEAD"
         }
     }
-}
+};
 let CreatureSubTypeEnum = {
     FOX: 0,
     SKELETON: 1,
@@ -2978,4 +2978,4 @@ let CreatureSubTypeEnum = {
             key: "SHEEP"
         }
     }
-}
+};
