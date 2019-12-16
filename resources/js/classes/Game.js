@@ -287,7 +287,9 @@ class Game {
             "animatedChest01":"resources/meshes/animatedChest01.babylon",
             "apple01":"resources/meshes/fruits.babylon",
             "dekuShield":"resources/meshes/items/dekuShield.babylon",
-            "kokiriSword":"resources/meshes/items/kokiriSword.babylon"
+            "kokiriSword":"resources/meshes/items/kokiriSword.babylon",
+            "cheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon",
+            "grilledCheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -388,7 +390,9 @@ class Game {
             "oblongEyeGreen":"resources/images/textures/items/oblongEyeGreen.svg",
             "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg",
             "dekuShield":"resources/images/textures/items/dekuShield.png",
-            "kokiriSword":"resources/images/textures/items/kokiriSword.svg"
+            "kokiriSword":"resources/images/textures/items/kokiriSword.svg",
+            "cheeseSandwich01":"resources/images/textures/items/cheeseSandwich.svg",
+            "grilledCheeseSandwich01":"resources/images/textures/items/grilledCheeseSandwich.svg"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -518,7 +522,9 @@ class Game {
             "battleAxe01Icon":"resources/images/icons/items/battleAxe01.png",
             "forgeHammer01Icon":"resources/images/icons/items/forgeHammer01.png",
             "forgeHammer02Icon":"resources/images/icons/items/forgeHammer02.png",
-            "cudgel01Icon":"resources/images/icons/items/cudgel01.png"
+            "cudgel01Icon":"resources/images/icons/items/cudgel01.png",
+            "cheeseSandwich01Icon":"resources/images/icons/items/cheeseSandwich01Icon.png",
+            "grilledCheeseSandwich01Icon":"resources/images/icons/items/grilledCheeseSandwich01Icon.png"
         };
         /**
          * Map of Sound file locations per ID; one to one
