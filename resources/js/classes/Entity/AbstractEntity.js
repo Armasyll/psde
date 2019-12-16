@@ -530,6 +530,9 @@ class AbstractEntity {
         delete AbstractEntity.abstractEntityList[id];
         return 0;
     }
+    static list() {
+        return AbstractEntity.abstractEntityList;
+    }
     static clear() {
         for (let i in AbstractEntity.abstractEntityList) {
             AbstractEntity.abstractEntityList[i].dispose();

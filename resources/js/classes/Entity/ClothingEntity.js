@@ -221,6 +221,9 @@ class ClothingEntity extends EquipmentEntity {
         delete ClothingEntity.clothingEntityList[id];
         return 0;
     }
+    static list() {
+        return ClothingEntity.clothingEntityList;
+    }
     static clear() {
         for (let i in ClothingEntity.clothingEntityList) {
             ClothingEntity.clothingEntityList[i].dispose();

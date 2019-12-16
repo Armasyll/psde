@@ -47,6 +47,9 @@ class InstancedItemEntity extends InstancedEntity {
         delete InstancedItemEntity.instancedItemEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedItemEntity.instancedItemEntityList;
+    }
     static clear() {
         for (let i in InstancedItemEntity.instancedItemEntityList) {
             InstancedItemEntity.instancedItemEntityList[i].dispose();

@@ -36,6 +36,9 @@ class KeyEntity extends ItemEntity {
         delete KeyEntity.keyEntityList[id];
         return 0;
     }
+    static list() {
+        return KeyEntity.keyEntityList;
+    }
     static clear() {
         for (let i in KeyEntity.keyEntityList) {
             KeyEntity.keyEntityList[i].dispose();

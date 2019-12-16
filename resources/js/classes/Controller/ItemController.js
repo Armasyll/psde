@@ -34,6 +34,9 @@ class ItemController extends EntityController {
         delete ItemController.itemControllerList[id];
         return 0;
     }
+    static list() {
+        return ItemController.itemControllerList;
+    }
     static clear() {
         for (let i in ItemController.itemControllerList) {
             ItemController.itemControllerList[i].dispose();

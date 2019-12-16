@@ -98,6 +98,9 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         delete InstancedWeaponEntity.instancedWeaponEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedWeaponEntity.instancedWeaponEntityList;
+    }
     static clear() {
         for (let i in InstancedWeaponEntity.instancedWeaponEntityList) {
             InstancedWeaponEntity.instancedWeaponEntityList[i].dispose();

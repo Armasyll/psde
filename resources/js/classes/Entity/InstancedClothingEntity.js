@@ -57,6 +57,9 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
         delete InstancedClothingEntity.instancedClothingEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedClothingEntity.instancedClothingEntityList;
+    }
     static clear() {
         for (let i in InstancedClothingEntity.instancedClothingEntityList) {
             InstancedClothingEntity.instancedClothingEntityList[i].dispose();

@@ -2035,6 +2035,9 @@ class CharacterEntity extends Entity {
         delete CharacterEntity.characterEntityList[id];
         return 0;
     }
+    static list() {
+        return CharacterEntity.characterEntityList;
+    }
     static clear() {
         for (let i in CharacterEntity.characterEntityList) {
             CharacterEntity.characterEntityList[i].dispose();

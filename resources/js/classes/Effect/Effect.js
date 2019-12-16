@@ -91,6 +91,9 @@ class Effect {
         delete Effect.effectList[id];
         return 0;
     }
+    static list() {
+        return Effect.effectList;
+    }
     static clear() {
         for (let i in Effect.effectList) {
             Effect.effectList[i].dispose();

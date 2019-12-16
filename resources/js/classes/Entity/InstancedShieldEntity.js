@@ -44,6 +44,9 @@ class InstancedShieldEntity extends InstancedClothingEntity {
         delete InstancedShieldEntity.instancedShieldEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedShieldEntity.instancedShieldEntityList;
+    }
     static clear() {
         for (let i in InstancedShieldEntity.instancedShieldEntityList) {
             InstancedShieldEntity.instancedShieldEntityList[i].dispose();

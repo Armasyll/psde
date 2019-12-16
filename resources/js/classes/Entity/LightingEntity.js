@@ -85,6 +85,9 @@ class LightingEntity extends FurnitureEntity {
         delete LightingEntity.lightingEntityList[id];
         return 0;
     }
+    static list() {
+        return LightingEntity.lightingEntityList;
+    }
     static clear() {
         for (let i in LightingEntity.lightingEntityList) {
             LightingEntity.lightingEntityList[i].dispose();

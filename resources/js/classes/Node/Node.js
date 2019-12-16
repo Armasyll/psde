@@ -83,6 +83,9 @@ class Node {
         delete Node.nodeList[id];
         return 0;
     }
+    static list() {
+        return Node.nodeList;
+    }
     static clear() {
         for (let i in Node.nodeList) {
             Node.nodeList[i].dispose();

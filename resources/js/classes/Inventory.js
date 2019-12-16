@@ -310,6 +310,9 @@ class Inventory {
         delete Inventory.inventoryList[id];
         return 0;
     }
+    static list() {
+        return Inventory.inventoryList;
+    }
     static clear() {
         for (let i in Inventory.inventoryList) {
             Inventory.inventoryList[i].dispose();

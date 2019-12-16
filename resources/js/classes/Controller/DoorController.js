@@ -65,6 +65,9 @@ class DoorController extends EntityController {
         delete DoorController.doorControllerList[id];
         return 0;
     }
+    static list() {
+        return DoorController.doorControllerList;
+    }
     static clear() {
         for (let i in DoorController.doorControllerList) {
             DoorController.doorControllerList[i].dispose();

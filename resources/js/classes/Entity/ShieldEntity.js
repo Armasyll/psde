@@ -69,6 +69,9 @@ class ShieldEntity extends ClothingEntity {
         delete ShieldEntity.shieldEntityList[id];
         return 0;
     }
+    static list() {
+        return ShieldEntity.shieldEntityList;
+    }
     static clear() {
         for (let i in ShieldEntity.shieldEntityList) {
             ShieldEntity.shieldEntityList[i].dispose();

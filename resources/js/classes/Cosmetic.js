@@ -112,6 +112,9 @@ class Cosmetic {
         delete Cosmetic.cosmeticList[id];
         return 0;
     }
+    static list() {
+        return Cosmetic.cosmeticList;
+    }
     static clear() {
         for (let i in Cosmetic.cosmeticList) {
             Cosmetic.cosmeticList[i].dispose();

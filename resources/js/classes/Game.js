@@ -391,8 +391,8 @@ class Game {
             "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg",
             "dekuShield":"resources/images/textures/items/dekuShield.png",
             "kokiriSword":"resources/images/textures/items/kokiriSword.svg",
-            "cheeseSandwich01":"resources/images/textures/items/cheeseSandwich.svg",
-            "grilledCheeseSandwich01":"resources/images/textures/items/grilledCheeseSandwich.svg"
+            "cheeseSandwich01":"resources/images/textures/items/cheeseSandwich01.svg",
+            "grilledCheeseSandwich01":"resources/images/textures/items/grilledCheeseSandwich01.svg"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -3769,12 +3769,11 @@ class Game {
         if (command.slice(0, 1) == "/") {
             command = command.slice(1);
         }
-        command = String(command).toLowerCase();
         let commandArray = command.split(" ");
-        if (commandArray.length == 0) {
+        if (commandArray.length == 0 || typeof commandArray[0] != "string" || commandArray[0].length <= 0) {
             commandArray.push("help");
         }
-        switch (commandArray[0]) {
+        switch (commandArray[0].toLowerCase()) {
             case "help" : {
                 Game.gui.chat.appendOutput("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
@@ -3804,14 +3803,22 @@ class Game {
             case "load" : {
                 break;
             }
+            case "additem" : {
+                for (let i = 1; i < commandArray.length; i++) {
+                    if (ItemEntity.has(commandArray[i])) {
+                        Game.player.addItem(commandArray[i]);
+                    }
+                }
+                break;
+            }
             case "addallitems" : {
-                for (let i in Game.itemEntities) {
+                for (let i in ItemEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;
             }
             case "addallweapons" : {
-                for (let i in Game.weaponEntities) {
+                for (let i in WeaponEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;
@@ -3819,7 +3826,7 @@ class Game {
             case "addallarmour" :
             case "addallarmor" :
             case "addallclothing" : {
-                for (let i in Game.clothingEntities) {
+                for (let i in ClothingEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;

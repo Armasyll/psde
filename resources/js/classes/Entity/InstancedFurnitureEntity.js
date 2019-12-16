@@ -67,6 +67,9 @@ class InstancedFurnitureEntity extends InstancedEntity {
         delete InstancedFurnitureEntity.instancedFurnitureEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedFurnitureEntity.instancedFurnitureEntityList;
+    }
     static clear() {
         for (let i in InstancedFurnitureEntity.instancedFurnitureEntityList) {
             InstancedFurnitureEntity.instancedFurnitureEntityList[i].dispose();

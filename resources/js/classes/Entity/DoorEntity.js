@@ -125,6 +125,9 @@ class DoorEntity extends Entity {
         delete DoorEntity.doorEntityList[id];
         return 0;
     }
+    static list() {
+        return DoorEntity.doorEntityList;
+    }
     static clear() {
         for (let i in DoorEntity.doorEntityList) {
             DoorEntity.doorEntityList[i].dispose();

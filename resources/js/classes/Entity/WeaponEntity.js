@@ -564,6 +564,9 @@ class WeaponEntity extends EquipmentEntity {
         delete WeaponEntity.weaponEntityList[id];
         return 0;
     }
+    static list() {
+        return WeaponEntity.weaponEntityList;
+    }
     static clear() {
         for (let i in WeaponEntity.weaponEntityList) {
             WeaponEntity.weaponEntityList[i].dispose();

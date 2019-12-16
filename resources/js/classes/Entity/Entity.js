@@ -310,6 +310,9 @@ class Entity extends AbstractEntity {
         delete Entity.entityList[id];
         return 0;
     }
+    static list() {
+        return Entity.entityList;
+    }
     static clear() {
         for (let i in Entity.entityList) {
             Entity.entityList[i].dispose();

@@ -430,6 +430,9 @@ class InstancedEntity extends AbstractEntity {
         delete InstancedEntity.instancedEntityList[id];
         return 0;
     }
+    static list() {
+        return InstancedEntity.instancedEntityList;
+    }
     static clear() {
         for (let i in InstancedEntity.instancedEntityList) {
             InstancedEntity.instancedEntityList[i].dispose();

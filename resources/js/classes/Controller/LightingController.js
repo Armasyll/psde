@@ -55,6 +55,9 @@ class LightingController extends FurnitureController {
         delete LightingController.lightingControllerList[id];
         return 0;
     }
+    static list() {
+        return LightingController.lightingControllerList;
+    }
     static clear() {
         for (let i in LightingController.lightingControllerList) {
             LightingController.lightingControllerList[i].dispose();

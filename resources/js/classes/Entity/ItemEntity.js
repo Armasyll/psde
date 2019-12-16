@@ -81,6 +81,9 @@ class ItemEntity extends Entity {
         delete ItemEntity.itemEntityList[id];
         return 0;
     }
+    static list() {
+        return ItemEntity.itemEntityList;
+    }
     static clear() {
         for (let i in ItemEntity.itemEntityList) {
             ItemEntity.itemEntityList[i].dispose();

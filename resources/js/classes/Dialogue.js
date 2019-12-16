@@ -187,6 +187,9 @@ class Dialogue {
         delete Dialogue.dialogueList[id];
         return 0;
     }
+    static list() {
+        return Dialogue.dialogueList;
+    }
     static clear() {
         for (let i in Dialogue.dialogueList) {
             Dialogue.dialogueList[i].dispose();

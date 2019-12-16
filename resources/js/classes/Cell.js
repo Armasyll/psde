@@ -533,6 +533,9 @@ class Cell {
         delete Cell.cellList[id];
         return 0;
     }
+    static list() {
+        return Cell.cellList;
+    }
     static clear() {
         for (let i in Cell.cellList) {
             Cell.cellList[i].dispose();

@@ -207,6 +207,9 @@ class FurnitureEntity extends Entity {
         delete FurnitureEntity.furnitureEntityList[id];
         return 0;
     }
+    static list() {
+        return FurnitureEntity.furnitureEntityList;
+    }
     static clear() {
         for (let i in FurnitureEntity.furnitureEntityList) {
             FurnitureEntity.furnitureEntityList[i].dispose();

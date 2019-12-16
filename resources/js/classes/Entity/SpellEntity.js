@@ -166,6 +166,9 @@ class SpellEntity extends AbstractEntity {
         delete SpellEntity.spellEntityList[id];
         return 0;
     }
+    static list() {
+        return SpellEntity.spellEntityList;
+    }
     static clear() {
         for (let i in SpellEntity.spellEntityList) {
             SpellEntity.spellEntityList[i].dispose();
