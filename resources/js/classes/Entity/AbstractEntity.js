@@ -487,6 +487,7 @@ class AbstractEntity {
         this.essentialOffset = false;
         this.healthOffset = 0;
         this.healthMaxOffset = 0;
+        return 0;
     }
 
     dispose() {

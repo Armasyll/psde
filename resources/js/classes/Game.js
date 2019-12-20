@@ -1006,10 +1006,10 @@ class Game {
      * @param {string} name 
      * @param {string} [description] 
      * @param {string} [iconID] Icon ID
-     * @param {number} age 
-     * @param {SexEnum} sex 
      * @param {CreatureTypeEnum} creatureType Creature Type
      * @param {CreatureSubTypeEnum} creatureSubType Creture Sub-Type
+     * @param {SexEnum} sex 
+     * @param {number} age 
      * @param {string} meshID Mesh ID
      * @param {string} [materialID] Material ID
      * @param {BABYLON.Vector3} position 
@@ -1017,13 +1017,13 @@ class Game {
      * @param {BABYLON.Vector3} [scaling] 
      * @param {object} [options] 
      */
-    static createPlayer(id = "", name = "", description = "", iconID = undefined, age = 18, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+    static createPlayer(id = "", name = "", description = "", iconID = undefined, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (Game.debugMode) console.log("Running createPlayer");
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let characterEntity = Game.createCharacterEntity(id, name, description, iconID, age, sex, creatureType, creatureSubType, meshID, materialID, options);
+        let characterEntity = Game.createCharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, meshID, materialID, options);
         let characterController = Game.createCharacterInstance(id, characterEntity, position, rotation, scaling, options);
         if (characterController instanceof CharacterEntity && characterController.hasController() && characterController.getController().hasMesh()) {
             Game.assignPlayer(characterEntity);
@@ -2686,21 +2686,21 @@ class Game {
      * @param {string} name Name
      * @param {string} [description] Description
      * @param {string} [iconID] Icon ID
-     * @param {number} [age] Age
-     * @param {SexEnum} [sex] SexEnum
      * @param {CreatureTypeEnum} [creatureType] Creature Type
      * @param {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type
+     * @param {SexEnum} [sex] SexEnum
+     * @param {number} [age] Age
      * @param {string} meshID Mesh ID
      * @param {string} materialID Material ID
      * @param {object} [options] Options
      */
-    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", age = 18, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, meshID = "missingMesh", materialID = "missingMaterial", options = {}) {
+    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", options = {}) {
         id = Tools.filterID(id);
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${age}, ${sex}, ${creatureType}, ${creatureSubType}, ${meshID}, ${materialID})`);
-        let characterEntity = new CharacterEntity(id, name, description, iconID, undefined, age, sex, creatureType, creatureSubType);
+        if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
+        let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
         if (typeof options == "object") {
             for (let i in options) {
                 switch (i) {

@@ -6,6 +6,7 @@ let EntityEnum = {
     FURNITURE: 4,
     DOOR: 5,
     SPELL: 6,
+    CREATURE: 7,
     properties: {
         0: {
             name: "Abstract",
@@ -41,6 +42,11 @@ let EntityEnum = {
             name: "Spell",
             value: 6,
             key: "SPELL"
+        },
+        7: {
+            name: "Creature",
+            value: 7,
+            key: "CREATURE"
         }
     }
 };

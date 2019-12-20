@@ -1,54 +1,24 @@
-class CharacterEntity extends Entity {
+class CharacterEntity extends CreatureEntity {
     /**
      * Creates a CharacterEntity
      * @param  {string} id Unique ID
      * @param  {string} name Name
      * @param  {string} [description] Description
      * @param  {string} [iconID] Icon ID
-     * @param  {CharacterClassEnum} [characterClass] CharacterClassEnum
-     * @param  {number} [age] Age
-     * @param  {SexEnum} [sex] SexEnum
      * @param  {CreatureTypeEnum} [creatureType] Creature Type
      * @param  {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type; dependant upon creatureType
+     * @param  {SexEnum} [sex] SexEnum
+     * @param  {number} [age] Age
+     * @param  {CharacterClassEnum} [characterClass] CharacterClassEnum
      */
-    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", characterClass = CharacterClassEnum.CLASSLESS, age = 33, sex = SexEnum.MALE, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX) {
-        super(id);
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, characterClass = CharacterClassEnum.CLASSLESS) {
+        super(id, name, description, iconID, creatureType, creatureSubType, sex, age);
         this.entityType = EntityEnum.CHARACTER;
-        this.name = "";
         this.surname = "";
         this.nickname = "";
-        this.characterClass = CharacterClassEnum.CLASSLESS;
-        this.age = 18;
-        this.sex = SexEnum.MALE;
         this.gender = SexEnum.MALE;
-        this.creatureType = 0;
-        this.creatureSubType = 0;
-        /*
-         Undead Fox Skeleton is a little hard to write out programatically.
-        think of it like a Gnoll: Humanoid, Gnoll, or a Dragon: Dragon, Gold.
-        now make the gnoll a zombie; Undead, Zombie, (Gnoll), or Undead, Dragon, (Gold)
-        how do I program that without redefining what a zombie is for each race?
-        */
-        /*
-         If creatureType is undead, 
-        this should be the creatureType this was before it became undead
-        */
-        this.specialCreatureType = 0;
-        /*
-         If the creatureType is undead and creatureSubType is 
-        ghost, ghoul, skeleton, or zombie, 
-        this should be the creatureSubType it was before it became undead
-        */
-        this.specialCreatureSubType = 0;
-        this.currentActions = {};
-        this.stance = ActionEnum.STAND;
-        this.cantripsKnown = new Set();
-        this.cantripsKnownLimit = 0;
-        this.spellsKnown = new Set();
-        this.spellsKnownLimit = 0;
-        this.spellSlots = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-        this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
         this.handedness = HandednessEnum.RIGHT;
+        this.characterClass = CharacterClassEnum.CLASSLESS;
         /**
          * Attached cosmetics
          * @type {<number, [Cosmetics]>} Bone ID and Cosmetic
@@ -109,74 +79,6 @@ class CharacterEntity extends Entity {
             obsession:0,
             hate:0
         };
-        this.alerted = false;
-        /**
-         * Hunger; may affect health regeneration
-         * @type {number} 0 to 100
-         */
-        this.hunger = 0;
-        this.hungerOffset = 0;
-        /**
-         * Physical power
-         * @type {number}
-         */
-        this.strength = 10;
-        this.strengthOffset = 0;
-        /**
-         * Agility
-         * @type {number}
-         */
-        this.dexterity = 10;
-        this.dexterityOffset = 0;
-        /**
-         * Endurance
-         * @type {number}
-         */
-        this.constitution = 10;
-        this.constitutionOffset = 0;
-        /**
-         * Reasoning and memory
-         * @type {number}
-         */
-        this.intelligence = 10;
-        this.intelligenceOffset = 0;
-        /**
-         * Perception and insight
-         * @type {number}
-         */
-        this.wisdom = 10;
-        this.wisdomOffset = 0;
-        /**
-         * Force of personality
-         * @type {number}
-         */
-        this.charisma = 10;
-        this.charismaOffset = 0;
-
-        this.armourClass = 0;
-
-        this.level = 1;
-        this.experiencePoints = 0;
-        this.nonLethalDamage = 0;
-        /**
-         * Money
-         * @type {number} 0 to Number.MAX_SAFE_INTEGER
-         */
-        this.money = 0;
-        /**
-         * Living; updated by this.setHealth()
-         * @type {boolean} True - living, false - dead
-         */
-        this.living = true;
-        this.conscious = true;
-        this.paralyzed = false;
-        /**
-         * Size
-         * @type {SizeEnum}
-         */
-        this.size = SizeEnum.SMALL;
-        this.armed = false;
-        this.armedOffset = false;
         /**
          * Primary fur colour
          * @type {string}
@@ -197,41 +99,6 @@ class CharacterEntity extends Entity {
          * @type {string}
          */
         this.furColourBHex = undefined;
-        /**
-         * Average weight, in kilograms, of creature; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.baseWeight = 36;
-        /**
-         * Average height, in metres, of creature; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.baseHeight = 1.20;
-        /**
-         * Average width, in metres, of creature; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.baseWidth = 0.4;
-        /**
-         * Weight, in kilograms; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.weight = 36;
-        /**
-         * Height, in mtres; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.height = 1.2;
-        /**
-         * Width, in metres; updated by this.generateProperties()
-         * @type {number}
-         */
-        this.width = 0.34;
-        /**
-         * Whether or not this CharacterEntity is a predator
-         * @type {boolean} True - predator, false - prey
-         */
-        this.predator = true;
         /**
          * Paw type
          * @type {number} (PawEnum)
@@ -277,6 +144,7 @@ class CharacterEntity extends Entity {
 
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
 
+        // TODO: work this out
         this.proficiencies = new Set();
         this.proficiencyOffset = 0;
 
@@ -284,9 +152,7 @@ class CharacterEntity extends Entity {
         this.setIcon(iconID);
         this.setClass(characterClass);
         this.setAge(age);
-        this.setSex(sex);
         this.setGender(sex);
-        this.setCreatureType(creatureType);
         this.addAvailableAction(ActionEnum.ATTACK);
         this.addAvailableAction(ActionEnum.HOLD);
         this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
@@ -745,327 +611,20 @@ class CharacterEntity extends Entity {
 
     /**
      * Removes an InstancedItemEntity from this entity's Item array
-     * @override super.removeItem
-     * @param  {InstancedItemEntity} _abstractEntity InstancedItemEntity, or ItemEntity, to be removed
+     * @override
+     * @param  {InstancedItemEntity} any InstancedItemEntity, or ItemEntity, to be removed
      * @return {this}
      */
-    removeItem(_abstractEntity) {
-        if (_abstractEntity instanceof AbstractEntity) {
-            this.unequipByInstancedEntity(_abstractEntity);
-            return super.removeItem(_abstractEntity);
+    removeItem(any) {
+        if (!this.hasInventory()) {
+            return 1;
         }
-        let _instancedItem = InstancedItemEntity.get(_abstractEntity);
-        if (_instancedItem instanceof InstancedItemEntity) {
-            return this.removeItem(_instancedItem);
+        any = this.inventory.getItem(any);
+        if (any instanceof AbstractEntity) {
+            this.unequipByInstancedEntity(any);
+            return super.removeItem(any);
         }
-        _instancedItem = ItemEntity.get(_abstractEntity);
-        if (_instancedItem instanceof ItemEntity) {
-            return this.removeItem(_instancedItem);
-        }
-        if (Game.debugMode) console.log(`Failed to remove item ${_abstractEntity} to ${this.id}`);
-        return 1;
-    }
-
-    setAge(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.age = number;
-        return this;
-    }
-    addAge(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.age += number;
-    }
-    getAge() {
-        return this.age;
-    }
-
-    setHunger(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 0;}
-        else {number = number|0}
-        this.hunger = number;
-        return this;
-    }
-    addHunger(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.hunger -= number;
-        return this;
-    }
-    subtractHunger(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.hunger -= number;
-        return this;
-    }
-    getHunger() {
-        return this.hunger + this.hungerOffset;
-    }
-
-    setStrength(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.strength = number;
-        return this;
-    }
-    addStrength(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.strength += number;
-        return this;
-    }
-    subtractStrength(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.strength -= number;
-        return this;
-    }
-    getStrength() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.strength + this.strengthOffset;
-    }
-    setDexterity(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.dexterity = number;
-        return this;
-    }
-    addDexterity(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.dexterity += number;
-        return this;
-    }
-    subtractDexterity(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.dexterity -= number;
-        return this;
-    }
-    getDexterity() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.dexterity + this.dexterityOffset;
-    }
-    setConstitution(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.constitution = number;
-        return this;
-    }
-    addConstitution(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.constitution += number;
-        return this;
-    }
-    subtractConstitution(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.constitution -= number;
-        return this;
-    }
-    getConstitution() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.constitution + this.constitutionOffset;
-    }
-    setIntelligence(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.intelligence = number;
-        return this;
-    }
-    addIntelligence(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.intelligence += number;
-        return this;
-    }
-    subtractIntelligence(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.intelligence -= number;
-        return this;
-    }
-    getIntelligence() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.intelligence + this.intelligenceOffset;
-    }
-    setWisdom(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.wisdom = number
-        return this;
-    }
-    addWisdom(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.wisdom += number;
-        return this;
-    }
-    subtractWisdom(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.wisdom -= number;
-        return this;
-    }
-    getWisdom() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.wisdom + this.wisdomOffset;
-    }
-    setCharisma(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.charisma = number;
-        return this;
-    }
-    addCharisma(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.charisma += number;
-        return this;
-    }
-    subtractCharisma(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.charisma -= number;
-        return this;
-    }
-    getCharisma() {
-        if (this.getGodMode()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.charisma + this.charismaOffset;
-    }
-    /**
-     * Sets CharacterEntity ability scores
-     * @param {number} strength Strength, physical power
-     * @param {number} dexterity Dexterity, agility
-     * @param {number} constitution Constitution, endurance
-     * @param {number} intelligence Intelligence, reasoning and memory
-     * @param {number} wisdom Wisdom, perception and insight
-     * @param {number} charisma Charisma, force of personality
-     */
-    setAbilityScores(strength = 10, dexterity = 10, intelligence = 10, constitution = 10, wisdom = 12, charisma = 10) {
-        this.setStrength(strength);
-        this.setDexterity(dexterity);
-        this.setConstitution(constitution);
-        this.setIntelligence(intelligence);
-        this.setWisdom(wisdom);
-        this.setCharisma(charisma);
-        return this;
-    }
-    getAbilityScores() {
-        return {
-            strength: this.strength,
-            dexterity: this.dexterity,
-            constitution: this.constitution,
-            intelligence: this.intelligence,
-            wisdom: this.wisdom,
-            charisma: this.charisma
-        };
-    }
-
-    getLevel() {
-        return this.level;
-    }
-    setXP(number = 0) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.experiencePoints = number;
-        this.level = Game.calculateLevel(this.experiencePoints);
-        return this;
-    }
-    addXP(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setXP(this.experiencePoints + number);
-        }
-        return this;
-    }
-    subtractXP(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setXP(this.experiencePoints - number);
-        }
-        return this;
-    }
-    getXP() {
-        return this.experiencePoints;
-    }
-
-    setNonLethalDamage(number = 0) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (this.getGodMode()) {
-            this.nonLethalDamage = 0;
-            return this;
-        }
-        this.nonLethalDamage = number;
-        if (this.getNonLethalDamage() > this.getHealth()) {
-            this.conscious = false;
-            if (this.hasController()) {
-                this.setStance(StanceEnum.LAY);
-                this.controller.doLay();
-            }
-        }
-        return this;
-    }
-    addNonLethalDamage(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setNonLethalDamage(this.nonLethalDamage + number);
-    }
-    subtractNonLethalDamage(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setNonLethalDamage(this.nonLethalDamage - number);
-    }
-    getNonLethalDamage() {
-        return this.nonLethalDamage;
-    }
-
-    setMoney(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.money = number;
-        return this;
-    }
-    addMoney(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setMoney(this.money + number);
-    }
-    subtractMoney(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setMoney(this.money - number);
-    }
-    getMoney() {
-        return this.money;
-    }
-
-    setSex(sex = SexEnum.MALE) {
-        if (SexEnum.properties.hasOwnProperty(sex)) {
-            this.sex = sex;
-            return 0;
-        }
-        return 2;
-    }
-    getSex() {
-        return this.sex;
+        return 0;
     }
 
     setGender(gender = SexEnum.MALE) {
@@ -1234,54 +793,6 @@ class CharacterEntity extends Entity {
         return this.unequip(_instancedItemEntity);
     }
 
-    setStance(stance = ActionEnum.STAND) {
-        if (this.stance == stance) {
-            return 0;
-        }
-        if (ActionEnum.properties.hasOwnProperty(stance)) {
-            this.stance = stance;
-            if (this.hasController()) {
-                if (this.stance == ActionEnum.LAY) {
-                    this.controller.setIdleAnim("90_idleLyingDown01", 1, true);
-                }
-                else if (this.stance == ActionEnum.SIT) {
-                    if (this.hasFurniture()) {
-                        this.controller.setIdleAnim("90_idleSittingDown01", 1, true);
-                    }
-                    else {
-                        this.controller.setIdleAnim("90_idleSittingOnGround01", 1, true);
-                    }
-                }
-                else if (this.stance == ActionEnum.STAND) {
-                    this.controller.setIdleAnim("90_idle01", 1, true);
-                }
-            }
-            return 0;
-        }
-        return 2;
-    }
-    getStance() {
-        return this.stance;
-    }
-    isCrouching() {
-        return this.stance == ActionEnum.CROUCH;
-    }
-    isLying() {
-        return this.stance == ActionEnum.LAY;
-    }
-    isSleeping() {
-        return this.sleeping == true;
-    }
-    isSitting() {
-        return this.stance == ActionEnum.SIT;
-    }
-    isStanding() {
-        return this.stance == ActionEnum.STAND;
-    }
-    isFlying() {
-        return this.stance == ActionEnum.FLY;
-    }
-
     setPaws(pawEnum = PawEnum.PAD) {
         if (PawEnum.properties.hasOwnProperty(pawEnum)) {
             this.pawType = pawEnum;
@@ -1366,98 +877,6 @@ class CharacterEntity extends Entity {
         this.setFurColourBHex(colourB);
         return this;
     }
-    getCreatureType() {
-        return this.creatureType;
-    }
-    setCreatureType(creatureType) {
-        if (CreatureTypeEnum.properties.hasOwnProperty(creatureType)) {
-            this.creatureType = creatureType;
-        }
-        else {
-            this.creatureType = CreatureTypeEnum.HUMANOID;
-        }
-        return this;
-    }
-    getCreatureSubType() {
-        return this.creatureSubType;
-    }
-    setCreatureSubType(creatureSubType) {
-        switch (this.creatureType) {
-            case CreatureTypeEnum.HUMANOID: {
-                if (CreatureSubTypeEnum.properties.hasOwnProperty(creatureSubType)) {
-                    this.creatureSubType = creatureSubType;
-                }
-                else {
-                    this.creatureSubType = CreatureSubTypeEnum.FOX;
-                }
-                break;
-            }
-            case CreatureTypeEnum.UNDEAD: {
-                if (CreatureSubTypeEnum.properties.hasOwnProperty(creatureSubType)) {
-                    this.creatureSubType = creatureSubType;
-                }
-                else {
-                    this.creatureSubType = CreatureSubTypeEnum.FOX;
-                }
-                break;
-            }
-        }
-        return this;
-    }
-    getHeight() {
-        return this.height;
-    }
-    getWeight() {
-        return this.weight;
-    }
-    getWidth() {
-        return this.width;
-    }
-    getArmourClass() {
-        return this.armourClass;
-    }
-
-    addCantrip(spell) {
-        if (!(spell instanceof SpellEntity)) {
-            if (SpellEntity.has(spell))
-                spell = SpellEntity.get(spell);
-            else
-                return this;
-        }
-        this.cantripsKnown.add(spell);
-        return this;
-    }
-    removeSpell(spell) {
-        if (!(spell instanceof SpellEntity)) {
-            if (SpellEntity.has(spell))
-                spell = SpellEntity.get(spell);
-            else
-                return this;
-        }
-        this.cantripsKnown.delete(spell);
-        return true;
-    }
-
-    addSpell(spell) {
-        if (!(spell instanceof SpellEntity)) {
-            if (SpellEntity.has(spell))
-                spell = SpellEntity.get(spell);
-            else
-                return this;
-        }
-        this.spellsKnown.add(spell);
-        return this;
-    }
-    removeSpell(spell) {
-        if (!(spell instanceof SpellEntity)) {
-            if (SpellEntity.has(spell))
-                spell = SpellEntity.get(spell);
-            else
-                return this;
-        }
-        this.spellsKnown.delete(spell);
-        return true;
-    }
     /**
      * Adds a new disposition this character has for the specified character, by their ID.
      * @param {string} characterEntity Character ID
@@ -1504,19 +923,6 @@ class CharacterEntity extends Entity {
     getDialogue() {
         return this.dialogue;
     }
-    setLiving(boolean = true) {
-        this.living = boolean == true;
-        return this;
-    }
-    isLiving() {
-        return this.living;
-    }
-    isDead() {
-        return !this.living;
-    }
-    getSize() {
-        return this.size;
-    }
     setFurniture(instancedFurnitureEntity) {
         if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
             this.furniture = instancedFurnitureEntity;
@@ -1550,78 +956,62 @@ class CharacterEntity extends Entity {
         return 0;
     }
 
-    setSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlots[spellSlot] = number;
-        return 0;
-    }
-    addSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlots[spellSlot] += number;
-        return 0;
-    }
-    removeSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlots.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlots[spellSlot] -= number;
-        return 0;
-    }
-
-    setUsedSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlotsUsed[spellSlot] = number;
-        return 0;
-    }
-    addUsedSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlotsUsed[spellSlot] += number;
-        return 0;
-    }
-    removeUsedSpellSlot(spellSlot, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (!this.spellSlotsUsed.hasOwnProperty(spellSlot)) {
-            return 2;
-        }
-        this.spellSlotsUsed[spellSlot] -= number;
-        return 0;
-    }
-    clearUsedSpellSlots() {
-        this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-    }
-
     resetOffsets() {
         super.resetOffsets();
-        this.hungerOffset = 0;
         this.proficiencyOffset = 0;
-        this.strengthOffset = 0;
-        this.dexterityOffset = 0;
-        this.constitutionOffset = 0;
-        this.intelligenceOffset = 0;
-        this.wisdomOffset = 0;
-        this.charismaOffset = 0;
+        return 0;
     }
-
-    generateProperties() {
+    /**
+     * Generates protections and multipliers; to be run after status effects and equipment are changed
+     */
+    generateAdditionalStats() {
+        this.armourClass = 0;
+        for (let slot in this.equipment) {
+            if (this.equipment[slot] instanceof ClothingEntity) {
+                let multiplier = 0.1;
+                switch (this.equipment[slot].getEquipmentSlot()) {
+                    case ApparelSlotEnum.CHEST: {
+                        multiplier = 0.3;
+                        break;
+                    }
+                    case ApparelSlotEnum.HAND_L:
+                    case ApparelSlotEnum.HAND_R:
+                    case ApparelSlotEnum.HANDS: {
+                        multiplier = 0.05;
+                    }                      
+                }
+                let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
+                switch (this.equipment[slot].getArmourType()) {
+                    case PADDED:
+                    case LEATHER:
+                    case STUDDEDLEATHER: {
+                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        break;
+                    }
+                    case HIDE:
+                    case CHAINSHIRT:
+                    case SCALEMAIL:
+                    case BREASTPLATE:
+                    case HALFPLATE: {
+                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        if (modifier > 2) {
+                            modifier = 2;
+                        }
+                        break;
+                    }
+                }
+                this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
+            }
+        }
+        return 0;
+    }
+    getProficiencyBonus() {
+        return Math.floor((this.level + 7) / 4) + this.proficiencyOffset;
+    }
+    generateProperties(firstTime = false) {
+        if (this.creatureType != CreatureTypeEnum.HUMANOID) {
+            return 0;
+        }
         switch(this.creatureSubType) {
             case CreatureSubTypeEnum.FOX: {
                 if (this.sex == SexEnum.MALE) {
@@ -1937,68 +1327,83 @@ class CharacterEntity extends Entity {
         this.width = (this.height / 3.5294) * (this.weight / this.baseWeight);
         return 0;
     }
-    generateBaseStats(firstTime = false) {
-        let healthFraction = 1;
-        if (!firstTime) {
-            healthFraction = this.getHealth() / this.getMaxHealth();
+
+    clone(id = undefined) {
+        let characterEntity = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
+        // variables from AbstractEntity
+        characterEntity.availableActions = Object.assign({}, this.availableActions);
+        characterEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        characterEntity.specialProperties = new Set(this.specialProperties);
+        characterEntity.defaultAction = this.defaultAction;
+        characterEntity.health = this.health;
+        characterEntity.healthOffset = this.healthOffset;
+        characterEntity.healthMax = this.healthMax;
+        characterEntity.healthMaxOffset = this.healthMaxOffset;
+        characterEntity.effects = Object.assign({}, this.effects);
+        characterEntity.effectsPriority = Object.assign({}, this.effectsPriority);
+        for (let i in this.actionEffects) {
+            characterEntity.actionEffects[i] = Object.assign({}, this.actionEffects[i]);
         }
-        this.setMaxHealth(this.getConstitution()/2 + this.getStrength()/2 + (this.getLevel() * this.getConstitution()/10));
-        this.setHealth(this.getMaxHealth() * healthFraction);
-        return 0;
-    }
-    /**
-     * Generates protections and multipliers; to be run after status effects and equipment are changed
-     */
-    generateAdditionalStats() {
-        this.armourClass = 0;
-        for (let slot in this.equipment) {
-            if (this.equipment[slot] instanceof ClothingEntity) {
-                let multiplier = 0.1;
-                switch (this.equipment[slot].getEquipmentSlot()) {
-                    case ApparelSlotEnum.CHEST: {
-                        multiplier = 0.3;
-                        break;
-                    }
-                    case ApparelSlotEnum.HAND_L:
-                    case ApparelSlotEnum.HAND_R:
-                    case ApparelSlotEnum.HANDS: {
-                        multiplier = 0.05;
-                    }                      
-                }
-                let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
-                switch (this.equipment[slot].getArmourType()) {
-                    case PADDED:
-                    case LEATHER:
-                    case STUDDEDLEATHER: {
-                        modifier = Game.calculateAbilityModifier(this.getDexterity());
-                        break;
-                    }
-                    case HIDE:
-                    case CHAINSHIRT:
-                    case SCALEMAIL:
-                    case BREASTPLATE:
-                    case HALFPLATE: {
-                        modifier = Game.calculateAbilityModifier(this.getDexterity());
-                        if (modifier > 2) {
-                            modifier = 2;
-                        }
-                        break;
-                    }
-                }
-                this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
+        // variables from Entity
+        characterEntity.weight = this.weight;
+        characterEntity.price = this.price;
+        // variables from CreatureEntity
+        characterEntity.specialCreatureType = this.specialCreatureType;
+        characterEntity.specialCreatureSubType = this.specialCreatureSubType;
+        characterEntity.cantripsKnown = new Set(this.cantripsKnown);
+        characterEntity.cantripsKnownLimit = this.cantripsKnownLimit;
+        characterEntity.spellsKnown = new Set(this.spellsKnown);
+        characterEntity.spellsKnownLimit = this.spellsKnownLimit;
+        characterEntity.spellSlots = Object.assign({}, this.spellSlots);
+        characterEntity.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
+        characterEntity.hunger = this.hunger;
+        characterEntity.strength = this.strength;
+        characterEntity.dexterity = this.dexterity;
+        characterEntity.constitution = this.constitution;
+        characterEntity.intelligence = this.intelligence;
+        characterEntity.wisdom = this.wisdom;
+        characterEntity.charisma = this.charisma;
+        characterEntity.level = this.level;
+        characterEntity.experiencePoints = this.experiencePoints;
+        characterEntity.nonLethalDamage = this.nonLethalDamage;
+        characterEntity.money = this.money;
+        characterEntity.living = this.living;
+        characterEntity.conscious = this.conscious;
+        characterEntity.paralyzed = this.paralyzed;
+        characterEntity.size = this.size;
+        characterEntity.baseWeight = this.baseWeight;
+        characterEntity.baseHeight = this.baseHeight;
+        characterEntity.baseWidth = this.baseWidth;
+        characterEntity.weight = this.weight;
+        characterEntity.height = this.height;
+        characterEntity.width = this.width;
+        characterEntity.predator = this.predator;
+        // variables from CharacterEntity
+        characterEntity.gender = this.gender;
+        characterEntity.handedness = this.handedness;
+        characterEntity.attachedCosmetics = Object.assign({}, this.attachedCosmetics);
+        for (let i in this.attachedCosmetics) {
+            characterEntity.attachedCosmetics[i] = Object.assign({}, this.attachedCosmetics[i]);
+        }
+        for (let i in this.equipment) {
+            if (this.equipment[i] instanceof AbstractEntity) {
+                characterEntity.equipment[i] = this.equipment[i].clone();
             }
         }
-        return 0;
-    }
-    getProficiencyBonus() {
-        return Math.floor((this.level + 7) / 4) + this.proficiencyOffset;
-    }
-    isArmed() {
-        return this.armed || this.armedOffset;
-    }
-
-    isAlerted() {
-        return this.alerted;
+        characterEntity.previousEquipment = Object.assign({}, this.previousEquipment);
+        characterEntity.defaultDisposition = Object.assign({}, this.defaultDisposition);
+        characterEntity.furColourA = this.furColourA;
+        characterEntity.furColourAHex = this.furColourAHex;
+        characterEntity.furColourB = this.furColourB;
+        characterEntity.furColourBHex = this.furColourBHex;
+        characterEntity.pawType = this.pawType;
+        characterEntity.eyeType = this.eyeType;
+        characterEntity.eyeColour = this.eyeColour;
+        characterEntity.peltType = this.peltType;
+        characterEntity.characterDisposition = Object.assign({}, this.characterDisposition);
+        characterEntity.dialogue = this.dialogue;
+        characterEntity.sexualOrientation = this.sexualOrientation;
+        return characterEntity;
     }
 
     dispose() {
@@ -2009,9 +1414,6 @@ class CharacterEntity extends Entity {
         this.setEnabled(false);
         CharacterEntity.remove(this.id);
         super.dispose();
-        for (var _var in this) {
-            this[_var] = null;
-        }
         return undefined;
     }
 

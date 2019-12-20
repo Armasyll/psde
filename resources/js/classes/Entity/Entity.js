@@ -244,6 +244,7 @@ class Entity extends AbstractEntity {
         super.resetOffsets();
         this.weightOffset = 0;
         this.priceOffset = 0;
+        return 0;
     }
 
     clone(id = undefined) {

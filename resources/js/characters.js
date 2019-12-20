@@ -1,3 +1,3 @@
-Game.createCharacterEntity("rinehart", "Rinehart Nye", undefined, "genericCharacterIcon", 30, SexEnum.MALE, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, "foxM", "foxRinehart", {eyes:EyeEnum.CIRCLE, eyesColour:"violet"});
-Game.createCharacterEntity("rosie", "Rosie", undefined, "rosieIcon", 14, SexEnum.FEMALE, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, "foxF", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"blue"});
-Game.createCharacterEntity("charlie", "Charlie", undefined, "charlieIcon", 28, SexEnum.FEMALE, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, "foxF", "foxCorsac", {eyes:EyeEnum.FERAL, eyesColour:"blue"});
+Game.createCharacterEntity("rinehart", "Rinehart Nye", undefined, "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 30, "foxM", "foxRinehart", {eyes:EyeEnum.CIRCLE, eyesColour:"violet"});
+Game.createCharacterEntity("rosie", "Rosie", undefined, "rosieIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.FEMALE, 14, "foxF", "foxRed", {eyes:EyeEnum.CIRCLE, eyesColour:"blue"});
+Game.createCharacterEntity("charlie", "Charlie", undefined, "charlieIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.FEMALE, 28, "foxF", "foxCorsac", {eyes:EyeEnum.FERAL, eyesColour:"blue"});

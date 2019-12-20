@@ -164,10 +164,10 @@ class Client {
             content: [
                 Game.player.getID(),
                 Game.player.getName(),
-                Game.player.getAge(),
-                Game.player.getSex(),
                 Game.player.getCreatureType(),
                 Game.player.getCreatureSubType(),
+                Game.player.getSex(),
+                Game.player.getAge(),
                 Game.player.getMeshID(),
                 Game.player.getMaterialID(),
                 Game.player.controller.mesh.position.asArray(),

@@ -343,7 +343,7 @@ class GameGUI {
             if (!doNotPassGo) {
                 if (!(Game.player instanceof AbstractEntity)) {
                     Game.generateWallScene();
-                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, GameGUI._ageInput.text, SexEnum.MALE, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
                 if (!Client.isOnline()) {
                     Client.connect();
@@ -378,7 +378,7 @@ class GameGUI {
             if (!doNotPassGo) {
                 if (!(Game.player instanceof AbstractEntity)) {
                     Game.generateApartment();
-                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, GameGUI._ageInput.text, SexEnum.MALE, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
                 if (Client.isOnline()) {
                     Client.disconnect();
