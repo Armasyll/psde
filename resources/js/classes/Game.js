@@ -345,7 +345,7 @@ class Game {
             "rock01":"resources/images/textures/items/rock01.png",
             "bone01":"resources/images/textures/items/bone01.svg",
             "icosphere30":"resources/images/textures/static/icosphere30.svg",
-            "fireOpacity":"resources/images/textures/effects/fireOpacity.png",
+            "fireOpacityPNG":"resources/images/textures/effects/fireOpacity.png",
             "fire":"resources/images/textures/effects/fire.png",
             "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
             "trimWood":"resources/images/textures/static/trimWood.png",
@@ -1316,6 +1316,15 @@ class Game {
         }
         loadedMaterial.specularColor.set(0,0,0);
         if (typeof options == "object") {
+            if (options.hasOwnProperty("opacityTexture")) {
+                loadedMaterial.opacityTexture = Game.getLoadedTexture(options["opacityTexture"]);
+            }
+            if (options.hasOwnProperty("specularTexture")) {
+                loadedMaterial.specularTexture = Game.getLoadedTexture(options["specularTexture"]);
+            }
+            if (options.hasOwnProperty("distortionTexture")) {
+                loadedMaterial.distortionTexture = Game.getLoadedTexture(options["distortionTexture"]);
+            }
             if (options.hasOwnProperty("specularColor")) {
                 loadedMaterial.specularColor.copyFrom(options["specularColor"]);
             }
@@ -1352,7 +1361,7 @@ class Game {
         }
         return 2;
     }
-    static setLoadedMesh(meshID, mesh) {
+    static setLoadedMesh(meshID, mesh, options = undefined) {
         meshID = Tools.filterID(meshID);
         if (meshID.length == 0) {
             return 2;
@@ -1366,7 +1375,44 @@ class Game {
         return 0;
     }
     static getLoadedMesh(meshID) {
+        if (!Game.hasLoadedMesh(meshID) && Game.hasAvailableMesh(meshID)) {
+            Game.loadMesh(meshID);
+        }
+        if (!Game.hasLoadedMesh(meshID)) {
+            return 2;
+        }
         return Game.loadedMeshes[meshID];
+    }
+    static updateLoadedMesh(meshID, options) {
+        meshID = Tools.filterID(meshID);
+        if (meshID.length == 0) {
+            return 2;
+        }
+        if (!Game.loadedMeshes.hasOwnProperty(meshID)) {
+            return 2;
+        }
+        if (!(Game.loadedMeshes[meshID] instanceof BABYLON.Mesh)) {
+            return 2;
+        }
+        let loadedMesh = Game.loadedMeshes[meshID];
+        if (typeof options == "object") {
+            if (options.hasOwnProperty("billboardMode")) {
+                loadedMesh.billboardMode = options["billboardMode"];
+            }
+            if (options.hasOwnProperty("material")) {
+                if (options["material"] instanceof BABYLON.Material) {
+                    loadedMesh.material = options["material"];
+                }
+                else if (Game.hasLoadedMaterial(options["material"])) {
+                    loadedMesh.material = Game.getLoadedMaterial(options["material"]);
+                }
+                else if (Game.hasAvailableMaterial(options["material"])) {
+                    Game.loadMaterial(options["material"]);
+                    loadedMesh.material = Game.getLoadedMaterial(options["material"]);
+                }
+            }
+        }
+        return 0;
     }
     static setLoadedSound(soundID, sound) {
         soundID = Tools.filterID(soundID);
@@ -1380,6 +1426,12 @@ class Game {
         return 0;
     }
     static getLoadedSound(soundID) {
+        if (!Game.hasLoadedSound(soundID) && Game.hasAvailableSound(soundID)) {
+            Game.loadSound(soundID);
+        }
+        if (!Game.hasLoadedSound(soundID)) {
+            return 2;
+        }
         return Game.loadedSounds[soundID];
     }
     static setLoadedTexture(textureID, texture) {
@@ -1394,9 +1446,15 @@ class Game {
         return 0;
     }
     static getLoadedTexture(textureID) {
+        if (!Game.hasLoadedTexture(textureID) && Game.hasAvailableTexture(textureID)) {
+            Game.loadTexture(textureID);
+        }
+        if (!Game.hasLoadedTexture(textureID)) {
+            return 2;
+        }
         return Game.loadedTextures[textureID];
     }
-    static setLoadedMaterial(materialID, material) {
+    static setLoadedMaterial(materialID, material, options) {
         materialID = Tools.filterID(materialID);
         if (materialID.length == 0) {
             return 2;
@@ -1405,20 +1463,61 @@ class Game {
             return 2;
         }
         Game.loadedMaterials[materialID] = material;
-        return 1;
+        return 0;
     }
     static getLoadedMaterial(materialID) {
         return Game.loadedMaterials[materialID];
     }
+    static updateLoadedMaterial(materialID, options) {
+        materialID = Tools.filterID(materialID);
+        if (materialID.length == 0) {
+            return 2;
+        }
+        if (!Game.loadedMaterials.hasOwnProperty(materialID)) {
+            return 2;
+        }
+        if (!(Game.loadedMaterials[materialID] instanceof BABYLON.Material)) {
+            return 2;
+        }
+        let loadedMaterial = Game.loadedMaterials[materialID];
+        if (typeof options == "object") {
+            if (options.hasOwnProperty("diffuseTexture")) {
+                loadedMaterial.diffuseTexture = Game.getLoadedTexture(options["diffuseTexture"]);
+            }
+            if (options.hasOwnProperty("opacityTexture")) {
+                loadedMaterial.opacityTexture = Game.getLoadedTexture(options["opacityTexture"]);
+            }
+            if (options.hasOwnProperty("specularTexture")) {
+                loadedMaterial.specularTexture = Game.getLoadedTexture(options["specularTexture"]);
+            }
+            if (options.hasOwnProperty("distortionTexture")) {
+                loadedMaterial.distortionTexture = Game.getLoadedTexture(options["distortionTexture"]);
+            }
+            if (options.hasOwnProperty("speed")) {
+                loadedMaterial.speed = options["speed"];
+            }
+            if (options.hasOwnProperty("specularColor")) {
+                loadedMaterial.specularColor.copyFrom(options["specularColor"]);
+            }
+        }
+        return 0;
+    }
     static setMeshMaterial(mesh, material) {
         if (!(mesh instanceof BABYLON.Mesh) || !(material instanceof BABYLON.Material)) {
-            return 2;
+            if (Game.hasLoadedMesh(mesh) && Game.hasLoadedMaterial(material)) {
+                mesh = Game.getLoadedMesh(mesh);
+                material = Game.getLoadedMaterial(material);
+            }
+            else {
+                return 2;
+            }
         }
         if (Game.debugMode) console.log(`Running setMeshMaterial(${mesh.name}, ${material.name})`);
         if (!Game.loadedMeshMaterials.hasOwnProperty(mesh.name)) {
             Game.loadedMeshMaterials[mesh.name] = {};
         }
         Game.loadedMeshMaterials[mesh.name][material.name] = mesh;
+        mesh.material = material;
         return 0;
     }
     static addClonedMesh(mesh, newMeshID = undefined) {
@@ -2020,6 +2119,34 @@ class Game {
             meshID = "missingMesh";
         }
         return [id, meshID, materialID, position, rotation, scaling, options];
+    }
+    /**
+     * Creates a billboard mesh
+     * @param  {string} id New ID for BABYLON.Mesh and EntityController
+     * @param  {string} [materialID] String ID of Material to apply to Mesh
+     * @param  {BABYLON.Vector3} position Mesh position
+     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
+     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
+     * @param  {object} [options] Options
+     * @return {BABYLON.AbstractMesh|array|number} The created mesh
+     */
+    static createBillboard(id = "", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        let mesh = BABYLON.Mesh.CreatePlane(id, 1, Game.scene);
+        mesh.id = id;
+        mesh.name = name;
+        Game.setLoadedMesh(id, mesh);
+        mesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+        mesh = Game.createMesh(id, id, materialID, position, rotation, scaling, options);
+        mesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+        mesh.material.backFaceCulling = false;
+        if (options["billboardMode"]) {
+            mesh.billboardMode = options["billboardMode"];
+        }
+        return mesh;
     }
     /**
      * Creates a mesh from those stored in loadedMeshes

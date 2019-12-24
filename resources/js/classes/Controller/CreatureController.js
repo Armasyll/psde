@@ -377,14 +377,17 @@ class CreatureController extends EntityController {
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (Game.debugMode) console.log("Running attachMeshIDToBone");
-        if (!Game.hasAvailableMesh(meshID)) {
+        if (!Game.hasMesh(meshID)) {
+            if (Game.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
             return this;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            if (Game.debugMode) console.log(`Couldn't find skeleton`);
             return this;
         }
         let bone = this.getBone(boneID);
         if (!(bone instanceof BABYLON.Bone)) {
+            if (Game.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return this;
         }
         if (!(position instanceof BABYLON.Vector3)) {
@@ -402,12 +405,22 @@ class CreatureController extends EntityController {
         if (!(Game.hasLoadedMesh(meshID))) {
             Game.loadMesh(meshID);
             Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
+            if (Game.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
             return this;
         }
         if (materialID != "collisionMaterial") {
             options["createClone"] = true;
         }
         let loadedMesh = Game.createMesh(meshID.concat("Attachment").concat(this.id.capitalize()).concat(boneID), meshID, materialID, position, rotation, scaling, options);
+        /*
+        if the mesh is a billboard
+         */
+        if (loadedMesh.getBoundingInfo().boundingBox.maximum.z == 0) {
+            loadedMesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+            rotation.y -= BABYLON.Tools.ToRadians(90);
+            rotation.z += BABYLON.Tools.ToRadians(90);
+            loadedMesh.material.backFaceCulling = false;
+        }
         return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);
     }
     /**
