@@ -478,6 +478,9 @@ class WeaponEntity extends EquipmentEntity {
     isLoading() {
         return this.loading;
     }
+    isRange() {
+        return this.ammunition || this.thrown;
+    }
     isReach() {
         return this.reach;
     }

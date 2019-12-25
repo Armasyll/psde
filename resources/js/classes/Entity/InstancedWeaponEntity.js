@@ -47,6 +47,9 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
     isLoading() {
         return this.entity.isLoading();
     }
+    isRange() {
+        return this.entity.isRange();
+    }
     isReach() {
         return this.entity.isReach();
     }
