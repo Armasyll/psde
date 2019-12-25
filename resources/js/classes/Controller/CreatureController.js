@@ -85,6 +85,7 @@ class CreatureController extends EntityController {
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set([this.mesh]);
 
+        this.updateTargetRayOrigin();
         CreatureController.set(this.id, this);
     }
 
@@ -611,6 +612,18 @@ class CreatureController extends EntityController {
      */
     getMeshes() {
         return this._attachedMeshes;
+    }
+
+    updateTargetRayOrigin() {
+        if (!(this.targetRay instanceof BABYLON.Ray)) {
+            return 2;
+        }
+        if (!this.hasSkeleton() || this.mesh.skeleton.getBoneIndexByName("FOCUS") == -1) {
+            this.targetRay.origin = this.mesh.position.add(this.mesh.getBoundingInfo().boundingBox.center);
+            return 1;
+        }
+        this.targetRay.origin = this.mesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.mesh.scaling));
+        return 0;
     }
 
     dispose() {

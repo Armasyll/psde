@@ -25,10 +25,10 @@ class CharacterControllerRigidBody extends CharacterController {
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
         this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
         this.stepOffset = 0.25;
-        this.yDifference = 0
+        this.yDifference = 0;
         this.yDifferencePosition = new BABYLON.Vector3.Zero();
         this.fallFrameCount = 0;
-        this.fallDistance = 0
+        this.fallDistance = 0;
     }
 
     moveAV() {
@@ -38,10 +38,16 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this._isLocked) {
             return this;
         }
+        this.updateTargetRayOrigin();
         let anim = this.idle;
         if (this.anyMovement() || this.falling) {
             this.startPosition.copyFrom(this.mesh.position);
             anim = this.doMove();
+        }
+        if (Game.player != this.entity && this.entity.target == null) {
+            
+            this.targetRay.direction.y = 0; // up-down
+            this.targetRay.direction.z = -this.mesh.forward.z;
         }
         this.lookAtCtl.target = this.targetRay.origin.add(this.targetRay.direction);
         this.lookAtCtl.update();
