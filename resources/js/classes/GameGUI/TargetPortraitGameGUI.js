@@ -127,7 +127,7 @@ class TargetPortraitGameGUI {
         if (!abstractEntity.isEnabled()) {
             return undefined;
         }
-        if (abstractEntity instanceof CharacterEntity) {
+        if (abstractEntity instanceof CreatureEntity) {
             TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
             TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
             TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
@@ -157,12 +157,14 @@ class TargetPortraitGameGUI {
         }
         TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
-        let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
-        if (number < 0) {
-            number = 0;
+        if (abstractEntity instanceof CreatureEntity) {
+            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
+            let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
+            if (number < 0) {
+                number = 0;
+            }
+            TargetPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
         }
-        TargetPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
     }
     static setImage(iconID = "genericItem") {
         TargetPortraitGameGUI.targetIcon.domImage.setAttribute("src", Game.getIcon(iconID));

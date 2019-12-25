@@ -417,8 +417,14 @@ class CreatureController extends EntityController {
          */
         if (loadedMesh.getBoundingInfo().boundingBox.maximum.z == 0) {
             loadedMesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            rotation.y -= BABYLON.Tools.ToRadians(90);
-            rotation.z += BABYLON.Tools.ToRadians(90);
+            if (bone.name == "hand.r") {
+                rotation.y -= BABYLON.Tools.ToRadians(90);
+                rotation.z += BABYLON.Tools.ToRadians(90);
+            }
+            else if (bone.name == "hand.l") {
+                rotation.y -= BABYLON.Tools.ToRadians(90);
+                rotation.z += BABYLON.Tools.ToRadians(270);
+            }
             loadedMesh.material.backFaceCulling = false;
         }
         return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);

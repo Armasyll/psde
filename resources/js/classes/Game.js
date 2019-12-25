@@ -3763,6 +3763,7 @@ class Game {
             return 1;
         }
         if (entityController.getEntity() == Game.player.getTarget()) {
+            Game.gui.targetPortrait.updateWith(entityController.getEntity());
             return 0;
         }
         if (!(entityController instanceof EntityController) || !entityController.isEnabled()) {
