@@ -615,6 +615,9 @@ class CreatureController extends EntityController {
     }
 
     updateTargetRayOrigin() {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         if (!(this.targetRay instanceof BABYLON.Ray)) {
             return 2;
         }
