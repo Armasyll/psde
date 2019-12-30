@@ -214,13 +214,7 @@ class InventoryGameGUI {
             InventoryGameGUI.items.removeControl(InventoryGameGUI.items.children[i]);
         }
         entityWithStorage.getItems().forEach(function(instancedItemEntity, id) {
-            var button = GameGUI._generateButton(undefined, instancedItemEntity.getName(), undefined, Game.getIcon(instancedItemEntity.getIcon()));
-            button.width = InventoryGameGUI.items.width;
-            button.height = String(InventoryGameGUI.items.heightInPixels / 10).concat("px");
-            button.children[0].height = button.height;
-            button.children[0].width = button.height;
-            button.children[0].left = "0px";
-            button.children[1].width = String(button.widthInPixels - button.children[0].widthInPixels).concat("px");
+            let button = InventoryGameGUI._generateInventoryItemsButton(id, instancedItemEntity.getName(), Game.getIcon(instancedItemEntity.getIcon()));
             button.onPointerUpObservable.add(function() {
                 InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), entityWithStorage);
             });
@@ -348,5 +342,32 @@ class InventoryGameGUI {
         for (let i = InventoryGameGUI.selectedActions.children.length - 1; i >= 0; i--) {
             InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
         }
+    }
+    static _generateInventoryItemsButton(id = undefined, title = undefined, icon = undefined) {
+        let button = new BABYLON.GUI.Button(id);
+            button.width = InventoryGameGUI.items.width;
+            button.height = String(InventoryGameGUI.items.heightInPixels / 10).concat("px");
+            button.thickness = 0;
+            let container = new BABYLON.GUI.StackPanel(id + "StackPanel");
+                container.width = button.width;
+                container.height = button.height;
+                container.isVertical = false;
+                container.thickness = 0;
+                button.addControl(container);
+                let image = new BABYLON.GUI.Image(id + "Image", icon);
+                    image.width = button.height;
+                    image.height = button.height;
+                    image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+                    image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    container.addControl(image);
+                let text = new BABYLON.GUI.TextBlock(id + "TextBlock", title);
+                    text.width = String(button.widthInPixels - button.heightInPixels).concat("px");
+                    text.text = title;
+                    text.thickness = 0;
+                    text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                    text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    text.color = GameGUI.color;
+                    container.addControl(text);
+        return button;
     }
 }
