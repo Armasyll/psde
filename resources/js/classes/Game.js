@@ -527,7 +527,11 @@ class Game {
             "forgeHammer02Icon":"resources/images/icons/items/forgeHammer02.png",
             "cudgel01Icon":"resources/images/icons/items/cudgel01.png",
             "cheeseSandwich01Icon":"resources/images/icons/items/cheeseSandwich01Icon.png",
-            "grilledCheeseSandwich01Icon":"resources/images/icons/items/grilledCheeseSandwich01Icon.png"
+            "grilledCheeseSandwich01Icon":"resources/images/icons/items/grilledCheeseSandwich01Icon.png",
+            "genericSwordIcon":"resources/images/icons/genericSwordIcon.svg",
+            "genericShirtIcon":"resources/images/icons/genericShirtIcon.svg",
+            "genericBagIcon":"resources/images/icons/genericBagIcon.svg",
+            "genericMoneyIcon":"resources/images/icons/genericMoneyIcon.svg"
         };
         /**
          * Map of Sound file locations per ID; one to one

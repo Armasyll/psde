@@ -19,7 +19,7 @@ class ChatGameGUI {
         controller.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         controller.height = 0.3;
-        controller.width = GameGUI.getFontSizePx(24);
+        controller.width = GameGUI.getFontSize(24);
         controller.isVertical = true;
             let chatOutputContainer = new BABYLON.GUI.Rectangle("chatOutputContainer");
             chatOutputContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;

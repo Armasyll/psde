@@ -3,8 +3,8 @@ class GameGUI {
         GameGUI.initialized = false;
     }
     static initialize() {
-        GameGUI.fontSize = 24;
-        GameGUI.fontSizePx = String(GameGUI.fontSize).concat("px");
+        GameGUI.fontSizeInPixels = 24;
+        GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
         GameGUI.alpha = "0.75";
         GameGUI.color = "#c3c3c3";
         GameGUI.colorDanger = "#ffffff";
@@ -76,22 +76,22 @@ class GameGUI {
         if (!GameGUI.initialized) {
             return;
         }
-        GameGUI.fontSize = Math.floor((window.innerWidth/16)/5);
-        GameGUI.fontSizePx = String(GameGUI.fontSize).concat("px");
-        GameGUI._hud.rootContainer.fontSize = GameGUI.fontSizePx;
-        GameGUI._menu.rootContainer.fontSize = GameGUI.fontSizePx;
+        GameGUI.fontSizeInPixels = Math.floor((window.innerWidth/16)/5);
+        GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
+        GameGUI._hud.rootContainer.fontSize = GameGUI.fontSize;
+        GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
         GameGUI.dialogueMenu.resize();
     }
-    static getFontSize(multiplier = 1) {
-        return GameGUI.fontSize * multiplier;
+    static getFontSizeInPixels(multiplier = 1) {
+        return GameGUI.fontSizeInPixels * multiplier;
     }
-    static getFontSizePx(multiplier = 1) {
+    static getFontSize(multiplier = 1) {
         if (multiplier == 1 || isNaN(multiplier)) {
-            return GameGUI.fontSizePx;
+            return GameGUI.fontSize;
         }
         else {
-            return String(GameGUI.fontSize * multiplier).concat("px");
+            return String(GameGUI.fontSizeInPixels * multiplier).concat("px");
         }
     }
     static pointerLock() {
@@ -233,22 +233,22 @@ class GameGUI {
         characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         characterChoiceMenuContainer.addColumnDefinition(0.5, false);
         characterChoiceMenuContainer.addColumnDefinition(0.5, false);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSize * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
+        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addColumnDefinition(0.3, false);
         buttonKBLayoutContainer.addRowDefinition(1.0, false);
 
         urlLabel.text = "GitHub: ";
-        urlLabel.height = GameGUI.fontSizePx;
+        urlLabel.height = GameGUI.fontSize;
         urlLabel.width = 1.0;
         urlLabel.color = GameGUI.color;
 
-        urlButton.height = GameGUI.fontSizePx;
+        urlButton.height = GameGUI.fontSize;
         urlButton.width = 1.0;
         urlButton.color = GameGUI.color;
 
@@ -424,17 +424,17 @@ class GameGUI {
     }
     static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _icon = undefined) {
         var _button = new BABYLON.GUI.Button(_id);
-            _button.width = GameGUI.getFontSizePx(9);
-            _button.height = GameGUI.getFontSizePx(2);
+            _button.width = GameGUI.getFontSize(9);
+            _button.height = GameGUI.getFontSize(2);
         var _buttonImage = new BABYLON.GUI.Image("", _icon);
-            _buttonImage.width = GameGUI.getFontSizePx(2);
-            _buttonImage.height = GameGUI.getFontSizePx(2);
+            _buttonImage.width = GameGUI.getFontSize(2);
+            _buttonImage.height = GameGUI.getFontSize(2);
             _buttonImage.left = "-40%";
             _buttonImage.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
             _button.addControl(_buttonImage);
         var _buttonText = new BABYLON.GUI.TextBlock();
-            _buttonText.width = GameGUI.getFontSizePx(7);
-            _buttonText.height = GameGUI.getFontSizePx(2);
+            _buttonText.width = GameGUI.getFontSize(7);
+            _buttonText.height = GameGUI.getFontSize(2);
             _buttonText.top = "5%";
             _buttonText.left = "10%";
             _buttonText.text = _title;

@@ -29,20 +29,20 @@ class DebugGameGUI {
         controller.alpha = 0.75;
         let titleBar = new BABYLON.GUI.StackPanel("skyboxUITitleBar");
             titleBar.width = String(controller.widthInPixels).concat("px");
-            titleBar.height = String(GameGUI.getFontSize(2)).concat("px");
+            titleBar.height = GameGUI.getFontSize(2);
             titleBar.thickness = 0;
             titleBar.isVertical = false;
             titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             let title = new BABYLON.GUI.TextBlock("skyboxUITitle");
                 title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                title.width = String(titleBar.widthInPixels - GameGUI.getFontSize(2)).concat("px");
+                title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
                 title.color = GameGUI.color;
                 title.text = "Skybox UI Controller";
             let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
                 closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 closeButton.color = GameGUI.color;
-                closeButton.width = String(GameGUI.getFontSize(2)).concat("px");
-                closeButton.height = String(GameGUI.getFontSize(2)).concat("px");
+                closeButton.width = GameGUI.getFontSize(2);
+                closeButton.height = GameGUI.getFontSize(2);
         if (Game.playerCell instanceof Cell) {
             DebugGameGUI.skyboxIsEnabled = Game.playerCell.getSkybox().isEnabled;
             DebugGameGUI.skyboxAzimuth = Game.playerCell.getSkyboxMaterial().azimuth;
@@ -111,14 +111,14 @@ class DebugGameGUI {
         let label = new BABYLON.GUI.TextBlock(String(id).concat("Label"));
             label.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             label.width = String((DebugGameGUI.width / 3) * 2).concat("px");
-            label.height = String(GameGUI.getFontSize(2)).concat("px");
+            label.height = GameGUI.getFontSize(2);
             label.color = GameGUI.color;
             label.text = String(labelString);
         let checkbox = new BABYLON.GUI.Checkbox(String(id).concat("Checkbox"));
             checkbox.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             checkbox.color = GameGUI.color;
-            checkbox.width = String(GameGUI.getFontSize(2)).concat("px");
-            checkbox.height = String(GameGUI.getFontSize(2)).concat("px");
+            checkbox.width = GameGUI.getFontSize(2);
+            checkbox.height = GameGUI.getFontSize(2);
             if (defaultValue === true) {
                 checkbox.value = true;
             }
@@ -141,14 +141,14 @@ class DebugGameGUI {
         let label = new BABYLON.GUI.TextBlock(String(id).concat("Label"));
             label.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
             label.width = String((DebugGameGUI.width / 3) * 2).concat("px");
-            label.height = String(GameGUI.getFontSize(2)).concat("px");
+            label.height = GameGUI.getFontSize(2);
             label.color = GameGUI.color;
             label.text = String(labelString);
         let slider = new BABYLON.GUI.Slider(String(id).concat("Slider"));
             slider.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             slider.color = GameGUI.color;
             slider.width = String(DebugGameGUI.width / 3).concat("px");
-            slider.height = String(GameGUI.getFontSize(2)).concat("px");
+            slider.height = GameGUI.getFontSize(2);
             slider.minimum = minimum;
             slider.maximum = maximum;
             slider.value = value;
