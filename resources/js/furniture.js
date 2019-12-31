@@ -2,4 +2,9 @@ Game.createFurnitureEntity("mattress01", "Mattress", "A plain mattress.", "mattr
 Game.createFurnitureEntity("animatedToilet01", "Toilet", "An ordinary, simple toilet.", "toilet01Icon", "animatedToilet01", undefined, FurnitureEnum.TOILET, 55, 300);
 Game.createFurnitureEntity("animatedSink01", "Sink", "An ordinary, simple sink.", "sink01Icon", "animatedSink01", undefined, FurnitureEnum.SINK, 45, 200);
 Game.createFurnitureEntity("animatedRefrigerator01", "Refrigerator", "A refrigerator.", "refrigerator01Icon", "animatedRefrigerator01", undefined, FurnitureEnum.REFRIGERATOR, 170, 800);
-Game.createFurnitureEntity("couch01", "Couch", "A couch.", "couch01Icon", "couch01", undefined, FurnitureEnum.COUCH, 30, 100)
+Game.createFurnitureEntity("couch01", "Couch", "A couch.", "couch01Icon", "couch01", undefined, FurnitureEnum.COUCH, 120, 200);
+Game.createFurnitureEntity("couch02", "Couch", "A couch.", "couch02Icon", "couch02", undefined, FurnitureEnum.COUCH, 120, 250);
+Game.createFurnitureEntity("loveseat01", "Loveseat", "A loveseat.", "loveseat01Icon", "loveseat01", undefined, FurnitureEnum.LOVESEAT, 80, 150);
+Game.createFurnitureEntity("chair01", "Chair", "A comfortable chair.", "chair01Icon", "chair01", undefined, FurnitureEnum.CHAIR, 40, 125);
+Game.createFurnitureEntity("chair02", "Chair", "A simple chair.", "chair02Icon", "chair02", undefined, FurnitureEnum.CHAIR, 10, 15);
+Game.createFurnitureEntity("chair03", "Chair", "A chair.", "chair03Icon", "chair03", undefined, FurnitureEnum.CHAIR, 10, 10);
