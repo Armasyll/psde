@@ -1,4 +1,4 @@
-class DialogueControls {
+class DialogueControls extends MenuControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {
             return 1;
@@ -15,13 +15,13 @@ class DialogueControls {
             case 54: case 55: case 56: case 57: case 49: {
                 break;
             }
-            case Game.UIAcceptAlt:
-            case Game.UIAccept: {
+            case AbstractControls.UIAcceptAlt:
+            case AbstractControls.UIAccept: {
 
                 break;
             }
-            case Game.UIDenyAlt:
-            case Game.UIDeny: {
+            case AbstractControls.UIDenyAlt:
+            case AbstractControls.UIDeny: {
                 GameGUI.hideMenu(true);
                 break;
             }

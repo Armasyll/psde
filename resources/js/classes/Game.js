@@ -58,7 +58,7 @@ class Game {
         /**
          * Map of Mesh file locations per ID
          * eg, {"foxM":"resources/meshes/characters/fox.babylon"}
-         * @type {<string, String>}
+         * @type {<string, string>}
          */
         Game.meshLocations = {
             "missingMesh":null,
@@ -292,7 +292,10 @@ class Game {
             "dekuShield":"resources/meshes/items/dekuShield.babylon",
             "kokiriSword":"resources/meshes/items/kokiriSword.babylon",
             "cheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon",
-            "grilledCheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon"
+            "grilledCheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon",
+            "flatScreenMonitor01":"resources/meshes/static/flatScreenMonitor01.babylon",
+            "flatScreenMonitor01Screen":"resources/meshes/static/flatScreenMonitor01.babylon",
+            "flatScreenMonitor01Stand":"resources/meshes/static/flatScreenMonitor01.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -303,7 +306,7 @@ class Game {
         /**
          * Map of Texture file locations per ID
          * eg, {"foxRed":"resources/images/textures/characters/foxRed.svg"}
-         * @type {<string, String>}
+         * @type {<string, string>}
          */
         Game.textureLocations = {
             "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
@@ -413,7 +416,7 @@ class Game {
         /**
          * Map of Icon file locations per ID
          * eg, {"rosie":"resources/images/icons/characters/rosie.png"}
-         * @type {<string, String>}
+         * @type {<string, string>}
          */
         Game.iconLocations = {
             "rosieIcon":"resources/images/icons/characters/rosie.png",
@@ -537,7 +540,7 @@ class Game {
         /**
          * Map of Sound file locations per ID; one to one
          * eg, {"openDoor":"resources/sounds/Open Door.mp3"}
-         * @type {<string, String>}
+         * @type {<string, string>}
          */
         Game.soundLocations = {
             "openDoor":"resources/sounds/Open Door.mp3",
@@ -549,6 +552,24 @@ class Game {
          * @type {<string, BABYLON.Sound>}
          */
         Game.loadedSounds = {};
+        /**
+         * Map of Video file locations per ID
+         * eg, {"missingVideo":"resources/videos/missingVideo.mp4"}
+         * @type {<string, string | [string]>}
+         */
+        Game.videoLocations = {
+            "missingVideo":["resources/videos/missingVideo.webm", "resources/videos/missingVode.mp4"]
+        };
+        /**
+         * Map of BABYLON.VideoTextures per ID; one to one
+         * @type {<string, BABYLON.VideoTexture>}
+         */
+        Game.loadedVideos = {};
+        /**
+         * Map of Video IDs to BABYLON.VideoTexture(s); one to many
+         * @type {<string, [BABYLON.VideoTexture]>}
+         */
+        Game.videoClones = {};
         /**
          * Map of Meshes per Texture IDs per Mesh IDs; one to many
          * eg, {"ring01":{"ring01Silver":{ring01 Mesh with ring01Silver Texture}, "ring01Gold":{ring01 Mesh with ring01Gold Texture}}, "ring02":{...}}
@@ -582,28 +603,35 @@ class Game {
         Game.materialsToCreateCounter = 0;
         /**
          * Map of Furniture that are waiting to be created
-         * @type {<string, <string:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, string:name, string:mesh, string:texture, string:type, string:position, string:rotation, string:scaling, object:options>}
          */
         Game.furnitureToCreateCounter = 0;
         Game.furnitureToCreate = {};
         /**
          * Map of Lighting that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<string, <string:id, String:name, String:mesh, String:texture, String:type, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, string:name, string:mesh, string:texture, string:type, string:position, string:rotation, string:scaling, object:options>}
          */
         Game.lightingToCreateCounter = 0;
         Game.lightingToCreate = {};
         /**
+         * Map of Displays that are waiting to be created;
+         * it's basically the same as furnitureToCreate :v
+         * @type {<string, <string:id, string:name, string:mesh, string:texture, string:video, string:position, string:rotation, string:scaling, object:options>}
+         */
+        Game.displaysToCreateCounter = 0;
+        Game.displaysToCreate = {};
+        /**
          * Map of Doors that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<string, <string:id, String:name, Forgot:to, String:mesh, String:texture, String:position, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, string:name, Forgot:to, string:mesh, string:texture, string:position, string:rotation, string:scaling, object:options>}
          */
         Game.doorsToCreateCounter = 0;
         Game.doorsToCreate = {};
         /**
          * Map of Characters that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
-         * @type {<string, <string:id, String:name, String:description, String:icon, Number:age, Number:sex, String:creatureType, String:creatureSubType, String:mesh, String:texture, String:options, String:rotation, String:scaling, object:options>}
+         * @type {<string, <string:id, string:name, string:description, string:icon, Number:age, Number:sex, string:creatureType, string:creatureSubType, string:mesh, string:texture, string:options, string:rotation, string:scaling, object:options>}
          */
         Game.charactersToCreateCounter = 0;
         Game.charactersToCreate = {};
@@ -744,6 +772,11 @@ class Game {
                 usableArea: [
                     [new BABYLON.Vector3(-0.575258, 0.375, -1.10144), new BABYLON.Vector3(0.575258, 0.375, 0.195)]
                 ]
+            },
+            "flatScreenMonitor01": {
+                videoMeshPosition: new BABYLON.Vector3(0, 0.490128, -0.0715),
+                videoMeshWidth: 0.98,
+                videoMeshHeight: 0.6250
             }
         };
 
@@ -777,6 +810,7 @@ class Game {
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
+        Game.loadDefaultVideos();
         Game.loadDefaultItems();
 
         Game.skybox = BABYLON.MeshBuilder.CreateBox("skybox", {size:2048.0}, Game.scene);
@@ -786,6 +820,7 @@ class Game {
             controlerCharacter, controlMenu
          */
         Game.controls = AbstractControls;
+        Game.updateMenuKeyboardDisplayKeys();
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
         Game.actionCloseFunction = Game.actionClose;
@@ -803,7 +838,6 @@ class Game {
         Game.gui = GameGUI;
         Game.gui.initialize();
         Game.initFreeCamera();
-        Game.initQwertyKeyboardControls();
         Game.initPostProcessing();
         window.addEventListener("click", Game.controls.onClick);
         window.addEventListener("mousedown", Game.controls.onMouseDown);
@@ -903,6 +937,7 @@ class Game {
             Game.createBackloggedBoundingCollisions();
             Game.createBackloggedFurniture();
             Game.createBackloggedLighting();
+            Game.createBackloggedDisplays();
             Game.createBackloggedDoors();
             Game.createBackloggedItems();
             Game.createBackloggedCharacters();
@@ -1069,74 +1104,10 @@ class Game {
         Game.initPlayerPortraitStatsUpdateInterval();
         return 0;
     }
-    static initBaseKeyboardControls() {
-        Game.chatInputFocusCode = 13;
-        Game.chatInputSubmitCode = 13;
-        Game.showMainMenuCode = 27;
-        return 0;
-    }
-    static initQwertyKeyboardControls() {
-        Game.initBaseKeyboardControls();
-        Game.walkCode = 87; // W
-        Game.walkBackCode = 83; // S
-        Game.turnLeftCode = 0;
-        Game.turnRightCode = 0;
-        Game.strafeLeftCode = 65; // A
-        Game.strafeRightCode = 68; // D
-        Game.jumpCode = 32; // Space
-        Game.interfaceTargetedEntityCode = 70; // F
-        Game.useTargetedEntityCode = 69; // E
-        Game.useSelectedItemCode = 82; // R
-        Game.showInventoryCode = 73; // I
-        Game.UIAccept = 69; // E
-        Game.UIAcceptAlt = 13; // Enter
-        Game.UIDeny = 81; // Q
-        Game.UIDenyAlt = 18; // Alt
-        Game.updateMenuKeyboardDisplayKeys();
-        return 0;
-    }
-    static initDvorakKeyboardControls() {
-        Game.initBaseKeyboardControls();
-        Game.walkCode = 188;
-        Game.walkBackCode = 73;
-        Game.turnLeftCode = 0;
-        Game.turnRightCode = 0;
-        Game.strafeLeftCode = 65;
-        Game.strafeRightCode = 69;
-        Game.jumpCode = 32;
-        Game.interfaceTargetedEntityCode = 85;
-        Game.useTargetedEntityCode = 190;
-        Game.useSelectedItemCode = 80;
-        Game.showInventoryCode = 67; // C
-        Game.UIAccept = 190; // E
-        Game.UIAcceptAlt = 13; // Enter
-        Game.UIDeny = 222; // Q
-        Game.UIDenyAlt = 18; // Alt
-        Game.updateMenuKeyboardDisplayKeys();
-        return 0;
-    }
-    static initAzertyKeyboardControls() {
-        Game.initBaseKeyboardControls();
-        Game.walkCode = 90;
-        Game.walkBackCode = 83;
-        Game.turnLeftCode = 0;
-        Game.turnRightCode = 0;
-        Game.strafeLeftCode = 81;
-        Game.strafeRightCode = 68;
-        Game.jumpCode = 32;
-        Game.interfaceTargetedEntityCode = 70;
-        Game.useTargetedEntityCode = 69;
-        Game.useSelectedItemCode = 82;
-        Game.showInventoryCode = 73;
-        Game.UIAccept = 69; // E
-        Game.UIAcceptAlt = 13; // Enter
-        Game.UIDeny = 65; // A
-        Game.UIDenyAlt = 18; // Alt
-        Game.updateMenuKeyboardDisplayKeys();
-        return 0;
-    }
     static updateMenuKeyboardDisplayKeys() {
-        Game.gui.setActionTooltipLetter();
+        if (Game.initialized && Game.gui.initialized) {
+            Game.gui.setActionTooltipLetter();
+        }
         return 0;
     }
     static initPostProcessing() {
@@ -1190,6 +1161,10 @@ class Game {
         Game.setLoadedSound("openDoor", new BABYLON.Sound("openDoor", "resources/sounds/Open Door.mp3", Game.scene));
         return 0;
     }
+    static loadDefaultVideos() {
+        Game.setLoadedVideo("missingVideo", new BABYLON.VideoTexture("missingVideo", ["resources/videos/missingVideo.webm", "resources/videos/missingVideo.mp4"], Game.scene));
+        return 0;
+    }
     static loadDefaultItems() {
         Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "block", "loadingMaterial", ItemEnum.GENERAL);
         return 0;
@@ -1214,6 +1189,131 @@ class Game {
             return 0;
         }
         return 1;
+    }
+    static setLoadedVideo(videoID, videoTexture) {
+        videoID = Tools.filterID(videoID);
+        if (videoID.length == 0) {
+            return 2;
+        }
+        if (!(videoTexture instanceof BABYLON.VideoTexture)) {
+            return 2;
+        }
+        Game.loadedVideos[videoID] = videoTexture;
+        return 0;
+    }
+    static getLoadedVideo(videoID) {
+        if (!Game.hasLoadedVideo(videoID) && Game.hasAvailableVideo(videoID)) {
+            Game.loadVideo(videoID);
+        }
+        if (!Game.hasLoadedVideo(videoID)) {
+            return 2;
+        }
+        return Game.loadedVideos[videoID];
+    }
+    static hasAvailableVideo(videoID) {
+        return Game.videoLocations.hasOwnProperty(videoID);
+    }
+    static hasLoadedVideo(videoID) {
+        return Game.loadedVideos.hasOwnProperty(videoID);
+    }
+    static hasVideo(videoID) {
+        if (Game.hasLoadedVideo(videoID)) {
+            return true;
+        }
+        else if (Game.hasAvailableVideo(videoID)) {
+            Game.loadVideo(videoID);
+            return true;
+        }
+        return false;
+    }
+    static addVideo(videoID, location) {
+        if (!Game.hasVideo(videoID)) {
+            return 2;
+        }
+        Game.videoLocations[videoID] = location;
+        return 0;
+    }
+    static getVideo(videoID) {
+        if (Game.hasLoadedVideo(videoID)) {
+            return Game.loadedVideos[videoID];
+        }
+        else if (Game.hasAvailableVideo(videoID)) {
+            Game.loadVideo(videoID);
+            return Game.loadedVideos["missingVideo"];
+        }
+        else {
+            return Game.loadedVideos["missingVideo"];
+        }
+    }
+    static loadVideo(videoID = "") {
+        videoID = Tools.filterID(videoID);
+        if (videoID.length == 0) {
+            return 2;
+        }
+        if (Game.hasLoadedVideo(videoID)) {
+            return 0;
+        }
+        else if (Game.hasAvailableVideo(videoID)) {
+            // TODO: commented out until VideoTexture.clone() returns a VideoTexture instead of a Texture
+            /*let loadedVideo = new BABYLON.VideoTexture(videoID, Game.videoLocations[videoID], Game.scene);
+            loadedVideo.name = videoID;
+            Game.setLoadedVideo(videoID, loadedVideo);*/
+            return 0;
+        }
+        return 1;
+    }
+    static createVideo(id = "", videoID = "", width = 1.0, height = 1.0) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        videoID = Tools.filterID(videoID);
+        if (!Game.hasAvailableVideo(videoID)) {
+            return 1;
+        }
+        let videoTexture = Game.cloneVideo(videoID);
+        if (!(videoTexture instanceof BABYLON.VideoTexture)) {
+            return 2;
+        }
+        let videoMaterial = new BABYLON.StandardMaterial(id.concat("Material"), Game.scene);
+        videoMaterial.name = id.concat("Material");
+        videoMaterial.diffuseTexture = videoTexture;
+        videoMaterial.emissiveColor = new BABYLON.Color3(1,1,1);
+        let videoMesh = BABYLON.MeshBuilder.CreatePlane(id.concat("Mesh"), {"width": width, "height": height}, Game.scene);
+        videoMesh.name = id.concat("Mesh");
+        videoMesh.material = videoMaterial;
+        return videoMesh;
+    }
+    static cloneVideo(videoID = "") {
+        if (!Game.hasAvailableVideo(videoID)) {
+            return 1;
+        }
+        let videoTexture = new BABYLON.VideoTexture(videoID, Game.videoLocations[videoID], Game.scene, false, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, {autoplay:false, autoUpdateTexture:true, loop:true});
+        Game.setVideoClone(videoID, videoTexture);
+        return videoTexture;
+    }
+    static setVideoClone(videoID = "", videoTextureClone) {
+        if (!Game.videoClones.hasOwnProperty(videoID)) {
+            Game.videoClones[videoID] = new Array();
+        }
+        videoTextureClone.name = videoID;
+        Game.videoClones[videoID].push(videoTextureClone);
+        return 0;
+    }
+    static removeVideoClone(videoTextureClone) {
+        if (!(videoTextureClone instanceof BABYLON.VideoTexture)) {
+            return 2;
+        }
+        if (!Game.videoClones.hasOwnProperty(videoID)) {
+            return 1;
+        }
+        Game.videoClones[videoTextureClone.name].some((videoTexture)=>{
+            if (videoTextureClone.uid == videoTexture.uid) {
+                Game.videoClones[videoTextureClone.name].remove(videoTextureClone);
+                return true;
+            }
+        });
+        return 0;
     }
     /**
      * Loads and creates an XML(SVG)Document
@@ -2434,7 +2534,59 @@ class Game {
             }
         }
     }
-    static addDoorsToCreate(doorIndexID, name = "", to = "", meshID = "missingMesh", textureID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+    static addDisplayToCreate(displayIndexID, name = "", meshID = "missingMesh", materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+        if (Game.hasDisplayToCreate(displayIndexID)) {
+            return true;
+        }
+        Game.loadMesh(meshID);
+        Game.displaysToCreate[displayIndexID] = {
+            0:displayIndexID,
+            1:name,
+            2:meshID,
+            3:materialID,
+            4:videoID,
+            5:position,
+            6:rotation,
+            7:scaling,
+            8:options
+        };
+        Game.displaysToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
+        return true;
+    }
+    static removeDisplayToCreate(displayIndexID) {
+        if (!Game.hasDisplayToCreate(displayIndexID)) {
+            return true;
+        }
+        delete Game.displaysToCreate[displayIndexID];
+        Game.displaysToCreateCounter -= 1;
+        return true;
+    }
+    static hasDisplayToCreate(displayIndexID) {
+        return Game.displaysToCreateCounter > 0 && Game.displaysToCreate.hasOwnProperty(displayIndexID);
+    }
+    static createBackloggedDisplays() {
+        if (Game.displaysToCreateCounter == 0) {
+            return true;
+        }
+        for (let i in Game.displaysToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.displaysToCreate[i][2])) {
+                Game.createDisplay(
+                    Game.displaysToCreate[i][0],
+                    Game.displaysToCreate[i][1],
+                    Game.displaysToCreate[i][2],
+                    Game.displaysToCreate[i][3],
+                    Game.displaysToCreate[i][4],
+                    Game.displaysToCreate[i][5],
+                    Game.displaysToCreate[i][6],
+                    Game.displaysToCreate[i][7],
+                    Game.displaysToCreate[i][8]
+                );
+                Game.removeDisplayToCreate(i);
+            }
+        }
+    }
+    static addDoorToCreate(doorIndexID, name = "", to = "", meshID = "missingMesh", textureID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (Game.hasDoorsToCreate(doorIndexID)) {
             return true;
         }
@@ -2454,7 +2606,7 @@ class Game {
         Game.hasBackloggedEntities = true;
         return true;
     }
-    static removeDoorsToCreate(doorIndexID) {
+    static removeDoorToCreate(doorIndexID) {
         if (!Game.hasDoorsToCreate(doorIndexID)) {
             return true;
         }
@@ -2482,7 +2634,7 @@ class Game {
                     Game.doorsToCreate[i][7],
                     Game.doorsToCreate[i][8]
                 );
-                Game.removeDoorsToCreate(i);
+                Game.removeDoorToCreate(i);
             }
         }
     }
@@ -3171,7 +3323,7 @@ class Game {
         }
         if (!(Game.hasLoadedMesh(meshID))) {
             Game.loadMesh(meshID);
-            Game.addDoorsToCreate(id, name, to, meshID, materialID, position, rotation, scaling, options);
+            Game.addDoorToCreate(id, name, to, meshID, materialID, position, rotation, scaling, options);
             return [id, name, to, meshID, materialID, position, rotation, scaling, options];
         }
         let doorEntity = new DoorEntity(id, name, undefined, undefined, options["locked"], options["key"], options["opensInward"], options["open"]);
@@ -3448,6 +3600,64 @@ class Game {
         }
         return 0;
     }
+    static filterCreateDisplay(id = "", name = "", meshID, materialID, videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        if (!Game.hasMesh(meshID)) {
+            return 2;
+        }
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
+        }
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            if (typeof rotation == "number") {
+                rotation = new BABYLON.Vector3(0, rotation, 0);
+            }
+            else {
+                rotation = Tools.filterVector(rotation);
+            }
+        }
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            if (typeof scaling == "number") {
+                scaling = new BABYLON.Vector3(scaling, scaling, scaling);
+            }
+            else {
+                scaling = Tools.filterVector(scaling);
+            }
+        }
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
+        }
+        if (typeof options != "object") {
+            options = {};
+        }
+        if (Game.meshProperties.hasOwnProperty(meshID)) {
+            Object.assign(options, Game.meshProperties[meshID]);
+        }
+        options["filtered"] = true;
+        return [id, name, meshID, materialID, videoID, position, rotation, scaling, options];
+    }
+    static createDisplay(id = "", name = "", meshID, materialID, videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 1, videoMeshHeight: 0.75, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+        if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
+            let filteredParameters = Game.filterCreateDisplay(id, name, meshID, materialID, videoID, position, rotation, scaling, options);
+            if (typeof filteredParameters == "number") {
+                return 2;
+            }
+            [id, name, meshID, materialID, videoID, position, rotation, scaling, options] = filteredParameters;
+        }
+        if (!(Game.hasLoadedMesh(meshID))) {
+            Game.loadMesh(meshID);
+            Game.addDisplayToCreate(id, name, meshID, materialID, videoID, position, rotation, scaling, options);
+            return [id, name, meshID, materialID, videoID, position, rotation, scaling, options];
+        }
+        let loadedMesh = Game.createMesh(id, meshID, materialID, position, rotation, scaling, options);
+        let displayEntity = new DisplayEntity(id, name, undefined, undefined);
+        let displayController = new DisplayController(id, loadedMesh, displayEntity, videoID, options["videoMeshWidth"], options["videoMeshHeight"], options["videoMeshPosition"]);
+        return displayController;
+    }
+    static removeDisplay() {}
     /**
      * Creates an ItemEntity
      * @param {string} [id] Unique ID, auto-generated if none given

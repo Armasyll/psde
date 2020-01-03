@@ -307,13 +307,16 @@ class GameGUI {
             GameGUI._ageInput.text = String(Game.Tools.filterInt(GameGUI._ageInput.text));
         });
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
-            Game.initQwertyKeyboardControls();
+            AbstractControls.initQwertyKeyboardControls();
+            Game.updateMenuKeyboardDisplayKeys();
         });
         buttonKBLayoutDvorak.onPointerUpObservable.add(function() {
-            Game.initDvorakKeyboardControls();
+            AbstractControls.initDvorakKeyboardControls();
+            Game.updateMenuKeyboardDisplayKeys();
         });
         buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
-            Game.initAzertyKeyboardControls();
+            AbstractControls.initAzertyKeyboardControls();
+            Game.updateMenuKeyboardDisplayKeys();
         });
         urlButton.onPointerUpObservable.add(function() {
             window.open('https://github.com/armasyll/psde', '_blank');
@@ -481,7 +484,7 @@ class GameGUI {
      * Sets the action tooltip's letter corresponding to Game.useTargetedEntityCode.
      * @param {string} _string Top left character.
      */
-    static setActionTooltipLetter(_string = String.fromCharCode(Game.useTargetedEntityCode)) {
+    static setActionTooltipLetter(_string = String.fromCharCode(AbstractControls.useTargetedEntityCode)) {
         GameGUI._actionTooltip.children[0].text = _string;
     }
     /**

@@ -118,4 +118,74 @@ class AbstractControls {
             default: return 0;
         }
     }
+    static initialize() {
+        AbstractControls.initialized = false;
+        AbstractControls.initQwertyKeyboardControls();
+        AbstractControls.initialized = true;
+        return 0;
+    }
+    static initBaseKeyboardControls() {
+        AbstractControls.chatInputFocusCode = 13;
+        AbstractControls.chatInputSubmitCode = 13;
+        AbstractControls.showMainMenuCode = 27;
+        return 0;
+    }
+    static initQwertyKeyboardControls() {
+        AbstractControls.initBaseKeyboardControls();
+        AbstractControls.walkCode = 87; // W
+        AbstractControls.walkBackCode = 83; // S
+        AbstractControls.turnLeftCode = 0;
+        AbstractControls.turnRightCode = 0;
+        AbstractControls.strafeLeftCode = 65; // A
+        AbstractControls.strafeRightCode = 68; // D
+        AbstractControls.jumpCode = 32; // Space
+        AbstractControls.interfaceTargetedEntityCode = 70; // F
+        AbstractControls.useTargetedEntityCode = 69; // E
+        AbstractControls.useSelectedItemCode = 82; // R
+        AbstractControls.showInventoryCode = 73; // I
+        AbstractControls.UIAccept = 69; // E
+        AbstractControls.UIAcceptAlt = 13; // Enter
+        AbstractControls.UIDeny = 81; // Q
+        AbstractControls.UIDenyAlt = 18; // Alt
+        return 0;
+    }
+    static initDvorakKeyboardControls() {
+        AbstractControls.initBaseKeyboardControls();
+        AbstractControls.walkCode = 188;
+        AbstractControls.walkBackCode = 73;
+        AbstractControls.turnLeftCode = 0;
+        AbstractControls.turnRightCode = 0;
+        AbstractControls.strafeLeftCode = 65;
+        AbstractControls.strafeRightCode = 69;
+        AbstractControls.jumpCode = 32;
+        AbstractControls.interfaceTargetedEntityCode = 85;
+        AbstractControls.useTargetedEntityCode = 190;
+        AbstractControls.useSelectedItemCode = 80;
+        AbstractControls.showInventoryCode = 67; // C
+        AbstractControls.UIAccept = 190; // E
+        AbstractControls.UIAcceptAlt = 13; // Enter
+        AbstractControls.UIDeny = 222; // Q
+        AbstractControls.UIDenyAlt = 18; // Alt
+        return 0;
+    }
+    static initAzertyKeyboardControls() {
+        AbstractControls.initBaseKeyboardControls();
+        AbstractControls.walkCode = 90;
+        AbstractControls.walkBackCode = 83;
+        AbstractControls.turnLeftCode = 0;
+        AbstractControls.turnRightCode = 0;
+        AbstractControls.strafeLeftCode = 81;
+        AbstractControls.strafeRightCode = 68;
+        AbstractControls.jumpCode = 32;
+        AbstractControls.interfaceTargetedEntityCode = 70;
+        AbstractControls.useTargetedEntityCode = 69;
+        AbstractControls.useSelectedItemCode = 82;
+        AbstractControls.showInventoryCode = 73;
+        AbstractControls.UIAccept = 69; // E
+        AbstractControls.UIAcceptAlt = 13; // Enter
+        AbstractControls.UIDeny = 65; // A
+        AbstractControls.UIDenyAlt = 18; // Alt
+        return 0;
+    }
 }
+AbstractControls.initialize();

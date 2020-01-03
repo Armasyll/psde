@@ -11,7 +11,7 @@ class MenuControls {
             return 2;
         }
         switch (keyboardEvent.keyCode) {
-            case Game.showInventoryCode: {
+            case AbstractControls.showInventoryCode: {
                 if (GameGUI.inventoryMenu.isVisible()) {
                     GameGUI.inventoryMenu.hide();
                     GameGUI.hideMenu();
@@ -23,8 +23,8 @@ class MenuControls {
                 }
                 break;
             }
-            case Game.UIDenyAlt:
-            case Game.UIDeny: {
+            case AbstractControls.UIDenyAlt:
+            case AbstractControls.UIDeny: {
                 GameGUI.hideMenu(true);
                 break;
             }

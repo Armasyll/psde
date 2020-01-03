@@ -11,7 +11,7 @@ class CharacterControls {
             return 2;
         }
         switch (keyboardEvent.keyCode) {
-            case Game.jumpCode : {
+            case AbstractControls.jumpCode : {
                 Game.player.getController().keyJump(true);
                 break;
             }
@@ -19,31 +19,31 @@ class CharacterControls {
                 Game.player.getController().keyShift(true);
                 break;
             }
-            case Game.walkCode : {
+            case AbstractControls.walkCode : {
                 Game.player.getController().keyMoveForward(true);
                 break;
             }
-            case Game.turnLeftCode : {
+            case AbstractControls.turnLeftCode : {
                 Game.player.getController().keyTurnLeft(true);
                 break;
             }
-            case Game.turnRightCode : {
+            case AbstractControls.turnRightCode : {
                 Game.player.getController().keyTurnRight(true);
                 break;
             }
-            case Game.walkBackCode : {
+            case AbstractControls.walkBackCode : {
                 Game.player.getController().keyMoveBackward(true);
                 break;
             }
-            case Game.strafeLeftCode : {
+            case AbstractControls.strafeLeftCode : {
                 Game.player.getController().keyStrafeLeft(true);
                 break;
             }
-            case Game.strafeRightCode : {
+            case AbstractControls.strafeRightCode : {
                 Game.player.getController().keyStrafeRight(true);
                 break;
             }
-            case Game.chatInputFocusCode : {
+            case AbstractControls.chatInputFocusCode : {
                 if (Game.gui.getHudVisible()) {
                     if (!Game.gui.chat.isFocused()) {
                         Game.gui.chat.setFocused(true);
@@ -54,11 +54,11 @@ class CharacterControls {
                 }
                 break;
             }
-            case Game.chatInputSubmitCode : {
+            case AbstractControls.chatInputSubmitCode : {
                 Game.sendChatMessage();
                 break;
             }
-            case Game.useTargetedEntityCode : {
+            case AbstractControls.useTargetedEntityCode : {
                 /*
                     TODO: on press (which it's being right now) begin a timeout for 1.5 (or w/e) seconds that opens a radial for additional interfacing;
                         if the key is released before then, which should be handled in controlCharacterOnKeyDown's useTargetedEntityCode, delete the timeout function
@@ -72,7 +72,7 @@ class CharacterControls {
                  */
                 break;
             }
-            case Game.interfaceTargetedEntityCode : {
+            case AbstractControls.interfaceTargetedEntityCode : {
                 if (Game.player.getController().getTarget() instanceof EntityController) {
                     Game.gui.clearActionsMenu();
                     Game.gui.populateActionsMenuWithTarget();
@@ -81,14 +81,14 @@ class CharacterControls {
                 }
                 break;
             }
-            case Game.showInventoryCode : {
+            case AbstractControls.showInventoryCode : {
                 Game.gui.inventoryMenu.updateWith(Game.player);
                 Game.gui.showMenu(true);
                 Game.gui.inventoryMenu.show();
                 Game.gui.pointerRelease();
                 break;
             }
-            case Game.showMainMenuCode : {
+            case AbstractControls.showMainMenuCode : {
                 if (Game.gui.getMenuVisible()) {
                     if (Game.debugMode) console.log(`\tShowing HUD`);
                     Game.gui.hideMenu(false);
@@ -127,7 +127,7 @@ class CharacterControls {
             case 54: case 55: case 56: case 57: case 49: {
                 break;
             }
-            case Game.jumpCode : {
+            case AbstractControls.jumpCode : {
                 Game.player.getController().keyJump(false);
                 break;
             }
@@ -135,31 +135,31 @@ class CharacterControls {
                 Game.player.getController().keyShift(false);
                 break;
             }
-            case Game.walkCode : {
+            case AbstractControls.walkCode : {
                 Game.player.getController().keyMoveForward(false);
                 break;
             }
-            case Game.turnLeftCode : {
+            case AbstractControls.turnLeftCode : {
                 Game.player.getController().keyTurnLeft(false);
                 break;
             }
-            case Game.turnRightCode : {
+            case AbstractControls.turnRightCode : {
                 Game.player.getController().keyTurnRight(false);
                 break;
             }
-            case Game.walkBackCode : {
+            case AbstractControls.walkBackCode : {
                 Game.player.getController().keyMoveBackward(false);
                 break;
             }
-            case Game.strafeLeftCode : {
+            case AbstractControls.strafeLeftCode : {
                 Game.player.getController().keyStrafeLeft(false);
                 break;
             }
-            case Game.strafeRightCode : {
+            case AbstractControls.strafeRightCode : {
                 Game.player.getController().keyStrafeRight(false);
                 break;
             }
-            case Game.useTargetedEntityCode : {
+            case AbstractControls.useTargetedEntityCode : {
                 if (Game.player.getTarget() instanceof AbstractEntity) {
                     Game.doEntityActionFunction(Game.player.getTarget(), Game.player, Game.player.getTarget().getDefaultAction());
                 }
@@ -212,7 +212,7 @@ class CharacterControls {
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return 2;
         }
-        if (Game.initialized && Game.player instanceof CharacterEntity && Game.player.getTarget() instanceof AbstractEntity) {
+        if (Game.player.getTarget() instanceof AbstractEntity) {
             Game.gui.clearActionsMenu();
             Game.gui.populateActionsMenuWithTarget();
             Game.gui.updateActionsMenu();
@@ -220,4 +220,9 @@ class CharacterControls {
         }
         return 0;
     }
+    static initialize() {
+        AbstractControls.initialized = true;
+        return 0;
+    }
 }
+CharacterControls.initialize();
