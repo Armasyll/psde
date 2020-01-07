@@ -63,7 +63,6 @@ class CharacterControllerTransform extends CharacterController {
                 cmd:"setLocRot",
                 msg:[
                     this.entity.getID(),
-                    new Date().getTime(),
                     this.mesh.position.asArray(),
                     this.mesh.rotation.asArray()
                 ]

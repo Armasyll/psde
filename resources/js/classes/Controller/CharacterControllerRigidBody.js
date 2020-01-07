@@ -55,6 +55,14 @@ class CharacterControllerRigidBody extends CharacterController {
         if (Game.player == this.entity) {
             Game.updateCameraTarget();
         }
+        Game.entityLocRotWorker.postMessage({
+            cmd:"setLocRot",
+            msg:[
+                this.entity.getID(),
+                this.mesh.position.asArray(),
+                this.mesh.rotation.asArray()
+            ]
+        });
         return this;
     }
     doMove() {

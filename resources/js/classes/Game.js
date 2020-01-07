@@ -857,11 +857,29 @@ class Game {
                     }
                     break;
                 }
+                case "entityToggler": {
+                    Game.entityLocRotWorker.postMessage({cmd:"toggleEntities"});
+                    break;
+                }
             }
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
         Game.entityLocRotWorker.onmessage = function(e) {
-            //console.log(e.data);
+            if (!e.data.hasOwnProperty(0) || !e.data.hasOwnProperty(1)) {
+                return 2;
+            }
+            if (e.data[0] == 0) {
+                if (!EntityController.has(e.data[1])) {
+                    return 1;
+                }
+                EntityController.get(e.data[1]).setEnabled(true);
+            }
+            else if (e.data[0] == 1) {
+                if (!EntityController.has(e.data[1])) {
+                    return 1;
+                }
+                EntityController.get(e.data[1]).setEnabled(false);
+            }
         }
         Game.gameTimeMultiplier = 10;
         Game.roundTime = 6;
@@ -1102,6 +1120,7 @@ class Game {
         Game.initFollowCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
+        Game.entityLocRotWorker.postMessage({cmd:"setPlayer",msg:Game.player.getID()});
         return 0;
     }
     static updateMenuKeyboardDisplayKeys() {

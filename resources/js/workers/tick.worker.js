@@ -24,6 +24,7 @@ function tickFunction() {
     }
     if (currentTime % turnTime == 0) {
         // turn
+        sendEntityTogglerRequest();
     }
     else if (currentTime % roundTime == 0) {
         // round
@@ -36,6 +37,9 @@ function stopFunction() {
 function startFunction() {
     tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
     paused = false;
+}
+function sendEntityTogglerRequest() {
+    postMessage({"cmd":"entityToggler"});
 }
 function sendInfo() {
     postMessage({"cmd":"sendInfo", "msg":{"currentTime":currentTime, "gameTimeMultiplier":gameTimeMultiplier, "roundTime":roundTime, "roundsPerTurn":roundsPerTurn, "turnTime":turnTime}});
