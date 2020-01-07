@@ -3600,7 +3600,20 @@ class Game {
         }
         return 0;
     }
-    static filterCreateDisplay(id = "", name = "", meshID, materialID, videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} meshID 
+     * @param {string} [materialID] 
+     * @param {string} [videoID] 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} [rotation] 
+     * @param {BABYLON.Vector3} [scaling] 
+     * @param {object} [options] 
+     * @returns {array}
+     */
+    static filterCreateDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3639,7 +3652,20 @@ class Game {
         options["filtered"] = true;
         return [id, name, meshID, materialID, videoID, position, rotation, scaling, options];
     }
-    static createDisplay(id = "", name = "", meshID, materialID, videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 1, videoMeshHeight: 0.75, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} meshID 
+     * @param {string} [materialID] 
+     * @param {string} [videoID] 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} [rotation] 
+     * @param {BABYLON.Vector3} [scaling] 
+     * @param {object} [options] 
+     * @returns {DisplayController}
+     */
+    static createDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 1, videoMeshHeight: 0.75, videoMeshPosition: BABYLON.Vector3.Zero()}) {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateDisplay(id, name, meshID, materialID, videoID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -3657,7 +3683,26 @@ class Game {
         let displayController = new DisplayController(id, loadedMesh, displayEntity, videoID, options["videoMeshWidth"], options["videoMeshHeight"], options["videoMeshPosition"]);
         return displayController;
     }
-    static removeDisplay() {}
+    /**
+     * 
+     * @param {DisplayController} displayController 
+     * @returns {number} Integer status code
+     */
+    static removeDisplay(displayController) {
+        if (!(displayController instanceof DisplayController)) {
+            if (!(DisplayController.has(displayController))) {
+                return 2;
+            }
+            displayController = DisplayController.get(displayController);
+        }
+        let mesh = displayController.getMesh();
+        displayController.entity.dispose();
+        displayController.dispose();
+        if (mesh instanceof BABYLON.InstancedMesh) {
+            Game.removeMesh(mesh);
+        }
+        return 0;
+    }
     /**
      * Creates an ItemEntity
      * @param {string} [id] Unique ID, auto-generated if none given
