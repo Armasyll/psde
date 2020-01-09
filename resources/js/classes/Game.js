@@ -813,13 +813,13 @@ class Game {
         Game.loadDefaultVideos();
         Game.loadDefaultItems();
 
-        Game.skybox = BABYLON.MeshBuilder.CreateBox("skybox", {size:2048.0}, Game.scene);
-
         /*
             Which function handles the function of the key presses;
             controlerCharacter, controlMenu
          */
         Game.controls = AbstractControls;
+        Game.editTargetMesh = null;
+        Game.editTargetController = null;
         Game.updateMenuKeyboardDisplayKeys();
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
@@ -839,9 +839,6 @@ class Game {
         Game.gui.initialize();
         Game.initFreeCamera();
         Game.initPostProcessing();
-        window.addEventListener("click", Game.controls.onClick);
-        window.addEventListener("mousedown", Game.controls.onMouseDown);
-        window.addEventListener("mouseup", Game.controls.onMouseUp);
         window.addEventListener("contextmenu", Game.controls.onContext);
 
         Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
@@ -912,6 +909,46 @@ class Game {
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
                         Game.controls.onKeyUp(evt.sourceEvent);
                     }));
+                    Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLongPressTrigger, function (evt) {
+                        Game.controls.onLongPress(evt.sourceEvent);
+                    }));
+                    Game.scene.onPointerObservable.add((e) => {
+                        switch (e.type) {
+                            case BABYLON.PointerEventTypes.POINTERDOWN:
+                                if (e.event.button == 0) {
+                                    Game.controls.onMouseDown(e.event);
+                                }
+                                else if (e.event.button == 1) {}
+                                else if (e.event.button == 2) {}
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERUP:
+                                if (e.event.button == 0) {
+                                    Game.controls.onMouseUp(e.event);
+                                }
+                                else if (e.event.button == 1) {}
+                                else if (e.event.button == 2) {}
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERMOVE:
+                                Game.controls.onMove(e.event);
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERWHEEL:
+                                Game.controls.onScroll(e.event);
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERPICK:
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERTAP:
+                                if (e.event.button == 0) {
+                                    Game.controls.onClick(e.event);
+                                }
+                                else if (e.event.button == 1) {}
+                                else if (e.event.button == 2) {
+                                    Game.controls.onContext(e.event);
+                                }
+                                break;
+                            case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
+                                break;
+                        }
+                    });
                 }
                 else {
                     Client.initialize();
@@ -1185,7 +1222,7 @@ class Game {
         return 0;
     }
     static loadDefaultItems() {
-        Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "block", "loadingMaterial", ItemEnum.GENERAL);
+        Game.createItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", "missingMesh", "loadingMaterial", ItemEnum.GENERAL);
         return 0;
     }
     /**
@@ -1658,6 +1695,12 @@ class Game {
         Game.clonedMeshes[newMeshID] = mesh;
         return 0;
     }
+    static getClonedMesh(meshID) {
+        if (Game.hasClonedMesh(meshID)) {
+            return Game.clonedMeshes[meshID];
+        }
+        return 2;
+    }
     static hasClonedMesh(meshID) {
         return Game.clonedMeshes.hasOwnProperty(meshID);
     }
@@ -1671,6 +1714,12 @@ class Game {
         }
         Game.instancedMeshes[newMeshID] = mesh;
         return 0;
+    }
+    static getInstancedMesh(meshID) {
+        if (Game.hasInstancedMesh(meshID)) {
+            return Game.instancedMeshes[meshID];
+        }
+        return 2;
     }
     static hasInstancedMesh(meshID) {
         return Game.instancedMeshes.hasOwnProperty(meshID);
@@ -4785,6 +4834,10 @@ class Game {
         }
         if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
         Game.interfaceMode = interfaceMode;
+        if (Game.interfaceMode == InterfaceModeEnum.EDIT) {
+            Game.setEditTargetMesh(null);
+            Game.setEditTargetController(null);
+        }
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.controls = CharacterControls;
@@ -4808,6 +4861,90 @@ class Game {
     static getInterfaceMode() {
         return Game.interfaceMode;
     }
+    static setEditTargetMesh(mesh) {
+        if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
+            Game.clearEditTargetMesh();
+            return 1;
+        }
+        if (mesh instanceof BABYLON.AbstractMesh) {}
+        else if (Game.hasClonedMesh(mesh)) {
+            mesh = Game.getClonedMesh(mesh);
+        }
+        else if (Game.hasInstancedMesh(mesh)) {
+            mesh = Game.getInstancedMesh(mesh);
+        }
+        else {
+            Game.clearEditTargetMesh();
+            return 2;
+        }
+        if (Game.editTargetMesh == mesh) {
+            return 0;
+        }
+        Game.previousEditTargetMesh = Game.editTargetMesh;
+        Game.editTargetMesh = mesh;
+        return 0;
+    }
+    static clearEditTargetMesh() {
+        Game.previousEditTargetMesh = Game.editTargetMesh;
+        Game.editTargetMesh = null;
+        return 0;
+    }
+    static setEditTargetController(abstractController) {
+        if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
+            Game.clearEditTargetController();
+            return 1;
+        }
+        if (abstractController instanceof AbstractController) {}
+        else if (AbstractController.has(abstractController)) {
+            abstractController = AbstractController.get(abstractController);
+        }
+        else {
+            Game.clearEditTargetController();
+            return 2;
+        }
+        if (Game.editTargetController == abstractController) {
+            return 0;
+        }
+        Game.previousEditTargetController = Game.editTargetController;
+        Game.editTargetController = abstractController;
+        return 0;
+    }
+    static clearEditTargetController() {
+        Game.previousEditTargetController = Game.editTargetController;
+        Game.editTargetController = null;
+        return 0;
+    }
+    static setMeshScaling(mesh, scaling = BABYLON.Vector3.One()) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (!Game.hasMesh(mesh)) {
+                return 2;
+            }
+            mesh = Game.getMesh(mesh);
+        }
+        mesh.scaling.copyFrom(scaling);
+        return 0;
+    }
+    static setMeshRotation(mesh, rotation = BABYLON.Vector3.Zero()) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (!Game.hasMesh(mesh)) {
+                return 2;
+            }
+            mesh = Game.getMesh(mesh);
+        }
+        mesh.rotation.copyFrom(rotation);
+        return 0;
+    }
+    static setMeshPosition(mesh, position = BABYLON.Vector3.Zero()) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (!Game.hasMesh(mesh)) {
+                return 2;
+            }
+            mesh = Game.getMesh(mesh);
+        }
+        mesh.position.copyFrom(position);
+        return 0;
+    }
+
     static calculateProficiencyByLevel(level) {
         return Math.floor((level + 7) / 4);
     }

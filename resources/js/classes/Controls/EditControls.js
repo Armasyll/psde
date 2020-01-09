@@ -1,4 +1,4 @@
-class EditControls {
+class EditControls extends AbstractControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {
             return 1;

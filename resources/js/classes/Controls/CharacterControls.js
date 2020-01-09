@@ -1,4 +1,4 @@
-class CharacterControls {
+class CharacterControls extends AbstractControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {
             return 1;
@@ -221,7 +221,7 @@ class CharacterControls {
         return 0;
     }
     static initialize() {
-        AbstractControls.initialized = true;
+        CharacterControls.initialized = true;
         return 0;
     }
 }
