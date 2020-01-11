@@ -4325,7 +4325,7 @@ class Game {
             case "V:" : {
                 if (Game.controls == EditControls) {
                     Game.gui.chat.appendOutput("\n    Bye, super powers v:\n");
-                    Game.setInterfaceMode(Game.previousInterfaceMode);
+                    Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
                 }
                 else {
                     Game.gui.chat.appendOutput("\n    A developer is you :V\n");
