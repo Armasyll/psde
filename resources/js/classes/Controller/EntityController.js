@@ -297,6 +297,12 @@ class EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
+        if (EditControls.pickedController == this) {
+            EditControls.reset();
+        }
+        else if (EditControls.previousPickedController == this) {
+            EditControls.previousPickedController = null;
+        }
         this.propertiesChanged = false;
         this.animations.clear();
         if (this.hasEntity) {

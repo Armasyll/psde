@@ -7,8 +7,13 @@ class EditControls extends AbstractControls {
             return 2;
         }
         switch (keyboardEvent.keyCode) {
+            case 16 : {
+                EditControls.shiftPressed = true;
+                break;
+            }
             case EditControls.rotateCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
+                    Game.gui.chat.appendOutput(`\n    Rotating ${EditControls.pickedMesh.id} by Y:${EditControls.yRotatingIncrement}\n`);
                     EditControls.rotating = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -16,6 +21,7 @@ class EditControls extends AbstractControls {
             }
             case EditControls.scaleCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
+                    Game.gui.chat.appendOutput(`\n    Scaling ${EditControls.pickedMesh.id} by *:${EditControls.yScalingIncrement}\n`);
                     EditControls.scaling = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -23,6 +29,7 @@ class EditControls extends AbstractControls {
             }
             case EditControls.moveCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
+                    Game.gui.chat.appendOutput(`\n    Moving ${EditControls.pickedMesh.id}\n`);
                     EditControls.moving = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -31,10 +38,37 @@ class EditControls extends AbstractControls {
             case EditControls.toggleCollision : {
                 break;
             }
+            case AbstractControls.chatInputFocusCode : {
+                if (Game.gui.getHudVisible()) {
+                    if (!Game.gui.chat.isFocused()) {
+                        Game.gui.chat.setFocused(true);
+                    }
+                    else {
+                        Game.sendChatMessage();
+                    }
+                }
+                break;
+            }
+            case AbstractControls.chatInputSubmitCode : {
+                Game.sendChatMessage();
+                break;
+            }
         }
         return 0;
     }
     static onKeyUp(keyboardEvent) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (!(keyboardEvent instanceof KeyboardEvent)) {
+            return 2;
+        }
+        switch (keyboardEvent.keyCode) {
+            case 16 : {
+                EditControls.shiftPressed = false;
+                break;
+            }
+        }
         return 0;
     }
     static onKeyPress(keyboardEvent) {
@@ -51,11 +85,8 @@ class EditControls extends AbstractControls {
             EditControls.pickedMeshOriginalPosition.copyFrom(EditControls.pickedMesh.position);
             EditControls.pickedMeshOriginalRotation.copyFrom(EditControls.pickedMesh.rotation);
             EditControls.pickedMeshOriginalScaling.copyFrom(EditControls.pickedMesh.scaling);
-            EditControls.moving = false;
-            EditControls.rotating = false;
-            EditControls.scaling = false;
-            Game.camera.attachControl(Game.canvas);
         }
+        EditControls.resetControls();
         return 0;
     }
     static onContext(mouseEvent) {
@@ -66,11 +97,17 @@ class EditControls extends AbstractControls {
             EditControls.clearPickedMesh();
         }
         else {
-            let pick = Game.scene.pick(window.innerWidth/2, window.innerHeight/2);
+            let pick = Game.scene.pick(window.innerWidth/2, window.innerHeight/2, (abstractMesh) => {
+                if (abstractMesh.isVisible && abstractMesh.isEnabled() && !abstractMesh.isHitbox && abstractMesh.material.id != "collisionMaterial") {
+                    return true;
+                }
+                return false;
+            });
             if (pick.pickedMesh instanceof BABYLON.AbstractMesh && pick.pickedMesh.isEnabled()) {
                 EditControls.pickMesh(pick.pickedMesh);
             }
         }
+        EditControls.resetControls();
         return 0;
     }
     static onMove(event) {
@@ -91,18 +128,18 @@ class EditControls extends AbstractControls {
             }
             else if (EditControls.rotating) {
                 if (xTotal > 0) {
-                    EditControls.pickedMesh.rotation.y += BABYLON.Tools.ToRadians(1);
+                    EditControls.pickedMesh.rotation.y += EditControls.yRotatingIncrement;
                 }
                 else if (xTotal < 0) {
-                    EditControls.pickedMesh.rotation.y -= BABYLON.Tools.ToRadians(1);
+                    EditControls.pickedMesh.rotation.y -= EditControls.yRotatingIncrement;
                 }
             }
             else if (EditControls.scaling) {
                 if (xTotal > 0) {
-                    EditControls.pickedMesh.scaling.addInPlace(new BABYLON.Vector3(0.0125, 0.0125, 0.0125))
+                    EditControls.pickedMesh.scaling.addInPlace(new BABYLON.Vector3(EditControls.xScalingIncrement, EditControls.yScalingIncrement, EditControls.zScalingIncrement))
                 }
                 else if (xTotal < 0) {
-                    EditControls.pickedMesh.scaling.subtractInPlace(new BABYLON.Vector3(0.0125, 0.0125, 0.0125))
+                    EditControls.pickedMesh.scaling.subtractInPlace(new BABYLON.Vector3(EditControls.xScalingIncrement, EditControls.yScalingIncrement, EditControls.zScalingIncrement))
                 }
             }
         }
@@ -123,6 +160,9 @@ class EditControls extends AbstractControls {
         else {
             EditControls.clearPickedMesh();
             return 2;
+        }
+        if (!mesh.isEnabled()) {
+            return 1;
         }
         if (EditControls.pickedMesh == mesh) {
             return 0;
@@ -152,6 +192,9 @@ class EditControls extends AbstractControls {
             EditControls.clearPickedController();
             return 2;
         }
+        if (!abstractController.isEnabled()) {
+            return 1;
+        }
         if (EditControls.pickedController == abstractController) {
             return 0;
         }
@@ -164,17 +207,59 @@ class EditControls extends AbstractControls {
         EditControls.pickedController = null;
         return 0;
     }
-    static initialize() {
-        EditControls.rotateCode = 82;
-        EditControls.scaleCode = 83;
-        EditControls.moveCode = 71;
-        EditControls.toggleCollision = 84;
+    static resetControls() {
         EditControls.rotating = false;
         EditControls.scaling = false;
         EditControls.moving = false;
         EditControls.vectorLockX = false;
         EditControls.vectorLockY = false;
         EditControls.vectorLockZ = false;
+        Game.camera.attachControl(Game.canvas);
+        return 0;
+    }
+    static resetIncrements() {
+        EditControls.rotatingIncrement = BABYLON.Tools.ToRadians(1);
+        EditControls.xRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.yRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.zRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.scalingIncrement = 0.0125;
+        EditControls.xScalingIncrement = EditControls.scalingIncrement;
+        EditControls.yScalingIncrement = EditControls.scalingIncrement;
+        EditControls.zScalingIncrement = EditControls.scalingIncrement;
+        EditControls.movingIncrement = 0.0125;
+        EditControls.xMovingIncrement = EditControls.movingIncrement;
+        EditControls.yMovingIncrement = EditControls.movingIncrement;
+        EditControls.zMovingIncrement = EditControls.movingIncrement;
+    }
+    static reset() {
+        EditControls.initialize();
+    }
+    static initialize() {
+        EditControls.rotateCode = 82; // r
+        EditControls.scaleCode = 83; // s
+        EditControls.moveCode = 71; // g
+        EditControls.toggleCollision = 84; // t
+        EditControls.rotating = false;
+        EditControls.rotatingIncrement = BABYLON.Tools.ToRadians(1);
+        EditControls.xRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.yRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.zRotatingIncrement = EditControls.rotatingIncrement;
+        EditControls.scaling = false;
+        EditControls.scalingIncrement = 0.0125;
+        EditControls.xScalingIncrement = EditControls.scalingIncrement;
+        EditControls.yScalingIncrement = EditControls.scalingIncrement;
+        EditControls.zScalingIncrement = EditControls.scalingIncrement;
+        EditControls.moving = false;
+        EditControls.movingIncrement = 0.0125;
+        EditControls.xMovingIncrement = EditControls.movingIncrement;
+        EditControls.yMovingIncrement = EditControls.movingIncrement;
+        EditControls.zMovingIncrement = EditControls.movingIncrement;
+        EditControls.vectorLockX = false;
+        EditControls.vectorLockY = false;
+        EditControls.vectorLockZ = false;
+        EditControls.localGridLock = false;
+        EditControls.globalGridLock = false;
+        EditControls.shiftPressed = false;
         EditControls.pickedMeshOriginalPosition = new BABYLON.Vector3();
         EditControls.pickedMeshOriginalRotation = new BABYLON.Vector3();
         EditControls.pickedMeshOriginalScaling = new BABYLON.Vector3();

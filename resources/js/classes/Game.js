@@ -881,6 +881,7 @@ class Game {
         Game.turnTime = 60;
         Game._filesToLoad -= 1;
         Game.interfaceMode = InterfaceModeEnum.NONE;
+        Game.previousInterfaceMode = null;
         Game.initialized = true;
         Game.engine.runRenderLoop(Game._renderLoopFunction);
         Game.scene.registerBeforeRender(Game._beforeRenderFunction);
@@ -2109,6 +2110,12 @@ class Game {
                 abstractMesh = Game.meshMaterialMeshes[abstractMesh.name][abstractMesh.material.name][abstractMesh.id];
                 Game.removeMeshMaterialMeshes(abstractMesh.name, abstractMesh.material.name, abstractMesh.id)
             }
+        }
+        if (abstractMesh == EditControls.pickedMesh) {
+            EditControls.reset();
+        }
+        else if (abstractMesh == EditControls.previousPickedMesh) {
+            EditControls.previousPickedMesh = null;
         }
         if (abstractMesh instanceof BABYLON.InstancedMesh) {
             delete Game.instancedMeshes[abstractMesh.id];
@@ -4316,7 +4323,14 @@ class Game {
             case "v:" :
             case ":V" :
             case "V:" : {
-                Game.gui.chat.appendOutput("\n    :V\n");
+                if (Game.controls == EditControls) {
+                    Game.gui.chat.appendOutput("\n    Bye, super powers v:\n");
+                    Game.setInterfaceMode(Game.previousInterfaceMode);
+                }
+                else {
+                    Game.gui.chat.appendOutput("\n    A developer is you :V\n");
+                    Game.setInterfaceMode(InterfaceModeEnum.EDIT);
+                }
                 break;
             }
             case "showdebug" : {
@@ -4831,6 +4845,7 @@ class Game {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
+        Game.previousInterfaceMode = Game.interfaceMode;
         Game.interfaceMode = interfaceMode;
         if (Game.interfaceMode == InterfaceModeEnum.EDIT) {
             EditControls.clearPickedMesh();
