@@ -818,8 +818,6 @@ class Game {
             controlerCharacter, controlMenu
          */
         Game.controls = AbstractControls;
-        Game.editTargetMesh = null;
-        Game.editTargetController = null;
         Game.updateMenuKeyboardDisplayKeys();
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
@@ -4835,8 +4833,8 @@ class Game {
         if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
         Game.interfaceMode = interfaceMode;
         if (Game.interfaceMode == InterfaceModeEnum.EDIT) {
-            Game.setEditTargetMesh(null);
-            Game.setEditTargetController(null);
+            EditControls.clearPickedMesh();
+            EditControls.clearPickedController();
         }
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
@@ -4860,59 +4858,6 @@ class Game {
     }
     static getInterfaceMode() {
         return Game.interfaceMode;
-    }
-    static setEditTargetMesh(mesh) {
-        if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
-            Game.clearEditTargetMesh();
-            return 1;
-        }
-        if (mesh instanceof BABYLON.AbstractMesh) {}
-        else if (Game.hasClonedMesh(mesh)) {
-            mesh = Game.getClonedMesh(mesh);
-        }
-        else if (Game.hasInstancedMesh(mesh)) {
-            mesh = Game.getInstancedMesh(mesh);
-        }
-        else {
-            Game.clearEditTargetMesh();
-            return 2;
-        }
-        if (Game.editTargetMesh == mesh) {
-            return 0;
-        }
-        Game.previousEditTargetMesh = Game.editTargetMesh;
-        Game.editTargetMesh = mesh;
-        return 0;
-    }
-    static clearEditTargetMesh() {
-        Game.previousEditTargetMesh = Game.editTargetMesh;
-        Game.editTargetMesh = null;
-        return 0;
-    }
-    static setEditTargetController(abstractController) {
-        if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
-            Game.clearEditTargetController();
-            return 1;
-        }
-        if (abstractController instanceof AbstractController) {}
-        else if (AbstractController.has(abstractController)) {
-            abstractController = AbstractController.get(abstractController);
-        }
-        else {
-            Game.clearEditTargetController();
-            return 2;
-        }
-        if (Game.editTargetController == abstractController) {
-            return 0;
-        }
-        Game.previousEditTargetController = Game.editTargetController;
-        Game.editTargetController = abstractController;
-        return 0;
-    }
-    static clearEditTargetController() {
-        Game.previousEditTargetController = Game.editTargetController;
-        Game.editTargetController = null;
-        return 0;
     }
     static setMeshScaling(mesh, scaling = BABYLON.Vector3.One()) {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
