@@ -4845,6 +4845,10 @@ class Game {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
+        if (interfaceMode == InterfaceModeEnum.WRITING) {
+            Game.interfaceMode = InterfaceModeEnum.WRITING;
+            return 0;
+        }
         Game.previousInterfaceMode = Game.interfaceMode;
         Game.interfaceMode = interfaceMode;
         if (Game.interfaceMode == InterfaceModeEnum.EDIT) {

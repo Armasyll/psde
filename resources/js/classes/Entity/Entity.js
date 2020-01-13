@@ -11,9 +11,9 @@ class Entity extends AbstractEntity {
         super(id, name, description, iconID);
         this.entityType = entityType;;
         this.weight = 0;
-        this.weightOffset = 0;
+        this.weightModifier = 0;
         this.price = 0;
-        this.priceOffset = 0;
+        this.priceModifier = 0;
         this.meshID = "missingMesh";
         this.textureID = "missingTexture";
         this.materialID = "missingMaterial";
@@ -34,7 +34,7 @@ class Entity extends AbstractEntity {
         return this;
     }
     getWeight() {
-        return this.weight + this.weightOffset;
+        return this.weight + this.weightModifier;
     }
 
     setPrice(number) {
@@ -44,7 +44,7 @@ class Entity extends AbstractEntity {
         return this;
     }
     getPrice() {
-        return this.price + this.priceOffset;
+        return this.price + this.priceModifier;
     }
 
     setMeshID(meshID) {
@@ -240,10 +240,10 @@ class Entity extends AbstractEntity {
         return this.defaultAction;
     }
 
-    resetOffsets() {
-        super.resetOffsets();
-        this.weightOffset = 0;
-        this.priceOffset = 0;
+    resetModifiers() {
+        super.resetModifiers();
+        this.weightModifier = 0;
+        this.priceModifier = 0;
         return 0;
     }
 
@@ -255,9 +255,9 @@ class Entity extends AbstractEntity {
         entity.specialProperties = new Set(this.specialProperties);
         entity.defaultAction = this.defaultAction;
         entity.health = this.health;
-        entity.healthOffset = this.healthOffset;
+        entity.healthModifier = this.healthModifier;
         entity.healthMax = this.healthMax;
-        entity.healthMaxOffset = this.healthMaxOffset;
+        entity.healthMaxModifier = this.healthMaxModifier;
         // variables from Entity
         entity.weight = this.weight;
         entity.price = this.price;

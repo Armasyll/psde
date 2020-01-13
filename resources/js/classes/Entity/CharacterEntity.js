@@ -71,13 +71,13 @@ class CharacterEntity extends CreatureEntity {
          * @type {number}  Hate
          */
         this.defaultDisposition = {
-            passion:0,
-            friendship:0,
-            playfulness:0,
-            soulmate:0,
-            familial:0,
-            obsession:0,
-            hate:0
+            "passion":0,
+            "friendship":0,
+            "playfulness":0,
+            "soulmate":0,
+            "familial":0,
+            "obsession":0,
+            "hate":0
         };
         /**
          * Primary fur colour
@@ -88,7 +88,7 @@ class CharacterEntity extends CreatureEntity {
          * Primary fur colour hex value
          * @type {string}
          */
-        this.furColourAHex = undefined;
+        this._furColourAHex = "#FFA500";
         /**
          * Sexondary fur colour
          * @type {string}
@@ -98,7 +98,7 @@ class CharacterEntity extends CreatureEntity {
          * Secondary fur colour hex value
          * @type {string}
          */
-        this.furColourBHex = undefined;
+        this._furColourBHex = "#FFFDD0";
         /**
          * Paw type
          * @type {number} (PawEnum)
@@ -114,6 +114,8 @@ class CharacterEntity extends CreatureEntity {
          * @type {string}
          */
         this.eyeColour = "green";
+        this._leftEyeColourHex = "#00FF00";
+        this._rightEyeColour.hex = "#00FF00";
         /**
          * Pelt type
          * @type {string} (PeltEnum)
@@ -140,13 +142,9 @@ class CharacterEntity extends CreatureEntity {
         /**
          * @type {InstancedFurnitureEntity}
          */
-        this.furniture = null;
+        this._furniture = null;
 
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
-
-        // TODO: work this out
-        this.proficiencies = new Set();
-        this.proficiencyOffset = 0;
 
         this.setName(name);
         this.setIcon(iconID);
@@ -823,15 +821,12 @@ class CharacterEntity extends CreatureEntity {
             colour = colour.toLowerCase();
         }
         this.eyeColour = colour;
-        this.eyeColourHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._leftEyeColourHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._rightEyeColourHex = this._leftEyeColourHex;
         return this;
     }
     getEyeColour() {
         return this.eyeColour;
-    }
-    setEyeColourHex(number) {
-        this.eyeColourHex = number;
-        return this;
     }
 
     setPelt(peltEnum = PeltEnum.FUR) {
@@ -845,12 +840,12 @@ class CharacterEntity extends CreatureEntity {
     }
     setFurColourA(colour = "red") {
         this.furColourA = colour;
-        this.furColourAHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._furColourAHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return this;
     }
     setFurColourB(colour = "cream") {
         this.furColourB = colour;
-        this.furColourBHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._furColourBHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return this;
     }
     setFurColour(colourA, colourB = undefined) {
@@ -861,44 +856,28 @@ class CharacterEntity extends CreatureEntity {
         this.setFurColourB(colourB);
         return this;
     }
-    setFurColourAHex(number) {
-        this.furColourAHex = number;
-        return this;
-    }
-    setFurColourBHex(number) {
-        this.furColourBHex = number;
-        return this;
-    }
-    setFurColourHex(colourA, colourB = undefined) {
-        if (typeof colourB == 'undefined')
-            colourB = colourA;
-        
-        this.setFurColourAHex(colourA);
-        this.setFurColourBHex(colourB);
-        return this;
-    }
     /**
      * Adds a new disposition this character has for the specified character, by their ID.
      * @param {string} characterEntity Character ID
-     * @param {number} [passionOffset] 
-     * @param {number} [friendshipOffset] 
-     * @param {number} [playfulnessOffset] 
-     * @param {number} [soulmateOffset] 
-     * @param {number} [familialOffset] 
-     * @param {number} [obsessionOffset] 
-     * @param {number} [hateOffset] 
+     * @param {number} [passionModifier] 
+     * @param {number} [friendshipModifier] 
+     * @param {number} [playfulnessModifier] 
+     * @param {number} [soulmateModifier] 
+     * @param {number} [familialModifier] 
+     * @param {number} [obsessionModifier] 
+     * @param {number} [hateModifier] 
      */
-    addNewDisposition(characterEntity, passionOffset = 0, friendshipOffset = 0, playfulnessOffset = 0, soulmateOffset = 0, familialOffset = 0, obsessionOffset = 0, hateOffset = 0) {
+    addNewDisposition(characterEntity, passionModifier = 0, friendshipModifier = 0, playfulnessModifier = 0, soulmateModifier = 0, familialModifier = 0, obsessionModifier = 0, hateModifier = 0) {
         if (characterEntity instanceof CharacterEntity) {
             characterEntity = characterEntity.getID();
         }
-        this.characterDisposition[characterEntity]["passion"] = passionOffset + this.defaultDisposition["passion"];
-        this.characterDisposition[characterEntity]["friendship"] = friendshipOffset + this.defaultDisposition["friendship"];
-        this.characterDisposition[characterEntity]["playfulness"] = playfulnessOffset + this.defaultDisposition["playfulness"];
-        this.characterDisposition[characterEntity]["soulmate"] = soulmateOffset + this.defaultDisposition["soulmate"];
-        this.characterDisposition[characterEntity]["familial"] = familialOffset + this.defaultDisposition["familial"];
-        this.characterDisposition[characterEntity]["obsession"] = obsessionOffset + this.defaultDisposition["obsession"];
-        this.characterDisposition[characterEntity]["hate"] = hateOffset + this.defaultDisposition["hate"];
+        this.characterDisposition[characterEntity]["passion"] = passionModifier + this.defaultDisposition["passion"];
+        this.characterDisposition[characterEntity]["friendship"] = friendshipModifier + this.defaultDisposition["friendship"];
+        this.characterDisposition[characterEntity]["playfulness"] = playfulnessModifier + this.defaultDisposition["playfulness"];
+        this.characterDisposition[characterEntity]["soulmate"] = soulmateModifier + this.defaultDisposition["soulmate"];
+        this.characterDisposition[characterEntity]["familial"] = familialModifier + this.defaultDisposition["familial"];
+        this.characterDisposition[characterEntity]["obsession"] = obsessionModifier + this.defaultDisposition["obsession"];
+        this.characterDisposition[characterEntity]["hate"] = hateModifier + this.defaultDisposition["hate"];
         return this;
     }
 
@@ -925,40 +904,23 @@ class CharacterEntity extends CreatureEntity {
     }
     setFurniture(instancedFurnitureEntity) {
         if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
-            this.furniture = instancedFurnitureEntity;
+            this._furniture = instancedFurnitureEntity;
         }
         return 0;
     }
     getFurniture() {
-        return this.furniture;
+        return this._furniture;
     }
     hasFurniture() {
-        return this.furniture instanceof InstancedFurnitureEntity;
+        return this._furniture instanceof InstancedFurnitureEntity;
     }
     removeFurniture() {
-        this.furniture = null;
+        this._furniture = null;
         return 0;
     }
 
-    addProficiency(proficiencyEnum) {
-        this.proficiencies.add(proficiencyEnum);
-        return 1;
-    }
-    removeProficiency(proficiencyEnum) {
-        this.proficiencies.delete(proficiencyEnum);
-        return 0;
-    }
-    hasProficiency(proficiencyEnum) {
-        return this.proficiencies.has(proficiencyEnum);
-    }
-    clearProficiencies() {
-        this.proficiencies.clear();
-        return 0;
-    }
-
-    resetOffsets() {
-        super.resetOffsets();
-        this.proficiencyOffset = 0;
+    resetModifiers() {
+        super.resetModifiers();
         return 0;
     }
     /**
@@ -1004,9 +966,6 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         return 0;
-    }
-    getProficiencyBonus() {
-        return Math.floor((this.level + 7) / 4) + this.proficiencyOffset;
     }
     generateProperties(firstTime = false) {
         if (this.creatureType != CreatureTypeEnum.HUMANOID) {
@@ -1336,9 +1295,9 @@ class CharacterEntity extends CreatureEntity {
         characterEntity.specialProperties = new Set(this.specialProperties);
         characterEntity.defaultAction = this.defaultAction;
         characterEntity.health = this.health;
-        characterEntity.healthOffset = this.healthOffset;
+        characterEntity.healthModifier = this.healthModifier;
         characterEntity.healthMax = this.healthMax;
-        characterEntity.healthMaxOffset = this.healthMaxOffset;
+        characterEntity.healthMaxModifier = this.healthMaxModifier;
         characterEntity.effects = Object.assign({}, this.effects);
         characterEntity.effectsPriority = Object.assign({}, this.effectsPriority);
         for (let i in this.actionEffects) {
@@ -1365,7 +1324,7 @@ class CharacterEntity extends CreatureEntity {
         characterEntity.charisma = this.charisma;
         characterEntity.level = this.level;
         characterEntity.experiencePoints = this.experiencePoints;
-        characterEntity.nonLethalDamage = this.nonLethalDamage;
+        characterEntity.stamina = this.stamina;
         characterEntity.money = this.money;
         characterEntity.living = this.living;
         characterEntity.conscious = this.conscious;
@@ -1393,12 +1352,14 @@ class CharacterEntity extends CreatureEntity {
         characterEntity.previousEquipment = Object.assign({}, this.previousEquipment);
         characterEntity.defaultDisposition = Object.assign({}, this.defaultDisposition);
         characterEntity.furColourA = this.furColourA;
-        characterEntity.furColourAHex = this.furColourAHex;
+        characterEntity._furColourAHex = this._furColourAHex;
         characterEntity.furColourB = this.furColourB;
-        characterEntity.furColourBHex = this.furColourBHex;
+        characterEntity._furColourBHex = this._furColourBHex;
         characterEntity.pawType = this.pawType;
         characterEntity.eyeType = this.eyeType;
         characterEntity.eyeColour = this.eyeColour;
+        characterEntity._leftEyeColourHex = this._leftEyeColourHex;
+        characterEntity._rightEyeColourHex = this._rightEyeColourHex;
         characterEntity.peltType = this.peltType;
         characterEntity.characterDisposition = Object.assign({}, this.characterDisposition);
         characterEntity.dialogue = this.dialogue;

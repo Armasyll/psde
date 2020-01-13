@@ -22,9 +22,9 @@ class SpellEntity extends AbstractEntity {
         this.spellComponents = {};
         this.duration = 0; // In actions; 0 is instant
         this.damageRollCount = 0;
-        this.damageRollCountOffset = 0;
+        this.damageRollCountModifier = 0;
         this.damageRoll = 0;
-        this.damageRollOffset = 0;
+        this.damageRollModifier = 0;
         this.damageType = DamageEnum.NONE;
         this.bonusAction = false; // If this is true, ignore castingTime
         this.concentration = false;
@@ -105,10 +105,10 @@ class SpellEntity extends AbstractEntity {
         return this.damageType;
     }
     getDamageRoll() {
-        return (this.damageRoll + this.damageRollOffset);
+        return (this.damageRoll + this.damageRollModifier);
     }
     getDamageRollCount() {
-        return (this.damageRollCount + this.damageRollCountOffset);
+        return (this.damageRollCount + this.damageRollCountModifier);
     }
 
     /**

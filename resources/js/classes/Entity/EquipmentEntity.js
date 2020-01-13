@@ -13,7 +13,7 @@ class EquipmentEntity extends ItemEntity {
         this.equipmentSlot = ApparelSlotEnum.NONE;
 
         this.abilityRequirements = {};
-        this.abilityRequirementsOffset = {};
+        this.abilityRequirementsModifier = {};
         this.advantageOn = new Set();
         this.disadvantageOn = new Set();
 
@@ -35,7 +35,7 @@ class EquipmentEntity extends ItemEntity {
     }
 
     hasAbilityScoreRequirement(abilityScoreEnum = undefined) {
-        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum) || this.abilityRequirementsOffset.hasOwnProperty(abilityScoreEnum)) {
+        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum) || this.abilityRequirementsModifier.hasOwnProperty(abilityScoreEnum)) {
             return true;
         }
         else if (abilityScoreEnum == undefined) {
@@ -48,8 +48,8 @@ class EquipmentEntity extends ItemEntity {
         if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
             score = this.abilityRequirements[abilityScoreEnum];
         }
-        if (this.abilityRequirementsOffset.hasOwnProperty(abilityScoreEnum)) {
-            score += this.abilityRequirementsOffset[abilityScoreEnum];
+        if (this.abilityRequirementsModifier.hasOwnProperty(abilityScoreEnum)) {
+            score += this.abilityRequirementsModifier[abilityScoreEnum];
         }
         return score;
     }
@@ -112,9 +112,9 @@ class EquipmentEntity extends ItemEntity {
         return 1;
     }
 
-    resetOffsets() {
-        super.resetOffsets();
-        this.abilityRequirementsOffset = {};
+    resetModifiers() {
+        super.resetModifiers();
+        this.abilityRequirementsModifier = {};
     }
 
     /**

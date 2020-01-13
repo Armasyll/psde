@@ -4,9 +4,9 @@ class WeaponEntityEffect extends EquipmentEntityEffect {
     }
     static allowedProperties() {
         return super.allowedProperties().concat([
-            "damageRollCountOffset",
-            "damageRollOffset",
-            "silveredOffset"
+            "damageRollCountModifier",
+            "damageRollModifier",
+            "silveredModifier"
         ]);
     }
     allowedProperty(property) {

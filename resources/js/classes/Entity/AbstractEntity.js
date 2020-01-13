@@ -23,19 +23,19 @@ class AbstractEntity {
         this.owner = null;
         this.target = null;
         this.health = 10;
-        this.healthOffset = 0;
+        this.healthModifier = 0;
         this.healthMax = 10;
-        this.healthMaxOffset = 0;
+        this.healthMaxModifier = 0;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.specialProperties = new Set();
         this.defaultAction = null;
         this.godMode = false;
-        this.godModeOffset = false;
+        this.godModeModifier = false;
         this.enabled = true;
         this.locked = false;
         this.essential = false;
-        this.essentialOffset = false;
+        this.essentialModifier = false;
         this.inventory = null;
         /**
          * Object<>
@@ -137,7 +137,7 @@ class AbstractEntity {
         return this;
     }
     getHealth() {
-        return this.health + this.healthOffset;
+        return this.health + this.healthModifier;
     }
 
     setMaxHealth(number) {
@@ -169,7 +169,7 @@ class AbstractEntity {
         return this;
     }
     getMaxHealth() {
-        return this.healthMax + this.healthMaxOffset;
+        return this.healthMax + this.healthMaxModifier;
     }
 
     setGodMode(boolean = true) {
@@ -185,7 +185,7 @@ class AbstractEntity {
         return this;
     }
     getGodMode() {
-        return this.godMode || this.godModeOffset;
+        return this.godMode || this.godModeModifier;
     }
 
     isEnabled() {
@@ -295,7 +295,7 @@ class AbstractEntity {
         return 0;
     }
     isEssential() {
-        return this.essential || this.essentialOffset;
+        return this.essential || this.essentialModifier;
     }
 
     kill() {
@@ -374,7 +374,7 @@ class AbstractEntity {
         return 0;
     }
     applyEffects() {
-        this.resetOffsets();
+        this.resetModifiers();
         for (let priority in this.effects) {
             this.effects[priority].forEach((stackCount, effect) => {
                 for (let modifier in effect.getModifiers()) {
@@ -403,7 +403,7 @@ class AbstractEntity {
             obj[priority].clear();
             delete obj[priority];
         }
-        this.resetOffsets();
+        this.resetModifiers();
         return 0;
     }
 
@@ -482,11 +482,11 @@ class AbstractEntity {
         return this.inventory.getItems();
     }
 
-    resetOffsets() {
-        this.godModeOffset = false;
-        this.essentialOffset = false;
-        this.healthOffset = 0;
-        this.healthMaxOffset = 0;
+    resetModifiers() {
+        this.godModeModifier = false;
+        this.essentialModifier = false;
+        this.healthModifier = 0;
+        this.healthMaxModifier = 0;
         return 0;
     }
 

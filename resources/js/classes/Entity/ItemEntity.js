@@ -31,8 +31,8 @@ class ItemEntity extends Entity {
         return this.itemType;
     }
 
-    resetOffsets() {
-        super.resetOffsets();
+    resetModifiers() {
+        super.resetModifiers();
     }
 
     clone(id = "") {

@@ -15,12 +15,12 @@ class WeaponEntity extends EquipmentEntity {
         this.weaponCategory = WeaponCategoryEnum.SIMPLE_MELEE;
         this.weaponType = WeaponEnum.NONE;
         this.damageRollCount = 1;
-        this.damageRollCountOffset = 0;
+        this.damageRollCountModifier = 0;
         this.damageRoll = 1;
-        this.damageRollOffset = 0;
+        this.damageRollModifier = 0;
         this.damageType = DamageEnum.NONE;
         this.silvered = false;
-        this.silveredOffset = false;
+        this.silveredModifier = false;
         this.range = [0,0];
         this.versatileRollCount = 1;
         this.versatileRoll = 0;
@@ -447,10 +447,10 @@ class WeaponEntity extends EquipmentEntity {
         return this.damageType;
     }
     getDamageRoll() {
-        return (this.damageRoll + this.damageRollOffset);
+        return (this.damageRoll + this.damageRollModifier);
     }
     getDamageRollCount() {
-        return (this.damageRollCount + this.damageRollCountOffset);
+        return (this.damageRollCount + this.damageRollCountModifier);
     }
 
     setWeaponType(weaponType) {
@@ -497,14 +497,14 @@ class WeaponEntity extends EquipmentEntity {
         return this.versatile;
     }
     isSilvered() {
-        return (this.silvered || this.silveredOffset);
+        return (this.silvered || this.silveredModifier);
     }
 
-    resetOffsets() {
-        super.resetOffsets();
-        this.damageRollCountOffset = 0;
-        this.damageRollOffset = 0;
-        this.silveredOffset = false;
+    resetModifiers() {
+        super.resetModifiers();
+        this.damageRollCountModifier = 0;
+        this.damageRollModifier = 0;
+        this.silveredModifier = false;
     }
 
     /**

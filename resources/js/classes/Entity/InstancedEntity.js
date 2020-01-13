@@ -19,8 +19,8 @@ class InstancedEntity extends AbstractEntity {
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
         this.entityType = this.entity.entityType;
-        this.weightOffset = 0;
-        this.priceOffset = 0;
+        this.weightModifier = 0;
+        this.priceModifier = 0;
         this._useOwnAvailableActions = false;
         this._useOwnDefaultAction = false;
         this._useOwnHiddenAvailableActions = false;
@@ -57,13 +57,13 @@ class InstancedEntity extends AbstractEntity {
         if (!this.hasEntity()) {
             return 0;
         }
-        return this.entity.getWeight() + this.weightOffset;
+        return this.entity.getWeight() + this.weightModifier;
     }
     getPrice() {
         if (!this.hasEntity()) {
             return 0;
         }
-        return this.entity.getPrice() + this.priceOffset;
+        return this.entity.getPrice() + this.priceModifier;
     }
 
     _createOwnSpecialProperties() {
@@ -373,9 +373,9 @@ class InstancedEntity extends AbstractEntity {
             instancedEntity.effects = this.cloneEffects();
         }
         instancedEntity.health = this.health;
-        instancedEntity.healthOffset = this.healthOffset;
+        instancedEntity.healthModifier = this.healthModifier;
         instancedEntity.healthMax = this.healthMax;
-        instancedEntity.healthMaxOffset = this.healthMaxOffset;
+        instancedEntity.healthMaxModifier = this.healthMaxModifier;
         return instancedEntity;
     }
     dispose() {

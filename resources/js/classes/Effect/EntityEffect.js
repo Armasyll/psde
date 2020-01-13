@@ -4,8 +4,8 @@ class EntityEffect extends Effect {
     }
     static allowedProperties() {
         return super.allowedProperties().concat([
-            "weightOffset",
-            "priceOffset"
+            "weightModifier",
+            "priceModifier"
         ]);
     }
     allowedProperty(property) {

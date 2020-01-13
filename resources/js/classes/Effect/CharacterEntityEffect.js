@@ -1,18 +1,9 @@
-class CharacterEntityEffect extends EntityEffect {
+class CharacterEntityEffect extends CreatureEntityEffect {
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         super(id, name, description, iconID);
     }
     static allowedProperties() {
-        return super.allowedProperties().concat([
-            "hungerOffset",
-            "proficiencyOffset",
-            "strengthOffset",
-            "dexterityOffset",
-            "constitutionOffset",
-            "intelligenceOffset",
-            "wisdomOffset",
-            "charismaOffset"
-        ]);
+        return super.allowedProperties();
     }
     allowedProperty(property) {
         return CharacterEntityEffect.allowedProperties().indexOf(property) != -1;

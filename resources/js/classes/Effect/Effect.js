@@ -12,6 +12,7 @@ class Effect {
          * Object<string, function>
          */
         this.modifiers = {};
+        this.duration = 0;
         this.priority = 1000;
         this.hidden = false;
         this.stackCount = 1;
@@ -37,18 +38,26 @@ class Effect {
     getModifiers() {
         return this.modifiers;
     }
+    setDuration(number) {
+        this.duration = number;
+        return 0;
+    }
+    getDuration() {
+        return this.duration;
+    }
     getPriority() {
         return this.priority;
     }
     setPriority(number) {
         this.priority = number;
+        return 0;
     }
     isHidden() {
         return this.hidden;
     }
     setHidden(boolean = true) {
         this.isHidden = boolean == true;
-        return this;
+        return 0;
     }
     getStackCount() {
         return this.stackCount;

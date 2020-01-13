@@ -7,7 +7,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         }
 
         this.silvered = this.entity.silvered;
-        this.silveredOffset = this.entity.silveredOffset;
+        this.silveredModifier = this.entity.silveredModifier;
 
         this.setOwner(owner);
 
@@ -66,7 +66,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         return this.entity.isVersatile();
     }
     isSilvered() {
-        return (this.silvered || this.silveredOffset);
+        return (this.silvered || this.silveredModifier);
     }
 
     clone(id = "") {
