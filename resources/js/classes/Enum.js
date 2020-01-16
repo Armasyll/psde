@@ -2985,3 +2985,31 @@ let CreatureSubTypeEnum = {
         }
     }
 };
+let IntervalEnum = {
+    ONCE: 0,
+    TICK: 1,
+    TURN: 2,
+    ROUND: 3,
+    properties: {
+        0: {
+            name: "Once",
+            value: 0,
+            key: "ONCE"
+        },
+        1: {
+            name: "Tick",
+            value: 1,
+            key: "TICK"
+        },
+        2: {
+            name: "Turn",
+            value: 2,
+            key: "TURN"
+        },
+        3: {
+            name: "Round",
+            value: 3,
+            key: "ROUND"
+        }
+    }
+};

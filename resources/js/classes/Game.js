@@ -856,6 +856,10 @@ class Game {
                     Game.entityLocRotWorker.postMessage({cmd:"toggleEntities"});
                     break;
                 }
+                case "notification": {
+                    console.log(e.data.msg);
+                    break;
+                }
             }
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");

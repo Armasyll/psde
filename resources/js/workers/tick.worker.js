@@ -14,6 +14,7 @@ let roundTime = 6 * gameTimeMultiplier;
 let roundsPerTurn = 10;
 let turnTime = roundTime * roundsPerTurn;
 let tickInterval = null;
+let tickIntervalCount = 1000 / gameTimeMultiplier;
 let paused = false;
 
 function tickFunction() {
@@ -29,14 +30,32 @@ function tickFunction() {
     else if (currentTime % roundTime == 0) {
         // round
     }
+    if (currentTime % turnTime == 0) {
+        sendTurn();
+    }
+    if (currentTime % roundTime == 0) {
+        sendRound();
+    }
+    if (currentTime % gameTimeMultiplier == 0) {
+        sendTick();
+    }
 }
 function stopFunction() {
     paused = true;
     clearInterval(tickInterval);
 }
 function startFunction() {
-    tickInterval = setInterval(tickFunction, 1000 / gameTimeMultiplier);
+    tickInterval = setInterval(tickFunction, tickIntervalCount);
     paused = false;
+}
+function sendTick() {
+    postMessage({"cmd":"notification", "msg":"tick"});
+}
+function sendRound() {
+    postMessage({"cmd":"notification", "msg":"round"});
+}
+function sendTurn() {
+    postMessage({"cmd":"notification", "msg":"turn"});
 }
 function sendEntityTogglerRequest() {
     postMessage({"cmd":"entityToggler"});

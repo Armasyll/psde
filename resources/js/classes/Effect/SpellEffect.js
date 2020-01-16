@@ -1,3 +1,0 @@
-class SpellEffect extends Effect {
-    
-}
