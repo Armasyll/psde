@@ -115,7 +115,7 @@ class CharacterEntity extends CreatureEntity {
          */
         this.eyeColour = "green";
         this._leftEyeColourHex = "#00FF00";
-        this._rightEyeColour.hex = "#00FF00";
+        this._rightEyeColourHex = "#00FF00";
         /**
          * Pelt type
          * @type {string} (PeltEnum)

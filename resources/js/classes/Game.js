@@ -857,7 +857,6 @@ class Game {
                     break;
                 }
                 case "notification": {
-                    console.log(e.data.msg);
                     break;
                 }
             }

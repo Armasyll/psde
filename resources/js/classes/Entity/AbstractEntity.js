@@ -38,13 +38,18 @@ class AbstractEntity {
         this.essentialModifier = false;
         this.inventory = null;
         /**
-         * Object<>
-         * <Effect, <0:Stack, 1:TimeStart, 2:TimeEnd>>
+         * @type {object}
+         * Object<Effect: <0:StackNumber, 1:TimeStart, 2:TimeEnd>>
          */
         this.effects = {};
+        /**
+         * @type {object}
+         * Object<number: Set<Effect>
+         */
         this.effectsPriority = {};
         /**
-         * Object<Target, <ActionEnum, Effect>>
+         * @type {object}
+         * Object<TargetEntity: <ActionEnum:Effect>>
          */
         this.actionEffects = {};
         AbstractEntity.set(this.id, this);
@@ -325,25 +330,18 @@ class AbstractEntity {
             }
         }
         if (this.effects.hasOwnProperty(effect)) {
-            this.effects[effect][0] += 1;
-        }
-        else {
-            this.effects[effect][0] = 1;
-            this.effects[effect][1] = 0;
-            this.effects[effect][2] = 0;
-        }
-        let i = effect.getPriority();
-        if (!this.effects.hasOwnProperty(i)) {
-            this.effects[i] = new Map();
-        }
-        if (this.effects[i].has(effect)) {
-            if (this.effects[i].get(effect) < effect.getStackCount()) {
-                this.effects[i].set(effect, this.effects[i].get(effect) + 1);
+            if (this.effects[effect][0] < effect.getStackCount()) {
+                this.effects[effect][0] += 1;
             }
         }
         else {
-            this.effects[i].set(effect, 1);
+            this.effects[effect] = {0:1, 1:0, 2:0};
         }
+        let i = effect.getPriority();
+        if (!this.effectsPriority.hasOwnProperty(i)) {
+            this.effectsPriority[i] = new Set();
+        }
+        this.effectsPriority[i].add(effect);
         this.applyEffects();
         return 0;
     }
@@ -357,29 +355,33 @@ class AbstractEntity {
             }
         }
         let i = effect.getPriority();
-        if (this.effects.hasOwnProperty(i)) {
-            if (this.effects[i].has(effect)) {
-                if (this.effects[i].get(effect) == 1) {
-                    this.effects[i].delete(effect);
-                    if (Object.keys(this.effects[i]).length == 0) {
-                        delete this.effects[i];
-                    }
+        if (this.effectsPriority.hasOwnProperty(i)) {
+            if (this.effectsPriority[i].has(effect) && this.effects.hasOwnProperty(effect)) {
+                if (this.effects[effect][0] == 1) {
+                    delete this.effects[effect][2];
+                    delete this.effects[effect][1];
+                    delete this.effects[effect][0];
+                    delete this.effects[effect];
+                    this.effectsPriority[i].delete(effect);
                 }
                 else {
-                    this.effects[i].set(effect, this.effects[i].get(effect) - 1);
+                    this.effects[effect][0] -= 1;
                 }
             }
+        }
+        if (this.effectsPriority[i].size == 0) {
+            delete this.effectsPriority[i];
         }
         this.applyEffects();
         return 0;
     }
     applyEffects() {
         this.resetModifiers();
-        for (let priority in this.effects) {
-            this.effects[priority].forEach((stackCount, effect) => {
+        for (let priority in this.effectsPriority) {
+            this.effectsPriority[priority].forEach((effect) => {
                 for (let modifier in effect.getModifiers()) {
                     if (this.hasOwnProperty(modifier)) {
-                        for (let i = 0; i < stackCount; i++) {
+                        for (let i = 0; i < this.effects[effect][0]; i++) {
                             this[modifier] = effect.getModifier(modifier)(this);
                         }
                     }
