@@ -368,9 +368,9 @@ class AbstractEntity {
                     this.effects[effect][0] -= 1;
                 }
             }
-        }
-        if (this.effectsPriority[i].size == 0) {
-            delete this.effectsPriority[i];
+            if (this.effectsPriority[i].size == 0) {
+                delete this.effectsPriority[i];
+            }
         }
         this.applyEffects();
         return 0;
