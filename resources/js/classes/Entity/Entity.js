@@ -256,8 +256,8 @@ class Entity extends AbstractEntity {
         entity.defaultAction = this.defaultAction;
         entity.health = this.health;
         entity.healthModifier = this.healthModifier;
-        entity.healthMax = this.healthMax;
-        entity.healthMaxModifier = this.healthMaxModifier;
+        entity.maxHealth = this.maxHealth;
+        entity.maxHealthModifier = this.maxHealthModifier;
         // variables from Entity
         entity.weight = this.weight;
         entity.price = this.price;

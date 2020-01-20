@@ -374,8 +374,8 @@ class InstancedEntity extends AbstractEntity {
         }
         instancedEntity.health = this.health;
         instancedEntity.healthModifier = this.healthModifier;
-        instancedEntity.healthMax = this.healthMax;
-        instancedEntity.healthMaxModifier = this.healthMaxModifier;
+        instancedEntity.maxHealth = this.maxHealth;
+        instancedEntity.maxHealthModifier = this.maxHealthModifier;
         return instancedEntity;
     }
     dispose() {

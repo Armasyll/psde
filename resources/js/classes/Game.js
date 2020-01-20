@@ -4481,13 +4481,13 @@ class Game {
                 else if (attackRoll > defender.getArmourClass()) {
                     let damage = Game.calculateDamage(attacker, weapon, attackRoll >= 20);
                     if (weapon instanceof AbstractEntity) {
-                        defender.subtractHealth(damage);
+                        defender.modifyHealth(-damage);
                     }
                     else if (attacker.isArmed()) {
-                        defender.subtractHealth(damage);
+                        defender.modifyHealth(-damage);
                     }
                     else {
-                        defender.addNonLethalDamage(damage);
+                        defender.modifyStamina(damage);
                     }
                 }
             }

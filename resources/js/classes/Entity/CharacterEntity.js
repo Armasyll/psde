@@ -1296,8 +1296,8 @@ class CharacterEntity extends CreatureEntity {
         characterEntity.defaultAction = this.defaultAction;
         characterEntity.health = this.health;
         characterEntity.healthModifier = this.healthModifier;
-        characterEntity.healthMax = this.healthMax;
-        characterEntity.healthMaxModifier = this.healthMaxModifier;
+        characterEntity.maxHealth = this.maxHealth;
+        characterEntity.maxHealthModifier = this.maxHealthModifier;
         characterEntity.effects = Object.assign({}, this.effects);
         characterEntity.effectsPriority = Object.assign({}, this.effectsPriority);
         for (let i in this.actionEffects) {

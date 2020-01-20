@@ -143,8 +143,8 @@ class PlayerPortraitGameGUI {
         }
         PlayerPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         PlayerPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        PlayerPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
-        let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
+        PlayerPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
+        let number = abstractEntity.getHealth() - abstractEntity.getStamina();
         if (number < 0) {
             number = 0;
         }

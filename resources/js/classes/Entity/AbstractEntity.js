@@ -24,8 +24,8 @@ class AbstractEntity {
         this.target = null;
         this.health = 10;
         this.healthModifier = 0;
-        this.healthMax = 10;
-        this.healthMaxModifier = 0;
+        this.maxHealth = 10;
+        this.maxHealthModifier = 0;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.specialProperties = new Set();
@@ -105,8 +105,8 @@ class AbstractEntity {
             this.health = this.getMaxHealth();
             return this;
         }
-        if (number > this.healthMax) {
-            number = this.healthMax;
+        if (number > this.getMaxHealth()) {
+            number = this.getMaxHealth();
         }
         else if (number < 0) {
             number = 0;
@@ -125,20 +125,10 @@ class AbstractEntity {
         }
         return this;
     }
-    addHealth(number = 1) {
+    modifyHealth(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        if (number > 0) {
-            this.setHealth(this.health + number);
-        }
-        return this;
-    }
-    subtractHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setHealth(this.health - number);
-        }
+        this.setHealth(this.health + number);
         return this;
     }
     getHealth() {
@@ -151,30 +141,45 @@ class AbstractEntity {
         if (number <= 0) {
             number = 1;
         }
-        this.healthMax = number;
+        let oldMaxHealth = this.getMaxHealth();
+        this.maxHealth = number;
         if (this.health > this.getMaxHealth()) {
             this.health = this.getMaxHealth();
         }
+        this.recalculateHealthByModifiedMaxHealth(oldMaxHealth);
         return this;
     }
-    addMaxHealth(number = 1) {
+    modifyMaxHealth(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        if (number > 0) {
-            this.setMaxHealth(this.healthMax + number);
-        }
-        return this;
-    }
-    subtractMaxHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setMaxHealth(this.healthMax - number);
-        }
+        this.setMaxHealth(this.maxHealth + number);
         return this;
     }
     getMaxHealth() {
-        return this.healthMax + this.healthMaxModifier;
+        return this.maxHealth + this.maxHealthModifier;
+    }
+    setMaxHealthModifier(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        let oldMaxHealth = this.getMaxHealth();
+        this.maxHealthModifier = number;
+        this.recalculateHealthByModifiedMaxHealth(oldMaxHealth);
+        return this;
+    }
+    modifyMaxHealthModifier(number = 1) {
+        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        else {number = number|0}
+        this.setMaxHealthModifier(this.maxHealthModifier + number);
+        return this;
+    }
+    recalculateHealthByModifiedMaxHealth(oldMaxHealth) {
+        let multiplier = this.getMaxHealth() / oldMaxHealth;
+        let health = Math.ceil(this.getHealth() * multiplier);
+        if (health > this.getMaxHealth()) {
+            health = this.getMaxHealth();
+        }
+        this.setHealth(health);
+        return 0;
     }
 
     setGodMode(boolean = true) {
@@ -368,6 +373,17 @@ class AbstractEntity {
             }
         }
         this.applyEffects();
+        for (let modifier in effect.getModifiers()) {
+            if (this.hasOwnProperty(modifier)) {
+                switch (modifier) {
+                    case "healthModifier":
+                    case "maxHealthModifier": {
+                        if (this.health > this.getMaxHealth()) {this.health = this.getMaxHealth();}
+                        break;
+                    }
+                }
+            }
+        }
         return 0;
     }
     applyEffects() {
@@ -377,7 +393,19 @@ class AbstractEntity {
                 for (let modifier in effect.getModifiers()) {
                     if (this.hasOwnProperty(modifier)) {
                         for (let i = 0; i < this.effects[effect][0]; i++) {
-                            this[modifier] = effect.getModifier(modifier)(this);
+                            switch (modifier) {
+                                case "healthModifier": {
+                                    this.setHealth(effect.getModifier(modifier)(this));
+                                    break;
+                                }
+                                case "maxHealthModifier": {
+                                    this.setMaxHealthModifier(effect.getModifier(modifier)(this));
+                                    break;
+                                }
+                                default: {
+                                    this[modifier] = effect.getModifier(modifier)(this);
+                                }
+                            }
                         }
                     }
                 }
@@ -483,7 +511,7 @@ class AbstractEntity {
         this.godModeModifier = false;
         this.essentialModifier = false;
         this.healthModifier = 0;
-        this.healthMaxModifier = 0;
+        this.maxHealthModifier = 0;
         return 0;
     }
 

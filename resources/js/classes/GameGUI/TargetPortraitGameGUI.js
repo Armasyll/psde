@@ -130,8 +130,8 @@ class TargetPortraitGameGUI {
         if (abstractEntity instanceof CreatureEntity) {
             TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
             TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
-            TargetPortraitGameGUI.setStaminaText((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage()) + "/" + abstractEntity.getHealth());
+            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
+            TargetPortraitGameGUI.setStaminaText((abstractEntity.getHealth()-abstractEntity.getStamina()) + "/" + abstractEntity.getHealth());
             TargetPortraitGameGUI.showHealth();
             TargetPortraitGameGUI.showStamina();
         }
@@ -158,8 +158,8 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
         TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
         if (abstractEntity instanceof CreatureEntity) {
-            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getNonLethalDamage())/abstractEntity.getHealth()*100);
-            let number = abstractEntity.getHealth() - abstractEntity.getNonLethalDamage();
+            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
+            let number = abstractEntity.getHealth() - abstractEntity.getStamina();
             if (number < 0) {
                 number = 0;
             }

@@ -237,15 +237,10 @@ class CreatureEntity extends Entity {
         this.money = number;
         return this;
     }
-    addMoney(number) {
+    modifyMoney(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
         return this.setMoney(this.money + number);
-    }
-    subtractMoney(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setMoney(this.money - number);
     }
     getMoney() {
         return this.money;
@@ -257,10 +252,10 @@ class CreatureEntity extends Entity {
         this.age = number;
         return this;
     }
-    addAge(number) {
+    modifyAge(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        return this.age += number;
+        return this.setAge(this.age + number);
     }
     getAge() {
         return this.age;
@@ -272,16 +267,10 @@ class CreatureEntity extends Entity {
         this.hunger = number;
         return this;
     }
-    addHunger(number) {
+    modifyHunger(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.hunger -= number;
-        return this;
-    }
-    subtractHunger(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.hunger -= number;
+        this.setHunger(this.hunger + number);
         return this;
     }
     getHunger() {
@@ -294,16 +283,10 @@ class CreatureEntity extends Entity {
         this.strength = number;
         return this;
     }
-    addStrength(number) {
+    modifyStrength(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.strength += number;
-        return this;
-    }
-    subtractStrength(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.strength -= number;
+        this.setStrength(this.string + number);
         return this;
     }
     getStrength() {
@@ -318,16 +301,10 @@ class CreatureEntity extends Entity {
         this.dexterity = number;
         return this;
     }
-    addDexterity(number) {
+    modifyDexterity(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.dexterity += number;
-        return this;
-    }
-    subtractDexterity(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.dexterity -= number;
+        this.setDexterity(this.dexterity + number);
         return this;
     }
     getDexterity() {
@@ -342,16 +319,10 @@ class CreatureEntity extends Entity {
         this.constitution = number;
         return this;
     }
-    addConstitution(number) {
+    modifyConstitution(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.constitution += number;
-        return this;
-    }
-    subtractConstitution(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.constitution -= number;
+        this.setConstitution(this.constitution + number);
         return this;
     }
     getConstitution() {
@@ -366,16 +337,10 @@ class CreatureEntity extends Entity {
         this.intelligence = number;
         return this;
     }
-    addIntelligence(number) {
+    modifyIntelligence(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.intelligence += number;
-        return this;
-    }
-    subtractIntelligence(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.intelligence -= number;
+        this.setIntelligence(this.intelligence + number);
         return this;
     }
     getIntelligence() {
@@ -390,16 +355,10 @@ class CreatureEntity extends Entity {
         this.wisdom = number
         return this;
     }
-    addWisdom(number) {
+    modifyWisdom(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.wisdom += number;
-        return this;
-    }
-    subtractWisdom(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.wisdom -= number;
+        this.setWisdom(this.wisdom + number);
         return this;
     }
     getWisdom() {
@@ -414,16 +373,10 @@ class CreatureEntity extends Entity {
         this.charisma = number;
         return this;
     }
-    addCharisma(number) {
+    modifyCharisma(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.charisma += number;
-        return this;
-    }
-    subtractCharisma(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        this.charisma -= number;
+        this.setCharisma(this.charisma + number);
         return this;
     }
     getCharisma() {
@@ -471,27 +424,17 @@ class CreatureEntity extends Entity {
         this.level = Game.calculateLevel(this.experiencePoints);
         return this;
     }
-    addXP(number) {
+    modifyXP(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        if (number > 0) {
-            this.setXP(this.experiencePoints + number);
-        }
-        return this;
-    }
-    subtractXP(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        if (number > 0) {
-            this.setXP(this.experiencePoints - number);
-        }
+        this.setXP(this.experiencePoints + number);
         return this;
     }
     getXP() {
         return this.experiencePoints;
     }
 
-    setNonLethalDamage(number = 0) {
+    setStamina(number = 0) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
         if (this.getGodMode()) {
@@ -499,7 +442,7 @@ class CreatureEntity extends Entity {
             return this;
         }
         this.stamina = number;
-        if (this.getNonLethalDamage() > this.getHealth()) {
+        if (this.getStamina() > this.getHealth()) {
             this.conscious = false;
             if (this.hasController()) {
                 this.setStance(StanceEnum.LAY);
@@ -508,17 +451,12 @@ class CreatureEntity extends Entity {
         }
         return this;
     }
-    addNonLethalDamage(number = 1) {
+    modifyStamina(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        return this.setNonLethalDamage(this.stamina + number);
+        return this.setStamina(this.stamina + number);
     }
-    subtractNonLethalDamage(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
-        else {number = number|0}
-        return this.setNonLethalDamage(this.stamina - number);
-    }
-    getNonLethalDamage() {
+    getStamina() {
         return this.stamina;
     }
 

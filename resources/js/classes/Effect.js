@@ -119,7 +119,7 @@ class Effect {
             "weightModifier",
             "priceModifier",
             "health",
-            "healthMaxModifier",
+            "maxHealthModifier",
             "hungerModifier",
             "strengthModifier",
             "dexterityModifier",
