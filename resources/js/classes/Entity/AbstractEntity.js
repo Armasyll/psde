@@ -329,19 +329,21 @@ class AbstractEntity {
                 return 2;
             }
         }
-        if (this.effects.hasOwnProperty(effect)) {
-            if (this.effects[effect][0] < effect.getStackCount()) {
-                this.effects[effect][0] += 1;
+        if (Game.debugMode) console.log(`Running ${this.getID()}.addEffect(${effect.getID()})`);
+        let effectID = effect.getID()
+        if (this.effects.hasOwnProperty(effectID)) {
+            if (this.effects[effectID][0] < effect.getStackCount()) {
+                this.effects[effectID][0] += 1;
             }
         }
         else {
-            this.effects[effect] = {0:1, 1:0, 2:0};
+            this.effects[effectID] = {0:1, 1:0, 2:0};
         }
         let i = effect.getPriority();
         if (!this.effectsPriority.hasOwnProperty(i)) {
             this.effectsPriority[i] = new Set();
         }
-        this.effectsPriority[i].add(effect);
+        this.effectsPriority[i].add(effectID);
         this.applyEffects();
         return 0;
     }
@@ -354,18 +356,20 @@ class AbstractEntity {
                 return 2;
             }
         }
+        if (Game.debugMode) console.log(`Running ${this.getID()}.removeEffect(${effect.getID()})`);
+        let effectID = effect.getID()
         let i = effect.getPriority();
         if (this.effectsPriority.hasOwnProperty(i)) {
-            if (this.effectsPriority[i].has(effect) && this.effects.hasOwnProperty(effect)) {
-                if (this.effects[effect][0] == 1) {
-                    delete this.effects[effect][2];
-                    delete this.effects[effect][1];
-                    delete this.effects[effect][0];
-                    delete this.effects[effect];
-                    this.effectsPriority[i].delete(effect);
+            if (this.effectsPriority[i].has(effectID) && this.effects.hasOwnProperty(effectID)) {
+                if (this.effects[effectID][0] == 1) {
+                    delete this.effects[effectID][2];
+                    delete this.effects[effectID][1];
+                    delete this.effects[effectID][0];
+                    delete this.effects[effectID];
+                    this.effectsPriority[i].delete(effectID);
                 }
                 else {
-                    this.effects[effect][0] -= 1;
+                    this.effects[effectID][0] -= 1;
                 }
             }
             if (this.effectsPriority[i].size == 0) {
@@ -387,31 +391,42 @@ class AbstractEntity {
         return 0;
     }
     applyEffects() {
+        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffects()`);
         this.resetModifiers();
         for (let priority in this.effectsPriority) {
-            this.effectsPriority[priority].forEach((effect) => {
-                for (let modifier in effect.getModifiers()) {
-                    if (this.hasOwnProperty(modifier)) {
-                        for (let i = 0; i < this.effects[effect][0]; i++) { //  current stack count
-                            switch (modifier) {
-                                case "healthModifier": {
-                                    this.setHealth(effect.getModifier(modifier)(this));
-                                    break;
-                                }
-                                case "maxHealthModifier": {
-                                    this.setMaxHealthModifier(effect.getModifier(modifier)(this));
-                                    break;
-                                }
-                                default: {
-                                    this[modifier] = effect.getModifier(modifier)(this);
-                                }
-                            }
-                        }
-                    }
-                }
+            this.effectsPriority[priority].forEach((effectID) => {
+                this.applyEffect(effectID);
             });
         }
         return 0;
+    }
+    applyEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
+        for (let property in effect.getModifiers()) { // for every property modified
+            for (let i = 0; i < this.effects[effect.getID()][0]; i++) { // we apply for each number in the stack
+                switch (property) {
+                    case "healthModifier": {
+                        this.setHealth(effect.applyModifier(property, this));
+                        break;
+                    }
+                    case "maxHealthModifier": {
+                        this.setMaxHealthModifier(effect.applyModifier(property, this));
+                        break;
+                    }
+                    default: {
+                        effect.applyModifier(property, this, this);
+                    }
+                }
+            }
+        }
     }
     getEffects() {
         return this.effects;

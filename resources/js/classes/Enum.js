@@ -3013,3 +3013,38 @@ let IntervalEnum = {
         }
     }
 };
+let OperationsEnum = {
+    SET: 0,
+    EQUALS: 0,
+    ADD: 1,
+    SUBTRACT: 2,
+    MULTIPLY: 3,
+    DIVIDE: 4,
+    properties: {
+        0: {
+            name: "Equals",
+            value: 0,
+            key: "EQUALS"
+        },
+        1: {
+            name: "Add",
+            value: 1,
+            key: "ADD"
+        },
+        2: {
+            name: "Subtract",
+            value: 2,
+            key: "SUBTRACT"
+        },
+        3: {
+            name: "Multiply",
+            value: 3,
+            key: "MULTIPLY"
+        },
+        4: {
+            name: "Divide",
+            value: 4,
+            key: "DIVIDE"
+        }
+    }
+};

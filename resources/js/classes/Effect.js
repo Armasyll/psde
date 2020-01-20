@@ -9,7 +9,9 @@ class Effect {
         this.description = description;
         this.iconID = iconID;
         /**
-         * Object<string, function>
+         * Map of properties to the functions that set them
+         * Object<string: function>
+         * @type {object}
          */
         this.modifiers = {};
         this.statusType = DamageEnum.BLUDGEONING;
@@ -17,6 +19,17 @@ class Effect {
          * Duration in ticks; -1 is indefinite, 0 is one-and-done
          */
         this.duration = -1;
+        //if false, the duration is prepended with this
+        this.durationIncludesTaperIn = true;
+        this.taperInDuration = 0;
+        this.taperInWeight = 0;
+        this.taperInCurve = 0;
+        // If false, the duration is postpended with this
+        this.durationIncludesTaperOut = true;
+        this.taperOutDuration = 0;
+        this.taperOutWeight = 0;
+        this.taperOutCurve = 0;
+
         /**
          * Only to be set if the duration is greater than 0, or is equal to -1
          * @type {IntervalEnum}
@@ -31,13 +44,93 @@ class Effect {
         this.dispellable = false;
         Effect.set(this.id, this);
     }
-    addModifier(property, modification) { // TODO: what about unmodifying?
+    getID() {
+        return this.id;
+    }
+    getName() {
+        return this.name;
+    }
+    getDescription() {
+        return this.description;
+    }
+    getIcon() {
+        return this.iconID;
+    }
+    addModifier(property, operation = OperationsEnum.ADD, modification = 1) {
+        if (Game.debugMode) console.log(`Running ${this.id}.addModifier(${property}, ${operation}, ${typeof modification == "function" ? "function()" : modification})`);
+        if (!OperationsEnum.properties.hasOwnProperty(operation)) {
+            if (Game.debugMode) console.log("Incorrect operation");
+            return this;
+        }
         if (this.allowedProperty(property)) {
-            if (typeof modification == "function" && typeof modification(1) != "undefined") {
-                this.modifiers[property] = modification;
+            if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
+                this.modifiers[property] = {0:operation, 1:modification};
             }
         }
         return this;
+    }
+    applyModifier(property, source, destination) {
+        if (!this.modifiers.hasOwnProperty(property)) {
+            return 0;
+        }
+        if (!source.hasOwnProperty(property)) {
+            return 0;
+        }
+        if (!(source instanceof AbstractEntity)) {
+            return 1;
+        }
+        let value = 0;
+        switch (this.modifiers[property][0]) {
+            case OperationsEnum.EQUALS: {
+                if (typeof this.modifiers[property][1] == "function") {
+                    value = this.modifiers[property][1](source);
+                }
+                else {
+                    value = this.modifiers[property][1];
+                }
+                break;
+            }
+            case OperationsEnum.ADD: {
+                if (typeof this.modifiers[property][1] == "function") {
+                    value = source[property] + this.modifiers[property][1](source);
+                }
+                else {
+                    value = source[property] + this.modifiers[property][1];
+                }
+                break;
+            }
+            case OperationsEnum.SUBTRACT: {
+                if (typeof this.modifiers[property][1] == "function") {
+                    value = source[property] - this.modifiers[property][1](source);
+                }
+                else {
+                    value = source[property] - this.modifiers[property][1];
+                }
+                break;
+            }
+            case OperationsEnum.MULTIPLY: {
+                if (typeof this.modifiers[property][1] == "function") {
+                    value = source[property] * this.modifiers[property][1](source);
+                }
+                else {
+                    value = source[property] * this.modifiers[property][1];
+                }
+                break;
+            }
+            case OperationsEnum.DIVIDE: {
+                if (typeof this.modifiers[property][1] == "function") {
+                    value = source[property] / this.modifiers[property][1](source);
+                }
+                else {
+                    value = source[property] / this.modifiers[property][1];
+                }
+                break;
+            }
+        }
+        if (destination instanceof AbstractEntity) {
+            destination[property] = value;
+        }
+        return value;
     }
     getModifier(property) {
         if (this.modifiers.hasOwnProperty(property)) {
@@ -106,10 +199,17 @@ class Effect {
     canDispel() {
         return this.dispellable;
     }
-    setStackCount(number) {
-        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
-        else {number = number|0}
-        this.stackCount = number;
+    /**
+     * Sets maximum stack count; -1 for infinite
+     * @param {number} stackCount 
+     */
+    setStackCount(stackCount = 1) {
+        if (typeof stackCount != "number") {stackCount = Number.parseInt(stackCount) | 1;}
+        else {stackCount = stackCount|0}
+        if (stackCount < -1 || stackCount == 0) {
+            stackCount = 1;
+        }
+        this.stackCount = stackCount;
         return this;
     }
     static allowedProperties() {
@@ -176,14 +276,16 @@ class Effect {
         if (typeof json == "string") {
             json = JSON.parse(json);
         }
-        if (!json.hasOwnProperty("id") || json.hasOwnProperty("name")) {
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || json.hasOwnProperty("name")) {
             return 2;
         }
         let effect = new Effect(json.id, json.name, json.description, json.iconID);
         if (!(effect instanceof Effect)) {
             return 1;
         }
+        if (json.hasOwnProperty("modifiers")) {
 
+        }
         if (json.hasOwnProperty("statusType")) {
             effect.setStatusType(json.statusType);
         }
@@ -197,7 +299,7 @@ class Effect {
             effect.setPriority(json.priority);
         }
         if (json.hasOwnProperty("hidden")) {
-            effect.hidden = json.hidden;
+            effect.setHidden(json.hidden);
         }
         if (json.hasOwnProperty("stackCount")) {
             effect.setStackCount(json.stackCount);
