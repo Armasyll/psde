@@ -392,7 +392,7 @@ class AbstractEntity {
             this.effectsPriority[priority].forEach((effect) => {
                 for (let modifier in effect.getModifiers()) {
                     if (this.hasOwnProperty(modifier)) {
-                        for (let i = 0; i < this.effects[effect][0]; i++) {
+                        for (let i = 0; i < this.effects[effect][0]; i++) { //  current stack count
                             switch (modifier) {
                                 case "healthModifier": {
                                     this.setHealth(effect.getModifier(modifier)(this));
