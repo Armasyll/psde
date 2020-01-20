@@ -324,11 +324,6 @@ class AbstractEntity {
                 return 2;
             }
         }
-        for (let property in effect.getModifiers()) {
-            if (!this.hasOwnProperty(property)) {
-                return 1;
-            }
-        }
         if (this.effects.hasOwnProperty(effect)) {
             if (this.effects[effect][0] < effect.getStackCount()) {
                 this.effects[effect][0] += 1;
