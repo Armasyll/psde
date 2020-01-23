@@ -8,9 +8,9 @@ class Game {
         Game.SECONDS_IN_DAY = 86400;
         Game.SECONDS_IN_HOUR = 3600;
         Game.RAD_0 = 0.0;
-        Game.RAD_1_HALF = BABYLON.Tools.ToRadians(1/2);
-        Game.RAD_1_3RD = BABYLON.Tools.ToRadians(1/3);
-        Game.RAD_1_4TH = BABYLON.Tools.ToRadians(1/4);
+        Game.RAD_1_HALF = BABYLON.Tools.ToRadians(1 / 2);
+        Game.RAD_1_3RD = BABYLON.Tools.ToRadians(1 / 3);
+        Game.RAD_1_4TH = BABYLON.Tools.ToRadians(1 / 4);
         Game.RAD_1 = BABYLON.Tools.ToRadians(1);
         Game.RAD_45 = BABYLON.Tools.ToRadians(45);
         Game.RAD_90 = BABYLON.Tools.ToRadians(90);
@@ -30,16 +30,16 @@ class Game {
 
         if (Game.debugMode) console.log("Running initialize");
         Game.canvas = document.getElementById("canvas");
-            Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-            Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
+        Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+        Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
         Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
-            Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
-            Game.engine.isPointerLock = false;
+        Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
+        Game.engine.isPointerLock = false;
         Game.scene = new BABYLON.Scene(Game.engine);
-            Game.scene.autoClear = false;
-            Game.scene.autoClearDepthAndStencil = false;
-            Game.scene.gravity = new BABYLON.Vector3(0,-9.81, 0);
-            Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
+        Game.scene.autoClear = false;
+        Game.scene.autoClearDepthAndStencil = false;
+        Game.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+        Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
         if (Game.physicsEnabled) {
             Game.initPhysics();
         }
@@ -61,241 +61,241 @@ class Game {
          * @type {<string, string>}
          */
         Game.meshLocations = {
-            "missingMesh":null,
-            "loadingMesh":null,
-            "cameraFocus":null,
-            "stopSign":"resources/meshes/static/misc.babylon",
-            "twoByFourByEight":"resources/meshes/static/misc.babylon",
-            "twoByFourByThree":"resources/meshes/static/misc.babylon",
-            "twoByFourBySix":"resources/meshes/static/misc.babylon",
-            "tombstone02":"resources/meshes/graveyard.babylon",
-            "icosphere30":"resources/meshes/static/misc.babylon",
-            "scroll01":"resources/meshes/static/misc.babylon",
-            "displayPlatform":"resources/meshes/static/misc.babylon",
-            "questionMark":"resources/meshes/static/misc.babylon",
-            "exclamationMark":"resources/meshes/static/misc.babylon",
-            "tombstone01":"resources/meshes/graveyard.babylon",
-            "obelisk02":"resources/meshes/graveyard.babylon",
-            "obelisk01":"resources/meshes/graveyard.babylon",
-            "scroll02":"resources/meshes/static/misc.babylon",
-            "coffinLid01":"resources/meshes/static/furniture.babylon",
-            "coffin01":"resources/meshes/static/furniture.babylon",
-            "coffinClosed01":"resources/meshes/static/furniture.babylon",
-            "bedMattressFrame01":"resources/meshes/static/furniture.babylon",
-            "bedFrame01":"resources/meshes/static/furniture.babylon",
-            "mattress01":"resources/meshes/static/furniture.babylon",
-            "bookshelfThin":"resources/meshes/static/furniture.babylon",
-            "couch02":"resources/meshes/static/furniture.babylon",
-            "nightstandDoubleDrawer":"resources/meshes/static/furniture.babylon",
-            "nightstandSingleDrawer":"resources/meshes/static/furniture.babylon",
-            "bedsideTableDoubleDrawer":"resources/meshes/static/furniture.babylon",
-            "chair01":"resources/meshes/static/furniture.babylon",
-            "loveseat01":"resources/meshes/static/furniture.babylon",
-            "bookshelf":"resources/meshes/static/furniture.babylon",
-            "lamp01":"resources/meshes/static/furniture.babylon",
-            "couch01":"resources/meshes/static/furniture.babylon",
-            "trashCanLid":"resources/meshes/static/furniture.babylon",
-            "trashBagFull":"resources/meshes/static/furniture.babylon",
-            "trashBagInCan":"resources/meshes/static/furniture.babylon",
-            "trashCan":"resources/meshes/static/furniture.babylon",
-            "consoleTable":"resources/meshes/static/furniture.babylon",
-            "sawhorse":"resources/meshes/static/furniture.babylon",
-            "bedsideTableSingleDrawer":"resources/meshes/static/furniture.babylon",
-            "diningTable":"resources/meshes/static/furniture.babylon",
-            "coffeeTable":"resources/meshes/static/furniture.babylon",
-            "cheeseWheel":"resources/meshes/items/food01.babylon",
-            "cheeseWheelSansWedge":"resources/meshes/items/food01.babylon",
-            "cheeseWedge":"resources/meshes/items/food01.babylon",
-            "stick01":"resources/data/items.babylon",
-            "stick03":"resources/data/items.babylon",
-            "stick04":"resources/data/items.babylon",
-            "ingot01":"resources/data/items.babylon",
-            "cube":"resources/data/items.babylon",
-            "trumpet01":"resources/data/items.babylon",
-            "mountainChocolateBar01":"resources/meshes/items/food01.babylon",
-            "mountainChocolateWrapper01":"resources/dmeshes/items/food01.babylon",
-            "hornsCurved01":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved02":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved03":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved04":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved05":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved07":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "hornsCurved06":"resources/meshes/cosmetics/hornsCurved.babylon",
-            "cup01":"resources/meshes/dishware01.babylon",
-            "currencyCoinQuarter":"resources/data/items.babylon",
-            "currencyCoinDime":"resources/data/items.babylon",
-            "currencyCoinNickel":"resources/data/items.babylon",
-            "bottle06":"resources/meshes/dishware01.babylon",
-            "bottle05":"resources/meshes/dishware01.babylon",
-            "bottle04":"resources/meshes/dishware01.babylon",
-            "bottle03":"resources/meshes/dishware01.babylon",
-            "bottle02":"resources/meshes/dishware01.babylon",
-            "bottle01":"resources/meshes/dishware01.babylon",
-            "ring01":"resources/meshes/items/rings01.babylon",
-            "ring02":"resources/meshes/items/rings01.babylon",
-            "ring03":"resources/meshes/items/rings01.babylon",
-            "ring04":"resources/meshes/items/rings01.babylon",
-            "ring09":"resources/meshes/items/rings01.babylon",
-            "bookHardcoverOpen01":"resources/data/items.babylon",
-            "key99":"resources/data/items.babylon",
-            "currencyCoinPenny":"resources/data/items.babylon",
-            "currencyNoteDollar":"resources/data/items.babylon",
-            "key01":"resources/data/items.babylon",
-            "boneRib01":"resources/meshes/gibs.babylon",
-            "bone02":"resources/meshes/gibs.babylon",
-            "boneMeat02":"resources/meshes/gibs.babylon",
-            "bone01":"resources/meshes/gibs.babylon",
-            "bookHardcoverClosed01":"resources/data/items.babylon",
-            "goblet01":"resources/meshes/dishware01.babylon",
-            "foxhead01":"resources/meshes/gibs.babylon",
-            "glass01":"resources/meshes/dishware01.babylon",
-            "gem03":"resources/data/items.babylon",
-            "gem04":"resources/data/items.babylon",
-            "gem05":"resources/data/items.babylon",
-            "gem06":"resources/data/items.babylon",
-            "gem08":"resources/data/items.babylon",
-            "plate01":"resources/meshes/dishware01.babylon",
-            "eye01":"resources/meshes/gibs.babylon",
-            "eye02":"resources/meshes/gibs.babylon",
-            "_cD":"resources/data/items.babylon",
-            "foxhead02":"resources/meshes/gibs.babylon",
-            "foxhead03":"resources/meshes/gibs.babylon",
-            "foxSkull02":"resources/meshes/gibs.babylon",
-            "sack01":"resources/data/items.babylon",
-            "craftsmanDoorwayNoTrim":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWindowDouble":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWallNoTrim":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWallNoCrown":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWallNoBaseboard":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWindowframeNoTrim":"resources/data/craftsmanWalls.babylon",
-            "craftsmanStairWallCornerRight":"resources/data/craftsmanWalls.babylon",
-            "craftsmanStairWallSideRight":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWindowframe":"resources/data/craftsmanWalls.babylon",
-            "craftsmanStairWallSideLeft":"resources/data/craftsmanWalls.babylon",
-            "craftsmanStairWallCornerLeft":"resources/data/craftsmanWalls.babylon",
-            "craftsmanStairs":"resources/data/craftsmanWalls.babylon",
-            "craftsmanWall":"resources/data/craftsmanWalls.babylon",
-            "craftsmanCorner":"resources/data/craftsmanWalls.babylon",
-            "craftsmanDoorway":"resources/data/craftsmanWalls.babylon",
-            "craftsmanDoor":"resources/data/craftsmanWalls.babylon",
-            "stairsCollision":"resources/data/craftsmanWalls.babylon",
-            "aardwolfM":"resources/meshes/characters/aardwolf.babylon",
-            "spiritN":"resources/meshes/characters/spiritN.babylon",
-            "foxF":"resources/meshes/characters/fox.babylon",
-            "foxSkeletonN":"resources/meshes/characters/foxSkeletonN.babylon",
-            "foxM":"resources/meshes/characters/fox.babylon",
-            "sheepF":"resources/meshes/characters/sheep.babylon",
-            "sheepM":"resources/meshes/characters/sheep.babylon",
-            "hitbox.canine":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.head":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.neck":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.chest":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.upperArm.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.forearm.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.hand.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.upperArm.r":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.forearm.r":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.hand.r":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.spine":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.pelvis":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.this.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.shin.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.foot.l":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.this.r":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.shin.r":"resources/meshes/hitboxes/canine.babylon",
-            "hitbox.canine.foot.r":"resources/meshes/hitboxes/canine.babylon",
-            "spider":"resources/meshes/arachnids.babylon",
-            "borb":"resources/meshes/borb.babylon",
-            "animatedPylon01":"resources/meshes/animatedPylon01.babylon",
-            "animatedRefrigerator01":"resources/meshes/animatedRefrigerator01.babylon",
-            "animatedCoffin01":"resources/meshes/animatedCoffin01.babylon",
-            "animatedBarrel01":"resources/meshes/animatedBarrel01.babylon",
-            "animatedToilet01":"resources/meshes/animatedToilet01.babylon",
-            "animatedSink01":"resources/meshes/animatedSink01.babylon",
-            "animatedDoor01":"resources/meshes/animatedDoor01.babylon",
-            "chair02":"resources/meshes/static/furniture.babylon",
-            "chair03":"resources/meshes/static/furniture.babylon",
-            "grass01":"resources/meshes/nature.babylon",
-            "mushroom01":"resources/meshes/nature.babylon",
-            "mushroom02":"resources/meshes/nature.babylon",
-            "mushroom03":"resources/meshes/nature.babylon",
-            "tombstone03":"resources/meshes/graveyard.babylon",
-            "graveyardWallCap01":"resources/meshes/graveyard.babylon",
-            "graveyardWallEndShortHalf01":"resources/meshes/graveyard.babylon",
-            "graveyardWallEndShort01":"resources/meshes/graveyard.babylon",
-            "graveyardWallEndMedium01":"resources/meshes/graveyard.babylon",
-            "graveyardWallEndTall01":"resources/meshes/graveyard.babylon",
-            "graveyardWallEndVeryTall01":"resources/meshes/graveyard.babylon",
-            "graveyardFence01":"resources/meshes/graveyard.babylon",
-            "graveyardFenceShort01":"resources/meshes/graveyard.babylon",
-            "graveyardFencePike01":"resources/meshes/graveyard.babylon",
-            "graveyardFenceWithPillar01":"resources/meshes/graveyard.babylon",
-            "graveyardFenceWithPillarShort01":"resources/meshes/graveyard.babylon",
-            "graveyardFencePillar01":"resources/meshes/graveyard.babylon",
-            "cap01":"resources/meshes/armour.babylon",
-            "birdMask01":"resources/meshes/armour.babylon",
-            "birdMaskJaw01":"resources/meshes/armour.babylon",
-            "wizardHat02":"resources/meshes/armour.babylon",
-            "barbute01":"resources/meshes/armour.babylon",
-            "roundShield01":"resources/meshes/armour.babylon",
-            "parmaShield01":"resources/meshes/armour.babylon",
-            "heaterShield01":"resources/meshes/armour.babylon",
-            "heaterShield02":"resources/meshes/armour.babylon",
-            "heaterShield03":"resources/meshes/armour.babylon",
-            "scutumShield01":"resources/meshes/armour.babylon",
-            "barbuteHorned01":"resources/meshes/armour.babylon",
-            "protohelmet":"resources/meshes/armour.babylon",
-            "bracer01.l":"resources/meshes/armour.babylon",
-            "bracer01.r":"resources/meshes/armour.babylon",
-            "pauldron01.l":"resources/meshes/armour.babylon",
-            "pauldron01.r":"resources/meshes/armour.babylon",
-            "knife01":"resources/meshes/weapons.babylon",
-            "spear01":"resources/meshes/weapons.babylon",
-            "glaive01":"resources/meshes/weapons.babylon",
-            "battleAxe01":"resources/meshes/weapons.babylon",
-            "axe03":"resources/meshes/weapons.babylon",
-            "axe02":"resources/meshes/weapons.babylon",
-            "axe01":"resources/meshes/weapons.babylon",
-            "sword01":"resources/meshes/weapons.babylon",
-            "sword01Broken00":"resources/meshes/weapons.babylon",
-            "sword01Broken01":"resources/meshes/weapons.babylon",
-            "sword01Broken02":"resources/meshes/weapons.babylon",
-            "sword01Broken03":"resources/meshes/weapons.babylon",
-            "scythe03":"resources/meshes/weapons.babylon",
-            "glaive01":"resources/meshes/weapons.babylon",
-            "forgeHammer01":"resources/meshes/weapons.babylon",
-            "forgeHammer02":"resources/meshes/weapons.babylon",
-            "warHammer01":"resources/meshes/weapons.babylon",
-            "mallet01":"resources/meshes/weapons.babylon",
-            "pickaxe01":"resources/meshes/weapons.babylon",
-            "spear01":"resources/meshes/weapons.babylon",
-            "shovel01":"resources/meshes/weapons.babylon",
-            "shortSword01":"resources/meshes/weapons.babylon",
-            "staff05":"resources/meshes/weapons.babylon",
-            "staff04":"resources/meshes/weapons.babylon",
-            "staff03":"resources/meshes/weapons.babylon",
-            "staff02":"resources/meshes/weapons.babylon",
-            "staff01":"resources/meshes/weapons.babylon",
-            "cross01":"resources/meshes/weapons.babylon",
-            "gladius01":"resources/meshes/weapons.babylon",
-            "harpe01":"resources/meshes/weapons.babylon",
-            "executionerSword01":"resources/meshes/weapons.babylon",
-            "cudgel01":"resources/meshes/weapons.babylon",
-            "morningstar01":"resources/meshes/weapons.babylon",
-            "greatSword01":"resources/meshes/weapons.babylon",
-            "katana01":"resources/meshes/weapons.babylon",
-            "wand01":"resources/meshes/weapons.babylon",
-            "wand02":"resources/meshes/weapons.babylon",
-            "wand03":"resources/meshes/weapons.babylon",
-            "animatedChest01":"resources/meshes/animatedChest01.babylon",
-            "apple01":"resources/meshes/items/food01.babylon",
-            "dekuShield":"resources/meshes/items/dekuShield.babylon",
-            "kokiriSword":"resources/meshes/items/kokiriSword.babylon",
-            "cheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon",
-            "grilledCheeseSandwich":"resources/meshes/items/grilledCheeseSandwich.babylon",
-            "flatScreenMonitor01":"resources/meshes/static/flatScreenMonitor01.babylon",
-            "flatScreenMonitor01Screen":"resources/meshes/static/flatScreenMonitor01.babylon",
-            "flatScreenMonitor01Stand":"resources/meshes/static/flatScreenMonitor01.babylon"
+            "missingMesh": null,
+            "loadingMesh": null,
+            "cameraFocus": null,
+            "stopSign": "resources/meshes/static/misc.babylon",
+            "twoByFourByEight": "resources/meshes/static/misc.babylon",
+            "twoByFourByThree": "resources/meshes/static/misc.babylon",
+            "twoByFourBySix": "resources/meshes/static/misc.babylon",
+            "tombstone02": "resources/meshes/graveyard.babylon",
+            "icosphere30": "resources/meshes/static/misc.babylon",
+            "scroll01": "resources/meshes/static/misc.babylon",
+            "displayPlatform": "resources/meshes/static/misc.babylon",
+            "questionMark": "resources/meshes/static/misc.babylon",
+            "exclamationMark": "resources/meshes/static/misc.babylon",
+            "tombstone01": "resources/meshes/graveyard.babylon",
+            "obelisk02": "resources/meshes/graveyard.babylon",
+            "obelisk01": "resources/meshes/graveyard.babylon",
+            "scroll02": "resources/meshes/static/misc.babylon",
+            "coffinLid01": "resources/meshes/static/furniture.babylon",
+            "coffin01": "resources/meshes/static/furniture.babylon",
+            "coffinClosed01": "resources/meshes/static/furniture.babylon",
+            "bedMattressFrame01": "resources/meshes/static/furniture.babylon",
+            "bedFrame01": "resources/meshes/static/furniture.babylon",
+            "mattress01": "resources/meshes/static/furniture.babylon",
+            "bookshelfThin": "resources/meshes/static/furniture.babylon",
+            "couch02": "resources/meshes/static/furniture.babylon",
+            "nightstandDoubleDrawer": "resources/meshes/static/furniture.babylon",
+            "nightstandSingleDrawer": "resources/meshes/static/furniture.babylon",
+            "bedsideTableDoubleDrawer": "resources/meshes/static/furniture.babylon",
+            "chair01": "resources/meshes/static/furniture.babylon",
+            "loveseat01": "resources/meshes/static/furniture.babylon",
+            "bookshelf": "resources/meshes/static/furniture.babylon",
+            "lamp01": "resources/meshes/static/furniture.babylon",
+            "couch01": "resources/meshes/static/furniture.babylon",
+            "trashCanLid": "resources/meshes/static/furniture.babylon",
+            "trashBagFull": "resources/meshes/static/furniture.babylon",
+            "trashBagInCan": "resources/meshes/static/furniture.babylon",
+            "trashCan": "resources/meshes/static/furniture.babylon",
+            "consoleTable": "resources/meshes/static/furniture.babylon",
+            "sawhorse": "resources/meshes/static/furniture.babylon",
+            "bedsideTableSingleDrawer": "resources/meshes/static/furniture.babylon",
+            "diningTable": "resources/meshes/static/furniture.babylon",
+            "coffeeTable": "resources/meshes/static/furniture.babylon",
+            "cheeseWheel": "resources/meshes/items/food01.babylon",
+            "cheeseWheelSansWedge": "resources/meshes/items/food01.babylon",
+            "cheeseWedge": "resources/meshes/items/food01.babylon",
+            "stick01": "resources/data/items.babylon",
+            "stick03": "resources/data/items.babylon",
+            "stick04": "resources/data/items.babylon",
+            "ingot01": "resources/data/items.babylon",
+            "cube": "resources/data/items.babylon",
+            "trumpet01": "resources/data/items.babylon",
+            "mountainChocolateBar01": "resources/meshes/items/food01.babylon",
+            "mountainChocolateWrapper01": "resources/dmeshes/items/food01.babylon",
+            "hornsCurved01": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved02": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved03": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved04": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved05": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved07": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "hornsCurved06": "resources/meshes/cosmetics/hornsCurved.babylon",
+            "cup01": "resources/meshes/dishware01.babylon",
+            "currencyCoinQuarter": "resources/data/items.babylon",
+            "currencyCoinDime": "resources/data/items.babylon",
+            "currencyCoinNickel": "resources/data/items.babylon",
+            "bottle06": "resources/meshes/dishware01.babylon",
+            "bottle05": "resources/meshes/dishware01.babylon",
+            "bottle04": "resources/meshes/dishware01.babylon",
+            "bottle03": "resources/meshes/dishware01.babylon",
+            "bottle02": "resources/meshes/dishware01.babylon",
+            "bottle01": "resources/meshes/dishware01.babylon",
+            "ring01": "resources/meshes/items/rings01.babylon",
+            "ring02": "resources/meshes/items/rings01.babylon",
+            "ring03": "resources/meshes/items/rings01.babylon",
+            "ring04": "resources/meshes/items/rings01.babylon",
+            "ring09": "resources/meshes/items/rings01.babylon",
+            "bookHardcoverOpen01": "resources/data/items.babylon",
+            "key99": "resources/data/items.babylon",
+            "currencyCoinPenny": "resources/data/items.babylon",
+            "currencyNoteDollar": "resources/data/items.babylon",
+            "key01": "resources/data/items.babylon",
+            "boneRib01": "resources/meshes/gibs.babylon",
+            "bone02": "resources/meshes/gibs.babylon",
+            "boneMeat02": "resources/meshes/gibs.babylon",
+            "bone01": "resources/meshes/gibs.babylon",
+            "bookHardcoverClosed01": "resources/data/items.babylon",
+            "goblet01": "resources/meshes/dishware01.babylon",
+            "foxhead01": "resources/meshes/gibs.babylon",
+            "glass01": "resources/meshes/dishware01.babylon",
+            "gem03": "resources/data/items.babylon",
+            "gem04": "resources/data/items.babylon",
+            "gem05": "resources/data/items.babylon",
+            "gem06": "resources/data/items.babylon",
+            "gem08": "resources/data/items.babylon",
+            "plate01": "resources/meshes/dishware01.babylon",
+            "eye01": "resources/meshes/gibs.babylon",
+            "eye02": "resources/meshes/gibs.babylon",
+            "_cD": "resources/data/items.babylon",
+            "foxhead02": "resources/meshes/gibs.babylon",
+            "foxhead03": "resources/meshes/gibs.babylon",
+            "foxSkull02": "resources/meshes/gibs.babylon",
+            "sack01": "resources/data/items.babylon",
+            "craftsmanDoorwayNoTrim": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWindowDouble": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWallNoTrim": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWallNoCrown": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWallNoBaseboard": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWindowframeNoTrim": "resources/data/craftsmanWalls.babylon",
+            "craftsmanStairWallCornerRight": "resources/data/craftsmanWalls.babylon",
+            "craftsmanStairWallSideRight": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWindowframe": "resources/data/craftsmanWalls.babylon",
+            "craftsmanStairWallSideLeft": "resources/data/craftsmanWalls.babylon",
+            "craftsmanStairWallCornerLeft": "resources/data/craftsmanWalls.babylon",
+            "craftsmanStairs": "resources/data/craftsmanWalls.babylon",
+            "craftsmanWall": "resources/data/craftsmanWalls.babylon",
+            "craftsmanCorner": "resources/data/craftsmanWalls.babylon",
+            "craftsmanDoorway": "resources/data/craftsmanWalls.babylon",
+            "craftsmanDoor": "resources/data/craftsmanWalls.babylon",
+            "stairsCollision": "resources/data/craftsmanWalls.babylon",
+            "aardwolfM": "resources/meshes/characters/aardwolf.babylon",
+            "spiritN": "resources/meshes/characters/spiritN.babylon",
+            "foxF": "resources/meshes/characters/fox.babylon",
+            "foxSkeletonN": "resources/meshes/characters/foxSkeletonN.babylon",
+            "foxM": "resources/meshes/characters/fox.babylon",
+            "sheepF": "resources/meshes/characters/sheep.babylon",
+            "sheepM": "resources/meshes/characters/sheep.babylon",
+            "hitbox.canine": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.head": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.neck": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.chest": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.upperArm.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.forearm.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.hand.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.upperArm.r": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.forearm.r": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.hand.r": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.spine": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.pelvis": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.this.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.shin.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.foot.l": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.this.r": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.shin.r": "resources/meshes/hitboxes/canine.babylon",
+            "hitbox.canine.foot.r": "resources/meshes/hitboxes/canine.babylon",
+            "spider": "resources/meshes/arachnids.babylon",
+            "borb": "resources/meshes/borb.babylon",
+            "animatedPylon01": "resources/meshes/animatedPylon01.babylon",
+            "animatedRefrigerator01": "resources/meshes/animatedRefrigerator01.babylon",
+            "animatedCoffin01": "resources/meshes/animatedCoffin01.babylon",
+            "animatedBarrel01": "resources/meshes/animatedBarrel01.babylon",
+            "animatedToilet01": "resources/meshes/animatedToilet01.babylon",
+            "animatedSink01": "resources/meshes/animatedSink01.babylon",
+            "animatedDoor01": "resources/meshes/animatedDoor01.babylon",
+            "chair02": "resources/meshes/static/furniture.babylon",
+            "chair03": "resources/meshes/static/furniture.babylon",
+            "grass01": "resources/meshes/nature.babylon",
+            "mushroom01": "resources/meshes/nature.babylon",
+            "mushroom02": "resources/meshes/nature.babylon",
+            "mushroom03": "resources/meshes/nature.babylon",
+            "tombstone03": "resources/meshes/graveyard.babylon",
+            "graveyardWallCap01": "resources/meshes/graveyard.babylon",
+            "graveyardWallEndShortHalf01": "resources/meshes/graveyard.babylon",
+            "graveyardWallEndShort01": "resources/meshes/graveyard.babylon",
+            "graveyardWallEndMedium01": "resources/meshes/graveyard.babylon",
+            "graveyardWallEndTall01": "resources/meshes/graveyard.babylon",
+            "graveyardWallEndVeryTall01": "resources/meshes/graveyard.babylon",
+            "graveyardFence01": "resources/meshes/graveyard.babylon",
+            "graveyardFenceShort01": "resources/meshes/graveyard.babylon",
+            "graveyardFencePike01": "resources/meshes/graveyard.babylon",
+            "graveyardFenceWithPillar01": "resources/meshes/graveyard.babylon",
+            "graveyardFenceWithPillarShort01": "resources/meshes/graveyard.babylon",
+            "graveyardFencePillar01": "resources/meshes/graveyard.babylon",
+            "cap01": "resources/meshes/armour.babylon",
+            "birdMask01": "resources/meshes/armour.babylon",
+            "birdMaskJaw01": "resources/meshes/armour.babylon",
+            "wizardHat02": "resources/meshes/armour.babylon",
+            "barbute01": "resources/meshes/armour.babylon",
+            "roundShield01": "resources/meshes/armour.babylon",
+            "parmaShield01": "resources/meshes/armour.babylon",
+            "heaterShield01": "resources/meshes/armour.babylon",
+            "heaterShield02": "resources/meshes/armour.babylon",
+            "heaterShield03": "resources/meshes/armour.babylon",
+            "scutumShield01": "resources/meshes/armour.babylon",
+            "barbuteHorned01": "resources/meshes/armour.babylon",
+            "protohelmet": "resources/meshes/armour.babylon",
+            "bracer01.l": "resources/meshes/armour.babylon",
+            "bracer01.r": "resources/meshes/armour.babylon",
+            "pauldron01.l": "resources/meshes/armour.babylon",
+            "pauldron01.r": "resources/meshes/armour.babylon",
+            "knife01": "resources/meshes/weapons.babylon",
+            "spear01": "resources/meshes/weapons.babylon",
+            "glaive01": "resources/meshes/weapons.babylon",
+            "battleAxe01": "resources/meshes/weapons.babylon",
+            "axe03": "resources/meshes/weapons.babylon",
+            "axe02": "resources/meshes/weapons.babylon",
+            "axe01": "resources/meshes/weapons.babylon",
+            "sword01": "resources/meshes/weapons.babylon",
+            "sword01Broken00": "resources/meshes/weapons.babylon",
+            "sword01Broken01": "resources/meshes/weapons.babylon",
+            "sword01Broken02": "resources/meshes/weapons.babylon",
+            "sword01Broken03": "resources/meshes/weapons.babylon",
+            "scythe03": "resources/meshes/weapons.babylon",
+            "glaive01": "resources/meshes/weapons.babylon",
+            "forgeHammer01": "resources/meshes/weapons.babylon",
+            "forgeHammer02": "resources/meshes/weapons.babylon",
+            "warHammer01": "resources/meshes/weapons.babylon",
+            "mallet01": "resources/meshes/weapons.babylon",
+            "pickaxe01": "resources/meshes/weapons.babylon",
+            "spear01": "resources/meshes/weapons.babylon",
+            "shovel01": "resources/meshes/weapons.babylon",
+            "shortSword01": "resources/meshes/weapons.babylon",
+            "staff05": "resources/meshes/weapons.babylon",
+            "staff04": "resources/meshes/weapons.babylon",
+            "staff03": "resources/meshes/weapons.babylon",
+            "staff02": "resources/meshes/weapons.babylon",
+            "staff01": "resources/meshes/weapons.babylon",
+            "cross01": "resources/meshes/weapons.babylon",
+            "gladius01": "resources/meshes/weapons.babylon",
+            "harpe01": "resources/meshes/weapons.babylon",
+            "executionerSword01": "resources/meshes/weapons.babylon",
+            "cudgel01": "resources/meshes/weapons.babylon",
+            "morningstar01": "resources/meshes/weapons.babylon",
+            "greatSword01": "resources/meshes/weapons.babylon",
+            "katana01": "resources/meshes/weapons.babylon",
+            "wand01": "resources/meshes/weapons.babylon",
+            "wand02": "resources/meshes/weapons.babylon",
+            "wand03": "resources/meshes/weapons.babylon",
+            "animatedChest01": "resources/meshes/animatedChest01.babylon",
+            "apple01": "resources/meshes/items/food01.babylon",
+            "dekuShield": "resources/meshes/items/dekuShield.babylon",
+            "kokiriSword": "resources/meshes/items/kokiriSword.babylon",
+            "cheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
+            "grilledCheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
+            "flatScreenMonitor01": "resources/meshes/static/flatScreenMonitor01.babylon",
+            "flatScreenMonitor01Screen": "resources/meshes/static/flatScreenMonitor01.babylon",
+            "flatScreenMonitor01Stand": "resources/meshes/static/flatScreenMonitor01.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -309,96 +309,96 @@ class Game {
          * @type {<string, string>}
          */
         Game.textureLocations = {
-            "packStreetApartmentBuildingGroundFloor":"resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
-            "carpetPink01":"resources/images/textures/static/carpet/carpetPink01.png",
-            "carpetBlack01":"resources/images/textures/static/carpet/carpetBlack01.png",
-            "carpet02-pink":"resources/images/textures/static/carpet/Carpet13_pink.png",
-            "carpet02-black":"resources/images/textures/static/carpet/Carpet13_black.png",
-            "carpet02-NORMAL":"resources/images/textures/static/carpet/Carpet13_nrm.png",
-            "noooo":"resources/images/textures/static/noooo.jpg",
-            "packStreetChapter23":"resources/images/textures/items/packStreetChapter23.svg",
-            "packStreetChapter24":"resources/images/textures/items/packStreetChapter24.svg",
-            "foxCorsac":"resources/images/textures/characters/foxCorsac.svg",
-            "cross01":"resources/images/textures/items/cross01.svg",
-            "spirit":"resources/images/textures/characters/spirit.png",
-            "woodenFloorDark01":"resources/images/textures/static/woodenFloorDark01.xcf",
-            "ring02GoldBrokenRuby":"resources/images/textures/items/ring02GoldBrokenRuby.svg",
-            "ring02Gold":"resources/images/textures/items/ring02Gold.svg",
-            "ring02Silver":"resources/images/textures/items/ring02Silver.svg",
-            "ring02SilverBrokenRuby":"resources/images/textures/items/ring02SilverBrokenRuby.svg",
-            "fireSplatter":"resources/images/textures/effects/fireSplatter.svg",
-            "fireOpacity":"resources/images/textures/effects/fireOpacity.svg",
-            "fireDistortion":"resources/images/textures/effects/fireDistortion.png",
-            "bottle03RedSarcophagusJuice":"resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
-            "bottle03Red":"resources/images/textures/items/bottle03Red.svg",
-            "bottle03Blue":"resources/images/textures/items/bottle03Blue.svg",
-            "bottle03Purple":"resources/images/textures/items/bottle03Purple.svg",
-            "bottle03White":"resources/images/textures/items/bottle03White.svg",
-            "bookshelfBlackPlywood":"resources/images/textures/furniture/bookshelfBlackPlywood.svg",
-            "TheMagicalCircleOfKingSolomon":"resources/images/textures/effects/TheMagicalCircleOfKingSolomon.svg",
-            "theLesserKeyOfSolomon":"resources/images/textures/items/theLesserKeyOfSolomon.svg",
-            "metalIron01":"resources/images/textures/items/metalIron01.png",
-            "foxRed":"resources/images/textures/characters/foxRed.svg",
-            "foxRinehart":"resources/images/textures/characters/foxRinehart.svg",
-            "sheepWhite":"resources/images/textures/characters/sheepWhite.svg",
-            "dice":"resources/images/textures/items/dice.svg",
-            "vChocolateV":"resources/images/textures/items/vChocolateV.svg",
-            "missingTexture":"resources/images/textures/static/missingTexture.svg",
-            "woodenMallet":"resources/images/textures/items/woodenMallet.svg",
-            "metalTool01":"resources/images/textures/items/metalTool01.svg",
-            "cheeseWheel":"resources/images/textures/items/cheeseWheel.svg",
-            "stick01":"resources/images/textures/items/stick01.svg",
-            "rock01":"resources/images/textures/items/rock01.png",
-            "bone01":"resources/images/textures/items/bone01.svg",
-            "icosphere30":"resources/images/textures/static/icosphere30.svg",
-            "fireOpacityPNG":"resources/images/textures/effects/fireOpacity.png",
-            "fire":"resources/images/textures/effects/fire.png",
-            "greenWallpaper":"resources/images/textures/static/greenWallpaper.png",
-            "trimWood":"resources/images/textures/static/trimWood.png",
-            "plainDoor":"resources/images/textures/static/plainDoor.svg",
-            "pinkWallpaperPlainWood":"resources/images/textures/static/pinkWallpaperPlainWood.png",
-            "yellowWallpaperPlainWood":"resources/images/textures/static/yellowWallpaperPlainWood.png",
-            "stahpSign":"resources/images/textures/items/stahpSign.svg",
-            "stopSign":"resources/images/textures/items/stopSign.svg",
-            "blackWallpaperPlainWood":"resources/images/textures/static/blackWallpaperPlainWood.png",
-            "blueWallpaperPlainWood":"resources/images/textures/static/blueWallpaperPlainWood.png",
-            "checkerLinoleumFloor01":"resources/images/textures/static/checkerLinoleumFloor01.png",
-            "greenWallpaperPlainWood":"resources/images/textures/static/greenWallpaperPlainWood.png",
-            "whitePanelGrayStone":"resources/images/textures/static/whitePanelGrayStone.png",
-            "whiteWallpaperPlainWood":"resources/images/textures/static/whiteWallpaperPlainWood.png",
-            "woodenFloorDark01-BUMP":"resources/images/textures/static/woodenFloorDark01-BUMP.png",
-            "woodenFloorDark01-DIFFUSE":"resources/images/textures/static/woodenFloorDark01-DIFFUSE.png",
-            "woodenFloorDark01-NORMAL":"resources/images/textures/static/woodenFloorDark01-NORMAL.png",
-            "stripped-BUMP":"resources/images/textures/static/stripped-BUMP.png",
-            "stripped-NORMAL":"resources/images/textures/static/stripped-NORMAL.png",
-            "stoneTexture01":"resources/images/textures/static/stoneTexture01.png",
-            "stoneTexture01-NORMAL":"resources/images/textures/static/stoneTexture01-NORMAL.png",
-            "dice01Texture":"resources/images/textures/items/dice01.svg",
-            "birdMask01":"resources/images/textures/items/birdMask01.svg",
-            "chest01":"resources/images/textures/furniture/chest01.svg",
-            "apple01":"resources/images/textures/items/apple01.svg",
-            "circularEyeBlue":"resources/images/textures/items/circularEyeBlue.svg",
-            "circularEyeGreen":"resources/images/textures/items/circularEyeGreen.svg",
-            "circularEyeViolet":"resources/images/textures/items/circularEyeViolet.svg",
-            "circularEye":"resources/images/textures/items/circularEye.svg",
-            "feralEye":"resources/images/textures/items/feralEye.svg",
-            "feralEyeViolet":"resources/images/textures/items/feralEyeViolet.svg",
-            "feralEyeBlue":"resources/images/textures/items/feralEyeBlue.svg",
-            "feralEyeGreen":"resources/images/textures/items/feralEyeGreen.svg",
-            "feralEyeYellow":"resources/images/textures/items/feralEyeYellow.svg",
-            "oblongEye":"resources/images/textures/items/oblongEye.svg",
-            "circularEyeBrown":"resources/images/textures/items/circularEyeBrown.svg",
-            "feralEyeBrown":"resources/images/textures/items/feralEyeBrown.svg",
-            "circularEyeYellow":"resources/images/textures/items/circularEyeYellow.svg",
-            "oblongEyeYellow":"resources/images/textures/items/oblongEyeYellow.svg",
-            "oblongEyeBrown":"resources/images/textures/items/oblongEyeBrown.svg",
-            "oblongEyeBlue":"resources/images/textures/items/oblongEyeBlue.svg",
-            "oblongEyeGreen":"resources/images/textures/items/oblongEyeGreen.svg",
-            "oblongEyeViolet":"resources/images/textures/items/oblongEyeViolet.svg",
-            "dekuShield":"resources/images/textures/items/dekuShield.png",
-            "kokiriSword":"resources/images/textures/items/kokiriSword.svg",
-            "cheeseSandwich01":"resources/images/textures/items/cheeseSandwich01.svg",
-            "grilledCheeseSandwich01":"resources/images/textures/items/grilledCheeseSandwich01.svg"
+            "packStreetApartmentBuildingGroundFloor": "resources/images/textures/static/packStreetApartmentBuildingGroundFloor.png",
+            "carpetPink01": "resources/images/textures/static/carpet/carpetPink01.png",
+            "carpetBlack01": "resources/images/textures/static/carpet/carpetBlack01.png",
+            "carpet02-pink": "resources/images/textures/static/carpet/Carpet13_pink.png",
+            "carpet02-black": "resources/images/textures/static/carpet/Carpet13_black.png",
+            "carpet02-NORMAL": "resources/images/textures/static/carpet/Carpet13_nrm.png",
+            "noooo": "resources/images/textures/static/noooo.jpg",
+            "packStreetChapter23": "resources/images/textures/items/packStreetChapter23.svg",
+            "packStreetChapter24": "resources/images/textures/items/packStreetChapter24.svg",
+            "foxCorsac": "resources/images/textures/characters/foxCorsac.svg",
+            "cross01": "resources/images/textures/items/cross01.svg",
+            "spirit": "resources/images/textures/characters/spirit.png",
+            "woodenFloorDark01": "resources/images/textures/static/woodenFloorDark01.xcf",
+            "ring02GoldBrokenRuby": "resources/images/textures/items/ring02GoldBrokenRuby.svg",
+            "ring02Gold": "resources/images/textures/items/ring02Gold.svg",
+            "ring02Silver": "resources/images/textures/items/ring02Silver.svg",
+            "ring02SilverBrokenRuby": "resources/images/textures/items/ring02SilverBrokenRuby.svg",
+            "fireSplatter": "resources/images/textures/effects/fireSplatter.svg",
+            "fireOpacity": "resources/images/textures/effects/fireOpacity.svg",
+            "fireDistortion": "resources/images/textures/effects/fireDistortion.png",
+            "bottle03RedSarcophagusJuice": "resources/images/textures/items/bottle03RedSarcophagusJuice.svg",
+            "bottle03Red": "resources/images/textures/items/bottle03Red.svg",
+            "bottle03Blue": "resources/images/textures/items/bottle03Blue.svg",
+            "bottle03Purple": "resources/images/textures/items/bottle03Purple.svg",
+            "bottle03White": "resources/images/textures/items/bottle03White.svg",
+            "bookshelfBlackPlywood": "resources/images/textures/furniture/bookshelfBlackPlywood.svg",
+            "TheMagicalCircleOfKingSolomon": "resources/images/textures/effects/TheMagicalCircleOfKingSolomon.svg",
+            "theLesserKeyOfSolomon": "resources/images/textures/items/theLesserKeyOfSolomon.svg",
+            "metalIron01": "resources/images/textures/items/metalIron01.png",
+            "foxRed": "resources/images/textures/characters/foxRed.svg",
+            "foxRinehart": "resources/images/textures/characters/foxRinehart.svg",
+            "sheepWhite": "resources/images/textures/characters/sheepWhite.svg",
+            "dice": "resources/images/textures/items/dice.svg",
+            "vChocolateV": "resources/images/textures/items/vChocolateV.svg",
+            "missingTexture": "resources/images/textures/static/missingTexture.svg",
+            "woodenMallet": "resources/images/textures/items/woodenMallet.svg",
+            "metalTool01": "resources/images/textures/items/metalTool01.svg",
+            "cheeseWheel": "resources/images/textures/items/cheeseWheel.svg",
+            "stick01": "resources/images/textures/items/stick01.svg",
+            "rock01": "resources/images/textures/items/rock01.png",
+            "bone01": "resources/images/textures/items/bone01.svg",
+            "icosphere30": "resources/images/textures/static/icosphere30.svg",
+            "fireOpacityPNG": "resources/images/textures/effects/fireOpacity.png",
+            "fire": "resources/images/textures/effects/fire.png",
+            "greenWallpaper": "resources/images/textures/static/greenWallpaper.png",
+            "trimWood": "resources/images/textures/static/trimWood.png",
+            "plainDoor": "resources/images/textures/static/plainDoor.svg",
+            "pinkWallpaperPlainWood": "resources/images/textures/static/pinkWallpaperPlainWood.png",
+            "yellowWallpaperPlainWood": "resources/images/textures/static/yellowWallpaperPlainWood.png",
+            "stahpSign": "resources/images/textures/items/stahpSign.svg",
+            "stopSign": "resources/images/textures/items/stopSign.svg",
+            "blackWallpaperPlainWood": "resources/images/textures/static/blackWallpaperPlainWood.png",
+            "blueWallpaperPlainWood": "resources/images/textures/static/blueWallpaperPlainWood.png",
+            "checkerLinoleumFloor01": "resources/images/textures/static/checkerLinoleumFloor01.png",
+            "greenWallpaperPlainWood": "resources/images/textures/static/greenWallpaperPlainWood.png",
+            "whitePanelGrayStone": "resources/images/textures/static/whitePanelGrayStone.png",
+            "whiteWallpaperPlainWood": "resources/images/textures/static/whiteWallpaperPlainWood.png",
+            "woodenFloorDark01-BUMP": "resources/images/textures/static/woodenFloorDark01-BUMP.png",
+            "woodenFloorDark01-DIFFUSE": "resources/images/textures/static/woodenFloorDark01-DIFFUSE.png",
+            "woodenFloorDark01-NORMAL": "resources/images/textures/static/woodenFloorDark01-NORMAL.png",
+            "stripped-BUMP": "resources/images/textures/static/stripped-BUMP.png",
+            "stripped-NORMAL": "resources/images/textures/static/stripped-NORMAL.png",
+            "stoneTexture01": "resources/images/textures/static/stoneTexture01.png",
+            "stoneTexture01-NORMAL": "resources/images/textures/static/stoneTexture01-NORMAL.png",
+            "dice01Texture": "resources/images/textures/items/dice01.svg",
+            "birdMask01": "resources/images/textures/items/birdMask01.svg",
+            "chest01": "resources/images/textures/furniture/chest01.svg",
+            "apple01": "resources/images/textures/items/apple01.svg",
+            "circularEyeBlue": "resources/images/textures/items/circularEyeBlue.svg",
+            "circularEyeGreen": "resources/images/textures/items/circularEyeGreen.svg",
+            "circularEyeViolet": "resources/images/textures/items/circularEyeViolet.svg",
+            "circularEye": "resources/images/textures/items/circularEye.svg",
+            "feralEye": "resources/images/textures/items/feralEye.svg",
+            "feralEyeViolet": "resources/images/textures/items/feralEyeViolet.svg",
+            "feralEyeBlue": "resources/images/textures/items/feralEyeBlue.svg",
+            "feralEyeGreen": "resources/images/textures/items/feralEyeGreen.svg",
+            "feralEyeYellow": "resources/images/textures/items/feralEyeYellow.svg",
+            "oblongEye": "resources/images/textures/items/oblongEye.svg",
+            "circularEyeBrown": "resources/images/textures/items/circularEyeBrown.svg",
+            "feralEyeBrown": "resources/images/textures/items/feralEyeBrown.svg",
+            "circularEyeYellow": "resources/images/textures/items/circularEyeYellow.svg",
+            "oblongEyeYellow": "resources/images/textures/items/oblongEyeYellow.svg",
+            "oblongEyeBrown": "resources/images/textures/items/oblongEyeBrown.svg",
+            "oblongEyeBlue": "resources/images/textures/items/oblongEyeBlue.svg",
+            "oblongEyeGreen": "resources/images/textures/items/oblongEyeGreen.svg",
+            "oblongEyeViolet": "resources/images/textures/items/oblongEyeViolet.svg",
+            "dekuShield": "resources/images/textures/items/dekuShield.png",
+            "kokiriSword": "resources/images/textures/items/kokiriSword.svg",
+            "cheeseSandwich01": "resources/images/textures/items/cheeseSandwich01.svg",
+            "grilledCheeseSandwich01": "resources/images/textures/items/grilledCheeseSandwich01.svg"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -419,123 +419,123 @@ class Game {
          * @type {<string, string>}
          */
         Game.iconLocations = {
-            "rosieIcon":"resources/images/icons/characters/rosie.png",
-            "charlieIcon":"resources/images/icons/characters/charlie.svg",
-            "genericItemIcon":"resources/images/icons/items/genericItem.svg",
-            "genericCharacterIcon":"resources/images/icons/characters/genericCharacter.svg",
-            "genericRabbitIcon":"resources/images/icons/characters/genericRabbit.svg",
-            "pandorasBoxLocationKeyIcon":"resources/images/icons/items/pandorasBoxLocationKey.svg",
-            "keyIcon":"resources/images/icons/items/key.svg",
-            "nickWildeIcon":"resources/images/icons/characters/nickWilde.svg",
-            "packstreet23StrangeNewDayIcon":"resources/images/icons/items/packstreet23StrangeNewDay.png",
-            "cross01Icon":"resources/images/icons/items/cross01.png",
-            "ring01SilverIcon":"resources/images/icons/items/ring01Silver.png",
-            "ring02SilverIcon":"resources/images/icons/items/ring02Silver.png",
-            "ring03SilverDRubyIcon":"resources/images/icons/items/ring03GoldDRuby.png",
-            "ring01GoldIcon":"resources/images/icons/items/ring01Gold.png",
-            "ring02GoldIcon":"resources/images/icons/items/ring02Gold.png",
-            "ring03GoldDRubyIcon":"resources/images/icons/items/ring03GoldDRuby.png",
-            "fireIcon":"resources/images/icons/effects/fire.png",
-            "bottle05RedSarcophagusJuiceIcon":"resources/images/icons/items/bottle05RedSarcophagusJuice.png",
-            "bottle04RedSarcophagusJuiceIcon":"resources/images/icons/items/bottle04RedSarcophagusJuice.png",
-            "bottle03RedSarcophagusJuiceIcon":"resources/images/icons/items/bottle03RedSarcophagusJuice.png",
-            "bottle03JarateIcon":"resources/images/icons/items/bottle03Jarate.png",
-            "theLesserKeyOfSolomonIcon":"resources/images/icons/items/theLesserKeyOfSolomon.png",
-            "mountainChocolate01Icon":"resources/images/icons/items/mountainChocolate01.png",
-            "knife01Icon":"resources/images/icons/items/knife01.png",
-            "missingIcon":"resources/images/icons/static/missingIcon.svg",
-            "cudgelIcon":"resources/images/icons/items/cudgel.png",
-            "morningstar01Icon":"resources/images/icons/items/morningstar01.png",
-            "wizardHat02Icon":"resources/images/icons/items/wizardHat02.png",
-            "barbuteHorned01Icon":"resources/images/icons/items/barbuteHorned01.png",
-            "heaterShield02Icon":"resources/images/icons/items/heaterShield02.png",
-            "heaterShield01Icon":"resources/images/icons/items/heaterShield01.png",
-            "roundShieldIcon":"resources/images/icons/items/roundShield.png",
-            "parmaShieldIcon":"resources/images/icons/items/parmaShield.png",
-            "scutumShieldIcon":"resources/images/icons/items/scutumShield.png",
-            "mallet01Icon":"resources/images/icons/items/mallet01.png",
-            "shovel01Icon":"resources/images/icons/items/shovel01.png",
-            "pickaxe01Icon":"resources/images/icons/items/pickaxe01.png",
-            "warHammer01Icon":"resources/images/icons/items/warHammer01.png",
-            "harpeIcon":"resources/images/icons/items/harpe.png",
-            "gladiusIcon":"resources/images/icons/items/gladius.png",
-            "plate01Icon":"resources/images/icons/items/plate01.png",
-            "glass01Icon":"resources/images/icons/items/glass01.png",
-            "gem03Icon":"resources/images/icons/items/glass03Icon.png",
-            "gem04Icon":"resources/images/icons/items/glass04Icon.png",
-            "gem05Icon":"resources/images/icons/items/glass05Icon.png",
-            "gem06Icon":"resources/images/icons/items/glass06Icon.png",
-            "gem08Icon":"resources/images/icons/items/glass08Icon.png",
-            "goblet01Icon":"resources/images/icons/items/goblet01.png",
-            "cup01Icon":"resources/images/icons/items/cup01.png",
-            "staff01Icon":"resources/images/icons/items/staff01.png",
-            "staff04Icon":"resources/images/icons/items/staff04.png",
-            "staff02Icon":"resources/images/icons/items/staff02.png",
-            "staff03Icon":"resources/images/icons/items/staff03.png",
-            "staff05Icon":"resources/images/icons/items/staff05.png",
-            "wand01Icon":"resources/images/icons/items/wand01.png",
-            "wand02Icon":"resources/images/icons/items/wand02.png",
-            "wand03Icon":"resources/images/icons/items/wand03.png",
-            "shortSword01Icon":"resources/images/icons/items/shortSword01.png",
-            "sword01Icon":"resources/images/icons/items/sword01.png",
-            "katana01Icon":"resources/images/icons/items/katana01.png",
-            "greatSword01Icon":"resources/images/icons/items/greatSword01.png",
-            "executionerSword01Icon":"resources/images/icons/items/executionerSword01.png",
-            "key01Icon":"resources/images/icons/items/key01.png",
-            "key02Icon":"resources/images/icons/items/key02.png",
-            "foxFfoxCorsacIcon":"resources/images/icons/characters/foxFfoxCorsac.png",
-            "foxMfoxRedIcon":"resources/images/icons/characters/foxMfoxRed.png",
-            "foxMfoxCorsacIcon":"resources/images/icons/characters/foxMfoxCorsac.png",
-            "foxFfoxRedIcon":"resources/images/icons/characters/foxFfoxRed.png",
-            "aardwolfMfoxCorsacIcon":"resources/images/icons/characters/aardwolfMfoxCorsac.png",
-            "spiritNIcon":"resources/images/icons/characters/spiritN.png",
-            "skeletonNIcon":"resources/images/icons/characters/skeletonN.png",
-            "foxSkeletonHeadIcon":"resources/images/icons/items/foxSkeletonHead.png",
-            "foxM01HeadIcon":"resources/images/icons/items/foxM01Head.png",
-            "foxM02HeadIcon":"resources/images/icons/items/foxM02Head.png",
-            "cap01Icon":"resources/images/icons/items/cap01.png",
-            "trumpet01Icon":"resources/images/icons/items/trumpet01.png",
-            "birdMask01Icon":"resources/images/icons/items/birdMask01.png",
-            "spiderIcon":"resources/images/icons/characters/spider.png",
-            "plainDoorIcon":"resources/images/icons/static/plainDoor.png",
-            "craftsmanWall01Icon":"resources/images/icons/static/craftsmanWall01.png",
-            "yellowWallpaperPlainWoodIcon.craftsmanWall01":"resources/images/icons/static/yellowWallpaperPlainWood.craftsmanWall01.png",
-            "greenWallpaperPlainWoodIcon.craftsmanWall01":"resources/images/icons/static/greenWallpaperPlainWood.craftsmanWall01.png",
-            "pinkWallpaperPlainWoodIcon.craftsmanWall01":"resources/images/icons/static/pinkWallpaperPlainWood.craftsmanWall01.png",
-            "stopSignIcon":"resources/images/icons/items/stopSign.png",
-            "frigeratorIcon":"resources/images/icons/items/frigerator.png",
-            "cheeseWheelIcon":"resources/images/icons/items/cheeseWheel.png",
-            "cheeseWheelSansWedgeIcon":"resources/images/icons/items/cheeseWheelSansWedge.png",
-            "cheeseWedgeIcon":"resources/images/icons/items/cheeseWedge.png",
-            "stick01Icon":"resources/images/icons/items/stick01.png",
-            "stick03Icon":"resources/images/icons/items/stick03.png",
-            "stick04Icon":"resources/images/icons/items/stick04.png",
-            "stick02Icon":"resources/images/icons/items/stick02.png",
-            "rock01Icon":"resources/images/icons/items/rock01.png",
-            "sink01Icon":"resources/images/icons/items/sink01.png",
-            "toilet01Icon":"resources/images/icons/items/toilet01.png",
-            "mattress01Icon":"resources/images/icons/items/mattress01.png",
-            "couch01Icon":"resources/images/icons/items/couch01Icon.png",
-            "couch02Icon":"resources/images/icons/items/couch02Icon.png",
-            "loveseat01Icon":"resources/images/icons/items/loveseat01Icon.png",
-            "chair01Icon":"resources/images/icons/items/chair01Icon.png",
-            "chair02Icon":"resources/images/icons/items/chair02Icon.png",
-            "chair03Icon":"resources/images/icons/items/chair03Icon.png",
-            "dice01Icon":"resources/images/icons/items/dice01.png",
-            "apple01Icon":"resources/images/icons/items/apple01.png",
-            "axe01Icon":"resources/images/icons/items/axe01.png",
-            "axe02Icon":"resources/images/icons/items/axe02.png",
-            "axe03Icon":"resources/images/icons/items/axe03.png",
-            "battleAxe01Icon":"resources/images/icons/items/battleAxe01.png",
-            "forgeHammer01Icon":"resources/images/icons/items/forgeHammer01.png",
-            "forgeHammer02Icon":"resources/images/icons/items/forgeHammer02.png",
-            "cudgel01Icon":"resources/images/icons/items/cudgel01.png",
-            "cheeseSandwich01Icon":"resources/images/icons/items/cheeseSandwich01Icon.png",
-            "grilledCheeseSandwich01Icon":"resources/images/icons/items/grilledCheeseSandwich01Icon.png",
-            "genericSwordIcon":"resources/images/icons/genericSwordIcon.svg",
-            "genericShirtIcon":"resources/images/icons/genericShirtIcon.svg",
-            "genericBagIcon":"resources/images/icons/genericBagIcon.svg",
-            "genericMoneyIcon":"resources/images/icons/genericMoneyIcon.svg"
+            "rosieIcon": "resources/images/icons/characters/rosie.png",
+            "charlieIcon": "resources/images/icons/characters/charlie.svg",
+            "genericItemIcon": "resources/images/icons/items/genericItem.svg",
+            "genericCharacterIcon": "resources/images/icons/characters/genericCharacter.svg",
+            "genericRabbitIcon": "resources/images/icons/characters/genericRabbit.svg",
+            "pandorasBoxLocationKeyIcon": "resources/images/icons/items/pandorasBoxLocationKey.svg",
+            "keyIcon": "resources/images/icons/items/key.svg",
+            "nickWildeIcon": "resources/images/icons/characters/nickWilde.svg",
+            "packstreet23StrangeNewDayIcon": "resources/images/icons/items/packstreet23StrangeNewDay.png",
+            "cross01Icon": "resources/images/icons/items/cross01.png",
+            "ring01SilverIcon": "resources/images/icons/items/ring01Silver.png",
+            "ring02SilverIcon": "resources/images/icons/items/ring02Silver.png",
+            "ring03SilverDRubyIcon": "resources/images/icons/items/ring03GoldDRuby.png",
+            "ring01GoldIcon": "resources/images/icons/items/ring01Gold.png",
+            "ring02GoldIcon": "resources/images/icons/items/ring02Gold.png",
+            "ring03GoldDRubyIcon": "resources/images/icons/items/ring03GoldDRuby.png",
+            "fireIcon": "resources/images/icons/effects/fire.png",
+            "bottle05RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle05RedSarcophagusJuice.png",
+            "bottle04RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle04RedSarcophagusJuice.png",
+            "bottle03RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle03RedSarcophagusJuice.png",
+            "bottle03JarateIcon": "resources/images/icons/items/bottle03Jarate.png",
+            "theLesserKeyOfSolomonIcon": "resources/images/icons/items/theLesserKeyOfSolomon.png",
+            "mountainChocolate01Icon": "resources/images/icons/items/mountainChocolate01.png",
+            "knife01Icon": "resources/images/icons/items/knife01.png",
+            "missingIcon": "resources/images/icons/static/missingIcon.svg",
+            "cudgelIcon": "resources/images/icons/items/cudgel.png",
+            "morningstar01Icon": "resources/images/icons/items/morningstar01.png",
+            "wizardHat02Icon": "resources/images/icons/items/wizardHat02.png",
+            "barbuteHorned01Icon": "resources/images/icons/items/barbuteHorned01.png",
+            "heaterShield02Icon": "resources/images/icons/items/heaterShield02.png",
+            "heaterShield01Icon": "resources/images/icons/items/heaterShield01.png",
+            "roundShieldIcon": "resources/images/icons/items/roundShield.png",
+            "parmaShieldIcon": "resources/images/icons/items/parmaShield.png",
+            "scutumShieldIcon": "resources/images/icons/items/scutumShield.png",
+            "mallet01Icon": "resources/images/icons/items/mallet01.png",
+            "shovel01Icon": "resources/images/icons/items/shovel01.png",
+            "pickaxe01Icon": "resources/images/icons/items/pickaxe01.png",
+            "warHammer01Icon": "resources/images/icons/items/warHammer01.png",
+            "harpeIcon": "resources/images/icons/items/harpe.png",
+            "gladiusIcon": "resources/images/icons/items/gladius.png",
+            "plate01Icon": "resources/images/icons/items/plate01.png",
+            "glass01Icon": "resources/images/icons/items/glass01.png",
+            "gem03Icon": "resources/images/icons/items/glass03Icon.png",
+            "gem04Icon": "resources/images/icons/items/glass04Icon.png",
+            "gem05Icon": "resources/images/icons/items/glass05Icon.png",
+            "gem06Icon": "resources/images/icons/items/glass06Icon.png",
+            "gem08Icon": "resources/images/icons/items/glass08Icon.png",
+            "goblet01Icon": "resources/images/icons/items/goblet01.png",
+            "cup01Icon": "resources/images/icons/items/cup01.png",
+            "staff01Icon": "resources/images/icons/items/staff01.png",
+            "staff04Icon": "resources/images/icons/items/staff04.png",
+            "staff02Icon": "resources/images/icons/items/staff02.png",
+            "staff03Icon": "resources/images/icons/items/staff03.png",
+            "staff05Icon": "resources/images/icons/items/staff05.png",
+            "wand01Icon": "resources/images/icons/items/wand01.png",
+            "wand02Icon": "resources/images/icons/items/wand02.png",
+            "wand03Icon": "resources/images/icons/items/wand03.png",
+            "shortSword01Icon": "resources/images/icons/items/shortSword01.png",
+            "sword01Icon": "resources/images/icons/items/sword01.png",
+            "katana01Icon": "resources/images/icons/items/katana01.png",
+            "greatSword01Icon": "resources/images/icons/items/greatSword01.png",
+            "executionerSword01Icon": "resources/images/icons/items/executionerSword01.png",
+            "key01Icon": "resources/images/icons/items/key01.png",
+            "key02Icon": "resources/images/icons/items/key02.png",
+            "foxFfoxCorsacIcon": "resources/images/icons/characters/foxFfoxCorsac.png",
+            "foxMfoxRedIcon": "resources/images/icons/characters/foxMfoxRed.png",
+            "foxMfoxCorsacIcon": "resources/images/icons/characters/foxMfoxCorsac.png",
+            "foxFfoxRedIcon": "resources/images/icons/characters/foxFfoxRed.png",
+            "aardwolfMfoxCorsacIcon": "resources/images/icons/characters/aardwolfMfoxCorsac.png",
+            "spiritNIcon": "resources/images/icons/characters/spiritN.png",
+            "skeletonNIcon": "resources/images/icons/characters/skeletonN.png",
+            "foxSkeletonHeadIcon": "resources/images/icons/items/foxSkeletonHead.png",
+            "foxM01HeadIcon": "resources/images/icons/items/foxM01Head.png",
+            "foxM02HeadIcon": "resources/images/icons/items/foxM02Head.png",
+            "cap01Icon": "resources/images/icons/items/cap01.png",
+            "trumpet01Icon": "resources/images/icons/items/trumpet01.png",
+            "birdMask01Icon": "resources/images/icons/items/birdMask01.png",
+            "spiderIcon": "resources/images/icons/characters/spider.png",
+            "plainDoorIcon": "resources/images/icons/static/plainDoor.png",
+            "craftsmanWall01Icon": "resources/images/icons/static/craftsmanWall01.png",
+            "yellowWallpaperPlainWoodIcon.craftsmanWall01": "resources/images/icons/static/yellowWallpaperPlainWood.craftsmanWall01.png",
+            "greenWallpaperPlainWoodIcon.craftsmanWall01": "resources/images/icons/static/greenWallpaperPlainWood.craftsmanWall01.png",
+            "pinkWallpaperPlainWoodIcon.craftsmanWall01": "resources/images/icons/static/pinkWallpaperPlainWood.craftsmanWall01.png",
+            "stopSignIcon": "resources/images/icons/items/stopSign.png",
+            "frigeratorIcon": "resources/images/icons/items/frigerator.png",
+            "cheeseWheelIcon": "resources/images/icons/items/cheeseWheel.png",
+            "cheeseWheelSansWedgeIcon": "resources/images/icons/items/cheeseWheelSansWedge.png",
+            "cheeseWedgeIcon": "resources/images/icons/items/cheeseWedge.png",
+            "stick01Icon": "resources/images/icons/items/stick01.png",
+            "stick03Icon": "resources/images/icons/items/stick03.png",
+            "stick04Icon": "resources/images/icons/items/stick04.png",
+            "stick02Icon": "resources/images/icons/items/stick02.png",
+            "rock01Icon": "resources/images/icons/items/rock01.png",
+            "sink01Icon": "resources/images/icons/items/sink01.png",
+            "toilet01Icon": "resources/images/icons/items/toilet01.png",
+            "mattress01Icon": "resources/images/icons/items/mattress01.png",
+            "couch01Icon": "resources/images/icons/items/couch01Icon.png",
+            "couch02Icon": "resources/images/icons/items/couch02Icon.png",
+            "loveseat01Icon": "resources/images/icons/items/loveseat01Icon.png",
+            "chair01Icon": "resources/images/icons/items/chair01Icon.png",
+            "chair02Icon": "resources/images/icons/items/chair02Icon.png",
+            "chair03Icon": "resources/images/icons/items/chair03Icon.png",
+            "dice01Icon": "resources/images/icons/items/dice01.png",
+            "apple01Icon": "resources/images/icons/items/apple01.png",
+            "axe01Icon": "resources/images/icons/items/axe01.png",
+            "axe02Icon": "resources/images/icons/items/axe02.png",
+            "axe03Icon": "resources/images/icons/items/axe03.png",
+            "battleAxe01Icon": "resources/images/icons/items/battleAxe01.png",
+            "forgeHammer01Icon": "resources/images/icons/items/forgeHammer01.png",
+            "forgeHammer02Icon": "resources/images/icons/items/forgeHammer02.png",
+            "cudgel01Icon": "resources/images/icons/items/cudgel01.png",
+            "cheeseSandwich01Icon": "resources/images/icons/items/cheeseSandwich01Icon.png",
+            "grilledCheeseSandwich01Icon": "resources/images/icons/items/grilledCheeseSandwich01Icon.png",
+            "genericSwordIcon": "resources/images/icons/genericSwordIcon.svg",
+            "genericShirtIcon": "resources/images/icons/genericShirtIcon.svg",
+            "genericBagIcon": "resources/images/icons/genericBagIcon.svg",
+            "genericMoneyIcon": "resources/images/icons/genericMoneyIcon.svg"
         };
         /**
          * Map of Sound file locations per ID; one to one
@@ -543,9 +543,9 @@ class Game {
          * @type {<string, string>}
          */
         Game.soundLocations = {
-            "openDoor":"resources/sounds/Open Door.mp3",
-            "hit":"resources/sounds/Hit.mp3",
-            "slice":"resources/sounds/Slice.mp3"
+            "openDoor": "resources/sounds/Open Door.mp3",
+            "hit": "resources/sounds/Hit.mp3",
+            "slice": "resources/sounds/Slice.mp3"
         };
         /**
          * Map of Sounds per ID; one to one
@@ -558,7 +558,7 @@ class Game {
          * @type {<string, string | [string]>}
          */
         Game.videoLocations = {
-            "missingVideo":["resources/videos/missingVideo.webm", "resources/videos/missingVode.mp4"]
+            "missingVideo": ["resources/videos/missingVideo.webm", "resources/videos/missingVode.mp4"]
         };
         /**
          * Map of BABYLON.VideoTextures per ID; one to one
@@ -648,7 +648,7 @@ class Game {
         Game.essentialEntities = new Set();
 
         Game.entityAnimationBones = {
-            "rightArm":[
+            "rightArm": [
                 "shoulder.r",
                 "upperArm.r",
                 "forearm.r",
@@ -671,7 +671,7 @@ class Game {
                 "fingersIndexDistalPhalanx.r",
                 "POLE.elbow.r"
             ],
-            "leftArm":[
+            "leftArm": [
                 "shoulder.l",
                 "upperArm.l",
                 "forearm.l",
@@ -694,7 +694,7 @@ class Game {
                 "fingersIndexDistalPhalanx.l",
                 "POLE.elbow.l"
             ],
-            "rightHand":[
+            "rightHand": [
                 "fingersMetacarpal.r",
                 "fingersProximinalPhalanx.r",
                 "fingersMiddlePhalanx.r",
@@ -711,7 +711,7 @@ class Game {
                 "fingersIndexMiddlePhalanx.r",
                 "fingersIndexDistalPhalanx.r"
             ],
-            "eyelids":[
+            "eyelids": [
                 "eyelidTop.r",
                 "eyelidTop.l",
                 "eyelidBot.r",
@@ -839,12 +839,29 @@ class Game {
         Game.initPostProcessing();
         window.addEventListener("contextmenu", Game.controls.onContext);
 
+        Game.currentTick = 0;
+        Game.currentRound = 0;
+        Game.currentTurn = 0;
+        Game.gameTimeMultiplier = 10;
+        Game.ticksPerTurn = 10;
+        Game.turnsPerRound = 6;
+        Game.turnTime = Game.ticksPerTurn * Game.gameTimeMultiplier;
+        Game.roundTime = Game.turnTime * Game.turnsPerRound;
         Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
-        Game.tickWorker.onmessage = function(e) {
+        Game.tickWorker.onmessage = function (e) {
             if (!e.data.hasOwnProperty("cmd")) {
                 return 2;
             }
             switch (e.data.cmd) {
+                case "sendInfo": {
+                    // TODO: recalculate all scheduled events, or find a way so I don't have to (by using ticks, rounds, and turns) :v
+                    Game.gameTimeMultiplier = e.data["msg"]["gameTimeMultiplier"];
+                    Game.ticksPerTurn = e.data["msg"]["ticksPerTurn"];
+                    Game.turnsPerRound = e.data["msg"]["turnsPerRound"];
+                    Game.turnTime = e.data["msg"]["turnTime"];
+                    Game.roundTime = e.data["msg"]["roundTime"];
+                    break;
+                }
                 case "sendTimestamp": {
                     Game.currentTime = e.data["msg"];
                     if (Game.playerCell instanceof Cell) {
@@ -853,16 +870,25 @@ class Game {
                     break;
                 }
                 case "entityToggler": {
-                    Game.entityLocRotWorker.postMessage({cmd:"toggleEntities"});
+                    Game.entityLocRotWorker.postMessage({ cmd: "toggleEntities" });
                     break;
                 }
-                case "notification": {
+                case "tick": {
+                    Game.currentTick = e.data.msg;
+                    break;
+                }
+                case "turn": {
+                    Game.currentTurn = e.data.msg;
+                    break;
+                }
+                case "round": {
+                    Game.currentRound = e.data.msg;
                     break;
                 }
             }
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
-        Game.entityLocRotWorker.onmessage = function(e) {
+        Game.entityLocRotWorker.onmessage = function (e) {
             if (!e.data.hasOwnProperty(0) || !e.data.hasOwnProperty(1)) {
                 return 2;
             }
@@ -920,15 +946,15 @@ class Game {
                                 if (e.event.button == 0) {
                                     Game.controls.onMouseDown(e.event);
                                 }
-                                else if (e.event.button == 1) {}
-                                else if (e.event.button == 2) {}
+                                else if (e.event.button == 1) { }
+                                else if (e.event.button == 2) { }
                                 break;
                             case BABYLON.PointerEventTypes.POINTERUP:
                                 if (e.event.button == 0) {
                                     Game.controls.onMouseUp(e.event);
                                 }
-                                else if (e.event.button == 1) {}
-                                else if (e.event.button == 2) {}
+                                else if (e.event.button == 1) { }
+                                else if (e.event.button == 2) { }
                                 break;
                             case BABYLON.PointerEventTypes.POINTERMOVE:
                                 Game.controls.onMove(e.event);
@@ -942,7 +968,7 @@ class Game {
                                 if (e.event.button == 0) {
                                     Game.controls.onClick(e.event);
                                 }
-                                else if (e.event.button == 1) {}
+                                else if (e.event.button == 1) { }
                                 else if (e.event.button == 2) {
                                     Game.controls.onContext(e.event);
                                 }
@@ -1025,13 +1051,13 @@ class Game {
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
         }
-        if (!(Game.player.getController() instanceof EntityController) || !(Game.player.getController().getBoneByName("FOCUS") instanceof BABYLON.Bone) ) {
+        if (!(Game.player.getController() instanceof EntityController) || !(Game.player.getController().getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
         }
         Game.camera = new BABYLON.ArcRotateCamera(
             "camera",
-            -Game.player.getController().getMesh().rotation.y-4.69,
-            Math.PI/2.5,
+            -Game.player.getController().getMesh().rotation.y - 4.69,
+            Math.PI / 2.5,
             3,
             Game.player.getController().getBoneByName("FOCUS").getAbsolutePosition(Game.player.getController().getMesh()),
             Game.scene);
@@ -1042,10 +1068,10 @@ class Game {
         Game.camera.lowerRadiusLimit = 0.1;
         Game.camera.angularSensibilityX = 3500;
         Game.camera.angularSensibilityY = 3500;
-        Game.camera.keysLeft=[];
-        Game.camera.keysRight=[];
-        Game.camera.keysUp=[];
-        Game.camera.keysDown=[];
+        Game.camera.keysLeft = [];
+        Game.camera.keysRight = [];
+        Game.camera.keysUp = [];
+        Game.camera.keysDown = [];
         Game.camera.attachControl(Game.canvas, false);
 
         Game.camera.minZ = 0.001;
@@ -1064,7 +1090,7 @@ class Game {
         Game.camera.rotationOffset = 0;
         Game.camera.speed = 0.25;
         Game.camera.attachControl(Game.canvas, true);
-        if (Game.physicsEnabled) {}
+        if (Game.physicsEnabled) { }
         else {
             Game.camera.applyGravity = applyGravity;
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
@@ -1159,7 +1185,7 @@ class Game {
         Game.initFollowCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
-        Game.entityLocRotWorker.postMessage({cmd:"setPlayer",msg:Game.player.getID()});
+        Game.entityLocRotWorker.postMessage({ cmd: "setPlayer", msg: Game.player.getID() });
         return 0;
     }
     static updateMenuKeyboardDisplayKeys() {
@@ -1197,16 +1223,16 @@ class Game {
         Game.setLoadedMaterial("missingMaterial", new BABYLON.StandardMaterial("missingMaterial", Game.scene));
         Game.setLoadedMaterial("loadingMaterial", new BABYLON.StandardMaterial("loadingMaterial", Game.scene));
         Game.setLoadedMaterial("missingMaterial", "missingTexture");
-        Game.loadedMaterials["default"].specularColor.set(0,0,0);
-        Game.loadedMaterials["missingMaterial"].specularColor.set(0,0,0);
-        Game.loadedMaterials["loadingMaterial"].specularColor.set(0,0,0);
+        Game.loadedMaterials["default"].specularColor.set(0, 0, 0);
+        Game.loadedMaterials["missingMaterial"].specularColor.set(0, 0, 0);
+        Game.loadedMaterials["loadingMaterial"].specularColor.set(0, 0, 0);
         Game.loadedMaterials["loadingMaterial"].diffuseColor.set(1, 0.85, 1);
         return 0;
     }
     static loadDefaultMeshes() {
-        Game.setLoadedMesh("missingMesh", BABYLON.MeshBuilder.CreateBox("missingMesh", {height: 0.3, width:0.3, depth:0.3}, Game.scene));
-        Game.setLoadedMesh("loadingMesh", BABYLON.MeshBuilder.CreateSphere("loadingMesh", {diameter: 0.6}, Game.scene));
-        Game.setLoadedMesh("cameraFocus", BABYLON.MeshBuilder.CreateBox("cameraFocus", {height: 0.05, width:0.05, depth:0.05}, Game.scene));
+        Game.setLoadedMesh("missingMesh", BABYLON.MeshBuilder.CreateBox("missingMesh", { height: 0.3, width: 0.3, depth: 0.3 }, Game.scene));
+        Game.setLoadedMesh("loadingMesh", BABYLON.MeshBuilder.CreateSphere("loadingMesh", { diameter: 0.6 }, Game.scene));
+        Game.setLoadedMesh("cameraFocus", BABYLON.MeshBuilder.CreateBox("cameraFocus", { height: 0.05, width: 0.05, depth: 0.05 }, Game.scene));
         Game.loadedMeshes["missingMesh"].material = Game.loadedMaterials["missingMaterial"];
         Game.loadedMeshes["missingMesh"].setEnabled(false);
         Game.loadedMeshes["loadingMesh"].setEnabled(false);
@@ -1336,8 +1362,8 @@ class Game {
         let videoMaterial = new BABYLON.StandardMaterial(id.concat("Material"), Game.scene);
         videoMaterial.name = id.concat("Material");
         videoMaterial.diffuseTexture = videoTexture;
-        videoMaterial.emissiveColor = new BABYLON.Color3(1,1,1);
-        let videoMesh = BABYLON.MeshBuilder.CreatePlane(id.concat("Mesh"), {"width": width, "height": height}, Game.scene);
+        videoMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
+        let videoMesh = BABYLON.MeshBuilder.CreatePlane(id.concat("Mesh"), { "width": width, "height": height }, Game.scene);
         videoMesh.name = id.concat("Mesh");
         videoMesh.material = videoMaterial;
         return videoMesh;
@@ -1346,7 +1372,7 @@ class Game {
         if (!Game.hasAvailableVideo(videoID)) {
             return 1;
         }
-        let videoTexture = new BABYLON.VideoTexture(videoID, Game.videoLocations[videoID], Game.scene, false, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, {autoplay:false, autoUpdateTexture:true, loop:true});
+        let videoTexture = new BABYLON.VideoTexture(videoID, Game.videoLocations[videoID], Game.scene, false, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, { autoplay: false, autoUpdateTexture: true, loop: true });
         Game.setVideoClone(videoID, videoTexture);
         return videoTexture;
     }
@@ -1365,7 +1391,7 @@ class Game {
         if (!Game.videoClones.hasOwnProperty(videoID)) {
             return 1;
         }
-        Game.videoClones[videoTextureClone.name].some((videoTexture)=>{
+        Game.videoClones[videoTextureClone.name].some((videoTexture) => {
             if (videoTextureClone.uid == videoTexture.uid) {
                 Game.videoClones[videoTextureClone.name].remove(videoTextureClone);
                 return true;
@@ -1480,7 +1506,7 @@ class Game {
         if (Game.hasLoadedTexture(bumpTextureID)) {
             loadedMaterial.bumpTexture = Game.getLoadedTexture(bumpTextureID);
         }
-        loadedMaterial.specularColor.set(0,0,0);
+        loadedMaterial.specularColor.set(0, 0, 0);
         if (typeof options == "object") {
             if (options.hasOwnProperty("opacityTexture")) {
                 loadedMaterial.opacityTexture = Game.getLoadedTexture(options["opacityTexture"]);
@@ -1799,7 +1825,7 @@ class Game {
         let script = document.createElement("script");
         script.type = "text/javascript";
         script.src = file;
-        script.onload = function(){
+        script.onload = function () {
         };
         document.body.appendChild(script);
         return 0;
@@ -1850,12 +1876,12 @@ class Game {
         let xPosition = (start.x + end.x) / 2;
         let yPosition = (start.y + end.y) / 2;
         let zPosition = (start.z + end.z) / 2;
-        let wall = BABYLON.MeshBuilder.CreateBox("wall", {"height":end.y - start.y, "depth":0.125, "width":wallWidth}, Game.scene);
+        let wall = BABYLON.MeshBuilder.CreateBox("wall", { "height": end.y - start.y, "depth": 0.125, "width": wallWidth }, Game.scene);
         wall.material = Game.loadedMaterials["collisionMaterial"];
-        wall.position.set(xPosition,yPosition,zPosition);
+        wall.position.set(xPosition, yPosition, zPosition);
         wall.rotation.y = yRotation;
         if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(wall, {mass:0});
+            Game.assignBoxPhysicsToMesh(wall, { mass: 0 });
         }
         else {
             wall.checkCollisions = true;
@@ -1868,12 +1894,12 @@ class Game {
      * @param {BABYLON.Vector3} end 
      * @param {number} yPosition 
      */
-    static createCollisionPlane(start = {x:0, z:0}, end = {x:0, z:0}, yPosition = 0) {
+    static createCollisionPlane(start = { x: 0, z: 0 }, end = { x: 0, z: 0 }, yPosition = 0) {
         if (Game.debugMode) console.log("Running Game::createCollisionPlane");
         if (start instanceof BABYLON.AbstractMesh) {
             let xRadius = start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x;
             let zRadius = start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z;
-            let newStart = {x:0, z:0};
+            let newStart = { x: 0, z: 0 };
             newStart.x = start.position.x;
             newStart.z = start.position.z;
             end.x = start.position.x + xRadius * 2;
@@ -1886,11 +1912,11 @@ class Game {
         let xPosition = (start.x + end.x) / 2;
         yPosition = yPosition - 0.06125;
         let zPosition = (start.z + end.z) / 2;
-        let floor = BABYLON.MeshBuilder.CreateBox("wall", {"height":0.125, "depth":depth, "width":width}, Game.scene);
+        let floor = BABYLON.MeshBuilder.CreateBox("wall", { "height": 0.125, "depth": depth, "width": width }, Game.scene);
         floor.material = Game.loadedMaterials["collisionMaterial"];
-        floor.position.set(xPosition,yPosition,zPosition);
+        floor.position.set(xPosition, yPosition, zPosition);
         if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(floor, {mass:0});
+            Game.assignBoxPhysicsToMesh(floor, { mass: 0 });
         }
         else {
             floor.checkCollisions = true;
@@ -1928,13 +1954,13 @@ class Game {
             adjacentSide = end.x - start.x;
         }
         let hypotenuseAngle = Math.acos(oppositeSide / adjacentSide);
-        let hypotenuseSide = oppositeSide * (1/Math.cos(hypotenuseAngle)); // height
-        let ramp = BABYLON.MeshBuilder.CreateBox("ramp", {"height":hypotenuseSide, "depth":0.125, "width":width}, Game.scene);
-        ramp.position.set((end.x + start.x) / 2 - 1,(end.y + start.y) / 2 - 0.125/2,(end.z + start.z) / 2 - 1);
+        let hypotenuseSide = oppositeSide * (1 / Math.cos(hypotenuseAngle)); // height
+        let ramp = BABYLON.MeshBuilder.CreateBox("ramp", { "height": hypotenuseSide, "depth": 0.125, "width": width }, Game.scene);
+        ramp.position.set((end.x + start.x) / 2 - 1, (end.y + start.y) / 2 - 0.125 / 2, (end.z + start.z) / 2 - 1);
         ramp.rotation.set(hypotenuseAngle, BABYLON.Tools.ToRadians(yRotation), 0);
         ramp.material = Game.loadedMaterials["collisionMaterial"];
         if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(ramp, {mass:0});
+            Game.assignBoxPhysicsToMesh(ramp, { mass: 0 });
         }
         else {
             ramp.checkCollisions = true;
@@ -1946,7 +1972,7 @@ class Game {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
-        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, {mass:0}, Game.scene);
+        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, Game.scene);
         return 0;
     }
     static assignCylinderPhysicsToMesh(mesh, options) {
@@ -1955,7 +1981,7 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = {mass:0.8,restitution:0.1};
+            options = { mass: 0.8, restitution: 0.1 };
         }
         mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.CylinderImpostor, options, Game.scene);
         return 0;
@@ -1966,7 +1992,7 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = {mass:0.8,restitution:0.1};
+            options = { mass: 0.8, restitution: 0.1 };
         }
         mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, options, Game.scene);
         return 0;
@@ -1977,7 +2003,7 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = {mass:0.8,restitution:0.1};
+            options = { mass: 0.8, restitution: 0.1 };
         }
         // bone boxes :v idk yet
         return 2;
@@ -1996,7 +2022,7 @@ class Game {
             return 2;
         }
         Game.assignBoundingBoxCollisionQueue.delete(mesh);
-        let collisionMesh = BABYLON.MeshBuilder.CreateBox(mesh.id + "-collisionBox", {width:mesh.getBoundingInfo().boundingBox.vectors[1].x - mesh.getBoundingInfo().boundingBox.vectors[0].x, height:mesh.getBoundingInfo().boundingBox.vectors[1].y - mesh.getBoundingInfo().boundingBox.vectors[0].y, depth:mesh.getBoundingInfo().boundingBox.vectors[1].z - mesh.getBoundingInfo().boundingBox.vectors[0].z}, Game.scene);
+        let collisionMesh = BABYLON.MeshBuilder.CreateBox(mesh.id + "-collisionBox", { width: mesh.getBoundingInfo().boundingBox.vectors[1].x - mesh.getBoundingInfo().boundingBox.vectors[0].x, height: mesh.getBoundingInfo().boundingBox.vectors[1].y - mesh.getBoundingInfo().boundingBox.vectors[0].y, depth: mesh.getBoundingInfo().boundingBox.vectors[1].z - mesh.getBoundingInfo().boundingBox.vectors[0].z }, Game.scene);
         collisionMesh.material = Game.loadedMaterials["collisionMaterial"];
         collisionMesh.checkCollisions = true;
         collisionMesh.setParent(mesh);
@@ -2014,7 +2040,7 @@ class Game {
     }
     static createBackloggedBoundingCollisions() {
         if (Game.assignBoundingBoxCollisionQueue.size > 0) {
-            Game.assignBoundingBoxCollisionQueue.forEach(function(meshID) {
+            Game.assignBoundingBoxCollisionQueue.forEach(function (meshID) {
                 Game.assignBoundingBoxCollisionToMesh(meshID);
             });
         }
@@ -2030,7 +2056,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
+    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         if (Game.debugMode) console.log("Running Game::createItemMesh");
         let instancedMesh = Game.createMesh(itemID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
@@ -2051,7 +2077,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
+    static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         if (Game.debugMode) console.log("Running Game::createFurnitureMesh");
         let instancedMesh = Game.createMesh(furnitureID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
@@ -2069,10 +2095,10 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone:false, checkCollisions: true}) {
+    static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         if (Game.debugMode) console.log(`Running Game::createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
         if (typeof options != "object") {
-            options = {mass:0.8,restitution:0.1};
+            options = { mass: 0.8, restitution: 0.1 };
         }
         let instancedMesh = Game.createMesh(characterID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
@@ -2369,7 +2395,7 @@ class Game {
             }
         }
         if (meshID == "craftsmanStairs") {
-            Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, {checkCollisions:true});
+            Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, { checkCollisions: true });
             options["checkCollisions"] = false;
         }
         if (!Game.hasLoadedMesh(meshID)) {
@@ -2403,7 +2429,7 @@ class Game {
                 mesh.name = meshID;
                 if (Game.debugMode) console.log("Creating master clone of " + meshID + " with " + materialID);
                 mesh.setEnabled(false);
-                mesh.position.set(0,-4095,0);
+                mesh.position.set(0, -4095, 0);
                 Game.setMeshMaterial(mesh, material);
             }
             if (options["createClone"]) {
@@ -2467,13 +2493,13 @@ class Game {
         }
         Game.loadMesh(meshID);
         Game.meshesToCreate[meshIndexID] = {
-            0:meshIndexID, 
-            1:meshID, 
-            2:materialID, 
-            3:position, 
-            4:rotation, 
-            5:scaling, 
-            6:options
+            0: meshIndexID,
+            1: meshID,
+            2: materialID,
+            3: position,
+            4: rotation,
+            5: scaling,
+            6: options
         };
         Game.meshesToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2518,12 +2544,12 @@ class Game {
         }
         Game.loadMesh(furnitureInstance.getMeshID());
         Game.furnitureToCreate[furnitureInstanceID] = {
-            0:furnitureInstanceID,
-            1:furnitureInstance,
-            2:position,
-            3:rotation,
-            4:scaling,
-            5:options
+            0: furnitureInstanceID,
+            1: furnitureInstance,
+            2: position,
+            3: rotation,
+            4: scaling,
+            5: options
         };
         Game.furnitureToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2558,21 +2584,21 @@ class Game {
             }
         }
     }
-    static addLightingToCreate(lightingIndexID, name = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {checkCollisions: true, lightPositionOffset: BABYLON.Vector3.Zero()}) {
+    static addLightingToCreate(lightingIndexID, name = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { checkCollisions: true, lightPositionOffset: BABYLON.Vector3.Zero() }) {
         if (Game.hasLightingToCreate(lightingIndexID)) {
             return true;
         }
         Game.loadMesh(meshID);
         Game.lightingToCreate[lightingIndexID] = {
-            0:lightingIndexID,
-            1:name,
-            2:meshID,
-            3:textureID,
-            4:lightingType,
-            5:position,
-            6:rotation,
-            7:scaling,
-            8:options
+            0: lightingIndexID,
+            1: name,
+            2: meshID,
+            3: textureID,
+            4: lightingType,
+            5: position,
+            6: rotation,
+            7: scaling,
+            8: options
         };
         Game.lightingToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2610,21 +2636,21 @@ class Game {
             }
         }
     }
-    static addDisplayToCreate(displayIndexID, name = "", meshID = "missingMesh", materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+    static addDisplayToCreate(displayIndexID, name = "", meshID = "missingMesh", materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero() }) {
         if (Game.hasDisplayToCreate(displayIndexID)) {
             return true;
         }
         Game.loadMesh(meshID);
         Game.displaysToCreate[displayIndexID] = {
-            0:displayIndexID,
-            1:name,
-            2:meshID,
-            3:materialID,
-            4:videoID,
-            5:position,
-            6:rotation,
-            7:scaling,
-            8:options
+            0: displayIndexID,
+            1: name,
+            2: meshID,
+            3: materialID,
+            4: videoID,
+            5: position,
+            6: rotation,
+            7: scaling,
+            8: options
         };
         Game.displaysToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2668,15 +2694,15 @@ class Game {
         }
         Game.loadMesh(meshID);
         Game.doorsToCreate[doorIndexID] = {
-            0:doorIndexID,
-            1:name,
-            2:to,
-            3:meshID,
-            4:textureID,
-            5:position,
-            6:rotation,
-            7:scaling,
-            8:options
+            0: doorIndexID,
+            1: name,
+            2: to,
+            3: meshID,
+            4: textureID,
+            5: position,
+            6: rotation,
+            7: scaling,
+            8: options
         };
         Game.doorsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2720,12 +2746,12 @@ class Game {
         }
         Game.loadMesh(characterEntity.getMeshID());
         Game.charactersToCreate[id] = {
-            0:id,
-            1:characterEntity,
-            2:position,
-            3:rotation,
-            4:scaling,
-            5:options
+            0: id,
+            1: characterEntity,
+            2: position,
+            3: rotation,
+            4: scaling,
+            5: options
         };
         Game.charactersToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2766,12 +2792,12 @@ class Game {
         }
         Game.loadMesh(itemEntity.getMeshID());
         Game.itemsToCreate[itemIndexID] = {
-            0:itemIndexID,
-            1:itemEntity,
-            2:position,
-            3:rotation,
-            4:scaling,
-            5:options
+            0: itemIndexID,
+            1: itemEntity,
+            2: position,
+            3: rotation,
+            4: scaling,
+            5: options
         };
         Game.itemsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2812,15 +2838,15 @@ class Game {
         }
         Game.loadMesh(meshID);
         Game.attachmentsToCreate[attachmentIndexID] = {
-            0:attachmentIndexID,
-            1:attachToController,
-            2:meshID,
-            3:materialID,
-            4:bone,
-            5:position,
-            6:rotation,
-            7:scaling,
-            8:options
+            0: attachmentIndexID,
+            1: attachToController,
+            2: meshID,
+            3: materialID,
+            4: bone,
+            5: position,
+            6: rotation,
+            7: scaling,
+            8: options
         };
         Game.attachmentsToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
@@ -2862,10 +2888,10 @@ class Game {
     static importBabylon(file, callback = undefined) {
         BABYLON.SceneLoader.ImportMesh(
             undefined,
-            file.substr(0, file.lastIndexOf("/")+1),
-            file.substr(file.lastIndexOf("/")+1),
+            file.substr(0, file.lastIndexOf("/") + 1),
+            file.substr(file.lastIndexOf("/") + 1),
             Game.scene,
-            function(meshes, particleSystems, skeletons) {
+            function (meshes, particleSystems, skeletons) {
                 if (typeof callback == "function") {
                     callback(meshes);
                 }
@@ -2884,11 +2910,11 @@ class Game {
         Game._filesToLoad += 1;
         BABYLON.SceneLoader.ImportMesh(
             undefined, // meshNames
-            file.substr(0, file.lastIndexOf("/")+1), // rootUrl
-            file.substr(file.lastIndexOf("/")+1), // sceneFilename
+            file.substr(0, file.lastIndexOf("/") + 1), // rootUrl
+            file.substr(file.lastIndexOf("/") + 1), // sceneFilename
             Game.scene, // scene
-            function(meshes, particleSystems, skeletons) { // onSuccess
-                for(let i = 0; i < meshes.length; i++) {
+            function (meshes, particleSystems, skeletons) { // onSuccess
+                for (let i = 0; i < meshes.length; i++) {
                     meshes[i].name = meshes[i].id;
                     meshes[i].setEnabled(false);
                     meshes[i].material = Game.loadedMaterials["default"];
@@ -2904,10 +2930,10 @@ class Game {
                     callback(importedMeshes);
                 }
             },
-            function() { // onProgress
+            function () { // onProgress
                 if (Game.debugMode) console.log("Importing meshes from " + file + "...");
             },
-            function() { // onError
+            function () { // onError
                 if (Game.debugMode) console.log("Error while importing meshes from " + file);
                 Game._filesToLoad -= 1;
             }
@@ -3244,18 +3270,18 @@ class Game {
             case "foxF":
             case "foxSkeletonN": {
                 characterController.attachToROOT("hitbox.canine", "collisionMaterial");
-                characterController.attachToHead("hitbox.canine.head", "collisionMaterial", {isHitbox:true});
-                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial", {isHitbox:true});
-                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", {isHitbox:true});
-                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", {isHitbox:true});
-                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", {isHitbox:true});
-                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", {isHitbox:true});
-                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", {isHitbox:true});
+                characterController.attachToHead("hitbox.canine.head", "collisionMaterial", { isHitbox: true });
+                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial", { isHitbox: true });
+                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", { isHitbox: true });
+                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", { isHitbox: true });
+                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", { isHitbox: true });
+                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", { isHitbox: true });
+                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", { isHitbox: true });
                 break;
             }
         }
-        let newScaling = characterEntity.height/characterEntity.baseHeight;
-        loadedMesh.scaling.set(newScaling,newScaling,newScaling);
+        let newScaling = characterEntity.height / characterEntity.baseHeight;
+        loadedMesh.scaling.set(newScaling, newScaling, newScaling);
         return characterEntity;
     }
     /**
@@ -3297,7 +3323,7 @@ class Game {
      * @param  {object} [options] Options
      * @return {array}
      */
-    static filterCreateDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {locked:false, key:null, opensInward:false, open:false, checkCollisions: true}) {
+    static filterCreateDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { locked: false, key: null, opensInward: false, open: false, checkCollisions: true }) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3351,7 +3377,7 @@ class Game {
             options["locked"] = false;
         }
         if (options.hasOwnProperty("key")) {
-            if (options["key"] instanceof ItemEntity) {}
+            if (options["key"] instanceof ItemEntity) { }
             else if (ItemEntity.has(options["key"])) {
                 options["key"] = ItemEntity.get(options["key"]);
             }
@@ -3389,7 +3415,7 @@ class Game {
      * @param  {object} [options] Options
      * @return {(EntityController|array)} A DoorController or an integer status code
      */
-    static createDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {locked:false, key:null, opensInward:false, open:false, checkCollisions: true}) {
+    static createDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { locked: false, key: null, opensInward: false, open: false, checkCollisions: true }) {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateDoor(id, name, to, meshID, materialID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -3467,7 +3493,7 @@ class Game {
      * @param  {object} [options] Options
      * @return {(array|number)} A FurnitureController or an integer status code
      */
-    static filterCreateFurnitureInstance(id = "", furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: false, checkCollisions: true}) {
+    static filterCreateFurnitureInstance(id = "", furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3526,7 +3552,7 @@ class Game {
      * @param  {object} [options] Options
      * @return {(FurnitureController|number)} A FurnitureController or an integer status code
      */
-    static createFurnitureInstance(id = "", furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: false, checkCollisions: true}) {
+    static createFurnitureInstance(id = "", furnitureEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateFurnitureInstance(id, furnitureEntity, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -3584,7 +3610,7 @@ class Game {
      * @param {object} [options] Options
      * @returns {array}
      */
-    static filterCreateLighting(id = "", name = "", meshID, materialID, lightingType, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, lightingPositionOffset: BABYLON.Vector3.Zero()}) {
+    static filterCreateLighting(id = "", name = "", meshID, materialID, lightingType, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: true, checkCollisions: true, lightingPositionOffset: BABYLON.Vector3.Zero() }) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3637,7 +3663,7 @@ class Game {
      * @param {object} [options] Options
      * @returns {(LightingController|array|number)} A LightingController or an integer status code
      */
-    static createLighting(id = "", name = "", meshID, materialID, lightingType, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, lightingPositionOffset: BABYLON.Vector3.Zero()}) {
+    static createLighting(id = "", name = "", meshID, materialID, lightingType, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: true, checkCollisions: true, lightingPositionOffset: BABYLON.Vector3.Zero() }) {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateLighting(id, name, meshID, materialID, lightingType, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -3689,7 +3715,7 @@ class Game {
      * @param {object} [options] 
      * @returns {array}
      */
-    static filterCreateDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+    static filterCreateDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: true, checkCollisions: true, videoMeshWidth: 0, videoMeshHeight: 0, videoMeshPosition: BABYLON.Vector3.Zero() }) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -3741,7 +3767,7 @@ class Game {
      * @param {object} [options] 
      * @returns {DisplayController}
      */
-    static createDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {createClone: true, checkCollisions: true, videoMeshWidth: 1, videoMeshHeight: 0.75, videoMeshPosition: BABYLON.Vector3.Zero()}) {
+    static createDisplay(id = "", name = "", meshID, materialID = "missingMaterial", videoID = "missingVideo", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: true, checkCollisions: true, videoMeshWidth: 1, videoMeshHeight: 0.75, videoMeshPosition: BABYLON.Vector3.Zero() }) {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateDisplay(id, name, meshID, materialID, videoID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -3800,7 +3826,7 @@ class Game {
         }
         let itemEntity = null;
         switch (itemType) {
-            case ItemEnum.GENERAL : {
+            case ItemEnum.GENERAL: {
                 itemEntity = new ItemEntity(id, name, description, iconID);
                 break;
             }
@@ -3808,22 +3834,22 @@ class Game {
                 itemEntity = new ClothingEntity(id, name, description, iconID, subType);
                 break;
             }
-            case ItemEnum.WEAPON : {
+            case ItemEnum.WEAPON: {
                 itemEntity = new WeaponEntity(id, name, description, iconID, subType);
                 break;
             }
-            case ItemEnum.SHIELD : {
+            case ItemEnum.SHIELD: {
                 itemEntity = new ShieldEntity(id, name, description, iconID);
                 break;
             }
-            case ItemEnum.KEY : {
+            case ItemEnum.KEY: {
                 itemEntity = new KeyEntity(id, name, description, iconID);
                 break;
             }
-            case ItemEnum.BOOK : {
+            case ItemEnum.BOOK: {
                 //itemEntity = new BookEntity(id, name, description, iconID); // TODO: this :v
             }
-            case ItemEnum.CONSUMABLE : {
+            case ItemEnum.CONSUMABLE: {
                 //itemEntity = new ConsumableEntity(id, name, description, iconID, subType); // TODO: this :v
             }
             default: {
@@ -3852,11 +3878,11 @@ class Game {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        if (abstractEntity instanceof InstancedItemEntity) {}
+        if (abstractEntity instanceof InstancedItemEntity) { }
         else if (abstractEntity instanceof ItemEntity) {
             abstractEntity = abstractEntity.createInstance(id);
         }
-        else if (typeof abstractEntity == "string" ) {
+        else if (typeof abstractEntity == "string") {
             if (ItemEntity.has(abstractEntity)) {
                 abstractEntity = ItemEntity.get(abstractEntity).createInstance(id);
             }
@@ -3993,45 +4019,45 @@ class Game {
         }
         return 2;
     }
-    static createMirror(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {width:5, height:5}) {
+    static createMirror(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { width: 5, height: 5 }) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         //Creation of a glass plane
-        let abstractMesh = BABYLON.MeshBuilder.CreatePlane(id, {width: options["width"], height: options["height"]}, Game.scene);
+        let abstractMesh = BABYLON.MeshBuilder.CreatePlane(id, { width: options["width"], height: options["height"] }, Game.scene);
         abstractMesh.position.copyFrom(position);
         abstractMesh.rotation.copyFrom(rotation);
         abstractMesh.scaling.copyFrom(scaling);
-    
+
         //Ensure working with new values for glass by computing and obtaining its worldMatrix
         abstractMesh.computeWorldMatrix(true);
-    
+
         return Game.createMirrorFrom(abstractMesh, Game.scene.meshes, options);
     }
     static createMirrorFrom(abstractMesh, renderList = [], options = {}) {
-        if (abstractMesh instanceof BABYLON.AbstractMesh) {}
+        if (abstractMesh instanceof BABYLON.AbstractMesh) { }
         else {
             return 2;
         }
         //Obtain normals for plane and assign one of them as the normal
         let glass_vertexData = abstractMesh.getVerticesData("normal");
-        let glassNormal = new BABYLON.Vector3(glass_vertexData[0], glass_vertexData[1], glass_vertexData[2]);	
+        let glassNormal = new BABYLON.Vector3(glass_vertexData[0], glass_vertexData[1], glass_vertexData[2]);
         //Use worldMatrix to transform normal into its current value
         glassNormal = new BABYLON.Vector3.TransformNormal(glassNormal, abstractMesh.getWorldMatrix())
-    
+
         //Create reflecting surface for mirror surface
         let reflector = new BABYLON.Plane.FromPositionAndNormal(abstractMesh.position, glassNormal.scale(-1));
-    
+
         //Create the mirror material
         let mirrorMaterial = new BABYLON.StandardMaterial("mirror", Game.scene);
         mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, Game.scene, true);
         mirrorMaterial.reflectionTexture.mirrorPlane = reflector;
         mirrorMaterial.reflectionTexture.renderList = renderList;
         mirrorMaterial.reflectionTexture.level = 1;
-    
+
         abstractMesh.material = mirrorMaterial;
-        
+
         return abstractMesh;
     }
     static enableHighlighting() {
@@ -4079,7 +4105,7 @@ class Game {
                 color = BABYLON.Color3.White();
             }
         }
-        entityController.getMeshes().forEach(function(mesh) {
+        entityController.getMeshes().forEach(function (mesh) {
             if (mesh instanceof BABYLON.Mesh) {
                 Game.highlightLayer.addMesh(mesh, color)
             }
@@ -4152,7 +4178,7 @@ class Game {
             Game.player.controller.targetRayHelper = new BABYLON.RayHelper(Game.player.controller.targetRay);
             Game.player.controller.targetRayHelper.show(Game.scene);
         }
-        let hit = Game.scene.pickWithRay(Game.player.controller.targetRay, function(pickedMesh) {
+        let hit = Game.scene.pickWithRay(Game.player.controller.targetRay, function (pickedMesh) {
             if (pickedMesh.controller == null || pickedMesh.controller == Game.playerController) {
                 return false;
             }
@@ -4196,7 +4222,7 @@ class Game {
         }
         Game.canvas.requestPointerLock();
         Game.engine.isPointerLock = true;
-        Game.pointerLockFunction = setTimeout(function() {document.addEventListener("pointerlockchange", Game.pointerRelease);}, 121);
+        Game.pointerLockFunction = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);
         return 0;
     }
     static pointerRelease(event) {
@@ -4241,36 +4267,36 @@ class Game {
             commandArray.push("help");
         }
         switch (commandArray[0].toLowerCase()) {
-            case "help" : {
+            case "help": {
                 Game.gui.chat.appendOutput("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
             }
-            case "clear" : {
+            case "clear": {
                 Game.gui.chat.clearOutput();
                 break;
             }
-            case "menu" : {
+            case "menu": {
                 Game.gui.showCharacterChoiceMenu();
                 break;
             }
-            case "login" : {
+            case "login": {
                 break;
             }
-            case "logout" : {
+            case "logout": {
                 Client.disconnect();
                 break;
             }
-            case "exit" :
-            case "quit" : {
+            case "exit":
+            case "quit": {
                 break;
             }
-            case "save" : {
+            case "save": {
                 break;
             }
-            case "load" : {
+            case "load": {
                 break;
             }
-            case "additem" : {
+            case "additem": {
                 for (let i = 1; i < commandArray.length; i++) {
                     if (ItemEntity.has(commandArray[i])) {
                         Game.player.addItem(commandArray[i]);
@@ -4278,43 +4304,43 @@ class Game {
                 }
                 break;
             }
-            case "addallitems" : {
+            case "addallitems": {
                 for (let i in ItemEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;
             }
-            case "addallweapons" : {
+            case "addallweapons": {
                 for (let i in WeaponEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;
             }
-            case "addallarmour" :
-            case "addallarmor" :
-            case "addallclothing" : {
+            case "addallarmour":
+            case "addallarmor":
+            case "addallclothing": {
                 for (let i in ClothingEntity.list()) {
                     Game.player.addItem(i);
                 }
                 break;
             }
-            case "addmoney" : {
+            case "addmoney": {
                 let money = Tools.filterInt(commandArray[1]) || 1;
                 Game.player.addMoney(money);
                 Game.gui.chat.appendOutput(`Added \$${money} to your wallet.`);
                 break;
             }
-            case "setmoney" : {
+            case "setmoney": {
                 let money = Tools.filterInt(commandArray[1]) || 1;
                 Game.player.setMoney(money);
                 Game.gui.chat.appendOutput(`Set your wallet to \$${money}.`);
                 break;
             }
-            case "getmoney" : {
+            case "getmoney": {
                 Game.gui.chat.appendOutput(`You have \$${Game.player.getMoney()} in your wallet.`);
                 break;
             }
-            case "kill" : {
+            case "kill": {
                 let target = Game.player;
                 if (typeof commandArray[1] == "string" && CharacterEntity.has(commandArray[1])) {
                     target = CharacterEntity.get(commandArray[1]);
@@ -4322,10 +4348,10 @@ class Game {
                 target.setHealth(0);
                 break;
             }
-            case ":v" :
-            case "v:" :
-            case ":V" :
-            case "V:" : {
+            case ":v":
+            case "v:":
+            case ":V":
+            case "V:": {
                 if (Game.controls == EditControls) {
                     Game.gui.chat.appendOutput("\n    Bye, super powers v:\n");
                     Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
@@ -4336,11 +4362,11 @@ class Game {
                 }
                 break;
             }
-            case "showdebug" : {
+            case "showdebug": {
                 DebugGameGUI.show();
                 break;
             }
-            default : {
+            default: {
                 Game.gui.chat.appendOutput(`Command "${command}" not found.\n`);
                 return 0;
             }
@@ -4477,7 +4503,7 @@ class Game {
         if (defender instanceof CharacterEntity && attacker instanceof CharacterEntity) {
             if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
                 let attackRoll = Game.calculateAttack(attacker, weapon);
-                if (attackRoll == 1) {}
+                if (attackRoll == 1) { }
                 else if (attackRoll > defender.getArmourClass()) {
                     let damage = Game.calculateDamage(attacker, weapon, attackRoll >= 20);
                     if (weapon instanceof AbstractEntity) {
@@ -4729,7 +4755,7 @@ class Game {
         let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
         subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
-        subEntity.getController().getMesh().rotation.set(0,0,0);
+        subEntity.getController().getMesh().rotation.set(0, 0, 0);
         subEntity.setFurniture(entity);
         subEntity.getController().doSit();
         return 0;
@@ -4761,7 +4787,7 @@ class Game {
         return 0;
     }
     static clearEssentialEntities() {
-        Game.essentialEntities.forEach(function(abstractEntity) {
+        Game.essentialEntities.forEach(function (abstractEntity) {
             abstractEntity.setEssential(false);
         });
         Game.essentialEntities.clear();
@@ -4769,7 +4795,7 @@ class Game {
     }
 
     static setPlayerCell(cell) {
-        if (cell instanceof Cell) {}
+        if (cell instanceof Cell) { }
         else if (Game.hasCell(cell)) {
             cell = Game.getCell(cell);
         }
@@ -4778,7 +4804,7 @@ class Game {
         }
         if (Game.playerCell instanceof Cell) {
             let meshesToRemove = cell.meshIDDifference(Game.playerCell);
-            meshesToRemove.forEach(function(meshID) {
+            meshesToRemove.forEach(function (meshID) {
                 for (let i in Game.meshMaterialMeshes) {
                     if (i == meshID) {
                         for (let j in Game.meshMaterialMeshes[i]) {
@@ -4802,7 +4828,7 @@ class Game {
                 return 2;
             }
         }
-        cell.getMeshIDs().forEach(function(meshID) {
+        cell.getMeshIDs().forEach(function (meshID) {
             for (let i in Game.meshMaterialMeshes) {
                 if (i == meshID) {
                     for (let j in Game.meshMaterialMeshes[i]) {
@@ -4827,6 +4853,70 @@ class Game {
         cell.createBackloggedAdditions();
         return 0;
     }
+    /**
+     * 
+     * @param {Effect} effect 
+     * @param {AbstractEntity} abstractEntity 
+     */
+    static addScheduledEffect(effect, abstractEntity) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        Game.tickWorker.postMessage({
+            cmd: "addScheduledEffect",
+            msg: {
+                "effect":effect.getID(),
+                "entity":abstractEntity.getID(),
+                "duration":effect.getDuration(),
+                "durationInterval":effect.getDurationInterval(),
+                "intervalType":effect.getIntervalType(),
+                "intervalNth":effect.getIntervalNth()
+            }
+        });
+    }
+    /**
+     * 
+     * @param {Effect} effect 
+     * @param {AbstractEntity} abstractEntity 
+     */
+    static removeScheduledEffect(effect, abstractEntity) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        Game.tickWorker.postMessage({
+            cmd: "removeScheduledEffect",
+            msg: {
+                "effect":effect.getID(),
+                "entity":abstractEntity.getID()
+            }
+        });
+    }
     static setDebugMode(debugMode) {
         Game.debugMode = debugMode == true;
     }
@@ -4840,7 +4930,7 @@ class Game {
         if (Game.interfaceMode == interfaceMode) {
             return 0;
         }
-        if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) {}
+        if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) { }
         else if (isNaN(interfaceMode) && InterfaceModeEnum.hasOwnProperty(interfaceMode)) {
             interfaceMode = InterfaceModeEnum[interfaceMode];
         }
@@ -5061,13 +5151,13 @@ class Game {
         else {
             switch (attacker.getSize()) {
                 case SizeEnum.FINE:
-                case SizeEnum.DIMINUTIVE: {return 0;}
-                case SizeEnum.SMALL: {return Game.roll(1, 2)}
-                case SizeEnum.MEDIUM: {return Game.roll(1, 3)}
-                case SizeEnum.LARGE: {return Game.roll(1, 4)}
-                case SizeEnum.HUGE: {return Game.roll(1, 6)}
-                case SizeEnum.GARGANTUAN: {return Game.roll(1, 8)}
-                case SizeEnum.COLOSSAL: {return Game.roll(2, 6)}
+                case SizeEnum.DIMINUTIVE: { return 0; }
+                case SizeEnum.SMALL: { return Game.roll(1, 2) }
+                case SizeEnum.MEDIUM: { return Game.roll(1, 3) }
+                case SizeEnum.LARGE: { return Game.roll(1, 4) }
+                case SizeEnum.HUGE: { return Game.roll(1, 6) }
+                case SizeEnum.GARGANTUAN: { return Game.roll(1, 8) }
+                case SizeEnum.COLOSSAL: { return Game.roll(2, 6) }
             }
         }
         return 0;
@@ -5103,7 +5193,7 @@ class Game {
                 for (let i = 0; i < die; i++) {
                     total += Math.ceil(Math.random() * faces);
                 }
-                return Number.parseFloat(total/die);
+                return Number.parseFloat(total / die);
             }
             case RollEnum.MAX: {
                 let max = 1;
@@ -5181,7 +5271,7 @@ class Game {
             return false;
         }
         let aPos = new BABYLON.Vector2(entityA.controller.mesh.position.x, entityA.controller.mesh.position.z);
-        let bPos = entityA.controller.mesh.calcMovePOV(0,0,1);
+        let bPos = entityA.controller.mesh.calcMovePOV(0, 0, 1);
         bPos = aPos.add(new BABYLON.Vector2(bPos.x, bPos.z));
         let cPos = new BABYLON.Vector2(entityB.controller.mesh.position.x, entityB.controller.mesh.position.z);
         let bAng = BABYLON.Angle.BetweenTwoPoints(aPos, bPos);

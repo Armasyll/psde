@@ -400,6 +400,10 @@ class AbstractEntity {
         }
         return 0;
     }
+    /**
+     * 
+     * @param {Effect} effect 
+     */
     applyEffect(effect) {
         if (!(effect instanceof Effect)) {
             if (Effect.has(effect)) {
@@ -414,19 +418,24 @@ class AbstractEntity {
             for (let i = 0; i < this.effects[effect.getID()][0]; i++) { // we apply for each number in the stack
                 switch (property) {
                     case "healthModifier": {
-                        this.setHealth(effect.applyModifier(property, this));
+                        this.setHealth(effect.calculateModifier(property, this));
                         break;
                     }
                     case "maxHealthModifier": {
-                        this.setMaxHealthModifier(effect.applyModifier(property, this));
+                        this.setMaxHealthModifier(effect.calculateModifier(property, this));
                         break;
                     }
                     default: {
-                        effect.applyModifier(property, this, this);
+                        this[property] = effect.calculateModifier(property, this);
                     }
                 }
             }
         }
+        if (effect.getInterval() == IntervalEnum.ONCE) {
+            return 0;
+        }
+        Game.addScheduledEffect(effect, this);
+        return 0;
     }
     getEffects() {
         return this.effects;

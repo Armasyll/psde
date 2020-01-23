@@ -2987,6 +2987,7 @@ let CreatureSubTypeEnum = {
 };
 let IntervalEnum = {
     ONCE: 0,
+    SECOND: 0,
     TICK: 1,
     TURN: 2,
     ROUND: 3,

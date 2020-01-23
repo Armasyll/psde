@@ -19,6 +19,7 @@ class Effect {
          * Duration in ticks; -1 is indefinite, 0 is one-and-done
          */
         this.duration = -1;
+        this.durationInterval = IntervalEnum.SECOND;
         //if false, the duration is prepended with this
         this.durationIncludesTaperIn = true;
         this.taperInDuration = 0;
@@ -34,7 +35,8 @@ class Effect {
          * Only to be set if the duration is greater than 0, or is equal to -1
          * @type {IntervalEnum}
          */
-        this.interval = IntervalEnum.ONCE;
+        this.intervalType = IntervalEnum.ONCE;
+        this.intervalNth = 1;
         this.priority = 1000;
         this.hidden = false;
         this.stackCount = 1;
@@ -69,7 +71,12 @@ class Effect {
         }
         return this;
     }
-    applyModifier(property, source, destination) {
+    /**
+     * 
+     * @param {string} property 
+     * @param {AbstractEntity} source 
+     */
+    calculateModifier(property, source) {
         if (!this.modifiers.hasOwnProperty(property)) {
             return 0;
         }
@@ -127,9 +134,6 @@ class Effect {
                 break;
             }
         }
-        if (destination instanceof AbstractEntity) {
-            destination[property] = value;
-        }
         return value;
     }
     getModifier(property) {
@@ -156,24 +160,32 @@ class Effect {
     getStatusType() {
         return this.statusType;
     }
-    setDuration(number) {
+    setDuration(number, interval = IntervalEnum.TICK) {
         this.duration = number;
+        this.durationInterval = interval;
         return 0;
     }
     getDuration() {
         return this.duration;
     }
-    setInterval(interval = IntervalEnum.ONCE) {
+    getDurationInterval() {
+        return this.durationInterval;
+    }
+    setInterval(interval = IntervalEnum.ONCE, nth = 1) {
         if (IntervalEnum.hasOwnProperty(interval)) {
-            this.interval = interval;
+            this.intervalType = interval;
         }
         else {
-            this.interval = IntervalEnum.ONCE;
+            this.intervalType = IntervalEnum.ONCE;
         }
+        this.intervalNth = nth;
         return 0;
     }
-    getInterval() {
-        return this.interval;
+    getIntervalType() {
+        return this.intervalType;
+    }
+    getIntervalNth() {
+        return this.intervalNth;
     }
     getPriority() {
         return this.priority;
@@ -290,10 +302,21 @@ class Effect {
             effect.setStatusType(json.statusType);
         }
         if (json.hasOwnProperty("duration")) {
-            effect.setDuration(json.duration);
+            let duration = Number.parseInt(json.duration) || -1;
+            if (duration == -1) {}
+            else {
+                effect.setDuration(duration);
+                if (json.hasOwnProperty("durationInterval")) {
+                    effect.setDuration(json.durationInterval);
+                }
+            }
         }
         if (json.hasOwnProperty("interval")) {
             effect.setInterval(json.interval);
+        }
+        if (json.hasOwnProperty("intervalNth")) {
+            let intervalNth = Number.parseInt(json.intervalNth) || 1;
+            effect.setInterval(intervalNth);
         }
         if (json.hasOwnProperty("priority")) {
             effect.setPriority(json.priority);
