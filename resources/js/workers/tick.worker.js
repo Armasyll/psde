@@ -96,6 +96,9 @@ class SimpleEntity {
         }
         return this.instancedEffects.has(instancedEffect);
     }
+    getInstancedEffects() {
+        return this.instancedEffects;
+    }
     hasEffect(effect) {
         if (!(effect instanceof SimpleEffect)) {
             if (SimpleEffect.has(effect)) {
@@ -113,7 +116,6 @@ class SimpleEntity {
         this.instancedEffects.forEach((instancedEffect) => {
             instancedEffect.dispose();
         });
-        this.instancedEffects.clear();
         SimpleEntity.remove(this.id);
     }
     static initialize() {
@@ -145,6 +147,8 @@ class SimpleEffect {
         this.intervalNth = intervalNth;
         this.entities = new Set();
         this.instances = new Set();
+        this.locked = true;
+        this.enabled = true;
         SimpleEffect.set(this.id, this);
     }
     getID() {
@@ -161,6 +165,9 @@ class SimpleEffect {
     }
     getIntervalNth() {
         return this.intervalNth;
+    }
+    getInstances() {
+        return this.instances;
     }
     addEntity(entity) {
         if (!(entity instanceof SimpleEntity)) {
@@ -222,10 +229,15 @@ class SimpleEffect {
         return 0;
     }
     createInstance(entity, startTick = currentTick) {
+        if (!this.enabled) {
+            return 1;
+        }
         let instancedEffect = new SimpleEffectInstance(this, entity, startTick);
         return instancedEffect;
     }
     dispose() {
+        this.locked = true;
+        this.enabled = false;
         this.instances.forEach((instance) => {
             instance.dispose();
         });
@@ -271,7 +283,7 @@ class SimpleEffectInstance {
         }
         this.effect = effect;
         this.entity = entity;
-        this.id = String(this.effect.id).concat((this.entity.id).capitalize())
+        this.id = String(this.effect.id).concat((this.entity.id).capitalize());
         this.start = startTick;
         this.expiration = this.effect.duration + this.start;
         SimpleEffectInstance.set(this.id, this);
@@ -314,10 +326,12 @@ class SimpleEffectInstance {
         }
         return tick - (this.start + this.effect.duration) % this.effect.intervalNth == 0;
     }
+    reapply(tick = currentTick) {
+        this.start = tick;
+        this.expiration = this.effect.duration + this.start;
+    }
     dispose() {
-        if (!this.entity.locked) {
-            this.entity.removeInstancedEffect(this, true);
-        }
+        this.entity.removeInstancedEffect(this, true);
         this.effect.removeInstance(this, true);
         SimpleEffectInstance.remove(this.id);
     }
@@ -449,6 +463,9 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
     else {
         effect = SimpleEffect.get(effectID);
     }
+    if (!effect.enabled) {
+        return 1;
+    }
 
     let entity = null;
     if (!SimpleEntity.has(abstractEntityID)) {
@@ -457,28 +474,56 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
     else {
         entity = SimpleEntity.get(abstractEntityID);
     }
+    if (!entity.enabled) {
+        return 1;
+    }
 
-    let effectInstance = effect.createInstance(entity, currentTick);
+    let effectInstance = null;
+    let entityHasEffect = entity.hasEffect(effect);
+    if (entityHasEffect) {
+        effectInstance = entity.findInstancedEffect(effect);
+        let previousExpiration = previousEffectInstance.getExpiration();
+        if (scheduledEffects.has(previousExpiration)) {
+            scheduledEffects.get(previousExpiration).remove(effectInstance);
+        }
+        effectInstance.reapply();
+    }
+    else {
+        effectInstance = effect.createInstance(entity, currentTick);
+    }
+    
     if (!scheduledEffects.has(effectInstance.getExpiration())) {
         scheduledEffects.set(effectInstance.getExpiration(), []);
     }
     scheduledEffects.get(effectInstance.getExpiration()).push(effectInstance);
 
     if (intervalType == 1) { // IntervalEnum.TICK default
-        effectsPerNthTick.set(intervalNth, []);
-        effectsPerNthTick.get(intervalNth).push(effectInstance);
+        if (!effectsPerNthTick.has(intervalNth)) {
+            effectsPerNthTick.set(intervalNth, []);
+        }
+        if (!entityHasEffect) {
+            effectsPerNthTick.get(intervalNth).push(effectInstance);
+        }
     }
     else if (intervalType == 2) { // IntervalEnum.TURN
-        effectsPerNthTurn.set(intervalNth, []);
-        effectsPerNthTurn.get(intervalNth).push(effectInstance);
+        if (!effectsPerNthTurn.has(intervalNth)) {
+            effectsPerNthTurn.set(intervalNth, []);
+        }
+        if (!entityHasEffect) {
+            effectsPerNthTurn.get(intervalNth).push(effectInstance);
+        }
     }
     else if (intervalType == 3) { // IntervalEnum.ROUND
-        effectsPerNthRound.set(intervalNth, []);
-        effectsPerNthRound.get(intervalNth).push(effectInstance);
+        if (!effectsPerNthRound.has(intervalNth)) {
+            effectsPerNthRound.set(intervalNth, []);
+        }
+        if (!entityHasEffect) {
+            effectsPerNthRound.get(intervalNth).push(effectInstance);
+        }
     }
     return 0;
 }
-function removeScheduledEffect(effect, entity) {
+function removeScheduledEffect(effect, entity = undefined) {
     if (!(effect instanceof SimpleEffect)) {
         if (SimpleEffect.has(effect)) {
             effect = SimpleEffect.get(effect);
@@ -487,20 +532,39 @@ function removeScheduledEffect(effect, entity) {
             return 1;
         }
     }
-    if (!(entity instanceof SimpleEntity)) {
+    if (!(entity instanceof SimpleEntity) && entity != undefined) {
         if (SimpleEntity.has(entity)) {
             entity = SimpleEntity.get(entity);
         }
         else {
-            entity = null;
+            return 1;
         }
     }
     if (entity instanceof SimpleEntity) {
-        entity.removeEffect(effect);
+        if (!entity.hasEffect(effect)) {
+            return 0;
+        }
+        if (effects.getInstances().size < entity.getEffects().size) {
+            effect.getInstances().forEach((instancedEffect) => {
+                if (instancedEffect.getEntity() == entity) {
+                    removeInstancedEffect(instancedEffect);
+                    return true;
+                }
+            });
+        }
+        else {
+            entity.getInstancedEffects().forEach((instancedEffect) => {
+                if (instancedEffect.getEffect() == effect) {
+                    removeInstancedEffect(instancedEffect);
+                    return true;
+                }
+            });
+        }
     }
     else {
-        effect.dispose();
+        removeEffect(effect);
     }
+    return 0;
 }
 function removeScheduledEffectsByTick(tick) {
     if (!scheduledEffects.has(tick)) {
@@ -508,14 +572,68 @@ function removeScheduledEffectsByTick(tick) {
     }
     effectsPerNthTick.forEach((array, intervalNth) => {
         array.forEach(instancedEffect => {
-            if (instancedEffect.expiresAtTick(currentTick)) {
-                array.remove(instancedEffect);
-                instancedEffect.dispose();
-            }
+            removeInstancedEffect(instancedEffect);
         });
     });
     scheduledEffects.get(tick).clear();
     scheduledEffects.delete(tick);
+}
+function removeInstancedEffect(instancedEffect) {
+    if (!(instancedEffect instanceof SimpleInstancedEffect)) {
+        if (SimpleInstancedEffect.has(instancedEffect)) {
+            instancedEffect = SimpleInstancedEffect.get(instancedEffect);
+        }
+        else {
+            return 1;
+        }
+    }
+    if (!scheduledEffects.has(instancedEffect.getExpiration())) {
+        return 1;
+    }
+    scheduledEffects.get(instancedEffect.getExpiration()).remove(instancedEffect);
+    if (instancedEffect.getEffect().getIntervalType() == 1) {
+        effectsPerNthTick.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    }
+    else if (instancedEffect.getEffect().getIntervalType() == 2) {
+        effectsPerNthTurn.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    }
+    else if (instancedEffect.getEffect().getIntervalType() == 3) {
+        effectsPerNthRound.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    }
+    instancedEffect.dispose();
+    return 0;
+}
+function removeEffect(effect) {
+    if (!(effect instanceof SimpleEffect)) {
+        if (SimpleEffect.has(effect)) {
+            effect = SimpleEffect.get(effect);
+        }
+        else {
+            return 1;
+        }
+    }
+    effect.enabled = false;
+    effect.getInstances().forEach((instancedEffect) => {
+        removeInstancedEffect(instancedEffect);
+    });
+    effect.dispose();
+}
+function removeEntity(entity) {
+    if (!(entity instanceof SimpleEntity) && entity != undefined) {
+        if (SimpleEntity.has(entity)) {
+            entity = SimpleEntity.get(entity);
+        }
+        else {
+            return 1;
+        }
+    }
+    entity.locked = true;
+    entity.enabled = false;
+    entity.getInstancedEffects().forEach((instancedEffect) => {
+        removeInstancedEffect(instancedEffect);
+    });
+    entity.dispose();
+    return 0;
 }
 function cleanScheduledEffects() {
     scheduledEffects.forEach((array, tick) => {
