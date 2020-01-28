@@ -1,4 +1,4 @@
-importScripts("../../../vendors/babylonjs/babylon.js", "../Overrides.js");
+importScripts("../../../vendors/babylonjs/babylon.js", "../Overrides.js", "../classes/Enum.js");
 class SimpleEntity {
     constructor(id) {
         this.id = id;
@@ -57,11 +57,13 @@ class SimpleEntity {
         if (this.locked || !this.enabled) {
             return 1;
         }
-        if (instancedEffect instanceof InstancedSimpleEffect) {
-            instancedEffect = instancedEffect.getEffect();
-        }
-        else if (InstancedSimpleEffect.has(instancedEffect)) {
-            instancedEffect = InstancedSimpleEffect.get(instancedEffect);
+        if (!(instancedEffect instanceof InstancedSimpleEffect)) {
+            if (InstancedSimpleEffect.has(instancedEffect)) {
+                instancedEffect = InstancedSimpleEffect.get(instancedEffect);
+            }
+            else {
+                return 2;
+            }
         }
         this.instancedEffects.add(instancedEffect);
         this.addEffect(instancedEffect.getEffect());
@@ -70,6 +72,14 @@ class SimpleEntity {
     removeInstancedEffect(instancedEffect, updateChild = false) {
         if (this.locked || !this.enabled) {
             return 1;
+        }
+        if (!(instancedEffect instanceof InstancedSimpleEffect)) {
+            if (InstancedSimpleEffect.has(instancedEffect)) {
+                instancedEffect = InstancedSimpleEffect.get(instancedEffect);
+            }
+            else {
+                return 2;
+            }
         }
         this.instancedEffects.delete(instancedEffect);
         if (updateChild) {
@@ -108,7 +118,7 @@ class SimpleEntity {
                 return false;
             }
         }
-        return this.entity.effects.has(effect);
+        return this.effects.has(effect);
     }
     dispose() {
         this.locked = true;
@@ -138,13 +148,10 @@ class SimpleEntity {
         SimpleEntity.simpleEntityList.delete(id);
     }
 }
+SimpleEntity.initialize();
 class SimpleEffect {
-    constructor(id, duration, durationInterval, intervalType, intervalNth) {
+    constructor(id) {
         this.id = id;
-        this.duration = duration;
-        this.durationInterval = durationInterval;
-        this.intervalType = intervalType;
-        this.intervalNth = intervalNth;
         this.entities = new Set();
         this.instances = new Set();
         this.locked = true;
@@ -153,18 +160,6 @@ class SimpleEffect {
     }
     getID() {
         return this.id;
-    }
-    getDuration() {
-        return this.duration;
-    }
-    getDurationInterval() {
-        return this.durationInterval;
-    }
-    getIntervalType() {
-        return this.intervalType;
-    }
-    getIntervalNth() {
-        return this.intervalNth;
     }
     getInstances() {
         return this.instances;
@@ -228,11 +223,11 @@ class SimpleEffect {
         this.instances.delete(instance);
         return 0;
     }
-    createInstance(entity, startTick = currentTick) {
+    createInstance(entity, duration, durationInterval, intervalType, intervalNth, startTick = currentTick) {
         if (!this.enabled) {
             return 1;
         }
-        let instancedEffect = new SimpleEffectInstance(this, entity, startTick);
+        let instancedEffect = new InstancedSimpleEffect(this, entity, duration, durationInterval, intervalType, intervalNth, startTick);
         return instancedEffect;
     }
     dispose() {
@@ -263,8 +258,9 @@ class SimpleEffect {
         SimpleEffect.simpleEffectList.delete(id);
     }
 }
-class SimpleEffectInstance {
-    constructor(effect, entity, startTick) {
+SimpleEffect.initialize();
+class InstancedSimpleEffect {
+    constructor(effect, entity, duration, durationInterval, intervalType, intervalNth, startTick = currentTick) {
         if (!(effect instanceof SimpleEffect)) {
             if (SimpleEffect.has(effect)) {
                 effect = SimpleEffect.get(effect);
@@ -284,9 +280,13 @@ class SimpleEffectInstance {
         this.effect = effect;
         this.entity = entity;
         this.id = String(this.effect.id).concat((this.entity.id).capitalize());
+        this.duration = duration;
+        this.durationInterval = durationInterval;
+        this.intervalType = intervalType;
+        this.intervalNth = intervalNth;
         this.start = startTick;
-        this.expiration = this.effect.duration + this.start;
-        SimpleEffectInstance.set(this.id, this);
+        this.expiration = this.duration + this.start;
+        InstancedSimpleEffect.set(this.id, this);
         this.entity.addInstancedEffect(this);
         this.effect.addInstance(this);
     }
@@ -300,7 +300,7 @@ class SimpleEffectInstance {
         return this.entity;
     }
     getDuration() {
-        return this.effect.duration;
+        return this.duration;
     }
     getStart() {
         return this.start;
@@ -309,53 +309,54 @@ class SimpleEffectInstance {
         return this.expiration;
     }
     getDurationInterval() {
-        return this.effect.durationInterval;
+        return this.durationInterval;
     }
     getIntervalType() {
-        return this.effect.intervalType;
+        return this.intervalType;
     }
     getIntervalNth() {
-        return this.effect.intervalNth;
+        return this.intervalNth;
     }
     expiresAtTick(tick = currentTick) {
         return tick >= this.expiration;
     }
     triggersAtTick(tick = currentTick) {
-        if (this.expiration > 0 && tick > this.expiration) {
+        if (tick > this.expiration) {
             return false;
         }
-        return tick - (this.start + this.effect.duration) % this.effect.intervalNth == 0;
+        return Math.abs(tick - (this.start + this.duration)) % this.intervalNth == 0;
     }
     reapply(tick = currentTick) {
         this.start = tick;
-        this.expiration = this.effect.duration + this.start;
+        this.expiration = this.duration + this.start;
     }
     dispose() {
         this.entity.removeInstancedEffect(this, true);
         this.effect.removeInstance(this, true);
-        SimpleEffectInstance.remove(this.id);
+        InstancedSimpleEffect.remove(this.id);
     }
 
     static initialize() {
-        SimpleEffectInstance.simpleEffectInstanceList = new Map();
+        InstancedSimpleEffect.instancedSimpleEffectList = new Map();
     }
     static set(id, simpleEffectInstance) {
-        SimpleEffectInstance.simpleEffectInstanceList.set(id, simpleEffectInstance)
+        InstancedSimpleEffect.instancedSimpleEffectList.set(id, simpleEffectInstance)
         return 0;
     }
     static get(id) {
-        return SimpleEffectInstance.simpleEffectInstanceList.get(id);
+        return InstancedSimpleEffect.instancedSimpleEffectList.get(id);
     }
     static has(id) {
-        return SimpleEffectInstance.simpleEffectInstanceList.has(id);
+        return InstancedSimpleEffect.instancedSimpleEffectList.has(id);
     }
     static list() {
-        return SimpleEffectInstance.simpleEffectInstanceList;
+        return InstancedSimpleEffect.instancedSimpleEffectList;
     }
     static remove(id) {
-        SimpleEffectInstance.simpleEffectInstanceList.delete(id);
+        InstancedSimpleEffect.instancedSimpleEffectList.delete(id);
     }
 }
+InstancedSimpleEffect.initialize();
 /*
 $ let worker = new Worker("/resources/js/workers/tick.worker.js")
 undefined
@@ -404,6 +405,7 @@ function tickFunction() {
     }
     if (currentTime % gameTimeMultiplier == 0) { // Tick
         currentTick++;
+        triggerScheduledEffects();
         removeScheduledEffectsByTick(currentTick); // effects are triggered first when they're applied; so they should be removed during their final tick
         sendTick();
         sendTimestamp();
@@ -441,29 +443,49 @@ function sendTimestamp() {
 function sendPaused() {
     postMessage({"cmd":"sendPaused", "msg":paused});
 }
-function addScheduledEffect(effectID, abstractEntityID, duration, durationInterval, intervalType, intervalNth) {
+/**
+ * 
+ * @param {string} effectID 
+ * @param {string} abstractEntityID 
+ * @param {number} duration Duration in nth as specified by durationInterval; rendered down to ticks
+ * @param {IntervalEnum} durationInterval Interval of the duration
+ * @param {IntervalEnum} intervalType Interval in which the effect is applied during its duration
+ * @param {number} intervalNth Every nth of the intervalType the effect is applied
+ */
+function addScheduledEffect(effectID, abstractEntityID, duration, durationInterval = IntervalEnum.TICK, intervalType = IntervalEnum.TICK, intervalNth = 1) {
+    console.info(`Running addScheduledEffect(${effectID}, ${abstractEntityID}, ${duration}, ${durationInterval}, ${intervalType}, ${intervalNth})`);
+    console.group("Adding Scheduled Effect");
     // TODO: have the effect be a sub-index; Map<number, Map<string, Array[{}]>>
     // TODO: ^, and AbstractEntityID
-    if (durationInterval == 0) {
+    if (durationInterval == IntervalEnum.ONCE) {
+        console.info(`Duration is one-and-done; no need.`);
+        console.groupEnd();
         return 0;
     }
-    else if (durationInterval == 2) {
+    else if (durationInterval == IntervalEnum.TURN) {
         duration = duration * ticksPerTurn;
         durationInterval = 1;
     }
-    else if (durationInterval == 3) {
+    else if (durationInterval == IntervalEnum.ROUND) {
         duration = duration * ticksPerTurn * turnsPerRound;
         durationInterval = 1;
     }
 
     let effect = null;
     if (!SimpleEffect.has(effectID)) {
-        effect = new SimpleEffect(effectID, duration, durationInterval, intervalType, intervalNth);
+        effect = new SimpleEffect(effectID);
     }
     else {
         effect = SimpleEffect.get(effectID);
     }
-    if (!effect.enabled) {
+    if (!(effect instanceof SimpleEffect)) {
+        console.warn(`Effect (${effectID}) could not be created.`);
+        console.groupEnd();
+        return 2;
+    }
+    else if (!effect.enabled) {
+        console.warn(`Effect (${effect.id}) is disabled, so it cannot by used.`);
+        console.groupEnd();
         return 1;
     }
 
@@ -474,7 +496,14 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
     else {
         entity = SimpleEntity.get(abstractEntityID);
     }
-    if (!entity.enabled) {
+    if (!(entity instanceof SimpleEntity)) {
+        console.warn(`Entity (${abstractEntityID}) could not be created.`);
+        console.groupEnd();
+        return 2;
+    }
+    else if (!entity.enabled) {
+        console.warn(`Entity (${entity.id}) is disabled, so it cannot be used.`);
+        console.groupEnd();
         return 1;
     }
 
@@ -482,6 +511,11 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
     let entityHasEffect = entity.hasEffect(effect);
     if (entityHasEffect) {
         effectInstance = entity.findInstancedEffect(effect);
+        if (!(effectInstance instanceof InstancedSimpleEffect)) {
+            console.warn(`Could not find Entity's (${entity.id}) instance of Effect (${effect.id}).`);
+            console.groupEnd();
+            return 2;
+        }
         let previousExpiration = previousEffectInstance.getExpiration();
         if (scheduledEffects.has(previousExpiration)) {
             scheduledEffects.get(previousExpiration).remove(effectInstance);
@@ -489,15 +523,15 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
         effectInstance.reapply();
     }
     else {
-        effectInstance = effect.createInstance(entity, currentTick);
+        effectInstance = effect.createInstance(entity, duration, durationInterval, intervalType, intervalNth, currentTick);
     }
-    
+
     if (!scheduledEffects.has(effectInstance.getExpiration())) {
         scheduledEffects.set(effectInstance.getExpiration(), []);
     }
     scheduledEffects.get(effectInstance.getExpiration()).push(effectInstance);
 
-    if (intervalType == 1) { // IntervalEnum.TICK default
+    if (intervalType == IntervalEnum.TICK) { // IntervalEnum.TICK default
         if (!effectsPerNthTick.has(intervalNth)) {
             effectsPerNthTick.set(intervalNth, []);
         }
@@ -505,7 +539,7 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
             effectsPerNthTick.get(intervalNth).push(effectInstance);
         }
     }
-    else if (intervalType == 2) { // IntervalEnum.TURN
+    else if (intervalType == IntervalEnum.TURN) { // IntervalEnum.TURN
         if (!effectsPerNthTurn.has(intervalNth)) {
             effectsPerNthTurn.set(intervalNth, []);
         }
@@ -513,7 +547,7 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
             effectsPerNthTurn.get(intervalNth).push(effectInstance);
         }
     }
-    else if (intervalType == 3) { // IntervalEnum.ROUND
+    else if (intervalType == IntervalEnum.ROUND) { // IntervalEnum.ROUND
         if (!effectsPerNthRound.has(intervalNth)) {
             effectsPerNthRound.set(intervalNth, []);
         }
@@ -521,6 +555,7 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
             effectsPerNthRound.get(intervalNth).push(effectInstance);
         }
     }
+    console.groupEnd();
     return 0;
 }
 function removeScheduledEffect(effect, entity = undefined) {
@@ -540,6 +575,7 @@ function removeScheduledEffect(effect, entity = undefined) {
             return 1;
         }
     }
+    console.info(`Running removeScheduledEffect(${effect.id}, ${entity instanceof SimpleEntity ? entity.id : "undefined"})`);
     if (entity instanceof SimpleEntity) {
         if (!entity.hasEffect(effect)) {
             return 0;
@@ -570,35 +606,54 @@ function removeScheduledEffectsByTick(tick) {
     if (!scheduledEffects.has(tick)) {
         return 0;
     }
+    console.info(`Running removeScheduledEffectsByTick(${tick})`);
     effectsPerNthTick.forEach((array, intervalNth) => {
         array.forEach(instancedEffect => {
             removeInstancedEffect(instancedEffect);
         });
     });
-    scheduledEffects.get(tick).clear();
-    scheduledEffects.delete(tick);
+    if (scheduledEffects.has(tick)) {
+        scheduledEffects.get(tick).clear();
+        scheduledEffects.delete(tick);
+    }
 }
 function removeInstancedEffect(instancedEffect) {
-    if (!(instancedEffect instanceof SimpleInstancedEffect)) {
-        if (SimpleInstancedEffect.has(instancedEffect)) {
-            instancedEffect = SimpleInstancedEffect.get(instancedEffect);
+    if (!(instancedEffect instanceof InstancedSimpleEffect)) {
+        if (InstancedSimpleEffect.has(instancedEffect)) {
+            instancedEffect = InstancedSimpleEffect.get(instancedEffect);
         }
         else {
             return 1;
         }
     }
-    if (!scheduledEffects.has(instancedEffect.getExpiration())) {
+    console.info(`Running removeInstancedEffect(${instancedEffect.id})`);
+    let effectExpiration = instancedEffect.getExpiration();
+    if (!scheduledEffects.has(effectExpiration)) {
         return 1;
     }
-    scheduledEffects.get(instancedEffect.getExpiration()).remove(instancedEffect);
-    if (instancedEffect.getEffect().getIntervalType() == 1) {
-        effectsPerNthTick.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    scheduledEffects.get(effectExpiration).remove(instancedEffect);
+    if (scheduledEffects.get(effectExpiration).length == 0) {
+        scheduledEffects.delete(effectExpiration);
     }
-    else if (instancedEffect.getEffect().getIntervalType() == 2) {
-        effectsPerNthTurn.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    let effectInterval = instancedEffect.getIntervalType();
+    let effectIntervalNth = instancedEffect.getIntervalNth();
+    if (effectInterval == IntervalEnum.TICK) {
+        effectsPerNthTick.get(effectIntervalNth).remove(instancedEffect);
+        if (effectsPerNthTick.get(effectIntervalNth).length == 0) {
+            effectsPerNthTick.delete(effectIntervalNth);
+        }
     }
-    else if (instancedEffect.getEffect().getIntervalType() == 3) {
-        effectsPerNthRound.get(instancedEffect.getEffect().getIntervalNth()).remove(instancedEffect);
+    else if (effectInterval == IntervalEnum.TURN) {
+        effectsPerNthTurn.get(effectIntervalNth).remove(instancedEffect);
+        if (effectsPerNthTurn.get(effectIntervalNth).length == 0) {
+            effectsPerNthTurn.delete(effectIntervalNth);
+        }
+    }
+    else if (effectInterval == IntervalEnum.ROUND) {
+        effectsPerNthRound.get(effectIntervalNth).remove(instancedEffect);
+        if (effectsPerNthRound.get(effectIntervalNth).length == 0) {
+            effectsPerNthRound.delete(effectIntervalNth);
+        }
     }
     instancedEffect.dispose();
     return 0;
@@ -612,6 +667,7 @@ function removeEffect(effect) {
             return 1;
         }
     }
+    console.info(`Running removeEffect(${effect.id})`);
     effect.enabled = false;
     effect.getInstances().forEach((instancedEffect) => {
         removeInstancedEffect(instancedEffect);
@@ -627,6 +683,7 @@ function removeEntity(entity) {
             return 1;
         }
     }
+    console.info(`Running removeEntity(${entity.id})`);
     entity.locked = true;
     entity.enabled = false;
     entity.getInstancedEffects().forEach((instancedEffect) => {
@@ -636,9 +693,25 @@ function removeEntity(entity) {
     return 0;
 }
 function cleanScheduledEffects() {
+    console.info(`Running cleanScheduledEffects()`);
     scheduledEffects.forEach((array, tick) => {
         if (tick < currentTick - 1) {
             removeScheduledEffectsByTick(tick);
+        }
+    });
+    effectsPerNthTick.forEach((array, intervalNth) => {
+        if (array.length == 0) {
+            effectsPerNthTick.delete(intervalNth);
+        }
+    });
+    effectsPerNthTurn.forEach((array, intervalNth) => {
+        if (array.length == 0) {
+            effectsPerNthTurn.delete(intervalNth);
+        }
+    });
+    effectsPerNthRound.forEach((array, intervalNth) => {
+        if (array.length == 0) {
+            effectsPerNthRound.delete(intervalNth);
         }
     });
 }
@@ -646,6 +719,7 @@ function triggerScheduledEffects() {
     effectsPerNthTick.forEach((array, intervalNth) => {
         array.forEach((instancedEffect) => {
             if (instancedEffect.triggersAtTick(currentTick)) {
+                console.info(`Triggering InstancedEffect (${instancedEffect.getID()}) for Entity (${instancedEffect.getEntity().getID()})`);
                 sendScheduledEffect(instancedEffect.getID(), instancedEffect.getEntity().getID());
             }
         });
