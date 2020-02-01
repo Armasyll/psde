@@ -9,8 +9,8 @@ class Effect {
         this.description = description;
         this.iconID = iconID;
         /**
-         * Map of properties to the functions that set them
-         * Object<string: function>
+         * Pseudo-map of properties to the functions that set them
+         * {string: {OperatorEnum: function}}
          * @type {object}
          */
         this.modifiers = {};
@@ -224,6 +224,17 @@ class Effect {
         this.stackCount = stackCount;
         return this;
     }
+
+    dispose() {
+        for (let modifier in this.modifiers) {
+            delete this.modifiers[modifier][0]
+            delete this.modifiers[modifier][1]
+            delete this.modifiers[modifier];
+        }
+        Effect.remove(this.id);
+        return undefined;
+    }
+
     static allowedProperties() {
         return [
             "godMode",
@@ -281,22 +292,80 @@ class Effect {
         Effect.effectList = {};
         return 0;
     }
-    static toJSON() {
-
+    static toJSON(effect) {
+        if (effect instanceof Effect) {}
+        else if (Effect.has(effect)) {
+            effect = Effect.get(effect);
+        }
+        else {
+            return null;
+        }
+        let jsonObject = JSON.parse(JSON.stringify(effect));
+        for (let modifier in effect.modifiers) {
+            jsonObject.modifiers[modifier][1] = effect.modifiers[modifier][1].toString();
+        }
+        return JSON.stringify(jsonObject);
     }
     static fromJSON(json) {
         if (typeof json == "string") {
+            console.group(`Running Effect.fromJSON(${json.slice(0,12)}...)`);
             json = JSON.parse(json);
         }
-        if (!(json instanceof Object) || !json.hasOwnProperty("id") || json.hasOwnProperty("name")) {
+        else {
+            console.group("Running Effect.fromJSON(...)");
+        }
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || !json.hasOwnProperty("name")) {
+            console.warn(`Supplied JSON was not valid.`);
+            console.groupEnd();
             return 2;
         }
+        console.info("Supplied JSON was valid.");
         let effect = new Effect(json.id, json.name, json.description, json.iconID);
         if (!(effect instanceof Effect)) {
+            console.warn(`Could not create a new Effect`);
+            console.groupEnd();
             return 1;
         }
+        console.info(`Effect (${effect.getID()}) has been created.`);
         if (json.hasOwnProperty("modifiers")) {
-
+            for (let modifier in json.modifiers) {
+                let modification = null;
+                switch (typeof json.modifiers[modifier][1]) {
+                    case "number": {
+                        modification = typeof json.modifiers[modifier][1];
+                        console.info(`Supplied modifier for (${modifier}) was a valid number.`);
+                        break;
+                    }
+                    case "boolean": {
+                        modification = typeof json.modifiers[modifier][1];
+                        console.info(`Supplied modifier for (${modifier}) was a valid boolean.`);
+                        break;
+                    }
+                    case "string": {
+                        try {
+                            // I know it's ugly, but it works.
+                            modification = new Function('return ' + json.modifiers[modifier][1])();
+                        }
+                        catch (exception) {
+                            effect.dispose();
+                            console.warn(`Supplied modifier for (${modifier}) was not a valid function.`);
+                            console.groupEnd();
+                            return 2;
+                        }
+                        finally {
+                            console.info(`Supplied modifier for (${modifier}) was a valid functions.`);
+                        }
+                        break;
+                    }
+                    default: {
+                        effect.dispose();
+                        console.warn(`Supplied modifier for (${modifier}) was not a valid type.`);
+                        console.groupEnd();
+                        return 2;
+                    }
+                }
+                effect.addModifier(modifier, json.modifiers[modifier][0], modification);
+            }
         }
         if (json.hasOwnProperty("statusType")) {
             effect.setStatusType(json.statusType);
@@ -315,8 +384,7 @@ class Effect {
             effect.setInterval(json.interval);
         }
         if (json.hasOwnProperty("intervalNth")) {
-            let intervalNth = Number.parseInt(json.intervalNth) || 1;
-            effect.setInterval(intervalNth);
+            effect.setInterval(Number.parseInt(json.intervalNth) || 1);
         }
         if (json.hasOwnProperty("priority")) {
             effect.setPriority(json.priority);
@@ -330,6 +398,8 @@ class Effect {
         if (json.hasOwnProperty("dispellable")) {
             effect.setDispel(json.dispellable);
         }
+        console.info(`Effect (${effect.getID()}) has been successfully created.`);
+        console.groupEnd();
         return effect;
     }
 }
