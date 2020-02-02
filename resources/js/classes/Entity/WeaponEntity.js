@@ -509,25 +509,59 @@ class WeaponEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} id ID
-     * @return {ClothingEntity}     new WeaponEntity
+     * @param  {string} id          ID
+     * @return {WeaponEntity}       new WeaponEntity
      */
     clone(id = "") {
-        let weaponEntity = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
+        let clone = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
-        weaponEntity.availableActions = Object.assign({}, this.availableActions);
-        weaponEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        weaponEntity.specialProperties = new Set(this.specialProperties);
-        weaponEntity.defaultAction = this.defaultAction;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        weaponEntity.weight.copyFrom(this.weight);
-        weaponEntity.price.copyFrom(this.price);
-        weaponEntity.health.copyFrom(this.health);
+        clone.weight = this.weight;
+        clone.price = this.price;
         // variables from ItemEntity
-        weaponEntity.setItemType(this.itemType);
+        clone.setItemType(this.itemType);
         // variables from EquipmentEntity
-        weaponEntity.setEquipmentSlot(this.equipmentSlot);
-        return weaponEntity;
+        clone.setEquipmentSlot(this.equipmentSlot);
+        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
+        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
+        clone.advantageOn = new Set(this.advantageOn);
+        clone.disadvantageOn = new Set(this.disadvantageOn);
+        // variables from WeaponEntity
+        clone.equipmentSlot = this.equipmentSlot;
+        clone.weaponCategory = this.weaponCategory;
+        clone.weaponType = this.weaponType;
+        clone.damageRollCount = this.damageRollCount;
+        clone.damageRollCountModifier = this.damageRollCountModifier;
+        clone.damageRoll = this.damageRoll;
+        clone.damageRollModifier = this.damageRollModifier;
+        clone.damageType = this.damageType;
+        clone.silvered = this.silvered;
+        clone.silveredModifier = this.silveredModifier;
+        clone.range = this.range;
+        clone.versatileRollCount = this.versatileRollCount;
+        clone.versatileRoll = this.versatileRoll;
+        clone.ammunition = this.ammunition;
+        clone.finesse = this.finesse;
+        clone.heavy = this.heavy;
+        clone.light = this.light;
+        clone.loading = this.loading;
+        clone.reach = this.reach;
+        clone.special = this.special;
+        clone.thrown = this.thrown;
+        clone.twoHanded = this.twoHanded;
+        clone.versatile = this.versatile;
+        return clone;
     }
     /**
      * Overrides EquipmentEntity.createInstance

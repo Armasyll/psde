@@ -689,6 +689,61 @@ class CreatureEntity extends Entity {
         return this.alerted;
     }
 
+    /**
+     * Overrides Entity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new CreatureEntity
+     */
+    clone(id = undefined) {
+        let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
+        // variables from AbstractEntity
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
+        // variables from Entity
+        clone.weight = this.weight;
+        clone.price = this.price;
+        // variables from CreatureEntity
+        clone.specialCreatureType = this.specialCreatureType;
+        clone.specialCreatureSubType = this.specialCreatureSubType;
+        clone.cantripsKnown = new Set(this.cantripsKnown);
+        clone.cantripsKnownLimit = this.cantripsKnownLimit;
+        clone.spellsKnown = new Set(this.spellsKnown);
+        clone.spellsKnownLimit = this.spellsKnownLimit;
+        clone.spellSlots = Object.assign({}, this.spellSlots);
+        clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
+        clone.hunger = this.hunger;
+        clone.strength = this.strength;
+        clone.dexterity = this.dexterity;
+        clone.constitution = this.constitution;
+        clone.intelligence = this.intelligence;
+        clone.wisdom = this.wisdom;
+        clone.charisma = this.charisma;
+        clone.level = this.level;
+        clone.experiencePoints = this.experiencePoints;
+        clone.stamina = this.stamina;
+        clone.money = this.money;
+        clone.living = this.living;
+        clone.conscious = this.conscious;
+        clone.paralyzed = this.paralyzed;
+        clone.size = this.size;
+        clone.baseWeight = this.baseWeight;
+        clone.baseHeight = this.baseHeight;
+        clone.baseWidth = this.baseWidth;
+        clone.weight = this.weight;
+        clone.height = this.height;
+        clone.width = this.width;
+        clone.predator = this.predator;
+        return clone;
+    }
     dispose() {
         if (this == Game.player) {
             return false;

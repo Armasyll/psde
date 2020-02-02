@@ -31,8 +31,43 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
         return this.entity.getDisadvantageOn();
     }
 
+    /**
+     * Overrides InstancedItemEntity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new InstancedEquipmentEntity
+     */
     clone(id = "") {
-        return new InstancedEquipmentEntity(id, this.entity, this.owner);
+        if (!this.hasEntity()) {
+            return this;
+        }
+        let clone = new InstancedEquipmentEntity(id, this.entity, this.owner);
+        // variables from AbstractEntity
+        if (this._useOwnAvailableActions) {
+            clone.availableActions = Object.assign({}, this.availableActions);
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        }
+        if (this._useOwnSpecialProperties) {
+            clone.specialProperties = new Set(this.specialProperties);
+        }
+        if (this._useOwnDefaultAction) {
+            clone.defaultAction = this.defaultAction;
+        }
+        if (this._useOwnEffects) {
+            clone.effects = this.cloneEffects();
+        }
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
+        clone.actionEffects = Object.assign({}, this.actionEffects);
+        // variables from InstancedItemEntity
+        clone.setOwner(this.owner);
+        return clone;
     }
     dispose() {
         super.dispose()

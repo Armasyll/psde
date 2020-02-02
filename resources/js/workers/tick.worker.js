@@ -4,6 +4,7 @@ class SimpleEntity {
         this.id = id;
         this.effects = new Set();
         this.instancedEffects = new Set();
+        this.instancedEffectPriorities = new Map();
         this.locked = false;
         this.enabled = true;
         SimpleEntity.set(id, this);
@@ -67,6 +68,10 @@ class SimpleEntity {
         }
         this.instancedEffects.add(instancedEffect);
         this.addEffect(instancedEffect.getEffect());
+        if (!this.instancedEffectPriorities.has(instancedEffect.priority)) {
+            this.instancedEffectPriorities.set(instancedEffect.priority, new Set());
+        }
+        this.instancedEffectPriorities.get(instancedEffect.priority).add(instancedEffect);
         return 0;
     }
     removeInstancedEffect(instancedEffect, updateChild = false) {
@@ -82,6 +87,12 @@ class SimpleEntity {
             }
         }
         this.instancedEffects.delete(instancedEffect);
+        if (this.instancedEffectPriorities.has(instancedEffect.priority)) {
+            this.instancedEffectPriorities.get(instancedEffect.priority).remove(instancedEffect);
+            if (this.instancedEffectPriorities.get(instancedEffect.priority).size == 0) {
+                this.instancedEffectPriorities.delete(instancedEffect.priority)
+            }
+        }
         if (updateChild) {
             this.removeEffect(instancedEffect.getEffect(), false);
         }
@@ -108,6 +119,9 @@ class SimpleEntity {
     }
     getInstancedEffects() {
         return this.instancedEffects;
+    }
+    getInstancedEffectPriorities() {
+        return this.instancedEffectPriorities;
     }
     hasEffect(effect) {
         if (!(effect instanceof SimpleEffect)) {
@@ -223,11 +237,11 @@ class SimpleEffect {
         this.instances.delete(instance);
         return 0;
     }
-    createInstance(entity, duration, durationInterval, intervalType, intervalNth, startTick = currentTick) {
+    createInstance(entity, duration, durationInterval = IntervalEnum.TICK, intervalType = IntervalEnum.TICK, intervalNth = 1, priority = 1000, startTick = currentTick) {
         if (!this.enabled) {
             return 1;
         }
-        let instancedEffect = new InstancedSimpleEffect(this, entity, duration, durationInterval, intervalType, intervalNth, startTick);
+        let instancedEffect = new InstancedSimpleEffect(this, entity, duration, durationInterval, intervalType, intervalNth, priority, startTick);
         return instancedEffect;
     }
     dispose() {
@@ -260,7 +274,7 @@ class SimpleEffect {
 }
 SimpleEffect.initialize();
 class InstancedSimpleEffect {
-    constructor(effect, entity, duration, durationInterval, intervalType, intervalNth, startTick = currentTick) {
+    constructor(effect, entity, duration, durationInterval = IntervalEnum.TICK, intervalType = IntervalEnum.TICK, intervalNth = 1, priority = 1000, startTick = currentTick) {
         if (!(effect instanceof SimpleEffect)) {
             if (SimpleEffect.has(effect)) {
                 effect = SimpleEffect.get(effect);
@@ -284,6 +298,7 @@ class InstancedSimpleEffect {
         this.durationInterval = durationInterval;
         this.intervalType = intervalType;
         this.intervalNth = intervalNth;
+        this.priority = priority;
         this.start = startTick;
         this.expiration = this.duration + this.start;
         InstancedSimpleEffect.set(this.id, this);
@@ -316,6 +331,9 @@ class InstancedSimpleEffect {
     }
     getIntervalNth() {
         return this.intervalNth;
+    }
+    getPiority() {
+        return this.priority;
     }
     expiresAtTick(tick = currentTick) {
         return tick >= this.expiration;
@@ -452,7 +470,7 @@ function sendPaused() {
  * @param {IntervalEnum} intervalType Interval in which the effect is applied during its duration
  * @param {number} intervalNth Every nth of the intervalType the effect is applied
  */
-function addScheduledEffect(effectID, abstractEntityID, duration, durationInterval = IntervalEnum.TICK, intervalType = IntervalEnum.TICK, intervalNth = 1) {
+function addScheduledEffect(effectID, abstractEntityID, duration, durationInterval = IntervalEnum.TICK, intervalType = IntervalEnum.TICK, intervalNth = 1, priority = 1000) {
     console.info(`Running addScheduledEffect(${effectID}, ${abstractEntityID}, ${duration}, ${durationInterval}, ${intervalType}, ${intervalNth})`);
     console.group("Adding Scheduled Effect");
     // TODO: have the effect be a sub-index; Map<number, Map<string, Array[{}]>>
@@ -523,7 +541,7 @@ function addScheduledEffect(effectID, abstractEntityID, duration, durationInterv
         effectInstance.reapply();
     }
     else {
-        effectInstance = effect.createInstance(entity, duration, durationInterval, intervalType, intervalNth, currentTick);
+        effectInstance = effect.createInstance(entity, duration, durationInterval, intervalType, intervalNth, priority, currentTick);
     }
 
     if (!scheduledEffects.has(effectInstance.getExpiration())) {
@@ -717,12 +735,21 @@ function cleanScheduledEffects() {
 }
 function triggerScheduledEffects() {
     effectsPerNthTick.forEach((array, intervalNth) => {
+        let effectsToTrigger = {};
         array.forEach((instancedEffect) => {
             if (instancedEffect.triggersAtTick(currentTick)) {
-                console.info(`Triggering InstancedEffect (${instancedEffect.getID()}) for Entity (${instancedEffect.getEntity().getID()})`);
-                sendScheduledEffect(instancedEffect.getID(), instancedEffect.getEntity().getID());
+                if (!effectsToTrigger.hasOwnProperty(instancedEffect.priority)) {
+                    effectsToTrigger[instancedEffect.priority] = [];
+                }
+                effectsToTrigger[instancedEffect.priority].push({0:instancedEffect.getID(), 1:instancedEffect.getEntity().getID()})
             }
         });
+        for (let priority in effectsToTrigger) {
+            effectsToTrigger[priority].forEach((entry) => {
+                console.info(`Triggering InstancedEffect (${entry[0]}) for Entity (${entry[1]})`);
+                sendScheduledEffect(entry[0], entry[1]);
+            });
+        }
     });
 }
 function sendScheduledEffect(effectID, abstractEntityID) {

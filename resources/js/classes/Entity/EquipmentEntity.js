@@ -118,24 +118,36 @@ class EquipmentEntity extends ItemEntity {
     }
 
     /**
-     * Overrides ItemEntity.clone; not meant to be run.
-     * @param  {string} id ID
-     * @return {EquipmentEntity}     new EquipmentEntity
+     * Overrides ItemEntity.clone
+     * @param  {string} id          ID
+     * @return {EquipmentEntity}    new EquipmentEntity
      */
     clone(id = "") {
-        let itemEntity = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
+        let clone = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
         // variables from AbstractEntity
-        itemEntity.availableActions = Object.assign({}, this.availableActions);
-        itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        itemEntity.specialProperties = new Set(this.specialProperties);
-        itemEntity.defaultAction = this.defaultAction;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        itemEntity.weight.copyFrom(this.weight);
-        itemEntity.price.copyFrom(this.price);
-        itemEntity.health.copyFrom(this.health);
+        clone.weight = this.weight;
+        clone.price = this.price;
         // variables from ItemEntity
-        itemEntity.itemType = this.itemType;
-        return itemEntity;
+        clone.setItemType(this.itemType);
+        // variables from EquipmentEntity
+        clone.setEquipmentSlot(this.equipmentSlot);
+        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
+        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
+        clone.advantageOn = new Set(this.advantageOn);
+        clone.disadvantageOn = new Set(this.disadvantageOn);
+        return clone;
     }
     /**
      * Overrides ItemEntity.createInstance; not meant to be run.

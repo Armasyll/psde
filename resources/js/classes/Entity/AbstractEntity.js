@@ -48,6 +48,7 @@ class AbstractEntity {
          */
         this.effectsPriority = {};
         /**
+         * Effects triggered on action
          * @type {object}
          * Object<TargetEntity: <ActionEnum:Effect>>
          */
@@ -440,13 +441,6 @@ class AbstractEntity {
     getEffects() {
         return this.effects;
     }
-    cloneEffects() {
-        let obj = {};
-        for (let priority in this.effects) {
-            obj[priority] = new Map(this.effects[priority]);
-        }
-        return obj;
-    }
     clearEffects() {
         for (let priority in this.effects) {
             obj[priority].clear();
@@ -539,6 +533,27 @@ class AbstractEntity {
         return 0;
     }
 
+    /**
+     * Clones
+     * @param  {string} id          ID
+     * @return {AbstractEntity}     new AbstractEntity
+     */
+    clone(id = undefined) {
+        let clone = new AbstractEntity(id, this.name, this.description, this.icon, this.entityType);
+        // variables from AbstractEntity
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
+        return clone;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);

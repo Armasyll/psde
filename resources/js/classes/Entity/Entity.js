@@ -247,21 +247,29 @@ class Entity extends AbstractEntity {
         return 0;
     }
 
+    /**
+     * Overrides AbstractEntity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new Entity
+     */
     clone(id = undefined) {
-        let entity = new Entity(id, this.name, this.description, this.icon, this.entityType);
+        let clone = new Entity(id, this.name, this.description, this.icon, this.entityType);
         // variables from AbstractEntity
-        entity.availableActions = Object.assign({}, this.availableActions);
-        entity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        entity.specialProperties = new Set(this.specialProperties);
-        entity.defaultAction = this.defaultAction;
-        entity.health = this.health;
-        entity.healthModifier = this.healthModifier;
-        entity.maxHealth = this.maxHealth;
-        entity.maxHealthModifier = this.maxHealthModifier;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        entity.weight = this.weight;
-        entity.price = this.price;
-        return entity;
+        clone.weight = this.weight;
+        clone.price = this.price;
+        return clone;
     }
     createInstance(id = "") {
         let instance = new InstancedEntity(id, this);

@@ -14,22 +14,36 @@ class ShieldEntity extends ClothingEntity {
     }
 
     /**
-     * Overrides ClothingEntity.clone
-     * @param  {string} id ID
-     * @return {ShieldEntity}     new ShieldEntity
+     * Overrides EquipmentEntity.clone
+     * @param  {string} id          ID
+     * @return {ShieldEntity}       new ShieldEntity
      */
     clone(id = undefined) {
-        let shieldEntity = new ShieldEntity(id, this.name, this.description, this.icon);
+        let clone = new ShieldEntity(id, this.name, this.description, this.icon);
         // variables from AbstractEntity
-        shieldEntity.availableActions = Object.assign({}, this.availableActions);
-        shieldEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        shieldEntity.specialProperties = new Set(this.specialProperties);
-        shieldEntity.defaultAction = this.defaultAction;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        shieldEntity.weight.copyFrom(this.weight);
-        shieldEntity.price.copyFrom(this.price);
-        shieldEntity.health.copyFrom(this.health);
-        return shieldEntity;
+        clone.weight = this.weight;
+        clone.price = this.price;
+        // variables from ItemEntity
+        clone.setItemType(this.itemType);
+        // variables from EquipmentEntity
+        clone.setEquipmentSlot(this.equipmentSlot);
+        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
+        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
+        clone.advantageOn = new Set(this.advantageOn);
+        clone.disadvantageOn = new Set(this.disadvantageOn);
+        return clone;
     }
     /**
      * Overrides ClothingEntity.createInstance

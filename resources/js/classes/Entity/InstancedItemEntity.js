@@ -15,8 +15,43 @@ class InstancedItemEntity extends InstancedEntity {
         return this.entity.getItemType();
     }
 
+    /**
+     * Overrides InstancedEntity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new InstancedItemEntity
+     */
     clone(id = "") {
-        return new InstancedItemEntity(id, this.entity, this.owner);
+        if (!this.hasEntity()) {
+            return this;
+        }
+        let clone = new InstancedItemEntity(id, this.entity, this.owner);
+        // variables from AbstractEntity
+        if (this._useOwnAvailableActions) {
+            clone.availableActions = Object.assign({}, this.availableActions);
+        }
+        if (this._useOwnHiddenAvailableActions) {
+            clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        }
+        if (this._useOwnSpecialProperties) {
+            clone.specialProperties = new Set(this.specialProperties);
+        }
+        if (this._useOwnDefaultAction) {
+            clone.defaultAction = this.defaultAction;
+        }
+        if (this._useOwnEffects) {
+            clone.effects = this.cloneEffects();
+        }
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
+        clone.actionEffects = Object.assign({}, this.actionEffects);
+        // variables from InstancedItemEntity
+        clone.setOwner(this.owner);
+        return clone;
     }
     dispose() {
         InstancedItemEntity.remove(this.id);

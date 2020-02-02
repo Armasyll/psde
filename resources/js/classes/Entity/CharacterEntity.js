@@ -1287,84 +1287,87 @@ class CharacterEntity extends CreatureEntity {
         return 0;
     }
 
+    /**
+     * Overrides CreatureEntity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new CharacterEntity
+     */
     clone(id = undefined) {
-        let characterEntity = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
+        let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
         // variables from AbstractEntity
-        characterEntity.availableActions = Object.assign({}, this.availableActions);
-        characterEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        characterEntity.specialProperties = new Set(this.specialProperties);
-        characterEntity.defaultAction = this.defaultAction;
-        characterEntity.health = this.health;
-        characterEntity.healthModifier = this.healthModifier;
-        characterEntity.maxHealth = this.maxHealth;
-        characterEntity.maxHealthModifier = this.maxHealthModifier;
-        characterEntity.effects = Object.assign({}, this.effects);
-        characterEntity.effectsPriority = Object.assign({}, this.effectsPriority);
-        for (let i in this.actionEffects) {
-            characterEntity.actionEffects[i] = Object.assign({}, this.actionEffects[i]);
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
         }
         // variables from Entity
-        characterEntity.weight = this.weight;
-        characterEntity.price = this.price;
+        clone.weight = this.weight;
+        clone.price = this.price;
         // variables from CreatureEntity
-        characterEntity.specialCreatureType = this.specialCreatureType;
-        characterEntity.specialCreatureSubType = this.specialCreatureSubType;
-        characterEntity.cantripsKnown = new Set(this.cantripsKnown);
-        characterEntity.cantripsKnownLimit = this.cantripsKnownLimit;
-        characterEntity.spellsKnown = new Set(this.spellsKnown);
-        characterEntity.spellsKnownLimit = this.spellsKnownLimit;
-        characterEntity.spellSlots = Object.assign({}, this.spellSlots);
-        characterEntity.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
-        characterEntity.hunger = this.hunger;
-        characterEntity.strength = this.strength;
-        characterEntity.dexterity = this.dexterity;
-        characterEntity.constitution = this.constitution;
-        characterEntity.intelligence = this.intelligence;
-        characterEntity.wisdom = this.wisdom;
-        characterEntity.charisma = this.charisma;
-        characterEntity.level = this.level;
-        characterEntity.experiencePoints = this.experiencePoints;
-        characterEntity.stamina = this.stamina;
-        characterEntity.money = this.money;
-        characterEntity.living = this.living;
-        characterEntity.conscious = this.conscious;
-        characterEntity.paralyzed = this.paralyzed;
-        characterEntity.size = this.size;
-        characterEntity.baseWeight = this.baseWeight;
-        characterEntity.baseHeight = this.baseHeight;
-        characterEntity.baseWidth = this.baseWidth;
-        characterEntity.weight = this.weight;
-        characterEntity.height = this.height;
-        characterEntity.width = this.width;
-        characterEntity.predator = this.predator;
+        clone.specialCreatureType = this.specialCreatureType;
+        clone.specialCreatureSubType = this.specialCreatureSubType;
+        clone.cantripsKnown = new Set(this.cantripsKnown);
+        clone.cantripsKnownLimit = this.cantripsKnownLimit;
+        clone.spellsKnown = new Set(this.spellsKnown);
+        clone.spellsKnownLimit = this.spellsKnownLimit;
+        clone.spellSlots = Object.assign({}, this.spellSlots);
+        clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
+        clone.hunger = this.hunger;
+        clone.strength = this.strength;
+        clone.dexterity = this.dexterity;
+        clone.constitution = this.constitution;
+        clone.intelligence = this.intelligence;
+        clone.wisdom = this.wisdom;
+        clone.charisma = this.charisma;
+        clone.level = this.level;
+        clone.experiencePoints = this.experiencePoints;
+        clone.stamina = this.stamina;
+        clone.money = this.money;
+        clone.living = this.living;
+        clone.conscious = this.conscious;
+        clone.paralyzed = this.paralyzed;
+        clone.size = this.size;
+        clone.baseWeight = this.baseWeight;
+        clone.baseHeight = this.baseHeight;
+        clone.baseWidth = this.baseWidth;
+        clone.weight = this.weight;
+        clone.height = this.height;
+        clone.width = this.width;
+        clone.predator = this.predator;
         // variables from CharacterEntity
-        characterEntity.gender = this.gender;
-        characterEntity.handedness = this.handedness;
-        characterEntity.attachedCosmetics = Object.assign({}, this.attachedCosmetics);
+        clone.gender = this.gender;
+        clone.handedness = this.handedness;
+        clone.attachedCosmetics = Object.assign({}, this.attachedCosmetics);
         for (let i in this.attachedCosmetics) {
-            characterEntity.attachedCosmetics[i] = Object.assign({}, this.attachedCosmetics[i]);
+            clone.attachedCosmetics[i] = Object.assign({}, this.attachedCosmetics[i]);
         }
         for (let i in this.equipment) {
             if (this.equipment[i] instanceof AbstractEntity) {
-                characterEntity.equipment[i] = this.equipment[i].clone();
+                clone.equipment[i] = this.equipment[i].clone();
             }
         }
-        characterEntity.previousEquipment = Object.assign({}, this.previousEquipment);
-        characterEntity.defaultDisposition = Object.assign({}, this.defaultDisposition);
-        characterEntity.furColourA = this.furColourA;
-        characterEntity._furColourAHex = this._furColourAHex;
-        characterEntity.furColourB = this.furColourB;
-        characterEntity._furColourBHex = this._furColourBHex;
-        characterEntity.pawType = this.pawType;
-        characterEntity.eyeType = this.eyeType;
-        characterEntity.eyeColour = this.eyeColour;
-        characterEntity._leftEyeColourHex = this._leftEyeColourHex;
-        characterEntity._rightEyeColourHex = this._rightEyeColourHex;
-        characterEntity.peltType = this.peltType;
-        characterEntity.characterDisposition = Object.assign({}, this.characterDisposition);
-        characterEntity.dialogue = this.dialogue;
-        characterEntity.sexualOrientation = this.sexualOrientation;
-        return characterEntity;
+        clone.previousEquipment = Object.assign({}, this.previousEquipment);
+        clone.defaultDisposition = Object.assign({}, this.defaultDisposition);
+        clone.furColourA = this.furColourA;
+        clone._furColourAHex = this._furColourAHex;
+        clone.furColourB = this.furColourB;
+        clone._furColourBHex = this._furColourBHex;
+        clone.pawType = this.pawType;
+        clone.eyeType = this.eyeType;
+        clone.eyeColour = this.eyeColour;
+        clone._leftEyeColourHex = this._leftEyeColourHex;
+        clone._rightEyeColourHex = this._rightEyeColourHex;
+        clone.peltType = this.peltType;
+        clone.characterDisposition = Object.assign({}, this.characterDisposition);
+        clone.dialogue = this.dialogue;
+        clone.sexualOrientation = this.sexualOrientation;
+        return clone;
     }
 
     dispose() {

@@ -4883,7 +4883,8 @@ class Game {
                 "duration":effect.getDuration(),
                 "durationInterval":effect.getDurationInterval(),
                 "intervalType":effect.getIntervalType(),
-                "intervalNth":effect.getIntervalNth()
+                "intervalNth":effect.getIntervalNth(),
+                "priority":effect.getPriority()
             }
         });
     }

@@ -165,26 +165,38 @@ class ClothingEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} id ID
-     * @return {ClothingEntity}     new ClothingEntity
+     * @param  {string} id              ID
+     * @return {ClothingEntity}         new ClothingEntity
      */
     clone(id = undefined) {
-        let clothingEntity = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
+        let clone = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
         // variables from AbstractEntity
-        clothingEntity.availableActions = Object.assign({}, this.availableActions);
-        clothingEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clothingEntity.specialProperties = new Set(this.specialProperties);
-        clothingEntity.defaultAction = this.defaultAction;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        clothingEntity.weight.copyFrom(this.weight);
-        clothingEntity.price.copyFrom(this.price);
-        clothingEntity.health.copyFrom(this.health);
-        return clothingEntity;
+        clone.weight = this.weight;
+        clone.price = this.price;
+        // variables from ClothingEntity
+        clone.armourCategory = this.armourCategory;
+        clone.armourType = this.armourType;
+        clone.armourClass = this.armourClass;
+        clone.armourClassModifier = this.armourClassModifier;
+        clone.portionMultiplier = this.portionMultiplier;
+        return clone;
     }
     /**
      * Overrides EquipmentEntity.createInstance
-     * @param  {string} id ID
-     * @return {InstancedClothingEntity}     new InstancedClothingEntity
+     * @param  {string} id                  ID
+     * @return {InstancedClothingEntity}    new InstancedClothingEntity
      */
     createInstance(id = undefined) {
         let instance = new InstancedClothingEntity(id, this);

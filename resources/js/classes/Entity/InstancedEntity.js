@@ -350,33 +350,42 @@ class InstancedEntity extends AbstractEntity {
             return this.entity.getEffects();
         }
     }
-    
+
+    /**
+     * Overrides AbstractEntity.clone
+     * @param  {string} id          ID
+     * @return {Entity}             new InstancedEntity
+     */
     clone(id = "") {
         if (!this.hasEntity()) {
             return this;
         }
-        let instancedEntity = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
+        let clone = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
         // variables from AbstractEntity
         if (this._useOwnAvailableActions) {
-            instancedEntity.availableActions = Object.assign({}, this.availableActions);
+            clone.availableActions = Object.assign({}, this.availableActions);
         }
         if (this._useOwnHiddenAvailableActions) {
-            instancedEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+            clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
         }
         if (this._useOwnSpecialProperties) {
-            instancedEntity.specialProperties = new Set(this.specialProperties);
+            clone.specialProperties = new Set(this.specialProperties);
         }
         if (this._useOwnDefaultAction) {
-            instancedEntity.defaultAction = this.defaultAction;
+            clone.defaultAction = this.defaultAction;
         }
         if (this._useOwnEffects) {
-            instancedEntity.effects = this.cloneEffects();
+            clone.effects = this.cloneEffects();
         }
-        instancedEntity.health = this.health;
-        instancedEntity.healthModifier = this.healthModifier;
-        instancedEntity.maxHealth = this.maxHealth;
-        instancedEntity.maxHealthModifier = this.maxHealthModifier;
-        return instancedEntity;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
+        clone.actionEffects = Object.assign({}, this.actionEffects);
+        return clone;
     }
     dispose() {
         this.setLocked(true);

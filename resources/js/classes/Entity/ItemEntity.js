@@ -35,18 +35,31 @@ class ItemEntity extends Entity {
         super.resetModifiers();
     }
 
+    /**
+     * Overrides Entity.clone
+     * @param  {string} id          ID
+     * @return {ItemEntity}         new ItemEntity
+     */
     clone(id = "") {
-        let itemEntity = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
+        let clone = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
         // variables from AbstractEntity
-        itemEntity.availableActions = Object.assign({}, this.availableActions);
-        itemEntity.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        itemEntity.specialProperties = new Set(this.specialProperties);
-        itemEntity.defaultAction = this.defaultAction;
+        clone.availableActions = Object.assign({}, this.availableActions);
+        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
+        clone.specialProperties = new Set(this.specialProperties);
+        clone.defaultAction = this.defaultAction;
+        clone.health = this.health;
+        clone.healthModifier = this.healthModifier;
+        clone.maxHealth = this.maxHealth;
+        clone.maxHealthModifier = this.maxHealthModifier;
+        for (effect in this.effects) {
+            clone.addEffect(effect);
+        }
         // variables from Entity
-        itemEntity.weight.copyFrom(this.weight);
-        itemEntity.price.copyFrom(this.price);
-        itemEntity.health.copyFrom(this.health);
-        return itemEntity;
+        clone.weight = this.weight;
+        clone.price = this.price;
+        // variables from ItemEntity
+        clone.setItemType(this.itemType);
+        return clone;
     }
     createInstance(id = undefined) {
         let instance = new InstancedItemEntity(id, this);
