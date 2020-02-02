@@ -4,7 +4,6 @@ class SimpleEntity {
         this.id = id;
         this.effects = new Set();
         this.instancedEffects = new Set();
-        this.instancedEffectPriorities = new Map();
         this.locked = false;
         this.enabled = true;
         SimpleEntity.set(id, this);
@@ -68,10 +67,6 @@ class SimpleEntity {
         }
         this.instancedEffects.add(instancedEffect);
         this.addEffect(instancedEffect.getEffect());
-        if (!this.instancedEffectPriorities.has(instancedEffect.priority)) {
-            this.instancedEffectPriorities.set(instancedEffect.priority, new Set());
-        }
-        this.instancedEffectPriorities.get(instancedEffect.priority).add(instancedEffect);
         return 0;
     }
     removeInstancedEffect(instancedEffect, updateChild = false) {
@@ -87,12 +82,6 @@ class SimpleEntity {
             }
         }
         this.instancedEffects.delete(instancedEffect);
-        if (this.instancedEffectPriorities.has(instancedEffect.priority)) {
-            this.instancedEffectPriorities.get(instancedEffect.priority).remove(instancedEffect);
-            if (this.instancedEffectPriorities.get(instancedEffect.priority).size == 0) {
-                this.instancedEffectPriorities.delete(instancedEffect.priority)
-            }
-        }
         if (updateChild) {
             this.removeEffect(instancedEffect.getEffect(), false);
         }
@@ -119,9 +108,6 @@ class SimpleEntity {
     }
     getInstancedEffects() {
         return this.instancedEffects;
-    }
-    getInstancedEffectPriorities() {
-        return this.instancedEffectPriorities;
     }
     hasEffect(effect) {
         if (!(effect instanceof SimpleEffect)) {
