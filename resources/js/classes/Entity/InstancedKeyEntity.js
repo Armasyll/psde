@@ -46,3 +46,4 @@ class InstancedKeyEntity extends InstancedKeyEntity {
         return 0;
     }
 }
+InstancedKeyEntity.initialize();
