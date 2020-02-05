@@ -1,4 +1,4 @@
-class InstancedKeyEntity extends InstancedKeyEntity {
+class InstancedKeyEntity extends InstancedItemEntity {
     constructor(id = undefined, entity = undefined, owner = undefined) {
         super(id, entity);
         if (!(this.entity instanceof KeyEntity)) {
