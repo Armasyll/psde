@@ -873,6 +873,18 @@ class Game {
                     Game.entityLocRotWorker.postMessage({ cmd: "toggleEntities" });
                     break;
                 }
+                case "triggerScheduledEffect": {
+                    if (!Effect.has(e.data.msg["effectID"])) {
+                        return 2;
+                    }
+                    if (!AbstractEntity.has(e.data.msg["abstractEntityID"])) {
+                        return 2;
+                    }
+                    let effect = Effect.get(e.data.msg["effectID"]);
+                    let abstractEntity = AbstractEntity.get(e.data.msg["abstractEntityID"]);
+                    abstractEntity.applyEffect(effect);
+                    break;
+                }
                 case "tick": {
                     Game.currentTick = e.data.msg;
                     break;
@@ -925,6 +937,7 @@ class Game {
                     Game.importDefaultMaterials();
                     Game.importDefaultMeshes();
                     Game.importEffects();
+                    Game.importClasses();
                     Game.importItems();
                     Game.importCosmetics();
                     Game.importFurniture();
@@ -1838,6 +1851,9 @@ class Game {
     }
     static importEffects() {
         return Game.importScript("resources/js/effects.js");
+    }
+    static importClasses() {
+        return Game.importScript("resources/js/classes.js");
     }
     static importItems() {
         return Game.importScript("resources/js/items.js");

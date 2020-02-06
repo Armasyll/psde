@@ -15,6 +15,13 @@ class Effect {
          */
         this.modifiers = {};
         this.statusType = DamageEnum.BLUDGEONING;
+
+        /**
+         * How the effect can be triggered; Time-based (INTERVAL,) Action-based (ACTION,) or Area-based (AREA.)
+         * TODO: Figure out how to implement area-based triggers :v
+         */
+        this.trigger = TriggerEnum.INTERVAL;
+
         /**
          * Duration in ticks; -1 is indefinite, 0 is one-and-done
          */
@@ -66,7 +73,7 @@ class Effect {
         }
         if (this.allowedProperty(property)) {
             if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
-                this.modifiers[property] = {0:operation, 1:modification};
+                this.modifiers[property] = {"operation":operation, "modification":modification};
             }
         }
         return this;
@@ -87,49 +94,52 @@ class Effect {
             return 1;
         }
         let value = 0;
-        switch (this.modifiers[property][0]) {
+        if (!(typeof source[property] == "number")) {
+            return value;
+        }
+        switch (this.modifiers[property]["operation"]) {
             case OperationsEnum.EQUALS: {
-                if (typeof this.modifiers[property][1] == "function") {
-                    value = this.modifiers[property][1](source);
+                if (typeof this.modifiers[property]["modification"] == "function") {
+                    value = this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = this.modifiers[property][1];
+                    value = this.modifiers[property]["modification"];
                 }
                 break;
             }
             case OperationsEnum.ADD: {
-                if (typeof this.modifiers[property][1] == "function") {
-                    value = source[property] + this.modifiers[property][1](source);
+                if (typeof this.modifiers[property]["modification"] == "function") {
+                    value = source[property] + this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] + this.modifiers[property][1];
+                    value = source[property] + this.modifiers[property]["modification"];
                 }
                 break;
             }
             case OperationsEnum.SUBTRACT: {
-                if (typeof this.modifiers[property][1] == "function") {
-                    value = source[property] - this.modifiers[property][1](source);
+                if (typeof this.modifiers[property]["modification"] == "function") {
+                    value = source[property] - this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] - this.modifiers[property][1];
+                    value = source[property] - this.modifiers[property]["modification"];
                 }
                 break;
             }
             case OperationsEnum.MULTIPLY: {
-                if (typeof this.modifiers[property][1] == "function") {
-                    value = source[property] * this.modifiers[property][1](source);
+                if (typeof this.modifiers[property]["modification"] == "function") {
+                    value = source[property] * this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] * this.modifiers[property][1];
+                    value = source[property] * this.modifiers[property]["modification"];
                 }
                 break;
             }
             case OperationsEnum.DIVIDE: {
-                if (typeof this.modifiers[property][1] == "function") {
-                    value = source[property] / this.modifiers[property][1](source);
+                if (typeof this.modifiers[property]["modification"] == "function") {
+                    value = source[property] / this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] / this.modifiers[property][1];
+                    value = source[property] / this.modifiers[property]["modification"];
                 }
                 break;
             }
@@ -226,10 +236,10 @@ class Effect {
     }
 
     dispose() {
-        for (let modifier in this.modifiers) {
-            delete this.modifiers[modifier][0]
-            delete this.modifiers[modifier][1]
-            delete this.modifiers[modifier];
+        for (let property in this.modifiers) {
+            delete this.modifiers[property]["operation"]
+            delete this.modifiers[property]["modification"]
+            delete this.modifiers[property];
         }
         Effect.remove(this.id);
         return undefined;
@@ -301,8 +311,8 @@ class Effect {
             return null;
         }
         let jsonObject = JSON.parse(JSON.stringify(effect));
-        for (let modifier in effect.modifiers) {
-            jsonObject.modifiers[modifier][1] = effect.modifiers[modifier][1].toString();
+        for (let property in effect.modifiers) {
+            jsonObject.modifiers[property]["modification"] = effect.modifiers[property]["modification"].toString();
         }
         return JSON.stringify(jsonObject);
     }
@@ -328,43 +338,43 @@ class Effect {
         }
         console.info(`Effect (${effect.getID()}) has been created.`);
         if (json.hasOwnProperty("modifiers")) {
-            for (let modifier in json.modifiers) {
+            for (let property in json.modifiers) {
                 let modification = null;
-                switch (typeof json.modifiers[modifier][1]) {
+                switch (typeof json.modifiers[property]["modification"]) {
                     case "number": {
-                        modification = typeof json.modifiers[modifier][1];
-                        console.info(`Supplied modifier for (${modifier}) was a valid number.`);
+                        modification = typeof json.modifiers[property]["modification"];
+                        console.info(`Supplied modifier for (${property}) was a valid number.`);
                         break;
                     }
                     case "boolean": {
-                        modification = typeof json.modifiers[modifier][1];
-                        console.info(`Supplied modifier for (${modifier}) was a valid boolean.`);
+                        modification = typeof json.modifiers[property]["modification"];
+                        console.info(`Supplied modifier for (${property}) was a valid boolean.`);
                         break;
                     }
                     case "string": {
                         try {
                             // I know it's ugly, but it works.
-                            modification = new Function('return ' + json.modifiers[modifier][1])();
+                            modification = new Function('return ' + json.modifiers[property]["modification"])();
                         }
                         catch (exception) {
                             effect.dispose();
-                            console.warn(`Supplied modifier for (${modifier}) was not a valid function.`);
+                            console.warn(`Supplied modifier for (${property}) was not a valid function.`);
                             console.groupEnd();
                             return 2;
                         }
                         finally {
-                            console.info(`Supplied modifier for (${modifier}) was a valid functions.`);
+                            console.info(`Supplied modifier for (${property}) was a valid functions.`);
                         }
                         break;
                     }
                     default: {
                         effect.dispose();
-                        console.warn(`Supplied modifier for (${modifier}) was not a valid type.`);
+                        console.warn(`Supplied modifier for (${property}) was not a valid type.`);
                         console.groupEnd();
                         return 2;
                     }
                 }
-                effect.addModifier(modifier, json.modifiers[modifier][0], modification);
+                effect.addModifier(property, json.modifiers[property]["operation"], modification);
             }
         }
         if (json.hasOwnProperty("statusType")) {

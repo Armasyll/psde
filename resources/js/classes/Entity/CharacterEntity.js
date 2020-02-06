@@ -9,16 +9,15 @@ class CharacterEntity extends CreatureEntity {
      * @param  {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type; dependant upon creatureType
      * @param  {SexEnum} [sex] SexEnum
      * @param  {number} [age] Age
-     * @param  {CharacterClassEnum} [characterClass] CharacterClassEnum
+     * @param  {CharacterClass} [characterClass] CharacterClass
      */
-    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, characterClass = CharacterClassEnum.CLASSLESS) {
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, characterClass = CharacterClass.get("classless")) {
         super(id, name, description, iconID, creatureType, creatureSubType, sex, age);
         this.entityType = EntityEnum.CHARACTER;
         this.surname = "";
         this.nickname = "";
         this.gender = SexEnum.MALE;
         this.handedness = HandednessEnum.RIGHT;
-        this.characterClass = CharacterClassEnum.CLASSLESS;
         /**
          * Attached cosmetics
          * @type {<number, [Cosmetics]>} Bone ID and Cosmetic
@@ -146,6 +145,12 @@ class CharacterEntity extends CreatureEntity {
 
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
 
+        /**
+         * @type {object} {CharacterClass: number}
+         */
+        this.characterClasses = {};
+        this.primaryCharacterClass = null;
+
         this.setName(name);
         this.setIcon(iconID);
         this.setClass(characterClass);
@@ -157,6 +162,7 @@ class CharacterEntity extends CreatureEntity {
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
         this.createInventory();
+        this.setClass(characterClass);
         this.generateProperties();
         this.generateBaseStats(true);
         this.generateAdditionalStats();
@@ -193,17 +199,6 @@ class CharacterEntity extends CreatureEntity {
     }
     getSurname() {
         return this.getLastName();
-    }
-
-    setClass(characterClass) {
-        if (CharacterClassEnum.properties.hasOwnProperty(characterClass)) {
-            this.characterClass = characterClass;
-            return 0;
-        }
-        return 2;
-    }
-    getClass() {
-        return this.characterClass;
     }
 
     getEquipment() {
@@ -919,6 +914,113 @@ class CharacterEntity extends CreatureEntity {
         return 0;
     }
 
+    setClass(characterClass) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 1;
+        }
+        if (!this.hasClass(characterClass)) {
+            this.addClass(characterClass);
+        }
+        this.primaryCharacterClass = characterClass;
+        return 0;
+    }
+    addClass(characterClass) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 1;
+        }
+        if (this.characterClasses.hasOwnProperty(characterClass)) {
+            return 0;
+        }
+        if (this.primaryCharacterClass == null) {
+            this.primaryCharacterClass = characterClass;
+        }
+        this.characterClasses[characterClass] = 1;
+        return 0;
+    }
+    removeClass(characterClass) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 1;
+        }
+        if (characterClass = this.primaryCharacterClass) {
+            return 0;
+        }
+        if (this.characterClasses.hasOwnProperty(characterClass)) {
+            delete this.characterClasses[characterClass];
+        }
+        return 0;
+    }
+    modifyClassLevel(characterClass, level = 1) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 1;
+        }
+        if (this.characterClasses.hasOwnProperty(characterClass)) {
+            level = Game.Tools.filterInteger(level);
+            let number = this.characterClasses[characterClass] + level;
+            if (number < 1) {
+                number = 1;
+            }
+            else if (number > Number.MAX_SAFE_INTEGER) {
+                number = Number.MAX_SAFE_INTEGER;
+            }
+            this.characterClasses[characterClass] = number;
+            return 0;
+        }
+        return 1;
+    }
+    /**
+     * @returns {Map} Map of class levels to their classes
+     */
+    getClasses() {
+        return this.characterClasses;
+    }
+    getClassLevel(characterClass) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 0;
+        }
+        if (this.characterClasses.hasOwnProperty(characterClass)) {
+            return this.characterClasses[characterClass];
+        }
+        return 0;
+    }
+    hasClass(characterClass) {
+        if (characterClass instanceof CharacterClass) {}
+        else if (CharacterClass.has(characterClass)) {
+            characterClass = CharacterClass.get(characterClass);
+        }
+        else {
+            return 1;
+        }
+        return this.characterClasses.hasOwnProperty(characterClass);
+    }
+    clearClasses() {
+        for (let characterClass in this.characterClasses) {
+            this.removeClass(characterClass);
+        }
+        delete this.characterClasses[this.primaryCharacterClass];
+        this.addClass("classless");
+        return 0;
+    }
+
     resetModifiers() {
         super.resetModifiers();
         return 0;
@@ -1367,6 +1469,8 @@ class CharacterEntity extends CreatureEntity {
         clone.characterDisposition = Object.assign({}, this.characterDisposition);
         clone.dialogue = this.dialogue;
         clone.sexualOrientation = this.sexualOrientation;
+        clone.characterClasses = new Map(this.characterClasses);
+        clone.primaryCharacterClass = this.primaryCharacterClass;
         return clone;
     }
 
@@ -1376,6 +1480,7 @@ class CharacterEntity extends CreatureEntity {
         }
         this.setLocked(true);
         this.setEnabled(false);
+        this.clearClasses();
         CharacterEntity.remove(this.id);
         super.dispose();
         return undefined;

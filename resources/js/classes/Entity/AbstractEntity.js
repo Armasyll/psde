@@ -333,12 +333,12 @@ class AbstractEntity {
         if (Game.debugMode) console.log(`Running ${this.getID()}.addEffect(${effect.getID()})`);
         let effectID = effect.getID()
         if (this.effects.hasOwnProperty(effectID)) {
-            if (this.effects[effectID][0] < effect.getStackCount()) {
-                this.effects[effectID][0] += 1;
+            if (this.effects[effectID]["currentStack"] < effect.getStackCount()) {
+                this.effects[effectID]["currentStack"] += 1;
             }
         }
         else {
-            this.effects[effectID] = {0:1, 1:0, 2:0};
+            this.effects[effectID] = {"currentStack":1, "timeStart":0, "timeEnd":0};
         }
         let i = effect.getPriority();
         if (!this.effectsPriority.hasOwnProperty(i)) {
@@ -362,15 +362,15 @@ class AbstractEntity {
         let i = effect.getPriority();
         if (this.effectsPriority.hasOwnProperty(i)) {
             if (this.effectsPriority[i].has(effectID) && this.effects.hasOwnProperty(effectID)) {
-                if (this.effects[effectID][0] == 1) {
-                    delete this.effects[effectID][2];
-                    delete this.effects[effectID][1];
-                    delete this.effects[effectID][0];
+                if (this.effects[effectID]["currentStack"] == 1) {
+                    delete this.effects[effectID]["timeEnd"];
+                    delete this.effects[effectID]["timeStart"];
+                    delete this.effects[effectID]["currentStack"];
                     delete this.effects[effectID];
                     this.effectsPriority[i].delete(effectID);
                 }
                 else {
-                    this.effects[effectID][0] -= 1;
+                    this.effects[effectID]["currentStack"] -= 1;
                 }
             }
             if (this.effectsPriority[i].size == 0) {
@@ -416,7 +416,7 @@ class AbstractEntity {
         }
         if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
         for (let property in effect.getModifiers()) { // for every property modified
-            for (let i = 0; i < this.effects[effect.getID()][0]; i++) { // we apply for each number in the stack
+            for (let i = 0; i < this.effects[effect.getID()]["currentStack"]; i++) { // we apply for each number in the stack
                 switch (property) {
                     case "healthModifier": {
                         this.setHealth(effect.calculateModifier(property, this));
@@ -427,7 +427,17 @@ class AbstractEntity {
                         break;
                     }
                     default: {
-                        this[property] = effect.calculateModifier(property, this);
+                        if (typeof this[property] == "number") {
+                            this[property] = effect.calculateModifier(property, this);
+                        }
+                        else if (this[property] instanceof Set) {
+                            if (effect.modifiers[property]["operation"] == OperationsEnum.ADD) {
+                                this[property].add(effect.modifiers[property]["modification"]);
+                            }
+                            else if (effect.modifiers[property]["operation"] == OperationsEnum.SUBTRACT) {
+                                this[property].delete(effect.modifiers[property]["modification"]);
+                            }
+                        }
                     }
                 }
             }

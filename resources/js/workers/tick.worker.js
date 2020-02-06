@@ -739,7 +739,7 @@ function triggerScheduledEffects() {
     });
 }
 function sendScheduledEffect(effectID, abstractEntityID) {
-    postMessage({"cmd":"sendScheduledEffect", "msg":{"effectID":effectID, "abstractEntityID":abstractEntityID}});
+    postMessage({"cmd":"triggerScheduledEffect", "msg":{"effectID":effectID, "abstractEntityID":abstractEntityID}});
 }
 
 startFunction();

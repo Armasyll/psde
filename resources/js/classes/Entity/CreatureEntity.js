@@ -160,6 +160,8 @@ class CreatureEntity extends Entity {
         this.proficiencies = new Map();
         this.proficiencyBonusModifier = 0;
 
+        this.conditions = new Set();
+
         this.setSex(sex);
         this.setCreatureType(creatureType);
         this.createInventory();
@@ -645,6 +647,43 @@ class CreatureEntity extends Entity {
         return 0;
     }
 
+    addCondition(conditionEnum) {
+        if (ConditionEnum.properties.hasOwnProperty(conditionEnum)) {}
+        else if (ConditionEnum.hasOwnProperty(conditionEnum)) {
+            conditionEnum = ConditionEnum[conditionEnum];
+        }
+        else {
+            return 1;
+        }
+        this.conditions.add(conditionEnum);
+        return 0;
+    }
+    removeCondition(conditionEnum) {
+        if (ConditionEnum.properties.hasOwnProperty(conditionEnum)) {}
+        else if (ConditionEnum.hasOwnProperty(conditionEnum)) {
+            conditionEnum = ConditionEnum[conditionEnum];
+        }
+        else {
+            return 1;
+        }
+        this.conditions.delete(conditionEnum);
+        return 0;
+    }
+    hasCondition(conditionEnum) {
+        if (ConditionEnum.properties.hasOwnProperty(conditionEnum)) {}
+        else if (ConditionEnum.hasOwnProperty(conditionEnum)) {
+            conditionEnum = ConditionEnum[conditionEnum];
+        }
+        else {
+            return false;
+        }
+        return this.conditions.has(conditionEnum);
+    }
+    clearConditions() {
+        this.conditions.clear();
+        return 0;
+    }
+
     resetModifiers() {
         super.resetModifiers();
         this.hungerModifier = 0;
@@ -660,6 +699,34 @@ class CreatureEntity extends Entity {
     }
     getProficiencyBonus() {
         return Math.floor((this.level + 7) / 4) + this.proficiencyBonusModifier;
+    }
+    getAbility(abilityEnum) {
+        switch (abilityEnum) {
+            case AbilityEnum.STRENGTH: {
+                return this.getStrength();
+                break;
+            }
+            case AbilityEnum.DEXTERITY: {
+                return this.getDexterity();
+                break;
+            }
+            case AbilityEnum.CONSTITUTION: {
+                return this.getConstitution();
+                break;
+            }
+            case AbilityEnum.INTELLIGENCE: {
+                return this.getIntelligence();
+                break;
+            }
+            case AbilityEnum.WISDOM: {
+                return this.getWisdom();
+                break;
+            }
+            case AbilityEnum.CHARISMA: {
+                return this.getCharisma();
+                break;
+            }
+        }
     }
     generateProperties(firstTime = false) {
         if (this.creatureType == CreatureType.HUMANOID) {
@@ -742,6 +809,9 @@ class CreatureEntity extends Entity {
         clone.height = this.height;
         clone.width = this.width;
         clone.predator = this.predator;
+        clone.proficiencies = new Map(this.proficiencies);
+        clone.proficiencyBonusModifier = this.proficiencyBonusModifier;
+        clone.conditions = new Set(this.conditions);
         return clone;
     }
     dispose() {
@@ -751,6 +821,8 @@ class CreatureEntity extends Entity {
         this.setLocked(true);
         this.setEnabled(false);
         CreatureEntity.remove(this.id);
+        this.clearProficiencies();
+        this.clearConditions();
         super.dispose();
         return undefined;
     }

@@ -1139,12 +1139,12 @@ let SpellTypeEnum = {
     }
 };
 let ArmourCategoryEnum = {
-    LIGHT_ARMOUR: 0,
     LIGHT_ARMOR: 0,
-    MEDIUM_ARMOUR: 1,
+    LIGHT_ARMOUR: 0,
     MEDIUM_ARMOR: 1,
-    HEAVY_ARMOUR: 2,
+    MEDIUM_ARMOUR: 1,
     HEAVY_ARMOR: 2,
+    HEAVY_ARMOUR: 2,
     SHIELD: 3,
     properties: {
         0: {
@@ -2037,6 +2037,52 @@ let AbilityEnum = {
         }
     }
 };
+let ProficiencyTypeEnum = {
+    ARMOUR: 0,
+    WEAPONS: 1,
+    SKILLS: 2,
+    SAVING_THROWS: 3,
+    TOOLS_AND_KITS: 4,
+    VEHICLES: 5,
+    LANGUAGES: 6,
+    properties: {
+        0: {
+            name: "Armor",
+            value: 0,
+            key: "ARMOUR"
+        },
+        1: {
+            name: "Weapon",
+            value: 1,
+            key: "WEAPONS"
+        },
+        2: {
+            name: "Skills",
+            value: 2,
+            key: "SKILLS"
+        },
+        3: {
+            name: "Saving Throws",
+            value: 3,
+            key: "SAVING_THROWS"
+        },
+        4: {
+            name: "Tools and Kits",
+            value: 4,
+            key: "TOOLS_AND_KITS"
+        },
+        5: {
+            name: "Vehicles",
+            value: 5,
+            key: "VEHICLES"
+        },
+        6: {
+            name: "Languages",
+            value: 6,
+            key: "LANGUAGES"
+        }
+    }
+}
 let ProficiencyEnum = {
     NONE: 0,
     ABYSSAL: 1,
@@ -2084,7 +2130,7 @@ let ProficiencyEnum = {
     HALFLING: 43,
     HAND_CROSSBOW: 44,
     HANDAXE: 45,
-    HEAVY_ARMOR: 46,
+    HEAVY_ARMOUR: 46,
     HEAVY_CROSSBOW: 47,
     HERBALISM_KIT: 48,
     HISTORY: 49,
@@ -2099,7 +2145,7 @@ let ProficiencyEnum = {
     LANCE: 58,
     LAND_VEHICLES: 59,
     LEATHERWORKERS_TOOLS: 60,
-    LIGHT_ARMOR: 61,
+    LIGHT_ARMOUR: 61,
     LIGHT_CROSSBOW: 62,
     LIGHT_HAMMER: 63,
     LONGBOW: 64,
@@ -2111,7 +2157,7 @@ let ProficiencyEnum = {
     MASONS_TOOLS: 70,
     MAUL: 71,
     MEDICINE: 72,
-    MEDIUM_ARMOR: 73,
+    MEDIUM_ARMOUR: 73,
     MORNINGSTAR: 74,
     NATURE: 75,
     NAVIGATORS_TOOLS: 76,
@@ -2157,6 +2203,13 @@ let ProficiencyEnum = {
     WEAVERS_TOOLS: 116,
     WHIP: 117,
     WOODCARVERS_TOOLS: 118,
+    FINESSE_WEAPONS: 119,
+    SPECIAL_WEAPONS: 120,
+    ARTISANS_TOOLS: 121,
+    IMPROVISED_WEAPONS: 122,
+    ENDURANCE: 123,
+    STREETWISE: 124,
+    ANY: 252,
     properties: {
         0: {
             name: "None",
@@ -2166,595 +2219,1096 @@ let ProficiencyEnum = {
         1: {
             name: "Abyssal",
             value: 1,
-            key: "ABYSSAL"
+            key: "ABYSSAL",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         2: {
             name: "Acrobatics",
             value: 2,
-            key: "ACROBATICS"
+            key: "ACROBATICS",
+            type: ProficiencyTypeEnum.SKILLS
         },
         3: {
             name: "Alchemist's Supplies",
             value: 3,
-            key: "ALCHEMISTS_SUPPLIES"
+            key: "ALCHEMISTS_SUPPLIES",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         4: {
             name: "Animal Handling",
             value: 4,
-            key: "ANIMAL_HANDLING"
+            key: "ANIMAL_HANDLING",
+            type: ProficiencyTypeEnum.SKILLS
         },
         5: {
             name: "Arcana",
             value: 5,
-            key: "ARCANA"
+            key: "ARCANA",
+            type: ProficiencyTypeEnum.SKILLS
         },
         6: {
             name: "Athletics",
             value: 6,
-            key: "ATHLETICS"
+            key: "ATHLETICS",
+            type: ProficiencyTypeEnum.SKILLS
         },
         7: {
             name: "Bagpipes",
             value: 7,
-            key: "BAGPIPES"
+            key: "BAGPIPES",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         8: {
             name: "Battleaxe",
             value: 8,
-            key: "BATTLEAXE"
+            key: "BATTLEAXE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         9: {
             name: "Blowgun",
             value: 9,
-            key: "BLOWGUN"
+            key: "BLOWGUN",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         10: {
             name: "Brewer's Supplies",
             value: 10,
-            key: "BREWERS_SUPPLIES"
+            key: "BREWERS_SUPPLIES",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         11: {
             name: "Calligrapher's Supplies",
             value: 11,
-            key: "CALLIGRAPHERS_SUPPLIES"
+            key: "CALLIGRAPHERS_SUPPLIES",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         12: {
             name: "Carpenter's Tools",
             value: 12,
-            key: "CARPENTERS_TOOLS"
+            key: "CARPENTERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         13: {
             name: "Cartographer's Tools",
             value: 13,
-            key: "CARTOGRAPHERS_TOOLS"
+            key: "CARTOGRAPHERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         14: {
             name: "Celestial",
             value: 14,
-            key: "CELESTIAL"
+            key: "CELESTIAL",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         15: {
             name: "Club",
             value: 15,
-            key: "CLUB"
+            key: "CLUB",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         16: {
             name: "Cobbler's Tools",
             value: 16,
-            key: "COBBLERS_TOOLS"
+            key: "COBBLERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         17: {
             name: "Common",
             value: 17,
-            key: "COMMON"
+            key: "COMMON",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         18: {
             name: "Cook's Utensils",
             value: 18,
-            key: "COOKS_UTENSILS"
+            key: "COOKS_UTENSILS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         19: {
             name: "Dagger",
             value: 19,
-            key: "DAGGER"
+            key: "DAGGER",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         20: {
             name: "Dart",
             value: 20,
-            key: "DART"
+            key: "DART",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         21: {
             name: "Deception",
             value: 21,
-            key: "DECEPTION"
+            key: "DECEPTION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         22: {
             name: "Deep Speech",
             value: 22,
-            key: "DEEP_SPEECH"
+            key: "DEEP_SPEECH",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         23: {
             name: "Dice Set",
             value: 23,
-            key: "DICE_SET"
+            key: "DICE_SET",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         24: {
             name: "Disguise Kit",
             value: 24,
-            key: "DISGUISE_KIT"
+            key: "DISGUISE_KIT",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         25: {
             name: "Draconic",
             value: 25,
-            key: "DRACONIC"
+            key: "DRACONIC",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         26: {
             name: "Dragonchess Set",
             value: 26,
-            key: "DRAGONCHESS_SET"
+            key: "DRAGONCHESS_SET",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         27: {
             name: "Drum",
             value: 27,
-            key: "DRUM"
+            key: "DRUM",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         28: {
             name: "Dulcimer",
             value: 28,
-            key: "DULCIMER"
+            key: "DULCIMER",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         29: {
             name: "Dwarvish",
             value: 29,
-            key: "DWARVISH"
+            key: "DWARVISH",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         30: {
             name: "Elvish",
             value: 30,
-            key: "ELVISH"
+            key: "ELVISH",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         31: {
             name: "Flail",
             value: 31,
-            key: "FLAIL"
+            key: "FLAIL",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         32: {
             name: "Flute",
             value: 32,
-            key: "FLUTE"
+            key: "FLUTE",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         33: {
             name: "Forgery Kit",
             value: 33,
-            key: "FORGERY_KIT"
+            key: "FORGERY_KIT",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         34: {
             name: "Giant",
             value: 34,
-            key: "GIANT"
+            key: "GIANT",
+            type: ProficiencyTypeEnum.LANGAUGES
         },
         35: {
             name: "Glaive",
             value: 35,
-            key: "GLAIVE"
+            key: "GLAIVE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         36: {
             name: "Glassblower's Tools",
             value: 36,
-            key: "GLASSBLOWERS_TOOLS"
+            key: "GLASSBLOWERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         37: {
             name: "Gnomish",
             value: 37,
-            key: "GNOMISH"
+            key: "GNOMISH",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         38: {
             name: "Goblin",
             value: 38,
-            key: "GOBLIN"
+            key: "GOBLIN",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         39: {
             name: "Greataxe",
             value: 39,
-            key: "GREATAXE"
+            key: "GREATAXE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         40: {
             name: "Greatclub",
             value: 40,
-            key: "GREAT_CLUB"
+            key: "GREAT_CLUB",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         41: {
             name: "Greatsword",
             value: 41,
-            key: "GREATSWORD"
+            key: "GREATSWORD",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         42: {
             name: "Halberd",
             value: 42,
-            key: "HALBERD"
+            key: "HALBERD",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         43: {
             name: "Halfling",
             value: 43,
-            key: "HALFLING"
+            key: "HALFLING",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         44: {
             name: "Hand Crossbow",
             value: 44,
-            key: "HAND_CROSSBOW"
+            key: "HAND_CROSSBOW",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         45: {
             name: "Handaxe",
             value: 45,
-            key: "HANDAXE"
+            key: "HANDAXE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         46: {
             name: "Heavy Armor",
             value: 46,
-            key: "HEAVY_ARMOR"
+            key: "HEAVY_ARMOUR",
+            type: ProficiencyTypeEnum.ARMOUR
         },
         47: {
             name: "Heavy Crossbow",
             value: 47,
-            key: "HEAVY_CROSSBOW"
+            key: "HEAVY_CROSSBOW",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         48: {
             name: "Herbalism Kit",
             value: 48,
-            key: "HERBALISM_KIT"
+            key: "HERBALISM_KIT",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         49: {
             name: "History",
             value: 49,
-            key: "HISTORY"
+            key: "HISTORY",
+            type: ProficiencyTypeEnum.SKILLS
         },
         50: {
             name: "Horn",
             value: 50,
-            key: "HORN"
+            key: "HORN",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         51: {
             name: "Improvised Weapon",
             value: 51,
-            key: "IMPROVISED_WEAPON"
+            key: "IMPROVISED_WEAPON",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         52: {
             name: "Infernal",
             value: 52,
-            key: "INFERNAL"
+            key: "INFERNAL",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         53: {
             name: "Insight",
             value: 53,
-            key: "INSIGHT"
+            key: "INSIGHT",
+            type: ProficiencyTypeEnum.SKILLS
         },
         54: {
             name: "Intimidation",
             value: 54,
-            key: "INTIMIDATION"
+            key: "INTIMIDATION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         55: {
             name: "Investigation",
             value: 55,
-            key: "INVESTIGATION"
+            key: "INVESTIGATION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         56: {
             name: "Javelin",
             value: 56,
-            key: "JAVELIN"
+            key: "JAVELIN",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         57: {
             name: "Jeweler's Tools",
             value: 57,
-            key: "JEWELERS_TOOLS"
+            key: "JEWELERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         58: {
             name: "Lance",
             value: 58,
-            key: "LANCE"
+            key: "LANCE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         59: {
             name: "Land Vehicles",
             value: 59,
-            key: "LAND_VEHICLES"
+            key: "LAND_VEHICLES",
+            type: ProficiencyTypeEnum.VEHICLES
         },
         60: {
             name: "Leatherworker's Tools",
             value: 60,
-            key: "LEATHERWORKERS_TOOLS"
+            key: "LEATHERWORKERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         61: {
             name: "Light Armor",
             value: 61,
-            key: "LIGHT_ARMOR"
+            key: "LIGHT_ARMOUR",
+            type: ProficiencyTypeEnum.ARMOUR
         },
         62: {
             name: "Light Crossbow",
             value: 62,
-            key: "LIGHT_CROSSBOW"
+            key: "LIGHT_CROSSBOW",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         63: {
             name: "Light Hammer",
             value: 63,
-            key: "LIGHT_HAMMER"
+            key: "LIGHT_HAMMER",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         64: {
             name: "Longbow",
             value: 64,
-            key: "LONGBOW"
+            key: "LONGBOW",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         65: {
             name: "Longsword",
             value: 65,
-            key: "LONGSWORD"
+            key: "LONGSWORD",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         66: {
             name: "Lute",
             value: 66,
-            key: "LUTE"
+            key: "LUTE",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         67: {
             name: "Lyre",
             value: 67,
-            key: "LYRE"
+            key: "LYRE",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         68: {
             name: "Mace",
             value: 68,
-            key: "MACE"
+            key: "MACE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         69: {
             name: "Martial Weapons",
             value: 69,
-            key: "MARTIAL_WEAPONS"
+            key: "MARTIAL_WEAPONS",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         70: {
             name: "Mason's Tools",
             value: 70,
-            key: "MASONS_TOOLS"
+            key: "MASONS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         71: {
             name: "Maul",
             value: 71,
-            key: "MAUL"
+            key: "MAUL",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         72: {
             name: "Medicine",
             value: 72,
-            key: "MEDICINE"
+            key: "MEDICINE",
+            type: ProficiencyTypeEnum.SKILLS
         },
         73: {
             name: "Medium Armor",
             value: 73,
-            key: "MEDIUM_ARMOR"
+            key: "MEDIUM_ARMOUR",
+            type: ProficiencyTypeEnum.ARMOUR
         },
         74: {
             name: "Morningstar",
             value: 74,
-            key: "MORNINGSTAR"
+            key: "MORNINGSTAR",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         75: {
             name: "Nature",
             value: 75,
-            key: "NATURE"
+            key: "NATURE",
+            type: ProficiencyTypeEnum.SKILLS
         },
         76: {
             name: "Navigator's Tools",
             value: 76,
-            key: "NAVIGATORS_TOOLS"
+            key: "NAVIGATORS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         77: {
             name: "Net",
             value: 77,
-            key: "NET"
+            key: "NET",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         78: {
             name: "Orc",
             value: 78,
-            key: "ORC"
+            key: "ORC",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         79: {
             name: "Painter's Supplies",
             value: 79,
-            key: "PAINTERS_SUPPLIES"
+            key: "PAINTERS_SUPPLIES",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         80: {
             name: "Pan Flute",
             value: 80,
-            key: "PAN_FLUTE"
+            key: "PAN_FLUTE",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         81: {
             name: "Perception",
             value: 81,
-            key: "PERCEPTION"
+            key: "PERCEPTION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         82: {
             name: "Performance",
             value: 82,
-            key: "PERFORMANCE"
+            key: "PERFORMANCE",
+            type: ProficiencyTypeEnum.SKILLS
         },
         83: {
             name: "Persuasion",
             value: 83,
-            key: "PERSUASION"
+            key: "PERSUASION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         84: {
             name: "Pike",
             value: 84,
-            key: "PIKE"
+            key: "PIKE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         85: {
             name: "Playing Card Set",
             value: 85,
-            key: "PLAYING_CARD_SET"
+            key: "PLAYING_CARD_SET",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         86: {
             name: "Poisoner's kit",
             value: 86,
-            key: "POISONERS_KIT"
+            key: "POISONERS_KIT",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         87: {
             name: "Potter's Tools",
             value: 87,
-            key: "POTTERS_TOOLS"
+            key: "POTTERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         88: {
             name: "Primordial",
             value: 88,
-            key: "PRIMORDIAL"
+            key: "PRIMORDIAL",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         89: {
             name: "Quarterstaff",
             value: 89,
-            key: "QUARTERSTAFF"
+            key: "QUARTERSTAFF",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         90: {
             name: "Rapier",
             value: 90,
-            key: "RAPIER"
+            key: "RAPIER",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         91: {
             name: "Religion",
             value: 91,
-            key: "RELIGION"
+            key: "RELIGION",
+            type: ProficiencyTypeEnum.SKILLS
         },
         92: {
             name: "Scimitar",
             value: 92,
-            key: "SCIMITAR"
+            key: "SCIMITAR",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         93: {
             name: "Shawm",
             value: 93,
-            key: "SHAWM"
+            key: "SHAWM",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         94: {
             name: "Shields",
             value: 94,
-            key: "SHIELDS"
+            key: "SHIELDS",
+            type: ProficiencyTypeEnum.ARMOUR
         },
         95: {
             name: "Shortbow",
             value: 95,
-            key: "SHORTBOW"
+            key: "SHORTBOW",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         96: {
             name: "Shortsword",
             value: 96,
-            key: "SHORTSWORD"
+            key: "SHORTSWORD",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         97: {
             name: "Sickle",
             value: 97,
-            key: "SICKLE"
+            key: "SICKLE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         98: {
             name: "Simple Weapons",
             value: 98,
-            key: "SIMPLE_WEAPONS"
+            key: "SIMPLE_WEAPONS",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         99: {
             name: "Sleight of Hand",
             value: 99,
-            key: "SLEIGHT_OF_HAND"
+            key: "SLEIGHT_OF_HAND",
+            type: ProficiencyTypeEnum.SKILLS
         },
         100: {
             name: "Sling",
             value: 100,
-            key: "SLING"
+            key: "SLING",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         101: {
             name: "Smith's Tools",
             value: 101,
-            key: "SMITHS_TOOLS"
+            key: "SMITHS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         102: {
             name: "Spear",
             value: 102,
-            key: "SPEAR"
+            key: "SPEAR",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         103: {
             name: "Stealth",
             value: 103,
-            key: "STEALTH"
+            key: "STEALTH",
+            type: ProficiencyTypeEnum.SKILLS
         },
         104: {
             name: "Survival",
             value: 104,
-            key: "SURVIVAL"
+            key: "SURVIVAL",
+            type: ProficiencyTypeEnum.SKILLS
         },
         105: {
             name: "Sylvan",
             value: 105,
-            key: "SYLVAN"
+            key: "SYLVAN",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         106: {
             name: "Thieves' Tools",
             value: 106,
-            key: "THIEVES_TOOLS"
+            key: "THIEVES_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         107: {
             name: "Three-Dragon Ante Set",
             value: 107,
-            key: "THREE_DRAGON_ANTE_SET"
+            key: "THREE_DRAGON_ANTE_SET",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         108: {
             name: "Tinker's Tools",
             value: 108,
-            key: "TINKERS_TOOLS"
+            key: "TINKERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         109: {
             name: "Trident",
             value: 109,
-            key: "TRIDENT"
+            key: "TRIDENT",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         110: {
             name: "Unarmed Strike",
             value: 110,
-            key: "UNARMED_STRIKE"
+            key: "UNARMED_STRIKE",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         111: {
             name: "Undercommon",
             value: 111,
-            key: "UNDERCOMMON"
+            key: "UNDERCOMMON",
+            type: ProficiencyTypeEnum.LANGUAGES
         },
         112: {
             name: "Viol",
             value: 112,
-            key: "VIOL"
+            key: "VIOL",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         113: {
             name: "War Pick",
             value: 113,
-            key: "WAR_PICK"
+            key: "WAR_PICK",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         114: {
             name: "Warhammer",
             value: 114,
-            key: "WARHAMMER"
+            key: "WARHAMMER",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         115: {
             name: "Water Vehicles",
             value: 115,
-            key: "WATER_VEHICLES"
+            key: "WATER_VEHICLES",
+            type: ProficiencyTypeEnum.VEHICLES
         },
         116: {
             name: "Weaver's Tools",
             value: 116,
-            key: "WEAVERS_TOOLS"
+            key: "WEAVERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
         },
         117: {
             name: "Whip",
             value: 117,
-            key: "WHIP"
+            key: "WHIP",
+            type: ProficiencyTypeEnum.WEAPONS
         },
         118: {
             name: "Woodcarver's Tools",
             value: 118,
-            key: "WOODCARVERS_TOOLS"
+            key: "WOODCARVERS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
+        },
+        119: {
+            name: "Finesse Weapons",
+            value: 119,
+            key: "FINESSE_WEAPONS",
+            type: ProficiencyTypeEnum.WEAPONS
+        },
+        120: {
+            name: "Special Weapons",
+            value: 120,
+            key: "SPECIAL_WEAPONS",
+            type: ProficiencyTypeEnum.WEAPONS
+        },
+        121: {
+            name: "Artisan's Tools",
+            value: 121,
+            key: "ARTISANS_TOOLS",
+            type: ProficiencyTypeEnum.TOOLS_AND_KITS
+        },
+        122: {
+            name: "Improvised Weapons",
+            value: 122,
+            key: "IMPROVISED_WEAPONS",
+            type: ProficiencyTypeEnum.WEAPONS
+        },
+        123: {
+            name: "Endurance",
+            value: 123,
+            key: "ENDURANCE",
+            type: ProficiencyTypeEnum.SKILLS
+        },
+        124: {
+            name: "Streetwise",
+            value: 124,
+            key: "STREETWISE",
+            type: ProficiencyTypeEnum.SKILLS
+        },
+        252: {
+            name: "Pick Any Choice",
+            value: 252,
+            key: "ANY"
         }
     }
 };
+let ArtisanToolEnum = {
+    ALCHEMISTS_SUPPLIES: 0,
+    BREWERS_SUPPLIES: 1,
+    CALLIGRAPHERS_SUPPLIES: 2,
+    CARPENTERS_TOOLS: 3,
+    CARTOGRAPHERS_TOOLS: 4,
+    COBBLERS_TOOLS: 5,
+    COOKS_UTENSILS: 6,
+    GLASSBLOWERS_TOOLS: 7,
+    JEWELERS_TOOLS: 8,
+    LEATHERWORKERS_TOOLS: 9,
+    MASONS_TOOLS: 10,
+    PAINTERS_SUPPLIES: 11,
+    POTTERS_TOOLS: 12,
+    SMITHS_TOOLS: 13,
+    TINKERS_TOOLS: 14,
+    WEAVERS_TOOLS: 15,
+    WOODCARVERS_TOOLS: 16,
+    ANY: 252,
+    properties: {
+        0: {
+            name: "Alchemist's Supplies",
+            value: 0,
+            key: "ALCHEMISTS_SUPPLIES"
+        },
+        1: {
+            name: "Brewer's Supplies",
+            value: 1,
+            key: "BREWERS_SUPPLIES"
+        },
+        2: {
+            name: "Calligrapher's Supplies",
+            value: 2,
+            key: "CALLIGRAPHERS_SUPPLIES"
+        },
+        3: {
+            name: "Carpenter's Tools",
+            value: 3,
+            key: "CARPENTERS_TOOLS"
+        },
+        4: {
+            name: "Cartographer's Tools",
+            value: 4,
+            key: "CARTOGRAPHERS_TOOLS"
+        },
+        5: {
+            name: "Cobbler's Tools",
+            value: 5,
+            key: "COBBLERS_TOOLS"
+        },
+        6: {
+            name: "Cook's Utensils",
+            value: 6,
+            key: "COOKS_UTENSILS"
+        },
+        7: {
+            name: "Glassblower's Tools",
+            value: 7,
+            key: "GLASSBLOWERS_TOOLS"
+        },
+        8: {
+            name: "Jeweler's Tools",
+            value: 8,
+            key: "JEWELERS_TOOLS"
+        },
+        9: {
+            name: "Leatherworker's Tools",
+            value: 9,
+            key: "LEATHERWORKERS_TOOLS"
+        },
+        10: {
+            name: "Mason's Tools",
+            value: 10,
+            key: "MASONS_TOOLS"
+        },
+        11: {
+            name: "Painter's Supplies",
+            value: 11,
+            key: "PAINTERS_SUPPLIES"
+        },
+        12: {
+            name: "Potter's Tools",
+            value: 12,
+            key: "POTTERS_TOOLS"
+        },
+        13: {
+            name: "Smith's Tools",
+            value: 13,
+            key: "SMITHS_TOOLS"
+        },
+        14: {
+            name: "Tinker's Tools",
+            value: 14,
+            key: "TINKERS_TOOLS"
+        },
+        15: {
+            name: "Weaver's Tools",
+            value: 15,
+            key: "WEAVERS_TOOLS"
+        },
+        16: {
+            name: "Woodcarver's Tools",
+            value: 16,
+            key: "WOODCARVERS_TOOLS"
+        },
+        252: {
+            name: "Pick Any Choice",
+            value: 252,
+            key: "ANY"
+        }
+    }
+}
+let LanguageEnum = {
+    ABYSSAL: 0,
+    CELESTIAL: 1,
+    COMMON: 2,
+    DEEP_SPEECH: 3,
+    DRACONIC: 4,
+    DWARVISH: 5,
+    ELVISH: 6,
+    GNOMISH: 7,
+    GOBLIN: 8,
+    HALFLING: 9,
+    INFERNAL: 10,
+    ORC: 11,
+    PRIMORDIAL: 12,
+    SYLVAN: 13,
+    UNDERCOMMON: 14,
+    ANY: 252,
+    properties: {
+        0: {
+            name: "Abyssal",
+            value: 0,
+            key: "ABYSSAL"
+        },
+        1: {
+            name: "Celestial",
+            value: 1,
+            key: "CELESTIAL"
+        },
+        2: {
+            name: "Common",
+            value: 2,
+            key: "COMMON"
+        },
+        3: {
+            name: "Deep Speech",
+            value: 3,
+            key: "DEEP_SPEECH"
+        },
+        4: {
+            name: "Draconic",
+            value: 4,
+            key: "DRACONIC"
+        },
+        5: {
+            name: "Dwarvish",
+            value: 5,
+            key: "DWARVISH"
+        },
+        6: {
+            name: "Elvish",
+            value: 6,
+            key: "ELVISH"
+        },
+        7: {
+            name: "Gnomish",
+            value: 7,
+            key: "GNOMISH"
+        },
+        8: {
+            name: "Goblin",
+            value: 8,
+            key: "GOBLIN"
+        },
+        9: {
+            name: "Halfling",
+            value: 9,
+            key: "HALFLING"
+        },
+        10: {
+            name: "Infernal",
+            value: 10,
+            key: "INFERNAL"
+        },
+        11: {
+            name: "Orc",
+            value: 11,
+            key: "ORC"
+        },
+        12: {
+            name: "Primordial",
+            value: 12,
+            key: "PRIMORDIAL"
+        },
+        13: {
+            name: "Sylvan",
+            value: 13,
+            key: "SYLVAN"
+        },
+        14: {
+            name: "Undercommon",
+            value: 14,
+            key: "UNDERCOMMON"
+        },
+        252: {
+            name: "Pick Any Choice",
+            value: 252,
+            key: "ANY"
+        }
+    }
+}
+let SkillEnum = {
+    ACROBATICS: 0,
+    ANIMAL_HANDLING: 1,
+    ARCANA: 2,
+    ATHLETICS: 3,
+    DECEPTION: 4,
+    HISTORY: 5,
+    INSIGHT: 6,
+    INTIMIDATION: 7,
+    INVESTIGATION: 8,
+    MEDICINE: 9,
+    NATURE: 10,
+    PERCEPTION: 11,
+    PERFORMANCE: 12,
+    PERSUASION: 13,
+    RELIGION: 14,
+    SLEIGHT_OF_HAND: 15,
+    STEALTH: 16,
+    SURVIVAL: 17,
+    ENDURANCE: 18,
+    STREETWISE: 19,
+    ANY: 253,
+    properties: {
+        0: {
+            name: "Acrobatics",
+            value: 0,
+            key: "ACROBATICS"
+        },
+        1: {
+            name: "Animal Handling",
+            value: 1,
+            key: "ANIMAL_HANDLING"
+        },
+        2: {
+            name: "Arcana",
+            value: 2,
+            key: "ARCANA"
+        },
+        3: {
+            name: "Athletics",
+            value: 3,
+            key: "ATHLETICS"
+        },
+        4: {
+            name: "Deception",
+            value: 4,
+            key: "DECEPTION"
+        },
+        5: {
+            name: "History",
+            value: 5,
+            key: "HISTORY"
+        },
+        6: {
+            name: "Insight",
+            value: 6,
+            key: "INSIGHT"
+        },
+        7: {
+            name: "Intimidation",
+            value: 7,
+            key: "INTIMIDATION"
+        },
+        8: {
+            name: "Investigation",
+            value: 8,
+            key: "INVESTIGATION"
+        },
+        9: {
+            name: "Medicine",
+            value: 9,
+            key: "MEDICINE"
+        },
+        10: {
+            name: "Nature",
+            value: 10,
+            key: "NATURE"
+        },
+        11: {
+            name: "Perception",
+            value: 11,
+            key: "PERCEPTION"
+        },
+        12: {
+            name: "Performance",
+            value: 12,
+            key: "PERFORMANCE"
+        },
+        13: {
+            name: "Persuasion",
+            value: 13,
+            key: "PERSUASION"
+        },
+        14: {
+            name: "Religion",
+            value: 14,
+            key: "RELIGION"
+        },
+        15: {
+            name: "Sleight of Hand",
+            value: 15,
+            key: "SLEIGHT_OF_HAND"
+        },
+        16: {
+            name: "Stealth",
+            value: 16,
+            key: "STEALTH"
+        },
+        17: {
+            name: "Survival",
+            value: 17,
+            key: "SURVIVAL"
+        },
+        18: {
+            name: "Endurance",
+            value: 18,
+            key: "ENDURANCE"
+        },
+        19: {
+            name: "Streetwise",
+            value: 19,
+            key: "STREETWISE"
+        },
+        252: {
+            name: "Pick Any Choice",
+            value: 252,
+            key: "ANY"
+        }
+    }
+}
 let SpellComponentEnum = {
     NONE: 0,
     VERBAL: 1,
@@ -2985,6 +3539,62 @@ let CreatureSubTypeEnum = {
         }
     }
 };
+let AreaEnum = {
+    CONE: 0,
+    CUBE: 1,
+    CYLINDER: 2,
+    LINE: 3,
+    SPHERE: 4,
+    properties: {
+        0: {
+            name: "Cone",
+            value: 0,
+            key: "CONE",
+        },
+        1: {
+            name: "Cube",
+            value: 1,
+            key: "CUBE",
+        },
+        2: {
+            name: "Cylinder",
+            value: 2,
+            key: "CYLINDER",
+        },
+        3: {
+            name: "Line",
+            value: 3,
+            key: "LINE",
+        },
+        4: {
+            name: "Sphere",
+            value: 4,
+            key: "SPHERE",
+        }
+    }
+}
+let TriggerEnum = {
+    INTERVAL: 0,
+    ACTION: 1,
+    AREA: 2,
+    properties: {
+        0: {
+            name: "Interval",
+            value: 0,
+            key: "INTERVAL"
+        },
+        1: {
+            name: "Action",
+            value: 1,
+            key: "ACTION"
+        },
+        2: {
+            name: "Area",
+            value: 1,
+            key: "AREA"
+        }
+    }
+}
 let IntervalEnum = {
     ONCE: 0,
     SECOND: 0,
@@ -3015,6 +3625,7 @@ let IntervalEnum = {
     }
 };
 let OperationsEnum = {
+    UPDATE: 0,
     SET: 0,
     EQUALS: 0,
     ADD: 1,
