@@ -3179,6 +3179,70 @@ let LanguageEnum = {
         }
     }
 }
+let MusicalInstrumentEnum = {
+    BAGPIPES: 0,
+    DRUM: 1,
+    DULCIMER: 2,
+    FLUTE: 3,
+    HORN: 4,
+    LUTE: 5,
+    LYRE: 6,
+    PAN_FLUTE: 7,
+    SHAWM: 8,
+    VIOL: 9,
+    properties: {
+        0: {
+            name: "Bagpipes",
+            value: 0,
+            key: "BAGPIPES"
+        },
+        1: {
+            name: "Drum",
+            value: 1,
+            key: "DRUM"
+        },
+        2: {
+            name: "Dulcimer",
+            value: 2,
+            key: "DULCIMER"
+        },
+        3: {
+            name: "Flute",
+            value: 3,
+            key: "FLUTE"
+        },
+        4: {
+            name: "Horn",
+            value: 4,
+            key: "HORN"
+        },
+        5: {
+            name: "Lute",
+            value: 5,
+            key: "LUTE"
+        },
+        6: {
+            name: "Lyre",
+            value: 6,
+            key: "LYRE"
+        },
+        7: {
+            name: "Pan_flute",
+            value: 7,
+            key: "PAN_FLUTE"
+        },
+        8: {
+            name: "Shawm",
+            value: 8,
+            key: "SHAWM"
+        },
+        9: {
+            name: "Viol",
+            value: 9,
+            key: "VIOL"
+        }
+    }
+}
 let SkillEnum = {
     ACROBATICS: 0,
     ANIMAL_HANDLING: 1,
