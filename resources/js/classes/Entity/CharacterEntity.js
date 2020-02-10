@@ -983,6 +983,9 @@ class CharacterEntity extends CreatureEntity {
         }
         return 1;
     }
+    getClass() {
+        return this.primaryCharacterClass;
+    }
     /**
      * @returns {Map} Map of class levels to their classes
      */

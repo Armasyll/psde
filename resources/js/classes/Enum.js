@@ -3095,6 +3095,7 @@ let LanguageEnum = {
     PRIMORDIAL: 12,
     SYLVAN: 13,
     UNDERCOMMON: 14,
+    DRUIDIC: 15,
     ANY: 252,
     properties: {
         0: {
@@ -3171,6 +3172,11 @@ let LanguageEnum = {
             name: "Undercommon",
             value: 14,
             key: "UNDERCOMMON"
+        },
+        15: {
+            name: "Druidic",
+            value: 15,
+            key: "DRUIDIC"
         },
         252: {
             name: "Pick Any Choice",

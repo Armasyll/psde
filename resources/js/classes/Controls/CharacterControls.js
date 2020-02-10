@@ -88,6 +88,13 @@ class CharacterControls extends AbstractControls {
                 Game.gui.pointerRelease();
                 break;
             }
+            case AbstractControls.showCharacterCode : {
+                Game.gui.characterStats.updateWith(Game.player);
+                Game.gui.showMenu(true);
+                Game.gui.characterStats.show();
+                Game.gui.pointerRelease();
+                break;
+            }
             case AbstractControls.showMainMenuCode : {
                 if (Game.gui.getMenuVisible()) {
                     if (Game.debugMode) console.log(`\tShowing HUD`);

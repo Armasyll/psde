@@ -16,7 +16,6 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedDescription = null;
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
-        InventoryGameGUI.controller = null;
         InventoryGameGUI.generateController();
     }
     static resize() {
@@ -207,29 +206,29 @@ class InventoryGameGUI {
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
-     * @param {AbstractEntity} entityWithStorage The Entity with the inventory.
+     * @param {AbstractEntity} creatureEntity The Entity with the inventory.
      */
-    static updateWith(entityWithStorage = Game.player) {
+    static updateWith(creatureEntity = Game.player) {
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             InventoryGameGUI.items.removeControl(InventoryGameGUI.items.children[i]);
         }
-        entityWithStorage.getItems().forEach(function(instancedItemEntity, id) {
+        creatureEntity.getItems().forEach(function(instancedItemEntity, id) {
             let button = InventoryGameGUI._generateInventoryItemsButton(id, instancedItemEntity.getName(), Game.getIcon(instancedItemEntity.getIcon()));
             button.onPointerUpObservable.add(function() {
-                InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), entityWithStorage);
+                InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), creatureEntity);
             });
             InventoryGameGUI.items.addControl(button);
         });
         InventoryGameGUI.clearSelected();
-        if (entityWithStorage.hasInventory()) {
-            InventoryGameGUI.tAISWeight.text = String(entityWithStorage.getInventory().getSize());
+        if (creatureEntity.hasInventory()) {
+            InventoryGameGUI.tAISWeight.text = String(creatureEntity.getInventory().getSize());
             InventoryGameGUI.tAISWeightContainer.isVisible = true;
         }
         else {
             InventoryGameGUI.tAISWeightContainer.isVisible = false;
         }
-        if (entityWithStorage instanceof CreatureEntity) {
-            InventoryGameGUI.tAISMoney.text = String(entityWithStorage.getMoney());
+        if (creatureEntity instanceof CreatureEntity) {
+            InventoryGameGUI.tAISMoney.text = String(creatureEntity.getMoney());
             InventoryGameGUI.tAISMoneyContainer.isVisible = true;
         }
         else {

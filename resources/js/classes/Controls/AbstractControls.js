@@ -183,6 +183,7 @@ class AbstractControls {
         AbstractControls.useTargetedEntityCode = 69; // E
         AbstractControls.useSelectedItemCode = 82; // R
         AbstractControls.showInventoryCode = 73; // I
+        AbstractControls.showCharacterCode = 80; // P
         AbstractControls.UIAccept = 69; // E
         AbstractControls.UIAcceptAlt = 13; // Enter
         AbstractControls.UIDeny = 81; // Q
@@ -202,6 +203,7 @@ class AbstractControls {
         AbstractControls.useTargetedEntityCode = 190;
         AbstractControls.useSelectedItemCode = 80;
         AbstractControls.showInventoryCode = 67; // C
+        AbstractControls.showCharacterCode = null;
         AbstractControls.UIAccept = 190; // E
         AbstractControls.UIAcceptAlt = 13; // Enter
         AbstractControls.UIDeny = 222; // Q
@@ -221,6 +223,7 @@ class AbstractControls {
         AbstractControls.useTargetedEntityCode = 69;
         AbstractControls.useSelectedItemCode = 82;
         AbstractControls.showInventoryCode = 73;
+        AbstractControls.showCharacterCode = null;
         AbstractControls.UIAccept = 69; // E
         AbstractControls.UIAcceptAlt = 13; // Enter
         AbstractControls.UIDeny = 65; // A

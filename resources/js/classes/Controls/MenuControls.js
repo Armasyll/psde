@@ -12,10 +12,10 @@ class MenuControls extends AbstractControls {
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.showInventoryCode: {
-                if (GameGUI.inventoryMenu.isVisible()) {
-                    GameGUI.inventoryMenu.hide();
-                    GameGUI.hideMenu();
-                    GameGUI.showHUD();
+                if (Game.gui.inventoryMenu.isVisible()) {
+                    Game.gui.inventoryMenu.hide();
+                    Game.gui.hideMenu();
+                    Game.gui.showHUD();
                 }
                 else {
                     Game.gui.inventoryMenu.updateWith(Game.player);
@@ -23,9 +23,21 @@ class MenuControls extends AbstractControls {
                 }
                 break;
             }
+            case AbstractControls.showCharacterCode : {
+                if (Game.gui.characterStats.isVisible()) {
+                    Game.gui.characterStats.hide();
+                    Game.gui.hideMenu();
+                    Game.gui.showHUD();
+                }
+                else {
+                    Game.gui.characterStats.updateWith(Game.player);
+                    Game.gui.characterStats.show();
+                }
+                break;
+            }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
-                GameGUI.hideMenu(true);
+                Game.gui.hideMenu(true);
                 break;
             }
         }

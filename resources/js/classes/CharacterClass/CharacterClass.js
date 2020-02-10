@@ -303,34 +303,6 @@ class CharacterClass {
         return this.savingThrowProficiencies.indexOf(abilityEnum) != -1;
     }
     /**
-     * Calculates spell save difficulty class
-     * @param {creatureEntity} characterEntity 
-     */
-    calculateSpellSaveDC(creatureEntity) {
-        if (creatureEntity instanceof CreatureEntity) {}
-        else if (CreatureEntity.has(creatureEntity)) {
-            creatureEntity = CreatureEntity.get(creatureEntity);
-        }
-        else {
-            return 0;
-        }
-        return this.spellSaveDCParam + creatureEntity.getProficiencyBonus() + Game.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
-    }
-    /**
-     * Calculates spell attack modifier
-     * @param {creatureEntity} creatureEntity 
-     */
-    calculateSpellAttackModifier(creatureEntity) {
-        if (creatureEntity instanceof CreatureEntity) {}
-        else if (CreatureEntity.has(creatureEntity)) {
-            creatureEntity = CreatureEntity.get(creatureEntity);
-        }
-        else {
-            return 0;
-        }
-        return creatureEntity.getProficiencyBonus() + Game.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
-    }
-    /**
      * 
      * @param {AbilityEnum} abilityEnum Required ability
      * @param {number} score Ability's minimum score

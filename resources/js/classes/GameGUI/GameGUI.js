@@ -34,6 +34,7 @@ class GameGUI {
 
         GameGUI._characterChoiceMenu = undefined;
         GameGUI.inventoryMenu = undefined;
+        GameGUI.characterStats = undefined;
         GameGUI._initMenu();
         GameGUI.debugMenu = undefined;
 
@@ -71,6 +72,9 @@ class GameGUI {
         GameGUI.inventoryMenu = InventoryGameGUI;
         GameGUI.inventoryMenu.initialize();
         GameGUI._menu.addControl(GameGUI.inventoryMenu.getController());
+        GameGUI.characterStats = CharacterStatsGUI;
+        GameGUI.characterStats.initialize();
+        GameGUI._menu.addControl(GameGUI.characterStats.getController());
     }
     static resize() {
         if (!GameGUI.initialized) {

@@ -1,0 +1,211 @@
+class CharacterStatsGUI {
+    static initialize() {
+        CharacterStatsGUI.initialized = false;
+        CharacterStatsGUI.controller = null;
+        CharacterStatsGUI.nameField = null;
+        CharacterStatsGUI.generateController();
+        return 0;
+    }
+    static resize() {
+        if (CharacterStatsGUI.initialized != true) {
+            return 1;
+        }
+        return 0;
+    }
+    static generateController() {
+        let controller = new BABYLON.GUI.StackPanel("stats");
+            controller.height = String(Game.engine.getRenderHeight()).concat("px");
+            controller.width = String(Game.engine.getRenderWidth()).concat("px");
+            controller.isVertical = true;
+            controller.background = GameGUI.background;
+            let header = new BABYLON.GUI.StackPanel("header");
+                header.height = String(GameGUI.fontSizeInPixels * 3).concat("px");
+                header.width = controller.width;
+                header.isVertical = false;
+                let hNameContainer = new BABYLON.GUI.StackPanel("nameContainer");
+                    hNameContainer.height = header.height;
+                    hNameContainer.width = String(header.widthInPixels / 3).concat("px");
+                    let hNCField = new BABYLON.GUI.InputText("nameField");
+                        hNCField.height = String((hNameContainer.heightInPixels / 3) * 2).concat("px");
+                        hNCField.width = hNameContainer.width;
+                        hNCField.color = GameGUI.color;
+                        hNCField.fontSize = hNCField.height;
+                    hNameContainer.addControl(hNCField);
+                    let hNCLabel = new BABYLON.GUI.TextBlock("nameLabel");
+                        hNCLabel.height = String(hNameContainer.heightInPixels / 3).concat("px");
+                        hNCLabel.width = hNameContainer.width;
+                        hNCLabel.text = "Character Name";
+                        hNCLabel.color = GameGUI.color;
+                        hNCLabel.fontSize = hNCLabel.height;
+                        hNCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    hNameContainer.addControl(hNCLabel);
+                header.addControl(hNameContainer);
+                let hInfoContainer = new BABYLON.GUI.StackPanel("infoContainer");
+                    hInfoContainer.height = header.height;
+                    hInfoContainer.width = String((header.widthInPixels / 3) * 2).concat("px");
+                    hInfoContainer.isVertical = true;
+                    let hICTop = new BABYLON.GUI.StackPanel("infoContainerTop");
+                        hICTop.height = String(hInfoContainer.heightInPixels / 2).concat("px");
+                        hICTop.width = hInfoContainer.width;
+                        hICTop.isVertical = false;
+                        let hICTClassContainer = new BABYLON.GUI.StackPanel("classContainer");
+                            hICTClassContainer.height = hICTop.height;
+                            hICTClassContainer.width = String(hICTop.widthInPixels / 3).concat("px");
+                            hICTClassContainer.isVertical = true;
+                            let hICTCCText = new BABYLON.GUI.TextBlock("className");
+                                hICTCCText.height = String((hICTClassContainer.heightInPixels / 3) * 2).concat("px");
+                                hICTCCText.color = GameGUI.color;
+                                hICTCCText.fontSize = hICTCCText.height;
+                                hICTCCText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTClassContainer.addControl(hICTCCText);
+                            let hICTCCLabel = new BABYLON.GUI.TextBlock("classLabel");
+                                hICTCCLabel.height = String(hICTClassContainer.heightInPixels / 3).concat("px");
+                                hICTCCLabel.text = "Class & Level";
+                                hICTCCLabel.color = GameGUI.color;
+                                hICTCCLabel.fontSize = hICTCCLabel.height;
+                                hICTCCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTClassContainer.addControl(hICTCCLabel);
+                        hICTop.addControl(hICTClassContainer);
+                        let hICTBGgContainer = new BABYLON.GUI.StackPanel("backgroundContainer");
+                            hICTBGgContainer.height = hICTop.height;
+                            hICTBGgContainer.width = String(hICTop.widthInPixels / 3).concat("px");
+                            hICTBGgContainer.isVertical = true;
+                            let hICTBGCText = new BABYLON.GUI.TextBlock("bgName");
+                                hICTBGCText.height = String((hICTBGgContainer.heightInPixels / 3) * 2).concat("px");
+                                hICTBGCText.color = GameGUI.color;
+                                hICTBGCText.fontSize = hICTBGCText.height;
+                                hICTBGCText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTBGgContainer.addControl(hICTBGCText);
+                            let hICTBGCLabel = new BABYLON.GUI.TextBlock("bgLabel");
+                                hICTBGCLabel.height = String(hICTBGgContainer.heightInPixels / 3).concat("px");
+                                hICTBGCLabel.text = "Background";
+                                hICTBGCLabel.color = GameGUI.color;
+                                hICTBGCLabel.fontSize = hICTBGCLabel.height;
+                                hICTBGCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTBGgContainer.addControl(hICTBGCLabel);
+                        hICTop.addControl(hICTBGgContainer);
+                        let hICTAccNameContainer = new BABYLON.GUI.StackPanel("accountNameContainer");
+                            hICTAccNameContainer.height = hICTop.height;
+                            hICTAccNameContainer.width = String(hICTop.widthInPixels / 3).concat("px");
+                            hICTAccNameContainer.isVertical = true;
+                            let hICTANCText = new BABYLON.GUI.TextBlock("anName");
+                                hICTANCText.height = String((hICTAccNameContainer.heightInPixels / 3) * 2).concat("px");
+                                hICTANCText.color = GameGUI.color;
+                                hICTANCText.fontSize = hICTANCText.height;
+                                hICTANCText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTAccNameContainer.addControl(hICTANCText);
+                            let hICTANCLabel = new BABYLON.GUI.TextBlock("anLabel");
+                                hICTANCLabel.height = String(hICTAccNameContainer.heightInPixels / 3).concat("px");
+                                hICTANCLabel.text = "Account Name";
+                                hICTANCLabel.color = GameGUI.color;
+                                hICTANCLabel.fontSize = hICTANCLabel.height;
+                                hICTANCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICTAccNameContainer.addControl(hICTANCLabel);
+                        hICTop.addControl(hICTAccNameContainer);
+                    hInfoContainer.addControl(hICTop);
+                    let hICBot = new BABYLON.GUI.StackPanel("infoSubContainerBottom");
+                        hICBot.height = String(hInfoContainer.heightInPixels / 2).concat("px");
+                        hICBot.width = hInfoContainer.width;
+                        hICBot.isVertical = false;
+                        hInfoContainer.addControl(hICBot);
+                        let hICBRaceContainer = new BABYLON.GUI.StackPanel("infoRaceContainer");
+                            hICBRaceContainer.height = hICBot.height;
+                            hICBRaceContainer.width = String(hICBot.widthInPixels / 3).concat("px");
+                            hICBRaceContainer.isVertical = true;
+                            let hICBRCText = new BABYLON.GUI.TextBlock("raceName");
+                                hICBRCText.height = String((hICBRaceContainer.heightInPixels / 3) * 2).concat("px");
+                                hICBRCText.color = GameGUI.color;
+                                hICBRCText.fontSize = hICBRCText.height;
+                                hICBRCText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBRaceContainer.addControl(hICBRCText);
+                            let hICBRCLabel = new BABYLON.GUI.TextBlock("raceLabel");
+                                hICBRCLabel.height = String(hICBRaceContainer.heightInPixels / 3).concat("px");
+                                hICBRCLabel.text = "Race";
+                                hICBRCLabel.color = GameGUI.color;
+                                hICBRCLabel.fontSize = hICBRCLabel.height;
+                                hICBRCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBRaceContainer.addControl(hICBRCLabel);
+                        hICBot.addControl(hICBRaceContainer);
+                        let hICBAlignmentContainer = new BABYLON.GUI.StackPanel("alignmentContainer");
+                            hICBAlignmentContainer.height = hICBot.height;
+                            hICBAlignmentContainer.width = String(hICBot.widthInPixels / 3).concat("px");
+                            hICBAlignmentContainer.isVertical = true;
+                            let hICBACText = new BABYLON.GUI.TextBlock("alignmentName");
+                                hICBACText.height = String((hICBAlignmentContainer.heightInPixels / 3) * 2).concat("px");
+                                hICBACText.color = GameGUI.color;
+                                hICBACText.fontSize = hICBACText.height;
+                                hICBACText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBAlignmentContainer.addControl(hICBACText);
+                            let hICBACLabel = new BABYLON.GUI.TextBlock("alignmentLabel");
+                                hICBACLabel.height = String(hICBAlignmentContainer.heightInPixels / 3).concat("px");
+                                hICBACLabel.text = "Alignment";
+                                hICBACLabel.color = GameGUI.color;
+                                hICBACLabel.fontSize = hICBACLabel.height;
+                                hICBACLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBAlignmentContainer.addControl(hICBACLabel);
+                        hICBot.addControl(hICBAlignmentContainer);
+                        let hICBXPContainer = new BABYLON.GUI.StackPanel("xpContainer");
+                            hICBXPContainer.height = hICBot.height;
+                            hICBXPContainer.width = String(hICBot.widthInPixels / 3).concat("px");
+                            hICBXPContainer.isVertical = true;
+                            let hICBXPCText = new BABYLON.GUI.TextBlock("xpName");
+                                hICBXPCText.height = String((hICBXPContainer.heightInPixels / 3) * 2).concat("px");
+                                hICBXPCText.color = GameGUI.color;
+                                hICBXPCText.fontSize = hICBXPCText.height;
+                                hICBXPCText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBXPContainer.addControl(hICBXPCText);
+                            let hICBXPCLabel = new BABYLON.GUI.TextBlock("xpLabel");
+                                hICBXPCLabel.height = String(hICBXPContainer.heightInPixels / 3).concat("px");
+                                hICBXPCLabel.text = "Experience Points";
+                                hICBXPCLabel.color = GameGUI.color;
+                                hICBXPCLabel.fontSize = hICBXPCLabel.height;
+                                hICBXPCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                            hICBXPContainer.addControl(hICBXPCLabel);
+                        hICBot.addControl(hICBXPContainer);
+                header.addControl(hInfoContainer);
+            controller.addControl(header);
+            let body = new BABYLON.GUI.StackPanel("body");
+                body.height = String(controller.heightInPixels - (GameGUI.fontSizeInPixels * 3)).concat("px");
+                body.width = controller.width;
+                body.isVertical = false;
+            controller.addControl(body);
+        CharacterStatsGUI.controller = controller;
+        CharacterStatsGUI.nameField = hNCField;
+        CharacterStatsGUI.nameLabel = hNCLabel;
+        CharacterStatsGUI.classField = hICTCCText;
+        CharacterStatsGUI.classLabel = hICTCCLabel;
+        CharacterStatsGUI.backgroundField = hICTBGCText;
+        CharacterStatsGUI.backgroundLabel = hICTBGCLabel;
+        CharacterStatsGUI.accountNameField = hICTANCText;
+        CharacterStatsGUI.accountNameLabel = hICTANCLabel;
+        CharacterStatsGUI.raceField = hICBRCText;
+        CharacterStatsGUI.raceLabel = hICBRCLabel;
+        CharacterStatsGUI.alignmentField = hICBACText;
+        CharacterStatsGUI.alignmentLabel = hICBACLabel;
+        CharacterStatsGUI.xpField = hICBXPCText;
+        CharacterStatsGUI.xpLabel = hICBXPCLabel;
+        CharacterStatsGUI.initialized = true;
+        return controller;
+    }
+    static getController() {
+        return CharacterStatsGUI.controller;
+    }
+    static isVisible() {
+        return CharacterStatsGUI.controller.isVisible;
+    }
+    static show() {
+        CharacterStatsGUI.controller.isVisible = true;
+    }
+    static hide() {
+        CharacterStatsGUI.controller.isVisible = false;
+    }
+    static updateWith(creatureEntity = Game.player) {
+        CharacterStatsGUI.nameField.text = creatureEntity.getName();
+        CharacterStatsGUI.classField.text = creatureEntity.getClass().getName();
+        //CharacterStatsGUI.backgroundField.text = creatureEntity.get();
+        //CharacterStatsGUI.accountNameField.text = creatureEntity.get();
+        CharacterStatsGUI.raceField.text = CreatureSubTypeEnum.properties[creatureEntity.getCreatureSubType()].name;
+        //CharacterStatsGUI.alignmentField.text = creatureEntity.get();
+        CharacterStatsGUI.xpField.text = String(creatureEntity.getXP());
+    }
+}
