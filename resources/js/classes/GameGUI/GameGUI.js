@@ -4,7 +4,16 @@ class GameGUI {
     }
     static initialize() {
         GameGUI.fontSizeInPixels = 24;
+        GameGUI.fontSizeSpacing = 8;
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
+        GameGUI.fontSizeInPixelsWithSpacing = GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing;
+        GameGUI.fontSizeWithSpacing = String(GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing).concat("px");
+        GameGUI.fontSizeTinyInPixels = GameGUI.fontSizeInPixels - 12;
+        GameGUI.fontSizeTiny = String(GameGUI.fontSizeTinyInPixels).concat("px");
+        GameGUI.fontSizeSmallInPixels = GameGUI.fontSizeInPixels - 8;
+        GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
+        GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
+        GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
         GameGUI.alpha = "0.75";
         GameGUI.color = "#c3c3c3";
         GameGUI.colorDanger = "#ffffff";
@@ -80,8 +89,17 @@ class GameGUI {
         if (!GameGUI.initialized) {
             return;
         }
-        GameGUI.fontSizeInPixels = Math.floor((window.innerWidth/16)/5);
+        GameGUI.fontSizeInPixels = Math.max(Math.floor((window.innerWidth/16)/5), 24);
+        GameGUI.fontSizeSpacing = Math.max(Math.ceil(GameGUI.fontSizeInPixels/3), 8);
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
+        GameGUI.fontSizeInPixelsWithSpacing = GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing;
+        GameGUI.fontSizeWithSpacing = String(GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing).concat("px");
+        GameGUI.fontSizeTinyInPixels = GameGUI.fontSizeInPixels - 12;
+        GameGUI.fontSizeTiny = String(GameGUI.fontSizeTinyInPixels).concat("px");
+        GameGUI.fontSizeSmallInPixels = GameGUI.fontSizeInPixels - 8;
+        GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
+        GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
+        GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
         GameGUI._hud.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
@@ -230,8 +248,8 @@ class GameGUI {
         let urlButton = BABYLON.GUI.Button.CreateSimpleButton("urlButton", "https://github.com/armasyll/psde");
         
         characterChoiceMenuContainer.zIndex = 90;
-        characterChoiceMenuContainer.height = 0.6
-        characterChoiceMenuContainer.width = 0.5;
+        characterChoiceMenuContainer.height = 0.75;
+        characterChoiceMenuContainer.width = 0.75;
         characterChoiceMenuContainer.background = GameGUI.background;
         characterChoiceMenuContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
