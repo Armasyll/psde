@@ -49,6 +49,7 @@ class GameGUI {
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
+        GameGUI.resize();
     }
     static _initHUD() {
         GameGUI._crosshair = GameGUI._generateCrosshair();
@@ -104,6 +105,7 @@ class GameGUI {
         GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
         GameGUI.dialogueMenu.resize();
+        GameGUI.characterStats.resize();
     }
     static getFontSizeInPixels(multiplier = 1) {
         return GameGUI.fontSizeInPixels * multiplier;
