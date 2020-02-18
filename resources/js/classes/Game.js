@@ -5019,6 +5019,37 @@ class Game {
         return 0;
     }
 
+    static getSkillAbility(skillEnum) {
+        switch (skillEnum) {
+            case ProficiencyEnum.ATHLETICS: {
+                return AbilityEnum.STRENGTH;
+            }
+            case ProficiencyEnum.SLEIGHT_OF_HAND:
+            case ProficiencyEnum.STEALTH: {
+                return AbilityEnum.DEXTERITY;
+            }
+            case ProficiencyEnum.ARCANA:
+            case ProficiencyEnum.HISTORY:
+            case ProficiencyEnum.INVESTIGATION:
+            case ProficiencyEnum.NATURE:
+            case ProficiencyEnum.RELIGION: {
+                return AbilityEnum.INTELLIGENCE;
+            }
+            case ProficiencyEnum.ANIMAL_HANDLING:
+            case ProficiencyEnum.INSIGHT:
+            case ProficiencyEnum.MEDICINE:
+            case ProficiencyEnum.PERCEPTION:
+            case ProficiencyEnum.SURVIVAL: {
+                return AbilityEnum.WISDOM;
+            }
+            case ProficiencyEnum.DECEPTION:
+            case ProficiencyEnum.INTIMIDATION:
+            case ProficiencyEnum.PERFORMANCE:
+            case ProficiencyEnum.PERSUASION: {
+                return AbilityEnum.CHARISMA;
+            }
+        }
+    }
     static calculateProficiencyByLevel(level) {
         return Math.floor((level + 7) / 4);
     }

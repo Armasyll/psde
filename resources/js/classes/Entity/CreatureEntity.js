@@ -102,6 +102,12 @@ class CreatureEntity extends Entity {
          * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
         this.money = 0;
+        this.proficiencyBonusModifier = 0;
+        /**
+         * Inspiration; idk how i'll handle this yet :v
+         * @type {number}
+         */
+        this.inspiration = 0;
         /**
          * Living; updated by this.setHealth()
          * @type {boolean} True - living, false - dead
@@ -155,10 +161,9 @@ class CreatureEntity extends Entity {
         this.predator = true;
 
         /**
-         * @type Map<ProficiencyEnum, number>
+         * @type {object} Map of ProficiencyEnum; it's an object so i don't have to go through an array just to check if a known index exists :v
          */
-        this.proficiencies = new Map();
-        this.proficiencyBonusModifier = 0;
+        this.proficiencies = {};
 
         this.conditions = new Set();
 
@@ -462,6 +467,28 @@ class CreatureEntity extends Entity {
         return this.stamina;
     }
 
+    getInspiration() {
+        return this.inspiration;
+    }
+    getPassivePerception(hasAdvantage = false) {
+        let number = 10;
+        if (hasAdvantage) {
+            number += 5;
+        }
+        number += this.getSkillScore(ProficiencyEnum.PERCEPTION);
+        // add feats later
+        return number;
+    }
+    getActivePerception(roll = 0) {
+        if (typeof roll == "number" && roll > 0) {
+            roll = roll|0;
+        }
+        else {
+            roll = Game.roll(1, 20);
+        }
+        return roll + this.getSkillScore(ProficiencyEnum.PERCEPTION);
+    }
+
     setStance(stance = ActionEnum.STAND) {
         if (this.stance == stance) {
             return 0;
@@ -623,26 +650,31 @@ class CreatureEntity extends Entity {
         this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
     }
 
-    addProficiency(proficiencyEnum, number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 1;}
-        else {number = number|0}
-        this.proficiencies.set(proficiencyEnum, this.getProficiency(proficiencyEnum) + number)
+    addProficiency(proficiencyEnum) {
+        if (!ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            return 2;
+        }
+        this.proficiencies[proficiencyEnum] = true;
         return 0;
     }
     removeProficiency(proficiencyEnum) {
-        this.proficiencies.remove(proficiencyEnum);
+        delete this.proficiencies[proficiencyEnum];
         return 0;
     }
     hasProficiency(proficiencyEnum) {
-        return this.proficiencies.has(proficiencyEnum);
+        return this.proficiencies.hasOwnProperty(proficiencyEnum);
     }
-    getProficiency(proficiencyEnum) {
-        if (this.hasProficiency(proficiencyEnum)) {
-            return this.proficiencies.get(proficiencyEnum);
+    getSkillScore(proficiencyEnum) {
+        if (!this.hasProficiency(proficiencyEnum)) {
+            return 0;
         }
-        return 0;
+        let number = Game.calculateAbilityModifier(this.getAbility(Game.getSkillAbility(proficiencyEnum)));
+        if (this.hasProficiency(proficiencyEnum)) {
+            number += 3
+        }
+        return number;
     }
-    clearProficiencies() {
+    clearSkills() {
         this.proficiencies.clear();
         return 0;
     }
@@ -698,7 +730,7 @@ class CreatureEntity extends Entity {
         return 0;
     }
     getProficiencyBonus() {
-        return Math.floor((this.level + 7) / 4) + this.proficiencyBonusModifier;
+        return Game.calculateProficiencyByLevel(this.level) + this.proficiencyBonusModifier;
     }
     getAbility(abilityEnum) {
         switch (abilityEnum) {
@@ -821,7 +853,7 @@ class CreatureEntity extends Entity {
         this.setLocked(true);
         this.setEnabled(false);
         CreatureEntity.remove(this.id);
-        this.clearProficiencies();
+        this.clearSkills();
         this.clearConditions();
         super.dispose();
         return undefined;

@@ -379,6 +379,10 @@ class CharacterStatsGUI {
         CharacterStatsGUI.passiveWisdomLabel.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.colARowC.height = String(Math.max((CharacterStatsGUI.colA.heightInPixels / 7) * 2.5, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.colARowC.width = CharacterStatsGUI.colA.width;
+        CharacterStatsGUI.proficienciesAndLanguagesField.height = String(CharacterStatsGUI.colARowC.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
+        CharacterStatsGUI.proficienciesAndLanguagesField.width = CharacterStatsGUI.colARowC.width;
+        CharacterStatsGUI.proficienciesAndLanguagesLabel.height = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.proficienciesAndLanguagesLabel.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.colB.height = CharacterStatsGUI.body.height;
         CharacterStatsGUI.colB.width = String(Math.max(CharacterStatsGUI.body.widthInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.colC.height = CharacterStatsGUI.body.height;
@@ -412,6 +416,8 @@ class CharacterStatsGUI {
                         hNCLabel.height = String(Math.max(hNameContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                         hNCLabel.width = hNameContainer.width;
                         hNCLabel.text = "Character Name";
+                        //hNCLabel.textSmall = "Char. Name";
+                        //hNCLabel.textTiny = "Chr Nm";
                         hNCLabel.color = GameGUI.color;
                         hNCLabel.fontSize = GameGUI.fontSizeSmall;
                         hNCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -437,7 +443,9 @@ class CharacterStatsGUI {
                             hICTClassContainer.addControl(hICTCCText);
                             let hICTCCLabel = new BABYLON.GUI.TextBlock("classLabel");
                                 hICTCCLabel.height = String(Math.max(hICTClassContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
-                                hICTCCLabel.text = "Class & Level";
+                                hICTCCLabel.text = "Class and Level";
+                                //hICTCCLabel.textSmall = "Class & Level";
+                                //hICTCCLabel.textTiny = "Cls & Lvl";
                                 hICTCCLabel.color = GameGUI.color;
                                 hICTCCLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICTCCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -456,6 +464,8 @@ class CharacterStatsGUI {
                             let hICTBGCLabel = new BABYLON.GUI.TextBlock("bgLabel");
                                 hICTBGCLabel.height = String(Math.max(hICTBGgContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                                 hICTBGCLabel.text = "Background";
+                                //hICTBGCLabel.textSmall = "Bckgnd";
+                                //hICTBGCLabel.textTiny = "Bg";
                                 hICTBGCLabel.color = GameGUI.color;
                                 hICTBGCLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICTBGCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -474,6 +484,8 @@ class CharacterStatsGUI {
                             let hICTANCLabel = new BABYLON.GUI.TextBlock("anLabel");
                                 hICTANCLabel.height = String(Math.max(hICTAccNameContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                                 hICTANCLabel.text = "Account Name";
+                                //hICTANCLabel.textSmall = "Acct. Name";
+                                //hICTANCLabel.textTiny = "Act Nm";
                                 hICTANCLabel.color = GameGUI.color;
                                 hICTANCLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICTANCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -498,6 +510,8 @@ class CharacterStatsGUI {
                             let hICBRCLabel = new BABYLON.GUI.TextBlock("raceLabel");
                                 hICBRCLabel.height = String(Math.max(hICBRaceContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                                 hICBRCLabel.text = "Race";
+                                //hICBRCLabel.textSmall = "Race";
+                                //hICBRCLabel.textTiny = "Rc";
                                 hICBRCLabel.color = GameGUI.color;
                                 hICBRCLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICBRCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -516,6 +530,8 @@ class CharacterStatsGUI {
                             let hICBACLabel = new BABYLON.GUI.TextBlock("alignmentLabel");
                                 hICBACLabel.height = String(Math.max(hICBAlignmentContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                                 hICBACLabel.text = "Alignment";
+                                //hICBACLabel.textSmall = "Align.";
+                                //hICBACLabel.textTiny = "Alnmt";
                                 hICBACLabel.color = GameGUI.color;
                                 hICBACLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICBACLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -534,6 +550,8 @@ class CharacterStatsGUI {
                             let hICBXPCLabel = new BABYLON.GUI.TextBlock("xpLabel");
                                 hICBXPCLabel.height = String(Math.max(hICBXPContainer.heightInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
                                 hICBXPCLabel.text = "Experience Points";
+                                //hICBXPCLabel.textSmall = "XP";
+                                //hICBXPCLabel.textTiny = "XP";
                                 hICBXPCLabel.color = GameGUI.color;
                                 hICBXPCLabel.fontSize = GameGUI.fontSizeSmall;
                                 hICBXPCLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -596,6 +614,8 @@ class CharacterStatsGUI {
                                         strengthLabel.height = String(strengthContainer.heightInPixels / 4).concat("px");
                                         strengthLabel.fontSize = GameGUI.fontSizeSmall;
                                         strengthLabel.text = "Strength";
+                                        //strengthLabel.textSmall = "Strength";
+                                        //strengthLabel.textTiny = "Str";
                                         strengthLabel.color = GameGUI.color;
                                     strengthData.addControl(strengthLabel);
                                     let strengthAbilityModifier = new BABYLON.GUI.TextBlock("strengthAbilityModifier");
@@ -654,6 +674,8 @@ class CharacterStatsGUI {
                                         dexterityLabel.height = String(dexterityContainer.heightInPixels / 4).concat("px");
                                         dexterityLabel.fontSize = GameGUI.fontSizeSmall;
                                         dexterityLabel.text = "Dexterity";
+                                        //dexterityLabel.textSmall = "Dexterity";
+                                        //dexterityLabel.textTiny = "Dex";
                                         dexterityLabel.color = GameGUI.color;
                                     dexterityData.addControl(dexterityLabel);
                                     let dexterityAbilityModifier = new BABYLON.GUI.TextBlock("dexterityAbilityModifier");
@@ -712,6 +734,8 @@ class CharacterStatsGUI {
                                         constitutionLabel.height = String(constitutionContainer.heightInPixels / 4).concat("px");
                                         constitutionLabel.fontSize = GameGUI.fontSizeSmall;
                                         constitutionLabel.text = "Constitution";
+                                        //constitutionLabel.textSmall = "Constitution";
+                                        //constitutionLabel.textTiny = "Con";
                                         constitutionLabel.color = GameGUI.color;
                                     constitutionData.addControl(constitutionLabel);
                                     let constitutionAbilityModifier = new BABYLON.GUI.TextBlock("constitutionAbilityModifier");
@@ -770,6 +794,8 @@ class CharacterStatsGUI {
                                         intelligenceLabel.height = String(intelligenceContainer.heightInPixels / 4).concat("px");
                                         intelligenceLabel.fontSize = GameGUI.fontSizeSmall;
                                         intelligenceLabel.text = "Intelligence";
+                                        //intelligenceLabel.textSmall = "Intelligence";
+                                        //intelligenceLabel.textTiny = "Int";
                                         intelligenceLabel.color = GameGUI.color;
                                     intelligenceData.addControl(intelligenceLabel);
                                     let intelligenceAbilityModifier = new BABYLON.GUI.TextBlock("intelligenceAbilityModifier");
@@ -828,6 +854,8 @@ class CharacterStatsGUI {
                                         wisdomLabel.height = String(wisdomContainer.heightInPixels / 4).concat("px");
                                         wisdomLabel.fontSize = GameGUI.fontSizeSmall;
                                         wisdomLabel.text = "Wisdom";
+                                        //wisdomLabel.textSmall = "Wisdom";
+                                        //wisdomLabel.textTiny = "Wis";
                                         wisdomLabel.color = GameGUI.color;
                                     wisdomData.addControl(wisdomLabel);
                                     let wisdomAbilityModifier = new BABYLON.GUI.TextBlock("wisdomAbilityModifier");
@@ -886,6 +914,8 @@ class CharacterStatsGUI {
                                         charismaLabel.height = String(charismaContainer.heightInPixels / 4).concat("px");
                                         charismaLabel.fontSize = GameGUI.fontSizeSmall;
                                         charismaLabel.text = "Charisma";
+                                        //charismaLabel.textSmall = "Charisma";
+                                        //charismaLabel.textTiny = "Cha";
                                         charismaLabel.color = GameGUI.color;
                                     charismaData.addControl(charismaLabel);
                                     let charismaAbilityModifier = new BABYLON.GUI.TextBlock("charismaAbilityModifier");
@@ -978,6 +1008,8 @@ class CharacterStatsGUI {
                                     let sTCStrengthLabel = new BABYLON.GUI.TextBlock("savingThrowContainerStrengthLabel");
                                         sTCStrengthLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCStrengthLabel.text = "Strength";
+                                        //sTCStrengthLabel.textSmall = "Strength";
+                                        //sTCStrengthLabel.textTiny = "Str";
                                         sTCStrengthLabel.color = GameGUI.color;
                                         sTCStrengthLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCStrengthContainer.addControl(sTCStrengthLabel);
@@ -1008,6 +1040,8 @@ class CharacterStatsGUI {
                                     let sTCDexterityLabel = new BABYLON.GUI.TextBlock("savingThrowContainerDexterityLabel");
                                         sTCDexterityLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCDexterityLabel.text = "Dexterity";
+                                        //sTCDexterityLabel.textSmall = "Dexterity";
+                                        //sTCDexterityLabel.textTiny = "Dex";
                                         sTCDexterityLabel.color = GameGUI.color;
                                         sTCDexterityLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCDexterityContainer.addControl(sTCDexterityLabel);
@@ -1038,6 +1072,8 @@ class CharacterStatsGUI {
                                     let sTCConstitutionLabel = new BABYLON.GUI.TextBlock("savingThrowContainerConstitutionLabel");
                                         sTCConstitutionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCConstitutionLabel.text = "Constitution";
+                                        //sTCConstitutionLabel.textSmall = "Constitution";
+                                        //sTCConstitutionLabel.textTiny = "Con";
                                         sTCConstitutionLabel.color = GameGUI.color;
                                         sTCConstitutionLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCConstitutionContainer.addControl(sTCConstitutionLabel);
@@ -1068,6 +1104,8 @@ class CharacterStatsGUI {
                                     let sTCIntelligenceLabel = new BABYLON.GUI.TextBlock("savingThrowContainerIntelligenceLabel");
                                         sTCIntelligenceLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCIntelligenceLabel.text = "Intelligence";
+                                        //sTCIntelligenceLabel.textSmall = "Intelligence";
+                                        //sTCIntelligenceLabel.textTiny = "Int";
                                         sTCIntelligenceLabel.color = GameGUI.color;
                                         sTCIntelligenceLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCIntelligenceContainer.addControl(sTCIntelligenceLabel);
@@ -1098,6 +1136,8 @@ class CharacterStatsGUI {
                                     let sTCWisdomLabel = new BABYLON.GUI.TextBlock("savingThrowContainerWisdomLabel");
                                         sTCWisdomLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCWisdomLabel.text = "Wisdom";
+                                        //sTCWisdomLabel.textSmall = "Wisdom";
+                                        //sTCWisdomLabel.textTiny = "Wis";
                                         sTCWisdomLabel.color = GameGUI.color;
                                         sTCWisdomLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCWisdomContainer.addControl(sTCWisdomLabel);
@@ -1128,6 +1168,8 @@ class CharacterStatsGUI {
                                     let sTCCharismaLabel = new BABYLON.GUI.TextBlock("savingThrowContainerCharismaLabel");
                                         sTCCharismaLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCCharismaLabel.text = "Charisma";
+                                        //sTCCharismaLabel.textSmall = "Charisma";
+                                        //sTCCharismaLabel.textTiny = "Cha";
                                         sTCCharismaLabel.color = GameGUI.color;
                                         sTCCharismaLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                                     sTCCharismaContainer.addControl(sTCCharismaLabel);
@@ -1680,13 +1722,29 @@ class CharacterStatsGUI {
                             passiveWisdomLabel.width = String(colARowB.widthInPixels - passiveWisdomScore.widthInPixels).concat("px");
                             passiveWisdomLabel.fontSize = GameGUI.fontSizeSmall;
                             passiveWisdomLabel.text = "Passive Wisdom (Perception)";
+                            //passiveWisdomLabel.textSmall = "Passive Wisdom";
+                            //passiveWisdomLabel.textTiny = "Pass. Wis";
                             passiveWisdomLabel.color = GameGUI.color;
                         colARowB.addControl(passiveWisdomLabel);
                     colA.addControl(colARowB);
                     let colARowC = new BABYLON.GUI.StackPanel("colARowC");
                         colARowC.height = String((colA.heightInPixels / 7) * 2.5).concat("px");
                         colARowC.width = colA.width;
-                        colARowC.isVertical = false;
+                        let proficienciesAndLanguagesField = new BABYLON.GUI.TextBlock("proficienciesAndLanguagesField");
+                            proficienciesAndLanguagesField.height = String(colARowC.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
+                            proficienciesAndLanguagesField.width = colARowC.width;
+                            proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
+                            proficienciesAndLanguagesField.color = GameGUI.color;
+                        colARowC.addControl(proficienciesAndLanguagesField);
+                        let proficienciesAndLanguagesLabel = new BABYLON.GUI.TextBlock("proficienciesAndLanguagesLabel");
+                            proficienciesAndLanguagesField.height = GameGUI.fontSizeSmall;
+                            proficienciesAndLanguagesField.width = colARowC.width;
+                            proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
+                            proficienciesAndLanguagesField.color = GameGUI.color;
+                            proficienciesAndLanguagesField.text = "Other Proficiencies and Languages";
+                            //proficienciesAndLanguagesField.textSmall = "Proficiencies and Languages";
+                            //proficienciesAndLanguagesField.textTiny = "Profs & Langs";
+                        colARowC.addControl(proficienciesAndLanguagesLabel);
                     colA.addControl(colARowC);
                 body.addControl(colA);
                 let colB = new BABYLON.GUI.StackPanel("colB");
@@ -1886,6 +1944,8 @@ class CharacterStatsGUI {
         CharacterStatsGUI.passiveWisdomField = passiveWisdomScore;
         CharacterStatsGUI.passiveWisdomLabel = passiveWisdomLabel;
         CharacterStatsGUI.colARowC = colARowC;
+        CharacterStatsGUI.proficienciesAndLanguagesField = proficienciesAndLanguagesField;
+        CharacterStatsGUI.proficienciesAndLanguagesLabel = proficienciesAndLanguagesLabel
         CharacterStatsGUI.colB = colB;
         CharacterStatsGUI.colC = colC;
         CharacterStatsGUI.initialized = true;
@@ -1929,5 +1989,63 @@ class CharacterStatsGUI {
         number = Game.calculateAbilityModifier(creatureEntity.getCharisma());
         CharacterStatsGUI.charismaAbilityModifier.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.charismaAbilityField.text = String(creatureEntity.getCharisma());
+        
+        CharacterStatsGUI.passiveWisdomField.text = String(creatureEntity.getPassivePerception());
+        CharacterStatsGUI.proficiencyBonusField.text = String(creatureEntity.getProficiencyBonus());
+        CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
+        // saving throws
+        // checkboxes don't show values when checked and disabled
+
+        number = creatureEntity.getSkillScore(ProficiencyEnum.ACROBATICS);
+        CharacterStatsGUI.skillAcrobaticsField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillAcrobaticsCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ACROBATICS);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.ANIMAL_HANDLING);
+        CharacterStatsGUI.skillAnimalHandlingField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillAnimalHandlingCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ANIMAL_HANDLING);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.ARCANA);
+        CharacterStatsGUI.skillArcanaField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillArcanaCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ARCANA);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.ATHLETICS);
+        CharacterStatsGUI.skillAthleticsField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillAthleticsCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ATHLETICS);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.DECEPTION);
+        CharacterStatsGUI.skillDeceptionField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillDeceptionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.DECEPTION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.HISTORY);
+        CharacterStatsGUI.skillHistoryField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillHistoryCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.HISTORY);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.INSIGHT);
+        CharacterStatsGUI.skillInsightField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillInsightCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INSIGHT);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.INTIMIDATION);
+        CharacterStatsGUI.skillIntimidationField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillIntimidationCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INTIMIDATION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.INVESTIGATION);
+        CharacterStatsGUI.skillInvestigationField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillInvestigationCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INVESTIGATION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.MEDICINE);
+        CharacterStatsGUI.skillMedicineField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillMedicineCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.MEDICINE);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.NATURE);
+        CharacterStatsGUI.skillNatureField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillNatureCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.NATURE);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.PERCEPTION);
+        CharacterStatsGUI.skillPerceptionField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillPerceptionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERCEPTION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.PERFORMANCE);
+        CharacterStatsGUI.skillPerformanceField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillPerformanceCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERFORMANCE);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.PERSUASION);
+        CharacterStatsGUI.skillPersuasionField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillPersuasionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERSUASION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.RELIGION);
+        CharacterStatsGUI.skillReligionField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillReligionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.RELIGION);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.SLEIGHT_OF_HAND);
+        CharacterStatsGUI.skillSleightOfHandField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillSleightOfHandCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.SLEIGHT_OF_HAND);
+        number = creatureEntity.getSkillScore(ProficiencyEnum.STEALTH);
+        CharacterStatsGUI.skillStealthField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.skillStealthCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.STEALTH);
     }
 }
