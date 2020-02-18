@@ -670,7 +670,7 @@ class CreatureEntity extends Entity {
         }
         let number = Game.calculateAbilityModifier(this.getAbility(Game.getSkillAbility(proficiencyEnum)));
         if (this.hasProficiency(proficiencyEnum)) {
-            number += 3
+            number += this.getProficiencyBonus();
         }
         return number;
     }
