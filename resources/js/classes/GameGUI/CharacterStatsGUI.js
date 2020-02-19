@@ -991,6 +991,7 @@ class CharacterStatsGUI {
                                         sTCStrengthCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCStrengthCheckbox.color = GameGUI.color;
                                         sTCStrengthCheckbox.disabledColor = sTCStrengthCheckbox.background;
+                                        sTCStrengthCheckbox.disabledColorItem = GameGUI.color;
                                         sTCStrengthCheckbox.thickness = 0;
                                         sTCStrengthCheckbox.isEnabled = false;
                                         sTCStrengthCheckbox.checkSizeRatio = 1.0;
@@ -1023,6 +1024,7 @@ class CharacterStatsGUI {
                                         sTCDexterityCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCDexterityCheckbox.color = GameGUI.color;
                                         sTCDexterityCheckbox.disabledColor = sTCDexterityCheckbox.background;
+                                        sTCDexterityCheckbox.disabledColorItem = GameGUI.color;
                                         sTCDexterityCheckbox.thickness = 0;
                                         sTCDexterityCheckbox.isEnabled = false;
                                         sTCDexterityCheckbox.checkSizeRatio = 1.0;
@@ -1055,6 +1057,7 @@ class CharacterStatsGUI {
                                         sTCConstitutionCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCConstitutionCheckbox.color = GameGUI.color;
                                         sTCConstitutionCheckbox.disabledColor = sTCConstitutionCheckbox.background;
+                                        sTCConstitutionCheckbox.disabledColorItem = GameGUI.color;
                                         sTCConstitutionCheckbox.thickness = 0;
                                         sTCConstitutionCheckbox.isEnabled = false;
                                         sTCConstitutionCheckbox.checkSizeRatio = 1.0;
@@ -1087,6 +1090,7 @@ class CharacterStatsGUI {
                                         sTCIntelligenceCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCIntelligenceCheckbox.color = GameGUI.color;
                                         sTCIntelligenceCheckbox.disabledColor = sTCIntelligenceCheckbox.background;
+                                        sTCIntelligenceCheckbox.disabledColorItem = GameGUI.color;
                                         sTCIntelligenceCheckbox.thickness = 0;
                                         sTCIntelligenceCheckbox.isEnabled = false;
                                         sTCIntelligenceCheckbox.checkSizeRatio = 1.0;
@@ -1119,6 +1123,7 @@ class CharacterStatsGUI {
                                         sTCWisdomCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCWisdomCheckbox.color = GameGUI.color;
                                         sTCWisdomCheckbox.disabledColor = sTCWisdomCheckbox.background;
+                                        sTCWisdomCheckbox.disabledColorItem = GameGUI.color;
                                         sTCWisdomCheckbox.thickness = 0;
                                         sTCWisdomCheckbox.isEnabled = false;
                                         sTCWisdomCheckbox.checkSizeRatio = 1.0;
@@ -1151,6 +1156,7 @@ class CharacterStatsGUI {
                                         sTCCharismaCheckbox.height = GameGUI.fontSizeSmall;
                                         sTCCharismaCheckbox.color = GameGUI.color;
                                         sTCCharismaCheckbox.disabledColor = sTCCharismaCheckbox.background;
+                                        sTCCharismaCheckbox.disabledColorItem = GameGUI.color;
                                         sTCCharismaCheckbox.thickness = 0;
                                         sTCCharismaCheckbox.isEnabled = false;
                                         sTCCharismaCheckbox.checkSizeRatio = 1.0;
@@ -1195,6 +1201,7 @@ class CharacterStatsGUI {
                                         sCAcrobaticsCheckbox.height = GameGUI.fontSizeSmall;
                                         sCAcrobaticsCheckbox.color = GameGUI.color;
                                         sCAcrobaticsCheckbox.disabledColor = sCAcrobaticsCheckbox.background;
+                                        sCAcrobaticsCheckbox.disabledColorItem = GameGUI.color;
                                         sCAcrobaticsCheckbox.thickness = 0;
                                         sCAcrobaticsCheckbox.isEnabled = false;
                                         sCAcrobaticsCheckbox.checkSizeRatio = 1.0;
@@ -1225,6 +1232,7 @@ class CharacterStatsGUI {
                                         sCAnimalHandlingCheckbox.height = GameGUI.fontSizeSmall;
                                         sCAnimalHandlingCheckbox.color = GameGUI.color;
                                         sCAnimalHandlingCheckbox.disabledColor = sCAnimalHandlingCheckbox.background;
+                                        sCAnimalHandlingCheckbox.disabledColorItem = GameGUI.color;
                                         sCAnimalHandlingCheckbox.thickness = 0;
                                         sCAnimalHandlingCheckbox.isEnabled = false;
                                         sCAnimalHandlingCheckbox.checkSizeRatio = 1.0;
@@ -1255,6 +1263,7 @@ class CharacterStatsGUI {
                                         sCArcanaCheckbox.height = GameGUI.fontSizeSmall;
                                         sCArcanaCheckbox.color = GameGUI.color;
                                         sCArcanaCheckbox.disabledColor = sCArcanaCheckbox.background;
+                                        sCArcanaCheckbox.disabledColorItem = GameGUI.color;
                                         sCArcanaCheckbox.thickness = 0;
                                         sCArcanaCheckbox.isEnabled = false;
                                         sCArcanaCheckbox.checkSizeRatio = 1.0;
@@ -1285,6 +1294,7 @@ class CharacterStatsGUI {
                                         sCAthleticsCheckbox.height = GameGUI.fontSizeSmall;
                                         sCAthleticsCheckbox.color = GameGUI.color;
                                         sCAthleticsCheckbox.disabledColor = sCAthleticsCheckbox.background;
+                                        sCAthleticsCheckbox.disabledColorItem = GameGUI.color;
                                         sCAthleticsCheckbox.thickness = 0;
                                         sCAthleticsCheckbox.isEnabled = false;
                                         sCAthleticsCheckbox.checkSizeRatio = 1.0;
@@ -1315,6 +1325,7 @@ class CharacterStatsGUI {
                                         sCDeceptionCheckbox.height = GameGUI.fontSizeSmall;
                                         sCDeceptionCheckbox.color = GameGUI.color;
                                         sCDeceptionCheckbox.disabledColor = sCDeceptionCheckbox.background;
+                                        sCDeceptionCheckbox.disabledColorItem = GameGUI.color;
                                         sCDeceptionCheckbox.thickness = 0;
                                         sCDeceptionCheckbox.isEnabled = false;
                                         sCDeceptionCheckbox.checkSizeRatio = 1.0;
@@ -1345,6 +1356,7 @@ class CharacterStatsGUI {
                                         sCHistoryCheckbox.height = GameGUI.fontSizeSmall;
                                         sCHistoryCheckbox.color = GameGUI.color;
                                         sCHistoryCheckbox.disabledColor = sCHistoryCheckbox.background;
+                                        sCHistoryCheckbox.disabledColorItem = GameGUI.color;
                                         sCHistoryCheckbox.thickness = 0;
                                         sCHistoryCheckbox.isEnabled = false;
                                         sCHistoryCheckbox.checkSizeRatio = 1.0;
@@ -1375,6 +1387,7 @@ class CharacterStatsGUI {
                                         sCInsightCheckbox.height = GameGUI.fontSizeSmall;
                                         sCInsightCheckbox.color = GameGUI.color;
                                         sCInsightCheckbox.disabledColor = sCInsightCheckbox.background;
+                                        sCInsightCheckbox.disabledColorItem = GameGUI.color;
                                         sCInsightCheckbox.thickness = 0;
                                         sCInsightCheckbox.isEnabled = false;
                                         sCInsightCheckbox.checkSizeRatio = 1.0;
@@ -1405,6 +1418,7 @@ class CharacterStatsGUI {
                                         sCIntimidationCheckbox.height = GameGUI.fontSizeSmall;
                                         sCIntimidationCheckbox.color = GameGUI.color;
                                         sCIntimidationCheckbox.disabledColor = sCIntimidationCheckbox.background;
+                                        sCIntimidationCheckbox.disabledColorItem = GameGUI.color;
                                         sCIntimidationCheckbox.thickness = 0;
                                         sCIntimidationCheckbox.isEnabled = false;
                                         sCIntimidationCheckbox.checkSizeRatio = 1.0;
@@ -1435,6 +1449,7 @@ class CharacterStatsGUI {
                                         sCInvestigationCheckbox.height = GameGUI.fontSizeSmall;
                                         sCInvestigationCheckbox.color = GameGUI.color;
                                         sCInvestigationCheckbox.disabledColor = sCInvestigationCheckbox.background;
+                                        sCInvestigationCheckbox.disabledColorItem = GameGUI.color;
                                         sCInvestigationCheckbox.thickness = 0;
                                         sCInvestigationCheckbox.isEnabled = false;
                                         sCInvestigationCheckbox.checkSizeRatio = 1.0;
@@ -1465,6 +1480,7 @@ class CharacterStatsGUI {
                                         sCMedicineCheckbox.height = GameGUI.fontSizeSmall;
                                         sCMedicineCheckbox.color = GameGUI.color;
                                         sCMedicineCheckbox.disabledColor = sCMedicineCheckbox.background;
+                                        sCMedicineCheckbox.disabledColorItem = GameGUI.color;
                                         sCMedicineCheckbox.thickness = 0;
                                         sCMedicineCheckbox.isEnabled = false;
                                         sCMedicineCheckbox.checkSizeRatio = 1.0;
@@ -1495,6 +1511,7 @@ class CharacterStatsGUI {
                                         sCNatureCheckbox.height = GameGUI.fontSizeSmall;
                                         sCNatureCheckbox.color = GameGUI.color;
                                         sCNatureCheckbox.disabledColor = sCNatureCheckbox.background;
+                                        sCNatureCheckbox.disabledColorItem = GameGUI.color;
                                         sCNatureCheckbox.thickness = 0;
                                         sCNatureCheckbox.isEnabled = false;
                                         sCNatureCheckbox.checkSizeRatio = 1.0;
@@ -1525,6 +1542,7 @@ class CharacterStatsGUI {
                                         sCPerceptionCheckbox.height = GameGUI.fontSizeSmall;
                                         sCPerceptionCheckbox.color = GameGUI.color;
                                         sCPerceptionCheckbox.disabledColor = sCPerceptionCheckbox.background;
+                                        sCPerceptionCheckbox.disabledColorItem = GameGUI.color;
                                         sCPerceptionCheckbox.thickness = 0;
                                         sCPerceptionCheckbox.isEnabled = false;
                                         sCPerceptionCheckbox.checkSizeRatio = 1.0;
@@ -1555,6 +1573,7 @@ class CharacterStatsGUI {
                                         sCPerformanceCheckbox.height = GameGUI.fontSizeSmall;
                                         sCPerformanceCheckbox.color = GameGUI.color;
                                         sCPerformanceCheckbox.disabledColor = sCPerformanceCheckbox.background;
+                                        sCPerformanceCheckbox.disabledColorItem = GameGUI.color;
                                         sCPerformanceCheckbox.thickness = 0;
                                         sCPerformanceCheckbox.isEnabled = false;
                                         sCPerformanceCheckbox.checkSizeRatio = 1.0;
@@ -1585,6 +1604,7 @@ class CharacterStatsGUI {
                                         sCPersuasionCheckbox.height = GameGUI.fontSizeSmall;
                                         sCPersuasionCheckbox.color = GameGUI.color;
                                         sCPersuasionCheckbox.disabledColor = sCPersuasionCheckbox.background;
+                                        sCPersuasionCheckbox.disabledColorItem = GameGUI.color;
                                         sCPersuasionCheckbox.thickness = 0;
                                         sCPersuasionCheckbox.isEnabled = false;
                                         sCPersuasionCheckbox.checkSizeRatio = 1.0;
@@ -1615,6 +1635,7 @@ class CharacterStatsGUI {
                                         sCReligionCheckbox.height = GameGUI.fontSizeSmall;
                                         sCReligionCheckbox.color = GameGUI.color;
                                         sCReligionCheckbox.disabledColor = sCReligionCheckbox.background;
+                                        sCReligionCheckbox.disabledColorItem = GameGUI.color;
                                         sCReligionCheckbox.thickness = 0;
                                         sCReligionCheckbox.isEnabled = false;
                                         sCReligionCheckbox.checkSizeRatio = 1.0;
@@ -1645,6 +1666,7 @@ class CharacterStatsGUI {
                                         sCSleightOfHandCheckbox.height = GameGUI.fontSizeSmall;
                                         sCSleightOfHandCheckbox.color = GameGUI.color;
                                         sCSleightOfHandCheckbox.disabledColor = sCSleightOfHandCheckbox.background;
+                                        sCSleightOfHandCheckbox.disabledColorItem = GameGUI.color;
                                         sCSleightOfHandCheckbox.thickness = 0;
                                         sCSleightOfHandCheckbox.isEnabled = false;
                                         sCSleightOfHandCheckbox.checkSizeRatio = 1.0;
@@ -1675,6 +1697,7 @@ class CharacterStatsGUI {
                                         sCStealthCheckbox.height = GameGUI.fontSizeSmall;
                                         sCStealthCheckbox.color = GameGUI.color;
                                         sCStealthCheckbox.disabledColor = sCStealthCheckbox.background;
+                                        sCStealthCheckbox.disabledColorItem = GameGUI.color;
                                         sCStealthCheckbox.thickness = 0;
                                         sCStealthCheckbox.isEnabled = false;
                                         sCStealthCheckbox.checkSizeRatio = 1.0;
