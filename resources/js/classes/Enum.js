@@ -2983,6 +2983,7 @@ let ArtisanToolEnum = {
     POTTERS_TOOLS: ProficiencyEnum.POTTERS_TOOLS,
     SMITHS_TOOLS: ProficiencyEnum.SMITHS_TOOLS,
     TINKERS_TOOLS: ProficiencyEnum.TINKERS_TOOLS,
+    THEIVES_TOOLS: ProficiencyEnum.THIEVES_TOOLS,
     WEAVERS_TOOLS: ProficiencyEnum.WEAVERS_TOOLS,
     WOODCARVERS_TOOLS: ProficiencyEnum.WOODCARVERS_TOOLS,
     ANY: ProficiencyEnum.ANY,

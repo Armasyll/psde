@@ -2048,5 +2048,7 @@ class CharacterStatsGUI {
         number = creatureEntity.getSkillScore(ProficiencyEnum.STEALTH);
         CharacterStatsGUI.skillStealthField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.skillStealthCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.STEALTH);
+
+        // proficienciesAndLanguages will include Languages, Armour, Weapons, and Tools & Kits
     }
 }
