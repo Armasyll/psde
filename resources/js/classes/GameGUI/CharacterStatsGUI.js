@@ -2018,7 +2018,6 @@ class CharacterStatsGUI {
         CharacterStatsGUI.proficiencyBonusField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
         // saving throws
-        // checkboxes don't show values when checked and disabled
 
         number = creatureEntity.getSkillScore(ProficiencyEnum.ACROBATICS);
         CharacterStatsGUI.skillAcrobaticsField.text = String((number > 0 ? "+" : "") + number);
