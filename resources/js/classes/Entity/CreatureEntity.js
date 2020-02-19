@@ -90,8 +90,9 @@ class CreatureEntity extends Entity {
 
         this.armourClass = 0;
 
-        this.level = 1;
+        this._level = 1;
         this.experiencePoints = 0;
+        this._proficiencyBonus = 0;
         /**
          * Like health, but hitting 0 knocks you out instead of killing you.
          */
@@ -164,6 +165,10 @@ class CreatureEntity extends Entity {
          * @type {object} Map of ProficiencyEnum; it's an object so i don't have to go through an array just to check if a known index exists :v
          */
         this.proficiencies = {};
+        /**
+         * @type {object} Map of AbilityEnum; "
+         */
+        this.savingThrows = {};
 
         this.conditions = new Set();
 
@@ -422,13 +427,17 @@ class CreatureEntity extends Entity {
     }
 
     getLevel() {
-        return this.level;
+        return this._level;
+    }
+    getProficiencyBonus() {
+        return this._proficiencyBonus + this.proficiencyBonusModifier;
     }
     setXP(number = 0) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
         this.experiencePoints = number;
-        this.level = Game.calculateLevel(this.experiencePoints);
+        this._level = Game.calculateLevel(this.experiencePoints);
+        this._proficiencyBonus = Game.calculateProficiencyByLevel(this._level);
         return this;
     }
     modifyXP(number) {
@@ -652,7 +661,12 @@ class CreatureEntity extends Entity {
 
     addProficiency(proficiencyEnum) {
         if (!ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
-            return 2;
+            if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
+                proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+            }
+            else {
+                return false;
+            }
         }
         this.proficiencies[proficiencyEnum] = true;
         return 0;
@@ -662,9 +676,25 @@ class CreatureEntity extends Entity {
         return 0;
     }
     hasProficiency(proficiencyEnum) {
+        if (!ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
+                proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+            }
+            else {
+                return false;
+            }
+        }
         return this.proficiencies.hasOwnProperty(proficiencyEnum);
     }
     getSkillScore(proficiencyEnum) {
+        if (!ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
+                proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+            }
+            else {
+                return false;
+            }
+        }
         let number = Game.calculateAbilityModifier(this.getAbility(Game.getSkillAbility(proficiencyEnum)));
         if (this.hasProficiency(proficiencyEnum)) {
             number += this.getProficiencyBonus();
@@ -674,6 +704,48 @@ class CreatureEntity extends Entity {
     clearSkills() {
         this.proficiencies.clear();
         return 0;
+    }
+    addSavingThrow(abilityEnum) {
+        if (!AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
+            if (AbilityEnum.hasOwnProperty(abilityEnum)) {
+                abilityEnum = AbilityEnum[abilityEnum];
+            }
+            else {
+                return 2;
+            }
+        }
+        this.savingThrows[abilityEnum] = true;
+        return 0;
+    }
+    removeSavingThrow(abilityEnum) {
+        delete this.savingThrows[abilityEnum];
+        return 0;
+    }
+    hasSavingThrow(abilityEnum) {
+        if (!AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
+            if (AbilityEnum.hasOwnProperty(abilityEnum)) {
+                abilityEnum = AbilityEnum[abilityEnum];
+            }
+            else {
+                return false;
+            }
+        }
+        return this.savingThrows.hasOwnProperty(abilityEnum);
+    }
+    getSavingThrow(abilityEnum) {
+        if (!AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
+            if (AbilityEnum.hasOwnProperty(abilityEnum)) {
+                abilityEnum = AbilityEnum[abilityEnum];
+            }
+            else {
+                return 0;
+            }
+        }
+        let number = Game.calculateAbilityModifier(this.getAbility(abilityEnum));
+        if (this.hasSavingThrow(abilityEnum)) {
+            number += this.getProficiencyBonus();
+        }
+        return number;
     }
 
     addCondition(conditionEnum) {
@@ -725,9 +797,6 @@ class CreatureEntity extends Entity {
         this.weightModifier = 0;
         this.proficiencyBonusModifier = 0;
         return 0;
-    }
-    getProficiencyBonus() {
-        return Game.calculateProficiencyByLevel(this.level) + this.proficiencyBonusModifier;
     }
     getAbility(abilityEnum) {
         switch (abilityEnum) {
@@ -823,7 +892,7 @@ class CreatureEntity extends Entity {
         clone.intelligence = this.intelligence;
         clone.wisdom = this.wisdom;
         clone.charisma = this.charisma;
-        clone.level = this.level;
+        clone.level = this._level;
         clone.experiencePoints = this.experiencePoints;
         clone.stamina = this.stamina;
         clone.money = this.money;

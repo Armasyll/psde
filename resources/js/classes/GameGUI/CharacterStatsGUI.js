@@ -64,11 +64,11 @@ class CharacterStatsGUI {
         CharacterStatsGUI.xpField.fontSize = GameGUI.fontSize;
         CharacterStatsGUI.xpLabel.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.xpLabel.fontSize = GameGUI.fontSizeSmall;
-        CharacterStatsGUI.body.height = String(Math.max(CharacterStatsGUI.controller.heightInPixels - (GameGUI.fontSizeInPixelsWithSpacing * 3), GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.body.height = String(CharacterStatsGUI.controller.heightInPixels - CharacterStatsGUI.header.heightInPixels).concat("px");
         CharacterStatsGUI.body.width = CharacterStatsGUI.controller.width;
         CharacterStatsGUI.colA.height = CharacterStatsGUI.body.height;
         CharacterStatsGUI.colA.width = String(Math.max(CharacterStatsGUI.body.widthInPixels / 3, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
-        CharacterStatsGUI.colARowA.height = String(Math.max((CharacterStatsGUI.colA.heightInPixels / 7) * 4, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.colARowA.height = String((CharacterStatsGUI.colA.heightInPixels / 7) * 4).concat("px");
         CharacterStatsGUI.colARowA.width = CharacterStatsGUI.colA.width;
         CharacterStatsGUI.colARowAColA.height = CharacterStatsGUI.colARowA.height;
         CharacterStatsGUI.colARowAColA.width = String(Math.max(CharacterStatsGUI.colARowA.widthInPixels / 2, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
@@ -377,7 +377,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.passiveWisdomLabel.height = CharacterStatsGUI.colARowB.height;
         CharacterStatsGUI.passiveWisdomLabel.width = String(Math.max(CharacterStatsGUI.colARowB.widthInPixels - CharacterStatsGUI.passiveWisdomField.widthInPixels, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.passiveWisdomLabel.fontSize = GameGUI.fontSizeSmall;
-        CharacterStatsGUI.proficienciesAndLanguagesContainer.height = String(Math.max((CharacterStatsGUI.colA.heightInPixels / 7) * 2.5, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.proficienciesAndLanguagesContainer.height = String((CharacterStatsGUI.colA.heightInPixels / 7) * 2.5).concat("px");
         CharacterStatsGUI.proficienciesAndLanguagesContainer.width = CharacterStatsGUI.colA.width;
         CharacterStatsGUI.proficienciesAndLanguagesField.height = String(CharacterStatsGUI.proficienciesAndLanguagesContainer.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
         CharacterStatsGUI.proficienciesAndLanguagesField.width = CharacterStatsGUI.proficienciesAndLanguagesContainer.width;
@@ -1758,13 +1758,15 @@ class CharacterStatsGUI {
                             proficienciesAndLanguagesField.width = proficienciesAndLanguagesContainer.width;
                             proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
                             proficienciesAndLanguagesField.color = GameGUI.color;
+                            proficienciesAndLanguagesField.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                            proficienciesAndLanguagesField.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                         proficienciesAndLanguagesContainer.addControl(proficienciesAndLanguagesField);
                         let proficienciesAndLanguagesLabel = new BABYLON.GUI.TextBlock("proficienciesAndLanguagesLabel");
-                            proficienciesAndLanguagesField.height = GameGUI.fontSizeSmall;
-                            proficienciesAndLanguagesField.width = proficienciesAndLanguagesContainer.width;
-                            proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
-                            proficienciesAndLanguagesField.color = GameGUI.color;
-                            proficienciesAndLanguagesField.text = "Other Proficiencies and Languages";
+                            proficienciesAndLanguagesLabel.height = GameGUI.fontSizeSmall;
+                            proficienciesAndLanguagesLabel.width = proficienciesAndLanguagesContainer.width;
+                            proficienciesAndLanguagesLabel.fontSize = GameGUI.fontSizeSmall;
+                            proficienciesAndLanguagesLabel.color = GameGUI.color;
+                            proficienciesAndLanguagesLabel.text = "Other Proficiencies and Languages";
                             //proficienciesAndLanguagesField.textSmall = "Proficiencies and Languages";
                             //proficienciesAndLanguagesField.textTiny = "Profs & Langs";
                         proficienciesAndLanguagesContainer.addControl(proficienciesAndLanguagesLabel);
@@ -2018,7 +2020,25 @@ class CharacterStatsGUI {
         CharacterStatsGUI.proficiencyBonusField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
         // saving throws
-
+        number = creatureEntity.getSavingThrow(AbilityEnum.STRENGTH);
+        CharacterStatsGUI.savingThrowStrengthField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowStrengthCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.STRENGTH);
+        number = creatureEntity.getSavingThrow(AbilityEnum.DEXTERITY);
+        CharacterStatsGUI.savingThrowDexterityField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowDexterityCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.DEXTERITY);
+        number = creatureEntity.getSavingThrow(AbilityEnum.CONSTITUTION);
+        CharacterStatsGUI.savingThrowConstitutionField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowConstitutionCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.CONSTITUTION);
+        number = creatureEntity.getSavingThrow(AbilityEnum.INTELLIGENCE);
+        CharacterStatsGUI.savingThrowIntelligenceField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowIntelligenceCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.INTELLIGENCE);
+        number = creatureEntity.getSavingThrow(AbilityEnum.WISDOM);
+        CharacterStatsGUI.savingThrowWisdomField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowWisdomCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.WISDOM);
+        number = creatureEntity.getSavingThrow(AbilityEnum.CHARISMA);
+        CharacterStatsGUI.savingThrowCharismaField.text = String((number > 0 ? "+" : "") + number);
+        CharacterStatsGUI.savingThrowCharismaCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.CHARISMA);
+        // other proficiencies and languages
         number = creatureEntity.getSkillScore(ProficiencyEnum.ACROBATICS);
         CharacterStatsGUI.skillAcrobaticsField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.skillAcrobaticsCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ACROBATICS);
