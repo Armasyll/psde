@@ -2968,416 +2968,82 @@ let ProficiencyEnum = {
     }
 };
 let ArtisanToolEnum = {
-    ALCHEMISTS_SUPPLIES: 0,
-    BREWERS_SUPPLIES: 1,
-    CALLIGRAPHERS_SUPPLIES: 2,
-    CARPENTERS_TOOLS: 3,
-    CARTOGRAPHERS_TOOLS: 4,
-    COBBLERS_TOOLS: 5,
-    COOKS_UTENSILS: 6,
-    GLASSBLOWERS_TOOLS: 7,
-    JEWELERS_TOOLS: 8,
-    LEATHERWORKERS_TOOLS: 9,
-    MASONS_TOOLS: 10,
-    PAINTERS_SUPPLIES: 11,
-    POTTERS_TOOLS: 12,
-    SMITHS_TOOLS: 13,
-    TINKERS_TOOLS: 14,
-    WEAVERS_TOOLS: 15,
-    WOODCARVERS_TOOLS: 16,
-    ANY: 252,
-    properties: {
-        0: {
-            name: "Alchemist's Supplies",
-            value: 0,
-            key: "ALCHEMISTS_SUPPLIES"
-        },
-        1: {
-            name: "Brewer's Supplies",
-            value: 1,
-            key: "BREWERS_SUPPLIES"
-        },
-        2: {
-            name: "Calligrapher's Supplies",
-            value: 2,
-            key: "CALLIGRAPHERS_SUPPLIES"
-        },
-        3: {
-            name: "Carpenter's Tools",
-            value: 3,
-            key: "CARPENTERS_TOOLS"
-        },
-        4: {
-            name: "Cartographer's Tools",
-            value: 4,
-            key: "CARTOGRAPHERS_TOOLS"
-        },
-        5: {
-            name: "Cobbler's Tools",
-            value: 5,
-            key: "COBBLERS_TOOLS"
-        },
-        6: {
-            name: "Cook's Utensils",
-            value: 6,
-            key: "COOKS_UTENSILS"
-        },
-        7: {
-            name: "Glassblower's Tools",
-            value: 7,
-            key: "GLASSBLOWERS_TOOLS"
-        },
-        8: {
-            name: "Jeweler's Tools",
-            value: 8,
-            key: "JEWELERS_TOOLS"
-        },
-        9: {
-            name: "Leatherworker's Tools",
-            value: 9,
-            key: "LEATHERWORKERS_TOOLS"
-        },
-        10: {
-            name: "Mason's Tools",
-            value: 10,
-            key: "MASONS_TOOLS"
-        },
-        11: {
-            name: "Painter's Supplies",
-            value: 11,
-            key: "PAINTERS_SUPPLIES"
-        },
-        12: {
-            name: "Potter's Tools",
-            value: 12,
-            key: "POTTERS_TOOLS"
-        },
-        13: {
-            name: "Smith's Tools",
-            value: 13,
-            key: "SMITHS_TOOLS"
-        },
-        14: {
-            name: "Tinker's Tools",
-            value: 14,
-            key: "TINKERS_TOOLS"
-        },
-        15: {
-            name: "Weaver's Tools",
-            value: 15,
-            key: "WEAVERS_TOOLS"
-        },
-        16: {
-            name: "Woodcarver's Tools",
-            value: 16,
-            key: "WOODCARVERS_TOOLS"
-        },
-        252: {
-            name: "Pick Any Choice",
-            value: 252,
-            key: "ANY"
-        }
-    }
+    ALCHEMISTS_SUPPLIES: ProficiencyEnum.ALCHEMISTS_SUPPLIES,
+    BREWERS_SUPPLIES: ProficiencyEnum.BREWERS_SUPPLIES,
+    CALLIGRAPHERS_SUPPLIES: ProficiencyEnum.CALLIGRAPHERS_SUPPLIES,
+    CARPENTERS_TOOLS: ProficiencyEnum.CARPENTERS_TOOLS,
+    CARTOGRAPHERS_TOOLS: ProficiencyEnum.CARTOGRAPHERS_TOOLS,
+    COBBLERS_TOOLS: ProficiencyEnum.COBBLERS_TOOLS,
+    COOKS_UTENSILS: ProficiencyEnum.COOKS_UTENSILS,
+    GLASSBLOWERS_TOOLS: ProficiencyEnum.GLASSBLOWERS_TOOLS,
+    JEWELERS_TOOLS: ProficiencyEnum.JEWELERS_TOOLS,
+    LEATHERWORKERS_TOOLS: ProficiencyEnum.LEATHERWORKERS_TOOLS,
+    MASONS_TOOLS: ProficiencyEnum.MASONS_TOOLS,
+    PAINTERS_SUPPLIES: ProficiencyEnum.PAINTERS_SUPPLIES,
+    POTTERS_TOOLS: ProficiencyEnum.POTTERS_TOOLS,
+    SMITHS_TOOLS: ProficiencyEnum.SMITHS_TOOLS,
+    TINKERS_TOOLS: ProficiencyEnum.TINKERS_TOOLS,
+    WEAVERS_TOOLS: ProficiencyEnum.WEAVERS_TOOLS,
+    WOODCARVERS_TOOLS: ProficiencyEnum.WOODCARVERS_TOOLS,
+    ANY: ProficiencyEnum.ANY,
+    properties: ProficiencyEnum.properties
 }
 let LanguageEnum = {
-    ABYSSAL: 0,
-    CELESTIAL: 1,
-    COMMON: 2,
-    DEEP_SPEECH: 3,
-    DRACONIC: 4,
-    DWARVISH: 5,
-    ELVISH: 6,
-    GNOMISH: 7,
-    GOBLIN: 8,
-    HALFLING: 9,
-    INFERNAL: 10,
-    ORC: 11,
-    PRIMORDIAL: 12,
-    SYLVAN: 13,
-    UNDERCOMMON: 14,
-    DRUIDIC: 15,
-    ANY: 252,
-    properties: {
-        0: {
-            name: "Abyssal",
-            value: 0,
-            key: "ABYSSAL"
-        },
-        1: {
-            name: "Celestial",
-            value: 1,
-            key: "CELESTIAL"
-        },
-        2: {
-            name: "Common",
-            value: 2,
-            key: "COMMON"
-        },
-        3: {
-            name: "Deep Speech",
-            value: 3,
-            key: "DEEP_SPEECH"
-        },
-        4: {
-            name: "Draconic",
-            value: 4,
-            key: "DRACONIC"
-        },
-        5: {
-            name: "Dwarvish",
-            value: 5,
-            key: "DWARVISH"
-        },
-        6: {
-            name: "Elvish",
-            value: 6,
-            key: "ELVISH"
-        },
-        7: {
-            name: "Gnomish",
-            value: 7,
-            key: "GNOMISH"
-        },
-        8: {
-            name: "Goblin",
-            value: 8,
-            key: "GOBLIN"
-        },
-        9: {
-            name: "Halfling",
-            value: 9,
-            key: "HALFLING"
-        },
-        10: {
-            name: "Infernal",
-            value: 10,
-            key: "INFERNAL"
-        },
-        11: {
-            name: "Orc",
-            value: 11,
-            key: "ORC"
-        },
-        12: {
-            name: "Primordial",
-            value: 12,
-            key: "PRIMORDIAL"
-        },
-        13: {
-            name: "Sylvan",
-            value: 13,
-            key: "SYLVAN"
-        },
-        14: {
-            name: "Undercommon",
-            value: 14,
-            key: "UNDERCOMMON"
-        },
-        15: {
-            name: "Druidic",
-            value: 15,
-            key: "DRUIDIC"
-        },
-        252: {
-            name: "Pick Any Choice",
-            value: 252,
-            key: "ANY"
-        }
-    }
+    ABYSSAL: ProficiencyEnum.ABYSSAL,
+    CELESTIAL: ProficiencyEnum.CELESTIAL,
+    COMMON: ProficiencyEnum.COMMON,
+    DEEP_SPEECH: ProficiencyEnum.DEEP_SPEECH,
+    DRACONIC: ProficiencyEnum.DRACONIC,
+    DWARVISH: ProficiencyEnum.DWARVISH,
+    ELVISH: ProficiencyEnum.ELVISH,
+    GNOMISH: ProficiencyEnum.GNOMISH,
+    GOBLIN: ProficiencyEnum.GOBLIN,
+    HALFLING: ProficiencyEnum.HALFLING,
+    INFERNAL: ProficiencyEnum.INFERNAL,
+    ORC: ProficiencyEnum.ORC,
+    PRIMORDIAL: ProficiencyEnum.PRIMORDIAL,
+    SYLVAN: ProficiencyEnum.SYLVAN,
+    UNDERCOMMON: ProficiencyEnum.UNDERCOMMON,
+    DRUIDIC: ProficiencyEnum.DRUIDIC,
+    ANY: ProficiencyEnum.ANY,
+    properties: ProficiencyEnum.properties
 }
 let MusicalInstrumentEnum = {
-    BAGPIPES: 0,
-    DRUM: 1,
-    DULCIMER: 2,
-    FLUTE: 3,
-    HORN: 4,
-    LUTE: 5,
-    LYRE: 6,
-    PAN_FLUTE: 7,
-    SHAWM: 8,
-    VIOL: 9,
-    properties: {
-        0: {
-            name: "Bagpipes",
-            value: 0,
-            key: "BAGPIPES"
-        },
-        1: {
-            name: "Drum",
-            value: 1,
-            key: "DRUM"
-        },
-        2: {
-            name: "Dulcimer",
-            value: 2,
-            key: "DULCIMER"
-        },
-        3: {
-            name: "Flute",
-            value: 3,
-            key: "FLUTE"
-        },
-        4: {
-            name: "Horn",
-            value: 4,
-            key: "HORN"
-        },
-        5: {
-            name: "Lute",
-            value: 5,
-            key: "LUTE"
-        },
-        6: {
-            name: "Lyre",
-            value: 6,
-            key: "LYRE"
-        },
-        7: {
-            name: "Pan_flute",
-            value: 7,
-            key: "PAN_FLUTE"
-        },
-        8: {
-            name: "Shawm",
-            value: 8,
-            key: "SHAWM"
-        },
-        9: {
-            name: "Viol",
-            value: 9,
-            key: "VIOL"
-        }
-    }
+    BAGPIPES: ProficiencyEnum.BAGPIPES,
+    DRUM: ProficiencyEnum.DRUM,
+    DULCIMER: ProficiencyEnum.DULCIMER,
+    FLUTE: ProficiencyEnum.FLUTE,
+    HORN: ProficiencyEnum.HORN,
+    LUTE: ProficiencyEnum.LUTE,
+    LYRE: ProficiencyEnum.LYRE,
+    PAN_FLUTE: ProficiencyEnum.PAN_FLUTE,
+    SHAWM: ProficiencyEnum.SHAWM,
+    VIOL: ProficiencyEnum.VIOL,
+    properties: ProficiencyEnum.properties
 }
 let SkillEnum = {
-    ACROBATICS: 0,
-    ANIMAL_HANDLING: 1,
-    ARCANA: 2,
-    ATHLETICS: 3,
-    DECEPTION: 4,
-    HISTORY: 5,
-    INSIGHT: 6,
-    INTIMIDATION: 7,
-    INVESTIGATION: 8,
-    MEDICINE: 9,
-    NATURE: 10,
-    PERCEPTION: 11,
-    PERFORMANCE: 12,
-    PERSUASION: 13,
-    RELIGION: 14,
-    SLEIGHT_OF_HAND: 15,
-    STEALTH: 16,
-    SURVIVAL: 17,
-    ENDURANCE: 18,
-    STREETWISE: 19,
-    ANY: 253,
-    properties: {
-        0: {
-            name: "Acrobatics",
-            value: 0,
-            key: "ACROBATICS"
-        },
-        1: {
-            name: "Animal Handling",
-            value: 1,
-            key: "ANIMAL_HANDLING"
-        },
-        2: {
-            name: "Arcana",
-            value: 2,
-            key: "ARCANA"
-        },
-        3: {
-            name: "Athletics",
-            value: 3,
-            key: "ATHLETICS"
-        },
-        4: {
-            name: "Deception",
-            value: 4,
-            key: "DECEPTION"
-        },
-        5: {
-            name: "History",
-            value: 5,
-            key: "HISTORY"
-        },
-        6: {
-            name: "Insight",
-            value: 6,
-            key: "INSIGHT"
-        },
-        7: {
-            name: "Intimidation",
-            value: 7,
-            key: "INTIMIDATION"
-        },
-        8: {
-            name: "Investigation",
-            value: 8,
-            key: "INVESTIGATION"
-        },
-        9: {
-            name: "Medicine",
-            value: 9,
-            key: "MEDICINE"
-        },
-        10: {
-            name: "Nature",
-            value: 10,
-            key: "NATURE"
-        },
-        11: {
-            name: "Perception",
-            value: 11,
-            key: "PERCEPTION"
-        },
-        12: {
-            name: "Performance",
-            value: 12,
-            key: "PERFORMANCE"
-        },
-        13: {
-            name: "Persuasion",
-            value: 13,
-            key: "PERSUASION"
-        },
-        14: {
-            name: "Religion",
-            value: 14,
-            key: "RELIGION"
-        },
-        15: {
-            name: "Sleight of Hand",
-            value: 15,
-            key: "SLEIGHT_OF_HAND"
-        },
-        16: {
-            name: "Stealth",
-            value: 16,
-            key: "STEALTH"
-        },
-        17: {
-            name: "Survival",
-            value: 17,
-            key: "SURVIVAL"
-        },
-        18: {
-            name: "Endurance",
-            value: 18,
-            key: "ENDURANCE"
-        },
-        19: {
-            name: "Streetwise",
-            value: 19,
-            key: "STREETWISE"
-        },
-        252: {
-            name: "Pick Any Choice",
-            value: 252,
-            key: "ANY"
-        }
-    }
+    ACROBATICS: ProficiencyEnum.ACROBATICS,
+    ANIMAL_HANDLING: ProficiencyEnum.ANIMAL_HANDLING,
+    ARCANA: ProficiencyEnum.ARCANA,
+    ATHLETICS: ProficiencyEnum.ATHLETICS,
+    DECEPTION: ProficiencyEnum.DECEPTION,
+    HISTORY: ProficiencyEnum.HISTORY,
+    INSIGHT: ProficiencyEnum.INSIGHT,
+    INTIMIDATION: ProficiencyEnum.INTIMIDATION,
+    INVESTIGATION: ProficiencyEnum.INVESTIGATION,
+    MEDICINE: ProficiencyEnum.MEDICINE,
+    NATURE: ProficiencyEnum.NATURE,
+    PERCEPTION: ProficiencyEnum.PERCEPTION,
+    PERFORMANCE: ProficiencyEnum.PERFORMANCE,
+    PERSUASION: ProficiencyEnum.PERSUASION,
+    RELIGION: ProficiencyEnum.RELIGION,
+    SLEIGHT_OF_HAND: ProficiencyEnum.SLEIGHT_OF_HAND,
+    STEALTH: ProficiencyEnum.STEALTH,
+    SURVIVAL: ProficiencyEnum.SURVIVAL,
+    ENDURANCE: ProficiencyEnum.ENDURANCE,
+    STREETWISE: ProficiencyEnum.STREETWISE,
+    ANY: ProficiencyEnum.ANY,
+    properties: ProficiencyEnum.properties
 }
 let SpellComponentEnum = {
     NONE: 0,
