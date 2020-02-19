@@ -377,10 +377,10 @@ class CharacterStatsGUI {
         CharacterStatsGUI.passiveWisdomLabel.height = CharacterStatsGUI.colARowB.height;
         CharacterStatsGUI.passiveWisdomLabel.width = String(Math.max(CharacterStatsGUI.colARowB.widthInPixels - CharacterStatsGUI.passiveWisdomField.widthInPixels, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.passiveWisdomLabel.fontSize = GameGUI.fontSizeSmall;
-        CharacterStatsGUI.colARowC.height = String(Math.max((CharacterStatsGUI.colA.heightInPixels / 7) * 2.5, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
-        CharacterStatsGUI.colARowC.width = CharacterStatsGUI.colA.width;
-        CharacterStatsGUI.proficienciesAndLanguagesField.height = String(CharacterStatsGUI.colARowC.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
-        CharacterStatsGUI.proficienciesAndLanguagesField.width = CharacterStatsGUI.colARowC.width;
+        CharacterStatsGUI.proficienciesAndLanguagesContainer.height = String(Math.max((CharacterStatsGUI.colA.heightInPixels / 7) * 2.5, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.proficienciesAndLanguagesContainer.width = CharacterStatsGUI.colA.width;
+        CharacterStatsGUI.proficienciesAndLanguagesField.height = String(CharacterStatsGUI.proficienciesAndLanguagesContainer.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
+        CharacterStatsGUI.proficienciesAndLanguagesField.width = CharacterStatsGUI.proficienciesAndLanguagesContainer.width;
         CharacterStatsGUI.proficienciesAndLanguagesLabel.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.proficienciesAndLanguagesLabel.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.colB.height = CharacterStatsGUI.body.height;
@@ -1727,25 +1727,25 @@ class CharacterStatsGUI {
                             passiveWisdomLabel.color = GameGUI.color;
                         colARowB.addControl(passiveWisdomLabel);
                     colA.addControl(colARowB);
-                    let colARowC = new BABYLON.GUI.StackPanel("colARowC");
-                        colARowC.height = String((colA.heightInPixels / 7) * 2.5).concat("px");
-                        colARowC.width = colA.width;
+                    let proficienciesAndLanguagesContainer = new BABYLON.GUI.StackPanel("proficienciesAndLanguagesContainer");
+                        proficienciesAndLanguagesContainer.height = String((colA.heightInPixels / 7) * 2.5).concat("px");
+                        proficienciesAndLanguagesContainer.width = colA.width;
                         let proficienciesAndLanguagesField = new BABYLON.GUI.TextBlock("proficienciesAndLanguagesField");
-                            proficienciesAndLanguagesField.height = String(colARowC.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
-                            proficienciesAndLanguagesField.width = colARowC.width;
+                            proficienciesAndLanguagesField.height = String(proficienciesAndLanguagesContainer.heightInPixels - GameGUI.fontSizeSmallInPixels).concat("px");
+                            proficienciesAndLanguagesField.width = proficienciesAndLanguagesContainer.width;
                             proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
                             proficienciesAndLanguagesField.color = GameGUI.color;
-                        colARowC.addControl(proficienciesAndLanguagesField);
+                        proficienciesAndLanguagesContainer.addControl(proficienciesAndLanguagesField);
                         let proficienciesAndLanguagesLabel = new BABYLON.GUI.TextBlock("proficienciesAndLanguagesLabel");
                             proficienciesAndLanguagesField.height = GameGUI.fontSizeSmall;
-                            proficienciesAndLanguagesField.width = colARowC.width;
+                            proficienciesAndLanguagesField.width = proficienciesAndLanguagesContainer.width;
                             proficienciesAndLanguagesField.fontSize = GameGUI.fontSizeSmall;
                             proficienciesAndLanguagesField.color = GameGUI.color;
                             proficienciesAndLanguagesField.text = "Other Proficiencies and Languages";
                             //proficienciesAndLanguagesField.textSmall = "Proficiencies and Languages";
                             //proficienciesAndLanguagesField.textTiny = "Profs & Langs";
-                        colARowC.addControl(proficienciesAndLanguagesLabel);
-                    colA.addControl(colARowC);
+                        proficienciesAndLanguagesContainer.addControl(proficienciesAndLanguagesLabel);
+                    colA.addControl(proficienciesAndLanguagesContainer);
                 body.addControl(colA);
                 let colB = new BABYLON.GUI.StackPanel("colB");
                     colB.height = body.height;
@@ -1943,7 +1943,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.colARowB = colARowB;
         CharacterStatsGUI.passiveWisdomField = passiveWisdomScore;
         CharacterStatsGUI.passiveWisdomLabel = passiveWisdomLabel;
-        CharacterStatsGUI.colARowC = colARowC;
+        CharacterStatsGUI.proficienciesAndLanguagesContainer = proficienciesAndLanguagesContainer;
         CharacterStatsGUI.proficienciesAndLanguagesField = proficienciesAndLanguagesField;
         CharacterStatsGUI.proficienciesAndLanguagesLabel = proficienciesAndLanguagesLabel
         CharacterStatsGUI.colB = colB;
@@ -1991,7 +1991,8 @@ class CharacterStatsGUI {
         CharacterStatsGUI.charismaAbilityField.text = String(creatureEntity.getCharisma());
         
         CharacterStatsGUI.passiveWisdomField.text = String(creatureEntity.getPassivePerception());
-        CharacterStatsGUI.proficiencyBonusField.text = String(creatureEntity.getProficiencyBonus());
+        number = creatureEntity.getProficiencyBonus();
+        CharacterStatsGUI.proficiencyBonusField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
         // saving throws
         // checkboxes don't show values when checked and disabled

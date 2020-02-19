@@ -5019,11 +5019,12 @@ class Game {
         return 0;
     }
 
-    static getSkillAbility(skillEnum) {
-        switch (skillEnum) {
+    static getSkillAbility(proficiencyEnum) {
+        switch (proficiencyEnum) {
             case ProficiencyEnum.ATHLETICS: {
                 return AbilityEnum.STRENGTH;
             }
+            case ProficiencyEnum.ACROBATICS:
             case ProficiencyEnum.SLEIGHT_OF_HAND:
             case ProficiencyEnum.STEALTH: {
                 return AbilityEnum.DEXTERITY;
