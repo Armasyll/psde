@@ -273,9 +273,6 @@ class CharacterEntity extends CreatureEntity {
                     }
                 }
             }
-            else {
-                return 1;
-            }
         }
         else {
             if (Game.debugMode) console.log(`\tNo equipment slot was defined.`);
@@ -1034,7 +1031,7 @@ class CharacterEntity extends CreatureEntity {
     generateAdditionalStats() {
         this.armourClass = 0;
         for (let slot in this.equipment) {
-            if (this.equipment[slot] instanceof ClothingEntity) {
+            if (this.equipment[slot] instanceof InstancedEquipmentEntity) {
                 let multiplier = 0.1;
                 switch (this.equipment[slot].getEquipmentSlot()) {
                     case ApparelSlotEnum.CHEST: {
@@ -1049,17 +1046,17 @@ class CharacterEntity extends CreatureEntity {
                 }
                 let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
                 switch (this.equipment[slot].getArmourType()) {
-                    case PADDED:
-                    case LEATHER:
-                    case STUDDEDLEATHER: {
+                    case ArmourEnum.PADDED:
+                    case ArmourEnum.LEATHER:
+                    case ArmourEnum.STUDDEDLEATHER: {
                         modifier = Game.calculateAbilityModifier(this.getDexterity());
                         break;
                     }
-                    case HIDE:
-                    case CHAINSHIRT:
-                    case SCALEMAIL:
-                    case BREASTPLATE:
-                    case HALFPLATE: {
+                    case ArmourEnum.HIDE:
+                    case ArmourEnum.CHAINSHIRT:
+                    case ArmourEnum.SCALEMAIL:
+                    case ArmourEnum.BREASTPLATE:
+                    case ArmourEnum.HALFPLATE: {
                         modifier = Game.calculateAbilityModifier(this.getDexterity());
                         if (modifier > 2) {
                             modifier = 2;

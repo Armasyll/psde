@@ -4007,11 +4007,15 @@ class Game {
             }
             instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
+        if (Game.debugMode) console.log(`Game.removeItemInSpace(${instancedItemEntity.getID()})`);
         if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) {
             Game.removeMesh(instancedItemEntity.getController().getMesh());
             instancedItemEntity.getController().dispose();
+            return 0;
         }
-        return 0;
+        else {
+            return 1;
+        }
     }
     /**
      * Creates a Cosmetic
@@ -4484,6 +4488,7 @@ class Game {
         if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
             return 2;
         }
+        if (Game.debugMode) console.log(`Game.actionTake(${instancedItemEntity.getID()}, ${subEntity.getID()})`);
         if (subEntity.addItem(instancedItemEntity) == 0) {
             Game.removeItemInSpace(instancedItemEntity);
             return 0;
