@@ -31,7 +31,7 @@ class Entity extends AbstractEntity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         this.weight = number;
-        return this;
+        return 0;
     }
     getWeight() {
         return this.weight + this.weightModifier;
@@ -41,7 +41,7 @@ class Entity extends AbstractEntity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         this.price = number;
-        return this;
+        return 0;
     }
     getPrice() {
         return this.price + this.priceModifier;
@@ -54,7 +54,7 @@ class Entity extends AbstractEntity {
         else {
             this.meshID = "missingMesh";
         }
-        return this;
+        return 0;
     }
     getMeshID() {
         return this.meshID;
@@ -66,7 +66,7 @@ class Entity extends AbstractEntity {
         else {
             this.textureID = "missingTexture";
         }
-        return this;
+        return 0;
     }
     getTextureID() {
         return this.textureID;
@@ -78,7 +78,7 @@ class Entity extends AbstractEntity {
         else {
             this.materialID = "missingMaterial";
         }
-        return this;
+        return 0;
     }
     getMaterialID() {
         return this.materialID;
@@ -93,10 +93,10 @@ class Entity extends AbstractEntity {
             action = action.action;
         }
         else if (!ActionEnum.properties.hasOwnProperty(action)) {
-            return this;
+            return 1;
         }
         this.availableActions[action] = new ActionData(action, _function, runOnce);
-        return this;
+        return 0;
     }
     /**
      * Removes an available Action when interacting with this Entity
@@ -108,7 +108,7 @@ class Entity extends AbstractEntity {
             action = action.action;
         }
         else if (!ActionEnum.properties.hasOwnProperty(action)) {
-            return this;
+            return 1;
         }
         if (this.availableActions.hasOwnProperty(action)) {
             if (this.availableActions[action] instanceof ActionData) {
@@ -116,7 +116,7 @@ class Entity extends AbstractEntity {
             }
             delete this.availableActions[action];
         }
-        return this;
+        return 0;
     }
     getAvailableAction(action) {
         if (action instanceof ActionData) {
@@ -154,7 +154,7 @@ class Entity extends AbstractEntity {
         if (action instanceof ActionData) {
             this.hiddenAvailableActions[action.action] = action;
         }
-        return this;
+        return 0;
     }
     /**
      * Removes a Hidden Available Action when interacting with this Entity
@@ -168,7 +168,7 @@ class Entity extends AbstractEntity {
         if (this.hasHiddenAvailableAction(action)) {
             delete this.hiddenAvailableActions[action];
         }
-        return this;
+        return 0;
     }
     getHiddenAvailableAction(action) {
         if (action instanceof ActionData) {

@@ -164,7 +164,7 @@ class FurnitureEntity extends Entity {
             }
         }
         this.furnitureType = furnitureType;
-        return this;
+        return 0;
     }
     getFurnitureType() {
         return this.furnitureType;
