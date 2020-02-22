@@ -13,7 +13,7 @@ class Inventory {
         /*
         Map of integers, related to item slots, and InstancedItemEntities
          */
-        this.inventory = new Map();
+        this.items = new Map();
         this.weight = 0;
         this.maxWeight = 10;
         this.maxSize = 9;
@@ -28,7 +28,7 @@ class Inventory {
         return this.name;
     }
     getSize() {
-        return this.inventory.size;
+        return this.items.size;
     }
     getWeight() {
         return this.weight;
@@ -48,14 +48,14 @@ class Inventory {
         return this.maxSize;
     }
     getAvailableSlots() {
-        return this.maxSize - this.inventory.size;
+        return this.maxSize - this.items.size;
     }
     getAvailableWeight() {
         return this.maxWeight - this.weight;
     }
     calculateUsedWeight() {
         let weight = 0;
-        this.inventory.forEach(function(item) {
+        this.items.forEach(function(item) {
             weight += item.getWeight();
         }, this);
         return weight;
@@ -72,7 +72,7 @@ class Inventory {
         }
         nth += 1;
         for (let i = 0; i < this.maxSize; i++) {
-            if (this.inventory.get(i) == undefined) {
+            if (this.items.get(i) == undefined) {
                 nth--;
                 if (nth <= 0) {
                     return i;
@@ -111,20 +111,20 @@ class Inventory {
         if (isNaN(slot) || slot == -1) {
             return 2;
         }
-        else if (this.inventory.get(slot) instanceof InstancedEntity) {
+        else if (this.items.get(slot) instanceof InstancedEntity) {
             return 1;
         }
-        this.inventory.set(slot, instancedItemEntity);
+        this.items.set(slot, instancedItemEntity);
         this.weight += instancedItemEntity.getWeight();
         return 0;
     }
     swapSlots(slotA, slotB) {
-        if (!this.inventory.has(slotA) || !this.inventory.has(slotB)) {
+        if (!this.items.has(slotA) || !this.items.has(slotB)) {
             return 2;
         }
-        let tempSlot = this.inventory.get(slotA);
-        this.inventory.set(slotA, this.inventory.get(slotB));
-        this.inventory.set(slotB, tempSlot);
+        let tempSlot = this.items.get(slotA);
+        this.items.set(slotA, this.items.get(slotB));
+        this.items.set(slotB, tempSlot);
         return 0;
     }
     /**
@@ -139,22 +139,22 @@ class Inventory {
         if (isNaN(number) || number < 0) {
             return 2;
         }
-        if (this.inventory.has(number) && this.inventory.get(number) instanceof InstancedEntity) {
-            this.weight -= this.inventory.get(number).getWeight();
-            this.inventory.delete(number);
+        if (this.items.has(number) && this.items.get(number) instanceof InstancedEntity) {
+            this.weight -= this.items.get(number).getWeight();
+            this.items.delete(number);
         }
         return 0;
     }
     getItemBySlot(number) {
-        if (this.inventory.has(number) && this.inventory.get(number) instanceof InstancedEntity) {
-            return this.inventory.get(number);
+        if (this.items.has(number) && this.items.get(number) instanceof InstancedEntity) {
+            return this.items.get(number);
         }
         return 2;
     }
     getSlotByItem(any) {
         let slot = -1;
         if (any instanceof InstancedEntity) {
-            this.inventory.forEach((val, key) => {
+            this.items.forEach((val, key) => {
                 if (val == any) {
                     slot = key;
                     return true;
@@ -162,7 +162,7 @@ class Inventory {
             });
         }
         else if (any instanceof Entity) {
-            this.inventory.forEach((val, key) => {
+            this.items.forEach((val, key) => {
                 if (val.getEntity() == any) {
                     slot = key;
                     return true;
@@ -171,7 +171,7 @@ class Inventory {
         }
         else if (typeof any == "string") {
             if (InstancedEntity.has(any)) {
-                this.inventory.forEach((val, key) => {
+                this.items.forEach((val, key) => {
                     if (val.getID() == any) {
                         slot = key;
                         return true;
@@ -179,7 +179,7 @@ class Inventory {
                 });
             }
             else if (Entity.has(any)) {
-                this.inventory.forEach((val, key) => {
+                this.items.forEach((val, key) => {
                     if (val.getEntity().getID() == any) {
                         slot = key;
                         return true;
@@ -197,7 +197,7 @@ class Inventory {
     getItem(any) {
         let item = null;
         if (any instanceof InstancedEntity) {
-            this.inventory.forEach((val) => {
+            this.items.forEach((val) => {
                 if (val == any) {
                     item = val;
                     return true;
@@ -205,7 +205,7 @@ class Inventory {
             });
         }
         else if (any instanceof Entity) {
-            this.inventory.forEach((val) => {
+            this.items.forEach((val) => {
                 if (val.getEntity() == any) {
                     item = val;
                     return true;
@@ -214,7 +214,7 @@ class Inventory {
         }
         else if (typeof any == "string") {
             if (InstancedEntity.has(any)) {
-                this.inventory.forEach((val) => {
+                this.items.forEach((val) => {
                     if (val.getID() == any) {
                         item = val;
                         return true;
@@ -222,7 +222,7 @@ class Inventory {
                 });
             }
             else if (Entity.has(any)) {
-                this.inventory.forEach((val) => {
+                this.items.forEach((val) => {
                     if (val.getEntity().getID() == any) {
                         item = val;
                         return true;
@@ -239,7 +239,7 @@ class Inventory {
         return (this.getItem(any) instanceof AbstractEntity);
     }
     getItems() {
-        return this.inventory;
+        return this.items;
     }
 
     hasEntity(abstractEntity) {
@@ -270,11 +270,11 @@ class Inventory {
     }
 
     clear() {
-        this.inventory.forEach((val, key) => {
+        this.items.forEach((val, key) => {
             val.dispose();
-            this.inventory.delete(key);
+            this.items.delete(key);
         });
-        this.inventory.clear();
+        this.items.clear();
         this.weight = 0;
     }
 
@@ -286,7 +286,7 @@ class Inventory {
         this.setEnabled(false);
         this.entities.clear();
         this.clear();
-        delete this.inventory;
+        delete this.items;
         return undefined;
     }
 

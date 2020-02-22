@@ -799,6 +799,14 @@ class CreatureEntity extends Entity {
         return 0;
     }
     getAbility(abilityEnum) {
+        if (!AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
+            if (AbilityEnum.hasOwnProperty(abilityEnum)) {
+                abilityEnum = AbilityEnum[abilityEnum];
+            }
+            else {
+                return 0;
+            }
+        }
         switch (abilityEnum) {
             case AbilityEnum.STRENGTH: {
                 return this.getStrength();
