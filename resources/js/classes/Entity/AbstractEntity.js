@@ -104,7 +104,7 @@ class AbstractEntity {
         else {number = number|0}
         if (this.getGodMode()) {
             this.health = this.getMaxHealth();
-            return this;
+            return 0;
         }
         if (number > this.getMaxHealth()) {
             number = this.getMaxHealth();
@@ -124,13 +124,12 @@ class AbstractEntity {
                 this.controller.doDeath();
             }
         }
-        return this;
+        return 0;
     }
     modifyHealth(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setHealth(this.health + number);
-        return this;
+        return this.setHealth(this.health + number);
     }
     getHealth() {
         return this.health + this.healthModifier;
@@ -148,13 +147,12 @@ class AbstractEntity {
             this.health = this.getMaxHealth();
         }
         this.recalculateHealthByModifiedMaxHealth(oldMaxHealth);
-        return this;
+        return 0;
     }
     modifyMaxHealth(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setMaxHealth(this.maxHealth + number);
-        return this;
+        return this.setMaxHealth(this.maxHealth + number);
     }
     getMaxHealth() {
         return this.maxHealth + this.maxHealthModifier;
@@ -165,13 +163,12 @@ class AbstractEntity {
         let oldMaxHealth = this.getMaxHealth();
         this.maxHealthModifier = number;
         this.recalculateHealthByModifiedMaxHealth(oldMaxHealth);
-        return this;
+        return 0;
     }
     modifyMaxHealthModifier(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setMaxHealthModifier(this.maxHealthModifier + number);
-        return this;
+        return this.setMaxHealthModifier(this.maxHealthModifier + number);
     }
     recalculateHealthByModifiedMaxHealth(oldMaxHealth) {
         let multiplier = this.getMaxHealth() / oldMaxHealth;
@@ -185,15 +182,13 @@ class AbstractEntity {
 
     setGodMode(boolean = true) {
         this.godMode = boolean == true;
-        return this;
+        return 0;
     }
     enableGodMode() {
-        this.setGodMode(true);
-        return this;
+        return this.setGodMode(true);
     }
     disableGodMode() {
-        this.setGodMode(false);
-        return this;
+        return this.setGodMode(false);
     }
     getGodMode() {
         return this.godMode || this.godModeModifier;

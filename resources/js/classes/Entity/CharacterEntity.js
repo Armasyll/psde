@@ -183,7 +183,7 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.name = name.replace(/[^0-9a-z]/gi, '');
         }
-        return this;
+        return 0;
     }
     getFullName() {
         if (this.surname != undefined && this.surname.length > 0)
@@ -636,7 +636,7 @@ class CharacterEntity extends CreatureEntity {
         this.defaultDisposition["familial"] = Number.parseInt(familial) || 0;
         this.defaultDisposition["obsession"] = Number.parseInt(obsession) || 0;
         this.defaultDisposition["hate"] = Number.parseInt(hate) || 0;
-        return this;
+        return 0;
     }
     setCharacterPassion(_character, number) {
         return this.characterDisposition[_character]["passion"] = number;
@@ -790,7 +790,7 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.pawType = PawEnum.PAD;
         }
-        return this;
+        return 0;
     }
 
     setEyeType(eyeEnum = EyeEnum.CIRCLE) {
@@ -800,7 +800,7 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.eyeType = EyeEnum.CIRCLE;
         }
-        return this;
+        return 0;
     }
     getEyeType() {
         return this.eyeType;
@@ -815,7 +815,7 @@ class CharacterEntity extends CreatureEntity {
         this.eyeColour = colour;
         this._leftEyeColourHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         this._rightEyeColourHex = this._leftEyeColourHex;
-        return this;
+        return 0;
     }
     getEyeColour() {
         return this.eyeColour;
@@ -828,17 +828,17 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.peltType = PeltEnum.FUR;
         }
-        return this;
+        return 0;
     }
     setFurColourA(colour = "red") {
         this.furColourA = colour;
         this._furColourAHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
-        return this;
+        return 0;
     }
     setFurColourB(colour = "cream") {
         this.furColourB = colour;
         this._furColourBHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
-        return this;
+        return 0;
     }
     setFurColour(colourA, colourB = undefined) {
         if (typeof colourB == 'undefined')
@@ -846,7 +846,7 @@ class CharacterEntity extends CreatureEntity {
         
         this.setFurColourA(colourA);
         this.setFurColourB(colourB);
-        return this;
+        return 0;
     }
     /**
      * Adds a new disposition this character has for the specified character, by their ID.
@@ -870,7 +870,7 @@ class CharacterEntity extends CreatureEntity {
         this.characterDisposition[characterEntity]["familial"] = familialModifier + this.defaultDisposition["familial"];
         this.characterDisposition[characterEntity]["obsession"] = obsessionModifier + this.defaultDisposition["obsession"];
         this.characterDisposition[characterEntity]["hate"] = hateModifier + this.defaultDisposition["hate"];
-        return this;
+        return 0;
     }
 
     hasDialogue() {
@@ -883,13 +883,13 @@ class CharacterEntity extends CreatureEntity {
             this.addAvailableAction(ActionEnum.TALK);
             this.setDefaultAction(ActionEnum.TALK);
         }
-        return this;
+        return 0;
     }
     removeDialogue() {
         this.dialogue = undefined;
         this.removeAvailableAction(ActionEnum.TALK);
         this.setDefaultAction(ActionEnum.LOOK);
-        return this;
+        return 0;
     }
     getDialogue() {
         return this.dialogue;
@@ -1414,10 +1414,10 @@ class CharacterEntity extends CreatureEntity {
         // variables from CreatureEntity
         clone.specialCreatureType = this.specialCreatureType;
         clone.specialCreatureSubType = this.specialCreatureSubType;
-        clone.cantripsKnown = new Set(this.cantripsKnown);
-        clone.cantripsKnownLimit = this.cantripsKnownLimit;
-        clone.spellsKnown = new Set(this.spellsKnown);
-        clone.spellsKnownLimit = this.spellsKnownLimit;
+        clone.cantrips = new Set(this.cantrips);
+        clone.cantripsLimit = this.cantripsLimit;
+        clone.spells = new Set(this.spells);
+        clone.spellsLimit = this.spellsLimit;
         clone.spellSlots = Object.assign({}, this.spellSlots);
         clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
         clone.hunger = this.hunger;

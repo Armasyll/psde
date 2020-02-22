@@ -37,9 +37,9 @@ class CreatureEntity extends Entity {
         this.specialCreatureSubType = 0;
         this.currentActions = {};
         this.stance = ActionEnum.STAND;
-        this.cantripsKnown = new Set();
+        this.cantripsKnown = {};
         this.cantripsKnownLimit = 0;
-        this.spellsKnown = new Set();
+        this.spellsKnown = {};
         this.spellsKnownLimit = 0;
         this.spellSlots = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
         this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
@@ -202,7 +202,7 @@ class CreatureEntity extends Entity {
         else {
             this.creatureType = CreatureTypeEnum.HUMANOID;
         }
-        return this;
+        return 0;
     }
     getCreatureSubType() {
         return this.creatureSubType;
@@ -228,7 +228,7 @@ class CreatureEntity extends Entity {
                 break;
             }
         }
-        return this;
+        return 0;
     }
     getHeight() {
         return this.height;
@@ -247,7 +247,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
         this.money = number;
-        return this;
+        return 0;
     }
     modifyMoney(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
@@ -262,7 +262,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
         this.age = number;
-        return this;
+        return 0;
     }
     modifyAge(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
@@ -277,13 +277,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 0;}
         else {number = number|0}
         this.hunger = number;
-        return this;
+        return 0;
     }
     modifyHunger(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setHunger(this.hunger + number);
-        return this;
+        return this.setHunger(this.hunger + number);
     }
     getHunger() {
         return this.hunger + this.hungerModifier;
@@ -293,13 +292,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.strength = number;
-        return this;
+        return 0;
     }
     modifyStrength(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setStrength(this.string + number);
-        return this;
+        return this.setStrength(this.string + number);
     }
     getStrength() {
         if (this.getGodMode()) {
@@ -311,13 +309,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.dexterity = number;
-        return this;
+        return 0;
     }
     modifyDexterity(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setDexterity(this.dexterity + number);
-        return this;
+        return this.setDexterity(this.dexterity + number);
     }
     getDexterity() {
         if (this.getGodMode()) {
@@ -329,13 +326,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.constitution = number;
-        return this;
+        return 0;
     }
     modifyConstitution(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setConstitution(this.constitution + number);
-        return this;
+        return this.setConstitution(this.constitution + number);
     }
     getConstitution() {
         if (this.getGodMode()) {
@@ -347,13 +343,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.intelligence = number;
-        return this;
+        return 0;
     }
     modifyIntelligence(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setIntelligence(this.intelligence + number);
-        return this;
+        return this.setIntelligence(this.intelligence + number);
     }
     getIntelligence() {
         if (this.getGodMode()) {
@@ -365,13 +360,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.wisdom = number
-        return this;
+        return 0;
     }
     modifyWisdom(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setWisdom(this.wisdom + number);
-        return this;
+        return this.setWisdom(this.wisdom + number);
     }
     getWisdom() {
         if (this.getGodMode()) {
@@ -383,13 +377,12 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) | 1;}
         else {number = number|0}
         this.charisma = number;
-        return this;
+        return 0;
     }
     modifyCharisma(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setCharisma(this.charisma + number);
-        return this;
+        return this.setCharisma(this.charisma + number);
     }
     getCharisma() {
         if (this.getGodMode()) {
@@ -413,7 +406,7 @@ class CreatureEntity extends Entity {
         this.setIntelligence(intelligence);
         this.setWisdom(wisdom);
         this.setCharisma(charisma);
-        return this;
+        return 0;
     }
     getAbilityScores() {
         return {
@@ -438,13 +431,12 @@ class CreatureEntity extends Entity {
         this.experiencePoints = number;
         this._level = Game.calculateLevel(this.experiencePoints);
         this._proficiencyBonus = Game.calculateProficiencyByLevel(this._level);
-        return this;
+        return 0;
     }
     modifyXP(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.setXP(this.experiencePoints + number);
-        return this;
+        return this.setXP(this.experiencePoints + number);
     }
     getXP() {
         return this.experiencePoints;
@@ -455,7 +447,7 @@ class CreatureEntity extends Entity {
         else {number = number|0}
         if (this.getGodMode()) {
             this.stamina = 0;
-            return this;
+            return 0;
         }
         this.stamina = number;
         if (this.getStamina() > this.getHealth()) {
@@ -465,7 +457,7 @@ class CreatureEntity extends Entity {
                 this.controller.doLay();
             }
         }
-        return this;
+        return 0;
     }
     modifyStamina(number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
@@ -551,20 +543,23 @@ class CreatureEntity extends Entity {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
-                return this;
+                return 2;
         }
-        this.cantripsKnown.add(spell);
-        return this;
+        if (Object.keys(this.cantripsKnown).length >= this.cantripsKnownLimit) {
+            return 1;
+        }
+        this.cantripsKnown[spell.getID()] = true;
+        return 0;
     }
-    removeSpell(spell) {
+    removeCantrip(spell) {
         if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
-                return this;
+                return 2;
         }
-        this.cantripsKnown.delete(spell);
-        return true;
+        delete this.cantripsKnown[spell.getID()];
+        return 0;
     }
 
     addSpell(spell) {
@@ -572,24 +567,27 @@ class CreatureEntity extends Entity {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
-                return this;
+                return 2;
         }
-        this.spellsKnown.add(spell);
-        return this;
+        if (Object.keys(this.spellsKnown).length >= this.spellsKnownLimit) {
+            return 1;
+        }
+        this.spellsKnown[spell.getID()] = true;
+        return 0;
     }
     removeSpell(spell) {
         if (!(spell instanceof SpellEntity)) {
             if (SpellEntity.has(spell))
                 spell = SpellEntity.get(spell);
             else
-                return this;
+                return 2;
         }
-        this.spellsKnown.delete(spell);
-        return true;
+        delete this.spellsKnown[spell.getID()];
+        return 0;
     }
     setLiving(boolean = true) {
         this.living = boolean == true;
-        return this;
+        return 0;
     }
     isLiving() {
         return this.living;
@@ -657,6 +655,7 @@ class CreatureEntity extends Entity {
     }
     clearUsedSpellSlots() {
         this.spellSlotsUsed = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+        return 0;
     }
 
     addProficiency(proficiencyEnum) {
@@ -887,9 +886,9 @@ class CreatureEntity extends Entity {
         // variables from CreatureEntity
         clone.specialCreatureType = this.specialCreatureType;
         clone.specialCreatureSubType = this.specialCreatureSubType;
-        clone.cantripsKnown = new Set(this.cantripsKnown);
+        clone.cantripsKnown = Object.assign({}, this.cantripsKnown);
         clone.cantripsKnownLimit = this.cantripsKnownLimit;
-        clone.spellsKnown = new Set(this.spellsKnown);
+        clone.spellsKnown = Object.assign({}, this.spellsKnown);
         clone.spellsKnownLimit = this.spellsKnownLimit;
         clone.spellSlots = Object.assign({}, this.spellSlots);
         clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
