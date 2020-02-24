@@ -4416,99 +4416,126 @@ class Game {
         }
         return 0;
     }
-    static doEntityAction(abstractEntity, subAbstractEntity = Game.player, actionID) {
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            abstractEntity = InstancedItemEntity.get(abstractEntity) || Entity.get(abstractEntity);
-            if (!(abstractEntity instanceof AbstractEntity)) {
+    static doEntityAction(entity, actor = Game.player, actionID = null) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
                 return 2;
             }
         }
-        if (!(subAbstractEntity instanceof AbstractEntity)) {
-            subAbstractEntity = InstancedItemEntity.get(subAbstractEntity) || Entity.get(subAbstractEntity);
-            if (!(subAbstractEntity instanceof AbstractEntity)) {
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
                 return 2;
             }
         }
-        if (isNaN(actionID)) {
-            actionID = Number.parseInt(actionID);
+        if (!ActionEnum.properties.hasOwnProperty(actionID)) {
+            actionID = entity.getDefaultAction();
         }
-        if (Game.debugMode) console.log(`Running Game::doEntityAction(${abstractEntity.id}, ${subAbstractEntity.id}, ${actionID})`);
+        if (Game.debugMode) console.log(`Running Game::doEntityAction(${entity.id}, ${actor.id}, ${actionID})`);
         switch (actionID) {
             case ActionEnum.USE: {
-                if (abstractEntity instanceof LightingEntity) {
-                    abstractEntity.toggle();
+                if (entity instanceof LightingEntity) {
+                    entity.toggle();
                 }
                 break;
             }
             case ActionEnum.LAY: {
-                Game.actionLay(abstractEntity, subAbstractEntity);
+                Game.actionLay(entity, actor);
                 break;
             }
             case ActionEnum.SIT: {
-                Game.actionSit(abstractEntity, subAbstractEntity);
+                Game.actionSit(entity, actor);
                 break;
             }
             case ActionEnum.TAKE: {
-                if (abstractEntity instanceof InstancedItemEntity) {
-                    Game.actionTake(abstractEntity, subAbstractEntity);
+                if (entity instanceof InstancedItemEntity) {
+                    Game.actionTake(entity, actor);
                 }
                 break;
             }
             case ActionEnum.OPEN: {
-                if (abstractEntity instanceof DoorEntity || abstractEntity instanceof FurnitureEntity || abstractEntity instanceof InstancedFurnitureEntity) {
-                    Game.actionOpen(abstractEntity, subAbstractEntity);
+                if (entity instanceof DoorEntity || entity instanceof FurnitureEntity || entity instanceof InstancedFurnitureEntity) {
+                    Game.actionOpen(entity, actor);
                 }
                 break;
             }
             case ActionEnum.CLOSE: {
-                if (abstractEntity instanceof DoorEntity || abstractEntity instanceof FurnitureEntity || abstractEntity instanceof InstancedFurnitureEntity) {
-                    Game.actionClose(abstractEntity, subAbstractEntity);
+                if (entity instanceof DoorEntity || entity instanceof FurnitureEntity || entity instanceof InstancedFurnitureEntity) {
+                    Game.actionClose(entity, actor);
                 }
                 break;
             }
             case ActionEnum.TALK: {
-                if (abstractEntity instanceof CharacterEntity) {
-                    Game.actionTalk(abstractEntity, subAbstractEntity);
+                if (entity instanceof CharacterEntity) {
+                    Game.actionTalk(entity, actor);
                 }
                 break;
             }
             case ActionEnum.ATTACK: {
-                if (abstractEntity instanceof AbstractEntity) {
-                    Game.actionAttack(abstractEntity, subAbstractEntity);
+                if (entity instanceof AbstractEntity) {
+                    Game.actionAttack(entity, actor);
                 }
                 break;
             }
         }
         return 0;
     }
-    static actionTake(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionTake(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (Game.debugMode) console.log(`Game.actionTake(${instancedItemEntity.getID()}, ${subEntity.getID()})`);
-        if (subEntity.addItem(instancedItemEntity) == 0) {
-            Game.removeItemInSpace(instancedItemEntity);
+        if (!actor.hasInventory()) {
+            return 1;
+        }
+        if (Game.debugMode) console.log(`Game.actionTake(${entity.getID()}, ${actor.getID()})`);
+        if (actor.addItem(entity) == 0) {
+            Game.removeItemInSpace(entity);
             return 0;
         }
         return 1;
     }
-    static actionAttack(defender = Game.player.getTarget(), attacker = Game.player, weapon = null, callback = undefined) {
-        if (!(defender instanceof AbstractEntity)) {
-            defender = null;
+    static actionAttack(entity = Game.player.getTarget(), actor = Game.player, weapon = null, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(attacker instanceof AbstractEntity)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (attacker.getController().isAttacking) {
+        if (actor.getController().isAttacking) {
             return 1;
         }
         if (weapon == null) {
-            let weaponL = attacker.getEquipment()[ApparelSlotEnum.HAND_L];
-            let weaponR = attacker.getEquipment()[ApparelSlotEnum.HAND_R];
-            if (attacker.isLeftHanded() && weaponL instanceof InstancedWeaponEntity) {
+            let weaponL = actor.getEquipment()[ApparelSlotEnum.HAND_L];
+            let weaponR = actor.getEquipment()[ApparelSlotEnum.HAND_R];
+            if (actor.isLeftHanded() && weaponL instanceof InstancedWeaponEntity) {
                 weapon = weaponL;
             }
             else if (weaponR instanceof InstancedWeaponEntity) {
@@ -4521,56 +4548,66 @@ class Game {
         else {
             weapon = WeaponEntity.get("weaponHand");
         }
-        if (defender instanceof CharacterEntity && attacker instanceof CharacterEntity) {
-            if (Game.withinRange(attacker, defender) && Game.inFrontOf(attacker, defender)) {
-                let attackRoll = Game.calculateAttack(attacker, weapon);
+        if (entity instanceof CharacterEntity && actor instanceof CharacterEntity) {
+            if (Game.withinRange(actor, entity) && Game.inFrontOf(actor, entity)) {
+                let attackRoll = Game.calculateAttack(actor, weapon);
                 if (attackRoll == 1) { }
-                else if (attackRoll > defender.getArmourClass()) {
-                    let damage = Game.calculateDamage(attacker, weapon, attackRoll >= 20);
+                else if (attackRoll > entity.getArmourClass()) {
+                    let damage = Game.calculateDamage(actor, weapon, attackRoll >= 20);
                     if (weapon instanceof AbstractEntity) {
-                        defender.modifyHealth(-damage);
+                        entity.modifyHealth(-damage);
                     }
-                    else if (attacker.isArmed()) {
-                        defender.modifyHealth(-damage);
+                    else if (actor.isArmed()) {
+                        entity.modifyHealth(-damage);
                     }
                     else {
-                        defender.modifyStamina(damage);
+                        entity.modifyStamina(damage);
                     }
                 }
             }
         }
         return 0;
     }
-    static actionDrop(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionDrop(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!subEntity.hasItem(instancedItemEntity)) {
+        if (!actor.hasItem(entity)) {
             return 1;
         }
-        if (subEntity instanceof CharacterController && subEntity.hasEquipment(instancedItemEntity)) {
-            if (subEntity.unequip(instancedItemEntity) != 0) {
+        if (actor instanceof CharacterController && actor.hasEquipment(entity)) {
+            if (actor.unequip(entity) != 0) {
                 if (typeof callback == "function") {
                     callback();
                 }
                 return 0;
             }
         }
-        if (subEntity.removeItem(instancedItemEntity) == 0) {
-            if (subEntity == Game.player) {
-                Game.gui.inventoryMenu.updateWith(subEntity);
+        if (actor.removeItem(entity) == 0) {
+            if (actor == Game.player) {
+                Game.gui.inventoryMenu.updateWith(actor);
             }
-            if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
-                instancedItemEntity.getController().setParent(null);
-                instancedItemEntity.getController().getMesh().position = subEntity.getController().getMesh().position.clone().add(
-                    new BABYLON.Vector3(0, Game.getMesh(instancedItemEntity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
+            if (entity.hasController() && entity.getController().hasMesh()) { // it shouldn't have an EntityController :v but just in case
+                entity.getController().setParent(null);
+                entity.getController().getMesh().position = actor.getController().getMesh().position.clone().add(
+                    new BABYLON.Vector3(0, Game.getMesh(entity.getMeshID()).getBoundingInfo().boundingBox.extendSize.y, 0)
                 );
             }
             else {
-                Game.createItemInstance(undefined, instancedItemEntity, subEntity.getController().getMesh().position.clone(), subEntity.getController().getMesh().rotation.clone());
+                Game.createItemInstance(undefined, entity, actor.getController().getMesh().position.clone(), actor.getController().getMesh().rotation.clone());
             }
         }
         if (typeof callback == "function") {
@@ -4578,12 +4615,22 @@ class Game {
         }
         return 0;
     }
-    static actionClose(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
-        if (!(entity instanceof AbstractEntity) || !(entity.getController() instanceof EntityController)) {
-            return 2;
+    static actionClose(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof CharacterEntity)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
         if (entity.getController() instanceof FurnitureController) {
             entity.getController().currAnim = entity.getController().closed;
@@ -4598,108 +4645,158 @@ class Game {
         }
         return 0;
     }
-    static actionHold(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionHold(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!subEntity.hasItem(instancedItemEntity)) {
+        if (!actor.hasItem(entity)) {
             if (typeof callback == "function") {
                 callback();
             }
             return 1;
         }
-        if (subEntity instanceof CharacterEntity) {
-            if (subEntity.hold(instancedItemEntity) != 0) {
+        if (actor instanceof CharacterEntity) {
+            if (actor.hold(entity) != 0) {
                 return 1
             }
         }
         if (typeof callback == "function") {
-            callback(instancedItemEntity, undefined, subEntity);
+            callback(entity, undefined, actor);
         }
         return 0;
     }
-    static actionEquip(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionEquip(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!subEntity.hasItem(instancedItemEntity)) {
+        if (!actor.hasItem(entity)) {
             if (typeof callback == "function") {
                 callback();
             }
             return 1;
         }
-        if (subEntity instanceof CharacterEntity) {
-            if (subEntity.equip(instancedItemEntity) != 0) {
+        if (actor instanceof CharacterEntity) {
+            if (actor.equip(entity) != 0) {
                 return 1;
             }
         }
         if (typeof callback == "function") {
-            callback(instancedItemEntity, undefined, subEntity);
+            callback(entity, undefined, actor);
         }
         return 0;
     }
-    static actionUnequip(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionUnequip(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!subEntity.hasItem(instancedItemEntity)) {
+        if (!actor.hasItem(entity)) {
             if (typeof callback == "function") {
                 callback();
             }
             return 1;
         }
-        if (subEntity instanceof CharacterEntity) {
-            if (subEntity.unequip(instancedItemEntity) != 0) {
+        if (actor instanceof CharacterEntity) {
+            if (actor.unequip(entity) != 0) {
                 return 1;
             }
         }
         if (typeof callback == "function") {
-            callback(instancedItemEntity, undefined, subEntity);
+            callback(entity, undefined, actor);
         }
         return 0;
     }
-    static actionRelease(instancedItemEntity, subEntity = Game.player, callback = undefined) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            return 2;
+    static actionRelease(entity, actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof AbstractEntity && subEntity.hasInventory())) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!subEntity.hasItem(instancedItemEntity)) {
+        if (!actor.hasItem(entity)) {
             if (typeof callback == "function") {
                 callback();
             }
             return 1;
         }
-        if (subEntity instanceof CharacterEntity) {
-            if (subEntity.unequip(instancedItemEntity) != 0) {
+        if (actor instanceof CharacterEntity) {
+            if (actor.unequip(entity) != 0) {
                 return 1;
             }
         }
         if (typeof callback == "function") {
-            callback(instancedItemEntity, undefined, subEntity);
+            callback(entity, undefined, actor);
         }
         return 0;
     }
-    static actionOpen(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
-        if (!(entity instanceof AbstractEntity) || !(entity.getController() instanceof EntityController)) {
-            return 2;
+    static actionOpen(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof CharacterEntity)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
         if (entity.getController() instanceof DoorController) {
             if (entity.isDoorLocked()) {
-                if (!subEntity.hasItem(entity.getKey())) {
+                if (!actor.hasItem(entity.getKey())) {
                     return 1;
                 }
                 entity.setLocked(false);
@@ -4716,83 +4813,123 @@ class Game {
         }
         return 0;
     }
-    static actionUse(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
-        if (!(entity instanceof AbstractEntity) || !(entity.getController() instanceof EntityController)) {
-            return 2;
+    static actionUse(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof CharacterEntity)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
         if (entity.getController() instanceof LightingController) {
             entity.getController().toggle();
         }
         return 0;
     }
-    static actionLay(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
-        if (!(entity instanceof AbstractEntity) || !(entity.getController() instanceof EntityController)) {
-            return 2;
+    static actionLay(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof CharacterEntity) || !(subEntity.getController() instanceof CharacterController)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        subEntity.setStance(StanceEnum.LAY);
-        subEntity.getController().setParent(entity.getController().getMesh());
+        actor.setStance(StanceEnum.LAY);
+        actor.getController().setParent(entity.getController().getMesh());
         if (Game.meshProperties.hasOwnProperty(entity.getController().getMesh().name)) {
             let posArray = Game.meshProperties[entity.getController().getMesh().name]["usableArea"];
             let newPos = new BABYLON.Vector3(0, posArray[0][0].y, 0);
             if (entity.getFurnitureType() == FurnitureEnum.BED) {
-                newPos.x = posArray[0][1].x - (0.0625 + subEntity.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
             }
             else if (entity.getFurnitureType() == FurnitureEnum.COUCH) {
-                newPos.x = posArray[0][1].x - (0.0625 + subEntity.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().getMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
             }
-            subEntity.getController().getMesh().position.copyFrom(newPos);
+            actor.getController().getMesh().position.copyFrom(newPos);
         }
         else {
             let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
             let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
-            subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, 0);
+            actor.getController().getMesh().position.set(seatingWidth / 2, 0.4, 0);
         }
-        subEntity.getController().getMesh().rotation.copyFrom(entity.getController().getMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
-        subEntity.setFurniture(entity);
-        subEntity.getController().doLay();
+        actor.getController().getMesh().rotation.copyFrom(entity.getController().getMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
+        actor.setFurniture(entity);
+        actor.getController().doLay();
         return 0;
     }
     /**
-     * Places the subEntity near the Entity, and sets its parent to the Entity
+     * Places the actpr near the entity, and sets its parent to the entity
      * TODO: Add actual placement of Characters based on their width
-     * @param  {FurnitureEntity} entity    Furniture
-     * @param  {EntityController} subEntity    Entity to be placed
+     * @param  {InstancedFurnitureEntity} entity Furniture
+     * @param  {AbstractEntity} actor Entity to be placed
      */
-    static actionSit(entity = Game.player.getTarget(), subEntity = Game.player, callback = undefined) {
-        if (!(entity instanceof AbstractEntity) || !(entity.getController() instanceof FurnitureController)) {
-            return 2;
+    static actionSit(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
         }
-        if (!(subEntity instanceof CharacterEntity) || !(subEntity.getController() instanceof CharacterController)) {
-            return 2;
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
         }
-        subEntity.setStance(StanceEnum.SIT);
-        subEntity.getController().setParent(entity.getController().getMesh());
+        actor.setStance(StanceEnum.SIT);
+        actor.getController().setParent(entity.getController().getMesh());
         let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
-        subEntity.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
-        subEntity.getController().getMesh().rotation.set(0, 0, 0);
-        subEntity.setFurniture(entity);
-        subEntity.getController().doSit();
+        actor.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
+        actor.getController().getMesh().rotation.set(0, 0, 0);
+        actor.setFurniture(entity);
+        actor.getController().doSit();
         return 0;
     }
-    static actionTalk(abstractEntity = Game.player.getTarget(), subAbstractEntity = Game.player, callback = undefined) {
-        if (Game.debugMode) console.log(`Running Game::actionTalk(${abstractEntity.id}, ${subAbstractEntity.id})`);
-        if (!(abstractEntity instanceof CharacterEntity)) {
+    static actionTalk(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (Game.debugMode) console.log(`Running Game::actionTalk(${entity.id}, ${actor.id})`);
+        if (!(entity.hasDialogue())) {
             return 2;
         }
-        if (!(subAbstractEntity instanceof CharacterEntity)) {
-            return 2;
-        }
-        if (!(abstractEntity.hasDialogue())) {
-            return 2;
-        }
-        Game.gui.dialogueMenu.setDialogue(abstractEntity.getDialogue(), abstractEntity, subAbstractEntity);
+        Game.gui.dialogueMenu.setDialogue(entity.getDialogue(), entity, actor);
         Game.gui.dialogueMenu.show();
         return 0;
     }

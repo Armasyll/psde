@@ -1,13 +1,14 @@
 class InstancedFurnitureEntity extends InstancedEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
-        super(_id, _entity);
+    constructor(id = undefined, entity = undefined, owner = undefined) {
+        super(id, entity);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
             return undefined;
         }
 
-        this.setOwner(_owner);
-        this.characters = new Set();
+        this.setOwner(owner);
+
+        this.seats = [];
 
         InstancedFurnitureEntity.set(this.id, this);
     }
@@ -17,22 +18,67 @@ class InstancedFurnitureEntity extends InstancedEntity {
     }
 
     getCharacters() {
-        return this.characters;
+        this._cleanSeats();
+        return this.seats;
+    }
+    hasCharacter(characterEntity) {
+        this._cleanSeats();
+        if (!(characterEntity instanceof CharacterEntity)) {
+            if (CharacterEntity.has(characterEntity)) {
+                characterEntity = CharacterEntity.get(characterEntity);
+            }
+            else {
+                return false;
+            }
+        }
+        this.seats.indexOf(characterEntity.id) != -1;
     }
     hasCharacters() {
-        return this.characters.size > 0;
+        this._cleanSeats();
+        return this.seats.length;
     }
     addCharacter(characterEntity) {
-        if (characterEntity instanceof CharacterEntity) {
-            this.characters.add(characterEntity);
+        this._cleanSeats();
+        if (!(characterEntity instanceof CharacterEntity)) {
+            if (CharacterEntity.has(characterEntity)) {
+                characterEntity = CharacterEntity.get(characterEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        return this;
+        this.seats.push(characterEntity.id);
+        return 0;
     }
     removeCharacter(characterEntity) {
-        if (characterEntity instanceof CharacterEntity) {
-            this.characters.remove(characterEntity);
+        this._cleanSeats();
+        if (!(characterEntity instanceof CharacterEntity)) {
+            if (CharacterEntity.has(characterEntity)) {
+                characterEntity = CharacterEntity.get(characterEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        return this;
+        delete this.seats.remove(characterEntity.getID());
+        return 0;
+    }
+    _cleanSeats() {
+        this.seats.forEach((characterID) => {
+            if (CharacterEntity.has(characterID)) {
+                if (CharacterEntity.get(characterID).furniture != this.id) {
+                    this.seats.remove(characterID);
+                }
+            }
+            else {
+                this.seats.remove(characterID);
+            }
+        });
+        return 0;
+    }
+    clearSeats() {
+        this.seats.clear();
+        return 0;
     }
 
     /**
@@ -52,10 +98,8 @@ class InstancedFurnitureEntity extends InstancedEntity {
     }
     dispose() {
         InstancedFurnitureEntity.remove(this.id);
-        super.dispose()
-        for (var _var in this) {
-            this[_var] = null;
-        }
+        this.clearSeats();
+        super.dispose();
         return undefined;
     }
 

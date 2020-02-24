@@ -73,7 +73,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.player.getController().getTarget() instanceof EntityController) {
+                if (Game.player.getController().hasTarget()) {
                     Game.gui.clearActionsMenu();
                     Game.gui.populateActionsMenuWithTarget();
                     Game.gui.updateActionsMenu();
@@ -167,8 +167,8 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.useTargetedEntityCode : {
-                if (Game.player.getTarget() instanceof AbstractEntity) {
-                    Game.doEntityActionFunction(Game.player.getTarget(), Game.player, Game.player.getTarget().getDefaultAction());
+                if (Game.player.hasTarget()) {
+                    Game.doEntityActionFunction(Game.player.getTarget(), Game.player);
                 }
                 break;
             }

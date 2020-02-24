@@ -1,12 +1,13 @@
 class InstancedKeyEntity extends InstancedItemEntity {
-    constructor(id = undefined, entity = undefined, owner = undefined) {
-        super(id, entity);
+    constructor(id = undefined, keyEntity = undefined, owner = undefined) {
+        super(id, keyEntity);
         if (!(this.entity instanceof KeyEntity)) {
             this.dispose();
             return undefined;
         }
+
         this.skeletonKeyModifier = false;
-        this.setOwner(owner);
+
         InstancedKeyEntity.set(this.id, this);
     }
     isSkeletonKey() {

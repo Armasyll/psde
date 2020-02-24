@@ -1,15 +1,12 @@
 class InstancedWeaponEntity extends InstancedEquipmentEntity {
     constructor(id = undefined, weaponEntity = undefined, owner = undefined) {
-        super(id, weaponEntity);
+        super(id, weaponEntity, owner);
         if (!(this.entity instanceof WeaponEntity)) {
             this.dispose();
             return undefined;
         }
 
-        this.silvered = this.entity.silvered;
-        this.silveredModifier = this.entity.silveredModifier;
-
-        this.setOwner(owner);
+        this.silveredModifier = false;
 
         InstancedWeaponEntity.set(this.id, this);
     }
@@ -66,7 +63,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         return this.entity.isVersatile();
     }
     isSilvered() {
-        return (this.silvered || this.silveredModifier);
+        return (this.entity.isSilvered() || this.silveredModifier);
     }
 
     /**

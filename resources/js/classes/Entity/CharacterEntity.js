@@ -138,10 +138,6 @@ class CharacterEntity extends CreatureEntity {
          * @type {Dialogue}
          */
         this.dialogue = undefined;
-        /**
-         * @type {InstancedFurnitureEntity}
-         */
-        this._furniture = null;
 
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
 
@@ -893,22 +889,6 @@ class CharacterEntity extends CreatureEntity {
     }
     getDialogue() {
         return this.dialogue;
-    }
-    setFurniture(instancedFurnitureEntity) {
-        if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
-            this._furniture = instancedFurnitureEntity;
-        }
-        return 0;
-    }
-    getFurniture() {
-        return this._furniture;
-    }
-    hasFurniture() {
-        return this._furniture instanceof InstancedFurnitureEntity;
-    }
-    removeFurniture() {
-        this._furniture = null;
-        return 0;
     }
 
     setClass(characterClass) {

@@ -13,14 +13,14 @@ class AbstractEntity {
         }
         this.id = id;
         this.entityType = EntityEnum.ABSTRACT;
-        this.name = null;
+        this.name = "";
         this.setName(name);
-        this.description = null;
+        this.description = "";
         this.setDescription(description);
-        this.iconID = null;
+        this.iconID = "";
         this.setIcon(iconID);
         this.controller = null;
-        this.owner = null;
+        this.owner = "";
         this.target = null;
         this.health = 10;
         this.healthModifier = 0;
@@ -39,7 +39,7 @@ class AbstractEntity {
         this.inventory = null;
         /**
          * @type {object}
-         * Object<Effect: <0:StackNumber, 1:TimeStart, 2:TimeEnd>>
+         * Object<EffectID: <"currentStack":StackNumber, "startTime":TimeStart, "endTime":TimeEnd>>
          */
         this.effects = {};
         /**
@@ -236,28 +236,25 @@ class AbstractEntity {
 
     /**
      * Sets Owner
-     * @param {CharacterEntity} characterEntity Character, or undefined
+     * @param {CharacterEntity} creatureEntity Character, or undefined
      */
-    setOwner(characterEntity) {
-        if (!(characterEntity instanceof AbstractEntity)) {
-            if (InstancedEntity.has(characterEntity)) {
-                characterEntity = InstancedEntity.get(characterEntity);
-            }
-            else if (Entity.has(characterEntity)) {
-                characterEntity = Entity.get(characterEntity);
+    setOwner(creatureEntity) {
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            if (CreatureEntity.has(creatureEntity)) {
+                creatureEntity = CreatureEntity.get(creatureEntity);
             }
             else {
                 return 2;
             }
         }
-        this.owner = characterEntity;
+        this.owner = creatureEntity.id;
         return 0;
     }
     getOwner() {
         return this.owner;
     }
     hasOwner() {
-        return this.owner instanceof AbstractEntity;
+        return CreatureEntity.has(this.owner);
     }
     removeOwner() {
         this.owner = null;
@@ -269,24 +266,21 @@ class AbstractEntity {
 
     setTarget(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            if (InstancedEntity.has(abstractEntity)) {
-                abstractEntity = InstancedEntity.get(characterEntity);
-            }
-            else if (Entity.has(characterEntity)) {
-                abstractEntity = Entity.get(abstractEntity);
+            if (AbstractEntity.has(characterEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
             }
             else {
                 return 2;
             }
         }
-        this.target = abstractEntity;
+        this.target = abstractEntity.id;
         return 0;
     }
     getTarget() {
         return this.target;
     }
     hasTarget() {
-        return this.target instanceof AbstractEntity;
+        return AbstractEntity.has(this.target);
     }
     removeTarget() {
         this.target = null;
@@ -332,20 +326,20 @@ class AbstractEntity {
             }
         }
         if (Game.debugMode) console.log(`Running ${this.getID()}.addEffect(${effect.getID()})`);
-        let effectID = effect.getID()
-        if (this.effects.hasOwnProperty(effectID)) {
-            if (this.effects[effectID]["currentStack"] < effect.getStackCount()) {
-                this.effects[effectID]["currentStack"] += 1;
+        let id = effect.getID()
+        if (this.effects.hasOwnProperty(id)) {
+            if (this.effects[id]["currentStack"] < effect.getStackCount()) {
+                this.effects[id]["currentStack"] += 1;
             }
         }
         else {
-            this.effects[effectID] = {"currentStack":1, "timeStart":0, "timeEnd":0};
+            this.effects[id] = {"currentStack":1, "timeStart":0, "timeEnd":0};
         }
-        let i = effect.getPriority();
-        if (!this.effectsPriority.hasOwnProperty(i)) {
-            this.effectsPriority[i] = new Set();
+        let priority = effect.getPriority();
+        if (!this.effectsPriority.hasOwnProperty(priority)) {
+            this.effectsPriority[priority] = new Set();
         }
-        this.effectsPriority[i].add(effectID);
+        this.effectsPriority[priority].add(id);
         this.applyEffects();
         return 0;
     }
@@ -359,23 +353,23 @@ class AbstractEntity {
             }
         }
         if (Game.debugMode) console.log(`Running ${this.getID()}.removeEffect(${effect.getID()})`);
-        let effectID = effect.getID()
-        let i = effect.getPriority();
-        if (this.effectsPriority.hasOwnProperty(i)) {
-            if (this.effectsPriority[i].has(effectID) && this.effects.hasOwnProperty(effectID)) {
-                if (this.effects[effectID]["currentStack"] == 1) {
-                    delete this.effects[effectID]["timeEnd"];
-                    delete this.effects[effectID]["timeStart"];
-                    delete this.effects[effectID]["currentStack"];
-                    delete this.effects[effectID];
-                    this.effectsPriority[i].delete(effectID);
+        let id = effect.getID()
+        let priority = effect.getPriority();
+        if (this.effectsPriority.hasOwnProperty(priority)) {
+            if (this.effectsPriority[priority].has(id) && this.effects.hasOwnProperty(id)) {
+                if (this.effects[id]["currentStack"] == 1) {
+                    delete this.effects[id]["timeEnd"];
+                    delete this.effects[id]["timeStart"];
+                    delete this.effects[id]["currentStack"];
+                    delete this.effects[id];
+                    this.effectsPriority[priority].delete(id);
                 }
                 else {
-                    this.effects[effectID]["currentStack"] -= 1;
+                    this.effects[id]["currentStack"] -= 1;
                 }
             }
-            if (this.effectsPriority[i].size == 0) {
-                delete this.effectsPriority[i];
+            if (this.effectsPriority[priority].size == 0) {
+                delete this.effectsPriority[priority];
             }
         }
         this.applyEffects();
@@ -566,7 +560,7 @@ class AbstractEntity {
         this.setHealth(entity.health);
         this.setMaxHealth(entity.maxHealth);
         for (let effect in entity.effects) {
-            for (let i = 0; i < entity.effects[effect][0]; i++) {
+            for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
                 this.addEffect(effect);
             }
         }

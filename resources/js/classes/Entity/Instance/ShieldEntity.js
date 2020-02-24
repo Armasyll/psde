@@ -6,8 +6,6 @@ class InstancedShieldEntity extends InstancedClothingEntity {
             return undefined;
         }
 
-        this.setOwner(owner);
-
         InstancedShieldEntity.set(this.id, this);
     }
 

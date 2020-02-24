@@ -1,12 +1,10 @@
 class InstancedEquipmentEntity extends InstancedItemEntity {
-    constructor(_id = undefined, _entity = undefined, _owner = undefined) {
-        super(_id, _entity);
+    constructor(id = undefined, entity = undefined, owner = undefined) {
+        super(id, entity, owner);
         if (!(this.entity instanceof EquipmentEntity)) {
             this.dispose();
             return undefined;
         }
-
-        this.setOwner(_owner);
     }
 
     getEquipmentSlot() {

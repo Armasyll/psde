@@ -172,6 +172,11 @@ class CreatureEntity extends Entity {
 
         this.conditions = {};
 
+        /**
+         * @type {InstancedFurnitureEntity}
+         */
+        this.furniture = null;
+
         this.setSex(sex);
         this.setCreatureType(creatureType);
         this.createInventory();
@@ -783,6 +788,24 @@ class CreatureEntity extends Entity {
         for (let condition in this.conditions) {
             this.removeCondition(condition);
         }
+        return 0;
+    }
+
+    getFurniture() {
+        return this.furniture;
+    }
+    hasFurniture() {
+        return InstancedFurnitureEntity.has(this.furniture);
+    }
+    setFurniture(instancedFurnitureEntity) {
+        if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
+            this.furniture = instancedFurnitureEntity.getID();
+            instancedFurnitureEntity.addCharacter(this);
+        }
+        return 0;
+    }
+    removeFurniture() {
+        this.furniture = null;
         return 0;
     }
 
