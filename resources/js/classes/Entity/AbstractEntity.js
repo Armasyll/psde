@@ -127,12 +127,18 @@ class AbstractEntity {
         return 0;
     }
     modifyHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         return this.setHealth(this.health + number);
     }
     getHealth() {
         return this.health + this.healthModifier;
+    }
+    setHealthModifier(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.healthModifier = number; // TODO: figure out if the character is dead after this :v
+        return 0;
     }
 
     setMaxHealth(number) {
@@ -150,7 +156,7 @@ class AbstractEntity {
         return 0;
     }
     modifyMaxHealth(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         return this.setMaxHealth(this.maxHealth + number);
     }
@@ -166,7 +172,7 @@ class AbstractEntity {
         return 0;
     }
     modifyMaxHealthModifier(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) | 0;}
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         return this.setMaxHealthModifier(this.maxHealthModifier + number);
     }
@@ -558,9 +564,7 @@ class AbstractEntity {
             return 2;
         }
         this.setHealth(entity.health);
-        this.setHealthModifier(entity.healthModifier);
         this.setMaxHealth(entity.maxHealth);
-        this.setMaxHealthModifier(entity.maxHealthModifier);
         for (let effect in entity.effects) {
             for (let i = 0; i < entity.effects[effect][0]; i++) {
                 this.addEffect(effect);

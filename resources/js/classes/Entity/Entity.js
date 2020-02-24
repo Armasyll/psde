@@ -318,6 +318,9 @@ class Entity extends AbstractEntity {
             return 2;
         }
         super.assign(entity, verify);
+        this.setMeshID(entity.meshID);
+        this.setTextureID(entity.textureID);
+        this.setMaterialID(entity.materialID);
         for (let actionEnum in entity.availableActions) {
             let actionData = entity.availableActions[actionEnum];
             if (actionData instanceof ActionData) {
