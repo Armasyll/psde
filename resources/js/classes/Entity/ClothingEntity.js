@@ -171,6 +171,7 @@ class ClothingEntity extends EquipmentEntity {
                 this.armourCategory = ArmourCategoryEnum.SHIELD;
                 this.armourClass = 2;
                 this.price = 100;
+                this.portionMultiplier = 1.0;
                 break;
             }
         }
