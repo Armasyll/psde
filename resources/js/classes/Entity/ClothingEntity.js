@@ -183,8 +183,8 @@ class ClothingEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} id              ID
-     * @return {ClothingEntity}         new ClothingEntity
+     * @param  {string} id ID
+     * @return {ClothingEntity} new ClothingEntity
      */
     clone(id = undefined) {
         let clone = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
@@ -193,13 +193,11 @@ class ClothingEntity extends EquipmentEntity {
     }
     /**
      * Overrides EquipmentEntity.createInstance
-     * @param  {string} id                  ID
-     * @return {InstancedClothingEntity}    new InstancedClothingEntity
+     * @param  {string} id ID
+     * @return {InstancedClothingEntity} new InstancedClothingEntity
      */
     createInstance(id = undefined) {
-        let instance = new InstancedClothingEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedClothingEntity(id, this);
     }
     /**
      * Clones the entity's values over this

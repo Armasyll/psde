@@ -35,8 +35,20 @@ class InstancedFurnitureEntity extends InstancedEntity {
         return this;
     }
 
+    /**
+     * Overrides InstancedEntity.clone
+     * @param  {string} id ID
+     * @return {InstancedFurnitureEntity} new InstancedFurnitureEntity
+     */
     clone(id = "") {
         return new InstancedFurnitureEntity(id, this.entity, this.owner);
+    }
+    assign(entity) {
+        if (verify && !(entity instanceof InstancedFurnitureEntity)) {
+            return 2;
+        }
+        super.assign(entity);
+        return 0;
     }
     dispose() {
         InstancedFurnitureEntity.remove(this.id);

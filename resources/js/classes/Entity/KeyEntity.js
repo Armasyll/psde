@@ -35,23 +35,7 @@ class KeyEntity extends ItemEntity {
      */
     clone(id = "") {
         let clone = new KeyEntity(id, this.name, this.description, this.icon);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = Object.assign({}, this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ItemEntity
-        clone.setItemType(this.itemType);
-        // variables from EquipmentEntity
-        clone.setSkeletonKey(this.skeletonKey);
-        clone.setSkeletonKeyModifier(this.skeletonKeyModifier);
+        clone.assign(this);
         return clone;
     }
     /**
@@ -60,13 +44,17 @@ class KeyEntity extends ItemEntity {
      * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
     createInstance(id = "") {
-        let instance = new InstancedKeyEntity(id, this);
-        instance.skeletonKey = this.skeletonKey;
-        instance.skeletonKeyModifier = this.skeletonKeyModifier;
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedKeyEntity(id, this);
     }
-
+    assign(entity) {
+        if (verify && !(entity instanceof KeyEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.setSkeletonKey(entity.skeletonKey);
+        this.setSkeletonKeyModifier(entity.skeletonKeyModifier);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);

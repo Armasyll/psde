@@ -5,9 +5,33 @@ class InstancedKeyEntity extends InstancedItemEntity {
             this.dispose();
             return undefined;
         }
-
+        this.skeletonKeyModifier = false;
         this.setOwner(owner);
         InstancedKeyEntity.set(this.id, this);
+    }
+    isSkeletonKey() {
+        return this.entity.isSkeletonKey() || this.skeletonKeyModifier;
+    }
+
+    /**
+     * Overrides InstancedEntity.clone
+     * @param  {string} id ID
+     * @return {InstancedKeyEntity} new InstancedItemEntity
+     */
+    clone(id = "") {
+        if (!this.hasEntity()) {
+            return 2;
+        }
+        let clone = new InstancedKeyEntity(id, this.entity, this.owner);
+        clone.assign(this);
+        return clone;
+    }
+    assign(entity) {
+        if (verify && !(entity instanceof InstancedKeyEntity)) {
+            return 2;
+        }
+        super.assign(entity);
+        return 0;
     }
     dispose() {
         InstancedKeyEntity.remove(this.id);

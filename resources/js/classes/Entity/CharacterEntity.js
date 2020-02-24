@@ -1391,13 +1391,20 @@ class CharacterEntity extends CreatureEntity {
 
     /**
      * Overrides CreatureEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new CharacterEntity
+     * @param  {string} id ID
+     * @return {CharacterEntity} new CharacterEntity
      */
     clone(id = undefined) {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
         clone.assign(this);
         return clone;
+    }
+    /**
+     * Characters cannot be instanced. Use clone instead.
+     * @param {string} id ID
+     */
+    createInstance(id = "") {
+        return this.clone(id);
     }
     /**
      * Clones the entity's values over this

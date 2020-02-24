@@ -97,6 +97,29 @@ class DoorEntity extends Entity {
         return this.opensInward;
     }
 
+    /**
+     * Overrides DoorEntity.clone
+     * @param  {string} id ID
+     * @return {DoorEntity} new DoorEntity
+     */
+    clone(id = "") {
+        return new DoorEntity(id, this.name, this.description, this.icon, this.furnitureType);
+    }
+    createInstance(id = "") {
+        return new InstancedFurnitureEntity(id, this); // not really a door instance :v
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {Entity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof DoorEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);

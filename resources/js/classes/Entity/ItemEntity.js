@@ -46,9 +46,7 @@ class ItemEntity extends Entity {
         return clone;
     }
     createInstance(id = undefined) {
-        let instance = new InstancedItemEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedItemEntity(id, this);
     }
     /**
      * Clones the entity's values over this

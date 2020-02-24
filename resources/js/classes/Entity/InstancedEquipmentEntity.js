@@ -33,8 +33,8 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
 
     /**
      * Overrides InstancedItemEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new InstancedEquipmentEntity
+     * @param  {string} id ID
+     * @return {InstancedEquipmentEntity} new InstancedEquipmentEntity
      */
     clone(id = "") {
         if (!this.hasEntity()) {

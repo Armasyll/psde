@@ -135,8 +135,8 @@ class EquipmentEntity extends ItemEntity {
 
     /**
      * Overrides ItemEntity.clone
-     * @param  {string} id          ID
-     * @return {EquipmentEntity}    new EquipmentEntity
+     * @param  {string} id ID
+     * @return {EquipmentEntity} new EquipmentEntity
      */
     clone(id = "") {
         let clone = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
@@ -146,12 +146,10 @@ class EquipmentEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.createInstance; not meant to be run.
      * @param  {string} id ID
-     * @return {InstancedEquipmentEntity}     new InstancedEquipmentEntity
+     * @return {InstancedEquipmentEntity} new InstancedEquipmentEntity
      */
     createInstance(id = undefined) {
-        let instance = new InstancedEquipmentEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedEquipmentEntity(id, this);
     }
     /**
      * Clones the entity's values over this

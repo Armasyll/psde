@@ -71,8 +71,8 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
 
     /**
      * Overrides InstancedEquipmentEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new InstancedShieldEntity
+     * @param  {string} id ID
+     * @return {InstancedWeaponEntity} new InstancedWeaponEntity
      */
     clone(id = "") {
         if (!this.hasEntity()) {

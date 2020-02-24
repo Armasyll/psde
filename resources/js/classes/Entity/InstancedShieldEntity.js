@@ -12,9 +12,9 @@ class InstancedShieldEntity extends InstancedClothingEntity {
     }
 
     /**
-     * Overrides InstancedEquipmentEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new InstancedShieldEntity
+     * Overrides InstancedClothingEntity.clone
+     * @param  {string} id ID
+     * @return {InstancedShieldEntity} new InstancedShieldEntity
      */
     clone(id) {
         if (!this.hasEntity()) {

@@ -5,13 +5,23 @@ class DisplayEntity extends FurnitureEntity {
         DisplayEntity.set(this.id, this);
     }
 
+    /**
+     * Overrides FurnitureEntity.clone
+     * @param  {string} id ID
+     * @return {DisplayEntity} new DisplayEntity
+     */
     clone(id = "") {
         return new DisplayEntity(id, this.name, this.description, this.icon, this.displayType);
     }
     createInstance(id = "") {
-        let instance = new InstancedDisplayEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedDisplayEntity(id, this);
+    }
+    assign(entity) {
+        if (verify && !(entity instanceof DisplayEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
     }
     dispose() {
         this.setLocked(true);

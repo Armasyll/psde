@@ -29,9 +29,7 @@ class ShieldEntity extends ClothingEntity {
      * @return {InstancedShieldEntity}     new InstancedShieldEntity
      */
     createInstance(id = undefined) {
-        let instance = new InstancedShieldEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedShieldEntity(id, this);
     }
     /**
      * Clones the entity's values over this

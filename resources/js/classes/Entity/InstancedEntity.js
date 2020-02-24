@@ -370,8 +370,8 @@ class InstancedEntity extends AbstractEntity {
 
     /**
      * Overrides AbstractEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new InstancedEntity
+     * @param  {string} id ID
+     * @return {Entity} new InstancedEntity
      */
     clone(id = "") {
         if (!this.hasEntity()) {

@@ -17,8 +17,8 @@ class InstancedItemEntity extends InstancedEntity {
 
     /**
      * Overrides InstancedEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new InstancedItemEntity
+     * @param  {string} id ID
+     * @return {InstancedItemEntity} new InstancedItemEntity
      */
     clone(id = "") {
         if (!this.hasEntity()) {

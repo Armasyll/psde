@@ -523,9 +523,7 @@ class WeaponEntity extends EquipmentEntity {
      * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
     createInstance(id = "") {
-        let instance = new InstancedWeaponEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedWeaponEntity(id, this);
     }
     /**
      * Clones the entity's values over this

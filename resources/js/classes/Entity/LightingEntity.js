@@ -53,8 +53,28 @@ class LightingEntity extends FurnitureEntity {
         }
     }
     
+    /**
+     * Overrides FurnitureEntity.clone
+     * @param  {string} id ID
+     * @return {LightingEntity} new LightingEntity
+     */
     clone(id = undefined) {
         return new LightingEntity(id, this.name, this.description, this.icon);
+    }
+    createInstance(id = "") {
+        return new InstancedFurnitureEntity(id, this); // not really a door instance :v
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {Entity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof LightingEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
     }
     dispose() {
         this.off();

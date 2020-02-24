@@ -268,8 +268,8 @@ class Entity extends AbstractEntity {
 
     /**
      * Overrides AbstractEntity.clone
-     * @param  {string} id          ID
-     * @return {Entity}             new Entity
+     * @param  {string} id ID
+     * @return {Entity} new Entity
      */
     clone(id = undefined) {
         let clone = new Entity(id, this.name, this.description, this.icon, this.entityType);
@@ -277,9 +277,7 @@ class Entity extends AbstractEntity {
         return clone;
     }
     createInstance(id = "") {
-        let instance = new InstancedEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedEntity(id, this);
     }
     addInstance(instancedEntity) {
         if (!(instancedEntity instanceof InstancedEntity)) {

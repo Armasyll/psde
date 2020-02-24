@@ -546,8 +546,8 @@ class AbstractEntity {
 
     /**
      * Clones
-     * @param  {string} id          ID
-     * @return {AbstractEntity}     new AbstractEntity
+     * @param  {string} id ID
+     * @return {AbstractEntity} new AbstractEntity
      */
     clone(id = undefined) {
         let clone = new AbstractEntity(id, this.name, this.description, this.icon, this.entityType);

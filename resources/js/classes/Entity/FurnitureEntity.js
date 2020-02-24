@@ -170,13 +170,28 @@ class FurnitureEntity extends Entity {
         return this.furnitureType;
     }
 
+    /**
+     * Overrides Entity.clone
+     * @param  {string} id ID
+     * @return {FurnitureEntity} new FurnitureEntity
+     */
     clone(id = "") {
         return new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
     }
     createInstance(id = "") {
-        let instance = new InstancedFurnitureEntity(id, this);
-        this.instances[instance.getID()] = instance;
-        return instance;
+        return new InstancedFurnitureEntity(id, this);
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {Entity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof FurnitureEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
     }
     dispose() {
         this.setLocked(true);
