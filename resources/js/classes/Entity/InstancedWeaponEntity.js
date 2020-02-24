@@ -79,40 +79,19 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
             return this;
         }
         let clone = new InstancedWeaponEntity(id, this.entity, this.owner);
-        // variables from AbstractEntity
-        if (this._useOwnAvailableActions) {
-            clone.availableActions = Object.assign({}, this.availableActions);
-        }
-        if (this._useOwnHiddenAvailableActions) {
-            clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        }
-        if (this._useOwnSpecialProperties) {
-            clone.specialProperties = new Set(this.specialProperties);
-        }
-        if (this._useOwnDefaultAction) {
-            clone.defaultAction = this.defaultAction;
-        }
-        if (this._useOwnEffects) {
-            clone.effects = this.cloneEffects();
-        }
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        clone.actionEffects = Object.assign({}, this.actionEffects);
-        // variables from InstancedItemEntity
-        clone.setOwner(this.owner);
+        clone.assign(this);
         return clone;
+    }
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof InstancedWeaponEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
     }
     dispose() {
         InstancedWeaponEntity.remove(this.id);
-        super.dispose()
-        for (var _var in this) {
-            this[_var] = null;
-        }
+        super.dispose();
         return undefined;
     }
 

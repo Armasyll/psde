@@ -170,7 +170,7 @@ class CreatureEntity extends Entity {
          */
         this.savingThrows = {};
 
-        this.conditions = new Set();
+        this.conditions = {};
 
         this.setSex(sex);
         this.setCreatureType(creatureType);
@@ -755,7 +755,7 @@ class CreatureEntity extends Entity {
         else {
             return 1;
         }
-        this.conditions.add(conditionEnum);
+        this.conditions[conditionEnum] = true;
         return 0;
     }
     removeCondition(conditionEnum) {
@@ -766,7 +766,7 @@ class CreatureEntity extends Entity {
         else {
             return 1;
         }
-        this.conditions.delete(conditionEnum);
+        delete this.conditions[conditionEnum];
         return 0;
     }
     hasCondition(conditionEnum) {
@@ -777,10 +777,12 @@ class CreatureEntity extends Entity {
         else {
             return false;
         }
-        return this.conditions.has(conditionEnum);
+        return this.conditions.hasOwnProperty(conditionEnum);
     }
     clearConditions() {
-        this.conditions.clear();
+        for (let condition in this.conditions) {
+            this.removeCondition(condition);
+        }
         return 0;
     }
 
@@ -868,56 +870,53 @@ class CreatureEntity extends Entity {
      */
     clone(id = undefined) {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from CreatureEntity
-        clone.specialCreatureType = this.specialCreatureType;
-        clone.specialCreatureSubType = this.specialCreatureSubType;
-        clone.cantripsKnown = Object.assign({}, this.cantripsKnown);
-        clone.cantripsKnownLimit = this.cantripsKnownLimit;
-        clone.spellsKnown = Object.assign({}, this.spellsKnown);
-        clone.spellsKnownLimit = this.spellsKnownLimit;
-        clone.spellSlots = Object.assign({}, this.spellSlots);
-        clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
-        clone.hunger = this.hunger;
-        clone.strength = this.strength;
-        clone.dexterity = this.dexterity;
-        clone.constitution = this.constitution;
-        clone.intelligence = this.intelligence;
-        clone.wisdom = this.wisdom;
-        clone.charisma = this.charisma;
-        clone.level = this._level;
-        clone.experiencePoints = this.experiencePoints;
-        clone.stamina = this.stamina;
-        clone.money = this.money;
-        clone.living = this.living;
-        clone.conscious = this.conscious;
-        clone.paralyzed = this.paralyzed;
-        clone.size = this.size;
-        clone.baseWeight = this.baseWeight;
-        clone.baseHeight = this.baseHeight;
-        clone.baseWidth = this.baseWidth;
-        clone.weight = this.weight;
-        clone.height = this.height;
-        clone.width = this.width;
-        clone.predator = this.predator;
-        clone.proficiencies = new Map(this.proficiencies);
-        clone.proficiencyBonusModifier = this.proficiencyBonusModifier;
-        clone.conditions = new Set(this.conditions);
+        clone.assign(this);
         return clone;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {CreatureEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof CreatureEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.specialCreatureType = entity.specialCreatureType;
+        this.specialCreatureSubType = entity.specialCreatureSubType;
+        this.cantripsKnown = Object.assign({}, entity.cantripsKnown);
+        this.cantripsKnownLimit = entity.cantripsKnownLimit;
+        this.spellsKnown = Object.assign({}, entity.spellsKnown);
+        this.spellsKnownLimit = entity.spellsKnownLimit;
+        this.spellSlots = Object.assign({}, entity.spellSlots);
+        this.spellSlotsUsed = Object.assign({}, entity.spellSlotsUsed);
+        this.hunger = entity.hunger;
+        this.strength = entity.strength;
+        this.dexterity = entity.dexterity;
+        this.constitution = entity.constitution;
+        this.intelligence = entity.intelligence;
+        this.wisdom = entity.wisdom;
+        this.charisma = entity.charisma;
+        this.level = entity._level;
+        this.experiencePoints = entity.experiencePoints;
+        this.stamina = entity.stamina;
+        this.money = entity.money;
+        this.living = entity.living;
+        this.conscious = entity.conscious;
+        this.paralyzed = entity.paralyzed;
+        this.size = entity.size;
+        this.baseWeight = entity.baseWeight;
+        this.baseHeight = entity.baseHeight;
+        this.baseWidth = entity.baseWidth;
+        this.weight = entity.weight;
+        this.height = entity.height;
+        this.width = entity.width;
+        this.predator = entity.predator;
+        this.proficiencies = Object.assign({}, entity.proficiencies);
+        this.proficiencyBonusModifier = entity.proficiencyBonusModifier;
+        this.conditions = Object.assign({}, entity.conditions);
+        return 0;
     }
     dispose() {
         if (this == Game.player) {

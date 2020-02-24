@@ -42,8 +42,26 @@ class ClothingEntity extends EquipmentEntity {
     getArmourCategory() {
         return this.armourCategory;
     }
+    setArmourClass(armourClass) {
+        if (typeof armourClass != "number") {armourClass = Number.parseInt(armourClass) || 0;}
+        else {armourClass = armourClass|0}
+        this.armourClass = armourClass;
+        return 0;
+    }
     getArmourClass() {
         return this.armourClass + this.armourClassModifier;
+    }
+    setArmourClassModifier(armourClassModifier) {
+        if (typeof armourClassModifier != "number") {armourClassModifier = Number.parseInt(armourClassModifier) || 0;}
+        else {armourClassModifier = armourClassModifier|0}
+        this.armourClassModifier = armourClassModifier;
+        return 0;
+    }
+    setPortionMultiplier(portionMultiplier) {
+        if (typeof portionMultiplier != "number") {portionMultiplier = Number.parseFloat(portionMultiplier) || 0.1;}
+        else {portionMultiplier = portionMultiplier}
+        this.portionMultiplier = portionMultiplier;
+        return 0;
     }
     getPortionMultiplier() {
         return this.portionMultiplier;
@@ -170,27 +188,7 @@ class ClothingEntity extends EquipmentEntity {
      */
     clone(id = undefined) {
         let clone = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ClothingEntity
-        clone.armourCategory = this.armourCategory;
-        clone.armourType = this.armourType;
-        clone.armourClass = this.armourClass;
-        clone.armourClassModifier = this.armourClassModifier;
-        clone.portionMultiplier = this.portionMultiplier;
+        clone.assign(this);
         return clone;
     }
     /**
@@ -202,6 +200,21 @@ class ClothingEntity extends EquipmentEntity {
         let instance = new InstancedClothingEntity(id, this);
         this.instances[instance.getID()] = instance;
         return instance;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {ClothingEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof ClothingEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.setArmourClass(entity.armourClass);
+        this.setArmourClassModifier(entity.armourClassModifier);
+        this.setPortionMultiplier(entity.portionMultiplier);
+        return 0;
     }
     dispose() {
         this.setLocked(true);
@@ -242,6 +255,42 @@ class ClothingEntity extends EquipmentEntity {
         }
         ClothingEntity.clothingEntityList = {};
         return 0;
-    }    
+    }
+    static toJSON(clothingEntity) {
+        if (clothingEntity instanceof ClothingEntity) {}
+        else if (ClothingEntity.has(clothingEntity)) {
+            clothingEntity = ClothingEntity.get(clothingEntity);
+        }
+        else {
+            return null;
+        }
+        let jsonObject = JSON.parse(JSON.stringify(clothingEntity));
+        return JSON.stringify(jsonObject);
+    }
+    static fromJSON(json) {
+        if (typeof json == "string") {
+            console.group(`Running ClothingEntity.fromJSON(${json.slice(0,12)}...)`);
+            json = JSON.parse(json);
+        }
+        else {
+            console.group("Running ClothingEntity.fromJSON(...)");
+        }
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || !json.hasOwnProperty("name")) {
+            console.warn(`Supplied JSON was not valid.`);
+            console.groupEnd();
+            return 2;
+        }
+        console.info("Supplied JSON was valid.");
+        let entity = new ClothingEntity(json.id, json.name, json.description, json.iconID, json.equipmentSlot, json.armourType);
+        if (!(entity instanceof ClothingEntity)) {
+            console.warn(`Could not create a new ClothingEntity`);
+            console.groupEnd();
+            return 1;
+        }
+        entity.assign(json, false);
+        console.info(`ClothingEntity (${entity.getID()}) has been created.`);
+        console.groupEnd();
+        return entity;
+    }
 }
 ClothingEntity.initialize();

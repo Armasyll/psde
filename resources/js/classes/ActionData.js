@@ -1,7 +1,7 @@
 class ActionData {
-    constructor(action, _function = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
+    constructor(action, actionFunction = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
         this.action = null;
-        this._function = null;
+        this.actionFunction = null;
         this.runOnce = runOnce == true;
         this.setAction(action);
 
@@ -31,14 +31,17 @@ class ActionData {
         return this.action;
     }
     hasFunction() {
-        return (typeof this._function == "function");
+        return (typeof this.actionFunction == "function");
     }
     dispose() {
         this.action = ActionEnum.NONE;
-        this._function = null;
+        this.actionFunction = null;
         this.runOnce = true;
         this.overrideParent = false;
         this.runBeforeParent = false;
         return undefined;
+    }
+    static toJSON(actionData) {
+        return JSON.stringify(actionData);
     }
 }

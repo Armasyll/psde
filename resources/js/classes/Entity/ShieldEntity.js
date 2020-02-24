@@ -20,29 +20,7 @@ class ShieldEntity extends ClothingEntity {
      */
     clone(id = undefined) {
         let clone = new ShieldEntity(id, this.name, this.description, this.icon);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ItemEntity
-        clone.setItemType(this.itemType);
-        // variables from EquipmentEntity
-        clone.setEquipmentSlot(this.equipmentSlot);
-        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
-        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
-        clone.advantageOn = new Set(this.advantageOn);
-        clone.disadvantageOn = new Set(this.disadvantageOn);
+        clone.assign(this);
         return clone;
     }
     /**
@@ -54,6 +32,18 @@ class ShieldEntity extends ClothingEntity {
         let instance = new InstancedShieldEntity(id, this);
         this.instances[instance.getID()] = instance;
         return instance;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {ShieldEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof ShieldEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        return 0;
     }
     dispose() {
         this.setLocked(true);

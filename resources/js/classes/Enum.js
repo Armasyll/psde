@@ -1997,46 +1997,6 @@ let CellTypeEnum = {
         }
     }
 };
-let AbilityEnum = {
-    STRENGTH: 0,
-    DEXTERITY: 1,
-    CONSTITUTION: 2,
-    INTELLIGENCE: 3,
-    WISDOM: 4,
-    CHARISMA: 5,
-    properties: {
-        0: {
-            name: "Strength",
-            value: 0,
-            key: "STRENGTH"
-        },
-        1: {
-            name: "Dexterity",
-            value: 1,
-            key: "DEXTERITY"
-        },
-        2: {
-            name: "Constitution",
-            value: 2,
-            key: "CONSTITUTION"
-        },
-        3: {
-            name: "Intelligence",
-            value: 3,
-            key: "INTELLIGENCE"
-        },
-        4: {
-            name: "Wisdom",
-            value: 4,
-            key: "WISDOM"
-        },
-        5: {
-            name: "Charisma",
-            value: 5,
-            key: "CHARISMA"
-        }
-    }
-};
 let ProficiencyTypeEnum = {
     ARMOUR: 0,
     WEAPONS: 1,
@@ -2082,7 +2042,7 @@ let ProficiencyTypeEnum = {
             key: "LANGUAGES"
         }
     }
-}
+};
 let ProficiencyEnum = {
     NONE: 0,
     ABYSSAL: 1,
@@ -2966,6 +2926,15 @@ let ProficiencyEnum = {
             key: "ANY"
         }
     }
+};
+let AbilityEnum = {
+    STRENGTH: ProficiencyEnum.STRENGTH,
+    DEXTERITY: ProficiencyEnum.DEXTERITY,
+    CONSTITUTION: ProficiencyEnum.CONSTITUTION,
+    INTELLIGENCE: ProficiencyEnum.INTELLIGENCE,
+    WISDOM: ProficiencyEnum.WISDOM,
+    CHARISMA: ProficiencyEnum.CHARISMA,
+    properties: ProficiencyEnum.properties
 };
 let ArtisanToolEnum = {
     ALCHEMISTS_SUPPLIES: ProficiencyEnum.ALCHEMISTS_SUPPLIES,

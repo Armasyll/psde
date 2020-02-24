@@ -28,7 +28,7 @@ class AbstractEntity {
         this.maxHealthModifier = 0;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
-        this.specialProperties = new Set();
+        this.specialProperties = {};
         this.defaultAction = null;
         this.godMode = false;
         this.godModeModifier = false;
@@ -545,19 +545,29 @@ class AbstractEntity {
      */
     clone(id = undefined) {
         let clone = new AbstractEntity(id, this.name, this.description, this.icon, this.entityType);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
+        clone.assign(this);
         return clone;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {AbstractEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof AbstractEntity)) {
+            return 2;
+        }
+        this.setHealth(entity.health);
+        this.setHealthModifier(entity.healthModifier);
+        this.setMaxHealth(entity.maxHealth);
+        this.setMaxHealthModifier(entity.maxHealthModifier);
+        for (let effect in entity.effects) {
+            for (let i = 0; i < entity.effects[effect][0]; i++) {
+                this.addEffect(effect);
+            }
+        }
+        this.setOwner(entity.owner);
+        return 0;
     }
     dispose() {
         this.setLocked(true);

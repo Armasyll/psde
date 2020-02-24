@@ -42,29 +42,25 @@ class ItemEntity extends Entity {
      */
     clone(id = "") {
         let clone = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ItemEntity
-        clone.setItemType(this.itemType);
+        clone.assign(this);
         return clone;
     }
     createInstance(id = undefined) {
         let instance = new InstancedItemEntity(id, this);
         this.instances[instance.getID()] = instance;
         return instance;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {ItemEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof ItemEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.setItemType(entity.itemType);
     }
     dispose() {
         this.setLocked(true);
@@ -103,6 +99,42 @@ class ItemEntity extends Entity {
         }
         ItemEntity.itemEntityList = {};
         return 0;
+    }
+    static toJSON(itemEntity) {
+        if (ItemEntity instanceof ItemEntity) {}
+        else if (ItemEntity.has(itemEntity)) {
+            itemEntity = ItemEntity.get(itemEntity);
+        }
+        else {
+            return null;
+        }
+        let jsonObject = JSON.parse(JSON.stringify(itemEntity));
+        return JSON.stringify(jsonObject);
+    }
+    static fromJSON(json) {
+        if (typeof json == "string") {
+            console.group(`Running ItemEntity.fromJSON(${json.slice(0,12)}...)`);
+            json = JSON.parse(json);
+        }
+        else {
+            console.group("Running ItemEntity.fromJSON(...)");
+        }
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || !json.hasOwnProperty("name")) {
+            console.warn(`Supplied JSON was not valid.`);
+            console.groupEnd();
+            return 2;
+        }
+        console.info("Supplied JSON was valid.");
+        let entity = new ItemEntity(json.id, json.name, json.description, json.iconID);
+        if (!(entity instanceof ItemEntity)) {
+            console.warn(`Could not create a new ItemEntity`);
+            console.groupEnd();
+            return 1;
+        }
+        entity.assign(json);
+        console.info(`ItemEntity (${entity.getID()}) has been created.`);
+        console.groupEnd();
+        return entity;
     }
 }
 ItemEntity.initialize();

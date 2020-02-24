@@ -14,8 +14,8 @@ class EquipmentEntity extends ItemEntity {
 
         this.abilityRequirements = {};
         this.abilityRequirementsModifier = {};
-        this.advantageOn = new Set();
-        this.disadvantageOn = new Set();
+        this.advantageOn = {};
+        this.disadvantageOn = {};
 
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);
@@ -43,70 +43,86 @@ class EquipmentEntity extends ItemEntity {
         }
         return false;
     }
-    getAbilityScoreRequirement(abilityScoreEnum) {
+    getAbilityRequirement(abilityEnum) {
         let score = 0;
-        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
-            score = this.abilityRequirements[abilityScoreEnum];
+        if (this.abilityRequirements.hasOwnProperty(abilityEnum)) {
+            score = this.abilityRequirements[abilityEnum];
         }
-        if (this.abilityRequirementsModifier.hasOwnProperty(abilityScoreEnum)) {
-            score += this.abilityRequirementsModifier[abilityScoreEnum];
+        if (this.abilityRequirementsModifier.hasOwnProperty(abilityEnum)) {
+            score += this.abilityRequirementsModifier[abilityEnum];
         }
         return score;
     }
-    addAbilityScoreRequirement(abilityScoreEnum, number) {
-        if (abilityScoreEnum.properties.hasOwnProperty(abilityScoreEnum)) {
+    addAbilityRequirement(abilityEnum, number) {
+        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
             if (typeof number != "number") {number = Number.parseInt(number) || 0;}
             else {number = number|0}
-            this.abilityRequirements[abilityScoreEnum] = number;
+            this.abilityRequirements[abilityEnum] = number;
             return 0;
         }
         return 1;
     }
-    removeAbilityScoreRequirement(abilityScoreEnum) {
-        if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum)) {
-            delete this.abilityRequirements[abilityScoreEnum];
+    removeAbilityRequirement(abilityEnum) {
+        if (this.abilityRequirements.hasOwnProperty(abilityEnum)) {
+            delete this.abilityRequirements[abilityEnum];
+            return 0;
+        }
+        return 1;
+    }
+
+    addAbilityRequirementModifier(abilityEnum, number) {
+        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {
+            if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+            else {number = number|0}
+            this.abilityRequirementsModifier[abilityEnum] = number;
+            return 0;
+        }
+    }
+    removeAbilityRequirementModifier(abilityEnum) {
+        if (this.abilityRequirementsModifier.hasOwnProperty(abilityEnum)) {
+            delete this.abilityRequirementsModifier[abilityEnum];
             return 0;
         }
         return 1;
     }
 
     hasAdvantageOn(proficiencyEnum) {
-        return this.advantageOn.has(proficiencyEnum);
+        return this.advantageOn.hasOwnProperty(proficiencyEnum);
     }
     getAdvantageOn() {
         return this.advantageOn;
     }
     addAdvantageOn(proficiencyEnum) {
         if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
-            this.advantageOn.add(proficiencyEnum);
+            this.advantageOn[proficiencyEnum] = true;
             return 0;
         }
         return 1;
     }
     removeAdvantageOn(proficiencyEnum) {
-        if (this.advantageOn.has(proficiencyEnum)) {
-            this.advantageOn.remove(proficiencyEnum);
+        if (this.advantageOn.hasOwnProperty(proficiencyEnum)) {
+            delete this.advantageOn[proficiencyEnum];
             return 0;
         }
         return 1;
     }
 
     hasDisadvantageOn(proficiencyEnum) {
-        return this.disadvantageOn.has(proficiencyEnum);
+        return this.disadvantageOn.hasOwnProperty(proficiencyEnum);
     }
     getDisadvantageOn() {
         return this.disadvantageOn;
     }
     addDisadvantageOn(proficiencyEnum) {
         if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
-            this.disadvantageOn.add(proficiencyEnum);
+            this.disadvantageOn[proficiencyEnum] = true;
             return 0;
         }
         return 1;
     }
     removeDisadvantageOn(proficiencyEnum) {
-        if (this.disadvantageOn.has(proficiencyEnum)) {
-            this.disadvantageOn.remove(proficiencyEnum);
+        if (this.disadvantageOn.hasOwnProperty(proficiencyEnum)) {
+            delete this.disadvantageOn[proficiencyEnum];
             return 0;
         }
         return 1;
@@ -124,29 +140,7 @@ class EquipmentEntity extends ItemEntity {
      */
     clone(id = "") {
         let clone = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ItemEntity
-        clone.setItemType(this.itemType);
-        // variables from EquipmentEntity
-        clone.setEquipmentSlot(this.equipmentSlot);
-        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
-        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
-        clone.advantageOn = new Set(this.advantageOn);
-        clone.disadvantageOn = new Set(this.disadvantageOn);
+        clone.assign(this);
         return clone;
     }
     /**
@@ -158,6 +152,31 @@ class EquipmentEntity extends ItemEntity {
         let instance = new InstancedEquipmentEntity(id, this);
         this.instances[instance.getID()] = instance;
         return instance;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {EquipmentEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof EquipmentEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.setEquipmentSlot(entity.equipmentSlot);
+        for (let abilityEnum in entity.abilityRequirements) {
+            this.addAbilityRequirement(abilityEnum, entity.abilityRequirements[abilityEnum]);
+        }
+        for (let abilityEnum in entity.abilityRequirementsModifier) {
+            this.addAbilityRequirementModifier(abilityEnum, entity.abilityRequirementsModifier[abilityEnum]);
+        }
+        for (let proficiencyEnum in entity.advantageOn) {
+            this.addAdvantageOn(proficiencyEnum);
+        }
+        for (let proficiencyEnum in entity.disadvantageOn) {
+            this.addDisadvantageOn(proficiencyEnum);
+        }
+        return 0;
     }
     dispose() {
         this.setLocked(true);

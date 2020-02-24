@@ -514,53 +514,7 @@ class WeaponEntity extends EquipmentEntity {
      */
     clone(id = "") {
         let clone = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from ItemEntity
-        clone.setItemType(this.itemType);
-        // variables from EquipmentEntity
-        clone.setEquipmentSlot(this.equipmentSlot);
-        clone.abilityRequirements = Object.assign({}, this.abilityRequirements);
-        clone.abilityRequirementsModifier = Object.assign({}, this.abilityRequirementsModifier);
-        clone.advantageOn = new Set(this.advantageOn);
-        clone.disadvantageOn = new Set(this.disadvantageOn);
-        // variables from WeaponEntity
-        clone.equipmentSlot = this.equipmentSlot;
-        clone.weaponCategory = this.weaponCategory;
-        clone.weaponType = this.weaponType;
-        clone.damageRollCount = this.damageRollCount;
-        clone.damageRollCountModifier = this.damageRollCountModifier;
-        clone.damageRoll = this.damageRoll;
-        clone.damageRollModifier = this.damageRollModifier;
-        clone.damageType = this.damageType;
-        clone.silvered = this.silvered;
-        clone.silveredModifier = this.silveredModifier;
-        clone.range = this.range;
-        clone.versatileRollCount = this.versatileRollCount;
-        clone.versatileRoll = this.versatileRoll;
-        clone.ammunition = this.ammunition;
-        clone.finesse = this.finesse;
-        clone.heavy = this.heavy;
-        clone.light = this.light;
-        clone.loading = this.loading;
-        clone.reach = this.reach;
-        clone.special = this.special;
-        clone.thrown = this.thrown;
-        clone.twoHanded = this.twoHanded;
-        clone.versatile = this.versatile;
+        clone.assign(this);
         return clone;
     }
     /**
@@ -572,6 +526,41 @@ class WeaponEntity extends EquipmentEntity {
         let instance = new InstancedWeaponEntity(id, this);
         this.instances[instance.getID()] = instance;
         return instance;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {WeaponEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof WeaponEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.equipmentSlot = entity.equipmentSlot;
+        this.weaponCategory = entity.weaponCategory;
+        this.weaponType = entity.weaponType;
+        this.damageRollCount = entity.damageRollCount;
+        this.damageRollCountModifier = entity.damageRollCountModifier;
+        this.damageRoll = entity.damageRoll;
+        this.damageRollModifier = entity.damageRollModifier;
+        this.damageType = entity.damageType;
+        this.silvered = entity.silvered;
+        this.silveredModifier = entity.silveredModifier;
+        this.range = entity.range;
+        this.versatileRollCount = entity.versatileRollCount;
+        this.versatileRoll = entity.versatileRoll;
+        this.ammunition = entity.ammunition;
+        this.finesse = entity.finesse;
+        this.heavy = entity.heavy;
+        this.light = entity.light;
+        this.loading = entity.loading;
+        this.reach = entity.reach;
+        this.special = entity.special;
+        this.thrown = entity.thrown;
+        this.twoHanded = entity.twoHanded;
+        this.versatile = entity.versatile;
+        return 0;
     }
     dispose() {
         this.setLocked(true);
@@ -610,6 +599,42 @@ class WeaponEntity extends EquipmentEntity {
         }
         WeaponEntity.weaponEntityList = {};
         return 0;
+    }
+    static toJSON(weaponEntity) {
+        if (WeaponEntity instanceof WeaponEntity) {}
+        else if (WeaponEntity.has(weaponEntity)) {
+            weaponEntity = WeaponEntity.get(weaponEntity);
+        }
+        else {
+            return null;
+        }
+        let jsonObject = JSON.parse(JSON.stringify(weaponEntity));
+        return JSON.stringify(jsonObject);
+    }
+    static fromJSON(json) {
+        if (typeof json == "string") {
+            console.group(`Running WeaponEntity.fromJSON(${json.slice(0,12)}...)`);
+            json = JSON.parse(json);
+        }
+        else {
+            console.group("Running WeaponEntity.fromJSON(...)");
+        }
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || !json.hasOwnProperty("name")) {
+            console.warn(`Supplied JSON was not valid.`);
+            console.groupEnd();
+            return 2;
+        }
+        console.info("Supplied JSON was valid.");
+        let entity = new WeaponEntity(json.id, json.name, json.description, json.iconID, json.weaponType);
+        if (!(entity instanceof WeaponEntity)) {
+            console.warn(`Could not create a new WeaponEntity`);
+            console.groupEnd();
+            return 1;
+        }
+        entity.assign(json);
+        console.info(`WeaponEntity (${entity.getID()}) has been created.`);
+        console.groupEnd();
+        return entity;
     }
 }
 WeaponEntity.initialize();

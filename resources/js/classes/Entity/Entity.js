@@ -36,6 +36,12 @@ class Entity extends AbstractEntity {
     getWeight() {
         return this.weight + this.weightModifier;
     }
+    setWeightModifier(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.weightModifier = number;
+        return 0;
+    }
 
     setPrice(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
@@ -45,6 +51,12 @@ class Entity extends AbstractEntity {
     }
     getPrice() {
         return this.price + this.priceModifier;
+    }
+    setPriceModifier(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.priceModifier = number;
+        return 0;
     }
 
     setMeshID(meshID) {
@@ -86,16 +98,18 @@ class Entity extends AbstractEntity {
 
     /**
      * Adds an available Action when interacting with this Entity
-     * @param {ActionEnum} action (ActionEnum)
+     * @param {ActionEnum} action ActionEnum
+     * @param {function} [actionFunction]
+     * @param {boolean} [runOnce]
      */
-    addAvailableAction(action, _function = undefined, runOnce = false) {
+    addAvailableAction(action, actionFunction = undefined, runOnce = false) {
         if (action instanceof ActionData) {
             action = action.action;
         }
         else if (!ActionEnum.properties.hasOwnProperty(action)) {
             return 1;
         }
-        this.availableActions[action] = new ActionData(action, _function, runOnce);
+        this.availableActions[action] = new ActionData(action, actionFunction, runOnce);
         return 0;
     }
     /**
@@ -194,9 +208,14 @@ class Entity extends AbstractEntity {
      */
     addSpecialProperty(specialProperty) {
         if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
-            return 2;
+            if (SpecialPropertyEnum.hasOwnProperty(specialProperty)) {
+                specialProperty = SpecialPropertyEnum[specialProperty];
+            }
+            else {
+                return 2;
+            }
         }
-        this.specialProperties.add(specialProperty);
+        this.specialProperties[specialProperty] = true;
         return 0;
     }
     /**
@@ -207,7 +226,7 @@ class Entity extends AbstractEntity {
         if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
             return 2;
         }
-        this.specialProperties.remove(specialProperty);
+        delete this.specialProperties[specialProperty];
         return 0;
     }
     /**
@@ -226,7 +245,7 @@ class Entity extends AbstractEntity {
         if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
             return false;
         }
-        return this.specialProperties.has(specialProperty);
+        return this.specialProperties.hasOwnProperty(specialProperty);
     }
 
     setDefaultAction(action) {
@@ -254,21 +273,7 @@ class Entity extends AbstractEntity {
      */
     clone(id = undefined) {
         let clone = new Entity(id, this.name, this.description, this.icon, this.entityType);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
+        clone.assign(this);
         return clone;
     }
     createInstance(id = "") {
@@ -277,11 +282,61 @@ class Entity extends AbstractEntity {
         return instance;
     }
     addInstance(instancedEntity) {
-        this.instances[instancedEntity.getID()] = instance;
+        if (!(instancedEntity instanceof InstancedEntity)) {
+            if (InstancedEntity.has(instancedEntity)) {
+                instancedEntity = InstancedEntity.get(instancedEntity);
+            }
+            else {
+                return 1;
+            }
+        }
+        this.instances[instancedEntity.getID()] = instancedEntity;
+        return 0;
+    }
+    removeInstance(instancedEntity) {
+        if (!(instancedEntity instanceof InstancedEntity)) {
+            if (InstancedEntity.has(instancedEntity)) {
+                instancedEntity = InstancedEntity.get(instancedEntity);
+            }
+            else {
+                return 1;
+            }
+        }
+        delete this.instances[instancedEntity.getID()];
         return 0;
     }
     getInstances() {
         return this.instances;
+    }
+    /**
+     * Clones the entity's values over this
+     * @param {Entity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof Entity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        for (let actionEnum in entity.availableActions) {
+            let actionData = entity.availableActions[actionEnum];
+            if (actionData instanceof ActionData) {
+                this.addAvailableAction(actionEnum, actionData.actionFunction, actionData.runOnce);
+            }
+            else {
+                this.addAvailableAction(actionEnum);
+            }
+        }
+        for (let actionEnum in entity.hiddenAvailableActions) {
+            this.addHiddenAvailableAction(actionEnum);
+        }
+        for (let specialProperty in entity.specialProperties) {
+            this.addSpecialProperty(specialProperty);
+        }
+        this.setDefaultAction(entity.defaultAction);
+        this.setWeight(entity.weight);
+        this.setPrice(entity.price);
+        return 0;
     }
     dispose() {
         this.setLocked(true);

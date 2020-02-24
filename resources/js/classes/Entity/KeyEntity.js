@@ -38,7 +38,7 @@ class KeyEntity extends ItemEntity {
         // variables from AbstractEntity
         clone.availableActions = Object.assign({}, this.availableActions);
         clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
+        clone.specialProperties = Object.assign({}, this.specialProperties);
         clone.defaultAction = this.defaultAction;
         clone.health = this.health;
         clone.healthModifier = this.healthModifier;

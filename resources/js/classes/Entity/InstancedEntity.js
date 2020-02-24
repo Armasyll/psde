@@ -15,6 +15,7 @@ class InstancedEntity extends AbstractEntity {
             }
         }
         this.entity = entity;
+        this.entity.addInstance(this);
         this.setName(name || this.entity.getName());
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
@@ -68,7 +69,7 @@ class InstancedEntity extends AbstractEntity {
 
     _createOwnSpecialProperties() {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         if (this.entity.getSpecialProperties() instanceof Set) {
             this.specialProperties = new Set(this.entity.getSpecialProperties());
@@ -78,31 +79,41 @@ class InstancedEntity extends AbstractEntity {
         }
         this._useOwnSpecialProperties = true;
     }
-    addSpecialProperty(_specialProperty) {
+    addSpecialProperty(specialProperty) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
-        if (isNaN(_specialProperty)) {
-            return this;
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
+            if (SpecialPropertyEnum.hasOwnProperty(specialProperty)) {
+                specialProperty = SpecialPropertyEnum[specialProperty];
+            }
+            else {
+                return 2;
+            }
         }
         if (!this._useOwnSpecialProperties) {
             this._createOwnSpecialProperties();
         }
-        this.specialProperties.add(_specialProperty);
-        return this;
+        this.specialProperties[specialProperty] = true;
+        return 0;
     }
-    removeSpecialProperty(_specialProperty) {
+    removeSpecialProperty(specialProperty) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
-        if (isNaN(_specialProperty)) {
-            return this;
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
+            if (SpecialPropertyEnum.hasOwnProperty(specialProperty)) {
+                specialProperty = SpecialPropertyEnum[specialProperty];
+            }
+            else {
+                return 2;
+            }
         }
         if (!this._useOwnSpecialProperties) {
             this._createOwnSpecialProperties();
         }
-        this.specialProperties.remove(_specialProperty);
-        return this;
+        delete this.specialProperties[specialProperty];
+        return 0;
     }
     getSpecialProperties() {
         if (!this.hasEntity()) {
@@ -115,24 +126,29 @@ class InstancedEntity extends AbstractEntity {
             return this.entity.getSpecialProperties();
         }
     }
-    hasSpecialProperty(_specialProperty) {
+    hasSpecialProperty(specialProperty) {
         if (!this.hasEntity()) {
             return false;
         }
-        if (this._useOwnSpecialProperties) {
-            if (isNaN(_specialProperty)) {
+        if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
+            if (SpecialPropertyEnum.hasOwnProperty(specialProperty)) {
+                specialProperty = SpecialPropertyEnum[specialProperty];
+            }
+            else {
                 return false;
             }
-            return this.specialProperties.has(_specialProperty);
+        }
+        if (this._useOwnSpecialProperties) {
+            return this.specialProperties.hasOwnProperty(specialProperty);
         }
         else {
-            return this.entity.hasSpecialProperty(_specialProperty);
+            return this.entity.hasSpecialProperty(specialProperty);
         }
     }
 
     _createOwnAvailableActions() {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         this.availableActions = [];
         for (var _action in this.entity.getAvailableActions()) {
@@ -143,49 +159,49 @@ class InstancedEntity extends AbstractEntity {
         }
         this._useOwnAvailableActions = true;
     }
-    addAvailableAction(_action, _function = undefined, _runOnce = false) {
+    addAvailableAction(actionEnum, actionFunction = undefined, runOnce = false) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
-        if (ActionEnum.hasOwnProperty(_action)) {}
-        else if (ActionEnum.properties.hasOwnProperty(_action)) {
-            _action = ActionEnum.properties[_action].value;
+        if (ActionEnum.hasOwnProperty(actionEnum)) {}
+        else if (ActionEnum.properties.hasOwnProperty(actionEnum)) {
+            actionEnum = ActionEnum.properties[actionEnum].value;
         }
         else {
-            return this;
+            return 2;
         }
         if (!this._useOwnAvailableActions) {
             this._createOwnAvailableActions();
         }
-        this.availableActions[_action] = new ActionData(_action, _function, _runOnce);
-        return this;
+        this.availableActions[actionEnum] = new ActionData(actionEnum, actionFunction, runOnce);
+        return 0;
     }
-    removeAvailableAction(_action) {
+    removeAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         if (!this._useOwnAvailableActions) {
             this._createOwnAvailableActions();
         }
-        if (this.availableActions.hasOwnProperty(_action)) {
-            if (this.availableActions[_action] instanceof ActionData) {
-                this.availableActions[_action].dispose();
+        if (this.availableActions.hasOwnProperty(actionEnum)) {
+            if (this.availableActions[actionEnum] instanceof ActionData) {
+                this.availableActions[actionEnum].dispose();
             }
-            delete this.availableActions[_action];
+            delete this.availableActions[actionEnum];
         }
-        return this;
+        return 0;
     }
-    getAvailableAction(_action) {
+    getAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
             return 0;
         }
         if (this._useOwnAvailableActions) {
-            if (this.availableActions.hasOwnProperty(_action)) {
-                return this.availableActions[_action];
+            if (this.availableActions.hasOwnProperty(actionEnum)) {
+                return this.availableActions[actionEnum];
             }
         }
         else {
-            return this.entity.getAvailableAction(_action);
+            return this.entity.getAvailableAction(actionEnum);
         }
     }
     getAvailableActions() {
@@ -199,21 +215,21 @@ class InstancedEntity extends AbstractEntity {
             return this.entity.getAvailableActions();
         }
     }
-    hasAvailableAction(_action) {
+    hasAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
             return false;
         }
         if (this._useOwnAvailableActions) {
-            return this.availableActions.hasOwnProperty(_action);
+            return this.availableActions.hasOwnProperty(actionEnum);
         }
         else {
-            return this.entity.hasAvailableAction(_action);
+            return this.entity.hasAvailableAction(actionEnum);
         }
     }
 
     _createOwnHiddenAvailableActions() {
         if (!this.hasEntity()) {
-            return this;
+            return 0;
         }
         this.hiddenAvailableActions = [];
         for (var _action in this.entity.getHiddenAvailableActions()) {
@@ -223,61 +239,62 @@ class InstancedEntity extends AbstractEntity {
             }
         }
         this._useOwnHiddenAvailableActions = true;
+        return 0;
     }
     /**
      * Adds a hidden available Action when interacting with this Entity
-     * @param {String} _action (ActionEnum)
+     * @param {String} actionEnum (ActionEnum)
      */
-    addHiddenAvailableAction(_action, _function = undefined, _runOnce = false) {
+    addHiddenAvailableAction(actionEnum, actionFunction = undefined, runOnce = false) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+        if (actionEnum instanceof ActionData) {
+            actionEnum = actionEnum.action;
         }
         if (!this._useOwnHiddenAvailableActions) {
             this._createOwnHiddenAvailableActions();
         }
-        _action = this.getAvailableAction(_action);
-        if (_action instanceof ActionData) {
-            this.hiddenAvailableActions[_action.action] = _action;
+        actionEnum = this.getAvailableAction(actionEnum);
+        if (actionEnum instanceof ActionData) {
+            this.hiddenAvailableActions[actionEnum.action] = actionEnum;
         }
-        return this;
+        return 0;
     }
     /**
      * Removes a hidden available Action when interacting with this Entity
-     * @param  {String} _action (ActionEnum)
+     * @param  {String} actionEnum (ActionEnum)
      * @return {Booealn}          Whether or not the Action was removed
      */
-    removeHiddenAvailableAction(_action) {
+    removeHiddenAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+        if (actionEnum instanceof ActionData) {
+            actionEnum = actionEnum.action;
         }
         if (!this._useOwnHiddenAvailableActions) {
             this._createOwnHiddenAvailableActions();
         }
-        if (this.hasHiddenAvailableAction(_action)) {
-            delete this.hiddenAvailableActions[_action];
+        if (this.hasHiddenAvailableAction(actionEnum)) {
+            delete this.hiddenAvailableActions[actionEnum];
         }
-        return this;
+        return 0;
     }
-    getHiddenAvailableAction(_action) {
+    getHiddenAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
             return 0;
         }
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+        if (actionEnum instanceof ActionData) {
+            actionEnum = actionEnum.action;
         }
         if (this._useOwnHiddenAvailableActions) {
-            if (this.hiddenAvailableActions.hasOwnProperty(_action)) {
-                return this.hiddenAvailableActions[_action];
+            if (this.hiddenAvailableActions.hasOwnProperty(actionEnum)) {
+                return this.hiddenAvailableActions[actionEnum];
             }
         }
         else {
-            return this.entity.getHiddenAvailableAction(_action);
+            return this.entity.getHiddenAvailableAction(actionEnum);
         }
         return 0;
     }
@@ -292,24 +309,24 @@ class InstancedEntity extends AbstractEntity {
             return this.entity.getHiddenAvailableActions();
         }
     }
-    hasHiddenAvailableAction(_action) {
+    hasHiddenAvailableAction(actionEnum) {
         if (!this.hasEntity()) {
             return false;
         }
-        if (_action instanceof ActionData) {
-            _action = _action.action;
+        if (actionEnum instanceof ActionData) {
+            actionEnum = actionEnum.action;
         }
         if (this._useOwnHiddenAvailableActions) {
-            return this.hiddenAvailableActions.hasOwnProperty(_action);
+            return this.hiddenAvailableActions.hasOwnProperty(actionEnum);
         }
         else {
-            return this.entity.hasHiddenAvailableAction(_action);
+            return this.entity.hasHiddenAvailableAction(actionEnum);
         }
     }
 
     setDefaultAction(action) {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         if (this.hasAvailableAction(action)) {
             this._useOwnDefaultAction = true;
@@ -358,40 +375,43 @@ class InstancedEntity extends AbstractEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
-        // variables from AbstractEntity
-        if (this._useOwnAvailableActions) {
-            clone.availableActions = Object.assign({}, this.availableActions);
-        }
-        if (this._useOwnHiddenAvailableActions) {
-            clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        }
-        if (this._useOwnSpecialProperties) {
-            clone.specialProperties = new Set(this.specialProperties);
-        }
-        if (this._useOwnDefaultAction) {
-            clone.defaultAction = this.defaultAction;
-        }
-        if (this._useOwnEffects) {
-            clone.effects = this.cloneEffects();
-        }
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        clone.actionEffects = Object.assign({}, this.actionEffects);
+        clone.assign(this);
         return clone;
+    }
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof InstancedEntity)) {
+            return 2;
+        }
+        //super.assign(entity);
+        this.setOwner(entity.owner);
+        if (entity._useOwnAvailableActions) {
+            this.availableActions = Object.assign({}, entity.availableActions);
+        }
+        if (entity._useOwnHiddenAvailableActions) {
+            this.hiddenAvailableActions = Object.assign({}, entity.hiddenAvailableActions);
+        }
+        if (entity._useOwnSpecialProperties) {
+            this.specialProperties = Object.assign({}, entity.specialProperties);
+        }
+        if (entity._useOwnDefaultAction) {
+            this.defaultAction = entity.defaultAction;
+        }
+        if (entity._useOwnEffects) {
+            this.effects = entity.cloneEffects();
+        }
+        return 0;
     }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        if (this.hasController) {
+        if (this.hasController()) {
             this.controller.dispose();
+        }
+        if (this.hasEntity()) {
+            this.entity.removeInstance(this);
         }
         InstancedEntity.remove(this.id);
         if (this._useOwnAvailableActions) {
@@ -413,7 +433,7 @@ class InstancedEntity extends AbstractEntity {
             delete this.hiddenAvailableActions;
         }
         if (this._useOwnSpecialProperties) {
-            delete this.specialProperties.clear();
+            delete this.specialProperties;
         }
         super.dispose();
         return undefined;

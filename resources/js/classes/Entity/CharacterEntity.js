@@ -20,7 +20,7 @@ class CharacterEntity extends CreatureEntity {
         this.handedness = HandednessEnum.RIGHT;
         /**
          * Attached cosmetics
-         * @type {<number, [Cosmetics]>} Bone ID and Cosmetic
+         * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
          */
         this.attachedCosmetics = {};
         this.attachedCosmetics[ApparelSlotEnum.HEAD] = [];
@@ -1396,84 +1396,54 @@ class CharacterEntity extends CreatureEntity {
      */
     clone(id = undefined) {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
-        // variables from AbstractEntity
-        clone.availableActions = Object.assign({}, this.availableActions);
-        clone.hiddenAvailableActions = Object.assign({}, this.hiddenAvailableActions);
-        clone.specialProperties = new Set(this.specialProperties);
-        clone.defaultAction = this.defaultAction;
-        clone.health = this.health;
-        clone.healthModifier = this.healthModifier;
-        clone.maxHealth = this.maxHealth;
-        clone.maxHealthModifier = this.maxHealthModifier;
-        for (effect in this.effects) {
-            clone.addEffect(effect);
-        }
-        // variables from Entity
-        clone.weight = this.weight;
-        clone.price = this.price;
-        // variables from CreatureEntity
-        clone.specialCreatureType = this.specialCreatureType;
-        clone.specialCreatureSubType = this.specialCreatureSubType;
-        clone.cantrips = new Set(this.cantrips);
-        clone.cantripsLimit = this.cantripsLimit;
-        clone.spells = new Set(this.spells);
-        clone.spellsLimit = this.spellsLimit;
-        clone.spellSlots = Object.assign({}, this.spellSlots);
-        clone.spellSlotsUsed = Object.assign({}, this.spellSlotsUsed);
-        clone.hunger = this.hunger;
-        clone.strength = this.strength;
-        clone.dexterity = this.dexterity;
-        clone.constitution = this.constitution;
-        clone.intelligence = this.intelligence;
-        clone.wisdom = this.wisdom;
-        clone.charisma = this.charisma;
-        clone.level = this.level;
-        clone.experiencePoints = this.experiencePoints;
-        clone.stamina = this.stamina;
-        clone.money = this.money;
-        clone.living = this.living;
-        clone.conscious = this.conscious;
-        clone.paralyzed = this.paralyzed;
-        clone.size = this.size;
-        clone.baseWeight = this.baseWeight;
-        clone.baseHeight = this.baseHeight;
-        clone.baseWidth = this.baseWidth;
-        clone.weight = this.weight;
-        clone.height = this.height;
-        clone.width = this.width;
-        clone.predator = this.predator;
-        // variables from CharacterEntity
-        clone.gender = this.gender;
-        clone.handedness = this.handedness;
-        clone.attachedCosmetics = Object.assign({}, this.attachedCosmetics);
-        for (let i in this.attachedCosmetics) {
-            clone.attachedCosmetics[i] = Object.assign({}, this.attachedCosmetics[i]);
-        }
-        for (let i in this.equipment) {
-            if (this.equipment[i] instanceof AbstractEntity) {
-                clone.equipment[i] = this.equipment[i].clone();
-            }
-        }
-        clone.previousEquipment = Object.assign({}, this.previousEquipment);
-        clone.defaultDisposition = Object.assign({}, this.defaultDisposition);
-        clone.furColourA = this.furColourA;
-        clone._furColourAHex = this._furColourAHex;
-        clone.furColourB = this.furColourB;
-        clone._furColourBHex = this._furColourBHex;
-        clone.pawType = this.pawType;
-        clone.eyeType = this.eyeType;
-        clone.eyeColour = this.eyeColour;
-        clone._leftEyeColourHex = this._leftEyeColourHex;
-        clone._rightEyeColourHex = this._rightEyeColourHex;
-        clone.peltType = this.peltType;
-        clone.characterDisposition = Object.assign({}, this.characterDisposition);
-        clone.dialogue = this.dialogue;
-        clone.sexualOrientation = this.sexualOrientation;
-        clone.characterClasses = new Map(this.characterClasses);
-        clone.primaryCharacterClass = this.primaryCharacterClass;
+        clone.assign(this);
         return clone;
     }
-
+    /**
+     * Clones the entity's values over this
+     * @param {CharacterEntity} entity 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(entity, verify = true) {
+        if (verify && !(entity instanceof CharacterEntity)) {
+            return 2;
+        }
+        super.assign(entity, verify);
+        this.gender = entity.gender;
+        this.handedness = entity.handedness;
+        for (let apparelSlot in entity.attachedCosmetics) {
+            if (entity.attachedCosmetics[apparelSlot].length > 0) {
+                entity.attachedCosmetics[apparelSlot].forEach((cosmetic) => {
+                    this.attachCosmetic(cosmetic);
+                });
+            }
+        }
+        for (let i in entity.equipment) {
+            let equipment = AbstractEntity.get(entity.equipment[i]);
+            if (equipment instanceof AbstractEntity) {
+                this.equipment[i] = equipment.clone();
+            }
+        }
+        // ...
+        this.previousEquipment = Object.assign({}, entity.previousEquipment);
+        this.defaultDisposition = Object.assign({}, entity.defaultDisposition);
+        this.furColourA = entity.furColourA;
+        this._furColourAHex = entity._furColourAHex;
+        this.furColourB = entity.furColourB;
+        this._furColourBHex = entity._furColourBHex;
+        this.pawType = entity.pawType;
+        this.eyeType = entity.eyeType;
+        this.eyeColour = entity.eyeColour;
+        this._leftEyeColourHex = entity._leftEyeColourHex;
+        this._rightEyeColourHex = entity._rightEyeColourHex;
+        this.peltType = entity.peltType;
+        this.characterDisposition = Object.assign({}, entity.characterDisposition);
+        this.dialogue = entity.dialogue;
+        this.sexualOrientation = entity.sexualOrientation;
+        this.characterClasses = Object.assign({}, entity.characterClasses);
+        this.primaryCharacterClass = entity.primaryCharacterClass;
+        return 0;
+    }
     dispose() {
         if (this == Game.player) {
             return false;
