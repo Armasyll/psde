@@ -280,6 +280,9 @@ class Entity extends AbstractEntity {
      */
     clone(id = undefined) {
         let clone = new Entity(id, this.name, this.description, this.icon, this.entityType);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
         clone.assign(this);
         return clone;
     }

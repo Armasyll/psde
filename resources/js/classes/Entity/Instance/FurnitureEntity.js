@@ -87,7 +87,11 @@ class InstancedFurnitureEntity extends InstancedEntity {
      * @return {InstancedFurnitureEntity} new InstancedFurnitureEntity
      */
     clone(id = "") {
-        return new InstancedFurnitureEntity(id, this.entity, this.owner);
+        let clone = new InstancedFurnitureEntity(id, this.entity, this.owner);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
+        return clone;
     }
     assign(entity) {
         if (verify && !(entity instanceof InstancedFurnitureEntity)) {

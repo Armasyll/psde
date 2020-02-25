@@ -15,11 +15,21 @@ class Inventory {
          */
         this.items = new Map();
         this.weight = 0;
-        this.maxWeight = 10;
         this.maxSize = 9;
+        this.setMaxSize(maxSize);
+        this.maxWeight = 10;
+        this.setMaxWeight(maxWeight);
         this.entities = new Set();
 
         Inventory.set(this.id, this);
+    }
+
+    setID(id) {
+        Inventory.remove(this.id);
+        id = Tools.filterID(id);
+        this.id = id;
+        Inventory.set(this.id, this);
+        return 0;
     }
     getID() {
         return this.id;
@@ -278,6 +288,28 @@ class Inventory {
         this.weight = 0;
     }
 
+    clone(id = "") {
+        let clone = new Inventory(id, this.name, this.maxSize, this.maxWeight);
+        this.items.forEach((value, key) => {
+            clone.addItemToSlot(key.clone(), value);
+        });
+        clone.assign(this);
+        return clone;
+    }
+    /**
+     * Clones the inventory's values over this
+     * @param {Inventory} inventory 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(inventory, verify = true) {
+        if (verify && !(inventory instanceof Inventory)) {
+            return 2;
+        }
+        this.setWeight(inventory.weight);
+        this.setMaxSize(inventory.maxSize);
+        this.setMaxWeight(inventory.maxWeight);
+        return 0;
+    }
     dispose() {
         if (this == Game.player.entity) {
             return false;

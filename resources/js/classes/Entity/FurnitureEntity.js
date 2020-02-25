@@ -176,7 +176,12 @@ class FurnitureEntity extends Entity {
      * @return {FurnitureEntity} new FurnitureEntity
      */
     clone(id = "") {
-        return new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
+        let clone = new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
+        clone.assign(this);
+        return clone;
     }
     createInstance(id = "") {
         return new InstancedFurnitureEntity(id, this);

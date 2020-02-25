@@ -378,6 +378,9 @@ class InstancedEntity extends AbstractEntity {
             return 2;
         }
         let clone = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
         clone.assign(this);
         return clone;
     }

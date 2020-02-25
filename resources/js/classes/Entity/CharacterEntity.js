@@ -1383,6 +1383,9 @@ class CharacterEntity extends CreatureEntity {
      */
     clone(id = undefined) {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
         clone.assign(this);
         return clone;
     }

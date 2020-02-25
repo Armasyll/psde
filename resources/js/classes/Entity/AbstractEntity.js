@@ -552,6 +552,9 @@ class AbstractEntity {
      */
     clone(id = undefined) {
         let clone = new AbstractEntity(id, this.name, this.description, this.icon, this.entityType);
+        if (this.hasInventory()) {
+            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        }
         clone.assign(this);
         return clone;
     }
@@ -564,14 +567,21 @@ class AbstractEntity {
         if (verify && !(entity instanceof AbstractEntity)) {
             return 2;
         }
+        this.entityType = entity.entityType;
         this.setHealth(entity.health);
         this.setMaxHealth(entity.maxHealth);
+        this.setOwner(entity.owner);
+        if (entity.godMode) {
+            this.setGodMode(true);
+        }
+        if (entity.essential) {
+            this.setEssential(true);
+        }
         for (let effect in entity.effects) {
             for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
                 this.addEffect(effect);
             }
         }
-        this.setOwner(entity.owner);
         return 0;
     }
     dispose() {
