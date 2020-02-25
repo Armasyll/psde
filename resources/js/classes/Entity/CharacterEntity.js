@@ -121,16 +121,8 @@ class CharacterEntity extends CreatureEntity {
          */
         this.peltType = PeltEnum.FUR;
         /**
-         * Map of Characters and this Character's disposition for them
-         * @type {Map} <Character, Object>
-         * 
-         * @type {number}  Passion
-         * @type {number}  Friendship
-         * @type {number}  Playfulness
-         * @type {number}  Souldmate
-         * @type {number}  Familial
-         * @type {number}  Obsession
-         * @type {number}  Hate
+         * Characters and this Character's disposition for them
+         * @type {object} {CharacterEntity: {string: number}}
          */
         this.characterDisposition = {};
         /**
@@ -971,7 +963,7 @@ class CharacterEntity extends CreatureEntity {
         return this.primaryCharacterClass;
     }
     /**
-     * @returns {Map} Map of class levels to their classes
+     * @returns {object} Classes and their scores
      */
     getClasses() {
         return this.characterClasses;

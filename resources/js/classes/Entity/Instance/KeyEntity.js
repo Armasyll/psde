@@ -1,6 +1,6 @@
 class InstancedKeyEntity extends InstancedItemEntity {
     constructor(id = undefined, keyEntity = undefined, owner = undefined) {
-        super(id, keyEntity);
+        super(id, keyEntity, owner);
         if (!(this.entity instanceof KeyEntity)) {
             this.dispose();
             return undefined;
@@ -10,6 +10,7 @@ class InstancedKeyEntity extends InstancedItemEntity {
 
         InstancedKeyEntity.set(this.id, this);
     }
+
     isSkeletonKey() {
         return this.entity.isSkeletonKey() || this.skeletonKeyModifier;
     }

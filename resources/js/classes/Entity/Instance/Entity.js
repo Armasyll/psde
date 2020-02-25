@@ -15,7 +15,6 @@ class InstancedEntity extends AbstractEntity {
             }
         }
         this.entity = entity;
-        this.entity.addInstance(this);
         this.setName(name || this.entity.getName());
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
@@ -27,6 +26,8 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnHiddenAvailableActions = false;
         this._useOwnSpecialProperties = false;
         this._useOwnEffects = false;
+
+        this.entity.addInstance(this);
 
         InstancedEntity.set(this.id, this);
     }
