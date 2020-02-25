@@ -164,7 +164,14 @@ class CharacterEntity extends CreatureEntity {
         this.generateAdditionalStats();
         CharacterEntity.set(this.id, this);
     }
-    
+
+    setID(id) {
+        CharacterEntity.remove(this.id);
+        super.setID(id);
+        CharacterEntity.set(this.id, this);
+        return 0;
+    }
+
     setName(name = "") {
         if (name.split(", ").length > 1) {
             let tempName = name.split(", ");

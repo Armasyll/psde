@@ -186,6 +186,13 @@ class CreatureEntity extends Entity {
         CreatureEntity.set(this.id, this);
     }
 
+    setID(id) {
+        CreatureEntity.remove(this.id);
+        super.setID(id);
+        CreatureEntity.set(this.id, this);
+        return 0;
+    }
+
     setSex(sex = SexEnum.MALE) {
         if (SexEnum.properties.hasOwnProperty(sex)) {
             this.sex = sex;

@@ -56,6 +56,13 @@ class AbstractEntity {
         AbstractEntity.set(this.id, this);
     }
 
+    setID(id) {
+        AbstractEntity.remove(this.id);
+        id = Tools.filterID(id);
+        this.id = id;
+        AbstractEntity.set(this.id, this);
+        return 0;
+    }
     getID() {
         return this.id;
     }

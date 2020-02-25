@@ -27,6 +27,13 @@ class Entity extends AbstractEntity {
         Entity.set(this.id, this);
     }
 
+    setID(id) {
+        Entity.remove(this.id);
+        super.setID(id);
+        Entity.set(this.id, this);
+        return 0;
+    }
+
     setWeight(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
