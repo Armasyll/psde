@@ -30,8 +30,8 @@ class KeyEntity extends ItemEntity {
 
     /**
      * Overrides ItemEntity.clone
-     * @param  {string} id          ID
-     * @return {KeyEntity}          new KeyEntity
+     * @param  {string} id ID
+     * @return {KeyEntity} new KeyEntity
      */
     clone(id = "") {
         let clone = new KeyEntity(id, this.name, this.description, this.icon);

@@ -3866,7 +3866,8 @@ class Game {
                 //itemEntity = new BookEntity(id, name, description, iconID); // TODO: this :v
             }
             case ItemEnum.CONSUMABLE: {
-                //itemEntity = new ConsumableEntity(id, name, description, iconID, subType); // TODO: this :v
+                itemEntity = new ConsumableEntity(id, name, description, iconID, subType);
+                break;
             }
             default: {
                 itemEntity = new ItemEntity(id, name, description, iconID);

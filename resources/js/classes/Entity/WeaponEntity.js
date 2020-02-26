@@ -509,8 +509,8 @@ class WeaponEntity extends EquipmentEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} id          ID
-     * @return {WeaponEntity}       new WeaponEntity
+     * @param  {string} id ID
+     * @return {WeaponEntity} new WeaponEntity
      */
     clone(id = "") {
         let clone = new WeaponEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
@@ -520,7 +520,7 @@ class WeaponEntity extends EquipmentEntity {
     /**
      * Overrides EquipmentEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
+     * @return {InstancedWeaponEntity} new InstancedWeaponEntity
      */
     createInstance(id = "") {
         return new InstancedWeaponEntity(id, this);
@@ -598,15 +598,15 @@ class WeaponEntity extends EquipmentEntity {
         WeaponEntity.weaponEntityList = {};
         return 0;
     }
-    static toJSON(weaponEntity) {
-        if (WeaponEntity instanceof WeaponEntity) {}
-        else if (WeaponEntity.has(weaponEntity)) {
-            weaponEntity = WeaponEntity.get(weaponEntity);
+    static toJSON(entity) {
+        if (entity instanceof WeaponEntity) {}
+        else if (WeaponEntity.has(entity)) {
+            entity = WeaponEntity.get(entity);
         }
         else {
             return null;
         }
-        let jsonObject = JSON.parse(JSON.stringify(weaponEntity));
+        let jsonObject = JSON.parse(JSON.stringify(entity));
         return JSON.stringify(jsonObject);
     }
     static fromJSON(json) {

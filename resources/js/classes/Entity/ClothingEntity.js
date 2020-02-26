@@ -255,15 +255,15 @@ class ClothingEntity extends EquipmentEntity {
         ClothingEntity.clothingEntityList = {};
         return 0;
     }
-    static toJSON(clothingEntity) {
-        if (clothingEntity instanceof ClothingEntity) {}
-        else if (ClothingEntity.has(clothingEntity)) {
-            clothingEntity = ClothingEntity.get(clothingEntity);
+    static toJSON(entity) {
+        if (entity instanceof ClothingEntity) {}
+        else if (ClothingEntity.has(entity)) {
+            entity = ClothingEntity.get(entity);
         }
         else {
             return null;
         }
-        let jsonObject = JSON.parse(JSON.stringify(clothingEntity));
+        let jsonObject = JSON.parse(JSON.stringify(entity));
         return JSON.stringify(jsonObject);
     }
     static fromJSON(json) {

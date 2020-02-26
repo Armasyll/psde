@@ -15,8 +15,8 @@ class ShieldEntity extends ClothingEntity {
 
     /**
      * Overrides EquipmentEntity.clone
-     * @param  {string} id          ID
-     * @return {ShieldEntity}       new ShieldEntity
+     * @param  {string} id ID
+     * @return {ShieldEntity} new ShieldEntity
      */
     clone(id = undefined) {
         let clone = new ShieldEntity(id, this.name, this.description, this.icon);
@@ -26,7 +26,7 @@ class ShieldEntity extends ClothingEntity {
     /**
      * Overrides ClothingEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedShieldEntity}     new InstancedShieldEntity
+     * @return {InstancedShieldEntity} new InstancedShieldEntity
      */
     createInstance(id = undefined) {
         return new InstancedShieldEntity(id, this);
@@ -80,6 +80,42 @@ class ShieldEntity extends ClothingEntity {
         }
         ShieldEntity.shieldEntityList = {};
         return 0;
+    }
+    static toJSON(entity) {
+        if (entity instanceof ShieldEntity) {}
+        else if (ShieldEntity.has(entity)) {
+            entity = ShieldEntity.get(entity);
+        }
+        else {
+            return null;
+        }
+        let jsonObject = JSON.parse(JSON.stringify(entity));
+        return JSON.stringify(jsonObject);
+    }
+    static fromJSON(json) {
+        if (typeof json == "string") {
+            console.group(`Running ShieldEntity.fromJSON(${json.slice(0,12)}...)`);
+            json = JSON.parse(json);
+        }
+        else {
+            console.group("Running ShieldEntity.fromJSON(...)");
+        }
+        if (!(json instanceof Object) || !json.hasOwnProperty("id") || !json.hasOwnProperty("name")) {
+            console.warn(`Supplied JSON was not valid.`);
+            console.groupEnd();
+            return 2;
+        }
+        console.info("Supplied JSON was valid.");
+        let entity = new ShieldEntity(json.id, json.name, json.description, json.iconID);
+        if (!(entity instanceof ShieldEntity)) {
+            console.warn(`Could not create a new ShieldEntity`);
+            console.groupEnd();
+            return 1;
+        }
+        entity.assign(json);
+        console.info(`ShieldEntity (${entity.getID()}) has been created.`);
+        console.groupEnd();
+        return entity;
     }
 }
 ShieldEntity.initialize();

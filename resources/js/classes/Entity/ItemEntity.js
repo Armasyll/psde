@@ -37,8 +37,8 @@ class ItemEntity extends Entity {
 
     /**
      * Overrides Entity.clone
-     * @param  {string} id          ID
-     * @return {ItemEntity}         new ItemEntity
+     * @param  {string} id ID
+     * @return {ItemEntity} new ItemEntity
      */
     clone(id = "") {
         let clone = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
@@ -98,15 +98,15 @@ class ItemEntity extends Entity {
         ItemEntity.itemEntityList = {};
         return 0;
     }
-    static toJSON(itemEntity) {
-        if (ItemEntity instanceof ItemEntity) {}
-        else if (ItemEntity.has(itemEntity)) {
-            itemEntity = ItemEntity.get(itemEntity);
+    static toJSON(entity) {
+        if (entity instanceof ItemEntity) {}
+        else if (ItemEntity.has(entity)) {
+            entity = ItemEntity.get(entity);
         }
         else {
             return null;
         }
-        let jsonObject = JSON.parse(JSON.stringify(itemEntity));
+        let jsonObject = JSON.parse(JSON.stringify(entity));
         return JSON.stringify(jsonObject);
     }
     static fromJSON(json) {
