@@ -277,6 +277,11 @@ class InventoryGameGUI {
             action = Tools.filterInt(action);
             let actionButton = undefined;
             switch (action) {
+                case ActionEnum.CONSUME : {
+                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateInventoryMenu);});
+                    break;
+                }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateInventoryMenu);});

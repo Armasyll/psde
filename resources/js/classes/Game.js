@@ -822,6 +822,7 @@ class Game {
         Game.doEntityActionFunction = Game.doEntityAction;
         Game.actionAttackFunction = Game.actionAttack;
         Game.actionCloseFunction = Game.actionClose;
+        Game.actionConsumeFunction = Game.actionConsume;
         Game.actionDropFunction = Game.actionDrop;
         Game.actionEquipFunction = Game.actionEquip;
         Game.actionHoldFunction = Game.actionHold;
