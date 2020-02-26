@@ -515,25 +515,25 @@ class AbstractEntity {
         return this.inventory.addItem(...parameters);
     }
     removeItem(...parameters) {
-        if (!this.hasInventory) {
+        if (!this.hasInventory()) {
             return 1;
         }
         return this.inventory.removeItem(...parameters);
     }
     hasItem(...parameters) {
-        if (!this.hasInventory) {
+        if (!this.hasInventory()) {
             return false;
         }
         return this.inventory.hasItem(...parameters);
     }
     getItem(...parameters) {
-        if (!this.hasInventory) {
+        if (!this.hasInventory()) {
             return 1;
         }
         return this.inventory.getItem(...parameters);
     }
     getItems() {
-        if (!this.hasInventory) {
+        if (!this.hasInventory()) {
             return 1;
         }
         return this.inventory.getItems();

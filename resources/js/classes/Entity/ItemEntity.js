@@ -11,6 +11,7 @@ class ItemEntity extends Entity {
         super(id, name, description, iconID, EntityEnum.ITEM);
 
         this.itemType = ItemEnum.GENERAL;
+        this.maxStackCount = 1;
 
         this.addAvailableAction(ActionEnum.DROP);
         this.addAvailableAction(ActionEnum.HOLD);
@@ -29,6 +30,23 @@ class ItemEntity extends Entity {
     }
     getItemType() {
         return this.itemType;
+    }
+
+    /**
+     * Sets maximum stack count; -1 for infinite
+     * @param {number} maxStackCount 
+     */
+    setMaxStackCount(maxStackCount = 1) {
+        if (typeof maxStackCount != "number") {maxStackCount = Number.parseInt(maxStackCount) || 1;}
+        else {maxStackCount = maxStackCount|0}
+        if (maxStackCount < -1 || maxStackCount == 0) {
+            maxStackCount = 1;
+        }
+        this.maxStackCount = maxStackCount;
+        return 0;
+    }
+    getMaxStackCount() {
+        return this.maxStackCount;
     }
 
     resetModifiers() {

@@ -13,7 +13,7 @@ class ConsumableEntity extends ItemEntity {
         this.consumableType = ConsumableEnum.FOOD;
         this.consumableEffects = {};
 
-        this.addAvailableAction(ActionEnum.DROP);
+        this.addAvailableAction(ActionEnum.CONSUME);
         this.setConsumableType(consumableType);
 
         ConsumableEntity.set(this.id, this);

@@ -17,6 +17,7 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
         InventoryGameGUI.generateController();
+        InventoryGameGUI.selectedEntity = null;
     }
     static resize() {
         if (InventoryGameGUI.initialized != true) {
@@ -206,34 +207,48 @@ class InventoryGameGUI {
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
-     * @param {AbstractEntity} creatureEntity The Entity with the inventory.
+     * @param {AbstractEntity} abstractEntity The Entity with the inventory.
      */
-    static updateWith(creatureEntity = Game.player) {
+    static updateWith(abstractEntity = Game.player) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
+        }
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             InventoryGameGUI.items.removeControl(InventoryGameGUI.items.children[i]);
         }
-        creatureEntity.getItems().forEach(function(instancedItemEntity, id) {
-            let button = InventoryGameGUI._generateInventoryItemsButton(id, instancedItemEntity.getName(), Game.getIcon(instancedItemEntity.getIcon()));
-            button.onPointerUpObservable.add(function() {
-                InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), creatureEntity);
-            });
-            InventoryGameGUI.items.addControl(button);
-        });
-        InventoryGameGUI.clearSelected();
-        if (creatureEntity.hasInventory()) {
-            InventoryGameGUI.tAISWeight.text = String(creatureEntity.getInventory().getSize());
+        if (abstractEntity.hasInventory()) {
+            for (let id in abstractEntity.getItems()) {
+                if (InstancedItemEntity.has(abstractEntity.getItems()[id])) {
+                    let instancedItemEntity = InstancedItemEntity.get(abstractEntity.getItems()[id]);
+                    let button = InventoryGameGUI._generateInventoryItemsButton(id, instancedItemEntity.getName(), Game.getIcon(instancedItemEntity.getIcon()));
+                    button.onPointerUpObservable.add(function() {
+                        InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), abstractEntity);
+                    });
+                    InventoryGameGUI.items.addControl(button);
+                }
+            };
+            InventoryGameGUI.tAISWeight.text = String(abstractEntity.getInventory().getSize());
             InventoryGameGUI.tAISWeightContainer.isVisible = true;
+            if (!abstractEntity.hasItem(InventoryGameGUI.selectedEntity) || InventoryGameGUI.selectedEntity == null) {
+                InventoryGameGUI.clearSelected();
+            }
         }
         else {
             InventoryGameGUI.tAISWeightContainer.isVisible = false;
         }
-        if (creatureEntity instanceof CreatureEntity) {
-            InventoryGameGUI.tAISMoney.text = String(creatureEntity.getMoney());
+        if (abstractEntity instanceof CreatureEntity) {
+            InventoryGameGUI.tAISMoney.text = String(abstractEntity.getMoney());
             InventoryGameGUI.tAISMoneyContainer.isVisible = true;
         }
         else {
             InventoryGameGUI.tAISMoneyContainer.isVisible = false;
         }
+        return 0;
     }
     /**
      * Sets the inventory menu's selected item section.
@@ -241,28 +256,39 @@ class InventoryGameGUI {
      * @param {Entity} targetEntity        The Entity storing the InstancedItemEntity
      * @param {Entity} playerEntity        The Entity viewing the item; the player.
      */
-    static updateSelectedWith(instancedItemEntity, targetEntity = undefined, playerEntity = Game.player) {
+    static updateSelectedWith(instancedItemEntity, targetEntity = Game.player, playerEntity = Game.player) {
         if (!(instancedItemEntity instanceof AbstractEntity)) {
-            if (instancedItemEntity == undefined) {
+            if (InstancedItemEntity.has(instancedItemEntity)) {
+                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
+            }
+            else if (instancedItemEntity == undefined) {
                 InventoryGameGUI.clearSelected;
                 return 0;
             }
-            instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
         if (!(targetEntity instanceof AbstractEntity)) {
-            targetEntity = Entity.get(targetEntity);
-        }
-        if (!(playerEntity instanceof AbstractEntity)) {
-            playerEntity = Entity.get(playerEntity);
-            if (!(playerEntity instanceof AbstractEntity)) {
-                playerEntity = Game.player;
+            if (AbstractEntity.has(targetEntity)) {
+                targetEntity = AbstractEntity.get(targetEntity);
+            }
+            else {
+                targetEntity = Game.player;
             }
         }
+        if (!(playerEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(playerEntity)) {
+                playerEntity = AbstractEntity.get(playerEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+
+        InventoryGameGUI.selectedEntity = instancedItemEntity.getID();
 
         InventoryGameGUI.selectedName.text = instancedItemEntity.getName();
         InventoryGameGUI.selectedImage.source = Game.getIcon(instancedItemEntity.getIcon());
         InventoryGameGUI.selectedDescription.text = instancedItemEntity.getDescription();
-        let weightString = undefined;
+        let weightString = "";
         if (instancedItemEntity.getWeight() < 1) {
             weightString = String(instancedItemEntity.getWeight() * 1000) + "g";
         }
@@ -270,21 +296,21 @@ class InventoryGameGUI {
             weightString = String(instancedItemEntity.getWeight()) + "kg";
         }
         InventoryGameGUI.selectedDetails.text = `Price: $${instancedItemEntity.getPrice()}, Weight: ${weightString}`;
-        for (var _i = InventoryGameGUI.selectedActions.children.length - 1; _i > -1; _i--) {
-            InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[_i]);
+        for (let i = InventoryGameGUI.selectedActions.children.length - 1; i > -1; i--) {
+            InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
         }
         for (let action in instancedItemEntity.getAvailableActions()) {
             action = Tools.filterInt(action);
-            let actionButton = undefined;
+            let actionButton = null;
             switch (action) {
                 case ActionEnum.CONSUME : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateInventoryMenu);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateInventoryMenu);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.EQUIP : {
@@ -330,7 +356,7 @@ class InventoryGameGUI {
                     break;
                 }
             }
-            if (actionButton != undefined) {
+            if (actionButton != null) {
                 InventoryGameGUI.selectedActions.addControl(actionButton);
                 actionButton.top = ((InventoryGameGUI.selectedActions.children.length * 10) - 55) + "%";
             }
@@ -340,6 +366,7 @@ class InventoryGameGUI {
      * Clears the inventory menu's selected item section.
      */
     static clearSelected() {
+        InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedName.text = "";
         InventoryGameGUI.selectedImage.source = "";
         InventoryGameGUI.selectedDescription.text = "";

@@ -8,6 +8,7 @@ class InstancedItemEntity extends InstancedEntity {
 
         this.setOwner(owner);
 
+        this.stackCount = 1;
         this.inventory = null;
 
         InstancedItemEntity.set(this.id, this);
@@ -31,6 +32,26 @@ class InstancedItemEntity extends InstancedEntity {
     }
     removeInventory() {
         this.inventory = null;
+    }
+    getMaxStackCount() {
+        return this.entity.getMaxStackCount();
+    }
+    setStackCount(number) { // TODO: actually implement with inventory later :v
+        if (typeof number != "number") {number = Number.parseInt(number) || 1;}
+        else {number = number|0}
+        if (number < -1 || number == 0) {
+            number = 1;
+        }
+        this.stackCount = number;
+        return 0;
+    }
+    modifyStackCount(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 1;}
+        else {number = number|0}
+        return this.setStackCount(this.stackCount + number);
+    }
+    getStackCount() {
+        return this.stackCount;
     }
 
     /**

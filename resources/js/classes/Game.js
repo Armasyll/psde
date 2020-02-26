@@ -4431,7 +4431,15 @@ class Game {
             }
         }
         if (!ActionEnum.properties.hasOwnProperty(actionID)) {
-            actionID = entity.getDefaultAction();
+            if (ActionEnum.hasOwnProperty(actionID)) {
+                actionID = ActionEnum[actionID];
+            }
+            else {
+                actionID = entity.getDefaultAction();
+            }
+        }
+        else {
+            actionID = Number.parseInt(actionID);
         }
         if (Game.debugMode) console.log(`Running Game::doEntityAction(${entity.id}, ${actor.id}, ${actionID})`);
         switch (actionID) {
@@ -4674,10 +4682,15 @@ class Game {
         }
         if (entity instanceof InstancedConsumableEntity) {
             for (let effect in entity.getEffects()) {
-                entity.setLocked(true);
                 actor.addEffect(effect);
+            }
+            if (entity.getStackCount() > 1) {
+                entity.modifyStackCount(-1);
+            }
+            else if (entity.getStackCount() == -1) {}
+            else {
                 Game.removeItemInSpace(entity);
-                
+                entity.dispose();
             }
         }
         else if (actor == Game.player && entity instanceof CharacterEntity && entity.getCreatureSubType() == actor.getCreatureSubType()) {
@@ -4687,7 +4700,12 @@ class Game {
             Game.gui.chat.appendOutput("You can't eat that.");
         }
         if (typeof callback == "function") {
-            callback(entity, undefined, actor);
+            if (Game.interfaceMode == InterfaceModeEnum.MENU) {
+                callback(actor);
+            }
+            else {
+                callback(entity, undefined, actor);
+            }
         }
         return 0;
     }

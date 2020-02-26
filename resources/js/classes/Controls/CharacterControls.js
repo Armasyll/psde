@@ -6,7 +6,7 @@ class CharacterControls extends AbstractControls {
         if (!(keyboardEvent instanceof KeyboardEvent)) {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyDown(${keyboardEvent.keyCode})`);
+        if (Game.debugMode) console.log(`Running CharacterControls::onKeyDown(${keyboardEvent.keyCode})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return 2;
         }
@@ -73,7 +73,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.player.getController().hasTarget()) {
+                if (Game.player.hasTarget()) {
                     Game.gui.clearActionsMenu();
                     Game.gui.populateActionsMenuWithTarget();
                     Game.gui.updateActionsMenu();
@@ -125,7 +125,7 @@ class CharacterControls extends AbstractControls {
         if (!(keyboardEvent instanceof KeyboardEvent)) {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnKeyUp(${keyboardEvent.keyCode})`);
+        if (Game.debugMode) console.log(`Running CharacterControls::onKeyUp(${keyboardEvent.keyCode})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return 2;
         }
@@ -205,7 +205,7 @@ class CharacterControls extends AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnClick(${mouseEvent.button})`);
+        if (Game.debugMode) console.log(`Running CharacterControls::onClick(${mouseEvent.button})`);
         return 0;
     }
     static onContext(mouseEvent) {
@@ -215,7 +215,7 @@ class CharacterControls extends AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::controlCharacterOnContext(${mouseEvent.button})`);
+        if (Game.debugMode) console.log(`Running CharacterControls::onContext(${mouseEvent.button})`);
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return 2;
         }

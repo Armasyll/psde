@@ -213,11 +213,10 @@ class CharacterEntity extends CreatureEntity {
         }
         if (Game.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${instancedItemEntity.id}, ${equipmentSlot})`);
         /*
-        Get an apparel slot out of whatever _equipmentSlot is, otherwise fail
+        Get an apparel slot out of whatever equipmentSlot is, otherwise fail
          */
-        if (this.equipment.hasOwnProperty(equipmentSlot)) {
-            equipmentSlot = Number.parseInt(equipmentSlot);
-        }
+        equipmentSlot = Number.parseInt(equipmentSlot);
+        if (this.equipment.hasOwnProperty(equipmentSlot)) {}
         else if (ApparelSlotEnum.properties.hasOwnProperty(instancedItemEntity.getEquipmentSlot())) {
             equipmentSlot = instancedItemEntity.getEquipmentSlot();
             if (equipmentSlot == ApparelSlotEnum.HANDS) {
@@ -276,13 +275,13 @@ class CharacterEntity extends CreatureEntity {
         /*
         Clear out the equipment slot if it's in use, and set its value to _entity
          */
-        if (this.equipment[equipmentSlot] == instancedItemEntity) {}
-        else if (this.equipment[equipmentSlot] instanceof AbstractEntity) {
+        if (this.equipment[equipmentSlot] == instancedItemEntity.getID()) {}
+        else if (InstancedItemEntity.has(this.equipment[equipmentSlot])) {
             this.unequipBySlot(equipmentSlot);
-            this.equipment[equipmentSlot] = instancedItemEntity;
+            this.equipment[equipmentSlot] = instancedItemEntity.getID();
         }
         else {
-            this.equipment[equipmentSlot] = instancedItemEntity;
+            this.equipment[equipmentSlot] = instancedItemEntity.getID();
         }
         /*
         Flip bits and do tricks
@@ -351,32 +350,32 @@ class CharacterEntity extends CreatureEntity {
         }
         return 0;
     }
-    unequip(_blob) {
-        if (_blob instanceof InstancedEntity) {
-            return this.unequipByInstancedEntity(_blob)
+    unequip(any) {
+        if (any instanceof InstancedEntity) {
+            return this.unequipByInstancedEntity(any)
         }
-        else if (_blob instanceof Entity) {
-            return this.unequipByEntity(_blob);
+        else if (any instanceof Entity) {
+            return this.unequipByEntity(any);
         }
-        else if (typeof _blob == "string") {
-            if (InstancedEntity.has(_blob)) {
-                return this.unequipByInstancedEntity(InstancedEntity.get(_blob));
+        else if (typeof any == "string") {
+            if (InstancedEntity.has(any)) {
+                return this.unequipByInstancedEntity(InstancedEntity.get(any));
             }
-            else if (Entity.has(_blob)) {
-                return this.unequipByEntity(Entity.get(_blob));
+            else if (Entity.has(any)) {
+                return this.unequipByEntity(Entity.get(any));
             }
-            else if (ApparelSlotEnum.hasOwnProperty(_blob)) {
-                return this.unequipBySlot(ApparelSlotEnum[_blob]);
+            else if (ApparelSlotEnum.hasOwnProperty(any)) {
+                return this.unequipBySlot(ApparelSlotEnum[any]);
             }
         }
-        else if (ApparelSlotEnum.properties.hasOwnProperty(_blob)) {
-            return this.unequipBySlot(_blob);
+        else if (ApparelSlotEnum.properties.hasOwnProperty(any)) {
+            return this.unequipBySlot(any);
         }
         return 2;
     }
     unequipByInstancedEntity(instancedEntity, strict = false) {
         for (let slot in this.equipment) {
-            if (this.equipment[slot] instanceof AbstractEntity && this.equipment[slot] == instancedEntity) {
+            if (InstancedEntity.has(this.equipment[slot]) && this.equipment[slot] == instancedEntity.getID()) {
                 return this.unequipBySlot(slot);
             }
         }
@@ -385,8 +384,11 @@ class CharacterEntity extends CreatureEntity {
     }
     unequipByEntity(entity) {
         for (let slot in this.equipment) {
-            if (this.equipment[slot] instanceof AbstractEntity && this.equipment[slot].getEntity() == entity) {
-                return this.unequipBySlot(slot);
+            if (InstancedEntity.has(this.equipment[slot])) {
+                let instancedEntity = InstancedEntity.get(this.equipment[slot]);
+                if (instancedEntity.getEntity() == entity) {
+                    return this.unequipBySlot(slot);
+                }
             }
         }
         if (Game.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
@@ -416,7 +418,10 @@ class CharacterEntity extends CreatureEntity {
         if (this.equipment[equipmentSlot] == null) {
             return 0;
         }
-        let instancedItemEntity = this.equipment[equipmentSlot];
+        if (!InstancedItemEntity.has(this.equipment[equipmentSlot])) {
+            return 1;
+        }
+        let instancedItemEntity = InstancedItemEntity.get(this.equipment[equipmentSlot]);
         this.equipment[equipmentSlot] = null;
         /*
         Flip bits and do tricks
@@ -427,7 +432,7 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.armed = false;
         }
-        if (instancedItemEntity instanceof AbstractEntity && this.hasController()) {
+        if (this.hasController()) {
             switch (equipmentSlot) {
                 case ApparelSlotEnum.HEAD: {
                     this.controller.detachFromHead(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
@@ -487,25 +492,26 @@ class CharacterEntity extends CreatureEntity {
     }
     hasEquipment(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            let _tempEntity = InstancedItemEntity.get(abstractEntity);
-            if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = ItemEntity.get(abstractEntity);
-                if (!(_tempEntity instanceof ItemEntity)) {
-                    return null;
-                }
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
             }
-            abstractEntity = _tempEntity;
+            else {
+                return false;
+            }
         }
         if (abstractEntity instanceof Entity) {
-            for (let equipmentSlot in this.equipment) {
-                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot].getEntity() == abstractEntity) {
-                    return true;
+            for (let slot in this.equipment) {
+                if (InstancedItemEntity.has(this.equipment[slot])) {
+                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[slot]);
+                    if (instancedItemEntity.getEntity() == abstractEntity) {
+                        return true;
+                    }
                 }
             }
         }
         else if (abstractEntity instanceof InstancedEntity) {
-            for (let equipmentSlot in this.equipment) {
-                if (this.equipment[equipmentSlot] instanceof AbstractEntity && this.equipment[equipmentSlot] == abstractEntity) {
+            for (let slot in this.equipment) {
+                if (this.equipment[slot] == abstractEntity.getID()) {
                     return true;
                 }
             }
@@ -514,18 +520,31 @@ class CharacterEntity extends CreatureEntity {
     }
     hasHeldItem(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            let _tempEntity = InstancedItemEntity.get(abstractEntity);
-            if (!(_tempEntity instanceof InstancedItemEntity)) {
-                _tempEntity = ItemEntity.get(abstractEntity);
-                if (!(_tempEntity instanceof ItemEntity)) {
-                    return null;
+            if (InstancedItemEntity.has(abstractEntity)) {
+                abstractEntity = InstancedItemEntity.get(abstractEntity);
+            }
+            else {
+                return false;
+            }
+        }
+        let slots = {};
+        slots[ApparelSlotEnum.HAND_L] = true;
+        slots[ApparelSlotEnum.HAND_R] = true;
+        if (abstractEntity instanceof Entity) {
+            for (let slot in slots) {
+                if (InstancedItemEntity.has(this.equipment[slot])) {
+                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[slot]);
+                    if (instancedItemEntity.getEntity() == abstractEntity) {
+                        return true;
+                    }
                 }
             }
-            abstractEntity = _tempEntity;
         }
-        if (abstractEntity instanceof InstancedEntity) {
-            if (this.equipment[ApparelSlotEnum.HAND_L] == abstractEntity || this.equipment[ApparelSlotEnum.HAND_R] == abstractEntity) {
-                return true;
+        else if (abstractEntity instanceof InstancedEntity) {
+            for (let slot in slots) {
+                if (this.equipment[slot] == abstractEntity.getID()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -597,18 +616,23 @@ class CharacterEntity extends CreatureEntity {
     /**
      * Removes an InstancedItemEntity from this entity's Item array
      * @override
-     * @param  {InstancedItemEntity} any InstancedItemEntity, or ItemEntity, to be removed
+     * @param  {InstancedItemEntity} instancedItemEntity InstancedItemEntity, or ItemEntity, to be removed
      * @return {this}
      */
-    removeItem(any) {
+    removeItem(instancedItemEntity) {
         if (!this.hasInventory()) {
             return 1;
         }
-        any = this.inventory.getItem(any);
-        if (any instanceof AbstractEntity) {
-            this.unequipByInstancedEntity(any);
-            return super.removeItem(any);
+        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
+            if (InstancedItemEntity.has(instancedItemEntity)) {
+                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
+            }
+            else {
+                return false;
+            }
         }
+        this.unequip(instancedItemEntity);
+        super.removeItem(instancedItemEntity);
         return 0;
     }
 

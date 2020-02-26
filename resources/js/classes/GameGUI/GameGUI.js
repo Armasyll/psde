@@ -590,6 +590,14 @@ class GameGUI {
         return _aRM;
     }
     static populateActionsMenuWith(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
+        }
         GameGUI._actionsMenuOptions.clear();
         let actions = abstractEntity.getAvailableActions();
         for (let actionID in actions) {
@@ -603,11 +611,24 @@ class GameGUI {
         return GameGUI.populateActionsMenuWith(Game.player.getTarget());
     }
     static addActionsMenuOption(actionID, abstractEntity) {
-        if (typeof actionID == "string") {
-            actionID = Number(actionID);
-        }
         if (!ActionEnum.properties.hasOwnProperty(actionID)) {
-            return 2;
+            if (ActionEnum.hasOwnProperty(actionID)) {
+                actionID = ActionEnum[actionID];
+            }
+            else {
+                return 2;
+            }
+        }
+        else {
+            actionID = Number.parseInt(actionID);
+        }
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
         }
         GameGUI._actionsMenuOptions.push({
             action:actionID,
@@ -619,8 +640,16 @@ class GameGUI {
         return true;
     }
     static removeActionsMenuOption(actionID) {
-        if (typeof actionID == "string") {
-            actionID = Number(actionID);
+        if (!ActionEnum.properties.hasOwnProperty(actionID)) {
+            if (ActionEnum.hasOwnProperty(actionID)) {
+                actionID = ActionEnum[actionID];
+            }
+            else {
+                return 2;
+            }
+        }
+        else {
+            actionID = Number.parseInt(actionID);
         }
         for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
             if (GameGUI._actionsMenuOptions[_i].action == actionID) {
