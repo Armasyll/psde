@@ -7,6 +7,7 @@ class ChatGameGUI {
         ChatGameGUI.input = null;
         ChatGameGUI.focused = false;
         ChatGameGUI.controller = ChatGameGUI.generateController();
+        ChatGameGUI.containerAlpha = 0.75;
     }
     static resize() {
         if (ChatGameGUI.initialized != true) {
@@ -15,36 +16,31 @@ class ChatGameGUI {
         return 0;
     }
     static generateController() {
-        let controller = new BABYLON.GUI.Rectangle("chatBox");
+        let controller = GameGUI.createRectangle("chatBox");
         controller.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         controller.height = 0.3;
         controller.width = GameGUI.getFontSize(24);
         controller.isVertical = true;
-            let chatOutputContainer = new BABYLON.GUI.Rectangle("chatOutputContainer");
+        controller.alpha = ChatGameGUI.containerAlpha;
+            let chatOutputContainer = GameGUI.createRectangle("chatOutputContainer");
             chatOutputContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             chatOutputContainer.height = 0.8;
             chatOutputContainer.width = 1.0;
-            chatOutputContainer.background = GameGUI.background;
-            chatOutputContainer.thickness = 0;
-            chatOutputContainer.alpha = 0.75;
-                let chatOutput = new BABYLON.GUI.TextBlock("chatOutput");
+            chatOutputContainer.alpha = ChatGameGUI.containerAlpha;
+                let chatOutput = GameGUI.createTextBlock("chatOutput");
                 chatOutput.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
                 chatOutput.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                 chatOutput.height = 1.0;
                 chatOutput.width = 1.0;
-                chatOutput.color = GameGUI.color;
                 chatOutput.textWrapping = true;
-            let chatInput = new BABYLON.GUI.InputText("chatInput");
+            let chatInput = GameGUI.createInputText("chatInput");
             chatInput.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             chatInput.height = 0.2;
             chatInput.width = 1.0;
-            chatInput.background = GameGUI.background;
-            chatInput.focusedBackground = GameGUI.focusedBackground;
-            chatInput.color = GameGUI.color;
             chatInput.text = "";
             chatInput.thickness = 1;
-            chatInput.alpha = 0.75;
+            chatInput.alpha = ChatGameGUI.containerAlpha;
         chatOutputContainer.addControl(chatOutput);
         controller.addControl(chatOutputContainer);
         controller.addControl(chatInput);

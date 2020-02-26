@@ -14,7 +14,8 @@ class GameGUI {
         GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
         GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
-        GameGUI.alpha = "0.75";
+        GameGUI.alpha = 0.75;
+        GameGUI.containerAlpha = 0.75;
         GameGUI.color = "#c3c3c3";
         GameGUI.colorDanger = "#ffffff";
         GameGUI.background = "#0c0c0c";
@@ -210,12 +211,12 @@ class GameGUI {
     }
     static _generateCrosshair() {
         if (Game.debugMode) console.log("Running GameGUI::_generateCrosshair");
-        var crosshair = new BABYLON.GUI.Ellipse("crosshair");
+        let crosshair = new BABYLON.GUI.Ellipse("crosshair");
         crosshair.width = "15px";
         crosshair.background = "white";
         crosshair.height = "15px";
         crosshair.color = "black";
-        crosshair.alpha = 0.5;
+        crosshair.alpha = GameGUI.alpha;
         crosshair.isVisible = false;
         crosshair.zIndex = 10;
         return crosshair;
@@ -235,19 +236,19 @@ class GameGUI {
     static _generateCharacterChoiceMenu() {
         if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");
         let characterChoiceMenuContainer = new BABYLON.GUI.Grid("characterChoiceMenu");
-        let nameLabel = new BABYLON.GUI.TextBlock("nameLabel");
-        GameGUI._nameInput = new BABYLON.GUI.InputText("nameInput");
-        let ageLabel = new BABYLON.GUI.TextBlock("ageLabel");
-        GameGUI._ageInput = new BABYLON.GUI.InputText("ageInput");
-        let buttonKBLayoutLabel = new BABYLON.GUI.TextBlock("kbLayoutLabel");
+        let nameLabel = GameGUI.createTextBlock("nameLabel");
+        GameGUI._nameInput = GameGUI.createInputText("nameInput");
+        let ageLabel = GameGUI.createTextBlock("ageLabel");
+        GameGUI._ageInput = GameGUI.createInputText("ageInput");
+        let buttonKBLayoutLabel = GameGUI.createTextBlock("kbLayoutLabel");
         let buttonKBLayoutContainer = new BABYLON.GUI.Grid("kbLayoutContainer");
-        let buttonKBLayoutQwerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutQwerty", "QWERTY");
-        let buttonKBLayoutDvorak = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutDvorak", "Dvorak");
-        let buttonKBLayoutAzerty = BABYLON.GUI.Button.CreateSimpleButton("kbLayoutAzerty", "AZERTY");
-        let submitOnline = BABYLON.GUI.Button.CreateSimpleButton("submitOnline", "Online");
-        let submitOffline = BABYLON.GUI.Button.CreateSimpleButton("submitOffline", "Offline");
-        let urlLabel = new BABYLON.GUI.TextBlock("urlLabel");
-        let urlButton = BABYLON.GUI.Button.CreateSimpleButton("urlButton", "https://github.com/armasyll/psde");
+        let buttonKBLayoutQwerty = GameGUI.createSimpleButton("kbLayoutQwerty", "QWERTY");
+        let buttonKBLayoutDvorak = GameGUI.createSimpleButton("kbLayoutDvorak", "Dvorak");
+        let buttonKBLayoutAzerty = GameGUI.createSimpleButton("kbLayoutAzerty", "AZERTY");
+        let submitOnline = GameGUI.createSimpleButton("submitOnline", "Online");
+        let submitOffline = GameGUI.createSimpleButton("submitOffline", "Offline");
+        let urlLabel = GameGUI.createTextBlock("urlLabel");
+        let urlButton = GameGUI.createSimpleButton("urlButton", "https://github.com/armasyll/psde");
         
         characterChoiceMenuContainer.zIndex = 90;
         characterChoiceMenuContainer.height = 0.75;
@@ -268,61 +269,40 @@ class GameGUI {
         buttonKBLayoutContainer.addRowDefinition(1.0, false);
 
         urlLabel.text = "GitHub: ";
-        urlLabel.height = GameGUI.fontSize;
         urlLabel.width = 1.0;
-        urlLabel.color = GameGUI.color;
 
-        urlButton.height = GameGUI.fontSize;
         urlButton.width = 1.0;
-        urlButton.color = GameGUI.color;
 
         nameLabel.text = "Name: ";
         nameLabel.height = 1.0;
         nameLabel.width = 1.0;
-        nameLabel.color = GameGUI.color;
 
         GameGUI._nameInput.text = "Player";
         GameGUI._nameInput.height = 1.0;
         GameGUI._nameInput.width = 1.0;
-        GameGUI._nameInput.color = GameGUI.color;
-        GameGUI._nameInput.background = GameGUI.focusedBackground;
 
         ageLabel.text = "Age: ";
         ageLabel.height = 1.0;
         ageLabel.width = 1.0;
-        ageLabel.color = GameGUI.color;
 
         GameGUI._ageInput.text = "18";
         GameGUI._ageInput.height = 1.0;
         GameGUI._ageInput.width = 1.0;
-        GameGUI._ageInput.color = GameGUI.color;
-        GameGUI._ageInput.background = GameGUI.focusedBackground;
 
         buttonKBLayoutLabel.text = "Keyboard Layout: ";
         buttonKBLayoutLabel.height = 1.0;
         buttonKBLayoutLabel.width = 1.0;
-        buttonKBLayoutLabel.color = GameGUI.color;
 
         buttonKBLayoutQwerty.height = 1.0;
         buttonKBLayoutQwerty.width = 1.0;
-        buttonKBLayoutQwerty.color = GameGUI.color;
-        buttonKBLayoutQwerty.background = GameGUI.focusedBackground;
         buttonKBLayoutDvorak.height = 1.0;
         buttonKBLayoutDvorak.width = 1.0;
-        buttonKBLayoutDvorak.color = GameGUI.color;
-        buttonKBLayoutDvorak.background = GameGUI.focusedBackground;
         buttonKBLayoutAzerty.height = 1.0;
         buttonKBLayoutAzerty.width = 1.0;
-        buttonKBLayoutAzerty.color = GameGUI.color;
-        buttonKBLayoutAzerty.background = GameGUI.focusedBackground;
 
         submitOffline.width = 1.0;
-        submitOffline.color = GameGUI.color;
-        submitOffline.background = GameGUI.focusedBackground;
 
         submitOnline.width = 1.0;
-        submitOnline.color = GameGUI.color;
-        submitOnline.background = GameGUI.focusedBackground;
 
         GameGUI._nameInput.onTextChangedObservable.add(function() {
             GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
@@ -449,6 +429,76 @@ class GameGUI {
         GameGUI.pointerLock();
         GameGUI._characterChoiceMenu.isVisible = false;
     }
+    static createSimpleButton(...params) {
+        let button = new BABYLON.GUI.Button.CreateSimpleButton(...params);
+        button.fontSize = GameGUI.fontSize;
+        button.color = GameGUI.color;
+        button.background = GameGUI.focusedBackground;
+        button.thickness = 0;
+        button.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        button.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        return button;
+    }
+    static CreateImageButton(...params) {
+        let button = BABYLON.GUI.Button.CreateImageButton(...params);
+        button.fontSize = GameGUI.fontSize;
+        button.color = GameGUI.color;
+        button.background = GameGUI.focusedBackground;
+        button.thickness = 0;
+        button.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        button.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        button.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        return button;
+    }
+    static createCheckbox(...params) {
+        let checkbox = new BABYLON.GUI.Checkbox(...params);
+        checkbox.color = GameGUI.color;
+        checkbox.disabledColor = GameGUI.background;
+        checkbox.disabledColorItem = GameGUI.color;
+        checkbox.thickness = 0;
+        checkbox.checkSizeRatio = 1.0;
+        checkbox.isChecked = false;
+        checkbox.background = null;
+        return checkbox;
+    }
+    static createInputText(...params) {
+        let inputText = new BABYLON.GUI.InputText(...params);
+        inputText.fontSize = GameGUI.fontSize;
+        inputText.color = GameGUI.color;
+        inputText.focusedBackground = GameGUI.focusedBackground;
+        inputText.disabledColorItem = GameGUI.color;
+        inputText.thickness = 0;
+        inputText.background = null;
+        return inputText;
+    }
+    static createTextBlock(...params) {
+        let textBlock = new BABYLON.GUI.TextBlock(...params);
+        textBlock.fontSize = GameGUI.fontSize;
+        textBlock.color = GameGUI.color;
+        textBlock.disabledColorItem = GameGUI.color;
+        textBlock.thickness = 0;
+        textBlock.background = null;
+        return textBlock;
+    }
+    static createRectangle(...params) {
+        let rectangle = new BABYLON.GUI.Rectangle(...params);
+        rectangle.color = GameGUI.color;
+        rectangle.disabledColorItem = GameGUI.color;
+        rectangle.thickness = 0;
+        rectangle.background = GameGUI.background;
+        return rectangle;
+    }
+    static createStackPanel(...params) {
+        let stackPanel = new BABYLON.GUI.StackPanel(...params);
+        stackPanel.color = GameGUI.color;
+        stackPanel.disabledColorItem = GameGUI.color;
+        stackPanel.thickness = 0;
+        stackPanel.background = GameGUI.background;
+        return stackPanel;
+    }
     static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _icon = undefined) {
         var _button = new BABYLON.GUI.Button(_id);
             _button.width = GameGUI.getFontSize(9);
@@ -471,32 +521,28 @@ class GameGUI {
     }
     static _generateTargetActionTooltip() {
         if (Game.debugMode) console.log("Running GameGUI::_generateTargetActionTooltip");
-        var tooltip = new BABYLON.GUI.Rectangle("targetActionTooltip");
+        let tooltip = GameGUI.createRectangle("targetActionTooltip");
             tooltip.width = 0.125;
             tooltip.height = 0.075;
             tooltip.top = "3.75%";
             tooltip.left = "6.25%";
-            tooltip.background = GameGUI.background;
-            tooltip.alpha = 0.5;
+            tooltip.alpha = GameGUI.alpha;
             tooltip.isVertical = false;
-        var keyName = new BABYLON.GUI.TextBlock();
+        let keyName = GameGUI.createTextBlock();
             keyName.text = "E";
             keyName.top = 0;
             keyName.left = "10%";
             keyName.textHorizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-            keyName.color = GameGUI.color;
-        var actionPanelActionName = new BABYLON.GUI.TextBlock();
+        let actionPanelActionName = GameGUI.createTextBlock();
             actionPanelActionName.text = "";
             actionPanelActionName.height = 0.5;
             //actionPanelActionName.top = "-25%";
             actionPanelActionName.left = "25%";
-            actionPanelActionName.color = GameGUI.color;
-        var actionPanelTargetName = new BABYLON.GUI.TextBlock();
+        let actionPanelTargetName = GameGUI.createTextBlock();
             actionPanelTargetName.text = "";
             actionPanelTargetName.height = 0.5;
             actionPanelTargetName.top = "25%";
             actionPanelTargetName.left = "25%";
-            actionPanelTargetName.color = GameGUI.color;
         tooltip.addControl(keyName);
         tooltip.addControl(actionPanelActionName);
         tooltip.addControl(actionPanelTargetName);
@@ -579,15 +625,15 @@ class GameGUI {
      */
     static _generateActionsRadialMenu() {
         if (Game.debugMode) console.log("Running GameGUI::_generateActionsRadialMenu");
-        var _aRM = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
-        _aRM.width = String(Game.engine.getRenderWidth() / 4) + "px";
-        _aRM.height = _aRM.width;
-        _aRM.background = GameGUI.background;
-        _aRM.color = GameGUI.color;
-        _aRM.alpha = GameGUI.alpha;
-        _aRM.isVisible = false;
-        _aRM.zIndex = 12;
-        return _aRM;
+        let actionsRadialMenu = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
+        actionsRadialMenu.width = String(Game.engine.getRenderWidth() / 4) + "px";
+        actionsRadialMenu.height = actionsRadialMenu.width;
+        actionsRadialMenu.background = GameGUI.background;
+        actionsRadialMenu.color = GameGUI.color;
+        actionsRadialMenu.alpha = GameGUI.containerAlpha;
+        actionsRadialMenu.isVisible = false;
+        actionsRadialMenu.zIndex = 12;
+        return actionsRadialMenu;
     }
     static populateActionsMenuWith(abstractEntity) {
         if (!(abstractEntity instanceof AbstractEntity)) {
@@ -701,11 +747,9 @@ class GameGUI {
         }
         let xPosition = 0;
         let yPosition = 0;
-        let button = new BABYLON.GUI.Button.CreateSimpleButton("closeRadialMenu", "X");
+        let button = GameGUI.createSimpleButton("closeRadialMenu", "X");
         button.width = "24px";
         button.height = "24px";
-        button.color = GameGUI.color;
-        button.background = GameGUI.background;
         button.onPointerClickObservable.add(function() {
             GameGUI.hideActionsMenu();
             GameGUI.pointerLock();
@@ -716,11 +760,9 @@ class GameGUI {
             for (let i = 0; i < GameGUI._actionsMenuOptions.length; i++) {
                 xPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
                 yPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
-                button = new BABYLON.GUI.Button.CreateSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[i].action].name);
+                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[i].action].name);
                 button.width = "96px";
                 button.height = "24px";
-                button.color = GameGUI.color;
-                button.background = GameGUI.background;
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
                     GameGUI.hideActionsMenu();
