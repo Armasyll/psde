@@ -3975,26 +3975,21 @@ class Game {
     }
     /**
      * Removes an InstancedItemEntity, its ItemController, and its BABYLON.InstancedMesh
-     * @param {(ItemController|string)} itemController An ItemController, or its string ID
+     * @param {(ItemController|string)} instancedItemEntity An ItemController, or its string ID
      * @returns {number} Integer status code
      */
-    static removeItemInstance(itemController) {
-        if (!(itemController instanceof ItemController)) {
-            if (!ItemController.has(itemController)) {
+    static removeItem(instancedItemEntity) {
+        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
+            if (!Game.hasInstancedItem(instancedItemEntity)) {
                 return 2;
             }
-            itemController = ItemController.get(itemController);
+            instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
-        let mesh = itemController.getMesh();
-        let entity = itemController.getEntity();
-        itemController.dispose();
-        if (entity instanceof AbstractEntity) {
-            entity.dispose();
+        if (Game.removeItemInSpace(instancedItemEntity) == 0) {
+            instancedItemEntity.dispose();
+            return 0;
         }
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
-        }
-        return 0;
+        return 1;
     }
     /**
      * Removes an InstancedItemEntity's ItemController, and its BABYLON.InstancedMesh
@@ -4465,6 +4460,10 @@ class Game {
                 }
                 break;
             }
+            case ActionEnum.CONSUME: {
+                Game.actionConsume(entity, actor);
+                break;
+            }
             case ActionEnum.CLOSE: {
                 if (entity instanceof DoorEntity || entity instanceof FurnitureEntity || entity instanceof InstancedFurnitureEntity) {
                     Game.actionClose(entity, actor);
@@ -4509,6 +4508,9 @@ class Game {
         if (Game.debugMode) console.log(`Game.actionTake(${entity.getID()}, ${actor.getID()})`);
         if (actor.addItem(entity) == 0) {
             Game.removeItemInSpace(entity);
+            if (typeof callback == "function") {
+                callback(entity, undefined, actor);
+            }
             return 0;
         }
         return 1;
@@ -4566,6 +4568,9 @@ class Game {
                     }
                 }
             }
+        }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
         }
         return 0;
     }
@@ -4643,6 +4648,45 @@ class Game {
         else if (entity.getController() instanceof DoorController) {
             entity.setClose();
             Game.playSound("openDoor");
+        }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
+        return 0;
+    }
+    static actionConsume(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (entity instanceof InstancedConsumableEntity) {
+            for (let effect in entity.getEffects()) {
+                entity.setLocked(true);
+                actor.addEffect(effect);
+                Game.removeItemInSpace(entity);
+                
+            }
+        }
+        else if (actor == Game.player && entity instanceof CharacterEntity && entity.getCreatureSubType() == actor.getCreatureSubType()) {
+            Game.gui.chat.appendOutput("Cannabalism is wrong :O");
+        }
+        else if (actor == Game.player) {
+            Game.gui.chat.appendOutput("You can't eat that.");
+        }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
         }
         return 0;
     }
@@ -4812,6 +4856,9 @@ class Game {
             entity.addHiddenAvailableAction(ActionEnum.OPEN);
             entity.removeHiddenAvailableAction(ActionEnum.CLOSE);
         }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
         return 0;
     }
     static actionUse(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
@@ -4833,6 +4880,9 @@ class Game {
         }
         if (entity.getController() instanceof LightingController) {
             entity.getController().toggle();
+        }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
         }
         return 0;
     }
@@ -4874,6 +4924,9 @@ class Game {
         actor.getController().getMesh().rotation.copyFrom(entity.getController().getMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
         actor.setFurniture(entity);
         actor.getController().doLay();
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
         return 0;
     }
     /**
@@ -4907,6 +4960,9 @@ class Game {
         actor.getController().getMesh().rotation.set(0, 0, 0);
         actor.setFurniture(entity);
         actor.getController().doSit();
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
         return 0;
     }
     static actionTalk(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
@@ -4932,6 +4988,9 @@ class Game {
         }
         Game.gui.dialogueMenu.setDialogue(entity.getDialogue(), entity, actor);
         Game.gui.dialogueMenu.show();
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
         return 0;
     }
 

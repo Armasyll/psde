@@ -8,11 +8,29 @@ class InstancedItemEntity extends InstancedEntity {
 
         this.setOwner(owner);
 
+        this.inventory = null;
+
         InstancedItemEntity.set(this.id, this);
     }
 
     getItemType() {
         return this.entity.getItemType();
+    }
+
+    setInventory(inventory) {
+        if (!(inventory instanceof Inventory)) {
+            if (Inventory.has(inventory)) {
+                inventory = Inventory.get(inventory);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.inventory = inventory;
+        return 0;
+    }
+    removeInventory() {
+        this.inventory = null;
     }
 
     /**
@@ -37,6 +55,10 @@ class InstancedItemEntity extends InstancedEntity {
     }
     dispose() {
         InstancedItemEntity.remove(this.id);
+        if (this.hasInventory()) {
+            this.inventory.removeItem(this);
+            this.removeInventory();
+        }
         super.dispose();
         return undefined;
     }

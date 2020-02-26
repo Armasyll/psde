@@ -12,6 +12,12 @@ class InstancedConsumableEntity extends InstancedItemEntity {
     getConsumableType() {
         return this.entity.getConsumableType();
     }
+    hasConsumableEffect(effect) {
+        return this.entity.hasConsumableEffect(effect);
+    }
+    getConsumableEffects() {
+        return this.entity.getConsumableEffects();
+    }
 
     /**
      * Overrides InstancedConsumableEntity.clone

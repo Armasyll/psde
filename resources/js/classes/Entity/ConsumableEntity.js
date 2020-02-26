@@ -11,6 +11,7 @@ class ConsumableEntity extends ItemEntity {
         super(id, name, description, iconID, ItemEnum.CONSUMABLE);
 
         this.consumableType = ConsumableEnum.FOOD;
+        this.consumableEffects = {};
 
         this.addAvailableAction(ActionEnum.DROP);
         this.setConsumableType(consumableType);
@@ -27,6 +28,45 @@ class ConsumableEntity extends ItemEntity {
     }
     getConsumableType() {
         return this.consumableType;
+    }
+
+    addConsumableEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.consumableEffects[effect.id] = true;
+        return 0;
+    }
+    removeConsumableEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        delete this.consumableEffects[effect.id];
+        return 0;
+    }
+    hasConsumableEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return false;
+            }
+        }
+        return this.consumableEffects.hasOwnProperty(effect.id)
+    }
+    getConsumableEffects() {
+        return this.consumableEffects;
     }
 
     resetModifiers() {

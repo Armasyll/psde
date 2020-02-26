@@ -19,16 +19,20 @@ class Inventory {
         this.setMaxSize(maxSize);
         this.maxWeight = 10;
         this.setMaxWeight(maxWeight);
-        this.entities = new Set();
+        this.entities = {};
+        this.locked = false;
+        this.enabled = true;
 
         Inventory.set(this.id, this);
     }
 
     setID(id) {
+        this.locked = true;
         Inventory.remove(this.id);
         id = Tools.filterID(id);
         this.id = id;
         Inventory.set(this.id, this);
+        this.locked = false;
         return 0;
     }
     getID() {
@@ -97,6 +101,9 @@ class Inventory {
      * @return {number}
      */
     addItem(any) {
+        if (this.locked || !this.enabled) {
+            return 1;
+        }
         if (any instanceof InstancedEntity) {
             return this.addItemToSlot(any, this.getAvailableSlot());
         }
@@ -115,6 +122,9 @@ class Inventory {
         return 2;
     }
     addItemToSlot(instancedItemEntity, slot) {
+        if (this.locked || !this.enabled) {
+            return 1;
+        }
         if (!(instancedItemEntity instanceof InstancedEntity)) {
             return 2;
         }
@@ -126,9 +136,13 @@ class Inventory {
         }
         this.items.set(slot, instancedItemEntity);
         this.weight += instancedItemEntity.getWeight();
+        instancedItemEntity.setInventory(this);
         return 0;
     }
     swapSlots(slotA, slotB) {
+        if (this.locked || !this.enabled) {
+            return 1;
+        }
         if (!this.items.has(slotA) || !this.items.has(slotB)) {
             return 2;
         }
@@ -143,15 +157,23 @@ class Inventory {
      * @return {this}
      */
     removeItem(any) {
+        if (this.locked || !this.enabled) {
+            return 1;
+        }
         return this.removeItemFromSlot(this.getSlotByItem(any));
     }
     removeItemFromSlot(number) {
+        if (this.locked || !this.enabled) {
+            return 1;
+        }
         if (isNaN(number) || number < 0) {
             return 2;
         }
-        if (this.items.has(number) && this.items.get(number) instanceof InstancedEntity) {
-            this.weight -= this.items.get(number).getWeight();
+        if (this.items.has(number)) {
+            let instancedItemEntity = this.items.get(number);
+            this.weight -= instancedItemEntity.getWeight();
             this.items.delete(number);
+            instancedItemEntity.removeInventory(this);
         }
         return 0;
     }
@@ -253,13 +275,26 @@ class Inventory {
     }
 
     hasEntity(abstractEntity) {
-        return this.entities.has(abstractEntity);
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        return this.entities.hasOwnProperty(abstractEntity.getID());
     }
     addEntity(abstractEntity, updateChild = false) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            return 1;
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        this.entities.add(abstractEntity);
+        this.entities[abstractEntity.getID()] = true;
         if (updateChild) {
             abstractEntity.setInventory(this, false);
         }
@@ -267,25 +302,54 @@ class Inventory {
     }
     removeEntity(abstractEntity, updateChild = false) {
         if (!(abstractEntity instanceof AbstractEntity)) {
-            return 1;
+            if (AbstractEntity.has(abstractEntity)) {
+                abstractEntity = AbstractEntity.get(abstractEntity);
+            }
+            else {
+                return 2;
+            }
         }
-        this.entities.remove(abstractEntity);
+        delete this.entities[abstractEntity];
         if (updateChild) {
             abstractEntity.removeInventory(false);
         }
         return 0;
     }
     hasEntities() {
-        return this.entities.size > 0;
+        return Object.keys(this.entities).length > 0;
+    }
+    clearEntities() {
+        for (let entity in this.entities) {
+            this.removeEntity(entity, true);
+        }
+    }
+
+    isEnabled() {
+        return this.enabled == true;
+    }
+    setEnabled(isEnabled = true) {
+        this.enabled = (isEnabled == true);
+        return 0;
+    }
+
+    isLocked() {
+        return this.locked == true;
+    }
+    setLocked(isLocked = true) {
+        this.locked = (isLocked == true);
+        return 0;
     }
 
     clear() {
-        this.items.forEach((val, key) => {
-            val.dispose();
-            this.items.delete(key);
+        this.isLocked = true;
+        this.items.forEach((instancedItemEntity, slot) => {
+            instancedItemEntity.removeInventory();
+            instancedItemEntity.dispose();
+            this.items.delete(slot);
         });
         this.items.clear();
         this.weight = 0;
+        this.isLocked = false;
     }
 
     clone(id = "") {
@@ -316,9 +380,10 @@ class Inventory {
         }
         this.setLocked(true);
         this.setEnabled(false);
-        this.entities.clear();
+        this.clearEntities();
         this.clear();
         delete this.items;
+        delete this.entities;
         return undefined;
     }
 

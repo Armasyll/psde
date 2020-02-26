@@ -57,10 +57,12 @@ class AbstractEntity {
     }
 
     setID(id) {
+        this.locked = true;
         AbstractEntity.remove(this.id);
         id = Tools.filterID(id);
         this.id = id;
         AbstractEntity.set(this.id, this);
+        this.locked = false;
         return 0;
     }
     getID() {
