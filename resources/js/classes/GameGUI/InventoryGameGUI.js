@@ -30,8 +30,10 @@ class InventoryGameGUI {
             InventoryGameGUI.tabsAndItems.width = String((InventoryGameGUI.controller.widthInPixels / 3) * 2).concat("px");
                 InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
                 InventoryGameGUI.tabs.width = InventoryGameGUI.tabsAndItems.width;
-                InventoryGameGUI.items.height = String(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2).concat("px");
-                InventoryGameGUI.items.width = InventoryGameGUI.tabsAndItems.width;
+                InventoryGameGUI.itemsContainer.height = String(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2).concat("px");
+                InventoryGameGUI.itemsContainer.width = InventoryGameGUI.tabsAndItems.width;
+                    InventoryGameGUI.items.height = "900px"
+                    InventoryGameGUI.items.width = InventoryGameGUI.itemsContainer.width;
                 InventoryGameGUI.tabsAndItemsSummary.height = GameGUI.getFontSize(4);
                 InventoryGameGUI.tabsAndItemsSummary.width = InventoryGameGUI.tabsAndItems.width;
                     InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
@@ -75,12 +77,18 @@ class InventoryGameGUI {
                     tabs.width = tabsAndItems.width;
                     tabs.isVertical = false;
                     tabsAndItems.addControl(tabs);
-                var items = GameGUI.createStackPanel("items");
-                    items.height = String(tabsAndItems.heightInPixels - tabs.heightInPixels * 2).concat("px"); // multiplied by two for both tabs, and summary
-                    items.width = tabsAndItems.width;
-                    items.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-                    items.isVertical = true;
-                    tabsAndItems.addControl(items);
+                var itemsContainer = new BABYLON.GUI.ScrollViewer("itemsContainer");
+                    itemsContainer.height = String(tabsAndItems.heightInPixels - tabs.heightInPixels * 2).concat("px");
+                    itemsContainer.width = tabsAndItems.width;
+                    itemsContainer._horizontalBarSpace.isVisible = false;
+                    itemsContainer._horizontalBarSpace.isEnabled = false;
+                    var items = GameGUI.createStackPanel("items");
+                        items.height = String(tabsAndItems.heightInPixels - tabs.heightInPixels * 2).concat("px"); // multiplied by two for both tabs, and summary
+                        items.width = tabsAndItems.width;
+                        items.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
+                        items.isVertical = true;
+                        itemsContainer.addControl(items);
+                    tabsAndItems.addControl(itemsContainer);
                 var tabsAndItemsSummary = GameGUI.createStackPanel("tabsAndItemsSummary");
                     tabsAndItemsSummary.height = GameGUI.getFontSize(4);
                     tabsAndItemsSummary.width = tabsAndItems.width;
@@ -154,6 +162,7 @@ class InventoryGameGUI {
         InventoryGameGUI.controller = controller;
         InventoryGameGUI.tabsAndItems = tabsAndItems;
         InventoryGameGUI.tabs = tabs;
+        InventoryGameGUI.itemsContainer = itemsContainer;
         InventoryGameGUI.items = items;
         InventoryGameGUI.tabsAndItemsSummary = tabsAndItemsSummary;
         InventoryGameGUI.tAISWeightContainer = tAISWeightContainer;
@@ -204,6 +213,7 @@ class InventoryGameGUI {
             InventoryGameGUI.items.removeControl(InventoryGameGUI.items.children[i]);
         }
         if (abstractEntity.hasInventory()) {
+            let itemsHeightInPixels = 0;
             for (let id in abstractEntity.getItems()) {
                 if (InstancedItemEntity.has(abstractEntity.getItems()[id])) {
                     let instancedItemEntity = InstancedItemEntity.get(abstractEntity.getItems()[id]);
@@ -212,8 +222,10 @@ class InventoryGameGUI {
                         InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), abstractEntity);
                     });
                     InventoryGameGUI.items.addControl(button);
+                    itemsHeightInPixels += button.heightInPixels;
                 }
             };
+            InventoryGameGUI.items.height = String(itemsHeightInPixels).concat("px");
             InventoryGameGUI.tAISWeight.text = String(abstractEntity.getInventory().getSize());
             InventoryGameGUI.tAISWeightContainer.isVisible = true;
             if (!abstractEntity.hasItem(InventoryGameGUI.selectedEntity) || InventoryGameGUI.selectedEntity == null) {
