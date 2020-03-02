@@ -207,6 +207,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowStrengthField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowStrengthField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowStrengthLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowStrengthLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowDexterityContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowDexterityContainer.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowDexterityCheckbox.width = GameGUI.fontSizeSmall;
@@ -214,6 +215,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowDexterityField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowDexterityField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowDexterityLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowDexterityLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowConstitutionContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowConstitutionContainer.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowConstitutionCheckbox.width = GameGUI.fontSizeSmall;
@@ -221,6 +223,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowConstitutionField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowConstitutionField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowConstitutionLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowConstitutionLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowIntelligenceContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowIntelligenceContainer.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowIntelligenceCheckbox.width = GameGUI.fontSizeSmall;
@@ -228,6 +231,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowIntelligenceField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowIntelligenceField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowIntelligenceLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowIntelligenceLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowWisdomContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowWisdomContainer.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowWisdomCheckbox.width = GameGUI.fontSizeSmall;
@@ -235,6 +239,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowWisdomField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowWisdomField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowWisdomLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowWisdomLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowCharismaContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowCharismaContainer.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowCharismaCheckbox.width = GameGUI.fontSizeSmall;
@@ -242,6 +247,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowCharismaField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.savingThrowCharismaField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowCharismaLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.savingThrowCharismaLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowLabel.width = CharacterStatsGUI.savingThrowContainer.width;
         CharacterStatsGUI.savingThrowLabel.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.savingThrowContainer.paddingBottom = GameGUI.fontSizeSmall;
@@ -254,6 +260,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillAcrobaticsField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillAcrobaticsField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillAcrobaticsLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillAcrobaticsLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillAnimalHandlingContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillAnimalHandlingContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillAnimalHandlingCheckbox.width = GameGUI.fontSizeSmall;
@@ -261,6 +268,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillAnimalHandlingField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillAnimalHandlingField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillAnimalHandlingLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillAnimalHandlingLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillArcanaContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillArcanaContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillArcanaCheckbox.width = GameGUI.fontSizeSmall;
@@ -268,6 +276,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillArcanaField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillArcanaField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillArcanaLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillArcanaLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillAthleticsContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillAthleticsContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillAthleticsCheckbox.width = GameGUI.fontSizeSmall;
@@ -275,6 +284,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillAthleticsField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillAthleticsField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillAthleticsLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillAthleticsLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillDeceptionContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillDeceptionContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillDeceptionCheckbox.width = GameGUI.fontSizeSmall;
@@ -282,6 +292,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillDeceptionField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillDeceptionField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillDeceptionLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillDeceptionLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillHistoryContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillHistoryContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillHistoryCheckbox.width = GameGUI.fontSizeSmall;
@@ -289,6 +300,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillHistoryField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillHistoryField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillHistoryLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillHistoryLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillInsightContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillInsightContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillInsightCheckbox.width = GameGUI.fontSizeSmall;
@@ -296,6 +308,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillInsightField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillInsightField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillInsightLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillInsightLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillIntimidationContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillIntimidationContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillIntimidationCheckbox.width = GameGUI.fontSizeSmall;
@@ -303,6 +316,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillIntimidationField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillIntimidationField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillIntimidationLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillIntimidationLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillInvestigationContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillInvestigationContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillInvestigationCheckbox.width = GameGUI.fontSizeSmall;
@@ -310,6 +324,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillInvestigationField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillInvestigationField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillInvestigationLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillInvestigationLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillMedicineContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillMedicineContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillMedicineCheckbox.width = GameGUI.fontSizeSmall;
@@ -317,6 +332,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillMedicineField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillMedicineField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillMedicineLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillMedicineLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillNatureContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillNatureContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillNatureCheckbox.width = GameGUI.fontSizeSmall;
@@ -324,6 +340,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillNatureField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillNatureField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillNatureLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillNatureLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPerceptionContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPerceptionContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPerceptionCheckbox.width = GameGUI.fontSizeSmall;
@@ -331,6 +348,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillPerceptionField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPerceptionField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillPerceptionLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillPerceptionLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPerformanceContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPerformanceContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPerformanceCheckbox.width = GameGUI.fontSizeSmall;
@@ -338,6 +356,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillPerformanceField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPerformanceField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillPerformanceLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillPerformanceLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPersuasionContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPersuasionContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillPersuasionCheckbox.width = GameGUI.fontSizeSmall;
@@ -345,6 +364,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillPersuasionField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillPersuasionField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillPersuasionLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillPersuasionLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillReligionContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillReligionContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillReligionCheckbox.width = GameGUI.fontSizeSmall;
@@ -352,6 +372,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillReligionField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillReligionField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillReligionLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillReligionLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillSleightOfHandContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillSleightOfHandContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillSleightOfHandCheckbox.width = GameGUI.fontSizeSmall;
@@ -359,6 +380,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillSleightOfHandField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillSleightOfHandField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillSleightOfHandLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillSleightOfHandLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillStealthContainer.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillStealthContainer.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillStealthCheckbox.width = GameGUI.fontSizeSmall;
@@ -366,6 +388,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.skillStealthField.fontSize = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillStealthField.width = String(GameGUI.fontSizeSmallInPixels * 3).concat("px");
         CharacterStatsGUI.skillStealthLabel.fontSize = GameGUI.fontSizeSmall;
+        CharacterStatsGUI.skillStealthLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillLabel.height = GameGUI.fontSizeSmall;
         CharacterStatsGUI.skillLabel.width = CharacterStatsGUI.skillContainer.width;
         CharacterStatsGUI.skillLabel.fontSize = GameGUI.fontSizeSmall;
@@ -850,6 +873,7 @@ class CharacterStatsGUI {
                                         sTCStrengthField.isEnabled = false;
                                     sTCStrengthContainer.addControl(sTCStrengthField);
                                     let sTCStrengthLabel = GameGUI.createTextBlock("savingThrowContainerStrengthLabel");
+                                        sTCStrengthLabel.width = sTCStrengthContainer.width;
                                         sTCStrengthLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCStrengthLabel.text = "Strength";
                                         //sTCStrengthLabel.textSmall = "Strength";
@@ -873,6 +897,7 @@ class CharacterStatsGUI {
                                         sTCDexterityField.isEnabled = false;
                                     sTCDexterityContainer.addControl(sTCDexterityField);
                                     let sTCDexterityLabel = GameGUI.createTextBlock("savingThrowContainerDexterityLabel");
+                                        sTCDexterityLabel.width = sTCDexterityContainer.width;
                                         sTCDexterityLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCDexterityLabel.text = "Dexterity";
                                         //sTCDexterityLabel.textSmall = "Dexterity";
@@ -896,6 +921,7 @@ class CharacterStatsGUI {
                                         sTCConstitutionField.isEnabled = false;
                                     sTCConstitutionContainer.addControl(sTCConstitutionField);
                                     let sTCConstitutionLabel = GameGUI.createTextBlock("savingThrowContainerConstitutionLabel");
+                                        sTCConstitutionLabel.width = sTCConstitutionContainer.width;
                                         sTCConstitutionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCConstitutionLabel.text = "Constitution";
                                         //sTCConstitutionLabel.textSmall = "Constitution";
@@ -919,6 +945,7 @@ class CharacterStatsGUI {
                                         sTCIntelligenceField.isEnabled = false;
                                     sTCIntelligenceContainer.addControl(sTCIntelligenceField);
                                     let sTCIntelligenceLabel = GameGUI.createTextBlock("savingThrowContainerIntelligenceLabel");
+                                        sTCIntelligenceLabel.width = sTCIntelligenceContainer.width;
                                         sTCIntelligenceLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCIntelligenceLabel.text = "Intelligence";
                                         //sTCIntelligenceLabel.textSmall = "Intelligence";
@@ -942,6 +969,7 @@ class CharacterStatsGUI {
                                         sTCWisdomField.isEnabled = false;
                                     sTCWisdomContainer.addControl(sTCWisdomField);
                                     let sTCWisdomLabel = GameGUI.createTextBlock("savingThrowContainerWisdomLabel");
+                                        sTCWisdomLabel.width = sTCWisdomContainer.width;
                                         sTCWisdomLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCWisdomLabel.text = "Wisdom";
                                         //sTCWisdomLabel.textSmall = "Wisdom";
@@ -965,6 +993,7 @@ class CharacterStatsGUI {
                                         sTCCharismaField.isEnabled = false;
                                     sTCCharismaContainer.addControl(sTCCharismaField);
                                     let sTCCharismaLabel = GameGUI.createTextBlock("savingThrowContainerCharismaLabel");
+                                        sTCCharismaLabel.width = sTCCharismaContainer.width;
                                         sTCCharismaLabel.fontSize = GameGUI.fontSizeSmall;
                                         sTCCharismaLabel.text = "Charisma";
                                         //sTCCharismaLabel.textSmall = "Charisma";
@@ -999,6 +1028,7 @@ class CharacterStatsGUI {
                                         sCAcrobaticsField.isEnabled = false;
                                     sCAcrobaticsContainer.addControl(sCAcrobaticsField);
                                     let sCAcrobaticsLabel = GameGUI.createTextBlock("skillContainerAcrobaticsLabel");
+                                        sCAcrobaticsLabel.width = sCAcrobaticsContainer.width;
                                         sCAcrobaticsLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCAcrobaticsLabel.text = "Acrobatics";
                                         sCAcrobaticsLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1020,6 +1050,7 @@ class CharacterStatsGUI {
                                         sCAnimalHandlingField.isEnabled = false;
                                     sCAnimalHandlingContainer.addControl(sCAnimalHandlingField);
                                     let sCAnimalHandlingLabel = GameGUI.createTextBlock("skillContainerAnimalHandlingLabel");
+                                        sCAnimalHandlingLabel.width = sCAnimalHandlingContainer.width;
                                         sCAnimalHandlingLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCAnimalHandlingLabel.text = "Animal Handling";
                                         sCAnimalHandlingLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1041,6 +1072,7 @@ class CharacterStatsGUI {
                                         sCArcanaField.isEnabled = false;
                                     sCArcanaContainer.addControl(sCArcanaField);
                                     let sCArcanaLabel = GameGUI.createTextBlock("skillContainerArcanaLabel");
+                                        sCArcanaLabel.width = sCArcanaContainer.width;
                                         sCArcanaLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCArcanaLabel.text = "Arcana";
                                         sCArcanaLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1062,6 +1094,7 @@ class CharacterStatsGUI {
                                         sCAthleticsField.isEnabled = false;
                                     sCAthleticsContainer.addControl(sCAthleticsField);
                                     let sCAthleticsLabel = GameGUI.createTextBlock("skillContainerAthleticsLabel");
+                                        sCAthleticsLabel.width = sCAthleticsContainer.width;
                                         sCAthleticsLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCAthleticsLabel.text = "Athletics";
                                         sCAthleticsLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1083,6 +1116,7 @@ class CharacterStatsGUI {
                                         sCDeceptionField.isEnabled = false;
                                     sCDeceptionContainer.addControl(sCDeceptionField);
                                     let sCDeceptionLabel = GameGUI.createTextBlock("skillContainerDeceptionLabel");
+                                        sCDeceptionLabel.width = sCDeceptionContainer.width;
                                         sCDeceptionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCDeceptionLabel.text = "Deception";
                                         sCDeceptionLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1104,6 +1138,7 @@ class CharacterStatsGUI {
                                         sCHistoryField.isEnabled = false;
                                     sCHistoryContainer.addControl(sCHistoryField);
                                     let sCHistoryLabel = GameGUI.createTextBlock("skillContainerHistoryLabel");
+                                        sCHistoryLabel.width = sCHistoryContainer.width;
                                         sCHistoryLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCHistoryLabel.text = "History";
                                         sCHistoryLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1125,6 +1160,7 @@ class CharacterStatsGUI {
                                         sCInsightField.isEnabled = false;
                                     sCInsightContainer.addControl(sCInsightField);
                                     let sCInsightLabel = GameGUI.createTextBlock("skillContainerInsightLabel");
+                                        sCInsightLabel.width = sCInsightContainer.width;
                                         sCInsightLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCInsightLabel.text = "Insight";
                                         sCInsightLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1146,6 +1182,7 @@ class CharacterStatsGUI {
                                         sCIntimidationField.isEnabled = false;
                                     sCIntimidationContainer.addControl(sCIntimidationField);
                                     let sCIntimidationLabel = GameGUI.createTextBlock("skillContainerIntimidationLabel");
+                                        sCIntimidationLabel.width = sCIntimidationContainer.width;
                                         sCIntimidationLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCIntimidationLabel.text = "Intimidation";
                                         sCIntimidationLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1167,6 +1204,7 @@ class CharacterStatsGUI {
                                         sCInvestigationField.isEnabled = false;
                                     sCInvestigationContainer.addControl(sCInvestigationField);
                                     let sCInvestigationLabel = GameGUI.createTextBlock("skillContainerInvestigationLabel");
+                                        sCInvestigationLabel.width = sCInvestigationContainer.width;
                                         sCInvestigationLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCInvestigationLabel.text = "Investigation";
                                         sCInvestigationLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1188,6 +1226,7 @@ class CharacterStatsGUI {
                                         sCMedicineField.isEnabled = false;
                                     sCMedicineContainer.addControl(sCMedicineField);
                                     let sCMedicineLabel = GameGUI.createTextBlock("skillContainerMedicineLabel");
+                                        sCMedicineLabel.width = sCMedicineContainer.width;
                                         sCMedicineLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCMedicineLabel.text = "Medicine";
                                         sCMedicineLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1209,6 +1248,7 @@ class CharacterStatsGUI {
                                         sCNatureField.isEnabled = false;
                                     sCNatureContainer.addControl(sCNatureField);
                                     let sCNatureLabel = GameGUI.createTextBlock("skillContainerNatureLabel");
+                                        sCNatureLabel.width = sCNatureContainer.width;
                                         sCNatureLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCNatureLabel.text = "Nature";
                                         sCNatureLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1230,6 +1270,7 @@ class CharacterStatsGUI {
                                         sCPerceptionField.isEnabled = false;
                                     sCPerceptionContainer.addControl(sCPerceptionField);
                                     let sCPerceptionLabel = GameGUI.createTextBlock("skillContainerPerceptionLabel");
+                                        sCPerceptionLabel.width = sCPerceptionContainer.width;
                                         sCPerceptionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCPerceptionLabel.text = "Perception";
                                         sCPerceptionLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1251,6 +1292,7 @@ class CharacterStatsGUI {
                                         sCPerformanceField.isEnabled = false;
                                     sCPerformanceContainer.addControl(sCPerformanceField);
                                     let sCPerformanceLabel = GameGUI.createTextBlock("skillContainerPerformanceLabel");
+                                        sCPerformanceLabel.width = sCPerformanceContainer.width;
                                         sCPerformanceLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCPerformanceLabel.text = "Performance";
                                         sCPerformanceLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1272,6 +1314,7 @@ class CharacterStatsGUI {
                                         sCPersuasionField.isEnabled = false;
                                     sCPersuasionContainer.addControl(sCPersuasionField);
                                     let sCPersuasionLabel = GameGUI.createTextBlock("skillContainerPersuasionLabel");
+                                        sCPersuasionLabel.width = sCPersuasionContainer.width;
                                         sCPersuasionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCPersuasionLabel.text = "Persuasion";
                                         sCPersuasionLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1293,6 +1336,7 @@ class CharacterStatsGUI {
                                         sCReligionField.isEnabled = false;
                                     sCReligionContainer.addControl(sCReligionField);
                                     let sCReligionLabel = GameGUI.createTextBlock("skillContainerReligionLabel");
+                                        sCReligionLabel.width = sCReligionContainer.width;
                                         sCReligionLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCReligionLabel.text = "Religion";
                                         sCReligionLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1314,6 +1358,7 @@ class CharacterStatsGUI {
                                         sCSleightOfHandField.isEnabled = false;
                                     sCSleightOfHandContainer.addControl(sCSleightOfHandField);
                                     let sCSleightOfHandLabel = GameGUI.createTextBlock("skillContainerSleightOfHandLabel");
+                                        sCSleightOfHandLabel.width = sCSleightOfHandContainer.width;
                                         sCSleightOfHandLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCSleightOfHandLabel.text = "Sleight of Hand";
                                         sCSleightOfHandLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -1335,6 +1380,7 @@ class CharacterStatsGUI {
                                         sCStealthField.isEnabled = false;
                                     sCStealthContainer.addControl(sCStealthField);
                                     let sCStealthLabel = GameGUI.createTextBlock("skillContainerStealthLabel");
+                                        sCStealthLabel.width = sCStealthContainer.width;
                                         sCStealthLabel.fontSize = GameGUI.fontSizeSmall;
                                         sCStealthLabel.text = "Stealth";
                                         sCStealthLabel.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;

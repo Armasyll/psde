@@ -291,7 +291,7 @@ Game.generateApartment = function() {
 
     apartmentCell.addFurniture("commonsCouch", "couch01",                                         new BABYLON.Vector3(8.25, 0, -22), new BABYLON.Vector3(0, -90, 0));
     apartmentCell.addCollidableMesh("commonsTableInstance01", "diningTable", undefined,           new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
-    apartmentCell.addItem("knife", "knife01",                                                     new BABYLON.Vector3(9.7, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
+    apartmentCell.addItem("knife", "knife01", new BABYLON.Vector3(9.7, 0.9, -22.5), new BABYLON.Vector3(180, 0, 0));
     apartmentCell.addItem("cross", "cross01",                                                     new BABYLON.Vector3(10, 0.85, -22));
     apartmentCell.addItem("plateInstance01", "plate01",                                           new BABYLON.Vector3(9.7, 0.75, -21.5));
     apartmentCell.addItem("cheeseWedgeInstance01", "cheeseWedge",                                 new BABYLON.Vector3(9.7, 0.775, -21.5));
