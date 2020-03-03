@@ -430,7 +430,7 @@ class GameGUI {
         GameGUI._characterChoiceMenu.isVisible = false;
     }
     static createSimpleButton(...params) {
-        let button = new BABYLON.GUI.Button.CreateSimpleButton(...params);
+        let button = BABYLON.GUI.Button.CreateSimpleButton(...params);
         button.fontSize = GameGUI.fontSize;
         button.color = GameGUI.color;
         button.background = GameGUI.focusedBackground;
