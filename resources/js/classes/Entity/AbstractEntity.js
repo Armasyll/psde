@@ -535,12 +535,13 @@ class AbstractEntity {
             return 0;
         }
         else if (result.meta.status == 300) {
+            /** If the item exists in 3D space, don't do anything */
             if (result.response.hasController()) {
                 return 1;
-            }
+            } /** Else if this, the entity trying to pick it up, has a controller, then create an instance of the item, or its own instance, in 3D space */
             else if (this.hasController()) {
                 Game.createItemInstance(result.response.id, result.response, this.getPosition());
-            }
+            }/** Else, if there were something else, eg. the character was locked and the item doesn't exist, don't do anything 'cause idk how to handle that :v */
             return 0;
         }
         return 2;
