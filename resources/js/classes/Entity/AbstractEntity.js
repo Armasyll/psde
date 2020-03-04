@@ -527,7 +527,7 @@ class AbstractEntity {
     addItem(...parameters) {
         if (!this.hasInventory()) {
             if (this.createInventory() != 0) {
-                return Tools.fresponse(300, "Warning, can't create inventory.");
+                return 2;
             }
         }
         let result = this.inventory.addItem(...parameters);
@@ -541,7 +541,7 @@ class AbstractEntity {
             } /** Else if this, the entity trying to pick it up, has a controller, then create an instance of the item, or its own instance, in 3D space */
             else if (this.hasController()) {
                 Game.createItemInstance(result.response.id, result.response, this.getPosition());
-            }/** Else, if there were something else, eg. the character was locked and the item doesn't exist, don't do anything 'cause idk how to handle that :v */
+            } /** Else, if there were something else, eg. the character was locked and the item doesn't exist, don't do anything 'cause idk how to handle that :v */
             return 0;
         }
         return 2;
