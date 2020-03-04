@@ -201,6 +201,7 @@ class InventoryGameGUI {
      * @param {AbstractEntity} abstractEntity The Entity with the inventory.
      */
     static updateWith(abstractEntity = Game.player) {
+        InventoryGameGUI.resize();
         if (!(abstractEntity instanceof AbstractEntity)) {
             if (AbstractEntity.has(abstractEntity)) {
                 abstractEntity = AbstractEntity.get(abstractEntity);
@@ -210,8 +211,11 @@ class InventoryGameGUI {
             }
         }
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
-            InventoryGameGUI.items.removeControl(InventoryGameGUI.items.children[i]);
+            let entry = InventoryGameGUI.items.children[i];
+            InventoryGameGUI.items.removeControl(entry);
+            entry.dispose();
         }
+        InventoryGameGUI.items.clearControls();
         if (abstractEntity.hasInventory()) {
             let itemsHeightInPixels = 0;
             for (let id in abstractEntity.getItems()) {

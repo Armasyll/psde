@@ -115,4 +115,19 @@ class Tools {
         map.forEach ((val, key) => {obj[key] = val});
         return obj;
     }
+    static fresponse(status = 200, msg = "OK", response = null, stringify = false) {
+        let result = null;
+        if (response) {
+            result = {"meta":{"status":status, "msg":msg}, "response":response};
+        }
+        else {
+            result = {"meta":{"status":status, "msg":msg}};
+        }
+        if (stringify) {
+            return JSON.stringify(result);
+        }
+        else {
+            return result;
+        }
+    }
 }

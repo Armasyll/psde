@@ -1,6 +1,6 @@
 class ItemController extends EntityController {
-    constructor(_id, _mesh, _entity) {
-        super(_id, _mesh, _entity);
+    constructor(id, mesh, entity) {
+        super(id, mesh, entity);
 
         this.entity.setDefaultAction(ActionEnum.TAKE);
 

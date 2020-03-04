@@ -1251,6 +1251,7 @@ class Game {
         Game.loadedMeshes["missingMesh"].setEnabled(false);
         Game.loadedMeshes["loadingMesh"].setEnabled(false);
         Game.loadedMeshes["cameraFocus"].isVisible = false;
+        Game.setMeshMaterial("missingMesh", "missingMaterial");
         return 0;
     }
     static loadDefaultSounds() {
@@ -2393,9 +2394,6 @@ class Game {
                 return 2;
             }
             [id, meshID, materialID, position, rotation, scaling] = filteredParameters;
-        }
-        if (meshID == "missingMesh") {
-            return 1;
         }
         if (!Game.hasLoadedMaterial(materialID)) {
             if (Game.hasAvailableTexture(materialID)) {

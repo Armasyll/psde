@@ -242,6 +242,24 @@ class AbstractEntity {
         this.controller = undefined;
         return 0;
     }
+    getPosition() {
+        if (this.hasController()) {
+            return this.controller.getPosition();
+        }
+        return BABYLON.Vector3.Zero();
+    }
+    getRotation() {
+        if (this.hasController()) {
+            return this.controller.getRotation();
+        }
+        return BABYLON.Vector3.Zero();
+    }
+    getScaling() {
+        if (this.hasController()) {
+            return this.controller.getScaling();
+        }
+        return BABYLON.Vector3.One();
+    }
 
     /**
      * Sets Owner
@@ -509,10 +527,23 @@ class AbstractEntity {
     addItem(...parameters) {
         if (!this.hasInventory()) {
             if (this.createInventory() != 0) {
-                return 1;
+                return Tools.fresponse(300, "Warning, can't create inventory.");
             }
         }
-        return this.inventory.addItem(...parameters);
+        let result = this.inventory.addItem(...parameters);
+        if (result.meta.status == 200) {
+            return 0;
+        }
+        else if (result.meta.status == 300) {
+            if (result.response.hasController()) {
+                return 1;
+            }
+            else if (this.hasController()) {
+                Game.createItemInstance(result.response.id, result.response, this.getPosition());
+            }
+            return 0;
+        }
+        return 2;
     }
     removeItem(...parameters) {
         if (!this.hasInventory()) {

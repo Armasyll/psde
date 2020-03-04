@@ -102,14 +102,14 @@ class Inventory {
      */
     addItem(abstractEntity) {
         if (this.locked || !this.enabled) {
-            return 1;
+            return Tools.fresponse(300, "Warning", abstractEntity);
         }
         if (!(abstractEntity instanceof AbstractEntity)) {
             if (AbstractEntity.has(abstractEntity)) {
                 abstractEntity = AbstractEntity.get(abstractEntity);
             }
             else {
-                return 2;
+                return Tools.fresponse(400, "Error", abstractEntity);
             }
         }
         if (abstractEntity instanceof InstancedEntity) {
@@ -119,7 +119,7 @@ class Inventory {
             return this.addItemToSlot(abstractEntity.createInstance(), this.getAvailableSlot());
         }
         if (Game.debugMode) console.log(`Failed to add item ${abstractEntity} to ${this.id}`);
-        return 2;
+        return Tools.fresponse(400, "Error", abstractEntity);
     }
     addItemToSlot(instancedItemEntity, slot) {
         if (this.locked || !this.enabled) {
@@ -136,15 +136,15 @@ class Inventory {
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
         if (isNaN(slot) || slot == -1) {
-            return 2;
+            return Tools.fresponse(300, "Warning", instancedItemEntity);
         }
         else if (this.items[slot] instanceof InstancedEntity) {
-            return 1;
+            return Tools.fresponse(300, "Warning", instancedItemEntity);
         }
         this.items[slot] = instancedItemEntity.getID();
         this.weight += instancedItemEntity.getWeight();
         instancedItemEntity.setInventory(this);
-        return 0;
+        return Tools.fresponse(200, "OK", instancedItemEntity);
     }
     swapSlots(slotA, slotB) {
         if (this.locked || !this.enabled) {

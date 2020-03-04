@@ -58,6 +58,30 @@ class EntityController {
     getID() {
         return this.id;
     }
+    getPosition() {
+        if (this.hasMesh()) {
+            return this.mesh.position.clone();
+        }
+        else {
+            return BABYLON.Vector3.Zero();
+        }
+    }
+    getRotation() {
+        if (this.hasMesh()) {
+            return this.mesh.rotation.clone();
+        }
+        else {
+            return BABYLON.Vector3.Zero();
+        }
+    }
+    getScaling() {
+        if (this.hasMesh()) {
+            return this.mesh.scaling.clone();
+        }
+        else {
+            return BABYLON.Vector3.One();
+        }
+    }
     setNetworkID(_id) {
         this.networkID = _id;
         return this;
