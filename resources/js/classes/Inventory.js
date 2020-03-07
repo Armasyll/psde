@@ -67,11 +67,12 @@ class Inventory {
     getAvailableWeight() {
         return this.maxWeight - this.weight;
     }
-    calculateUsedWeight() {
+    calculateWeight() {
         let weight = 0;
         for (let slot in this.items) {
             weight += InstancedItemEntity.get(this.items[slot]).getWeight();
         }
+        this.weight = weight;
         return weight;
     }
 
@@ -102,14 +103,14 @@ class Inventory {
      */
     addItem(abstractEntity) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(300, "Warning", abstractEntity);
+            return Tools.fresponse(423, "Error, inventory is locked.");
         }
         if (!(abstractEntity instanceof AbstractEntity)) {
             if (AbstractEntity.has(abstractEntity)) {
                 abstractEntity = AbstractEntity.get(abstractEntity);
             }
             else {
-                return Tools.fresponse(400, "Error", abstractEntity);
+                return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
         if (abstractEntity instanceof InstancedEntity) {
@@ -119,27 +120,27 @@ class Inventory {
             return this.addItemToSlot(abstractEntity.createInstance(), this.getAvailableSlot());
         }
         if (Game.debugMode) console.log(`Failed to add item ${abstractEntity} to ${this.id}`);
-        return Tools.fresponse(400, "Error", abstractEntity);
+        return Tools.fresponse(400, "Error");
     }
     addItemToSlot(instancedItemEntity, slot) {
         if (this.locked || !this.enabled) {
-            return 1;
+            return Tools.fresponse(423, "Error, inventory is locked.");
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             if (InstancedItemEntity.has(instancedItemEntity)) {
                 instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
             }
             else {
-                return 2;
+                return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
         if (isNaN(slot) || slot == -1) {
-            return Tools.fresponse(300, "Warning", instancedItemEntity);
+            return Tools.fresponse(300, "Warning, item slot is invalid.", instancedItemEntity);
         }
         else if (this.items[slot] instanceof InstancedEntity) {
-            return Tools.fresponse(300, "Warning", instancedItemEntity);
+            return Tools.fresponse(300, "Warning, item slot is already occupied.", instancedItemEntity);
         }
         this.items[slot] = instancedItemEntity.getID();
         this.weight += instancedItemEntity.getWeight();
@@ -148,18 +149,26 @@ class Inventory {
     }
     swapSlots(slotA, slotB) {
         if (this.locked || !this.enabled) {
-            return 1;
+            return Tools.fresponse(423, "Error, inventory is locked.");
         }
+        slotA = Number.parseInt(slotA) || Number.MAX_SAFE_INTEGER;
+        slotB = Number.parseInt(slotB) || Number.MAX_SAFE_INTEGER;
         /** Can't swap empty slots */
         if (!this.items.hasOwnProperty(slotA) && !this.items.hasOwnProperty(slotB)) {
-            return 2;
+            return Tools.fresponse(404, "Error, item slot is invalid.");
+        }
+        else if (slotA > this.maxSize || slotB > this.maxSize) {
+            return Tools.fresponse(403, "Error, item slot is greater than max.");
+        }
+        else if (slotA < 0 || slotB < 0) {
+            return Tools.fresponse(403, "Error, item slot is less than minimum.");
         }
         this.locked = true;
-        let tempSlot = this.items[slotA];
+        let tempItem = this.items[slotA];
         this.items[slotA] = this.items[slotB];
-        this.items[slotB] = tempSlot;
+        this.items[slotB] = tempItem;
         this.locked = false;
-        return 0;
+        return Tools.fresponse(200, "OK");
     }
     /**
      * Removes an InstancedItemEntity from this entity's Item array
@@ -168,30 +177,31 @@ class Inventory {
      */
     removeItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
-            return 1;
+            return Tools.fresponse(423, "Error, inventory is locked.");
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             if (InstancedItemEntity.has(instancedItemEntity)) {
                 instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
             }
             else {
-                return 2;
+                return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
         if (Game.debugMode) console.log(`Running <Inventory> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
-        return this.removeItemFromSlot(this.getSlotByItem(instancedItemEntity));
+        let slot = this.getSlotByItem(instancedItemEntity);
+        if (slot < 0) {
+            return Tools.fresponse(410, "Error, inventory doesn't have item.");
+        }
+        return this.removeItemFromSlot(slot);
     }
     removeItemFromSlot(slot) {
         if (this.locked || !this.enabled) {
-            return 1;
+            return Tools.fresponse(423, "Error, inventory is locked.");
         }
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
         if (isNaN(slot) || slot == -1) {
-            return 2;
-        }
-        else if (this.items[slot] instanceof InstancedEntity) {
-            return 1;
+            return Tools.fresponse(300, "Warning, item slot is invalid.");
         }
         if (this.items.hasOwnProperty(slot)) {
             if (InstancedItemEntity.has(this.items[slot])) {
@@ -201,7 +211,7 @@ class Inventory {
             }
             delete this.items[slot];
         }
-        return 0;
+        return Tools.fresponse(200, "OK");
     }
     getItemBySlot(number) {
         if (this.items[number] && this.items[number] instanceof InstancedEntity) {
