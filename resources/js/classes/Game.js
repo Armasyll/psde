@@ -1024,7 +1024,7 @@ class Game {
                 }
             }
         }
-        if (Game.defaultPipeline.imageProcessing.vignetteEnabled) {
+        if (Game.defaultPipeline instanceof BABYLON.PostProcessRenderPipeline && Game.defaultPipeline.imageProcessing.vignetteEnabled) {
             Game.defaultPipeline.imageProcessing.vignetteWeight = 5 + (100 - (Game.player.getHealth() / Game.player.getMaxHealth() * 100));
         }
     }
