@@ -1214,7 +1214,7 @@ class Game {
         }
         Game.defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", false, Game.scene, [Game.camera]);
         Game.defaultPipeline.samples = 2;
-        Game.defaultPipeline.fxaaEnabled = false; // if true, breaks on Chrome 80.0.3987.132
+        Game.defaultPipeline.fxaaEnabled = true; // if true, breaks on Chrome 80.0.3987.132 with nvidia driver 440 on GNU/Linux
         Game.defaultPipeline.cameraFov = Game.camera.fov;
         Game.defaultPipeline.imageProcessing.vignetteEnabled = true;
         return 0;
