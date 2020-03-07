@@ -833,8 +833,8 @@ class Game {
         Game.actionTakeFunction = Game.actionTake;
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
-        // TODO: add support for other GUIs (that aren't created yet :v, like HTML instead of BABYLON.GUI)
-        Game.gui = GameGUI;
+
+        Game.gui = HTMLGUI;
         Game.gui.initialize();
         Game.initFreeCamera();
         Game.initPostProcessing();
@@ -4378,7 +4378,7 @@ class Game {
                 break;
             }
             case "showdebug": {
-                DebugGameGUI.show();
+                Game.gui.debug.show();
                 break;
             }
             default: {
@@ -5003,8 +5003,8 @@ class Game {
         if (!(entity.hasDialogue())) {
             return 2;
         }
-        Game.gui.dialogueMenu.setDialogue(entity.getDialogue(), entity, actor);
-        Game.gui.dialogueMenu.show();
+        Game.gui.dialogue.setDialogue(entity.getDialogue(), entity, actor);
+        Game.gui.dialogue.show();
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
         }

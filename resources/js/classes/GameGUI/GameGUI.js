@@ -2,6 +2,9 @@ class GameGUI {
     constructor() {
         GameGUI.initialized = false;
     }
+    static className() {
+        return "GameGUI";
+    }
     static initialize() {
         GameGUI.fontSizeInPixels = 24;
         GameGUI.fontSizeSpacing = 8;
@@ -39,7 +42,7 @@ class GameGUI {
         GameGUI.actionTooltipLocked = false;
         GameGUI._actionsMenu = undefined;
         GameGUI._actionsMenuOptions = new Array();
-        GameGUI.dialogueMenu = undefined;
+        GameGUI.dialogue = undefined;
         GameGUI._initHUD();
 
         GameGUI._characterChoiceMenu = undefined;
@@ -66,9 +69,9 @@ class GameGUI {
         GameGUI.chat = ChatGameGUI;
         GameGUI.chat.initialize();
         GameGUI._hud.addControl(GameGUI.chat.getController());
-        GameGUI.dialogueMenu = DialogueGameGUI;
-        GameGUI.dialogueMenu.initialize();
-        GameGUI._hud.addControl(GameGUI.dialogueMenu.getController());
+        GameGUI.dialogue = DialogueGameGUI;
+        GameGUI.dialogue.initialize();
+        GameGUI._hud.addControl(GameGUI.dialogue.getController());
         GameGUI.playerPortrait = PlayerPortraitGameGUI;
         GameGUI.playerPortrait.initialize();
         GameGUI._hud.addControl(GameGUI.playerPortrait.getController());
@@ -105,7 +108,7 @@ class GameGUI {
         GameGUI._hud.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
-        GameGUI.dialogueMenu.resize();
+        GameGUI.dialogue.resize();
         GameGUI.characterStats.resize();
     }
     static getFontSizeInPixels(multiplier = 1) {
@@ -441,7 +444,7 @@ class GameGUI {
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         return button;
     }
-    static CreateImageButton(...params) {
+    static createImageButton(...params) {
         let button = BABYLON.GUI.Button.CreateImageButton(...params);
         button.fontSize = GameGUI.fontSize;
         button.color = GameGUI.color;
