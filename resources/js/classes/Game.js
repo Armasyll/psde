@@ -834,7 +834,7 @@ class Game {
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
 
-        Game.gui = HTMLGUI;
+        Game.gui = GameGUI;
         Game.gui.initialize();
         Game.initFreeCamera();
         Game.initPostProcessing();
@@ -1214,7 +1214,7 @@ class Game {
         }
         Game.defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", false, Game.scene, [Game.camera]);
         Game.defaultPipeline.samples = 2;
-        Game.defaultPipeline.fxaaEnabled = true;
+        Game.defaultPipeline.fxaaEnabled = false; // if true, breaks on Chrome 80.0.3987.132
         Game.defaultPipeline.cameraFov = Game.camera.fov;
         Game.defaultPipeline.imageProcessing.vignetteEnabled = true;
         return 0;
