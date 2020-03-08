@@ -16,7 +16,7 @@ No money is made from this game, yo.
 
 It's a 3D browser-based game written in JavaScript <sup>that requires a web server to access</sup>.
 
-It uses `Babylon.JS 3.3.0` (https://github.com/BabylonJS/Babylon.js), models created and exported from `Blender 2.79`, and textures created in `Inkscape 0.92.3`.
+It uses `Babylon.JS 4.1.0` (https://github.com/BabylonJS/Babylon.js), models created and exported from `Blender 2.81`, and textures created in `Inkscape 0.92.3`.
 
 <hr/>
 
