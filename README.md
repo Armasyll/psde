@@ -46,17 +46,25 @@ It works :V
 
 ## Object Hierarchy
 ```
+->CharacterClass
+|-->SorcererClass
+
 ->AbstractEntity
 |-->Entity
-| |--->EntityWithStorage
+| |--->CreatureEntity
 | |  |---->CharacterEntity
-| |  |---->FurnitureEntity
+| |
+| |--->FurnitureEntity
+| |  |---->DisplayEntity
+| |  |---->DoorEntity
+| |  |---->Lighting
 | |
 | |--->ItemEntity
 | |  |---->ConsumableEntity
 | |  |---->KeyEntity
 | |  |---->EquipmentEntity
 | |      |----->ClothingEntity
+| |           |------>ShieldEntity
 | |      |----->WeaponEntity
 | |
 | |--->SpellEntity
@@ -64,26 +72,38 @@ It works :V
 |-->InstancedEntity
   |--->InstancedFurnitureEntity
   |--->InstancedItemEntity
+     |---->InstancedConsumableEntity
      |---->InstancedEquipmentEntity
-         |----->InstancedClothingEntity
-         |----->InstancedWeaponEntity
+     |   |----->InstancedClothingEntity
+     |        |------>InstancedShieldEntity
+     |   |----->InstancedWeaponEntity
+     |---->InstancedKeyEntity
 
 ->ActionData
 ->AnimData
+->Cell
 ->Cosmetic
 ->Dialogue
+->Effect
+->Inventory
 
 ->EntityController
-|--->CharacterController
-|--->FurnitureController
-|  |---->DoorController
-|  |---->LightingController
-|--->ItemController
-|  |---->EquipmentController
-|      |----->ClothingController
-|      |----->WeaponController
-|
-|--->SpellController
+|-->CreatureController
+|  |--->CharacterController
+|      |---->CharacterControllerTransform
+|      |---->CharacterControllerRigidBody
+|-->FurnitureController
+|  |--->DisplayController
+|  |--->DoorController
+|  |--->LightingController
+|-->ItemController
+
+->AbstractControls
+|-->CharacterControls
+|-->EditControls
+|-->MenuControls
+  |--->DialogueControls
+|-->WritingControls
 
 ->NetworkController
 ```
