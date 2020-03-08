@@ -206,6 +206,9 @@ class FurnitureEntity extends Entity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "FurnitureEntity";
+    }
 
     static initialize() {
         FurnitureEntity.furnitureEntityList = {};

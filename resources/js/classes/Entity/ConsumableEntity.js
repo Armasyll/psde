@@ -105,6 +105,9 @@ class ConsumableEntity extends ItemEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "ConsumableEntity";
+    }
 
     static initialize() {
         ConsumableEntity.consumableEntityList = {};

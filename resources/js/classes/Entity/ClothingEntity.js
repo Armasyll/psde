@@ -224,6 +224,9 @@ class ClothingEntity extends EquipmentEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "ClothingEntity";
+    }
 
     static initialize() {
         ClothingEntity.clothingEntityList = {};

@@ -40,6 +40,9 @@ class InstancedKeyEntity extends InstancedItemEntity {
         super.dispose()
         return undefined;
     }
+    getClassName() {
+        return "InstancedKeyEntity";
+    }
 
     static initialize() {
         InstancedKeyEntity.instancedKeyEntityList = {};

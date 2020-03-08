@@ -512,6 +512,9 @@ class Cell {
         Cell.remove(this.id);
         return undefined;
     }
+    getClassName() {
+        return "Cell";
+    }
 
     static initialize() {
         Cell.cellList = {};

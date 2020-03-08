@@ -30,6 +30,9 @@ class DisplayEntity extends FurnitureEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "DisplayEntity";
+    }
 
     static initialize() {
         DisplayEntity.displayEntityList = {};

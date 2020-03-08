@@ -442,6 +442,9 @@ class InstancedEntity extends AbstractEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedEntity";
+    }
 
     static initialize() {
         InstancedEntity.instancedEntityList = {};

@@ -166,6 +166,9 @@ class Dialogue {
         Dialogue.remove(this.id);
         return 0;
     }
+    getClassName() {
+        return "Dialogue";
+    }
 
     static initialize() {
         Dialogue.dialogueList = {};

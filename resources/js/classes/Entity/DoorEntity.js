@@ -127,6 +127,9 @@ class DoorEntity extends Entity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "DoorEntity";
+    }
 
     static initialize() {
         DoorEntity.doorEntityList = {};

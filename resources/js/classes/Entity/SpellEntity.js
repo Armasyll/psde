@@ -145,6 +145,9 @@ class SpellEntity extends AbstractEntity {
     dispose() {
         SpellEntity.remove(this.id);
     }
+    getClassName() {
+        return "SpellEntity";
+    }
 
     static initialize() {
         SpellEntity.spellEntityList = {};

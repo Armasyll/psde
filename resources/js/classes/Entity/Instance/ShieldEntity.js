@@ -34,6 +34,9 @@ class InstancedShieldEntity extends InstancedClothingEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedShieldEntity";
+    }
 
     static initialize() {
         InstancedShieldEntity.instancedShieldEntityList = {};

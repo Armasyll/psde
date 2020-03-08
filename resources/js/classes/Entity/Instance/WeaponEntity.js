@@ -91,6 +91,9 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedWeaponEntity";
+    }
 
     static initialize() {
         InstancedWeaponEntity.instancedWeaponEntityList = {};

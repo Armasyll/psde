@@ -50,6 +50,9 @@ class ShieldEntity extends ClothingEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "ShieldEntity";
+    }
 
     static initialize() {
         ShieldEntity.shieldEntityList = {};

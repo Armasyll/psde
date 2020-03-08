@@ -364,6 +364,9 @@ class Entity extends AbstractEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "Entity";
+    }
 
     static initialize() {
         Entity.entityList = {};

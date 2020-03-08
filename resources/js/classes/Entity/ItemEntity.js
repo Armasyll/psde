@@ -85,6 +85,9 @@ class ItemEntity extends Entity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "ItemEntity";
+    }
 
     static initialize() {
         ItemEntity.itemEntityList = {};

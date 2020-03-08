@@ -343,6 +343,27 @@ class AbstractEntity {
         return 0;
     }
 
+    hasCondition(conditionEnum) {
+        return false;
+    }
+    addCondition(conditionEnum) {
+        return 0;
+    }
+    removeCondition(conditionEnum) {
+        return 0;
+    }
+
+    hasEffect(effect) {
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return false;
+            }
+        }
+        return this.effects.hasOwnProperty(effect.id);
+    }
     addEffect(effect) {
         if (!(effect instanceof Effect)) {
             if (Effect.has(effect)) {
@@ -400,17 +421,6 @@ class AbstractEntity {
             }
         }
         this.applyEffects();
-        for (let modifier in effect.getModifiers()) {
-            if (this.hasOwnProperty(modifier)) {
-                switch (modifier) {
-                    case "healthModifier":
-                    case "maxHealthModifier": {
-                        if (this.health > this.getMaxHealth()) {this.health = this.getMaxHealth();}
-                        break;
-                    }
-                }
-            }
-        }
         return 0;
     }
     applyEffects() {
@@ -436,6 +446,9 @@ class AbstractEntity {
                 return 2;
             }
         }
+        if (!this.hasEffect(effect)) {
+            return 1;
+        }
         if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
         for (let property in effect.getModifiers()) { // for every property modified
             for (let i = 0; i < this.effects[effect.getID()]["currentStack"]; i++) { // we apply for each number in the stack
@@ -447,6 +460,27 @@ class AbstractEntity {
                     case "maxHealthModifier": {
                         this.setMaxHealthModifier(effect.calculateModifier(property, this));
                         break;
+                    }
+                    case "conditions": {
+                        let conditions = effect.getModifier("conditions");
+                        for (let j = 0; j < conditions.length; j++) {
+                            if (conditions[j].operation == OperationsEnum.SUBTRACT) {
+                                if (typeof conditions[j].modification == "function") {
+                                    this.removeCondition(conditions[j].modification(this));
+                                }
+                                else {
+                                    this.removeCondition(conditions[j].modification);
+                                }
+                            }
+                            else if (conditions[j].operation == OperationsEnum.ADD) {
+                                if (typeof conditions[j].modification == "function") {
+                                    this.addCondition(conditions[j].modification(this));
+                                }
+                                else {
+                                    this.addCondition(conditions[j].modification);
+                                }
+                            }
+                        }
                     }
                     default: {
                         if (typeof this[property] == "number") {
@@ -464,7 +498,10 @@ class AbstractEntity {
                 }
             }
         }
-        if (effect.getInterval() == IntervalEnum.ONCE) {
+        if (this.health > this.getMaxHealth()) {
+            this.health = this.getMaxHealth();
+        }
+        if (effect.getIntervalType() == IntervalEnum.ONCE) {
             return 0;
         }
         Game.addScheduledEffect(effect, this);
@@ -488,41 +525,40 @@ class AbstractEntity {
     getInventory() {
         return this.inventory;
     }
-    setInventory(inventory, updateChild = true) {
-        if (this instanceof CharacterEntity || this instanceof InstancedFurnitureEntity) {
-            if (inventory instanceof Inventory) {
-                this.inventory = inventory;
-                if (updateChild) {
-                    inventory.addEntity(this);
-                }
+    setInventory(inventory) {
+        if (!(inventory instanceof Inventory)) {
+            if (Inventory.has(inventory)) {
+                inventory = Inventory.get(inventory);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (this.hasInventory()) {
+            if (this.inventory == inventory) {
                 return 0;
             }
-            return 1;
+            this.removeInventory();
         }
-        else {
-            if (Game.debugMode) console.log(`Running <${EntityEnum.properties[this.entityType].name}Entity> ${this.id}.setInventory(${inventory.id}, ${updateChild ? "true" : "false"})`);
-            return 1;
-        }
+        if (Game.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.setInventory(${inventory.id})`);
+        this.inventory = inventory;
+        inventory.addEntity(this);
+        return 0;
     }
-    removeInventory(updateChild = true) {
+    removeInventory() {
         if (!this.hasInventory()) {
             return 1;
         }
-        this.inventory.dispose();
         this.inventory = null;
-        if (updateChild) {
-            this.inventory.removeEntity(this, false);
-        }
+        this.inventory.removeEntity(this, false);
         return 0;
     }
     createInventory(maxSize = 9, maxWeight = 10) {
-        if (this instanceof CharacterEntity || this instanceof InstancedFurnitureEntity) {
-            return this.setInventory(new Inventory(this.id + "Inventory", "Inventory", maxSize, maxWeight));
+        if (this.hasInventory()) {
+            return 0;
         }
-        else {
-            if (Game.debugMode) console.log(`Running <${EntityEnum.properties[this.entityType].name}Entity> ${this.id}.createInventory(${maxSize}, ${maxWeight})`);
-            return 1;
-        }
+        if (Game.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.createInventory(${maxSize}, ${maxWeight})`);
+        return this.setInventory(new Inventory(this.id + "Inventory", "Inventory", maxSize, maxWeight));
     }
     addItem(...parameters) {
         if (!this.hasInventory()) {
@@ -531,10 +567,10 @@ class AbstractEntity {
             }
         }
         let result = this.inventory.addItem(...parameters);
-        if (result.meta.status == 200) {
-            return 0;
+        if (result.meta.status >= 400) {
+            return 2;
         }
-        else if (result.meta.status == 300) {
+        else if (result.meta.status >= 300) {
             /** If the item exists in 3D space, don't do anything */
             if (result.response.hasController()) {
                 return 1;
@@ -544,13 +580,21 @@ class AbstractEntity {
             } /** Else, if there were something else, eg. the character was locked and the item doesn't exist, don't do anything 'cause idk how to handle that :v */
             return 0;
         }
-        return 2;
+        else {
+            return 0;
+        }
     }
     removeItem(...parameters) {
         if (!this.hasInventory()) {
             return 1;
         }
-        return this.inventory.removeItem(...parameters);
+        let result = this.inventory.removeItem(...parameters);
+        if (result.meta.status >= 400) {
+            return 2;
+        }
+        else {
+            return 0;
+        }
     }
     hasItem(...parameters) {
         if (!this.hasInventory()) {
@@ -637,6 +681,9 @@ class AbstractEntity {
         }
         AbstractEntity.remove(this.id);
         return undefined;
+    }
+    getClassName() {
+        return "AbstractEntity";
     }
 
     static initialize() {

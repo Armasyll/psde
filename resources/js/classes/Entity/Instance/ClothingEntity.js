@@ -47,6 +47,9 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedClothingEntity";
+    }
 
     static initialize() {
         InstancedClothingEntity.instancedClothingEntityList = {};

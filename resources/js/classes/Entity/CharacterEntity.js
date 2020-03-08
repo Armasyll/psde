@@ -1468,6 +1468,9 @@ class CharacterEntity extends CreatureEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "CharacterEntity";
+    }
 
     static initialize() {
         CharacterEntity.characterEntityList = {};

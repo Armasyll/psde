@@ -183,4 +183,7 @@ class EquipmentEntity extends ItemEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "EquipmentEntity";
+    }
 }

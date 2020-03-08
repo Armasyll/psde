@@ -53,4 +53,7 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedEquipmentEntity";
+    }
 }

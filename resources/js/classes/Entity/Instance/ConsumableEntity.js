@@ -44,6 +44,9 @@ class InstancedConsumableEntity extends InstancedItemEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedConsumableEntity";
+    }
 
     static initialize() {
         InstancedConsumableEntity.instancedConsumableEntityList = {};

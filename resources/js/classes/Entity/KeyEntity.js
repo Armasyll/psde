@@ -63,6 +63,9 @@ class KeyEntity extends ItemEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "KeyEntity";
+    }
 
     static initialize() {
         KeyEntity.keyEntityList = {};

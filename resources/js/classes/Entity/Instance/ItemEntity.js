@@ -83,6 +83,9 @@ class InstancedItemEntity extends InstancedEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedItemEntity";
+    }
 
     static initialize() {
         InstancedItemEntity.instancedItemEntityList = {};

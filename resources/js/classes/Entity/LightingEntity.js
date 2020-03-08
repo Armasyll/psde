@@ -84,6 +84,9 @@ class LightingEntity extends FurnitureEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "LightingEntity";
+    }
 
     static initialize() {
         LightingEntity.lightingEntityList = {};

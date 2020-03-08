@@ -106,6 +106,9 @@ class InstancedFurnitureEntity extends InstancedEntity {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "InstancedFurnitureEntity";
+    }
 
     static initialize() {
         InstancedFurnitureEntity.instancedFurnitureEntityList = {};

@@ -91,6 +91,9 @@ class Cosmetic {
         Cosmetic.remove(this.id);
         return 0;
     }
+    getClassName() {
+        return "Cosmetic";
+    }
 
     static initialize() {
         Cosmetic.cosmeticList = {};

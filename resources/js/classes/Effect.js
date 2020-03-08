@@ -72,7 +72,15 @@ class Effect {
             return this;
         }
         if (this.allowedProperty(property)) {
-            if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
+            if (property == "conditions") {
+                if (!this.modifiers.hasOwnProperty("conditions")) {
+                    this.modifiers["conditions"] = [];
+                }
+                if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
+                    this.modifiers["conditions"].push({"operation":operation, "modification":modification});
+                }
+            }
+            else if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
                 this.modifiers[property] = {"operation":operation, "modification":modification};
             }
         }
@@ -244,6 +252,9 @@ class Effect {
         Effect.remove(this.id);
         return undefined;
     }
+    getClassName() {
+        return "Effect";
+    }
 
     static allowedProperties() {
         return [
@@ -265,7 +276,8 @@ class Effect {
             "proficiencyBonusModifier",
             "damageRollCountModifier",
             "damageRollModifier",
-            "silveredModifier"
+            "silveredModifier",
+            "conditions"
         ];
     }
     allowedProperty(property) {

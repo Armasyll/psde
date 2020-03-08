@@ -567,6 +567,9 @@ class WeaponEntity extends EquipmentEntity {
         WeaponEntity.remove(this.id);
         return undefined;
     }
+    getClassName() {
+        return "WeaponEntity";
+    }
 
     static initialize() {
         WeaponEntity.weaponEntityList = {};

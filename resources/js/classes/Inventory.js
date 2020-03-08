@@ -320,6 +320,9 @@ class Inventory {
         if (updateChild) {
             abstractEntity.removeInventory(false);
         }
+        if (Object.keys(this.entities).length == 0) {
+            this.dispose();
+        }
         return 0;
     }
     hasEntities() {
@@ -391,6 +394,9 @@ class Inventory {
         delete this.items;
         delete this.entities;
         return undefined;
+    }
+    getClassName() {
+        return "Inventory";
     }
 
     static initialize() {
