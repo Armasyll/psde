@@ -295,7 +295,11 @@ class Game {
             "grilledCheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
             "flatScreenMonitor01": "resources/meshes/static/flatScreenMonitor01.babylon",
             "flatScreenMonitor01Screen": "resources/meshes/static/flatScreenMonitor01.babylon",
-            "flatScreenMonitor01Stand": "resources/meshes/static/flatScreenMonitor01.babylon"
+            "flatScreenMonitor01Stand": "resources/meshes/static/flatScreenMonitor01.babylon",
+            "1980Computer": "resources/meshes/static/1980Computer.babylon",
+            "1980Monitor": "resources/meshes/static/1980Computer.babylon",
+            "1980Screen": "resources/meshes/static/1980Computer.babylon",
+            "1980Keyboard": "resources/meshes/static/1980Computer.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -398,7 +402,8 @@ class Game {
             "dekuShield": "resources/images/textures/items/dekuShield.png",
             "kokiriSword": "resources/images/textures/items/kokiriSword.svg",
             "cheeseSandwich01": "resources/images/textures/items/cheeseSandwich01.svg",
-            "grilledCheeseSandwich01": "resources/images/textures/items/grilledCheeseSandwich01.svg"
+            "grilledCheeseSandwich01": "resources/images/textures/items/grilledCheeseSandwich01.svg",
+            "1980Computer": "resources/images/textures/static/1980Computer-notCC0.png"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};

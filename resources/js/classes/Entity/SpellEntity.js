@@ -12,10 +12,10 @@ class SpellEntity extends AbstractEntity {
         this.entityType = EntityEnum.SPELL;
         this.spellType = SpellTypeEnum.NONE;
         this.spellLevel = 0;
-        this.spellSlot = 1;
+        this.spellSlotsUsed = 1;
         this.prepared = false;
         this.cantrip = false;
-        this.ritual = false; // If true, caster's used spellSlot cannot be higher than spell's
+        this.ritual = false; // If true, caster's chosen spell slot cannot be higher than spell's
         this.castingTime = 0; // In actions; 0 is instant
         this.reaction = false;
         this.range = 0;
@@ -37,7 +37,7 @@ class SpellEntity extends AbstractEntity {
 
         this.setSpellType(spellType);
         this.setSpellLevel(spellLevel);
-        this.setSpellSlots(spellSlots);
+        this.setSpellSlotsUsed(spellSlots);
         this.setRitual(ritual);
 
         this.generateProperties();
@@ -67,14 +67,14 @@ class SpellEntity extends AbstractEntity {
     getSpellLevel() {
         return this.spellLevel;
     }
-    setSpellSlots(number) {
+    setSpellSlotsUsed(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.spellSlot = number;
+        this.spellSlotsUsed = number;
         return 0;
     }
-    getSpellSlots() {
-        return this.spellSlot;
+    getSpellSlotsUsed() {
+        return this.spellSlotsUsed;
     }
     setRitual(boolean = true) {
         this.ritual = boolean == true;

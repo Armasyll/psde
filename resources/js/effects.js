@@ -5,11 +5,12 @@ new Effect("strong", "Strong", "Strong!", undefined).addModifier("strengthModifi
 new Effect("weak", "Weak", "Weak.", undefined).addModifier("strengthModifier", OperationsEnum.SUBTRACT, 2);
 new Effect("infiniteDollarBill", "Infinite Dollar Bill", "It's the inifinite dollar bill!", undefined).addModifier("money", OperationsEnum.SET, (characterEntity) => {return (characterEntity.money == 0 ? 1 : characterEntity.money);});
 
-new Effect("heal", "Heal", "Heals and cures the diseases of a target living creature.", undefined).addModifier("health", OperationsEnum.ADD, (creatureEntity) => {
-    if (creatureEntity.creatureType == CreatureTypeEnum.CONSTRUCT) {
+new Effect("heal", "Heal", "Heals and cures the diseases of a target living creature.", undefined).addModifier("health", OperationsEnum.ADD, (targetEntity, actorEntity) => {
+    // When you cast this spell using a spell slot of 7th level or higher, the amount of Healing increases by 10 for each slot level above 6th.
+    if (targetEntity.creatureType == CreatureTypeEnum.CONSTRUCT) {
         return 0;
     }
-    else if (creatureEntity.creatureType == CreatureTypeEnum.UNDEAD) {
+    else if (targetEntity.creatureType == CreatureTypeEnum.UNDEAD) {
         return -70;
     }
     return 70;
