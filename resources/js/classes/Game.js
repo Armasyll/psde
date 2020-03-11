@@ -832,12 +832,15 @@ class Game {
         Game.actionEquipFunction = Game.actionEquip;
         Game.actionHoldFunction = Game.actionHold;
         Game.actionLayFunction = Game.actionLay;
+        Game.actionLookFunction = Game.actionLook;
         Game.actionOpenFunction = Game.actionOpen;
+        Game.actionReadFunction = Game.actionRead;
         Game.actionReleaseFunction = Game.actionRelease;
         Game.actionSitFunction = Game.actionSit;
         Game.actionTakeFunction = Game.actionTake;
         Game.actionTalkFunction = Game.actionTalk;
         Game.actionUnequipFunction = Game.actionUnequip;
+        Game.actionUseFunction = Game.actionUse;
 
         Game.gui = GameGUI;
         Game.gui.initialize();
@@ -945,6 +948,7 @@ class Game {
                     Game.importEffects();
                     Game.importClasses();
                     Game.importItems();
+                    Game.importBooks();
                     Game.importCosmetics();
                     Game.importFurniture();
                     Game.importCharacters();
@@ -1867,6 +1871,9 @@ class Game {
     }
     static importCharacters() {
         return Game.importScript("resources/js/characters.js");
+    }
+    static importBooks() {
+        return Game.importScript("resources/js/books.js");
     }
     static importCosmetics() {
         return Game.importScript("resources/js/cosmetics.js");
@@ -4453,6 +4460,14 @@ class Game {
                 }
                 break;
             }
+            case ActionEnum.LOOK: {
+                Game.actionLook(entity, actor);
+                break;
+            }
+            case ActionEnum.READ: {
+                Game.actionRead(entity, actor);
+                break;
+            }
             case ActionEnum.LAY: {
                 Game.actionLay(entity, actor);
                 break;
@@ -4904,6 +4919,52 @@ class Game {
         if (entity.getController() instanceof LightingController) {
             entity.getController().toggle();
         }
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
+        return 0;
+    }
+    static actionLook(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
+        }
+        //...
+        if (typeof callback == "function") {
+            callback(entity, undefined, actor);
+        }
+        return 0;
+    }
+    static actionRead(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!(actor instanceof AbstractEntity)) {
+            if (AbstractEntity.has(actor)) {
+                actor = AbstractEntity.get(actor);
+            }
+            else {
+                return 2;
+            }
+        }
+        //...
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
         }

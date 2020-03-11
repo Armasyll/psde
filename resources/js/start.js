@@ -37,6 +37,15 @@ window.addEventListener("DOMContentLoaded", function() {
                 GameGUI.hideMenu(false);
                 GameGUI.hideHUD(false);
                 GameGUI.lock();
+                break;
+            }
+            case "debugBook": {
+                GameGUI.hideCharacterChoiceMenu();
+                BookGameGUI.show();
+                setTimeout(function() {
+                    BookGameGUI.updateWith(BookEntity.get("linedUp"), 1);
+                }, 1000);
+                break;
             }
         }
     });

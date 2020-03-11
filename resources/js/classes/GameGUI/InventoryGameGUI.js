@@ -295,7 +295,9 @@ class InventoryGameGUI {
         }
         InventoryGameGUI.selectedDetails.text = `Price: $${instancedItemEntity.getPrice()}, Weight: ${weightString}`;
         for (let i = InventoryGameGUI.selectedActions.children.length - 1; i > -1; i--) {
-            InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
+            let child = InventoryGameGUI.selectedActions.children[i];
+            InventoryGameGUI.selectedActions.removeControl(child);
+            child.dispose();
         }
         for (let action in instancedItemEntity.getAvailableActions()) {
             action = Tools.filterInt(action);
@@ -335,6 +337,11 @@ class InventoryGameGUI {
                 }
                 case ActionEnum.LOOK : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    break;
+                }
+                case ActionEnum.READ : {
+                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton.onPointerUpObservable.add(function() {Game.actionReadFunction(instancedItemEntity, playerEntity);});
                     break;
                 }
                 case ActionEnum.PUT : {

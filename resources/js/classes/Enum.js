@@ -703,6 +703,7 @@ let ActionEnum = {
     UNEQUIP: 19,
     USE: 20,
     ATTACK: 21,
+    READ: 22,
     properties: {
         0: {
             name: "None",
@@ -813,6 +814,11 @@ let ActionEnum = {
             name: "Attack",
             value: 21,
             key: "ATTACK"
+        },
+        22: {
+            name: "Read",
+            value: 22,
+            key: "READ"
         }
     }
 };

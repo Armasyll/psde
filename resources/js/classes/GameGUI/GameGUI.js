@@ -89,6 +89,9 @@ class GameGUI {
         GameGUI.characterStats = CharacterStatsGUI;
         GameGUI.characterStats.initialize();
         GameGUI._menu.addControl(GameGUI.characterStats.getController());
+        GameGUI.book = BookGameGUI;
+        GameGUI.book.initialize();
+        GameGUI._menu.addControl(GameGUI.book.getController());
     }
     static resize() {
         if (!GameGUI.initialized) {
@@ -110,6 +113,7 @@ class GameGUI {
         GameGUI.inventoryMenu.resize();
         GameGUI.dialogue.resize();
         GameGUI.characterStats.resize();
+        GameGUI.book.resize();
     }
     static getFontSizeInPixels(multiplier = 1) {
         return GameGUI.fontSizeInPixels * multiplier;

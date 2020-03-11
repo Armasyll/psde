@@ -49,7 +49,8 @@ class BookEntity extends ItemEntity {
         return this.content;
     }
     setContent(string) {
-        this.content = String(string);
+        string = String(string).replace(/\r\n|\n|&NewLine;|&#13;/gi, "&#10;");
+        this.content = string;
         return 0;
     }
 
