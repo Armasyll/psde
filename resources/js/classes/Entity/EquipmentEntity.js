@@ -1,11 +1,11 @@
 class EquipmentEntity extends ItemEntity {
     /**
-     * Creats Equipment
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
+     * Creats an EquipmentEntity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
      * @param  {string}  description Description
-     * @param  {string}  iconID       Image ID
-     * @param  {ApparelSlotEnum}  equipmentSlot  Apparel slot enum
+     * @param  {string}  iconID Image ID
+     * @param  {ApparelSlotEnum}  equipmentSlot Apparel slot enum
      */
     constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE) {
         super(id, name, description, iconID);

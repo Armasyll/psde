@@ -135,7 +135,7 @@ class DoorEntity extends Entity {
         DoorEntity.doorEntityList = {};
     }
     static get(id) {
-        if (FurnitureEntity.has(id)) {
+        if (DoorEntity.has(id)) {
             return DoorEntity.doorEntityList[id];
         }
         return 1;

@@ -3867,7 +3867,8 @@ class Game {
                 break;
             }
             case ItemEnum.BOOK: {
-                //itemEntity = new BookEntity(id, name, description, iconID); // TODO: this :v
+                itemEntity = new BookEntity(id, name, description, iconID);
+                break;
             }
             case ItemEnum.CONSUMABLE: {
                 itemEntity = new ConsumableEntity(id, name, description, iconID, subType);

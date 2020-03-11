@@ -20,6 +20,7 @@ class Entity extends AbstractEntity {
 
         this.instances = {};
 
+        this.addAvailableAction(ActionEnum.TOUCH);
         this.addAvailableAction(ActionEnum.LOOK);
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
         this.setDefaultAction(ActionEnum.LOOK);
