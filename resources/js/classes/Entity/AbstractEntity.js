@@ -50,7 +50,7 @@ class AbstractEntity {
         /**
          * Effects triggered on action
          * @type {object}
-         * Object<TargetEntity: <ActionEnum:Effect>>
+         * {ActionEnum:{Effect:boolean}}
          */
         this.actionEffects = {};
         AbstractEntity.set(this.id, this);
@@ -389,6 +389,10 @@ class AbstractEntity {
         }
         this.effectsPriority[priority].add(id);
         this.applyEffects();
+        if (effect.getDuration() <= 0) {
+            return 0;
+        }
+        Game.addScheduledEffect(effect, this);
         return 0;
     }
     removeEffect(effect) {
@@ -446,10 +450,11 @@ class AbstractEntity {
                 return 2;
             }
         }
+        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
         if (!this.hasEffect(effect)) {
+            if (Game.debugMode) console.log("\tBut this entity doesn't have the effect.");
             return 1;
         }
-        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
         for (let property in effect.getModifiers()) { // for every property modified
             for (let i = 0; i < this.effects[effect.getID()]["currentStack"]; i++) { // we apply for each number in the stack
                 switch (property) {
@@ -501,10 +506,6 @@ class AbstractEntity {
         if (this.health > this.getMaxHealth()) {
             this.health = this.getMaxHealth();
         }
-        if (effect.getIntervalType() == IntervalEnum.ONCE) {
-            return 0;
-        }
-        Game.addScheduledEffect(effect, this);
         return 0;
     }
     getEffects() {
@@ -615,6 +616,145 @@ class AbstractEntity {
         return this.inventory.getItems();
     }
 
+    /**
+     * 
+     * @param {ActionEnum} action 
+     * @param {Effect} effect 
+     * @param {boolean} [alwaysTrigger] Whether or not to trigger every time this action is taken; isn't considered when this entity is an instance.
+     */
+    addActionEffect(action, effect, alwaysTrigger = false) {
+        if (ActionEnum.properties.hasOwnProperty(action)) {}
+        else if (ActionEnum.hasOwnProperty(action)) {
+            action = ActionEnum[action];
+        }
+        else {
+            return 2;
+        }
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                return 2;
+            }
+        }
+        alwaysTrigger = alwaysTrigger == true;
+        if (!this.actionEffects.hasOwnProperty(action)) {
+            this.actionEffects[action] = {};
+        }
+        this.actionEffects[action][effect.getID()] = alwaysTrigger;
+        return 0;
+    }
+    /**
+     * 
+     * @param {ActionEnum} action 
+     * @param {Effect} [effect] 
+     */
+    removeActionEffect(action, effect) {
+        if (ActionEnum.properties.hasOwnProperty(action)) {}
+        else if (ActionEnum.hasOwnProperty(action)) {
+            action = ActionEnum[action];
+        }
+        else {
+            action = null;
+        }
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                effect = null;
+            }
+        }
+        if (action == null && effect == null) {
+            return 2;
+        }
+        if (effect instanceof Effect) {
+            this.removeActionEffectByEffect(effect.getID());
+        }
+        else {
+            this.removeActionEffectByAction(action);
+        }
+        return 0;
+    }
+    /**
+     * 
+     * @param {ActionEnum} action 
+     */
+    removeActionEffectByAction(action) {
+        if (this.actionEffects.hasOwnProperty(action)) {
+            for (let effect in this.actionEffects[action]) {
+                delete this.actionEffects[action][effect];
+            }
+        }
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} effect 
+     */
+    removeActionEffectByEffect(effect) {
+        for (let action in this.actionEffects) {
+            if (this.actionEffects[action].hasOwnProperty(effect)) {
+                delete this.actionEffects[action][effect];
+            }
+            if (Object.keys(this.actionEffects[action]).length == 0) {
+                this.removeActionEffectByAction(action);
+            }
+        }
+        return 0;
+    }
+    /**
+     * 
+     * @param {ActionEnum} action 
+     * @param {Effect} [effect] 
+     */
+    hasActionEffect(action, effect) {
+        if (ActionEnum.properties.hasOwnProperty(action)) {}
+        else if (ActionEnum.hasOwnProperty(action)) {
+            action = ActionEnum[action];
+        }
+        else {
+            action = null;
+        }
+        if (!(effect instanceof Effect)) {
+            if (Effect.has(effect)) {
+                effect = Effect.get(effect);
+            }
+            else {
+                effect = null;
+            }
+        }
+        if (action == null && effect == null) {
+            return false;
+        }
+        if (action != null && effect != null) {
+            if (this.actionEffects.hasOwnProperty(action)) {
+                return this.actionEffects[action].hasOwnProperty(effect);
+            }
+            return false;
+        }
+        else if (effect instanceof Effect) {
+            for (let action in this.actionEffects) {
+                if (this.actionEffects[action].hasOwnProperty(effect.getID())) {
+                    return true;
+                }
+            }
+        }
+        return this.actionEffects.hasOwnProperty(action);
+    }
+    getActionEffects(action) {
+        if (this.actionEffects.hasOwnProperty(action)) {
+            return this.actionEffects[action];
+        }
+    }
+    clearActionEffects() {
+        for (let action in this.actionEffects) {
+            this.removeActionEffectByAction(action);
+        }
+        return 0;
+    }
+
     resetModifiers() {
         this.godModeModifier = false;
         this.essentialModifier = false;
@@ -658,6 +798,11 @@ class AbstractEntity {
         for (let effect in entity.effects) {
             for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
                 this.addEffect(effect);
+            }
+        }
+        for (let action in entity.actionEffects) {
+            for (let effect in entity.actionEffects[action]) {
+                this.addActionEffect(action, effect, entity.actionEffects[action][effect]);
             }
         }
         return 0;

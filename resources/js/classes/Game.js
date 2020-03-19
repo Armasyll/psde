@@ -889,6 +889,7 @@ class Game {
                     if (!AbstractEntity.has(e.data.msg["abstractEntityID"])) {
                         return 2;
                     }
+                    if (Game.debugMode) console.log(`Caught triggerScheduledEffect(${e.data.msg["effectID"]}, ${e.data.msg["abstractEntityID"]})`);
                     let effect = Effect.get(e.data.msg["effectID"]);
                     let abstractEntity = AbstractEntity.get(e.data.msg["abstractEntityID"]);
                     abstractEntity.applyEffect(effect);
@@ -948,6 +949,7 @@ class Game {
                     Game.importEffects();
                     Game.importClasses();
                     Game.importItems();
+                    Game.importConsumables();
                     Game.importBooks();
                     Game.importCosmetics();
                     Game.importFurniture();
@@ -1868,6 +1870,9 @@ class Game {
     }
     static importItems() {
         return Game.importScript("resources/js/items.js");
+    }
+    static importConsumables() {
+        return Game.importScript("resources/js/consumables.js");
     }
     static importCharacters() {
         return Game.importScript("resources/js/characters.js");
@@ -4700,7 +4705,7 @@ class Game {
             }
         }
         if (entity instanceof InstancedConsumableEntity) {
-            for (let effect in entity.getEffects()) {
+            for (let effect in entity.getActionEffects(ActionEnum.CONSUME)) {
                 actor.addEffect(effect);
             }
             if (entity.getStackCount() > 1) {

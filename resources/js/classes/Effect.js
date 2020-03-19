@@ -173,7 +173,7 @@ class Effect {
         else {
             this.statusType = DamageEnum.BLUDGEONING;
         }
-        return 0;
+        return this;
     }
     getStatusType() {
         return this.statusType;
@@ -181,7 +181,10 @@ class Effect {
     setDuration(number, interval = IntervalEnum.TICK) {
         this.duration = number;
         this.durationInterval = interval;
-        return 0;
+        if (this.duration > 0) {
+            this.setInterval(interval)
+        }
+        return this;
     }
     getDuration() {
         return this.duration;
@@ -190,14 +193,14 @@ class Effect {
         return this.durationInterval;
     }
     setInterval(interval = IntervalEnum.ONCE, nth = 1) {
-        if (IntervalEnum.hasOwnProperty(interval)) {
+        if (IntervalEnum.properties.hasOwnProperty(interval)) {
             this.intervalType = interval;
         }
         else {
             this.intervalType = IntervalEnum.ONCE;
         }
         this.intervalNth = nth;
-        return 0;
+        return this;
     }
     getIntervalType() {
         return this.intervalType;
@@ -210,21 +213,21 @@ class Effect {
     }
     setPriority(number) {
         this.priority = number;
-        return 0;
+        return this;
     }
     isHidden() {
         return this.hidden;
     }
     setHidden(boolean = true) {
         this.isHidden = boolean == true;
-        return 0;
+        return this;
     }
     getStackCount() {
         return this.stackCount;
     }
     setDispel(dispel) {
         this.dispellable = dispel == true;
-        return 0;
+        return this;
     }
     canDispel() {
         return this.dispellable;

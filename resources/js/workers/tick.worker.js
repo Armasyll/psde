@@ -727,7 +727,7 @@ function triggerScheduledEffects() {
                 if (!effectsToTrigger.hasOwnProperty(instancedEffect.priority)) {
                     effectsToTrigger[instancedEffect.priority] = [];
                 }
-                effectsToTrigger[instancedEffect.priority].push({0:instancedEffect.getID(), 1:instancedEffect.getEntity().getID()})
+                effectsToTrigger[instancedEffect.priority].push({0:instancedEffect.effect.id, 1:instancedEffect.entity.id})
             }
         });
         for (let priority in effectsToTrigger) {
@@ -834,14 +834,23 @@ addEventListener('message', (event) => {
             if (!event.data.hasOwnProperty("msg")) {
                 break;
             }
-            addScheduledEffect(...event.data.msg)
+            else if (Object.keys(event.data.msg).length != 7) {
+                console.log("brk");
+                break;
+            }
+            let msg = event.data.msg;
+            addScheduledEffect(msg.effect, msg.entity, msg.duration, msg.durationInterval, msg.intervalType, msg.intervalNth, msg.priority);
             break;
         }
         case "removeScheduledEffect": {
             if (!event.data.hasOwnProperty("msg")) {
                 break;
             }
-            removeAscheduledEffect(...event.data.msg);
+            else if (Object.keys(event.data.msg).length != 2) {
+                break;
+            }
+            let msg = event.data.msg;
+            removeAscheduledEffect(msg.effect, msg.abstractEntity);
             break;
         }
     };

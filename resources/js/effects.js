@@ -40,3 +40,4 @@ new Effect("healingWord", "Healing Word", "Heals a target living creature.", und
     }
     return 70;
 });
+new Effect("foodRegeneration", "Eaten", "You've eaten recently.", undefined).addModifier("health", OperationsEnum.ADD, 1).setDuration(6);

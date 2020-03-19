@@ -9,14 +9,6 @@ Game.createItemEntity("theLesserKeyOfSolomon", "The Lesser Key of Solomon", "The
 Game.createItemEntity("bottle03RedSarcophagusJuice", "Red Sarcophagus Juice", "A small sample of some red liquid from the bottom of an obsidian sarcophagus.", "bottle03RedSarcophagusJuiceIcon", "bottle03", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
 Game.createItemEntity("bottle04RedSarcophagusJuice", "Red Sarcophagus Juice", "A flask of some red liquid from the bottom of an obsidian sarcophagus.", "bottle04RedSarcophagusJuiceIcon", "bottle04", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
 Game.createItemEntity("bottle05RedSarcophagusJuice", "Red Sarcophagus Juice", "A bottle of some red liquid from the bottom of an obsidian sarcophagus.", "bottle05RedSarcophagusJuiceIcon", "bottle05", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
-Game.createItemEntity("mountainChocolateWrapper", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "mountainChocolate01Icon", "mountainChocolateWrapper01", "vChocolateV", ItemEnum.CONSUMABLE);
-Game.createItemEntity("mountainChocolateBar", "Giant Toblerone", "A giant, delicious toblerone! You don't deserve it, though.", "mountainChocolate01Icon", "mountainChocolateBar01", "vChocolateV", ItemEnum.CONSUMABLE);
-Game.createItemEntity("cheeseWheel", "Cheese Wheel", "A wheel of cheese.", "cheeseWheelIcon", "cheeseWheel", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
-Game.createItemEntity("cheeseWheelSansWedge", "Partial Cheese Wheel", "A partially cut wheel of cheese.", "cheeseWheelSansWedgeIcon", "cheeseWheelSansWedge", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
-Game.createItemEntity("cheeseWedge", "Cheese Wedge", "A wedge of cheese.", "cheeseWedgeIcon", "cheeseWedge", "cheeseWheel", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
-Game.createItemEntity("apple01", "Apple", "An apple.", "apple01Icon", "apple01", "apple01", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
-Game.createItemEntity("cheeseSandwich01", "Cheese Sandwich", "A plain cheese sandwich.", "cheeseSandwich01Icon", "cheeseSandwich", "cheeseSandwich01", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
-Game.createItemEntity("grilledCheeseSandwich01", "Grilled Cheese Sandwich", "A delicious grilled cheese sandwich.", "grilledCheeseSandwich01Icon", "grilledCheeseSandwich", "grilledCheeseSandwich01", ItemEnum.CONSUMABLE, ConsumableEnum.FOOD);
 
 Game.createItemEntity("barbute01", "Barbute", "", "barbute01Icon", "barbute01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 Game.createItemEntity("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01Icon", "barbuteHorned01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
