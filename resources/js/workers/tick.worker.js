@@ -659,6 +659,7 @@ function removeInstancedEffect(instancedEffect) {
             effectsPerNthRound.delete(effectIntervalNth);
         }
     }
+    postMessage({"cmd":"removeScheduledEffect", "msg":{"effectID":instancedEffect.effect.id, "abstractEntityID":instancedEffect.entity.id}});
     instancedEffect.dispose();
     return 0;
 }

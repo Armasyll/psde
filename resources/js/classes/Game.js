@@ -895,6 +895,19 @@ class Game {
                     abstractEntity.applyEffect(effect);
                     break;
                 }
+                case "removeScheduledEffect": {
+                    if (!Effect.has(e.data.msg["effectID"])) {
+                        return 2;
+                    }
+                    if (!AbstractEntity.has(e.data.msg["abstractEntityID"])) {
+                        return 2;
+                    }
+                    if (Game.debugMode) console.log(`Caught removeScheduledEffect(${e.data.msg["effectID"]}, ${e.data.msg["abstractEntityID"]})`);
+                    let effect = Effect.get(e.data.msg["effectID"]);
+                    let abstractEntity = AbstractEntity.get(e.data.msg["abstractEntityID"]);
+                    abstractEntity.removeEffect(effect);
+                    break;
+                }
                 case "tick": {
                     Game.currentTick = e.data.msg;
                     break;

@@ -41,3 +41,9 @@ new Effect("healingWord", "Healing Word", "Heals a target living creature.", und
     return 70;
 });
 new Effect("foodRegeneration", "Eaten", "You've eaten recently.", undefined).addModifier("health", OperationsEnum.ADD, 1).setDuration(6);
+new Effect("theobromineConsumption", "Consumed Theobromine", "You have consumed something with theobromine; maybe it was chocolate?", undefined).addModifier("health", OperationsEnum.ADD, (creatureEntity, casterEntity) => {
+    if (creatureEntity.creatureType == CreatureTypeEnum.HUMANOID && creatureEntity.creatureSubType == CreatureSubTypeEnum.FOX) {
+        return -1;
+    }
+    return 1;
+}).setDuration(7);

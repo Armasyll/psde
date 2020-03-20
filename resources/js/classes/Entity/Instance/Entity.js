@@ -26,6 +26,7 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnHiddenAvailableActions = false;
         this._useOwnSpecialProperties = false;
         this._useOwnEffects = false;
+        this._useOwnActionEffects = false;
 
         this.entity.addInstance(this);
 
@@ -348,24 +349,47 @@ class InstancedEntity extends AbstractEntity {
 
     addEffect(...blob) {
         if (!this._useOwnEffects) {
-            this.effects = entity.cloneEffects();
+            Object.assign(this.effects, this.entity.effects);
             this._useOwnEffects = true;
         }
         return super.addEffect(...blob);
     }
     removeEffect(...blob) {
         if (!this._useOwnEffects) {
-            this.effects = entity.cloneEffects();
+            Object.assign(this.effects, this.entity.effects);
             this._useOwnEffects = true;
         }
         return super.removeEffect(...blob);
     }
-    getEffects() {
+    getEffects(...blob) {
         if (this._useOwnEffects) {
             return this.effects;
         }
         else {
-            return this.entity.getEffects();
+            return this.entity.getEffects(...blob);
+        }
+    }
+
+    addActionEffect(...blob) {
+        if (!this._useOwnActionEffects) {
+            Object.assign(this.actionEffects, this.entity.actionEffects);
+            this._useOwnActionEffects = true;
+        }
+        return super.addActionEffect(...blob);
+    }
+    removeActionEffect(...blob) {
+        if (!this._useOwnActionEffects) {
+            Object.assign(this.actionEffects, this.entity.actionEffects);
+            this._useOwnActionEffects = true;
+        }
+        return super.removeActionEffect(...blob);
+    }
+    getActionEffects(...blob) {
+        if (this._useOwnEffects) {
+            return this.actionEffects;
+        }
+        else {
+            return this.entity.getActionEffects(...blob);
         }
     }
 
