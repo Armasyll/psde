@@ -76,11 +76,9 @@ class Effect {
                 if (!this.modifiers.hasOwnProperty("conditions")) {
                     this.modifiers["conditions"] = [];
                 }
-                if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
-                    this.modifiers["conditions"].push({"operation":operation, "modification":modification});
-                }
+                this.modifiers["conditions"].push({"operation":operation, "modification":modification});
             }
-            else if (typeof modification == "function" && typeof modification(1) != "undefined" || typeof modification == "number") {
+            else {
                 this.modifiers[property] = {"operation":operation, "modification":modification};
             }
         }
@@ -95,64 +93,59 @@ class Effect {
         if (!this.modifiers.hasOwnProperty(property)) {
             return 0;
         }
-        if (!source.hasOwnProperty(property)) {
-            return 0;
-        }
         if (!(source instanceof AbstractEntity)) {
             return 1;
         }
-        let value = 0;
-        if (!(typeof source[property] == "number")) {
-            return value;
+        if (!source.hasOwnProperty(property)) {
+            return 0;
+        }
+        if (typeof source[property] == "boolean") {}
+        else if (typeof source[property] == "number") {}
+        else {
+            return 0;
         }
         switch (this.modifiers[property]["operation"]) {
             case OperationsEnum.EQUALS: {
                 if (typeof this.modifiers[property]["modification"] == "function") {
-                    value = this.modifiers[property]["modification"](source);
+                    return this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = this.modifiers[property]["modification"];
+                    return this.modifiers[property]["modification"];
                 }
-                break;
             }
             case OperationsEnum.ADD: {
                 if (typeof this.modifiers[property]["modification"] == "function") {
-                    value = source[property] + this.modifiers[property]["modification"](source);
+                    return source[property] + this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] + this.modifiers[property]["modification"];
+                    return source[property] + this.modifiers[property]["modification"];
                 }
-                break;
             }
             case OperationsEnum.SUBTRACT: {
                 if (typeof this.modifiers[property]["modification"] == "function") {
-                    value = source[property] - this.modifiers[property]["modification"](source);
+                    return source[property] - this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] - this.modifiers[property]["modification"];
+                    return source[property] - this.modifiers[property]["modification"];
                 }
-                break;
             }
             case OperationsEnum.MULTIPLY: {
                 if (typeof this.modifiers[property]["modification"] == "function") {
-                    value = source[property] * this.modifiers[property]["modification"](source);
+                    return source[property] * this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] * this.modifiers[property]["modification"];
+                    return source[property] * this.modifiers[property]["modification"];
                 }
-                break;
             }
             case OperationsEnum.DIVIDE: {
                 if (typeof this.modifiers[property]["modification"] == "function") {
-                    value = source[property] / this.modifiers[property]["modification"](source);
+                    return source[property] / this.modifiers[property]["modification"](source);
                 }
                 else {
-                    value = source[property] / this.modifiers[property]["modification"];
+                    return source[property] / this.modifiers[property]["modification"];
                 }
-                break;
             }
         }
-        return value;
     }
     getModifier(property) {
         if (this.modifiers.hasOwnProperty(property)) {
@@ -262,7 +255,9 @@ class Effect {
     static allowedProperties() {
         return [
             "godMode",
+            "godModeModifier",
             "essential",
+            "essentialModifier",
             "weightModifier",
             "priceModifier",
             "health",

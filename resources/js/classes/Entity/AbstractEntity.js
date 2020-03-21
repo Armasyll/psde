@@ -486,9 +486,13 @@ class AbstractEntity {
                                 }
                             }
                         }
+                        break;
                     }
                     default: {
                         if (typeof this[property] == "number") {
+                            this[property] = effect.calculateModifier(property, this);
+                        }
+                        else if (typeof this[property] == "boolean") {
                             this[property] = effect.calculateModifier(property, this);
                         }
                         else if (this[property] instanceof Set) {
