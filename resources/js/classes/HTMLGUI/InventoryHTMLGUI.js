@@ -11,9 +11,6 @@ class InventoryHTMLGUI {
     static getController() {
         
     }
-    static isVisible() {
-        
-    }
     static show() {
         
     }

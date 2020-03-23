@@ -15,6 +15,7 @@ class BookGameGUI {
         BookGameGUI.hasNextPage = false;
         BookGameGUI.hasPreviousPage = false;
         BookGameGUI.locked = false;
+        BookGameGUI.isVisible = false;
         BookGameGUI.generateController();
     }
     static resize() {
@@ -127,15 +128,14 @@ class BookGameGUI {
     static getController() {
         return BookGameGUI.controller;
     }
-    static isVisible() {
-        return BookGameGUI.controller.isVisible;
-    }
     static show() {
         BookGameGUI.controller.isVisible = true;
+        BookGameGUI.isVisible = true;
         return 0;
     }
     static hide() {
         BookGameGUI.controller.isVisible = false;
+        BookGameGUI.isVisible = false;
         return 0;
     }
     static updateWith(abstractEntity, page = 1) {

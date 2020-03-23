@@ -6,6 +6,7 @@ class ChatGameGUI {
         ChatGameGUI.output = null;
         ChatGameGUI.input = null;
         ChatGameGUI.focused = false;
+        ChatGameGUI.isVisible = false;
         ChatGameGUI.controller = ChatGameGUI.generateController();
         ChatGameGUI.containerAlpha = 0.75;
     }
@@ -60,16 +61,15 @@ class ChatGameGUI {
     static getController() {
         return ChatGameGUI.controller;
     }
-    static isVisible() {
-        return ChatGameGUI.controller.isVisible;
-    }
     static show() {
         if (Game.debugMode) console.log("Running ChatGameGUI::show");
         ChatGameGUI.controller.isVisible = true;
+        ChatGameGUI.isVisible = true;
     }
     static hide() {
         if (Game.debugMode) console.log("Running ChatGameGUI::hide");
         ChatGameGUI.controller.isVisible = false;
+        ChatGameGUI.isVisible = false;
     }
     static getOutput() {
         return String(ChatGameGUI.output.text).trim();

@@ -6,6 +6,7 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.playerHealthText = null;
         PlayerPortraitGameGUI.playerStaminaBar = null;
         PlayerPortraitGameGUI.playerStaminaText = null;
+        PlayerPortraitGameGUI.isVisible = false;
         PlayerPortraitGameGUI.controller = PlayerPortraitGameGUI.generateController();
         PlayerPortraitGameGUI.initialized = true;
         PlayerPortraitGameGUI.containerAlpha = 0.75;
@@ -102,9 +103,11 @@ class PlayerPortraitGameGUI {
     }
     static show() {
         PlayerPortraitGameGUI.controller.isVisible = true;
+        PlayerPortraitGameGUI.isVisible = true;
     }
     static hide() {
         PlayerPortraitGameGUI.controller.isVisible = false;
+        PlayerPortraitGameGUI.isVisible = false;
     }
     static set(abstractEntity = Game.player) {
         if (abstractEntity instanceof EntityController) {

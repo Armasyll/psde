@@ -11,9 +11,6 @@ class PlayerPortraitHTMLGUI {
     static getController() {
         
     }
-    static isVisible() {
-        
-    }
     static show() {
         
     }

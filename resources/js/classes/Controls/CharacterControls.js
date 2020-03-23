@@ -12,7 +12,10 @@ class CharacterControls extends AbstractControls {
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.jumpCode : {
-                Game.player.getController().keyJump(true);
+                if (CharacterControls.jumpPressTime == 0) {
+                    CharacterControls.jumpPressTime = Date.now();
+                    CharacterControls.jumpTimeoutFunction = setTimeout(function() {CharacterControls.triggerJump()}, CharacterControls.jumpTimeout);
+                }
                 break;
             }
             case 16 : {
@@ -70,6 +73,10 @@ class CharacterControls extends AbstractControls {
                         _radialEndInterval() {}
                         _radianIntervalFunction() {}
                  */
+                if (CharacterControls.usePressTime == 0) {
+                    CharacterControls.usePressTime = Date.now();
+                    CharacterControls.useTimeoutFunction = setTimeout(function() {CharacterControls.triggerUse()}, CharacterControls.useTimeout);
+                }
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
@@ -135,7 +142,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.jumpCode : {
-                Game.player.getController().keyJump(false);
+                CharacterControls.triggerJump();
                 break;
             }
             case 16 : {
@@ -167,9 +174,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.useTargetedEntityCode : {
-                if (Game.player.hasTarget()) {
-                    Game.doEntityActionFunction(Game.player.getTarget(), Game.player);
-                }
+                CharacterControls.triggerUse();
                 break;
             }
         }
@@ -183,6 +188,15 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onMouseDown(mouseEvent) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+            return 2;
+        }
+        if (mouseEvent.button == 0) {
+            if (CharacterControls.attackPressTime == 0) {
+                CharacterControls.attackPressTime = Date.now();
+                CharacterControls.attackTimeoutFunction = setTimeout(function() {CharacterControls.triggerAttack()}, CharacterControls.attackTimeout);
+            }
+        }
         return 0;
     }
     static onMouseUp(mouseEvent) {
@@ -190,11 +204,11 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (mouseEvent.button == 0) {
-            Game.actionAttackFunction(Game.player.getTarget(), Game.player);
+            CharacterControls.triggerAttack();
         }
         else if (mouseEvent.button == 1) {}
         else if (mouseEvent.button == 2) {
-            return Game.controlCharacterOnContext(mouseEvent);
+            return CharacterControls.onContext(mouseEvent);
         }
         return 0;
     }
@@ -227,8 +241,62 @@ class CharacterControls extends AbstractControls {
         }
         return 0;
     }
+    static triggerJump() {
+        if (CharacterControls.jumpPressTime == 0 || CharacterControls.jumpTriggered || Game.playerController.jumping) {
+            return 1;
+        }
+        CharacterControls.jumpTriggered = true;
+        clearTimeout(CharacterControls.jumpTimeoutFunction);
+        Game.player.getController().keyJump(true);
+        CharacterControls.jumpPressTime = 0;
+        CharacterControls.jumpTriggered = false;
+        return 0;
+    }
+    static triggerUse() {
+        if (CharacterControls.usePressTime == 0 || CharacterControls.useTriggered || Game.gui.dialogue.isVisible || Game.gui.actionsMenu.isVisible) {
+            return 1;
+        }
+        CharacterControls.useTriggered = true;
+        clearTimeout(CharacterControls.useTimeoutFunction);
+        if (Date.now() - CharacterControls.usePressTime <= 750) {
+            Game.doEntityActionFunction(Game.player.getTarget(), Game.player);
+        }
+        else {
+            Game.gui.clearActionsMenu();
+            Game.gui.populateActionsMenuWithTarget();
+            Game.gui.updateActionsMenu();
+            Game.gui.showActionsMenu();
+        }
+        CharacterControls.usePressTime = 0;
+        CharacterControls.useTriggered = false;
+        return 0;
+    }
+    static triggerAttack() {
+        if (CharacterControls.attackPressTime == 0 || CharacterControls.attackTriggered || Game.playerController.attacking) {
+            return 1;
+        }
+        CharacterControls.attackTriggered = true;
+        Game.actionAttackFunction(Game.player.getTarget(), Game.player);
+        clearTimeout(CharacterControls.attackTimeoutFunction);
+        console.log(Date.now() - CharacterControls.attackPressTime);
+        CharacterControls.attackPressTime = 0;
+        CharacterControls.attackTriggered = false;
+        return 0;
+    }
     static initialize() {
         CharacterControls.initialized = true;
+        CharacterControls.usePressTime = 0;
+        CharacterControls.useTriggered = false;
+        CharacterControls.useTimeout = 800;
+        CharacterControls.useTimeoutFunction = null;
+        CharacterControls.jumpPressTime = 0;
+        CharacterControls.jumpTriggered = false;
+        CharacterControls.jumpTimeout = 800;
+        CharacterControls.jumpTimeoutFunction = null;
+        CharacterControls.attackPressTime = 0;
+        CharacterControls.attackTriggered = false;
+        CharacterControls.attackTimeout = 800;
+        CharacterControls.attackTimeoutFunction = null;
         return 0;
     }
 }

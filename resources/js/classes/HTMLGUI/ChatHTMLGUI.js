@@ -11,9 +11,6 @@ class ChatHTMLGUI {
     static getController() {
         
     }
-    static isVisible() {
-        
-    }
     static show() {
         
     }

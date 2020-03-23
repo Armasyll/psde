@@ -12,7 +12,7 @@ class MenuControls extends AbstractControls {
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.showInventoryCode: {
-                if (Game.gui.inventoryMenu.isVisible()) {
+                if (Game.gui.inventoryMenu.isVisible) {
                     Game.gui.inventoryMenu.hide();
                     Game.gui.hideMenu();
                     Game.gui.showHUD();
@@ -24,7 +24,7 @@ class MenuControls extends AbstractControls {
                 break;
             }
             case AbstractControls.showCharacterCode : {
-                if (Game.gui.characterStats.isVisible()) {
+                if (Game.gui.characterStats.isVisible) {
                     Game.gui.characterStats.hide();
                     Game.gui.hideMenu();
                     Game.gui.showHUD();

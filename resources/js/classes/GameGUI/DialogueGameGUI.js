@@ -11,6 +11,7 @@ class DialogueGameGUI {
         DialogueGameGUI.optionsColB = null;
         DialogueGameGUI.optionsColC = null;
         DialogueGameGUI.dialogueOptions = new Array();
+        DialogueGameGUI.isVisible = false;
         DialogueGameGUI.controller = DialogueGameGUI.generateController();
     }
     static resize() {
@@ -135,20 +136,19 @@ class DialogueGameGUI {
     static getController() {
         return DialogueGameGUI.controller;
     }
-    static isVisible() {
-        return DialogueGameGUI.controller.isVisible;
-    }
     static show() {
         if (Game.debugMode) console.log("Running DialogueGameGUI::show");
         Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
         GameGUI.pointerRelease();
         DialogueGameGUI.controller.isVisible = true;
+        DialogueGameGUI.isVisible = true;
     }
     static hide() {
         if (Game.debugMode) console.log("Running DialogueGameGUI::hideDialogueMenu");
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         GameGUI.pointerLock();
         DialogueGameGUI.controller.isVisible = false;
+        DialogueGameGUI.isVisible = false;
     }
     static setDialogue(dialogue, them, you = Game.player) {
         if (Game.debugMode) console.log("Running DialogueGameGUI::setDialogue");

@@ -11,6 +11,7 @@ class DebugGameGUI {
         DebugGameGUI.skyboxMieDirectionalG = 0.8;
         DebugGameGUI.skyboxMieCoefficient = 0.005;
         DebugGameGUI.skyboxRayleigh = 2;
+        DebugGameGUI.isVisible = false;
         DebugGameGUI.generateController();
         DebugGameGUI.containerAlpha = 0.75;
     }
@@ -74,12 +75,14 @@ class DebugGameGUI {
         GameGUI.pointerRelease();
         DebugGameGUI.updateSkyboxUI();
         DebugGameGUI.skyboxController.isVisible = true;
+        DebugGameGUI.isVisible = true;
         return 0;
     }
     static hide() {
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         GameGUI.pointerLock();
         DebugGameGUI.skyboxController.isVisible = false;
+        DebugGameGUI.isVisible = false;
         return 0;
     }
     static updateSkyboxUI() {

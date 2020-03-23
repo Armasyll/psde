@@ -3,6 +3,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.initialized = false;
         CharacterStatsGUI.controller = null;
         CharacterStatsGUI.nameField = null;
+        CharacterStatsGUI.isVisible = false;
         CharacterStatsGUI.generateController();
         return 0;
     }
@@ -1641,14 +1642,13 @@ class CharacterStatsGUI {
     static getController() {
         return CharacterStatsGUI.controller;
     }
-    static isVisible() {
-        return CharacterStatsGUI.controller.isVisible;
-    }
     static show() {
         CharacterStatsGUI.controller.isVisible = true;
+        CharacterStatsGUI.isVisible = true;
     }
     static hide() {
         CharacterStatsGUI.controller.isVisible = false;
+        CharacterStatsGUI.isVisible = false;
     }
     static updateWith(creatureEntity = Game.player) {
         CharacterStatsGUI.nameField.text = creatureEntity.getName();

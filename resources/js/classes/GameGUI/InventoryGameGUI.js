@@ -16,6 +16,7 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedDescription = null;
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
+        InventoryGameGUI.isVisible = false;
         InventoryGameGUI.generateController();
         InventoryGameGUI.containerAlpha = 1.0;
         InventoryGameGUI.selectedEntity = null;
@@ -183,18 +184,13 @@ class InventoryGameGUI {
     static getController() {
         return InventoryGameGUI.controller;
     }
-    /**
-     * Returns whether or not the inventory menu is visible.
-     * @return {Boolean} Whether or not the inventory menu is visible.
-     */
-    static isVisible() {
-        return InventoryGameGUI.controller.isVisible;
-    }
     static show() {
         InventoryGameGUI.controller.isVisible = true;
+        InventoryGameGUI.isVisible = true;
     }
     static hide() {
         InventoryGameGUI.controller.isVisible = false;
+        InventoryGameGUI.isVisible = false;
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.

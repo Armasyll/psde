@@ -6,6 +6,7 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.targetHealthText = null;
         TargetPortraitGameGUI.targetStaminaBar = null;
         TargetPortraitGameGUI.targetStaminaText = null;
+        TargetPortraitGameGUI.isVisible = false;
         TargetPortraitGameGUI.controller = TargetPortraitGameGUI.generateController();
         TargetPortraitGameGUI.initialized = true;
         TargetPortraitGameGUI.containerAlpha = 0.75;
@@ -105,9 +106,11 @@ class TargetPortraitGameGUI {
     }
     static show() {
         TargetPortraitGameGUI.controller.isVisible = true;
+        TargetPortraitGameGUI.isVisible = true;
     }
     static hide() {
         TargetPortraitGameGUI.controller.isVisible = false;
+        TargetPortraitGameGUI.isVisible = false;
     }
     static set(abstractEntity) {
         if (abstractEntity instanceof EntityController) {

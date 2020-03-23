@@ -11,9 +11,6 @@ class DebugHTMLGUI {
     static getController() {
         
     }
-    static isVisible() {
-        
-    }
     static show() {
         
     }

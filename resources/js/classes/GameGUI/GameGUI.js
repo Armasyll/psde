@@ -38,10 +38,10 @@ class GameGUI {
 
         GameGUI.pointerLockEventFunction = GameGUI.pointerLockEvent
 
-        GameGUI._actionTooltip = undefined;
+        GameGUI.actionTooltip = undefined;
         GameGUI.actionTooltipLocked = false;
-        GameGUI._actionsMenu = undefined;
-        GameGUI._actionsMenuOptions = new Array();
+        GameGUI.actionsMenu = undefined;
+        GameGUI.actionsMenuOptions = new Array();
         GameGUI.dialogue = undefined;
         GameGUI._initHUD();
 
@@ -57,11 +57,11 @@ class GameGUI {
     }
     static _initHUD() {
         GameGUI._crosshair = GameGUI._generateCrosshair();
-        GameGUI._actionTooltip = GameGUI._generateTargetActionTooltip();
-        GameGUI._actionsMenu = GameGUI._generateActionsRadialMenu();
+        GameGUI.actionTooltip = GameGUI._generateTargetActionTooltip();
+        GameGUI.actionsMenu = GameGUI._generateActionsRadialMenu();
         GameGUI._hud.addControl(GameGUI._crosshair);
-        GameGUI._hud.addControl(GameGUI._actionsMenu);
-        GameGUI._hud.addControl(GameGUI._actionTooltip);
+        GameGUI._hud.addControl(GameGUI.actionsMenu);
+        GameGUI._hud.addControl(GameGUI.actionTooltip);
 
         GameGUI.debugMenu = DebugGameGUI;
         GameGUI.debugMenu.initialize();
@@ -562,7 +562,7 @@ class GameGUI {
      * @param {string} _string Top left character.
      */
     static setActionTooltipLetter(_string = String.fromCharCode(AbstractControls.useTargetedEntityCode)) {
-        GameGUI._actionTooltip.children[0].text = _string;
+        GameGUI.actionTooltip.children[0].text = _string;
     }
     /**
      * Sets the action tooltip's top right text.
@@ -576,7 +576,7 @@ class GameGUI {
         else {
             _string = _string.capitalize();
         }
-        GameGUI._actionTooltip.children[1].text = _string;
+        GameGUI.actionTooltip.children[1].text = _string;
     }
     /**
      * Sets the action tooltip's bottom text. Not used, I think. :D
@@ -587,7 +587,7 @@ class GameGUI {
             _string = "";
         }
         if (Game.debugMode) console.log("Running GameGUI::setActionTooltipTarget");
-        GameGUI._actionTooltip.children[2].text = _string;
+        GameGUI.actionTooltip.children[2].text = _string;
     }
     /**
      * Sets the action tooltip's top right and bottom text.
@@ -606,7 +606,7 @@ class GameGUI {
             return;
         }
         if (!GameGUI.actionTooltipLocked) {
-            GameGUI._actionTooltip.isVisible = true;
+            GameGUI.actionTooltip.isVisible = true;
         }
     }
     /**
@@ -617,7 +617,7 @@ class GameGUI {
             return;
         }
         if (!GameGUI.actionTooltipLocked) {
-            GameGUI._actionTooltip.isVisible = false;
+            GameGUI.actionTooltip.isVisible = false;
         }
     }
     static lockActionTooltip() {
@@ -651,7 +651,7 @@ class GameGUI {
                 return 2;
             }
         }
-        GameGUI._actionsMenuOptions.clear();
+        GameGUI.actionsMenuOptions.clear();
         let actions = abstractEntity.getAvailableActions();
         for (let actionID in actions) {
             if (!abstractEntity.hasHiddenAvailableAction(actionID)) {
@@ -683,11 +683,11 @@ class GameGUI {
                 return 2;
             }
         }
-        GameGUI._actionsMenuOptions.push({
+        GameGUI.actionsMenuOptions.push({
             action:actionID,
             target:abstractEntity
         });
-        if (GameGUI._actionsMenu.isVisible) {
+        if (GameGUI.actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
         return true;
@@ -704,22 +704,22 @@ class GameGUI {
         else {
             actionID = Number.parseInt(actionID);
         }
-        for (var _i = 0; _i < GameGUI._actionsMenuOptions.length; _i++) {
-            if (GameGUI._actionsMenuOptions[_i].action == actionID) {
-                GameGUI._actionsMenuOptions.splice(_i, 1);
+        for (var _i = 0; _i < GameGUI.actionsMenuOptions.length; _i++) {
+            if (GameGUI.actionsMenuOptions[_i].action == actionID) {
+                GameGUI.actionsMenuOptions.splice(_i, 1);
                 _i = _actionsMenuOptions.length;
             }
         }
-        if (GameGUI._actionsMenu.isVisible) {
+        if (GameGUI.actionsMenu.isVisible) {
             GameGUI.updateActionsMenu();
         }
         return true;
     }
     static clearActionsMenu() {
-        for (let i = GameGUI._actionsMenu.children.length - 1; i >= 0; i--) {
-            GameGUI._actionsMenu.children[i].dispose();
+        for (let i = GameGUI.actionsMenu.children.length - 1; i >= 0; i--) {
+            GameGUI.actionsMenu.children[i].dispose();
         }
-        GameGUI._actionsMenuOptions.clear();
+        GameGUI.actionsMenuOptions.clear();
         return true;
     }
     static showActionsMenu(pointerRelease = true, updateChild = true) {
@@ -730,7 +730,7 @@ class GameGUI {
             GameGUI.hideActionTooltip();
             GameGUI.lockActionTooltip();
         }
-        GameGUI._actionsMenu.isVisible = true;
+        GameGUI.actionsMenu.isVisible = true;
         if (pointerRelease) {
             GameGUI.pointerRelease();
         }
@@ -739,7 +739,7 @@ class GameGUI {
         if (GameGUI.locked) {
             return;
         }
-        GameGUI._actionsMenu.isVisible = false;
+        GameGUI.actionsMenu.isVisible = false;
         if (updateChild) {
             GameGUI.unlockActionTooltip();
             GameGUI.showActionTooltip();
@@ -749,8 +749,8 @@ class GameGUI {
         }
     }
     static updateActionsMenu() {
-        for (let i = GameGUI._actionsMenu.children.length - 1; i >= 0; i--) {
-            GameGUI._actionsMenu.children[i].dispose();
+        for (let i = GameGUI.actionsMenu.children.length - 1; i >= 0; i--) {
+            GameGUI.actionsMenu.children[i].dispose();
         }
         let xPosition = 0;
         let yPosition = 0;
@@ -762,20 +762,20 @@ class GameGUI {
             GameGUI.pointerLock();
         });
         button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
-        GameGUI._actionsMenu.addControl(button);
-        if (GameGUI._actionsMenuOptions.length > 0) {
-            for (let i = 0; i < GameGUI._actionsMenuOptions.length; i++) {
-                xPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
-                yPosition = (GameGUI._actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI._actionsMenuOptions.length*i - 90));
-                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI._actionsMenuOptions[i].action].name);
+        GameGUI.actionsMenu.addControl(button);
+        if (GameGUI.actionsMenuOptions.length > 0) {
+            for (let i = 0; i < GameGUI.actionsMenuOptions.length; i++) {
+                xPosition = (GameGUI.actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI.actionsMenuOptions.length*i - 90));
+                yPosition = (GameGUI.actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI.actionsMenuOptions.length*i - 90));
+                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI.actionsMenuOptions[i].action].name);
                 button.width = "96px";
                 button.height = "24px";
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
                     GameGUI.hideActionsMenu();
-                    Game.doEntityActionFunction(GameGUI._actionsMenuOptions[i].target, Game.player, GameGUI._actionsMenuOptions[i].action);
+                    Game.doEntityActionFunction(GameGUI.actionsMenuOptions[i].target, Game.player, GameGUI.actionsMenuOptions[i].action);
                 });
-                GameGUI._actionsMenu.addControl(button);
+                GameGUI.actionsMenu.addControl(button);
             }
         }
     }
