@@ -192,6 +192,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (mouseEvent.button == 0) {
+            CharacterControls.attackPressed = true;
             if (CharacterControls.attackPressTime == 0 && !Game.playerController.attacking) {
                 CharacterControls.attackPressTime = Date.now();
                 CharacterControls.attackTimeoutFunction = setTimeout(function() {CharacterControls.triggerAttack()}, CharacterControls.attackTimeout);
@@ -204,6 +205,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (mouseEvent.button == 0) {
+            CharacterControls.attackPressed = false;
             CharacterControls.triggerAttack();
         }
         else if (mouseEvent.button == 1) {}
@@ -272,7 +274,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static triggerAttack() {
-        if (CharacterControls.attackPressTime == 0 || CharacterControls.attackTriggered || Game.playerController.attacking) {
+        if (CharacterControls.attackPressTime < 25 || CharacterControls.attackTriggered || Game.playerController.attacking) {
             return 1;
         }
         CharacterControls.attackTriggered = true;
@@ -281,6 +283,10 @@ class CharacterControls extends AbstractControls {
         console.log(Date.now() - CharacterControls.attackPressTime);
         CharacterControls.attackPressTime = 0;
         CharacterControls.attackTriggered = false;
+        if (CharacterControls.attackPressed) {
+            CharacterControls.attackPressTime = Date.now() + 200;
+            CharacterControls.attackTimeoutFunction = setTimeout(function() {CharacterControls.triggerAttack()}, CharacterControls.attackTimeout + 200);
+        }
         return 0;
     }
     static initialize() {
