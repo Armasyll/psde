@@ -12,7 +12,7 @@ class CharacterControls extends AbstractControls {
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.jumpCode : {
-                if (CharacterControls.jumpPressTime == 0) {
+                if (CharacterControls.jumpPressTime == 0 && !Game.playerController.jumping) {
                     CharacterControls.jumpPressTime = Date.now();
                     CharacterControls.jumpTimeoutFunction = setTimeout(function() {CharacterControls.triggerJump()}, CharacterControls.jumpTimeout);
                 }
@@ -73,7 +73,7 @@ class CharacterControls extends AbstractControls {
                         _radialEndInterval() {}
                         _radianIntervalFunction() {}
                  */
-                if (CharacterControls.usePressTime == 0) {
+                if (CharacterControls.usePressTime == 0 && !Game.gui.actionsMenu.isVisible && !Game.gui.dialogue.isVisible) {
                     CharacterControls.usePressTime = Date.now();
                     CharacterControls.useTimeoutFunction = setTimeout(function() {CharacterControls.triggerUse()}, CharacterControls.useTimeout);
                 }
@@ -192,7 +192,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (mouseEvent.button == 0) {
-            if (CharacterControls.attackPressTime == 0) {
+            if (CharacterControls.attackPressTime == 0 && !Game.playerController.attacking) {
                 CharacterControls.attackPressTime = Date.now();
                 CharacterControls.attackTimeoutFunction = setTimeout(function() {CharacterControls.triggerAttack()}, CharacterControls.attackTimeout);
             }
