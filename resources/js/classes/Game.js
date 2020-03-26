@@ -3042,9 +3042,9 @@ class Game {
                         LightingEntity.set(newID, entity);
                     }
                 }
-                else if (entity instanceof SpellEntity) {
-                    SpellEntity.remove(currentID);
-                    SpellEntity.set(newID, entity);
+                else if (entity instanceof Spell) {
+                    Spell.remove(currentID);
+                    Spell.set(newID, entity);
                 }
                 entity.setID(newID);
                 Entity.set(newID, entity);
@@ -5499,7 +5499,7 @@ class Game {
             }
             return damageRoll;
         }
-        else if (weapon instanceof SpellEntity) {
+        else if (weapon instanceof Spell) {
             damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
             damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
         }

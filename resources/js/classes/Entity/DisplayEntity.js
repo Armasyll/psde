@@ -16,7 +16,7 @@ class DisplayEntity extends FurnitureEntity {
     createInstance(id = "") {
         return new InstancedDisplayEntity(id, this);
     }
-    assign(entity) {
+    assign(entity, verify = true) {
         if (verify && !(entity instanceof DisplayEntity)) {
             return 2;
         }

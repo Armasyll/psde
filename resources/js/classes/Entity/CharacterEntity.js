@@ -1422,39 +1422,43 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.gender = entity.gender;
-        this.handedness = entity.handedness;
-        for (let apparelSlot in entity.attachedCosmetics) {
-            if (entity.attachedCosmetics[apparelSlot].length > 0) {
-                entity.attachedCosmetics[apparelSlot].forEach((cosmetic) => {
-                    this.attachCosmetic(cosmetic);
-                });
+        if (entity.hasOwnProperty("gender")) this.gender = entity.gender;
+        if (entity.hasOwnProperty("handedness")) this.handedness = entity.handedness;
+        if (entity.hasOwnProperty("attachedCosmetics")) {
+                for (let apparelSlot in entity.attachedCosmetics) {
+                if (entity.attachedCosmetics[apparelSlot].length > 0) {
+                    entity.attachedCosmetics[apparelSlot].forEach((cosmetic) => {
+                        this.attachCosmetic(cosmetic);
+                    });
+                }
             }
         }
-        for (let i in entity.equipment) {
-            let equipment = AbstractEntity.get(entity.equipment[i]);
-            if (equipment instanceof AbstractEntity) {
-                this.equipment[i] = equipment.clone();
+        if (entity.hasOwnProperty("equipment")) {
+                for (let i in entity.equipment) {
+                let equipment = AbstractEntity.get(entity.equipment[i]);
+                if (equipment instanceof AbstractEntity) {
+                    this.equipment[i] = equipment.clone();
+                }
             }
         }
         // ...
-        this.previousEquipment = Object.assign({}, entity.previousEquipment);
-        this.defaultDisposition = Object.assign({}, entity.defaultDisposition);
-        this.furColourA = entity.furColourA;
-        this._furColourAHex = entity._furColourAHex;
-        this.furColourB = entity.furColourB;
-        this._furColourBHex = entity._furColourBHex;
-        this.pawType = entity.pawType;
-        this.eyeType = entity.eyeType;
-        this.eyeColour = entity.eyeColour;
-        this._leftEyeColourHex = entity._leftEyeColourHex;
-        this._rightEyeColourHex = entity._rightEyeColourHex;
-        this.peltType = entity.peltType;
-        this.characterDisposition = Object.assign({}, entity.characterDisposition);
-        this.dialogue = entity.dialogue;
-        this.sexualOrientation = entity.sexualOrientation;
-        this.characterClasses = Object.assign({}, entity.characterClasses);
-        this.primaryCharacterClass = entity.primaryCharacterClass;
+        if (entity.hasOwnProperty("previousEquipment")) this.previousEquipment = Object.assign({}, entity.previousEquipment);
+        if (entity.hasOwnProperty("defaultDisposition")) this.defaultDisposition = Object.assign({}, entity.defaultDisposition);
+        if (entity.hasOwnProperty("furColourA")) this.furColourA = entity.furColourA;
+        if (entity.hasOwnProperty("_furColourAHex")) this._furColourAHex = entity._furColourAHex;
+        if (entity.hasOwnProperty("furColourB")) this.furColourB = entity.furColourB;
+        if (entity.hasOwnProperty("_furColourBHex")) this._furColourBHex = entity._furColourBHex;
+        if (entity.hasOwnProperty("pawType")) this.pawType = entity.pawType;
+        if (entity.hasOwnProperty("eyeType")) this.eyeType = entity.eyeType;
+        if (entity.hasOwnProperty("eyeColour")) this.eyeColour = entity.eyeColour;
+        if (entity.hasOwnProperty("_leftEyeColourHex")) this._leftEyeColourHex = entity._leftEyeColourHex;
+        if (entity.hasOwnProperty("_rightEyeColourHex")) this._rightEyeColourHex = entity._rightEyeColourHex;
+        if (entity.hasOwnProperty("peltType")) this.peltType = entity.peltType;
+        if (entity.hasOwnProperty("characterDisposition")) this.characterDisposition = Object.assign({}, entity.characterDisposition);
+        if (entity.hasOwnProperty("dialogue")) this.dialogue = entity.dialogue;
+        if (entity.hasOwnProperty("sexualOrientation")) this.sexualOrientation = entity.sexualOrientation;
+        if (entity.hasOwnProperty("characterClasses")) this.characterClasses = Object.assign({}, entity.characterClasses);
+        if (entity.hasOwnProperty("primaryCharacterClass")) this.primaryCharacterClass = entity.primaryCharacterClass;
         return 0;
     }
     dispose() {

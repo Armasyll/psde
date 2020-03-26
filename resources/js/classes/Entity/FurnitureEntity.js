@@ -196,6 +196,7 @@ class FurnitureEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("furnitureType")) this.setFurnitureType(entity.furnitureType);
         return 0;
     }
     dispose() {

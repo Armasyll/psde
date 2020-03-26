@@ -161,18 +161,26 @@ class EquipmentEntity extends ItemEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setEquipmentSlot(entity.equipmentSlot);
-        for (let abilityEnum in entity.abilityRequirements) {
-            this.addAbilityRequirement(abilityEnum, entity.abilityRequirements[abilityEnum]);
+        if (entity.hasOwnProperty("equipmentSlot")) this.setEquipmentSlot(entity.equipmentSlot);
+        if (entity.hasOwnProperty("abilityRequirements")) {
+            for (let abilityEnum in entity.abilityRequirements) {
+                this.addAbilityRequirement(abilityEnum, entity.abilityRequirements[abilityEnum]);
+            }
         }
-        for (let abilityEnum in entity.abilityRequirementsModifier) {
-            this.addAbilityRequirementModifier(abilityEnum, entity.abilityRequirementsModifier[abilityEnum]);
+        if (entity.hasOwnProperty("abilityRequirementsModifier")) {
+            for (let abilityEnum in entity.abilityRequirementsModifier) {
+                this.addAbilityRequirementModifier(abilityEnum, entity.abilityRequirementsModifier[abilityEnum]);
+            }
         }
-        for (let proficiencyEnum in entity.advantageOn) {
-            this.addAdvantageOn(proficiencyEnum);
+        if (entity.hasOwnProperty("advantageOn")) {
+            for (let proficiencyEnum in entity.advantageOn) {
+                this.addAdvantageOn(proficiencyEnum);
+            }
         }
-        for (let proficiencyEnum in entity.disadvantageOn) {
-            this.addDisadvantageOn(proficiencyEnum);
+        if (entity.hasOwnProperty("disadvantageOn")) {
+            for (let proficiencyEnum in entity.disadvantageOn) {
+                this.addDisadvantageOn(proficiencyEnum);
+            }
         }
         return 0;
     }

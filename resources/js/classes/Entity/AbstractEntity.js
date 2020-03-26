@@ -789,24 +789,32 @@ class AbstractEntity {
         if (verify && !(entity instanceof AbstractEntity)) {
             return 2;
         }
-        this.entityType = entity.entityType;
-        this.setHealth(entity.health);
-        this.setMaxHealth(entity.maxHealth);
-        this.setOwner(entity.owner);
-        if (entity.godMode) {
-            this.setGodMode(true);
-        }
-        if (entity.essential) {
-            this.setEssential(true);
-        }
-        for (let effect in entity.effects) {
-            for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
-                this.addEffect(effect);
+        if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
+        if (entity.hasOwnProperty("health")) this.setHealth(entity.health);
+        if (entity.hasOwnProperty("maxHealth")) this.setMaxHealth(entity.maxHealth);
+        if (entity.hasOwnProperty("owner")) this.setOwner(entity.owner);
+        if (entity.hasOwnProperty("godMode")) {
+            if (entity.godMode) {
+                this.setGodMode(true);
             }
         }
-        for (let action in entity.actionEffects) {
-            for (let effect in entity.actionEffects[action]) {
-                this.addActionEffect(action, effect, entity.actionEffects[action][effect]);
+        if (entity.hasOwnProperty("essential")) {
+            if (entity.essential) {
+                this.setEssential(true);
+            }
+        }
+        if (entity.hasOwnProperty("effects")) {
+            for (let effect in entity.effects) {
+                for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
+                    this.addEffect(effect);
+                }
+            }
+        }
+        if (entity.hasOwnProperty("actionEffects")) {
+            for (let action in entity.actionEffects) {
+                for (let effect in entity.actionEffects[action]) {
+                    this.addActionEffect(action, effect, entity.actionEffects[action][effect]);
+                }
             }
         }
         return 0;

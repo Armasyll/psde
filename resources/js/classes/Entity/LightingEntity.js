@@ -74,6 +74,14 @@ class LightingEntity extends FurnitureEntity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("lightOn")) {
+            if (entity.lightOn === true) {
+                this.on();
+            }
+            else {
+                this.off();
+            }
+        }
         return 0;
     }
     dispose() {

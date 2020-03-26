@@ -210,9 +210,9 @@ class ClothingEntity extends EquipmentEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setArmourClass(entity.armourClass);
-        this.setArmourClassModifier(entity.armourClassModifier);
-        this.setPortionMultiplier(entity.portionMultiplier);
+        if (entity.hasOwnProperty("armourClass")) this.setArmourClass(entity.armourClass);
+        if (entity.hasOwnProperty("armourClassModifier")) this.setArmourClassModifier(entity.armourClassModifier);
+        if (entity.hasOwnProperty("portionMultiplier")) this.setPortionMultiplier(entity.portionMultiplier);
         return 0;
     }
     dispose() {

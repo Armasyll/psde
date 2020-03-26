@@ -86,8 +86,8 @@ class BookEntity extends ItemEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setAuthor(entity.author);
-        this.setContent(entity.content);
+        if (entity.hasOwnProperty("author")) this.setAuthor(entity.author);
+        if (entity.hasOwnProperty("content")) this.setContent(entity.content);
         return 0;
     }
     dispose() {

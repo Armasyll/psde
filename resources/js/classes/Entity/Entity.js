@@ -327,27 +327,33 @@ class Entity extends AbstractEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setMeshID(entity.meshID);
-        this.setTextureID(entity.textureID);
-        this.setMaterialID(entity.materialID);
-        for (let actionEnum in entity.availableActions) {
-            let actionData = entity.availableActions[actionEnum];
-            if (actionData instanceof ActionData) {
-                this.addAvailableAction(actionEnum, actionData.actionFunction, actionData.runOnce);
+        if (entity.hasOwnProperty("meshID")) this.setMeshID(entity.meshID);
+        if (entity.hasOwnProperty("textureID")) this.setTextureID(entity.textureID);
+        if (entity.hasOwnProperty("materialID")) this.setMaterialID(entity.materialID);
+        if (entity.hasOwnProperty("availableActions")) {
+            for (let actionEnum in entity.availableActions) {
+                let actionData = entity.availableActions[actionEnum];
+                if (actionData instanceof ActionData) {
+                    this.addAvailableAction(actionEnum, actionData.actionFunction, actionData.runOnce);
+                }
+                else {
+                    this.addAvailableAction(actionEnum);
+                }
             }
-            else {
-                this.addAvailableAction(actionEnum);
+        }
+        if (entity.hasOwnProperty("hiddenAvailableActions")) {
+            for (let actionEnum in entity.hiddenAvailableActions) {
+                this.addHiddenAvailableAction(actionEnum);
             }
         }
-        for (let actionEnum in entity.hiddenAvailableActions) {
-            this.addHiddenAvailableAction(actionEnum);
+        if (entity.hasOwnProperty("specialProperties")) {
+            for (let specialProperty in entity.specialProperties) {
+                this.addSpecialProperty(specialProperty);
+            }
         }
-        for (let specialProperty in entity.specialProperties) {
-            this.addSpecialProperty(specialProperty);
-        }
-        this.setDefaultAction(entity.defaultAction);
-        this.setWeight(entity.weight);
-        this.setPrice(entity.price);
+        if (entity.hasOwnProperty("defaultAction")) this.setDefaultAction(entity.defaultAction);
+        if (entity.hasOwnProperty("weight")) this.setWeight(entity.weight);
+        if (entity.hasOwnProperty("price")) this.setPrice(entity.price);
         return 0;
     }
     dispose() {

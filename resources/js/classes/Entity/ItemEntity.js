@@ -76,7 +76,8 @@ class ItemEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setItemType(entity.itemType);
+        if (entity.hasOwnProperty("itemType")) this.setItemType(entity.itemType);
+        if (entity.hasOwnProperty("maxStackCount")) this.setMaxStackCount(entity.maxStackCount);
     }
     dispose() {
         this.setLocked(true);

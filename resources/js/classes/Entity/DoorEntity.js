@@ -118,6 +118,10 @@ class DoorEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("doorLocked")) this.setDoorLocked(entity.doorLocked);
+        if (entity.hasOwnProperty("key")) this.setKey(entity.key);
+        if (entity.hasOwnProperty("open")) this.setOpen(entity.open);
+        if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
         return 0;
     }
     dispose() {

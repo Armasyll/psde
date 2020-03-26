@@ -51,8 +51,8 @@ class KeyEntity extends ItemEntity {
             return 2;
         }
         super.assign(entity, verify);
-        this.setSkeletonKey(entity.skeletonKey);
-        this.setSkeletonKeyModifier(entity.skeletonKeyModifier);
+        if (entity.hasOwnProperty("skeletonKey")) this.setSkeletonKey(entity.skeletonKey);
+        if (entity.hasOwnProperty("skeletonKeyModifier")) this.setSkeletonKeyModifier(entity.skeletonKeyModifier);
         return 0;
     }
     dispose() {

@@ -1,15 +1,24 @@
-class SpellEntity extends AbstractEntity {
+class Spell {
     /**
      * Creates a Spell
-     * @param  {string} id          Unique ID
-     * @param  {string} name        Name
+     * @param  {string} id Unique ID
+     * @param  {string} name Name
      * @param  {string} description Description
-     * @param  {string} iconID       Image path of base64
-     * @param  {SpellTypeEnum} spellType      Spell type
+     * @param  {string} iconID Image path of base64
+     * @param  {SpellTypeEnum} spellType Spell type
      */
     constructor(id, name = "", description = undefined, iconID = undefined, spellType = SpellTypeEnum.UNIVERSAL, spellLevel = 0, spellSlots = 1, ritual = false) {
-        super(id, name, description, iconID);
-        this.entityType = EntityEnum.SPELL;
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        this.id = id;
+        this.name = "";
+        this.setName(name);
+        this.description = "";
+        this.setDescription(description);
+        this.iconID = "";
+        this.setIcon(iconID);
         this.spellType = SpellTypeEnum.NONE;
         this.spellLevel = 0;
         this.spellSlotsUsed = 1;
@@ -42,7 +51,7 @@ class SpellEntity extends AbstractEntity {
 
         this.generateProperties();
 
-        SpellEntity.set(this.id, this);
+        Spell.set(this.id, this);
     }
 
     generateProperties() {
@@ -89,7 +98,7 @@ class SpellEntity extends AbstractEntity {
         this.castingTime = number;
         return 0;
     }
-    getCastingTime(number) {
+    getCastingTime() {
         return this.castingTime;
     }
     setRange(number) {
@@ -116,7 +125,7 @@ class SpellEntity extends AbstractEntity {
      * @param {SpellComponentEnum} spellComponent 
      * @param {object} optionalComponents 
      */
-    setComponents(spellComponent = SpellComponentEnum.NONE, optionalComponents) {
+    addComponent(spellComponent = SpellComponentEnum.NONE, optionalComponents) {
         if (!SpellComponentEnum.properties.hasOwnProperty(spellComponent)) {
             spellComponent = SpellComponentEnum.NONE;
         }
@@ -124,60 +133,92 @@ class SpellEntity extends AbstractEntity {
             return 0;
         }
         else if (spellComponent == SpellComponentEnum.MATERIAL) {
-            this.component[spellComponent] = optionalComponents; // I'm lazy
+            this.spellComponents[spellComponent] = optionalComponents; // I'm lazy
         }
         else {
-            this.component[spellComponent] = 0;
+            this.spellComponents[spellComponent] = 0;
         }
         return 0;
     }
     hasComponent(spellComponent) {
-        return this.component.hasOwnProperty(spellComponent);
+        return this.spellComponents.hasOwnProperty(spellComponent);
     }
     getMaterials() {
         if (this.hasComponent(SpellComponentEnum.MATERIAL)) {
-            return this.component[SpellComponentEnum.MATERIAL];
+            return this.spellComponents[SpellComponentEnum.MATERIAL];
         }
         else {
             return {};
         }
     }
+
+    assign(spell) {
+        if (verify && !(spell instanceof Spell)) {
+            return 2;
+        }
+        if (spell.hasOwnProperty("prepared")) this.prepared = spell.prepared;
+        if (spell.hasOwnProperty("cantrip")) this.cantrip = spell.cantrip;
+        if (spell.hasOwnProperty("castingTime")) this.setCastingTime(spell.castingTime);
+        if (spell.hasOwnProperty("reaction")) this.reaction = spell.reaction;
+        if (spell.hasOwnProperty("range")) this.setRange(spell.range);
+        if (spell.hasOwnProperty("spellComponents")) {
+            for (let component in spell.spellComponents) {
+                this.addComponent(component, spell.spellComponents[component]);
+            }
+        }
+        if (spell.hasOwnProperty("duration")) this.duration = spell.duration;
+        if (spell.hasOwnProperty("damageRollCount")) this.damageRollCount = spell.damageRollCount;
+        if (spell.hasOwnProperty("damageRollCountModifier")) this.damageRollCountModifier = spell.damageRollCountModifier;
+        if (spell.hasOwnProperty("damageRoll")) this.damageRoll = spell.damageRoll;
+        if (spell.hasOwnProperty("damageRollModifier")) this.damageRollModifier = spell.damageRollModifier;
+        if (spell.hasOwnProperty("damageType")) this.damageType = spell.damageType;
+        if (spell.hasOwnProperty("bonusAction")) this.bonusAction = spell.bonusAction;
+        if (spell.hasOwnProperty("concentration")) this.concentration = spell.concentration;
+        if (spell.hasOwnProperty("savingAbility")) this.savingAbility = spell.savingAbility;
+        if (spell.hasOwnProperty("savingAbilityScore")) this.savingAbilityScore = spell.savingAbilityScore;
+        if (spell.hasOwnProperty("savingAbilityMultiplier")) this.savingAbilityMultiplier = spell.savingAbilityMultiplier;
+        if (spell.hasOwnProperty("spellType")) this.setSpellType(spell.spellType);
+        if (spell.hasOwnProperty("spellLevel")) this.setSpellLevel(spell.spellLevel)
+        if (spell.hasOwnProperty("spellSlotsUsed")) this.setSpellSlotsUsed(spell.spellSlotsUsed)
+        if (spell.hasOwnProperty("ritual")) this.setRitual(spell.ritual)
+        return 0;
+    }
     dispose() {
-        SpellEntity.remove(this.id);
+        Spell.remove(this.id);
     }
     getClassName() {
-        return "SpellEntity";
+        return "Spell";
     }
 
     static initialize() {
-        SpellEntity.spellEntityList = {};
+        Spell.spellList = {};
     }
     static get(id) {
-        if (SpellEntity.has(id)) {
-            return SpellEntity.spellEntityList[id];
+        if (Spell.has(id)) {
+            return Spell.spellList[id];
         }
         return 1;
     }
     static has(id) {
-        return SpellEntity.spellEntityList.hasOwnProperty(id);
+        return Spell.spellList.hasOwnProperty(id);
     }
-    static set(id, spellEntity) {
-        SpellEntity.spellEntityList[id] = spellEntity;
+    static set(id, spell) {
+        Spell.spellList[id] = spell;
         return 0;
     }
     static remove(id) {
-        delete SpellEntity.spellEntityList[id];
+        delete Spell.spellList[id];
         return 0;
     }
     static list() {
-        return SpellEntity.spellEntityList;
+        return Spell.spellList;
     }
     static clear() {
-        for (let i in SpellEntity.spellEntityList) {
-            SpellEntity.spellEntityList[i].dispose();
+        for (let i in Spell.spellList) {
+            Spell.spellList[i].dispose();
         }
-        SpellEntity.spellEntityList = {};
+        Spell.spellList = {};
         return 0;
     }
 }
-SpellEntity.initialize();
+Spell.initialize();
