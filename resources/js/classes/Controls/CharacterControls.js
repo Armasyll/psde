@@ -280,12 +280,32 @@ class CharacterControls extends AbstractControls {
         CharacterControls.attackTriggered = true;
         Game.actionAttackFunction(Game.player.getTarget(), Game.player);
         clearTimeout(CharacterControls.attackTimeoutFunction);
-        console.log(Date.now() - CharacterControls.attackPressTime);
+        let pressTime = Date.now() - CharacterControls.attackPressTime;
         CharacterControls.attackPressTime = 0;
         CharacterControls.attackTriggered = false;
-        if (CharacterControls.attackPressed) {
+        /* Release button immediately after heavy attack does nothing */
+        if (CharacterControls.lastAttackWasHeavy && pressTime < 65) {
+            CharacterControls.attackPressed = false;
+            CharacterControls.lastAttackWasHeavy = false;
+        }
+        else if (CharacterControls.attackPressed) { /* Consecutive heavy attacks without releasing button */
             CharacterControls.attackPressTime = Date.now() + 200;
             CharacterControls.attackTimeoutFunction = setTimeout(function() {CharacterControls.triggerAttack()}, CharacterControls.attackTimeout + 200);
+            if (pressTime > 795) {
+                CharacterControls.lastAttackWasHeavy = true;
+            }
+        }
+        else {
+            CharacterControls.lastAttackWasHeavy = false;
+            if (pressTime > 795) { // Heavy
+                CharacterControls.lastAttackWasHeavy = true;
+            }
+            else if (pressTime > 400) { // Medium
+            }
+            else if (pressTime > 35) { // Light
+            }
+            else { // Nothing
+            }
         }
         return 0;
     }
@@ -303,6 +323,7 @@ class CharacterControls extends AbstractControls {
         CharacterControls.attackTriggered = false;
         CharacterControls.attackTimeout = 800;
         CharacterControls.attackTimeoutFunction = null;
+        CharacterControls.lastAttackWasHeavy = false;
         return 0;
     }
 }
