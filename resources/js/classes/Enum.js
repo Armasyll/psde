@@ -1825,6 +1825,8 @@ let ConditionEnum = {
     STUNNED: 36,
     TURNED: 37,
     UNCONSCIOUS: 38,
+    ASLEEP: 39,
+    DROWSY: 40,
     properties: {
         0: {
             name: "None",
@@ -1981,6 +1983,14 @@ let ConditionEnum = {
         38: {
             name: "Unconscious",
             value: 38
+        },
+        39: {
+            name: "Asleep",
+            value: 39
+        },
+        40: {
+            name: "Drowsy",
+            value: 40
         }
     }
 };
