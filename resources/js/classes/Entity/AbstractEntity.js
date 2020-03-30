@@ -22,10 +22,18 @@ class AbstractEntity {
         this.controller = null;
         this.owner = "";
         this.target = null;
+
         this.health = 10;
-        this.healthModifier = 0;
+        this.healthOverride = -1;
+
         this.maxHealth = 10;
         this.maxHealthModifier = 0;
+        this.maxHealthOverride = -1;
+        this.maxHealthConditionModifier = 0;
+        this.maxHealthConditionOverride = -1;
+        this.maxHealthEffectModifier = 0;
+        this.maxHealthEffectOverride = -1;
+
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.specialProperties = {};
@@ -141,13 +149,7 @@ class AbstractEntity {
         return this.setHealth(this.health + number);
     }
     getHealth() {
-        return this.health + this.healthModifier;
-    }
-    setHealthModifier(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        this.healthModifier = number; // TODO: figure out if the character is dead after this :v
-        return 0;
+        return this.health;
     }
 
     setMaxHealth(number) {
@@ -170,20 +172,16 @@ class AbstractEntity {
         return this.setMaxHealth(this.maxHealth + number);
     }
     getMaxHealth() {
-        return this.maxHealth + this.maxHealthModifier;
-    }
-    setMaxHealthModifier(number) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        let oldMaxHealth = this.getMaxHealth();
-        this.maxHealthModifier = number;
-        this.recalculateHealthByModifiedMaxHealth(oldMaxHealth);
-        return 0;
-    }
-    modifyMaxHealthModifier(number = 1) {
-        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
-        else {number = number|0}
-        return this.setMaxHealthModifier(this.maxHealthModifier + number);
+        if (this.maxHealthEffectOverride >= 0) {
+            return this.maxHealthEffectOverride;
+        }
+        else if (this.maxHealthConditionOverride >= 0) {
+            return this.maxHealthConditionOverride;
+        }
+        else if (this.maxHealthOverride >= 0) {
+            return this.maxHealthOverride;
+        }
+        return this.maxHealth + this.maxHealthConditionModifier + this.maxHealthEffectModifier;
     }
     recalculateHealthByModifiedMaxHealth(oldMaxHealth) {
         let multiplier = this.getMaxHealth() / oldMaxHealth;
@@ -764,6 +762,8 @@ class AbstractEntity {
         this.essentialModifier = false;
         this.healthModifier = 0;
         this.maxHealthModifier = 0;
+        this.maxHealthConditionModifier = 0;
+        this.maxHealthEffectModifier = 0;
         return 0;
     }
 
@@ -792,6 +792,12 @@ class AbstractEntity {
         if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
         if (entity.hasOwnProperty("health")) this.setHealth(entity.health);
         if (entity.hasOwnProperty("maxHealth")) this.setMaxHealth(entity.maxHealth);
+        if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
+        if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
+        if (entity.hasOwnProperty("maxHealthConditionModifier")) this.maxHealthConditionModifier = entity.maxHealthConditionModifier;
+        if (entity.hasOwnProperty("maxHealthConditionOverride")) this.maxHealthConditionOverride = entity.maxHealthConditionOverride;
+        if (entity.hasOwnProperty("maxHealthEffectModifier")) this.maxHealthEffectModifier = entity.maxHealthEffectModifier;
+        if (entity.hasOwnProperty("maxHealthEffectOverride")) this.maxHealthEffectOverride = entity.maxHealthEffectOverride;
         if (entity.hasOwnProperty("owner")) this.setOwner(entity.owner);
         if (entity.hasOwnProperty("godMode")) {
             if (entity.godMode) {

@@ -1265,6 +1265,7 @@ let DamageEnum = {
     RADIANT: 10,
     SLASHING: 11,
     THUNDER: 12,
+    DISEASE: 13, // special
     properties: {
         0: {
             name: "Bludgeoning",
@@ -1330,6 +1331,11 @@ let DamageEnum = {
             name: "Thunder",
             value: 12,
             key: "THUNDER"
+        },
+        13: {
+            name: "Disease",
+            value: 13,
+            key: "DISEASE"
         }
     }
 };
@@ -1786,211 +1792,96 @@ let RollEnum = {
     }
 };
 let ConditionEnum = {
-    NONE: 0,
-    ABILITY_DAMAGED: 1,
-    ABILITY_DRAINED: 2,
-    BLINDED: 3,
-    BLOWN_AWAY: 4,
-    CHECKED: 5,
-    CONFUSED: 6,
-    COWERING: 7,
-    DAZED: 8,
-    DAZZLED: 9,
-    DEAD: 10,
-    DEAFENED: 11,
-    DISABLED: 12,
-    DYING: 13,
-    ENERGY_DRAINED: 14,
-    ENTANGLED: 15,
-    EXHAUSTED: 16,
-    FASCINATED: 17,
-    FATIGUED: 18,
-    FLAT_FOOTED: 19,
-    FRIGHTENED: 20,
-    GRAPPLING: 21,
-    HELPLESS: 22,
-    INCORPOREAL: 23,
-    INVISIBLE: 24,
-    KNOCKED_DOWN: 25,
-    NAUSEATED: 26,
-    PANICKED: 27,
-    PARALYZED: 28,
-    PETRIFIED: 29,
-    PINNED: 30,
-    PRONE: 31,
-    SHAKEN: 32,
-    SICKENED: 33,
-    STABLE: 34,
-    STAGGERED: 35,
-    STUNNED: 36,
-    TURNED: 37,
-    UNCONSCIOUS: 38,
-    ASLEEP: 39,
-    DROWSY: 40,
+    BLINDED: 0,
+    CHARMED: 1,
+    DEAFENED: 2,
+    FATIGUED: 3,
+    FRIGHTENED: 4,
+    GRAPPLED: 5,
+    INCAPACITATED: 6,
+    INVISIBLE: 7,
+    PARALYZED: 8,
+    PETRIFIED: 9,
+    POISONED: 10,
+    PRONE: 11,
+    RESTRAINED: 12,
+    STUNNED: 13,
+    UNCONSCIOUS: 14,
     properties: {
         0: {
-            name: "None",
-            value: 0
+            name: "Blinded",
+            value: 0,
+            key: "BLINDED"
         },
         1: {
-            name: "Ability Damaged",
-            value: 1
+            name: "Charmed",
+            value: 1,
+            key: "CHARMED"
         },
         2: {
-            name: "Ability Drained",
-            value: 2
+            name: "Deafened",
+            value: 2,
+            key: "DEAFENED"
         },
         3: {
-            name: "Blinded",
-            value: 3
+            name: "Fatigued",
+            value: 3,
+            key: "FATIGUED"
         },
         4: {
-            name: "Blown Away",
-            value: 4
+            name: "Frightened",
+            value: 4,
+            key: "FRIGHTENED"
         },
         5: {
-            name: "Checked",
-            value: 5
+            name: "Grappled",
+            value: 5,
+            key: "GRAPPLED"
         },
         6: {
-            name: "Confused",
-            value: 6
+            name: "Incapacitated",
+            value: 6,
+            key: "INCAPACITATED"
         },
         7: {
-            name: "Cowering",
-            value: 7
+            name: "Invisible",
+            value: 7,
+            key: "INVISIBLE"
         },
         8: {
-            name: "Dazed",
-            value: 8
+            name: "Paralyzed",
+            value: 8,
+            key: "PARALYZED"
         },
         9: {
-            name: "Dazzled",
-            value: 9
+            name: "Petrified",
+            value: 9,
+            key: "PETRIFIED"
         },
         10: {
-            name: "Dead",
-            value: 10
+            name: "Poisoned",
+            value: 1,
+            key: "POISONED"
         },
         11: {
-            name: "Deafened",
-            value: 11
+            name: "Prone",
+            value: 1,
+            key: "PRONE"
         },
         12: {
-            name: "Disabled",
-            value: 12
+            name: "Restrained",
+            value: 1,
+            key: "RESTRAINED"
         },
         13: {
-            name: "Dying",
-            value: 13
+            name: "Stunned",
+            value: 1,
+            key: "STUNNED"
         },
         14: {
-            name: "Energy Drained",
-            value: 14
-        },
-        15: {
-            name: "Entangled",
-            value: 15
-        },
-        16: {
-            name: "Exhausted",
-            value: 16
-        },
-        17: {
-            name: "Fascinated",
-            value: 17
-        },
-        18: {
-            name: "Fatigued",
-            value: 18
-        },
-        19: {
-            name: "Flat-Footed",
-            value: 19
-        },
-        20: {
-            name: "Frightened",
-            value: 20
-        },
-        21: {
-            name: "Grappling",
-            value: 21
-        },
-        22: {
-            name: "Helpless",
-            value: 22
-        },
-        23: {
-            name: "Incorporeal",
-            value: 23
-        },
-        24: {
-            name: "Invisible",
-            value: 24
-        },
-        25: {
-            name: "Knocked Down",
-            value: 25
-        },
-        26: {
-            name: "Nauseated",
-            value: 26
-        },
-        27: {
-            name: "Panicked",
-            value: 27
-        },
-        28: {
-            name: "Paralyzed",
-            value: 28
-        },
-        29: {
-            name: "Petrified",
-            value: 29
-        },
-        30: {
-            name: "Pinned",
-            value: 30
-        },
-        31: {
-            name: "Prone",
-            value: 31
-        },
-        32: {
-            name: "Shaken",
-            value: 32
-        },
-        33: {
-            name: "Sickened",
-            value: 33
-        },
-        34: {
-            name: "Stable",
-            value: 34
-        },
-        35: {
-            name: "Staggered",
-            value: 35
-        },
-        36: {
-            name: "Stunned",
-            value: 36
-        },
-        37: {
-            name: "Turned",
-            value: 37
-        },
-        38: {
             name: "Unconscious",
-            value: 38
-        },
-        39: {
-            name: "Asleep",
-            value: 39
-        },
-        40: {
-            name: "Drowsy",
-            value: 40
+            value: 1,
+            key: "UNCONSCIOUS"
         }
     }
 };
@@ -3382,3 +3273,43 @@ let OperationsEnum = {
         }
     }
 };
+let SenseEnum = {
+    TOUCH: 0,
+    SIGHT: 1,
+    HEARING: 2,
+    SMELL: 3,
+    TASTE: 4,
+    SPACE: 5,
+    properties: {
+        0: {
+            name: "Touch",
+            value: 0,
+            key: "TOUCH"
+        },
+        1: {
+            name: "Sight",
+            value: 1,
+            key: "SIGHT"
+        },
+        2: {
+            name: "Hearing",
+            value: 2,
+            key: "HEARING"
+        },
+        3: {
+            name: "Smell",
+            value: 3,
+            key: "SMELL"
+        },
+        4: {
+            name: "Taste",
+            value: 4,
+            key: "TASTE"
+        },
+        5: {
+            name: "Space",
+            value: 5,
+            key: "SPACE"
+        }
+    }
+}
