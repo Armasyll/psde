@@ -766,6 +766,13 @@ class AbstractEntity {
         this.maxHealthEffectModifier = 0;
         return 0;
     }
+    resetOverrides() {
+        this.healthOverride = -1;
+        this.maxHealthOverride = -1;
+        this.maxHealthConditionOverride = -1;
+        this.maxHealthEffectOverride = -1;
+        return 0;
+    }
 
     /**
      * Clones
