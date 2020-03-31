@@ -14,9 +14,21 @@ class CreatureEntity extends Entity {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.CREATURE;
 
+        /**
+         * @type {number}
+         */
         this.age = 18;
+        /**
+         * @type {SexEnum}
+         */
         this.sex = SexEnum.MALE;
+        /**
+         * @type {CreatureTypeEnum}
+         */
         this.creatureType = 0;
+        /**
+         * @type {CreatureTypeEnum}
+         */
         this.creatureSubType = 0;
         /*
          Undead Fox Skeleton is a little hard to write out programatically.
@@ -28,72 +40,89 @@ class CreatureEntity extends Entity {
          If creatureType is undead, 
         this should be the creatureType this was before it became undead
         */
+        /**
+         * @type {CreatureTypeEnum}
+         */
         this.specialCreatureType = 0;
         /*
          If the creatureType is undead and creatureSubType is 
         ghost, ghoul, skeleton, or zombie, 
         this should be the creatureSubType it was before it became undead
         */
+        /**
+         * @type {CreatureSubTypeEnum}
+         */
         this.specialCreatureSubType = 0;
-        this.currentActions = {};
+        /**
+         * @type {ActionEnum}
+         */
         this.stance = ActionEnum.STAND;
+        /**
+         * List of known cantrips
+         * @type {Object.<string, boolean>}
+         */
         this.cantripsKnown = {};
+        /**
+         * @type {number}
+         */
         this.cantripsKnownLimit = 0;
+        /**
+         * List of known spells
+         * @type {Object.<string, boolean>}
+         */
         this.spellsKnown = {};
+        /**
+         * @type {number}
+         */
         this.spellsKnownLimit = 0;
+        /**
+         * @type {Object.<string, number>}
+         */
         this.spellSlots = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
+        /**
+         * @type {Object.<string, number>}
+         */
         this.spellSlotsUsed = Object.assign({}, this.spellSlots);
 
-        this.alerted = false;
+        /**
+         * @type {boolean}
+         * @readonly
+         */
+        this._alerted = false;
         /**
          * Hunger; may affect health regeneration
          * @type {number} 0 to 100
          */
         this.hunger = 0;
+        /**
+         * @type {number}
+         */
         this.hungerModifier = 0;
 
         /**
          * Ability Score
          * @type {Object.<string, number>}
          */
-        this.abilityScore = {};
-        this.abilityScoreModifier = {};
+        this.abilityScore = {
+            "STRENGTH":10,
+            "DEXTERITY":10,
+            "CONSTITUTION":10,
+            "INTELLIGENCE":10,
+            "WISDOM":10,
+            "CHARISMA":10
+        };
         /**
-         * Physical power
-         * @type {number}
+         * Ability Score
+         * @type {Object.<string, number>}
          */
-        this.abilityScore["STRENGTH"] = 10;
-        this.abilityScoreModifier["STRENGTH"] = 0;
-        /**
-         * Agility
-         * @type {number}
-         */
-        this.abilityScore["DEXTERITY"] = 10;
-        this.abilityScoreModifier["DEXTERITY"] = 0;
-        /**
-         * Endurance
-         * @type {number}
-         */
-        this.abilityScore["CONSTITUTION"] = 10;
-        this.abilityScoreModifier["CONSTITUTION"] = 0;
-        /**
-         * Reasoning and memory
-         * @type {number}
-         */
-        this.abilityScore["INTELLIGENCE"] = 10;
-        this.abilityScoreModifier["INTELLIGENCE"] = 0;
-        /**
-         * Perception and insight
-         * @type {number}
-         */
-        this.abilityScore["WISDOM"] = 10;
-        this.abilityScoreModifier["WISDOM"] = 0;
-        /**
-         * Force of personality
-         * @type {number}
-         */
-        this.abilityScore["CHARISMA"] = 10;
-        this.abilityScoreModifier["CHARISMA"] = 0;
+        this.abilityScoreModifier = {
+            "STRENGTH":0,
+            "DEXTERITY":0,
+            "CONSTITUTION":0,
+            "INTELLIGENCE":0,
+            "WISDOM":0,
+            "CHARISMA":00
+        };
 
         /**
          * @type {number}
@@ -304,13 +333,31 @@ class CreatureEntity extends Entity {
          */
         this.reactionsEffectOverride = -1;
 
+        /**
+         * @type {number}
+         * @readonly
+         */
         this._level = 1;
+        /**
+         * @type {number}
+         */
         this.experiencePoints = 0;
+        /**
+         * @type {number}
+         * @readonly
+         */
         this._proficiencyBonus = 0;
+        /**
+         * @type {number}
+         */
+        this.proficiencyBonusModifier = 0;
         /**
          * Like health, but hitting 0 knocks you out instead of killing you.
          */
         this.stamina = 0;
+        /**
+         * @type {number}
+         */
         this.staminaModifier = 0;
 
         /**
@@ -318,9 +365,15 @@ class CreatureEntity extends Entity {
          * @type {number} 0 to Number.MAX_SAFE_INTEGER
          */
         this.money = 0;
+        /**
+         * @type {number}
+         */
         this.moneyModifier = 0;
+        /**
+         * @type {number}
+         */
         this.moneyOverride = -1;
-        this.proficiencyBonusModifier = 0;
+
         /**
          * Inspiration; idk how i'll handle this yet :v
          * @type {number}
@@ -331,14 +384,26 @@ class CreatureEntity extends Entity {
          * @type {boolean} True - living, false - dead
          */
         this.living = true;
+        /**
+         * @type {boolean}
+         */
         this.stabilized = true;
+        /**
+         * @type {boolean}
+         */
         this.nearDeathThisWindow = false;
         /**
          * Size
          * @type {SizeEnum}
          */
         this.size = SizeEnum.SMALL;
+        /**
+         * @type {boolean}
+         */
         this.armed = false;
+        /**
+         * @type {boolean}
+         */
         this.armedOverride = false;
 
         /**
@@ -361,6 +426,9 @@ class CreatureEntity extends Entity {
          * @type {number}
          */
         this.weight = 36;
+        /**
+         * @type {number}
+         */
         this.weightModifier = 0;
         /**
          * Height, in mtres; updated by this.generateProperties()
@@ -386,14 +454,29 @@ class CreatureEntity extends Entity {
         this.conditions = {};
 
         /**
-         * @type {InstancedFurnitureEntity}
+         * @type {?InstancedFurnitureEntity}
          */
         this.furniture = null;
 
+        /**
+         * @type {boolean}
+         */
         this.canMove = true;
+        /**
+         * @type {boolean}
+         */
         this.canHold = true;
+        /**
+         * @type {boolean}
+         */
         this.canSpeak = true;
+        /**
+         * @type {boolean}
+         */
         this.canHear = true;
+        /**
+         * @type {boolean}
+         */
         this.canSee = true;
 
         this.vantageOnAttack = 0;
@@ -403,72 +486,77 @@ class CreatureEntity extends Entity {
         this.vantageAgainstAttackConditionOverride = 0;
         this.vantageAgainstAttackEffectOverride = 0;
 
-        this.vantageAbilityChecks = {};
-        this.vantageAbilityChecks["STRENGTH"] = 0;
-        this.vantageAbilityChecks["DEXTERITY"] = 0;
-        this.vantageAbilityChecks["CONSTITUTION"] = 0;
-        this.vantageAbilityChecks["INTELLIGENCE"] = 0;
-        this.vantageAbilityChecks["WISDOM"] = 0;
-        this.vantageAbilityChecks["CHARISMA"] = 0;
+        this.vantageAbilityChecks = {
+            "STRENGTH":0,
+            "DEXTERITY":0,
+            "CONSTITUTION":0,
+            "INTELLIGENCE":0,
+            "WISDOM":0,
+            "CHARISMA":0
+        };
         this.vantageAbilityChecksOverride = Object.assign({}, this.vantageAbilityChecks);
         this.vantageAbilityChecksConditionOverride = Object.assign({}, this.vantageAbilityChecks);
         this.vantageAbilityChecksEffectOverride = Object.assign({}, this.vantageAbilityChecks);
 
-        this.vantageSenseChecks = {};
-        this.vantageSenseChecks["TOUCH"] = 0;
-        this.vantageSenseChecks["SIGHT"] = 0;
-        this.vantageSenseChecks["HEARING"] = 0;
-        this.vantageSenseChecks["SMELL"] = 0;
-        this.vantageSenseChecks["TASTE"] = 0;
-        this.vantageSenseChecks["SPACE"] = 0;
+        this.vantageSenseChecks = {
+            "TOUCH":0,
+            "SIGHT":0,
+            "HEARING":0,
+            "SMELL":0,
+            "TASTE":0,
+            "SPACE":0
+        };
         this.vantageSenseChecksOverride = Object.assign({}, this.vantageSenseChecks);
         this.vantageSenseChecksConditionOverride = Object.assign({}, this.vantageSenseChecks);
         this.vantageSenseChecksEffectOverride = Object.assign({}, this.vantageSenseChecks);
 
-        this.vantageSavingThrows = {};
-        this.vantageSavingThrows["STRENGTH"] = 0;
-        this.vantageSavingThrows["DEXTERITY"] = 0;
-        this.vantageSavingThrows["CONSTITUTION"] = 0;
-        this.vantageSavingThrows["INTELLIGENCE"] = 0;
-        this.vantageSavingThrows["WISDOM"] = 0;
-        this.vantageSavingThrows["CHARISMA"] = 0;
+        this.vantageSavingThrows = {
+            "STRENGTH":0,
+            "DEXTERITY":0,
+            "CONSTITUTION":0,
+            "INTELLIGENCE":0,
+            "WISDOM":0,
+            "CHARISMA":0
+        };
         this.vantageSavingThrowsOverride = Object.assign({}, this.vantageSavingThrows);
         this.vantageSavingThrowsConditionOverride = Object.assign({}, this.vantageSavingThrows);
         this.vantageSavingThrowsEffectOverride = Object.assign({}, this.vantageSavingThrows);
 
-        this.resistanceTo = {};
-        this.resistanceTo["BLUDGEONING"] = false;
-        this.resistanceTo["ACID"] = false;
-        this.resistanceTo["COLD"] = false;
-        this.resistanceTo["FIRE"] = false;
-        this.resistanceTo["FORCE"] = false;
-        this.resistanceTo["LIGHTNING"] = false;
-        this.resistanceTo["NECROTIC"] = false;
-        this.resistanceTo["PIERCING"] = false;
-        this.resistanceTo["POISON"] = false;
-        this.resistanceTo["PSYCHIC"] = false;
-        this.resistanceTo["RADIANT"] = false;
-        this.resistanceTo["SLASHING"] = false;
-        this.resistanceTo["THUNDER"] = false;
-        this.resistanceTo["DISEASE"] = false; // special
+        this.resistanceTo = {
+            "BLUDGEONING":false,
+            "ACID":false,
+            "COLD":false,
+            "FIRE":false,
+            "FORCE":false,
+            "LIGHTNING":false,
+            "NECROTIC":false,
+            "PIERCING":false,
+            "POISON":false,
+            "PSYCHIC":false,
+            "RADIANT":false,
+            "SLASHING":false,
+            "THUNDER":false,
+            "DISEASE":false,
+        }
         this.resistanceToConditionOverride = Object.assign({}, this.resistanceTo);
         this.resistanceToEffectOverride = Object.assign({}, this.resistanceTo);
 
-        this.immuneTo = {};
-        this.immuneTo["BLUDGEONING"] = false;
-        this.immuneTo["ACID"] = false;
-        this.immuneTo["COLD"] = false;
-        this.immuneTo["FIRE"] = false;
-        this.immuneTo["FORCE"] = false;
-        this.immuneTo["LIGHTNING"] = false;
-        this.immuneTo["NECROTIC"] = false;
-        this.immuneTo["PIERCING"] = false;
-        this.immuneTo["POISON"] = false;
-        this.immuneTo["PSYCHIC"] = false;
-        this.immuneTo["RADIANT"] = false;
-        this.immuneTo["SLASHING"] = false;
-        this.immuneTo["THUNDER"] = false;
-        this.immuneTo["DISEASE"] = false; // special
+        this.immuneTo = {
+            "BLUDGEONING":false,
+            "ACID":false,
+            "COLD":false,
+            "FIRE":false,
+            "FORCE":false,
+            "LIGHTNING":false,
+            "NECROTIC":false,
+            "PIERCING":false,
+            "POISON":false,
+            "PSYCHIC":false,
+            "RADIANT":false,
+            "SLASHING":false,
+            "THUNDER":false,
+            "DISEASE":false
+        };
         this.immuneToConditionOverride = Object.assign({}, this.immuneTo);
         this.immuneToEffectOverride = Object.assign({}, this.immuneTo);
 
@@ -1519,7 +1607,7 @@ class CreatureEntity extends Entity {
     }
 
     isAlerted() {
-        return this.alerted;
+        return this._alerted;
     }
 
     /**
