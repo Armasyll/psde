@@ -700,7 +700,7 @@ class CreatureEntity extends Entity {
         return this.setStrength(this.abilityScore["STRENGTH"] + number);
     }
     getStrength() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["STRENGTH"] + this.abilityScoreModifier["STRENGTH"];
@@ -717,7 +717,7 @@ class CreatureEntity extends Entity {
         return this.setDexterity(this.abilityScore["DEXTERITY"] + number);
     }
     getDexterity() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["DEXTERITY"] + this.abilityScoreModifier["DEXTERITY"];
@@ -734,7 +734,7 @@ class CreatureEntity extends Entity {
         return this.setConstitution(this.abilityScore["CONSTITUTION"] + number);
     }
     getConstitution() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["CONSTITUTION"] + this.abilityScoreModifier["CONSTITUTION"];
@@ -751,7 +751,7 @@ class CreatureEntity extends Entity {
         return this.setIntelligence(this.abilityScore["INTELLIGENCE"] + number);
     }
     getIntelligence() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["INTELLIGENCE"] + this.abilityScoreModifier["INTELLIGENCE"];
@@ -768,7 +768,7 @@ class CreatureEntity extends Entity {
         return this.setWisdom(this.abilityScore["WISDOM"] + number);
     }
     getWisdom() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["WISDOM"] + this.abilityScoreModifier["WISDOM"];
@@ -785,7 +785,7 @@ class CreatureEntity extends Entity {
         return this.setCharisma(this.abilityScore["CHARISMA"] + number);
     }
     getCharisma() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.abilityScore["CHARISMA"] + this.abilityScoreModifier["CHARISMA"];
@@ -820,7 +820,7 @@ class CreatureEntity extends Entity {
     setHealth(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             this.health = this.getMaxHealth();
             return 0;
         }
@@ -865,7 +865,7 @@ class CreatureEntity extends Entity {
     setStamina(number = 0) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             this.stamina = 0;
             return 0;
         }
@@ -1110,7 +1110,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} proficiency ProficiencyEnum
-     * @returns number
+     * @returns {number}
      */
     addProficiency(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
@@ -1127,7 +1127,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} proficiency ProficiencyEnum
-     * @returns number
+     * @returns {number}
      */
     removeProficiency(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
@@ -1144,7 +1144,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} proficiency ProficiencyEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasProficiency(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
@@ -1160,7 +1160,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} proficiency ProficiencyEnum
-     * @returns number;
+     * @returns {number}
      */
     getSkillScore(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
@@ -1178,7 +1178,7 @@ class CreatureEntity extends Entity {
         return number;
     }
     /**
-     * @returns number
+     * @returns {number}
      */
     clearSkills() {
         this.proficiencies.clear();
@@ -1234,7 +1234,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} condition ConditionEnum
-     * @returns number
+     * @returns {number}
      */
     addCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
@@ -1251,7 +1251,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} condition ConditionEnum
-     * @returns number
+     * @returns {number}
      */
     removeCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
@@ -1268,7 +1268,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} condition ConditionEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
@@ -1289,16 +1289,16 @@ class CreatureEntity extends Entity {
     }
 
     /**
-     * @returns number
+     * @returns {number}
      */
     getExhaustion() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return 0;
         }
         return this.exhaustion + this.exhaustionEffectModifier + this.exhaustionConditionModifier;
     }
     /**
-     * @returns number
+     * @returns {number}
      */
     getMovementSpeed() {
         if (this.movementSpeedEffectOverride != 0) {
@@ -1314,10 +1314,10 @@ class CreatureEntity extends Entity {
     }
 
     /**
-     * @returns boolean
+     * @returns {boolean}
      */
     hasAdvantageOnAttack() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (this.vantageOnAttackEffectOverride != 0) {
@@ -1332,10 +1332,10 @@ class CreatureEntity extends Entity {
         return false;
     }
     /**
-     * @returns boolean
+     * @returns {boolean}
      */
     hasDisadvantageOnAttack() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (this.vantageOnAttackEffectOverride != 0) {
@@ -1350,10 +1350,10 @@ class CreatureEntity extends Entity {
         return false;
     }
     /**
-     * @returns boolean
+     * @returns {boolean}
      */
     hasAdvantageAgainstAttack() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (this.vantageAgainstAttackEffectOverride != 0) {
@@ -1368,10 +1368,10 @@ class CreatureEntity extends Entity {
         return false;
     }
     /**
-     * @returns boolean
+     * @returns {boolean}
      */
     hasDisadvantageAgainstAttack() {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (this.vantageAgainstAttackEffectOverride != 0) {
@@ -1389,10 +1389,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasAdvantageOnAbility(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1420,10 +1420,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasDisadvantageOnAbility(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1452,10 +1452,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} sense SenseEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasAdvantageOnSense(sense) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (!SenseEnum.hasOwnProperty(sense)) {
@@ -1483,10 +1483,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} sense SenseEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasDisadvantageOnSense(sense) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (!SenseEnum.hasOwnProperty(sense)) {
@@ -1515,10 +1515,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasAdvantageOnSavingThrow(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1546,10 +1546,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     hasDisadvantageOnSavingThrow(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1578,10 +1578,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     succeedOnSavingThrow(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1609,10 +1609,10 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} ability AbilityEnum
-     * @returns boolean
+     * @returns {boolean}
      */
     failOnSavingThrow(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return false;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -1639,7 +1639,7 @@ class CreatureEntity extends Entity {
     }
 
     /**
-     * @returns number
+     * @returns {number}
      */
     applyConditions() {
         this.resetConditionProperties();
@@ -1654,7 +1654,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {string|number} condition ConditionEnum
-     * @returns number
+     * @returns {number}
      */
     applyCondition(condition) {
         if (!ConditionEnum.hasOwnProperty(condition)) {
@@ -1777,7 +1777,7 @@ class CreatureEntity extends Entity {
         return 0;
     }
     /**
-     * @returns number;
+     * @returns {number}
      */
     applyExhaustion() {
         switch (this.getExaustion()) {
@@ -1788,11 +1788,11 @@ class CreatureEntity extends Entity {
                 this.movementSpeedConditionOverride = 0;
             }
             case 4: {
-                if (this.healthMaxConditionOverride == -1) {
-                    this.healthMaxConditionOverride = Math.floor(this.getMaxHealth() / 2);
+                if (this.maxHealthConditionOverride == -1) {
+                    this.maxHealthConditionOverride = Math.floor(this.getMaxHealth() / 2);
                 }
-                if (this.health > this.healthMaxConditionOverride) {
-                    this.health = this.healthMaxConditionOverride;
+                if (this.health > this.maxHealthConditionOverride) {
+                    this.health = this.maxHealthConditionOverride;
                 }
             }
             case 3: {
@@ -1822,7 +1822,7 @@ class CreatureEntity extends Entity {
     }
     /**
      * Resets all properties modified by effects
-     * @returns number
+     * @returns {number}
      */
     resetEffectProperties() {
         super.resetEffectProperties();
@@ -1862,7 +1862,7 @@ class CreatureEntity extends Entity {
     }
     /**
      * Resets all properties modified by conditions
-     * @returns number
+     * @returns {number}
      */
     resetConditionProperties() {
         super.resetConditionProperties();
@@ -1907,6 +1907,7 @@ class CreatureEntity extends Entity {
 
     /**
      * Resets all modifier properties
+     * @returns {number}
      */
     resetModifiers() {
         super.resetModifiers();
@@ -1945,6 +1946,7 @@ class CreatureEntity extends Entity {
     }
     /**
      * Resets all override properties
+     * @returns {number}
      */
     resetOverrides() {
         super.resetOverrides();
@@ -2006,7 +2008,7 @@ class CreatureEntity extends Entity {
     }
     /**
      * Resets combat action properties
-     * @returns 0
+     * @returns {number}
      */
     resetCombatActions() {
         this.usedStandardActions = 0;
@@ -2018,10 +2020,10 @@ class CreatureEntity extends Entity {
     /**
      * Returns ability score
      * @param {string|number} ability AbilityEnum
-     * @returns number
+     * @returns {number}
      */
     getAbility(ability) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         if (!AbilityEnum.hasOwnProperty(ability)) {
@@ -2037,7 +2039,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {boolean} [firstTime] If this is the first run
-     * @returns number
+     * @returns {number}
      */
     generateProperties(firstTime = false) {
         if (this.creatureType == CreatureType.HUMANOID) {
@@ -2048,7 +2050,7 @@ class CreatureEntity extends Entity {
     /**
      * 
      * @param {boolean} [firstTime] If this is the first run
-     * @returns number
+     * @returns {number}
      */
     generateBaseStats(firstTime = false) {
         let healthFraction = 1;
@@ -2060,7 +2062,7 @@ class CreatureEntity extends Entity {
         return 0;
     }
     /**
-     * @returns number
+     * @returns {number}
      */
     generateAdditionalStats() {
         this.armourClass = 0;
@@ -2120,10 +2122,6 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("canHarmCharmTarget")) this.canHarmCharmTarget = entity.canHarmCharmTarget;
         if (entity.hasOwnProperty("fearTarget")) this.fearTarget = entity.fearTarget;
         if (entity.hasOwnProperty("canHarmFearTarget")) this.canHarmFearTarget = entity.canHarmFearTarget;
-        if (entity.hasOwnProperty("armourClassConditionModifier")) this.armourClassConditionModifier = entity.armourClassConditionModifier;
-        if (entity.hasOwnProperty("armourClassConditionOverride")) this.armourClassConditionOverride = entity.armourClassConditionOverride;
-        if (entity.hasOwnProperty("movementSpeedConditionModifier")) this.movementSpeedConditionModifier = entity.movementSpeedConditionModifier;
-        if (entity.hasOwnProperty("movementSpeedConditionOverride")) this.movementSpeedConditionOverride = entity.movementSpeedConditionOverride;
         if (entity.hasOwnProperty("standardActionsOverride")) this.standardActionsOverride = entity.standardActionsOverride;
         if (entity.hasOwnProperty("movementActionsOverride")) this.movementActionsOverride = entity.movementActionsOverride;
         if (entity.hasOwnProperty("bonusActionsOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;
@@ -2133,44 +2131,18 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("_canSpeak")) this._canSpeak = entity._canSpeak;
         if (entity.hasOwnProperty("_canHear")) this._canHear = entity._canHear;
         if (entity.hasOwnProperty("_canSee")) this._canSee = entity._canSee;
-        if (entity.hasOwnProperty("_canMoveConditionOverride")) this._canMoveConditionOverride = entity._canMoveConditionOverride;
-        if (entity.hasOwnProperty("_canHoldConditionOverride")) this._canHoldConditionOverride = entity._canHoldConditionOverride;
-        if (entity.hasOwnProperty("_canSpeakConditionOverride")) this._canSpeakConditionOverride = entity._canSpeakConditionOverride;
-        if (entity.hasOwnProperty("_canHearConditionOverride")) this._canHearConditionOverride = entity._canHearConditionOverride;
-        if (entity.hasOwnProperty("_canSeeConditionOverride")) this._canSeeConditionOverride = entity._canSeeConditionOverride;
-        if (entity.hasOwnProperty("_canMoveEffectOverride")) this._canMoveEffectOverride = entity._canMoveEffectOverride;
-        if (entity.hasOwnProperty("_canHoldEffectOverride")) this._canHoldEffectOverride = entity._canHoldEffectOverride;
-        if (entity.hasOwnProperty("_canSpeaEffectnOverride")) this._canSpeakEffectOverride = entity._canSpeakEffectOverride;
-        if (entity.hasOwnProperty("_canHearEffectOverride")) this._canHearEffectOverride = entity._canHearEffectOverride;
-        if (entity.hasOwnProperty("_canSeeCEffectverride")) this._canSeeEffectOverride = entity._canSeeEffectOverride;
         if (entity.hasOwnProperty("vantageOnAttack")) this.vantageOnAttack = entity.vantageOnAttack;
-        if (entity.hasOwnProperty("vantageOnAttackConditionOverride")) this.vantageOnAttackConditionOverride = entity.vantageOnAttackConditionOverride;
-        if (entity.hasOwnProperty("vantageOnAttackEffectOverride")) this.vantageOnAttackEffectOverride = entity.vantageOnAttackEffectOverride;
         if (entity.hasOwnProperty("vantageAgainstAttack")) this.vantageAgainstAttack = entity.vantageAgainstAttack;
-        if (entity.hasOwnProperty("vantageAgainstAttackConditionOverride")) this.vantageAgainstAttackConditionOverride = entity.vantageAgainstAttackConditionOverride;
-        if (entity.hasOwnProperty("vantageAgainstAttackEffectOverride")) this.vantageAgainstAttackEffectOverride = entity.vantageAgainstAttackEffectOverride;
         if (entity.hasOwnProperty("vantageAbilityChecks")) this.vantageAbilityChecks = Object.assign({}, entity.vantageAbilityChecks);
-        if (entity.hasOwnProperty("vantageAbilityChecksConditionOverride")) this.vantageAbilityChecksConditionOverride = Object.assign({}, entity.vantageAbilityChecksConditionOverride);
-        if (entity.hasOwnProperty("vantageAbilityChecksEffectOverride")) this.vantageAbilityChecksEffectOverride = Object.assign({}, entity.vantageAbilityChecksEffectOverride);
         if (entity.hasOwnProperty("vantageAbilityChecksOverride")) this.vantageAbilityChecksOverride = Object.assign({}, entity.vantageAbilityChecksOverride);
         if (entity.hasOwnProperty("vantageSenseChecks")) this.vantageSenseChecks = Object.assign({}, entity.vantageSenseChecks);
-        if (entity.hasOwnProperty("vantageSenseChecksConditionOverride")) this.vantageSenseChecksConditionOverride = Object.assign({}, entity.vantageSenseChecksConditionOverride);
-        if (entity.hasOwnProperty("vantageSenseChecksEffectOverride")) this.vantageSenseChecksEffectOverride = Object.assign({}, entity.vantageSenseChecksEffectOverride);
         if (entity.hasOwnProperty("vantageSenseChecksOverride")) this.vantageSenseChecksOverride = Object.assign({}, entity.vantageSenseChecksOverride);
         if (entity.hasOwnProperty("vantageSavingThrows")) this.vantageSavingThrows = Object.assign({}, entity.vantageSavingThrows);
-        if (entity.hasOwnProperty("vantageSavingThrowsConditionOverride")) this.vantageSavingThrowsConditionOverride = Object.assign({}, entity.vantageSavingThrowsConditionOverride);
-        if (entity.hasOwnProperty("vantageSavingThrowsEffectOverride")) this.vantageSavingThrowsEffectOverride = Object.assign({}, entity.vantageSavingThrowsEffectOverride);
         if (entity.hasOwnProperty("vantageSavingThrowsOverride")) this.vantageSavingThrowsOverride = Object.assign({}, entity.vantageSavingThrowsOverride);
         if (entity.hasOwnProperty("failSucceedSavingThrows")) this.failSucceedSavingThrows = Object.assign({}, entity.failSucceedSavingThrows);
-        if (entity.hasOwnProperty("failSucceedSavingThrowsConditionOverride")) this.failSucceedSavingThrowsConditionOverride = Object.assign({}, entity.failSucceedSavingThrowsConditionOverride);
-        if (entity.hasOwnProperty("failSucceedSavingThrowsEffectOverride")) this.failSucceedSavingThrowsEffectOverride = Object.assign({}, entity.failSucceedSavingThrowsEffectOverride);
         if (entity.hasOwnProperty("failSucceedSavingThrowsOverride")) this.failSucceedSavingThrowsOverride = Object.assign({}, entity.failSucceedSavingThrowsOverride);
         if (entity.hasOwnProperty("resistanceTo")) this.resistanceTo = Object.assign({}, entity.resistanceTo);
-        if (entity.hasOwnProperty("resistanceToConditionOverride")) this.resistanceToConditionOverride = Object.assign({}, entity.resistanceToConditionOverride);
-        if (entity.hasOwnProperty("resistanceToEffectOverride")) this.resistanceToEffectOverride = Object.assign({}, entity.resistanceToEffectOverride);
         if (entity.hasOwnProperty("immuneTo")) this.immuneTo = Object.assign({}, entity.immuneTo);
-        if (entity.hasOwnProperty("immuneToConditionOverride")) this.immuneToConditionOverride = Object.assign({}, entity.immuneToConditionOverride);
-        if (entity.hasOwnProperty("immuneToEffectOverride")) this.immuneToEffectOverride = Object.assign({}, entity.immuneToEffectOverride);
         if (entity.hasOwnProperty("level")) this.level = entity._level;
         if (entity.hasOwnProperty("experiencePoints")) this.experiencePoints = entity.experiencePoints;
         if (entity.hasOwnProperty("stamina")) this.stamina = entity.stamina;
@@ -2191,35 +2163,19 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("usedStandardActions")) this.usedStandardActions = entity.usedStandardActions;
         if (entity.hasOwnProperty("standardActions")) this.standardActions = entity.standardActions;
         if (entity.hasOwnProperty("standardActionsModifier")) this.standardActionsModifier = entity.standardActionsModifier;
-        if (entity.hasOwnProperty("standardActionsConditionModifier")) this.standardActionsConditionModifier = entity.standardActionsConditionModifier;
-        if (entity.hasOwnProperty("standardActionsEffectModifier")) this.standardActionsEffectModifier = entity.standardActionsEffectModifier;
         if (entity.hasOwnProperty("standardActionsOverride")) this.standardActionsOverride = entity.standardActionsOverride;
-        if (entity.hasOwnProperty("standardActionsConditionOverride")) this.standardActionsConditionOverride = entity.standardActionsConditionOverride;
-        if (entity.hasOwnProperty("standardActionsEffectOverride")) this.standardActionsEffectOverride = entity.standardActionsEffectOverride;
         if (entity.hasOwnProperty("usedMovementActions")) this.usedMovementActions = entity.usedMovementActions;
         if (entity.hasOwnProperty("movementActions")) this.movementActions = entity.movementActions;
         if (entity.hasOwnProperty("movementActionsModifier")) this.movementActionsModifier = entity.movementActionsModifier;
-        if (entity.hasOwnProperty("movementActionsConditionModifier")) this.movementActionsConditionModifier = entity.movementActionsConditionModifier;
-        if (entity.hasOwnProperty("movementActionsEffectModifier")) this.movementActionsEffectModifier = entity.movementActionsEffectModifier;
         if (entity.hasOwnProperty("movementActionsOverride")) this.movementActionsOverride = entity.movementActionsOverride;
-        if (entity.hasOwnProperty("movementActionsConditionOverride")) this.movementActionsConditionOverride = entity.movementActionsConditionOverride;
-        if (entity.hasOwnProperty("movementActionsEffectOverride")) this.movementActionsEffectOverride = entity.movementActionsEffectOverride;
         if (entity.hasOwnProperty("usedBonusActions")) this.usedBonusActions = entity.usedBonusActions;
         if (entity.hasOwnProperty("bonusActions")) this.bonusActions = entity.bonusActions;
         if (entity.hasOwnProperty("bonusActionsModifier")) this.bonusActionsModifier = entity.bonusActionsModifier;
-        if (entity.hasOwnProperty("bonusActionsConditionModifier")) this.bonusActionsConditionModifier = entity.bonusActionsConditionModifier;
-        if (entity.hasOwnProperty("bonusActionsEffectModifier")) this.bonusActionsEffectModifier = entity.bonusActionsEffectModifier;
         if (entity.hasOwnProperty("bonusActionsOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;
-        if (entity.hasOwnProperty("bonusActionsConditionOverride")) this.bonusActionsConditionOverride = entity.bonusActionsConditionOverride;
-        if (entity.hasOwnProperty("bonusActionsEffectOverride")) this.bonusActionsEffectOverride = entity.bonusActionsEffectOverride;
         if (entity.hasOwnProperty("usedReactions")) this.usedReactions = entity.usedReactions;
         if (entity.hasOwnProperty("reactions")) this.reactions = entity.reactions;
         if (entity.hasOwnProperty("reactionsModifier")) this.reactionsModifier = entity.reactionsModifier;
-        if (entity.hasOwnProperty("reactionsConditionModifier")) this.reactionsConditionModifier = entity.reactionsConditionModifier;
-        if (entity.hasOwnProperty("reactionsEffectModifier")) this.reactionsEffectModifier = entity.reactionsEffectModifier;
         if (entity.hasOwnProperty("reactionsOverride")) this.reactionsOverride = entity.reactionsOverride;
-        if (entity.hasOwnProperty("reactionsConditionOverride")) this.reactionsConditionOverride = entity.reactionsConditionOverride;
-        if (entity.hasOwnProperty("reactionsEffectOverride")) this.reactionsEffectOverride = entity.reactionsEffectOverride;
         return 0;
     }
     dispose() {

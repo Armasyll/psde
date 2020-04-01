@@ -11,9 +11,12 @@ class Effect {
         /**
          * Pseudo-map of properties to the functions that set them
          * {string: {OperatorEnum: function}}
-         * @type {object}
+         * @example {"health": {OperationsEnum.ADD: 1}}
+         * @example {"health": {OperationsEnum.ADD: function() {return 1;}}}
+         * @example {"health": {OperationsEnum.ADD: function(creatureEntity) {return creatureEntity.getHealth() + 1;}}}
+         * @type {Object.<string: Object.<OperationsEnum: number|function>}
          */
-        this.modifiers = {};
+        this.modifiers = {"conditions":[]};
         this.statusType = DamageEnum.BLUDGEONING;
 
         /**
@@ -65,22 +68,27 @@ class Effect {
     getIcon() {
         return this.iconID;
     }
+
+    /**
+     * 
+     * @param {string} property Property
+     * @returns {boolean}
+     */
+    allowedProperty(property) {
+        return Effect.allowedProperties.hasOwnProperty(property);
+    }
+
     addModifier(property, operation = OperationsEnum.ADD, modification = 1) {
         if (Game.debugMode) console.log(`Running ${this.id}.addModifier(${property}, ${operation}, ${typeof modification == "function" ? "function()" : modification})`);
         if (!OperationsEnum.properties.hasOwnProperty(operation)) {
             if (Game.debugMode) console.log("Incorrect operation");
             return this;
         }
-        if (this.allowedProperty(property)) {
-            if (property == "conditions") {
-                if (!this.modifiers.hasOwnProperty("conditions")) {
-                    this.modifiers["conditions"] = [];
-                }
-                this.modifiers["conditions"].push({"operation":operation, "modification":modification});
-            }
-            else {
-                this.modifiers[property] = {"operation":operation, "modification":modification};
-            }
+        if (property == "conditions") {
+            this.modifiers["conditions"].push({"operation":operation, "modification":modification});
+        }
+        else {
+            this.modifiers[property] = {"operation":operation, "modification":modification};
         }
         return this;
     }
@@ -241,8 +249,9 @@ class Effect {
 
     dispose() {
         for (let property in this.modifiers) {
-            delete this.modifiers[property]["operation"]
-            delete this.modifiers[property]["modification"]
+            delete this.modifiers["conditions"];
+            delete this.modifiers[property]["operation"];
+            delete this.modifiers[property]["modification"];
             delete this.modifiers[property];
         }
         Effect.remove(this.id);
@@ -252,38 +261,45 @@ class Effect {
         return "Effect";
     }
 
-    static allowedProperties() {
-        return [
-            "godMode",
-            "godModeModifier",
-            "essential",
-            "essentialModifier",
-            "weightModifier",
-            "priceModifier",
-            "health",
-            "maxHealthModifier",
-            "hungerModifier",
-            "strengthModifier",
-            "dexterityModifier",
-            "constitutionModifier",
-            "intelligenceModifier",
-            "wisdomModifier",
-            "charismaModifier",
-            "staminaModifier",
-            "armedModifier",
-            "proficiencyBonusModifier",
-            "damageRollCountModifier",
-            "damageRollModifier",
-            "silveredModifier",
-            "conditions"
-        ];
-    }
-    allowedProperty(property) {
-        return Effect.allowedProperties().indexOf(property) != -1;
-    }
-
     static initialize() {
         Effect.effectList = {};
+        Effect.allowedProperties = {
+            // AbstractEntity
+            "health":true,
+            "healthEffectModifier":true,
+            "healthEffectOverride":true,
+            "maxHealthEffectModifier":true,
+            "maxHealthEffectOverride":true,
+            "godModeConditionOverride":true,
+            "godModeEffectOverride":true,
+            // CreatureEntity
+            "exhaustionEffectModifier":true,
+            "armourClassEffectModifier":true,
+            "armourClassEffectOverride":true,
+            "movementSpeedEffectModifier":true,
+            "movementSpeedEffectOverride":true,
+            "standardActionsEffectModifier":true,
+            "standardActionsEffectOverride":true,
+            "movementActionsEffectModifier":true,
+            "movementActionsEffectOverride":true,
+            "bonusActionsEffectModifier":true,
+            "bonusActionsEffectOverride":true,
+            "reactionsEffectModifier":true,
+            "reactionsEffectOverride":true,
+            "_canMoveEffectOverride":true,
+            "_canHoldEffectOverride":true,
+            "_canSpeakEffectOverride":true,
+            "_canHearEffectOverride":true,
+            "_canSeeEffectOverride":true,
+            "vantageOnAttackEffectOverride":true,
+            "vantageAgainstAttackEffectOverride":true,
+            "vantageAbilityChecksEffectOverride":true,
+            "vantageSenseChecksEffectOverride":true,
+            "vantageSavingThrowsEffectOverride":true,
+            "failSucceedSavingThrowsEffectOverride":true,
+            "resistanceToEffectOverride":true,
+            "immuneToEffectOverride":true
+        }
     }
     static get(id) {
         if (Effect.has(id)) {

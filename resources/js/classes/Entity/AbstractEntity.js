@@ -24,7 +24,6 @@ class AbstractEntity {
         this.target = null;
 
         this.health = 10;
-        this.healthOverride = -1;
 
         this.maxHealth = 10;
         this.maxHealthModifier = 0;
@@ -39,11 +38,15 @@ class AbstractEntity {
         this.specialProperties = {};
         this.defaultAction = null;
         this.godMode = false;
-        this.godModeModifier = false;
+        this.godModeOverride = -1;
+        this.godModeConditionOverride = -1;
+        this.godModeEffectOverride = -1;
         this.enabled = true;
         this.locked = false;
         this.essential = false;
-        this.essentialModifier = false;
+        this.essentialOverride = -1;
+        this.essentialConditionOverride = -1;
+        this.essentialEffectOverride = -1;
         this.inventory = null;
         /**
          * @type {object}
@@ -119,7 +122,7 @@ class AbstractEntity {
     setHealth(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             this.health = this.getMaxHealth();
             return 0;
         }
@@ -149,6 +152,9 @@ class AbstractEntity {
         return this.setHealth(this.health + number);
     }
     getHealth() {
+        if (this.isGod()) {
+            return this.getMaxHealth();
+        }
         return this.health;
     }
 
@@ -203,8 +209,22 @@ class AbstractEntity {
     disableGodMode() {
         return this.setGodMode(false);
     }
-    getGodMode() {
-        return this.godMode || this.godModeModifier;
+    isGod() {
+        if (this.godModeEffectOverride != -1) {
+            return this.godModeEffectOverride;
+        }
+        else if (this.godModeConditionOverride != -1) {
+            return this.godModeConditionOverride;
+        }
+        else if (this.godModeOverride != -1) {
+            return this.godModeOverride;
+        }
+        return this.godMode;
+    }
+    applyGodMode() {
+        if (this.isGod()) {
+            // Tell Game.
+        }
     }
 
     isEnabled() {
@@ -326,7 +346,21 @@ class AbstractEntity {
         return 0;
     }
     isEssential() {
-        return this.essential || this.essentialModifier;
+        if (this.essentialEffectOverride != -1) {
+            return this.essentialEffectOverride;
+        }
+        else if (this.essentialConditionOverride != -1) {
+            return this.essentialConditionOverride;
+        }
+        else if (this.essentialOverride != -1) {
+            return this.essentialOverride;
+        }
+        return this.essential;
+    }
+    applyEssential() {
+        if (this.isEssential()) {
+            // Tell Game.
+        }
     }
 
     kill() {
@@ -465,6 +499,9 @@ class AbstractEntity {
                         break;
                     }
                     case "conditions": {
+                        if (effect.getModifier("conditions").length == 0) {
+                            break;
+                        }
                         let conditions = effect.getModifier("conditions");
                         for (let j = 0; j < conditions.length; j++) {
                             if (conditions[j].operation == OperationsEnum.SUBTRACT) {
@@ -493,9 +530,9 @@ class AbstractEntity {
                         else if (typeof this[property] == "boolean") {
                             this[property] = effect.calculateModifier(property, this);
                         }
-                        else if (this[property] instanceof Set) {
+                        else if (typeof this[property] == "object") {
                             if (effect.modifiers[property]["operation"] == OperationsEnum.ADD) {
-                                this[property].add(effect.modifiers[property]["modification"]);
+                                this[property](effect.modifiers[property]["modification"]);
                             }
                             else if (effect.modifiers[property]["operation"] == OperationsEnum.SUBTRACT) {
                                 this[property].delete(effect.modifiers[property]["modification"]);
@@ -757,20 +794,52 @@ class AbstractEntity {
         return 0;
     }
 
+    /**
+     * Resets all properties modified by effects
+     * @returns {number}
+     */
+    resetEffectProperties() {
+        this.maxHealthEffectModifier = 0;
+        this.maxHealthEffectOverride = -1;
+        this.godModeEffectOverride = -1;
+        this.essentialEffectOverride = -1;
+        return 0;
+    }
+    /**
+     * Resets all properties modified by conditions
+     * @returns {number}
+     */
+    resetConditionProperties() {
+        this.maxHealthConditionModifier = 0;
+        this.maxHealthConditionOverride = -1;
+        this.godModeConditionOverride = -1;
+        this.essentialConditionOverride = -1;
+        return 0;
+    }
+    /**
+     * Resets all modifier properties
+     * @returns {number}
+     */
     resetModifiers() {
-        this.godModeModifier = false;
-        this.essentialModifier = false;
-        this.healthModifier = 0;
         this.maxHealthModifier = 0;
         this.maxHealthConditionModifier = 0;
         this.maxHealthEffectModifier = 0;
         return 0;
     }
+    /**
+     * Resets all override properties
+     * @returns {number}
+     */
     resetOverrides() {
-        this.healthOverride = -1;
         this.maxHealthOverride = -1;
         this.maxHealthConditionOverride = -1;
         this.maxHealthEffectOverride = -1;
+        this.godModeOverride = -1;
+        this.godModeConditionOverride = -1;
+        this.godModeEffectOverride = -1;
+        this.essentialOverride = -1;
+        this.essentialConditionOverride = -1;
+        this.essentialEffectOverride = -1;
         return 0;
     }
 
@@ -797,25 +866,15 @@ class AbstractEntity {
             return 2;
         }
         if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
-        if (entity.hasOwnProperty("health")) this.setHealth(entity.health);
-        if (entity.hasOwnProperty("maxHealth")) this.setMaxHealth(entity.maxHealth);
+        if (entity.hasOwnProperty("health")) this.health = entity.health;
+        if (entity.hasOwnProperty("maxHealth")) this.maxHealth = entity.maxHealth;
         if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
         if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
-        if (entity.hasOwnProperty("maxHealthConditionModifier")) this.maxHealthConditionModifier = entity.maxHealthConditionModifier;
-        if (entity.hasOwnProperty("maxHealthConditionOverride")) this.maxHealthConditionOverride = entity.maxHealthConditionOverride;
-        if (entity.hasOwnProperty("maxHealthEffectModifier")) this.maxHealthEffectModifier = entity.maxHealthEffectModifier;
-        if (entity.hasOwnProperty("maxHealthEffectOverride")) this.maxHealthEffectOverride = entity.maxHealthEffectOverride;
         if (entity.hasOwnProperty("owner")) this.setOwner(entity.owner);
-        if (entity.hasOwnProperty("godMode")) {
-            if (entity.godMode) {
-                this.setGodMode(true);
-            }
-        }
-        if (entity.hasOwnProperty("essential")) {
-            if (entity.essential) {
-                this.setEssential(true);
-            }
-        }
+        if (entity.hasOwnProperty("godMode")) this.godMode = godMode;
+        if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = godModeOverride;
+        if (entity.hasOwnProperty("essential")) this.essential = essential;
+        if (entity.hasOwnProperty("essentialOverride")) this.essentialOverride = essentialOverride;
         if (entity.hasOwnProperty("effects")) {
             for (let effect in entity.effects) {
                 for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {
@@ -830,6 +889,8 @@ class AbstractEntity {
                 }
             }
         }
+        this.applyGodMode();
+        this.applyEssential();
         return 0;
     }
     dispose() {

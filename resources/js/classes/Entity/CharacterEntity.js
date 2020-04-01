@@ -661,7 +661,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["passion"] = number;
     }
     getCharacterPassion(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["passion"];
@@ -670,7 +670,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["friendship"] = number;
     }
     getCharacterFriendship(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["friendship"];
@@ -679,7 +679,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["playfulness"] = number;
     }
     getCharacterPlayfulness(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["playfulness"];
@@ -688,7 +688,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["soulmate"] = number;
     }
     getCharacterSoulmate(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["soulmate"];
@@ -697,7 +697,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["familial"] = number;
     }
     getCharacterFamilial(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["familial"];
@@ -706,7 +706,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["obsession"] = number;
     }
     getCharacterObsession(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
         return this.characterDisposition[_character]["obsession"];
@@ -715,7 +715,7 @@ class CharacterEntity extends CreatureEntity {
         return this.characterDisposition[_character]["hate"] = number;
     }
     getCharacterHate(_character) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER; // SO MUCH HATE >:VVVVV
         }
         return this.characterDisposition[_character]["hate"];
@@ -741,7 +741,7 @@ class CharacterEntity extends CreatureEntity {
         }
     }
     hasCharacterDisposition(characterID) {
-        if (this.getGodMode()) {
+        if (this.isGod()) {
             return true;
         }
         return this.characterDisposition.hasOwnProperty(characterID);

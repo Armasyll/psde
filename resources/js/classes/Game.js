@@ -1469,7 +1469,7 @@ class Game {
      * @param {string} imageID SVG Document ID
      * @param {string} newImageID new Image ID
      * @param {object} elementStyles eg. {iris:{background:green}, sclera:{background:#fff}}
-     * @returns 
+     * @returns {SVGElement}
      */
     static modifySVG(imageID, newImageID, elementStyles) {
         if (!Game.loadedSVGDocuments.hasOwnProperty(imageID)) {
