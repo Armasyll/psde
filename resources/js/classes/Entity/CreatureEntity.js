@@ -121,7 +121,7 @@ class CreatureEntity extends Entity {
             "CONSTITUTION":0,
             "INTELLIGENCE":0,
             "WISDOM":0,
-            "CHARISMA":00
+            "CHARISMA":0
         };
 
         /**
@@ -391,7 +391,7 @@ class CreatureEntity extends Entity {
         /**
          * @type {boolean}
          */
-        this.nearDeathThisWindow = false;
+        this._nearDeathThisWindow = false;
         /**
          * Size
          * @type {SizeEnum}
@@ -461,23 +461,33 @@ class CreatureEntity extends Entity {
         /**
          * @type {boolean}
          */
-        this.canMove = true;
+        this._canMove = 1;
+        this._canMoveConditionOverride = -1;
+        this._canMoveEffectOverride = -1;
         /**
          * @type {boolean}
          */
-        this.canHold = true;
+        this._canHold = 1;
+        this._canHoldConditionOverride = -1;
+        this._canHoldEffectOverride = -1;
         /**
          * @type {boolean}
          */
-        this.canSpeak = true;
+        this._canSpeak = 1;
+        this._canSpeakConditionOverride = -1;
+        this._canSpeakEffectOverride = -1;
         /**
          * @type {boolean}
          */
-        this.canHear = true;
+        this._canHear = 1;
+        this._canHearConditionOverride = -1;
+        this._canHearEffectOverride = -1;
         /**
          * @type {boolean}
          */
-        this.canSee = true;
+        this._canSee = 1;
+        this._canSeeConditionOverride = -1;
+        this._canSeeEffectOverride = -1;
 
         this.vantageOnAttack = 0;
         this.vantageOnAttackConditionOverride = 0;
@@ -510,55 +520,38 @@ class CreatureEntity extends Entity {
         this.vantageSenseChecksConditionOverride = Object.assign({}, this.vantageSenseChecks);
         this.vantageSenseChecksEffectOverride = Object.assign({}, this.vantageSenseChecks);
 
-        this.vantageSavingThrows = {
-            "STRENGTH":0,
-            "DEXTERITY":0,
-            "CONSTITUTION":0,
-            "INTELLIGENCE":0,
-            "WISDOM":0,
-            "CHARISMA":0
-        };
-        this.vantageSavingThrowsOverride = Object.assign({}, this.vantageSavingThrows);
-        this.vantageSavingThrowsConditionOverride = Object.assign({}, this.vantageSavingThrows);
-        this.vantageSavingThrowsEffectOverride = Object.assign({}, this.vantageSavingThrows);
+        this.vantageSavingThrows = Object.assign({}, this.vantageAbilityChecks);
+        this.vantageSavingThrowsOverride = Object.assign({}, this.vantageAbilityChecks);
+        this.vantageSavingThrowsConditionOverride = Object.assign({}, this.vantageAbilityChecks);
+        this.vantageSavingThrowsEffectOverride = Object.assign({}, this.vantageAbilityChecks);
+
+        this.failSucceedSavingThrows = Object.assign({}, this.vantageAbilityChecks);
+        this.failSucceedSavingThrowsOverride = Object.assign({}, this.vantageAbilityChecks);
+        this.failSucceedSavingThrowsConditionOverride = Object.assign({}, this.vantageAbilityChecks);
+        this.failSucceedSavingThrowsEffectOverride = Object.assign({}, this.vantageAbilityChecks);
 
         this.resistanceTo = {
-            "BLUDGEONING":false,
-            "ACID":false,
-            "COLD":false,
-            "FIRE":false,
-            "FORCE":false,
-            "LIGHTNING":false,
-            "NECROTIC":false,
-            "PIERCING":false,
-            "POISON":false,
-            "PSYCHIC":false,
-            "RADIANT":false,
-            "SLASHING":false,
-            "THUNDER":false,
-            "DISEASE":false,
+            "BLUDGEONING":0,
+            "ACID":0,
+            "COLD":0,
+            "FIRE":0,
+            "FORCE":0,
+            "LIGHTNING":0,
+            "NECROTIC":0,
+            "PIERCING":0,
+            "POISON":0,
+            "PSYCHIC":0,
+            "RADIANT":0,
+            "SLASHING":0,
+            "THUNDER":0,
+            "DISEASE":0,
         }
         this.resistanceToConditionOverride = Object.assign({}, this.resistanceTo);
         this.resistanceToEffectOverride = Object.assign({}, this.resistanceTo);
 
-        this.immuneTo = {
-            "BLUDGEONING":false,
-            "ACID":false,
-            "COLD":false,
-            "FIRE":false,
-            "FORCE":false,
-            "LIGHTNING":false,
-            "NECROTIC":false,
-            "PIERCING":false,
-            "POISON":false,
-            "PSYCHIC":false,
-            "RADIANT":false,
-            "SLASHING":false,
-            "THUNDER":false,
-            "DISEASE":false
-        };
-        this.immuneToConditionOverride = Object.assign({}, this.immuneTo);
-        this.immuneToEffectOverride = Object.assign({}, this.immuneTo);
+        this.immuneTo = Object.assign({}, this.resistanceTo);
+        this.immuneToConditionOverride = Object.assign({}, this.resistanceTo);
+        this.immuneToEffectOverride = Object.assign({}, this.resistanceTo);
 
         this.setSex(sex);
         this.setCreatureType(creatureType);
@@ -704,7 +697,7 @@ class CreatureEntity extends Entity {
     modifyStrength(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
-        return this.setStrength(this.string + number);
+        return this.setStrength(this.abilityScore["STRENGTH"] + number);
     }
     getStrength() {
         if (this.getGodMode()) {
@@ -798,14 +791,7 @@ class CreatureEntity extends Entity {
         return this.abilityScore["CHARISMA"] + this.abilityScoreModifier["CHARISMA"];
     }
     getAbilityScores() {
-        return {
-            "STRENGTH": this.abilityScore["STRENGTH"],
-            "DEXTERITY": this.abilityScore["DEXTERITY"],
-            "CONSTITUTION": this.abilityScore["CONSTITUTION"],
-            "INTELLIGENCE": this.abilityScore["INTELLIGENCE"],
-            "WISDOM": this.abilityScore["WISDOM"],
-            "CHARISMA": this.abilityScore["CHARISMA"]
-        };
+        return this.abilityScore;
     }
 
     getLevel() {
@@ -853,10 +839,10 @@ class CreatureEntity extends Entity {
         this.health = number;
         if (this.health <= tempNumber) {
             this.living = false;
-            if (!this.nearDeathThisWindow) {
+            if (!this._nearDeathThisWindow) {
                 this.stabilized = false;
                 this.addCondition(ConditionEnum.DEAD);
-                this.nearDeathThisWindow = true;
+                this._nearDeathThisWindow = true;
             }
             if (this.hasController()) {
                 this.controller.doDeath();
@@ -864,14 +850,14 @@ class CreatureEntity extends Entity {
         }
         else if (this.health <= 0) {
             this.living = true;
-            if (!this.nearDeathThisWindow) {
+            if (!this._nearDeathThisWindow) {
                 this.stabilized = false;
                 this.addCondition(ConditionEnum.UNCONSCIOUS);
-                this.nearDeathThisWindow = true;
+                this._nearDeathThisWindow = true;
             }
         }
         else {
-            this.nearDeathThisWindow = false;
+            this._nearDeathThisWindow = false;
         }
         return 0;
     }
@@ -1042,6 +1028,25 @@ class CreatureEntity extends Entity {
     getSize() {
         return this.size;
     }
+
+    getFurniture() {
+        return this.furniture;
+    }
+    hasFurniture() {
+        return InstancedFurnitureEntity.has(this.furniture);
+    }
+    setFurniture(instancedFurnitureEntity) {
+        if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
+            this.furniture = instancedFurnitureEntity.getID();
+            instancedFurnitureEntity.addCharacter(this);
+        }
+        return 0;
+    }
+    removeFurniture() {
+        this.furniture = null;
+        return 0;
+    }
+
     setSpellSlot(spellSlot, number = 1) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
@@ -1102,6 +1107,11 @@ class CreatureEntity extends Entity {
         return 0;
     }
 
+    /**
+     * 
+     * @param {string|number} proficiency ProficiencyEnum
+     * @returns number
+     */
     addProficiency(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
             if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
@@ -1114,10 +1124,28 @@ class CreatureEntity extends Entity {
         this.proficiencies[proficiency] = true;
         return 0;
     }
+    /**
+     * 
+     * @param {string|number} proficiency ProficiencyEnum
+     * @returns number
+     */
     removeProficiency(proficiency) {
+        if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
+            if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = ProficiencyEnum.properties[proficiency].key;
+            }
+            else {
+                return 1;
+            }
+        }
         delete this.proficiencies[proficiency];
         return 0;
     }
+    /**
+     * 
+     * @param {string|number} proficiency ProficiencyEnum
+     * @returns boolean
+     */
     hasProficiency(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
             if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
@@ -1127,15 +1155,20 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        return this.proficiencies.hasOwnProperty(proficiency);
+        return this.proficiencies[proficiency] === true;
     }
+    /**
+     * 
+     * @param {string|number} proficiency ProficiencyEnum
+     * @returns number;
+     */
     getSkillScore(proficiency) {
         if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
             if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
                 proficiency = ProficiencyEnum.properties[proficiency].key;
             }
             else {
-                return false;
+                return 0;
             }
         }
         let number = Game.calculateAbilityModifier(this.getAbility(Game.getSkillAbility(proficiency)));
@@ -1144,11 +1177,65 @@ class CreatureEntity extends Entity {
         }
         return number;
     }
+    /**
+     * @returns number
+     */
     clearSkills() {
         this.proficiencies.clear();
         return 0;
     }
 
+    canMove() {
+        if (this._canMoveEffectOverride >= 0) {
+            return this._canMoveEffectOverride == 1;
+        }
+        else if (this._canMoveConditionOverride >= 0) {
+            return this._canMoveConditionOverride == 1;
+        }
+        return this._canMove == 1;
+    }
+    canHold() {
+        if (this._canHoldEffectOverride >= 0) {
+            return this._canHoldEffectOverride == 1;
+        }
+        else if (this._canHoldConditionOverride >= 0) {
+            return this._canHoldConditionOverride == 1;
+        }
+        return this._canHold == 1;
+    }
+    canSpeak() {
+        if (this._canSpeakEffectOverride >= 0) {
+            return this._canSpeakEffectOverride == 1;
+        }
+        else if (this._canSpeakConditionOverride >= 0) {
+            return this._canSpeakConditionOverride == 1;
+        }
+        return this._canSpeak == 1;
+    }
+    canHear() {
+        if (this._canHearEffectOverride >= 0) {
+            return this._canHearEffectOverride == 1;
+        }
+        else if (this._canHearConditionOverride >= 0) {
+            return this._canHearConditionOverride == 1;
+        }
+        return this._canHear == 1;
+    }
+    canSee() {
+        if (this._canSeeEffectOverride >= 0) {
+            return this._canSeeEffectOverride == 1;
+        }
+        else if (this._canSeeConditionOverride >= 0) {
+            return this._canSeeConditionOverride == 1;
+        }
+        return this._canSee == 1;
+    }
+
+    /**
+     * 
+     * @param {string|number} condition ConditionEnum
+     * @returns number
+     */
     addCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
         else if (ConditionEnum.properties.hasOwnProperty(condition)) {
@@ -1158,8 +1245,14 @@ class CreatureEntity extends Entity {
             return 1;
         }
         this.conditions[condition] = true;
+        this.applyCondition(condition);
         return 0;
     }
+    /**
+     * 
+     * @param {string|number} condition ConditionEnum
+     * @returns number
+     */
     removeCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
         else if (ConditionEnum.properties.hasOwnProperty(condition)) {
@@ -1169,8 +1262,14 @@ class CreatureEntity extends Entity {
             return 1;
         }
         delete this.conditions[condition];
+        this.applyConditions();
         return 0;
     }
+    /**
+     * 
+     * @param {string|number} condition ConditionEnum
+     * @returns boolean
+     */
     hasCondition(condition) {
         if (ConditionEnum.hasOwnProperty(condition)) {}
         else if (ConditionEnum.properties.hasOwnProperty(condition)) {
@@ -1179,94 +1278,421 @@ class CreatureEntity extends Entity {
         else {
             return false;
         }
-        return this.conditions.hasOwnProperty(condition);
+        return this.conditions[condition] === true;
     }
     clearConditions() {
         for (let condition in this.conditions) {
-            this.removeCondition(condition);
+            delete this.conditions[condition];
         }
+        this.resetConditionProperties();
         return 0;
     }
 
+    /**
+     * @returns number
+     */
     getExhaustion() {
+        if (this.getGodMode()) {
+            return 0;
+        }
         return this.exhaustion + this.exhaustionEffectModifier + this.exhaustionConditionModifier;
     }
+    /**
+     * @returns number
+     */
     getMovementSpeed() {
-        if (this.movementSpeedEffectOverride >= 0) {
+        if (this.movementSpeedEffectOverride != 0) {
             return this.movementSpeedEffectOverride;
         }
-        else if (this.movementSpeedConditionOverride >= 0) {
+        else if (this.movementSpeedConditionOverride != 0) {
             return this.movementSpeedConditionOverride;
         }
-        else if (this.movementSpeedOverride >= 0) {
+        else if (this.movementSpeedOverride != 0) {
             return this.movementSpeedOverride;
         }
-        return this.movementSpeed + this.movementSpeedConditionModifier + this.movementSpeedEffectModifier
+        return this.movementSpeed + this.movementSpeedConditionModifier + this.movementSpeedEffectModifier;
     }
 
+    /**
+     * @returns boolean
+     */
+    hasAdvantageOnAttack() {
+        if (this.getGodMode()) {
+            return true;
+        }
+        if (this.vantageOnAttackEffectOverride != 0) {
+            return this.vantageOnAttackEffectOverride > 0;
+        }
+        else if (this.vantageOnAttackConditionOverride != 0) {
+            return this.vantageOnAttackConditionOverride > 0;
+        }
+        else if (this.vantageOnAttack != 0) {
+            return this.vantageOnAttack > 0;
+        }
+        return false;
+    }
+    /**
+     * @returns boolean
+     */
+    hasDisadvantageOnAttack() {
+        if (this.getGodMode()) {
+            return false;
+        }
+        if (this.vantageOnAttackEffectOverride != 0) {
+            return this.vantageOnAttackEffectOverride < 0;
+        }
+        else if (this.vantageOnAttackConditionOverride != 0) {
+            return this.vantageOnAttackConditionOverride < 0;
+        }
+        else if (this.vantageOnAttack != 0) {
+            return this.vantageOnAttack < 0;
+        }
+        return false;
+    }
+    /**
+     * @returns boolean
+     */
+    hasAdvantageAgainstAttack() {
+        if (this.getGodMode()) {
+            return true;
+        }
+        if (this.vantageAgainstAttackEffectOverride != 0) {
+            return this.vantageAgainstAttackEffectOverride > 0;
+        }
+        else if (this.vantageAgainstAttackConditionOverride != 0) {
+            return this.vantageAgainstAttackConditionOverride > 0;
+        }
+        else if (this.vantageAgainstAttack != 0) {
+            return this.vantageAgainstAttack > 0;
+        }
+        return false;
+    }
+    /**
+     * @returns boolean
+     */
+    hasDisadvantageAgainstAttack() {
+        if (this.getGodMode()) {
+            return false;
+        }
+        if (this.vantageAgainstAttackEffectOverride != 0) {
+            return this.vantageAgainstAttackEffectOverride < 0;
+        }
+        else if (this.vantageAgainstAttackConditionOverride != 0) {
+            return this.vantageAgainstAttackConditionOverride < 0;
+        }
+        else if (this.vantageAgainstAttack != 0) {
+            return this.vantageAgainstAttack < 0;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
     hasAdvantageOnAbility(ability) {
-        if (this.vantageAbilityChecksEffectOverride[ability] > 0) {
-            return this.vantageAbilityChecksEffectOverride[ability];
+        if (this.getGodMode()) {
+            return true;
         }
-        else if (this.vantageAbilityChecksConditionOverride[ability] > 0) {
-            return this.vantageAbilityChecksConditionOverride[ability];
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
         }
-        else if (this.vantageAbilityChecksOverride[ability] > 0) {
-            return this.vantageAbilityChecksOverride[ability];
+        if (this.vantageAbilityChecksEffectOverride != 0) {
+            return this.vantageAbilityChecksEffectOverride > 0;
         }
-        return this.vantageAbilityChecks[ability] > 0;
+        else if (this.vantageAbilityChecksConditionOverride != 0) {
+            return this.vantageAbilityChecksConditionOverride > 0;
+        }
+        else if (this.vantageAbilityChecksOverride != 0) {
+            return this.vantageAbilityChecksOverride > 0;
+        }
+        else if (this.vantageAbilityChecks != 0) {
+            return this.vantageAbilityChecks > 0;
+        }
+        return false;
     }
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
     hasDisadvantageOnAbility(ability) {
-        if (this.vantageAbilityChecksEffectOverride[ability] < 0) {
-            return this.vantageAbilityChecksEffectOverride[ability];
+        if (this.getGodMode()) {
+            return false;
         }
-        else if (this.vantageAbilityChecksConditionOverride[ability] < 0) {
-            return this.vantageAbilityChecksConditionOverride[ability];
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
         }
-        else if (this.vantageAbilityChecksOverride[ability] < 0) {
-            return this.vantageAbilityChecksOverride[ability];
+        if (this.vantageAbilityChecksEffectOverride != 0) {
+            return this.vantageAbilityChecksEffectOverride < 0;
         }
-        return this.vantageAbilityChecks[ability] < 0;
+        else if (this.vantageAbilityChecksConditionOverride != 0) {
+            return this.vantageAbilityChecksConditionOverride < 0;
+        }
+        else if (this.vantageAbilityChecksOverride != 0) {
+            return this.vantageAbilityChecksOverride < 0;
+        }
+        else if (this.vantageAbilityChecks != 0) {
+            return this.vantageAbilityChecks < 0;
+        }
+        return false;
     }
 
+    /**
+     * 
+     * @param {string|number} sense SenseEnum
+     * @returns boolean
+     */
+    hasAdvantageOnSense(sense) {
+        if (this.getGodMode()) {
+            return true;
+        }
+        if (!SenseEnum.hasOwnProperty(sense)) {
+            if (SenseEnum.properties.hasOwnProperty(sense)) {
+                sense = SenseEnum.properties[sense].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.vantageSenseChecksEffectOverride != 0) {
+            return this.vantageSenseChecksEffectOverride > 0;
+        }
+        else if (this.vantageSenseChecksConditionOverride != 0) {
+            return this.vantageSenseChecksConditionOverride > 0;
+        }
+        else if (this.vantageSenseChecksOverride != 0) {
+            return this.vantageSenseChecksOverride > 0;
+        }
+        else if (this.vantageSenseChecks != 0) {
+            return this.vantageSenseChecks > 0;
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param {string|number} sense SenseEnum
+     * @returns boolean
+     */
+    hasDisadvantageOnSense(sense) {
+        if (this.getGodMode()) {
+            return false;
+        }
+        if (!SenseEnum.hasOwnProperty(sense)) {
+            if (SenseEnum.properties.hasOwnProperty(sense)) {
+                sense = SenseEnum.properties[sense].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.vantageEffectOverrideSenseChecks != 0) {
+            return this.vantageEffectOverrideSenseChecks < 0;
+        }
+        else if (this.vantageConditionOverrideSenseChecks != 0) {
+            return this.vantageConditionOverrideSenseChecks < 0;
+        }
+        else if (this.vantageOverrideSenseChecks != 0) {
+            return this.vantageOverrideSenseChecks < 0;
+        }
+        else if (this.vantageSenseChecks != 0) {
+            return this.vantageSenseChecks < 0;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
+    hasAdvantageOnSavingThrow(ability) {
+        if (this.getGodMode()) {
+            return true;
+        }
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.vantageSavingThrowsEffectOverride != 0) {
+            return this.vantageSavingThrowsEffectOverride > 0;
+        }
+        else if (this.vantageSavingThrowsConditionOverride != 0) {
+            return this.vantageSavingThrowsConditionOverride > 0;
+        }
+        else if (this.vantageSavingThrowsOverride != 0) {
+            return this.vantageSavingThrowsOverride > 0;
+        }
+        else if (this.vantageSavingThrows != 0) {
+            return this.vantageSavingThrows > 0;
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
+    hasDisadvantageOnSavingThrow(ability) {
+        if (this.getGodMode()) {
+            return false;
+        }
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.vantageSavingThrowsEffectOverride != 0) {
+            return this.vantageSavingThrowsEffectOverride < 0;
+        }
+        else if (this.vantageSavingThrowsConditionOverride != 0) {
+            return this.vantageSavingThrowsConditionOverride < 0;
+        }
+        else if (this.vantageSavingThrowsOverride != 0) {
+            return this.vantageSavingThrowsOverride < 0;
+        }
+        else if (this.vantageSavingThrows != 0) {
+            return this.vantageSavingThrows < 0;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
+    succeedOnSavingThrow(ability) {
+        if (this.getGodMode()) {
+            return true;
+        }
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.failSucceedSavingThrowsEffectOverride != 0) {
+            return this.failSucceedSavingThrowsEffectOverride > 0;
+        }
+        else if (this.failSucceedSavingThrowsConditionOverride != 0) {
+            return this.failSucceedSavingThrowsConditionOverride > 0;
+        }
+        else if (this.failSucceedSavingThrowsOverride != 0) {
+            return this.failSucceedSavingThrowsOverride > 0;
+        }
+        else if (this.failSucceedSavingThrows != 0) {
+            return this.failSucceedSavingThrows > 0;
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param {string|number} ability AbilityEnum
+     * @returns boolean
+     */
+    failOnSavingThrow(ability) {
+        if (this.getGodMode()) {
+            return false;
+        }
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.failSucceedSavingThrowsEffectOverride != 0) {
+            return this.failSucceedSavingThrowsEffectOverride < 0;
+        }
+        else if (this.failSucceedSavingThrowsConditionOverride != 0) {
+            return this.failSucceedSavingThrowsConditionOverride < 0;
+        }
+        else if (this.failSucceedSavingThrowsOverride != 0) {
+            return this.failSucceedSavingThrowsOverride < 0;
+        }
+        else if (this.failSucceedSavingThrows != 0) {
+            return this.failSucceedSavingThrows < 0;
+        }
+        return false;
+    }
+
+    /**
+     * @returns number
+     */
     applyConditions() {
         this.resetConditionProperties();
         for (let condition in this.conditions) {
-            this.applyCondition(condition);
+            if (this.conditions[condition]) {
+                this.applyCondition(condition);
+            }
         }
         this.applyExhaustion();
         return 0;
     }
+    /**
+     * 
+     * @param {string|number} condition ConditionEnum
+     * @returns number
+     */
     applyCondition(condition) {
+        if (!ConditionEnum.hasOwnProperty(condition)) {
+            if (ConditionEnum.properties.hasOwnProperty(condition)) {
+                condition = ConditionEnum.properties[condition];
+            }
+            else {
+                return 1;
+            }
+        }
         switch (condition) {
             case ConditionEnum.BLINDED: {
                 this.vantageOnAttackConditionOverride--;
                 this.vantageAgainstAttackConditionOverride--;
-                this.vantageSenseChecksOverride[SenseEnum.SIGHT]--;
+                this.vantageSenseChecksConditionOverride["SIGHT"]--;
                 break;
             }
             case ConditionEnum.CHARMED: {
-                this.canHarmCharmTarget = false;
                 break;
             }
             case ConditionEnum.DEAFENED: {
-                this.vantageSenseChecksOverride[SenseEnum.HEARING]--;
+                this.vantageSenseChecksConditionOverride["HEARING"]--;
                 break;
             }
             case ConditionEnum.FATIGUED: {
-                this.exhaustionConditionModifier += 1;
+                this.exhaustionConditionModifier++;
                 break;
             }
             case ConditionEnum.FRIGHTENED: {
                 break;
             }
             case ConditionEnum.GRAPPLED: {
-                this.movementSpeedOverride = 0;
+                this.movementSpeedConditionOverride = 0;
                 break;
             }
             case ConditionEnum.INCAPACITATED: {
-                this.standardActionsOverride = 0;
-                this.reactionsOverride = 0;
+                this.standardActionsConditionOverride = 0;
+                this.reactionsConditionOverride = 0;
                 break;
             }
             case ConditionEnum.INVISIBLE: {
@@ -1275,81 +1701,84 @@ class CreatureEntity extends Entity {
                 break;
             }
             case ConditionEnum.PARALYZED: {
-                this.standardActionsOverride = 0;
-                this.reactionsOverride = 0;
-                this.canMove = false;
-                this.movementActionsOverride = 0;
-                this.canSpeak = false;
-                this.vantageSavingThrowsOverride["STRENGTH"]--;
-                this.vantageSavingThrowsOverride["DEXTERITY"]--;
+                this.standardActionsConditionOverride = 0;
+                this.reactionsConditionOverride = 0;
+                this._canMoveConditionOverride--;
+                this.movementActionsConditionOverride = 0;
+                this._canSpeakConditionOverride--;
+                this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
+                this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageAgainstAttackConditionOverride--;
                 break;
             }
             case ConditionEnum.PETRIFIED: {
-                this.standardActionsOverride = 0;
-                this.reactionsOverride = 0;
-                this.canMove = false;
-                this.movementActionsOverride = 0;
-                this.canSpeak = false;
-                this.canHear = false;
-                this.canSee = false;
-                this.vantageSavingThrowsOverride["STRENGTH"]--;
-                this.vantageSavingThrowsOverride["DEXTERITY"]--;
+                this.standardActionsConditionOverride = 0;
+                this.reactionsConditionOverride = 0;
+                this._canMoveConditionOverride--;
+                this.movementActionsConditionOverride = 0;
+                this._canSpeakConditionOverride--;
+                this._canHearConditionOverride--;
+                this._canSeeConditionOverride--;
+                this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
+                this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageAgainstAttackConditionOverride--;
-                for (let damage in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[damage] = true;}
-                this.immuneToConditionOverride["POISON"] = true;
-                this.immuneToConditionOverride["DISEASE"] = true;
+                for (let damage in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[damage]--;}
+                this.immuneToConditionOverride["POISON"]++;
+                this.immuneToConditionOverride["DISEASE"]++;
                 break;
             }
             case ConditionEnum.POISONED: {
                 this.vantageOnAttackConditionOverride--;
-                for (let ability in this.vantageAbilityChecks) {this.vantageAbilityChecks[ability]--;}
-                for (let sense in this.vantageSenseChecks) {this.vantageSenseChecks[sense]--;}
+                for (let ability in this.vantageAbilityChecksConditionOverride) {this.vantageAbilityChecksConditionOverride[ability]--;}
+                for (let sense in this.vantageSenseChecksConditionOverride) {this.vantageSenseChecksConditionOverride[sense]--;}
                 break;
             }
-            case ConditionEnum.PRONE: {
+            case ConditionEnum.PRONE: { // TODO: this
                 this.vantageOnAttackConditionOverride--;
                 // If an attack is within 5', vantageAgainstAttack--, otherwise vantageAgainstAttack++
                 break;
             }
             case ConditionEnum.RESTRAINED: {
-                this.movementSpeedOverride = 0;
-                this.vantageSavingThrows["DEXTERITY"]--;
+                this.movementSpeedConditionOverride = 0;
+                this.vantageSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageOnAttackConditionOverride--;
                 this.vantageAgainstAttackConditionOverride--;
                 break;
             }
             case ConditionEnum.STUNNED: {
-                this.standardActionsOverride = 0;
-                this.reactionsOverride = 0;
-                this.canMove = false;
-                this.movementActionsOverride = 0;
-                this.vantageSavingThrowsOverride["STRENGTH"]--;
-                this.vantageSavingThrowsOverride["DEXTERITY"]--;
+                this.standardActionsConditionOverride = 0;
+                this.reactionsConditionOverride = 0;
+                this._canMoveConditionOverride--;
+                this.movementActionsConditionOverride = 0;
+                this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
+                this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageAgainstAttackConditionOverride--;
                 break;
             }
             case ConditionEnum.UNCONSCIOUS: {
-                this.standardActionsOverride = 0;
-                this.reactionsOverride = 0;
-                this.canMove = false;
-                this.movementActionOverrideConditionOverride = 0;
-                this.canSpeak = false;
-                this.canHear = false;
-                this.canSee = false;
-                this.canHold = false;
+                this.standardActionsConditionOverride = 0;
+                this.reactionsConditionOverride = 0;
+                this._canMoveConditionOverride--;
+                this.movementActionsOverrideConditionOverride = 0;
+                this._canSpeakConditionOverride--;
+                this._canHearConditionOverride--;
+                this._canSeeConditionOverride--;
+                this._canHoldConditionOverride--;
                 if (this instanceof CharacterEntity) {
                     this.unequipBySlot(ApparelSlotEnum.HAND_L);
                     this.unequipBySlot(ApparelSlotEnum.HAND_R);
                 }
-                this.vantageSavingThrowsOverride["STRENGTH"]--;
-                this.vantageSavingThrowsOverride["DEXTERITY"]--;
+                this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
+                this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageAgainstAttackConditionOverride--;
                 break;
             }
         }
         return 0;
     }
+    /**
+     * @returns number;
+     */
     applyExhaustion() {
         switch (this.getExaustion()) {
             case 6: {
@@ -1368,12 +1797,12 @@ class CreatureEntity extends Entity {
             }
             case 3: {
                 this.vantageOnAttackConditionOverride--;
-                this.vantageSavingThrows["STRENGTH"]--;
-                this.vantageSavingThrows["DEXTERITY"]--;
-                this.vantageSavingThrows["CONSTITUTION"]--;
-                this.vantageSavingThrows["INTELLIGENCE"]--;
-                this.vantageSavingThrows["WISDOM"]--;
-                this.vantageSavingThrows["CHARISMA"]--;
+                this.vantageSavingThrowsConditionOverride["STRENGTH"]--;
+                this.vantageSavingThrowsConditionOverride["DEXTERITY"]--;
+                this.vantageSavingThrowsConditionOverride["CONSTITUTION"]--;
+                this.vantageSavingThrowsConditionOverride["INTELLIGENCE"]--;
+                this.vantageSavingThrowsConditionOverride["WISDOM"]--;
+                this.vantageSavingThrowsConditionOverride["CHARISMA"]--;
             }
             case 2: {
                 if (this.movementSpeedConditionOverride != 0) {
@@ -1381,16 +1810,20 @@ class CreatureEntity extends Entity {
                 }
             }
             case 1: {
-                this.vantageAbilityChecks["STRENGTH"]--;
-                this.vantageAbilityChecks["DEXTERITY"]--;
-                this.vantageAbilityChecks["CONSTITUTION"]--;
-                this.vantageAbilityChecks["INTELLIGENCE"]--;
-                this.vantageAbilityChecks["WISDOM"]--;
-                this.vantageAbilityChecks["CHARISMA"]--;
+                this.vantageAbilityChecksConditionOverride["STRENGTH"]--;
+                this.vantageAbilityChecksConditionOverride["DEXTERITY"]--;
+                this.vantageAbilityChecksConditionOverride["CONSTITUTION"]--;
+                this.vantageAbilityChecksConditionOverride["INTELLIGENCE"]--;
+                this.vantageAbilityChecksConditionOverride["WISDOM"]--;
+                this.vantageAbilityChecksConditionOverride["CHARISMA"]--;
             }
         }
         return 0;
     }
+    /**
+     * Resets all properties modified by effects
+     * @returns number
+     */
     resetEffectProperties() {
         super.resetEffectProperties();
         this.exhaustionEffectModifier = 0;
@@ -1398,6 +1831,12 @@ class CreatureEntity extends Entity {
         this.armourClassEffectOverride = -1;
         this.movementSpeedEffectModifier = 0;
         this.movementSpeedEffectOverride = -1;
+
+        this._canMoveEffectOverride = true;
+        this._canHoldEffectOverride = true;
+        this._canSpeakEffectOverride = true;
+        this._canHearEffectOverride = true;
+        this._canSeeEffectOverride = true;
 
         this.vantageOnAttackEffectOverride = 0;
         this.vantageAgainstAttackEffectOverride = 0;
@@ -1407,8 +1846,9 @@ class CreatureEntity extends Entity {
         for (let property in this.vantageAbilityChecksEffectOverride) {this.vantageAbilityChecksEffectOverride[property] = 0;};
         for (let property in this.vantageSenseChecksEffectOverride) {this.vantageSenseChecksEffectOverride[property] = 0;};
         for (let property in this.vantageSavingThrowsEffectOverride) {this.vantageSavingThrowsEffectOverride[property] = 0;};
-        for (let property in this.resistanceToEffectOverride) {this.resistanceToEffectOverride[property] = false;};
-        for (let property in this.immuneToEffectOverride) {this.immuneToEffectOverride[property] = false;};
+        for (let property in this.failSucceedSavingThrowsEffectOverride) {this.failSucceedSavingThrowsEffectOverride[property] = 0;};
+        for (let property in this.resistanceToEffectOverride) {this.resistanceToEffectOverride[property] = 0;};
+        for (let property in this.immuneToEffectOverride) {this.immuneToEffectOverride[property] = 0;};
 
         this.movementActionsEffectOverride = -1;
         this.movementActionsEffectModifier = 0;
@@ -1420,6 +1860,10 @@ class CreatureEntity extends Entity {
         this.reactionsEffectOverride = -1;
         return 0;
     }
+    /**
+     * Resets all properties modified by conditions
+     * @returns number
+     */
     resetConditionProperties() {
         super.resetConditionProperties();
         this.armourClassConditionModifier = 0;
@@ -1432,11 +1876,11 @@ class CreatureEntity extends Entity {
         this.reactionsConditionOverride = -1;
         this.exhaustionConditionModifier = 0;
 
-        this.canMove = true;
-        this.canHold = true;
-        this.canSpeak = true;
-        this.canHear = true;
-        this.canSee = true;
+        this._canMoveConditionOverride = true;
+        this._canHoldConditionOverride = true;
+        this._canSpeakConditionOverride = true;
+        this._canHearConditionOverride = true;
+        this._canSeeConditionOverride = true;
 
         this.vantageOnAttackConditionOverride = 0;
         this.vantageAgainstAttackConditionOverride = 0;
@@ -1446,8 +1890,9 @@ class CreatureEntity extends Entity {
         for (let property in this.vantageAbilityChecksConditionOverride) {this.vantageAbilityChecksConditionOverride[property] = 0;};
         for (let property in this.vantageSenseChecksConditionOverride) {this.vantageSenseChecksConditionOverride[property] = 0;};
         for (let property in this.vantageSavingThrowsConditionOverride) {this.vantageSavingThrowsConditionOverride[property] = 0;};
-        for (let property in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[property] = false;};
-        for (let property in this.immuneToConditionOverride) {this.immuneToConditionOverride[property] = false;};
+        for (let property in this.failSucceedSavingThrowsConditionOverride) {this.failSucceedSavingThrowsConditionOverride[property] = 0;};
+        for (let property in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[property] = 0;};
+        for (let property in this.immuneToConditionOverride) {this.immuneToConditionOverride[property] = 0;};
 
         this.reactionsConditionOverride = -1;
         this.reactionsConditionModifier = 0;
@@ -1460,24 +1905,9 @@ class CreatureEntity extends Entity {
         return 0;
     }
 
-    getFurniture() {
-        return this.furniture;
-    }
-    hasFurniture() {
-        return InstancedFurnitureEntity.has(this.furniture);
-    }
-    setFurniture(instancedFurnitureEntity) {
-        if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
-            this.furniture = instancedFurnitureEntity.getID();
-            instancedFurnitureEntity.addCharacter(this);
-        }
-        return 0;
-    }
-    removeFurniture() {
-        this.furniture = null;
-        return 0;
-    }
-
+    /**
+     * Resets all modifier properties
+     */
     resetModifiers() {
         super.resetModifiers();
         this.hungerModifier = 0;
@@ -1513,6 +1943,9 @@ class CreatureEntity extends Entity {
         this.standardActionsModifier = 0;        
         return 0;
     }
+    /**
+     * Resets all override properties
+     */
     resetOverrides() {
         super.resetOverrides();
         this.armourClassOverride = -1;
@@ -1527,6 +1960,12 @@ class CreatureEntity extends Entity {
         this.reactionsOverride = -1;
         this.moneyOverride = -1;
         this.armedOverride = false;
+
+        this._canMoveConditionOverride = true;
+        this._canHoldConditionOverride = true;
+        this._canSpeakConditionOverride = true;
+        this._canHearConditionOverride = true;
+        this._canSeeConditionOverride = true;
 
         this.vantageOnAttackConditionOverride = 0;
         this.vantageOnAttackEffectOverride = 0;
@@ -1543,10 +1982,13 @@ class CreatureEntity extends Entity {
         for (let property in this.vantageSavingThrowsConditionOverride) {this.vantageSavingThrowsConditionOverride[property] = 0;};
         for (let property in this.vantageSavingThrowsEffectOverride) {this.vantageSavingThrowsEffectOverride[property] = 0;};
         for (let property in this.vantageSavingThrowsOverride) {this.vantageSavingThrowsOverride[property] = 0;};
-        for (let property in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[property] = false;};
-        for (let property in this.resistanceToEffectOverride) {this.resistanceToEffectOverride[property] = false;};
-        for (let property in this.immuneToConditionOverride) {this.immuneToConditionOverride[property] = false;};
-        for (let property in this.immuneToEffectOverride) {this.immuneToEffectOverride[property] = false;};
+        for (let property in this.failSucceedSavingThrowsConditionOverride) {this.failSucceedSavingThrowsConditionOverride[property] = 0;};
+        for (let property in this.failSucceedSavingThrowsEffectOverride) {this.failSucceedSavingThrowsEffectOverride[property] = 0;};
+        for (let property in this.failSucceedSavingThrowsOverride) {this.failSucceedSavingThrowsOverride[property] = 0;};
+        for (let property in this.resistanceToConditionOverride) {this.resistanceToConditionOverride[property] = 0;};
+        for (let property in this.resistanceToEffectOverride) {this.resistanceToEffectOverride[property] = 0;};
+        for (let property in this.immuneToConditionOverride) {this.immuneToConditionOverride[property] = 0;};
+        for (let property in this.immuneToEffectOverride) {this.immuneToEffectOverride[property] = 0;};
 
         this.standardActionsOverride = -1;
         this.standardActionsConditionOverride = -1;
@@ -1562,12 +2004,22 @@ class CreatureEntity extends Entity {
         this.reactionsEffectOverride = -1;
         return 0;
     }
+    /**
+     * Resets combat action properties
+     * @returns 0
+     */
     resetCombatActions() {
         this.usedStandardActions = 0;
         this.usedMovementActions = 0;
         this.usedBonusActions = 0;
         this.usedReactions = 0;
+        return 0;
     }
+    /**
+     * Returns ability score
+     * @param {string|number} ability AbilityEnum
+     * @returns number
+     */
     getAbility(ability) {
         if (this.getGodMode()) {
             return Number.MAX_SAFE_INTEGER;
@@ -1582,12 +2034,22 @@ class CreatureEntity extends Entity {
         }
         return this.abilityScore[ability] + this.abilityScoreModifier[ability];
     }
+    /**
+     * 
+     * @param {boolean} [firstTime] If this is the first run
+     * @returns number
+     */
     generateProperties(firstTime = false) {
         if (this.creatureType == CreatureType.HUMANOID) {
             return 0;
         }
         return 0;
     }
+    /**
+     * 
+     * @param {boolean} [firstTime] If this is the first run
+     * @returns number
+     */
     generateBaseStats(firstTime = false) {
         let healthFraction = 1;
         if (!firstTime) {
@@ -1597,6 +2059,9 @@ class CreatureEntity extends Entity {
         this.setHealth(this.getMaxHealth() * healthFraction);
         return 0;
     }
+    /**
+     * @returns number
+     */
     generateAdditionalStats() {
         this.armourClass = 0;
         return 0;
@@ -1659,15 +2124,25 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("armourClassConditionOverride")) this.armourClassConditionOverride = entity.armourClassConditionOverride;
         if (entity.hasOwnProperty("movementSpeedConditionModifier")) this.movementSpeedConditionModifier = entity.movementSpeedConditionModifier;
         if (entity.hasOwnProperty("movementSpeedConditionOverride")) this.movementSpeedConditionOverride = entity.movementSpeedConditionOverride;
-        if (entity.hasOwnProperty("standardActionOverride")) this.standardActionsOverride = entity.standardActionsOverride;
-        if (entity.hasOwnProperty("movementActionOverride")) this.movementActionsOverride = entity.movementActionsOverride;
-        if (entity.hasOwnProperty("bonusActionOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;
+        if (entity.hasOwnProperty("standardActionsOverride")) this.standardActionsOverride = entity.standardActionsOverride;
+        if (entity.hasOwnProperty("movementActionsOverride")) this.movementActionsOverride = entity.movementActionsOverride;
+        if (entity.hasOwnProperty("bonusActionsOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;
         if (entity.hasOwnProperty("reactionOverride")) this.reactionsOverride = entity.reactionsOverride;
-        if (entity.hasOwnProperty("canMove")) this.canMove = entity.canMove;
-        if (entity.hasOwnProperty("canHold")) this.canHold = entity.canHold;
-        if (entity.hasOwnProperty("canSpeak")) this.canSpeak = entity.canSpeak;
-        if (entity.hasOwnProperty("canHear")) this.canHear = entity.canHear;
-        if (entity.hasOwnProperty("canSee")) this.canSee = entity.canSee;
+        if (entity.hasOwnProperty("_canMove")) this._canMove = entity._canMove;
+        if (entity.hasOwnProperty("_canHold")) this._canHold = entity._canHold;
+        if (entity.hasOwnProperty("_canSpeak")) this._canSpeak = entity._canSpeak;
+        if (entity.hasOwnProperty("_canHear")) this._canHear = entity._canHear;
+        if (entity.hasOwnProperty("_canSee")) this._canSee = entity._canSee;
+        if (entity.hasOwnProperty("_canMoveConditionOverride")) this._canMoveConditionOverride = entity._canMoveConditionOverride;
+        if (entity.hasOwnProperty("_canHoldConditionOverride")) this._canHoldConditionOverride = entity._canHoldConditionOverride;
+        if (entity.hasOwnProperty("_canSpeakConditionOverride")) this._canSpeakConditionOverride = entity._canSpeakConditionOverride;
+        if (entity.hasOwnProperty("_canHearConditionOverride")) this._canHearConditionOverride = entity._canHearConditionOverride;
+        if (entity.hasOwnProperty("_canSeeConditionOverride")) this._canSeeConditionOverride = entity._canSeeConditionOverride;
+        if (entity.hasOwnProperty("_canMoveEffectOverride")) this._canMoveEffectOverride = entity._canMoveEffectOverride;
+        if (entity.hasOwnProperty("_canHoldEffectOverride")) this._canHoldEffectOverride = entity._canHoldEffectOverride;
+        if (entity.hasOwnProperty("_canSpeaEffectnOverride")) this._canSpeakEffectOverride = entity._canSpeakEffectOverride;
+        if (entity.hasOwnProperty("_canHearEffectOverride")) this._canHearEffectOverride = entity._canHearEffectOverride;
+        if (entity.hasOwnProperty("_canSeeCEffectverride")) this._canSeeEffectOverride = entity._canSeeEffectOverride;
         if (entity.hasOwnProperty("vantageOnAttack")) this.vantageOnAttack = entity.vantageOnAttack;
         if (entity.hasOwnProperty("vantageOnAttackConditionOverride")) this.vantageOnAttackConditionOverride = entity.vantageOnAttackConditionOverride;
         if (entity.hasOwnProperty("vantageOnAttackEffectOverride")) this.vantageOnAttackEffectOverride = entity.vantageOnAttackEffectOverride;
@@ -1686,6 +2161,10 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("vantageSavingThrowsConditionOverride")) this.vantageSavingThrowsConditionOverride = Object.assign({}, entity.vantageSavingThrowsConditionOverride);
         if (entity.hasOwnProperty("vantageSavingThrowsEffectOverride")) this.vantageSavingThrowsEffectOverride = Object.assign({}, entity.vantageSavingThrowsEffectOverride);
         if (entity.hasOwnProperty("vantageSavingThrowsOverride")) this.vantageSavingThrowsOverride = Object.assign({}, entity.vantageSavingThrowsOverride);
+        if (entity.hasOwnProperty("failSucceedSavingThrows")) this.failSucceedSavingThrows = Object.assign({}, entity.failSucceedSavingThrows);
+        if (entity.hasOwnProperty("failSucceedSavingThrowsConditionOverride")) this.failSucceedSavingThrowsConditionOverride = Object.assign({}, entity.failSucceedSavingThrowsConditionOverride);
+        if (entity.hasOwnProperty("failSucceedSavingThrowsEffectOverride")) this.failSucceedSavingThrowsEffectOverride = Object.assign({}, entity.failSucceedSavingThrowsEffectOverride);
+        if (entity.hasOwnProperty("failSucceedSavingThrowsOverride")) this.failSucceedSavingThrowsOverride = Object.assign({}, entity.failSucceedSavingThrowsOverride);
         if (entity.hasOwnProperty("resistanceTo")) this.resistanceTo = Object.assign({}, entity.resistanceTo);
         if (entity.hasOwnProperty("resistanceToConditionOverride")) this.resistanceToConditionOverride = Object.assign({}, entity.resistanceToConditionOverride);
         if (entity.hasOwnProperty("resistanceToEffectOverride")) this.resistanceToEffectOverride = Object.assign({}, entity.resistanceToEffectOverride);

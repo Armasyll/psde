@@ -1658,6 +1658,7 @@ class CharacterStatsGUI {
         CharacterStatsGUI.raceField.text = CreatureSubTypeEnum.properties[creatureEntity.getCreatureSubType()].name;
         //CharacterStatsGUI.alignmentField.text = creatureEntity.get();
         CharacterStatsGUI.xpField.text = String(creatureEntity.getXP());
+        let checkbox = false;
         let number = Game.calculateAbilityModifier(creatureEntity.getStrength());
         CharacterStatsGUI.strengthAbilityModifier.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.strengthAbilityField.text = String(creatureEntity.getStrength());
@@ -1682,24 +1683,66 @@ class CharacterStatsGUI {
         CharacterStatsGUI.proficiencyBonusField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
         // saving throws
-        number = creatureEntity.getSavingThrow(AbilityEnum.STRENGTH);
+        number = Game.calculateAbilityModifier(creatureEntity.getStrength());
+        if (creatureEntity.hasProficiency("STRENGTH")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowStrengthField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowStrengthCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.STRENGTH);
-        number = creatureEntity.getSavingThrow(AbilityEnum.DEXTERITY);
+        CharacterStatsGUI.savingThrowStrengthCheckbox.isChecked = checkbox;
+        number = Game.calculateAbilityModifier(creatureEntity.getDexterity());
+        if (creatureEntity.hasProficiency("DEXTERITY")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowDexterityField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowDexterityCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.DEXTERITY);
-        number = creatureEntity.getSavingThrow(AbilityEnum.CONSTITUTION);
+        CharacterStatsGUI.savingThrowDexterityCheckbox.isChecked = checkbox;
+        number = Game.calculateAbilityModifier(creatureEntity.getConstitution());
+        if (creatureEntity.hasProficiency("CONSTITUTION")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowConstitutionField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowConstitutionCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.CONSTITUTION);
-        number = creatureEntity.getSavingThrow(AbilityEnum.INTELLIGENCE);
+        CharacterStatsGUI.savingThrowConstitutionCheckbox.isChecked = checkbox;
+        number = Game.calculateAbilityModifier(creatureEntity.getIntelligence());
+        if (creatureEntity.hasProficiency("INTELLIGENCE")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowIntelligenceField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowIntelligenceCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.INTELLIGENCE);
-        number = creatureEntity.getSavingThrow(AbilityEnum.WISDOM);
+        CharacterStatsGUI.savingThrowIntelligenceCheckbox.isChecked = checkbox;
+        number = Game.calculateAbilityModifier(creatureEntity.getWisdom());
+        if (creatureEntity.hasProficiency("WISDOM")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowWisdomField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowWisdomCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.WISDOM);
-        number = creatureEntity.getSavingThrow(AbilityEnum.CHARISMA);
+        CharacterStatsGUI.savingThrowWisdomCheckbox.isChecked = checkbox;
+        number = Game.calculateAbilityModifier(creatureEntity.getCharisma());
+        if (creatureEntity.hasProficiency("CHARISMA")) {
+            number += creatureEntity.getProficiencyBonus();
+            checkbox = true;
+        }
+        else {
+            checkbox = false;
+        }
         CharacterStatsGUI.savingThrowCharismaField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.savingThrowCharismaCheckbox.isChecked = creatureEntity.hasSavingThrow(AbilityEnum.CHARISMA);
+        CharacterStatsGUI.savingThrowCharismaCheckbox.isChecked = checkbox;
         // other proficiencies and languages
         number = creatureEntity.getSkillScore(ProficiencyEnum.ACROBATICS);
         CharacterStatsGUI.skillAcrobaticsField.text = String((number > 0 ? "+" : "") + number);

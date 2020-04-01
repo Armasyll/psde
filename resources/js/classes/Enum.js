@@ -2227,6 +2227,13 @@ let ProficiencyEnum = {
     "IMPROVISED_WEAPONS": 122,
     "ENDURANCE": 123,
     "STREETWISE": 124,
+    "STRENGTH":125,
+    "DEXTERITY":126,
+    "CONSTITUTION":127,
+    "INTELLIGENCE":128,
+    "WISDOM":129,
+    "CHARISMA":130,
+
     "ANY": 252,
     /** @type {object} */
     "properties": {
@@ -2977,6 +2984,42 @@ let ProficiencyEnum = {
             "name": "Streetwise",
             "value": 124,
             "key": "STREETWISE",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        125: {
+            "name": "Strength",
+            "value": 125,
+            "key": "STRENGTH",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        126: {
+            "name": "Dexterity",
+            "value": 126,
+            "key": "DEXTERITY",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        127: {
+            "name": "Constitution",
+            "value": 127,
+            "key": "CONSTITUTION",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        128: {
+            "name": "Intelligence",
+            "value": 128,
+            "key": "INTELLIGENCE",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        129: {
+            "name": "Wisdom",
+            "value": 129,
+            "key": "WISDOM",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        130: {
+            "name": "Charisma",
+            "value": 130,
+            "key": "CHARISMA",
             "type": ProficiencyTypeEnum.SKILLS
         },
         252: {

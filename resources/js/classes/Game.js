@@ -5326,6 +5326,14 @@ class Game {
     }
 
     static getSkillAbility(proficiencyEnum) {
+        if (!ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
+            if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
+                proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+            }
+            else {
+                return 0;
+            }
+        }
         switch (proficiencyEnum) {
             case ProficiencyEnum.ATHLETICS: {
                 return AbilityEnum.STRENGTH;
@@ -5356,6 +5364,7 @@ class Game {
                 return AbilityEnum.CHARISMA;
             }
         }
+        return 0;
     }
     static calculateProficiencyByLevel(level) {
         return Math.floor((level + 7) / 4);
