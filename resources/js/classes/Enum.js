@@ -147,7 +147,7 @@ let ItemEnum = {
     "CONSUMABLE": 4,
     "BOOK": 5,
     "TRASH": 6,
-    "SHIELD": 7,
+    "SHIELDS": 7,
     "properties": {
         0: {
             "name": "General",
@@ -185,9 +185,9 @@ let ItemEnum = {
             "key": "TRASH"
         },
         7: {
-            "name": "Shield",
+            "name": "Shields",
             "value": 7,
-            kay: "SHIELD"
+            kay: "SHIELDS"
         }
     }
 };
@@ -1221,133 +1221,6 @@ let SpellTypeEnum = {
     }
 };
 /**
- * Enum for Armour Categories
- * @readonly
- * @enum {number}
- */
-let ArmourCategoryEnum = {
-    "LIGHT_ARMOR": 0,
-    "LIGHT_ARMOUR": 0,
-    "MEDIUM_ARMOR": 1,
-    "MEDIUM_ARMOUR": 1,
-    "HEAVY_ARMOR": 2,
-    "HEAVY_ARMOUR": 2,
-    "SHIELD": 3,
-    "properties": {
-        0: {
-            "name": "Light Armour",
-            "value": 0,
-            "key": "LIGHT_ARMOUR"
-        },
-        1: {
-            "name": "Medium Armour",
-            "value": 1,
-            "key": "MEDIUM_ARMOUR"
-        },
-        2: {
-            "name": "Heavy Armour",
-            "value": 2,
-            "key": "HEAVY_ARMOUR"
-        },
-        3: {
-            "name": "Shield",
-            "value": 3,
-            "key": "SHIELD"
-        }
-    }
-};
-/**
- * Enum for Armour Categories
- * @readonly
- * @enum {number}
- */
-let ArmorCategoryEnum = ArmourCategoryEnum;
-/**
- * Enum for Armours
- * @readonly
- * @enum {number}
- */
-let ArmourEnum = {
-    "NONE": 0,
-    "PADDED": 1,
-    "LEATHER": 2,
-    "STUDDEDLEATHER": 3,
-    "HIDE": 4,
-    "CHAINSHIRT": 5,
-    "SCALEMAIL": 6,
-    "BREASTPLATE": 7,
-    "HALFPLATE": 8,
-    "RINGMAIL": 9,
-    "CHAINMAIL": 10,
-    "SPLINT": 11,
-    "PLATE": 12,
-    "SHIELD": 13,
-    "properties": {
-        0: {
-            "name": "None",
-            "value": 0,
-        },
-        1: {
-            "name": "Padded",
-            "value": 1,
-        },
-        2: {
-            "name": "Leather",
-            "value": 2,
-        },
-        3: {
-            "name": "Studded Leather",
-            "value": 3,
-        },
-        4: {
-            "name": "Hide",
-            "value": 4,
-        },
-        5: {
-            "name": "Chain Shirt",
-            "value": 5,
-        },
-        6: {
-            "name": "Scale Mail",
-            "value": 6,
-        },
-        7: {
-            "name": "Breastplate",
-            "value": 7,
-        },
-        8: {
-            "name": "Half Plate",
-            "value": 8,
-        },
-        9: {
-            "name": "Ring Mail",
-            "value": 9,
-        },
-        10: {
-            "name": "Chain Mail",
-            "value": 10,
-        },
-        11: {
-            "name": "Splint",
-            "value": 11,
-        },
-        12: {
-            "name": "Plate",
-            "value": 12,
-        },
-        13: {
-            "name": "Shield",
-            "value": 13,
-        }
-    }
-};
-/**
- * Enum for Armours
- * @readonly
- * @enum {number}
- */
-let ArmorEnum = ArmourEnum;
-/**
  * Enum for Damage types
  * @readonly
  * @enum {number}
@@ -1438,294 +1311,6 @@ let DamageEnum = {
             "value": 13,
             "key": "DISEASE"
         }
-    }
-};
-/**
- * Enum for Weapon Categories
- * @readonly
- * @enum {number}
- */
-let WeaponCategoryEnum = {
-    "SIMPLE_MELEE": 0,
-    "SIMPLE_RANGED": 1,
-    "MARTIAL_MELEE": 2,
-    "MARTIAL_RANGED": 3,
-    "properties": {
-        0: {
-            "name": "Simple Melee",
-            "value": 0,
-            "key": "SIMPLE_MELEE"
-        },
-        1: {
-            "name": "Simple Ranged",
-            "value": 1,
-            "key": "SIMPLE_RANGED"
-        },
-        2: {
-            "name": "Martial Melee",
-            "value": 2,
-            "key": "MARTIAL_MELEE"
-        },
-        3: {
-            "name": "Martial Ranged",
-            "value": 3,
-            "key": "MARTIAL_RANGED"
-        }
-    }
-};
-/**
- * Enum for Weapons
- * @readonly
- * @enum {number}
- */
-let WeaponEnum = {
-    "NONE": 0,
-    "CLUB": 1,
-    "DAGGER": 2,
-    "GREAT_CLUB": 3,
-    "HANDAXE": 4,
-    "JAVELIN": 5,
-    "LIGHT_HAMMER": 6,
-    "MACE": 7,
-    "QUARTERSTAFF": 8,
-    "SICKLE": 9,
-    "SPEAR": 10,
-    "LIGHT_CROSSBOW": 11,
-    "DART": 12,
-    "SHORTBOW": 13,
-    "SLING": 14,
-    "HANDGUN": 15,
-    "BATTLEAXE": 16,
-    "FLAIL": 17,
-    "GLAIVE": 18,
-    "GREATAXE": 19,
-    "GREATSWORD": 20,
-    "HALBERD": 21,
-    "LANCE": 22,
-    "LONGSWORD": 23,
-    "MAUL": 24,
-    "MORNINGSTAR": 25,
-    "PIKE": 26,
-    "RAPIER": 27,
-    "SCIMITAR": 28,
-    "SHORTSWORD": 29,
-    "TRIDENT": 30,
-    "WARPICK": 31,
-    "WARHAMMER": 32,
-    "WHIP": 33,
-    "BLOWGUN": 34,
-    "HAND_CROSSBOW": 35,
-    "HEAVY_CROSSBOW": 36,
-    "LONGBOW": 37,
-    "NET": 38,
-    "RIFLE": 39,
-    "SHOTGUN": 40,
-    "properties": {
-        0: {
-            "name": "None",
-            "value": 0,
-            "key": "NONE"
-        },
-        1: {
-            "name": "Club",
-            "value": 1,
-            "key": "CLUB"
-        },
-        2: {
-            "name": "Dagger",
-            "value": 2,
-            "key": "DAGGER"
-        },
-        3: {
-            "name": "Great Club",
-            "value": 3,
-            "key": "GREAT_CLUB"
-        },
-        4: {
-            "name": "Handaxe",
-            "value": 4,
-            "key": "HANDAXE"
-        },
-        5: {
-            "name": "Javelin",
-            "value": 5,
-            "key": "JAVELIN"
-        },
-        6: {
-            "name": "Light Hammer",
-            "value": 6,
-            "key": "LIGHT_HAMMER"
-        },
-        7: {
-            "name": "Mace",
-            "value": 7,
-            "key": "MACE"
-        },
-        8: {
-            "name": "Quarterstaff",
-            "value": 8,
-            "key": "QUARTERSTAFF"
-        },
-        9: {
-            "name": "Sickle",
-            "value": 9,
-            "key": "SICKLE"
-        },
-        10: {
-            "name": "Spear",
-            "value": 10,
-            "key": "SPEAR"
-        },
-        11: {
-            "name": "Light Crossbow",
-            "value": 11,
-            "key": "LIGHT_CROSSBOW"
-        },
-        12: {
-            "name": "Dart",
-            "value": 12,
-            "key": "DART"
-        },
-        13: {
-            "name": "Shortbow",
-            "value": 13,
-            "key": "SHORTBOW"
-        },
-        14: {
-            "name": "Sling",
-            "value": 14,
-            "key": "SLING"
-        },
-        15: {
-            "name": "Handgun",
-            "value": 15,
-            "key": "HANDGUN"
-        },
-        16: {
-            "name": "Battleaxe",
-            "value": 16,
-            "key": "BATTLEAXE"
-        },
-        17: {
-            "name": "Flail",
-            "value": 17,
-            "key": "FLAIL"
-        },
-        18: {
-            "name": "Glaive",
-            "value": 18,
-            "key": "GLAIVE"
-        },
-        19: {
-            "name": "Greataxe",
-            "value": 19,
-            "key": "GREATAXE"
-        },
-        20: {
-            "name": "Greatsword",
-            "value": 20,
-            "key": "GREATSWORD"
-        },
-        21: {
-            "name": "Halberd",
-            "value": 21,
-            "key": "HALBERD"
-        },
-        22: {
-            "name": "Lance",
-            "value": 22,
-            "key": "LANCE"
-        },
-        23: {
-            "name": "Longsword",
-            "value": 23,
-            "key": "LONGSWORD"
-        },
-        24: {
-            "name": "Maul",
-            "value": 24,
-            "key": "MAUL"
-        },
-        25: {
-            "name": "Morningstar",
-            "value": 25,
-            "key": "MORNINGSTAR"
-        },
-        26: {
-            "name": "Pike",
-            "value": 26,
-            "key": "PIKE"
-        },
-        27: {
-            "name": "Rapier",
-            "value": 27,
-            "key": "RAPIER"
-        },
-        28: {
-            "name": "Scimitar",
-            "value": 28,
-            "key": "SCIMITAR"
-        },
-        29: {
-            "name": "Shortsword",
-            "value": 29,
-            "key": "SHORTSWORD"
-        },
-        30: {
-            "name": "Trident",
-            "value": 30,
-            "key": "TRIDENT"
-        },
-        31: {
-            "name": "Warpick",
-            "value": 31,
-            "key": "WARPICK"
-        },
-        32: {
-            "name": "Warhammer",
-            "value": 32,
-            "key": "WARHAMMER"
-        },
-        33: {
-            "name": "Whip",
-            "value": 33,
-            "key": "WHIP"
-        },
-        34: {
-            "name": "Blowgun",
-            "value": 34,
-            "key": "BLOWGUN"
-        },
-        35: {
-            "name": "Hand Crossbow",
-            "value": 35,
-            "key": "HAND_CROSSBOW"
-        },
-        36: {
-            "name": "Heavy Crossbow",
-            "value": 36,
-            "key": "HEAVY_CROSSBOW"
-        },
-        37: {
-            "name": "Longbow",
-            "value": 37,
-            "key": "LONGBOW"
-        },
-        38: {
-            "name": "Net",
-            "value": 38,
-            "key": "NET"
-        },
-        39: {
-            "name": "Rifle",
-            "value": 39,
-            "key": "RIFLE"
-        },
-        40: {
-            "name": "Shotgun",
-            "value": 40,
-            "key": "SHOTGUN"
-        },
     }
 };
 /**
@@ -2058,6 +1643,7 @@ let ProficiencyTypeEnum = {
     "TOOLS_AND_KITS": 4,
     "VEHICLES": 5,
     "LANGUAGES": 6,
+    "ANY": 7,
     "properties": {
         0: {
             "name": "Armor",
@@ -2093,6 +1679,11 @@ let ProficiencyTypeEnum = {
             "name": "Languages",
             "value": 6,
             "key": "LANGUAGES"
+        },
+        7: {
+            "name": "Any",
+            "value": 7,
+            "key": "ANY"
         }
     }
 };
@@ -2142,7 +1733,7 @@ let ProficiencyEnum = {
     "GNOMISH": 37,
     "GOBLIN": 38,
     "GREATAXE": 39,
-    "GREAT_CLUB": 40,
+    "GREATCLUB": 40,
     "GREATSWORD": 41,
     "HALBERD": 42,
     "HALFLING": 43,
@@ -2221,18 +1812,22 @@ let ProficiencyEnum = {
     "WEAVERS_TOOLS": 116,
     "WHIP": 117,
     "WOODCARVERS_TOOLS": 118,
-    "FINESSE_WEAPONS": 119,
-    "SPECIAL_WEAPONS": 120,
-    "ARTISANS_TOOLS": 121,
+    "FINESSE_WEAPONS": 119, // Meta
+    "SPECIAL_WEAPONS": 120, // Meta
+    "ARTISANS_TOOLS": 121, // Meta
     "IMPROVISED_WEAPONS": 122,
     "ENDURANCE": 123,
     "STREETWISE": 124,
-    "STRENGTH":125,
-    "DEXTERITY":126,
-    "CONSTITUTION":127,
-    "INTELLIGENCE":128,
-    "WISDOM":129,
-    "CHARISMA":130,
+    "STRENGTH": 125,
+    "DEXTERITY": 126,
+    "CONSTITUTION": 127,
+    "INTELLIGENCE": 128,
+    "WISDOM": 129,
+    "CHARISMA": 130,
+    "SIMPLE_MELEE":131,
+    "SIMPLE_RANGED":132,
+    "MARTIAL_MELEE":133,
+    "MARTIAL_RANGED":134,
 
     "ANY": 252,
     /** @type {object} */
@@ -2444,7 +2039,7 @@ let ProficiencyEnum = {
             "name": "Giant",
             "value": 34,
             "key": "GIANT",
-            "type": ProficiencyTypeEnum.LANGAUGES
+            "type": ProficiencyTypeEnum.LANGUAGES
         },
         35: {
             "name": "Glaive",
@@ -2479,7 +2074,7 @@ let ProficiencyEnum = {
         40: {
             "name": "Greatclub",
             "value": 40,
-            "key": "GREAT_CLUB",
+            "key": "GREATCLUB",
             "type": ProficiencyTypeEnum.WEAPONS
         },
         41: {
@@ -3022,10 +2617,35 @@ let ProficiencyEnum = {
             "key": "CHARISMA",
             "type": ProficiencyTypeEnum.SKILLS
         },
+        131: {
+            "name": "Simple Melee",
+            "value": 131,
+            "key": "SIMPLE_MELEE",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        132: {
+            "name": "Simple Ranged",
+            "value": 132,
+            "key": "SIMPLE_RANGED",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        133: {
+            "name": "Martial Melee",
+            "value": 133,
+            "key": "MARTIAL_MELEE",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
+        134: {
+            "name": "Martial Ranged",
+            "value": 134,
+            "key": "MARTIAL_RANGED",
+            "type": ProficiencyTypeEnum.SKILLS
+        },
         252: {
             "name": "Pick Any Choice",
             "value": 252,
-            "key": "ANY"
+            "key": "ANY",
+            "type": ProficiencyTypeEnum.ANY
         }
     }
 };
@@ -3041,9 +2661,59 @@ let AbilityEnum = {
     "INTELLIGENCE": ProficiencyEnum.INTELLIGENCE,
     "WISDOM": ProficiencyEnum.WISDOM,
     "CHARISMA": ProficiencyEnum.CHARISMA,
+    "ANY": ProficiencyEnum.ANY,
     /** @type {object} */
     "properties": ProficiencyEnum.properties
 };
+/**
+ * Enum for Tools and Kits
+ * @readonly
+ * @enum {number}
+ */
+let ToolsAndKitsEnum = {
+    "ALCHEMISTS_SUPPLIES":ProficiencyEnum.ALCHEMISTS_SUPPLIES,
+    "BAGPIPES":ProficiencyEnum.BAGPIPES,
+    "BREWERS_SUPPLIES":ProficiencyEnum.BREWERS_SUPPLIES,
+    "CALLIGRAPHERS_SUPPLIES":ProficiencyEnum.CALLIGRAPHERS_SUPPLIES,
+    "CARPENTERS_TOOLS":ProficiencyEnum.CARPENTERS_TOOLS,
+    "CARTOGRAPHERS_TOOLS":ProficiencyEnum.CARTOGRAPHERS_TOOLS,
+    "COBBLERS_TOOLS":ProficiencyEnum.COBBLERS_TOOLS,
+    "COOKS_UTENSILS":ProficiencyEnum.COOKS_UTENSILS,
+    "DICE_SET":ProficiencyEnum.DICE_SET,
+    "DISGUISE_KIT":ProficiencyEnum.DISGUISE_KIT,
+    "DRAGONCHESS_SET":ProficiencyEnum.DRAGONCHESS_SET,
+    "DRUM":ProficiencyEnum.DRUM,
+    "DULCIMER":ProficiencyEnum.DULCIMER,
+    "FLUTE":ProficiencyEnum.FLUTE,
+    "FORGERY_KIT":ProficiencyEnum.FORGERY_KIT,
+    "GLASSBLOWERS_TOOLS":ProficiencyEnum.GLASSBLOWERS_TOOLS,
+    "HERBALISM_KIT":ProficiencyEnum.HERBALISM_KIT,
+    "HORN":ProficiencyEnum.HORN,
+    "JEWELERS_TOOLS":ProficiencyEnum.JEWELERS_TOOLS,
+    "LEATHERWORKERS_TOOLS":ProficiencyEnum.LEATHERWORKERS_TOOLS,
+    "LUTE":ProficiencyEnum.LUTE,
+    "LYRE":ProficiencyEnum.LYRE,
+    "MASONS_TOOLS":ProficiencyEnum.MASONS_TOOLS,
+    "NAVIGATORS_TOOLS":ProficiencyEnum.NAVIGATORS_TOOLS,
+    "PAINTERS_SUPPLIES":ProficiencyEnum.PAINTERS_SUPPLIES,
+    "PAN_FLUTE":ProficiencyEnum.PAN_FLUTE,
+    "PLAYING_CARD_SET":ProficiencyEnum.PLAYING_CARD_SET,
+    "POISONERS_KIT":ProficiencyEnum.POISONERS_KIT,
+    "POTTERS_TOOLS":ProficiencyEnum.POTTERS_TOOLS,
+    "SHAWM":ProficiencyEnum.SHAWM,
+    "SMITHS_TOOLS":ProficiencyEnum.SMITHS_TOOLS,
+    "THIEVES_TOOLS":ProficiencyEnum.THIEVES_TOOLS,
+    "THREE_DRAGON_ANTE_SET":ProficiencyEnum.THREE_DRAGON_ANTE_SET,
+    "TINKERS_TOOLS":ProficiencyEnum.TINKERS_TOOLS,
+    "VIOL":ProficiencyEnum.VIOL,
+    "WEAVERS_TOOLS":ProficiencyEnum.WEAVERS_TOOLS,
+    "WOODCARVERS_TOOLS":ProficiencyEnum.WOODCARVERS_TOOLS,
+    "ARTISANS_TOOLS":ProficiencyEnum.ARTISANS_TOOLS,
+    "LAND_VEHICLES":ProficiencyEnum.LAND_VEHICLES, // are these really tools?
+    "WATER_VEHICLES":ProficiencyEnum.WATER_VEHICLES, // are these really tools?
+    "ANY": ProficiencyEnum.ANY,
+    "properties": ProficiencyEnum.properties
+}
 /**
  * Enum for Artisan Tools
  * @readonly
@@ -3070,6 +2740,19 @@ let ArtisanToolEnum = {
     "WOODCARVERS_TOOLS": ProficiencyEnum.WOODCARVERS_TOOLS,
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
+}
+/**
+ * Enum for Kits
+ * @readonly
+ * @enum {number}
+ */
+let KitEnum = {
+    "DISGUISE_KIT":ProficiencyEnum.DISGUISE_KIT,
+    "FORGERY_KIT":ProficiencyEnum.FORGERY_KIT,
+    "HERBALISM_KIT":ProficiencyEnum.HERBALISM_KIT,
+    "POISONERS_KIT":ProficiencyEnum.POISONERS_KIT,
+    "ANY": ProficiencyEnum.ANY,
+    "properties":ProficiencyEnum.properties
 }
 /**
  * Enum for Languages
@@ -3112,8 +2795,221 @@ let MusicalInstrumentEnum = {
     "PAN_FLUTE": ProficiencyEnum.PAN_FLUTE,
     "SHAWM": ProficiencyEnum.SHAWM,
     "VIOL": ProficiencyEnum.VIOL,
+    "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
 }
+/**
+ * Enum for Armour Categories
+ * @readonly
+ * @enum {number}
+ */
+let ArmourCategoryEnum = {
+    "LIGHT_ARMOUR": ProficiencyEnum.LIGHT_ARMOUR,
+    "MEDIUM_ARMOUR": ProficiencyEnum.MEDIUM_ARMOUR,
+    "HEAVY_ARMOUR": ProficiencyEnum.HEAVY_ARMOUR,
+    "SHIELDS": ProficiencyEnum.SHIELDS,
+    "properties": ProficiencyEnum.properties
+};
+/**
+ * Enum for Armour Properties
+ * @readonly
+ * @enum {number}
+ */
+let ArmourPropertyEnum = {
+    "NONE": 0,
+    "PADDED": 1,
+    "LEATHER": 2,
+    "STUDDEDLEATHER": 3,
+    "HIDE": 4,
+    "CHAINSHIRT": 5,
+    "SCALEMAIL": 6,
+    "BREASTPLATE": 7,
+    "HALFPLATE": 8,
+    "RINGMAIL": 9,
+    "CHAINMAIL": 10,
+    "SPLINT": 11,
+    "PLATE": 12,
+    "SHIELDS": 13,
+    "properties": {
+        0: {
+            "name": "None",
+            "value": 0,
+        },
+        1: {
+            "name": "Padded",
+            "value": 1,
+        },
+        2: {
+            "name": "Leather",
+            "value": 2,
+        },
+        3: {
+            "name": "Studded Leather",
+            "value": 3,
+        },
+        4: {
+            "name": "Hide",
+            "value": 4,
+        },
+        5: {
+            "name": "Chain Shirt",
+            "value": 5,
+        },
+        6: {
+            "name": "Scale Mail",
+            "value": 6,
+        },
+        7: {
+            "name": "Breastplate",
+            "value": 7,
+        },
+        8: {
+            "name": "Half Plate",
+            "value": 8,
+        },
+        9: {
+            "name": "Ring Mail",
+            "value": 9,
+        },
+        10: {
+            "name": "Chain Mail",
+            "value": 10,
+        },
+        11: {
+            "name": "Splint",
+            "value": 11,
+        },
+        12: {
+            "name": "Plate",
+            "value": 12,
+        },
+        13: {
+            "name": "Shields",
+            "value": 13,
+        }
+    }
+};
+/**
+ * Enum for Weapon Categories
+ * @readonly
+ * @enum {number}
+ */
+let WeaponCategoryEnum = {
+    "SIMPLE_MELEE": ProficiencyEnum.SIMPLE_MELEE,
+    "SIMPLE_RANGED": ProficiencyEnum.SIMPLE_RANGED,
+    "MARTIAL_MELEE": ProficiencyEnum.MARTIAL_MELEE,
+    "MARTIAL_RANGED": ProficiencyEnum.MARTIAL_RANGED,
+    "properties": ProficiencyEnum.properties
+};
+/**
+ * Enum for Simple Melee Weapons
+ * @readonly
+ * @enum {number}
+ */
+let SimpleMeleeWeaponEnum = {
+    "CLUB":ProficiencyEnum.CLUB,
+    "DAGGER":ProficiencyEnum.DAGGER,
+    "GREATCLUB":ProficiencyEnum.GREATCLUB,
+    "HANDAXE":ProficiencyEnum.HANDAXE,
+    "JAVELIN":ProficiencyEnum.JAVELIN,
+    "LIGHT_HAMMER":ProficiencyEnum.LIGHT_HAMMER,
+    "MACE":ProficiencyEnum.MACE,
+    "QUARTERSTAFF":ProficiencyEnum.QUARTERSTAFF,
+    "SICKLE":ProficiencyEnum.SICKLE,
+    "SPEAR":ProficiencyEnum.SPEAR,
+    "SIMPLE_MELEE":ProficiencyEnum.SIMPLE_MELEE,
+    "properties":ProficiencyEnum.properties
+}
+/**
+ * Enum for Simple Ranged Weapons
+ * @readonly
+ * @enum {number}
+ */
+let SimpleRangedWeaponEnum = {
+    "LIGHT_CROSSBOW":ProficiencyEnum.LIGHT_CROSSBOW,
+    "DART":ProficiencyEnum.DART,
+    "SHORTBOW":ProficiencyEnum.SHORTBOW,
+    "SLING":ProficiencyEnum.SLING,
+    "SIMPLE_RANGED":ProficiencyEnum.SIMPLE_RANGED,
+    "properties":ProficiencyEnum.properties
+}
+/**
+ * Enum for Martial Melee Weapons
+ * @readonly
+ * @enum {number}
+ */
+let MartialMeleeWeaponEnum = {
+    "BATTLEAXE":ProficiencyEnum.BATTLEAXE,
+    "FLAIL":ProficiencyEnum.FLAIL,
+    "GLAIVE":ProficiencyEnum.GLAIVE,
+    "GREATAXE":ProficiencyEnum.GREATAXE,
+    "GREATSWORD":ProficiencyEnum.GREATSWORD,
+    "HALBERD":ProficiencyEnum.HALBERD,
+    "LANCE":ProficiencyEnum.LANCE,
+    "LONGSWORD":ProficiencyEnum.LONGSWORD,
+    "MAUL":ProficiencyEnum.MAUL,
+    "MORNINGSTAR":ProficiencyEnum.MORNINGSTAR,
+    "PIKE":ProficiencyEnum.PIKE,
+    "RAPIER":ProficiencyEnum.RAPIER,
+    "SCIMITAR":ProficiencyEnum.SCIMITAR,
+    "SHORTSWORD":ProficiencyEnum.SHORTSWORD,
+    "TRIDENT":ProficiencyEnum.TRIDENT,
+    "WAR_PICK":ProficiencyEnum.WAR_PICK,
+    "WARHAMMER":ProficiencyEnum.WARHAMMER,
+    "WHIP":ProficiencyEnum.WHIP,
+    "MARTIAL_MELEE":ProficiencyEnum.MARTIAL_MELEE,
+    "properties":ProficiencyEnum.properties
+}
+/**
+ * Enum for Martial Ranged Weapons
+ * @readonly
+ * @enum {number}
+ */
+let MartialRangedWeaponEnum = {
+    "BLOWGUN":ProficiencyEnum.BLOWGUN,
+    "HAND_CROSSBOW":ProficiencyEnum.HAND_CROSSBOW,
+    "HEAVY_CROSSBOW":ProficiencyEnum.HEAVY_CROSSBOW,
+    "LONGBOW":ProficiencyEnum.LONGBOW,
+    "NET":ProficiencyEnum.NET,
+    "MARTIAL_RANGED":ProficiencyEnum.MARTIAL_RANGED,
+    "properties":ProficiencyEnum.properties
+}
+/**
+ * Enum for Melee Weapons
+ * @readonly
+ * @enum {number}
+ */
+let MeleeWeaponEnum = Object.assign({}, SimpleMeleeWeaponEnum, MartialMeleeWeaponEnum);
+/**
+ * Enum for Ranged Weapons
+ * @readonly
+ * @enum {number}
+ */
+let RangedWeaponEnum = Object.assign({}, SimpleRangedWeaponEnum, MartialRangedWeaponEnum);
+/**
+ * Enum for Simple Weapons
+ * @readonly
+ * @enum {number}
+ */
+let SimpleWeaponEnum = Object.assign({"SIMPLE_WEAPONS":ProficiencyEnum.SIMPLE_WEAPONS}, SimpleMeleeWeaponEnum, SimpleRangedWeaponEnum);
+/**
+ * Enum for Martial Weapons
+ * @readonly
+ * @enum {number}
+ */
+let MartialWeaponEnum = Object.assign({"MARTIAL_WEAPONS":ProficiencyEnum.MARTIAL_WEAPONS}, MartialMeleeWeaponEnum, MartialRangedWeaponEnum);
+/**
+ * Enum for Weapons
+ * @readonly
+ * @enum {number}
+ */
+let WeaponEnum = Object.assign(
+    {
+        "FINESSE_WEAPONS":ProficiencyEnum.FINESSE_WEAPONS,
+        "SPECIAL_WEAPONS":ProficiencyEnum.SPECIAL_WEAPONS,
+        "IMPROVISED_WEAPONS":ProficiencyEnum.IMPROVISED_WEAPONS
+    },
+    SimpleWeaponEnum, MartialWeaponEnum, WeaponCategoryEnum);
 /**
  * Enum for Skills
  * @readonly

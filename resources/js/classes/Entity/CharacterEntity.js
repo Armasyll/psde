@@ -1049,17 +1049,17 @@ class CharacterEntity extends CreatureEntity {
                 }
                 let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
                 switch (this.equipment[slot].getArmourType()) {
-                    case ArmourEnum.PADDED:
-                    case ArmourEnum.LEATHER:
-                    case ArmourEnum.STUDDEDLEATHER: {
+                    case ArmourPropertyEnum.PADDED:
+                    case ArmourPropertyEnum.LEATHER:
+                    case ArmourPropertyEnum.STUDDEDLEATHER: {
                         modifier = Game.calculateAbilityModifier(this.getDexterity());
                         break;
                     }
-                    case ArmourEnum.HIDE:
-                    case ArmourEnum.CHAINSHIRT:
-                    case ArmourEnum.SCALEMAIL:
-                    case ArmourEnum.BREASTPLATE:
-                    case ArmourEnum.HALFPLATE: {
+                    case ArmourPropertyEnum.HIDE:
+                    case ArmourPropertyEnum.CHAINSHIRT:
+                    case ArmourPropertyEnum.SCALEMAIL:
+                    case ArmourPropertyEnum.BREASTPLATE:
+                    case ArmourPropertyEnum.HALFPLATE: {
                         modifier = Game.calculateAbilityModifier(this.getDexterity());
                         if (modifier > 2) {
                             modifier = 2;

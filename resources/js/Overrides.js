@@ -1,6 +1,6 @@
 /* for trinear logic */
-window["maybe"] = -1;
-window["neither"] = -1;
+maybe = -1;
+neither = -1;
 // General functions
 Object.defineProperty(BABYLON.AbstractMesh.prototype, "controller", {
     get: function () {

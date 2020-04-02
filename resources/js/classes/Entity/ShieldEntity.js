@@ -7,8 +7,8 @@ class ShieldEntity extends ClothingEntity {
      * @param  {string}  iconID      Image ID
      */
     constructor(id = undefined, name = undefined, description = undefined, iconID = undefined) {
-        super(id, name, description, iconID, ApparelSlotEnum.HANDS, ArmourEnum.SHIELD);
-        this.itemType = ItemEnum.SHIELD;
+        super(id, name, description, iconID, ApparelSlotEnum.HANDS, ArmourPropertyEnum.SHIELDS);
+        this.itemType = ItemEnum.SHIELDS;
 
         ShieldEntity.set(this.id, this);
     }

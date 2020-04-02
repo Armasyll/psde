@@ -3885,7 +3885,7 @@ class Game {
                 itemEntity = new WeaponEntity(id, name, description, iconID, subType);
                 break;
             }
-            case ItemEnum.SHIELD: {
+            case ItemEnum.SHIELDS: {
                 itemEntity = new ShieldEntity(id, name, description, iconID);
                 break;
             }

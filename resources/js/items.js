@@ -71,7 +71,7 @@ Game.createItemEntity("sticc", "Stick", "A stick.", "stick01Icon", "stick01", "s
 Game.createItemEntity("rocc", "Rock", "A rock.", "rock01Icon", "rock01", "rock01", ItemEnum.WEAPON);
 Game.createItemEntity("kokiriSword", "Small Sword", "A treasured sword.", undefined, "kokiriSword", "kokiriSword", ItemEnum.WEAPON);
 
-Game.createItemEntity("dekuShield", "Small Shield", "A wooden shield.", undefined, "dekuShield", "dekuShield", ItemEnum.SHIELD);
+Game.createItemEntity("dekuShield", "Small Shield", "A wooden shield.", undefined, "dekuShield", "dekuShield", ItemEnum.SHIELDS);
 
 Game.createItemEntity("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03Icon", "gem03", undefined, ItemEnum.GENERAL);
 Game.createItemEntity("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04Icon", "gem04", undefined, ItemEnum.GENERAL);

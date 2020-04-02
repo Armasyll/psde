@@ -11,47 +11,80 @@ class CharacterClass {
 
         this.characterClassType = characterClassType;
 
-        this.hitDice = [1,8];
-        this.healthInitial = 8;
-        this.healthPerLevel = [1,8];
-        this.optionalHealthPerLevel = 5;
-        this.healthAbilityModifier = AbilityEnum.CONSTITUTION
-
-        this.armourProficiencies = [ProficiencyEnum.LIGHT_ARMOUR];
-        this.armourProficiencyChoices = [];
-        this.weaponProficiencies = [ProficiencyEnum.SIMPLE_WEAPONS, ProficiencyEnum.FINESSE_WEAPONS, ProficiencyEnum.IMPROVISED_WEAPONS];
-        this.weaponProficiencyChoices = [ProficiencyEnum.MARTIAL_WEAPONS, ProficiencyEnum.SPECIAL_WEAPONS];
         /**
-         * All guaranteed proficiencies
+         * Roll for default hit points
+         * @type {Array.<number>}
+         * @property {number} Dice
+         * @property {number} Faces
+         */
+        this.hitDice = [1,8];
+        /**
+         * Override for hitDice roll
+         * @type {number}
+         */
+        this.healthInitial = 8;
+        /**
+         * Roll for incremental hit points per level
+         * @type {Array.<number>}
+         * @property {number} Dice
+         * @property {number} Faces
+         */
+        this.healthPerLevel = [1,8];
+        /**
+         * Override for healthPerLevel roll
+         * @type {number}
+         */
+        this.optionalHealthPerLevel = 5;
+        this.healthAbilityModifier = "CONSTITUTION";
+
+        this.armourProficiencies = [];
+        this.armourProficiencyChoices = [];
+        this.weaponProficiencies = [];
+        this.weaponProficiencyChoices = [];
+        /**
+         * Guaranteed tool proficiencies
+         * @type {Array.<string>}
          */
         this.toolProficiencies = [];
         /**
          * Array of skill-based proficiencies which include a list of tool-based proficiencies;
          * of each nested array, only one choice may be taken
          * multiple of the same entry may be included to allow for multiple choices
-         * So, if ProficiencyEnum.ARTISAN_TOOLS, then the character must choose an entry in ArtisanToolEnum
+         * So, if ProficiencyEnum.ARTISANS_TOOLS, then the character must choose an entry in ArtisanToolEnum
          * 
          * eg, you could choose any artian tool, or any musical instrument
-         * @example [ProficiencyEnum.ARTISAN_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]
+         * @example [ProficiencyEnum.ARTISANS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]
          *
          * eg, You could choose two of any artisan tool, or navigation tools and one of any musical instrument, or one of any artisan tool and one of any musical instrument
-         * @example [[ProficiencyEnum.ARTISAN_TOOLS, ProficiencyEnum.NAVIGATORS_TOOLS], [ProficiencyEnum.ARTISAN_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
+         * @example [[ProficiencyEnum.ARTISANS_TOOLS, ProficiencyEnum.NAVIGATORS_TOOLS], [ProficiencyEnum.ARTISANS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
          * 
          * eg, You could choose one of any artisan tool, and either navigation tools or one of music instrument
-         * @example [ProficiencyEnum.ARTISAN_TOOLS, [ProficiancyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
+         * @example [ProficiencyEnum.ARTISANS_TOOLS, [ProficiancyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
          * 
          * eg, You could choose one of any artisan tool, or navigation tools, or music instrument, buy only one!
-         * @example [[ProficiencyEnum.ARTISAN_TOOLS, ProficiancyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
+         * @example [[ProficiencyEnum.ARTISANS_TOOLS, ProficiancyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
          * 
-         * @type {array} Array of ProficiencyEnum, or a nested array of ProficiencyEnum
+         * @type {Array.<string|Array.<string>>} Array of ProficiencyEnum, or a nested array of ProficiencyEnum
          */
-        this.toolProficiencyChoices = [ProficiencyEnum.ARTISAN_TOOLS, [ProficiencyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.POISONERS_KIT, ProficiencyEnum.THIEVES_TOOLS, ProficiencyEnum.LAND_VEHICLES, ProficiencyEnum.WATER_VEHICLES]];
-        this.skillProficiencies = [];
-        this.skillProficiencyChoices = [SkillEnum.ANY, SkillEnum.ANY];
+        this.toolProficiencyChoices = [];
         /**
-         * @type {array} Array of ability enums
+         * Guaranteed skill proficiencies
+         * @type {Array.<string>}
          */
-        this.savingThrowProficiencies = [AbilityEnum.ANY, AbilityEnum.ANY];
+        this.skillProficiencies = [];
+        /**
+         * @type {Array.<string|Array.<string>>} 
+         */
+        this.skillProficiencyChoices = [];
+        /**
+         * Guaranteed ability saving throws
+         * @type {Array.<string>} Array of abilities
+         */
+        this.savingThrowProficiencies = [];
+        /**
+         * @type {Array.<string|Array.<string>>} 
+         */
+        this.savingThrowProficiencyChoices = [];
 
         //
 
@@ -83,20 +116,34 @@ class CharacterClass {
     getIcon() {
         return this.iconID;
     }
-    setCharacterClassType(characterClassEnum) {
-        if (CharacterClassEnum.properties.has(characterClassEnum)) {}
-        else if (CharacterClassEnum.has(characterClassEnum)) {
-            characterClassEnum = CharacterClassEnum.get(characterClassEnum);
+    /**
+     * 
+     * @param {string|number} characterClass CharacterClassEnum
+     * @returns {number}
+     */
+    setCharacterClassType(characterClass) {
+        if (CharacterClassEnum.has(characterClass)) {}
+        else if (CharacterClassEnum.properties.has(characterClass)) {
+            characterClass = CharacterClassEnum.properties[characterClass].key;
         }
         else {
             return 1;
         }
-        this.characterClassType = characterClassEnum;
+        this.characterClassType = characterClass;
         return 0;
     }
+    /**
+     * @returns {number} CharacterClassEnum
+     */
     getCharacterClassType() {
         return this.characterClassType;
     }
+    /**
+     * 
+     * @param {number} die 
+     * @param {number} faces 
+     * @returns {number}
+     */
     setHitDice(die, faces) {
         if (die instanceof Array && die.length == 2) {
             faces = Number.parseInt(die[1]) || 8;
@@ -106,19 +153,39 @@ class CharacterClass {
         this.hitDice[1] = faces;
         return 0;
     }
+    /**
+     * @returns {number}
+     */
     getHitDice() {
         return this.hitDice;
     }
+    /**
+     * @returns {number}
+     */
     rollHitDice() {
         return Game.roll(this.hitDice[0], this.hitDice[1]);
     }
+    /**
+     * 
+     * @param {number} healthInitial 
+     * @returns {number}
+     */
     setInitialHealth(healthInitial) {
-        healthInitial = Game.Tools.filterInteger(healthInitial);
+        healthInitial = Game.Tools.filterInt(healthInitial)||10;
         this.healthInitial = healthInitial;
     }
+    /**
+     * @returns {number}
+     */
     getInitialHealth() {
         return this.healthInitial;
     }
+    /**
+     * 
+     * @param {number} die 
+     * @param {number} faces 
+     * @returns {number}
+     */
     setHealthPerLevel(die, faces) {
         if (die instanceof Array && die.length == 2) {
             faces = Number.parseInt(die[1]) || 8;
@@ -128,206 +195,437 @@ class CharacterClass {
         this.healthPerLevel[1] = faces;
         return 0;
     }
+    /**
+     * @returns {number}
+     */
     getHealthPerLevel() {
         return this.healthPerLevel;
     }
+    /**
+     * @returns {number}
+     */
     rollHealthPerLevel() {
         return Game.roll(this.healthPerLevel[0], this.healthPerLevel[1]);
     }
+    /**
+     * 
+     * @param {number} optionalHealthPerLevel 
+     * @returns {number}
+     */
     setOptionalHealthPerLevel(optionalHealthPerLevel) {
         this.optionalHealthPerLevel = optionalHealthPerLevel;
         return 0;
     }
+    /**
+     * @returns {number}
+     */
     getOptionalHealthPerLevel() {
         return this.optionalHealthPerLevel;
     }
-    setHealthAbilityModifier(abilityEnum) {
-        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {}
-        else if (AbilityEnum.hasOwnProperty(abilityEnum)) {
-            abilityEnum = AbilityEnum[abilityEnum];
+    /**
+     * 
+     * @param {string|number} ability 
+     * @returns {number}
+     */
+    setHealthAbilityModifier(ability) {
+        if (AbilityEnum.hasOwnProperty(ability)) {}
+        else if (AbilityEnum.properties.hasOwnProperty(ability)) {
+            ability = AbilityEnum.properties[ability].key;
         }
         else {
             return 2;
         }
-        this.healthAbilityModifier = abilityEnum;
+        this.healthAbilityModifier = ability;
         return 0;
     }
+    /**
+     * @returns {number}
+     */
     getHealthAbilityModifier() {
         return this.healthAbilityModifier;
     }
     /**
      * 
-     * @param {ProficiencyEnum} proficiencyEnum 
+     * @param {string|Array.<string>} proficiency ArmourCategoryEnum
+     * @returns {number}
      */
-    addArmourProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+    addArmourProficiencyChoice(proficiency) {
+        if (proficiency instanceof Array) {
+            let choices = [];
+            for (let i in proficiency) {
+                if (!ArmourCategoryEnum.hasOwnProperty(proficiency[i])) {
+                    if (ArmourCategoryEnum.properties.hasOwnProperty(proficiency[i])) {
+                        proficiency[i] = ArmourCategoryEnum.properties[proficiency[i]].key;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                choices.push(proficiency[i]);
+            }
+            if (choices.length == 0) {
+                return 2;
+            }
+            this.armourProficiencies.push(choices);
+            return 0;
+        }
+        if (!ArmourCategoryEnum.hasOwnProperty(proficiency)) {
+            if (ArmourCategoryEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = ArmourCategoryEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        this.armourProficiencies.push(proficiency);
+        return 0;
+    }
+    /**
+     * 
+     * @param {string|number} proficiency ArmourCategoryEnum
+     * @returns {number}
+     */
+    addArmourProficiency(proficiency) {
+        if (ArmourCategoryEnum.hasOwnProperty(proficiency)) {}
+        else if (ArmourCategoryEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ArmourCategoryEnum.properties[proficiency].key;
         }
         else {
             return 2;
         }
-        if (ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.ARMOUR) {
-            return 1;
-        }
-        if (this.armourProficiencies.indexOf(proficiencyEnum) != -1) {
+        if (this.armourProficiencies.indexOf(proficiency) != -1) {
             return 0;
         }
-        this.armourProficiencies.push(proficiencyEnum);
+        this.armourProficiencies.push(proficiency);
+        return 0;
     }
-    hasArmourProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+    /**
+     * 
+     * @param {string|number} proficiency 
+     * @returns {boolean}
+     */
+    hasArmourProficiency(proficiency) {
+        if (ArmourCategoryEnum.hasOwnProperty(proficiency)) {}
+        else if (ArmourCategoryEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ArmourCategoryEnum.properties[proficiency].key;
         }
         else {
             return false;
         }
-        return this.armourProficiencies.indexOf(proficiencyEnum) != -1;
+        return this.armourProficiencies.indexOf(proficiency) != -1;
     }
     /**
      * 
-     * @param {ProficiencyEnum} proficiencyEnum 
+     * @param {string|Array.<string>} proficiency WeaponEnum
+     * @returns {number}
      */
-    addWeaponProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+    addWeaponProficiencyChoice(proficiency) {
+        if (proficiency instanceof Array) {
+            let choices = [];
+            for (let i in proficiency) {
+                if (!WeaponEnum.hasOwnProperty(proficiency[i])) {
+                    if (WeaponEnum.properties.hasOwnProperty(proficiency[i])) {
+                        proficiency[i] = WeaponEnum.properties[proficiency[i]].key;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                choices.push(proficiency[i]);
+            }
+            if (choices.length == 0) {
+                return 2;
+            }
+            this.weaponProficiencyChoices.push(choices);
+            return 0;
+        }
+        if (!WeaponEnum.hasOwnProperty(proficiency)) {
+            if (WeaponEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = WeaponEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        this.weaponProficiencyChoices.push(proficiency);
+        return 0;
+    }
+    /**
+     * 
+     * @param {string|number} proficiency 
+     * @returns {number}
+     */
+    addWeaponProficiency(proficiency) {
+        if (!WeaponEnum.hasOwnProperty(proficiency)) {
+            if (WeaponEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = WeaponEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        if (this.weaponProficiencies.indexOf(proficiency) != -1) {
+            return 0;
+        }
+        this.weaponProficiencies.push(proficiency);
+    }
+    /**
+     * 
+     * @param {string|numer} proficiency ProficiencyEnum
+     * @returns {boolean}
+     */
+    hasWeaponProficiency(proficiency) {
+        if (ProficiencyEnum.hasOwnProperty(proficiency)) {}
+        else if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ProficiencyEnum.properties[proficiency].key;
+        }
+        else {
+            return false;
+        }
+        return this.weaponProficiencies.indexOf(proficiency) != -1;
+    }
+    /**
+     * 
+     * @param {string|Array.<string>} proficiency ProficiencyEnum
+     * @returns {number}
+     */
+    addToolProficiencyChoice(proficiency) {
+        if (proficiency instanceof Array) {
+            let choices = [];
+            for (let i in proficiency) {
+                if (!ToolsAndKitsEnum.hasOwnProperty(proficiency[i])) {
+                    if (ToolsAndKitsEnum.properties.hasOwnProperty(proficiency[i])) {
+                        proficiency[i] = ToolsAndKitsEnum.properties[proficiency[i]].key;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                choices.push(proficiency[i]);
+            }
+            if (choices.length == 0) {
+                return 2;
+            }
+            this.toolProficiencyChoices.push(choices);
+            return 0;
+        }
+        if (!ToolsAndKitsEnum.hasOwnProperty(proficiency)) {
+            if (ToolsAndKitsEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = ToolsAndKitsEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        this.toolProficiencyChoices.push(proficiency);
+        return 0;
+    }
+    /**
+     * 
+     * @param {string|number} proficiency 
+     * @returns {number}
+     */
+    addToolProficiency(proficiency) {
+        if (!ToolsAndKitsEnum.hasOwnProperty(proficiency)) {
+            if (ToolsAndKitsEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = ToolsAndKitsEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        if (this.toolProficiency.indexOf(proficiency) != -1) {
+            return 0;
+        }
+        this.toolProficiency.push(proficiency);
+        return 0;
+    }
+    /**
+     * 
+     * @param {stirng|number} proficiency 
+     * @returns {boolean}
+     */
+    hasToolProficiency(proficiency) {
+        if (ToolsAndKitsEnum.hasOwnProperty(proficiency)) {}
+        else if (ToolsAndKitsEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ToolsAndKitsEnum.properties[proficiency].key;
+        }
+        else {
+            return false;
+        }
+        return this.toolProficiencies.indexOf(proficiency) != -1;
+    }
+    /**
+     * 
+     * @param {string|Array.<string>} proficiency SkillEnum
+     * @returns {number}
+     */
+    addSkillProficiencyChoice(proficiency) {
+        if (proficiency instanceof Array) {
+            let choices = [];
+            for (let i in proficiency) {
+                if (!SkillEnum.hasOwnProperty(proficiency[i])) {
+                    if (SkillEnum.properties.hasOwnProperty(proficiency[i])) {
+                        proficiency[i] = SkillEnum.properties[proficiency[i]].key;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                choices.push(proficiency[i]);
+            }
+            if (choices.length == 0) {
+                return 2;
+            }
+            this.skillProficiencyChoices.push(choices);
+            return 0;
+        }
+        if (!SkillEnum.hasOwnProperty(proficiency)) {
+            if (SkillEnum.properties.hasOwnProperty(proficiency)) {
+                proficiency = SkillEnum.properties[proficiency].key;
+            }
+            else {
+                return 2;
+            }
+        }
+        this.skillProficiencyChoices.push(proficiency);
+        return 0;
+    }
+    /**
+     * 
+     * @param {string|number} proficiency 
+     * @returns {number}
+     */
+    addSkillProficiency(proficiency) {
+        if (ProficiencyEnum.hasOwnProperty(proficiency)) {}
+        else if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ProficiencyEnum.properties[proficiency].key;
         }
         else {
             return 2;
         }
-        if (ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.WEAPONS && ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.SKILLS) {
+        if (ProficiencyEnum.properties[proficiency].type != ProficiencyTypeEnum.SKILLS && ProficiencyEnum.properties[proficiency].type != ProficiencyTypeEnum.LANGUAGES) {
             return 1;
         }
-        if (this.weaponProficiencies.indexOf(proficiencyEnum) != -1) {
+        if (this.skillProficiencies.indexOf(proficiency) != -1) {
             return 0;
         }
-        this.weaponProficiencies.push(proficiencyEnum);
-    }
-    hasWeaponProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
-        }
-        else {
-            return false;
-        }
-        return this.weaponProficiencies.indexOf(proficiencyEnum) != -1;
+        this.skillProficiencies.push(proficiency);
+        return 0;
     }
     /**
      * 
-     * @param {ProficiencyEnum} proficiencyEnum 
+     * @param {string|number} proficiency 
+     * @returns {boolean}
      */
-    addToolProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
-        }
-        else {
-            return 2;
-        }
-        if (ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.TOOLS_AND_KITS) {
-            return 1;
-        }
-        if (this.toolProficiencies.indexOf(proficiencyEnum) != -1) {
-            return 0;
-        }
-        this.toolProficiencies.push(proficiencyEnum);
-    }
-    hasToolProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+    hasSkillProficiency(proficiency) {
+        if (ProficiencyEnum.hasOwnProperty(proficiency)) {}
+        else if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
+            proficiency = ProficiencyEnum.properties[proficiency].key;
         }
         else {
             return false;
         }
-        return this.toolProficiencies.indexOf(proficiencyEnum) != -1;
+        return this.skillProficiencies.indexOf(proficiency) != -1;
     }
     /**
      * 
-     * @param {ProficiencyEnum} proficiencyEnum 
+     * @param {string|Array.<string>} ability AbilityEnum
+     * @returns {number}
      */
-    addSkillProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
-        }
-        else {
-            return 2;
-        }
-        if (ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.SKILLS && ProficiencyEnum.properties[proficiencyEnum].type != ProficiencyTypeEnum.LANGUAGES) {
-            return 1;
-        }
-        if (this.skillProficiencies.indexOf(proficiencyEnum) != -1) {
+    addSavingThrowProficiencyChoice(ability) {
+        if (ability instanceof Array) {
+            let choices = [];
+            for (let i in ability) {
+                if (!AbilityEnum.hasOwnProperty(ability[i])) {
+                    if (AbilityEnum.properties.hasOwnProperty(ability[i])) {
+                        ability[i] = AbilityEnum.properties[ability[i]].key;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                choices.push(ability[i]);
+            }
+            if (choices.length == 0) {
+                return 2;
+            }
+            this.savingThrowProficiencyChoices.push(choices);
             return 0;
         }
-        this.skillProficiencies.push(proficiencyEnum);
-    }
-    hasSkillProficiency(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {}
-        else if (ProficiencyEnum.hasOwnProperty(proficiencyEnum)) {
-            proficiencyEnum = ProficiencyEnum[proficiencyEnum];
+        if (!AbilityEnum.hasOwnProperty(ability)) {
+            if (AbilityEnum.properties.hasOwnProperty(ability)) {
+                ability = AbilityEnum.properties[ability].key;
+            }
+            else {
+                return 2;
+            }
         }
-        else {
-            return false;
-        }
-        return this.skillProficiencies.indexOf(proficiencyEnum) != -1;
+        this.savingThrowProficiencyChoices.push(ability);
+        return 0;
     }
     /**
      * 
-     * @param {AbilityEnum} abilityEnum 
+     * @param {string|number} ability 
+     * @returns {number}
      */
-    addSavingThrowProficiency(abilityEnum) {
-        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {}
-        else if (AbilityEnum.hasOwnProperty(abilityEnum)) {
-            abilityEnum = AbilityEnum[abilityEnum];
+    addSavingThrowProficiency(ability) {
+        if (AbilityEnum.hasOwnProperty(ability)) {}
+        else if (AbilityEnum.properties.hasOwnProperty(ability)) {
+            ability = AbilityEnum.properties[ability].key;
         }
         else {
             return 1;
         }
-        if (this.savingThrowProficiencies.indexOf(abilityEnum) != -1) {
+        if (this.savingThrowProficiencies.indexOf(ability) != -1) {
             return 0;
         }
-        this.savingThrowProficiencies.push(abilityEnum);
+        this.savingThrowProficiencies.push(ability);
+        return 0;
     }
-    hasSavingThrowProficiency(abilityEnum) {
-        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {}
-        else if (AbilityEnum.hasOwnProperty(abilityEnum)) {
-            abilityEnum = AbilityEnum[abilityEnum];
+    /**
+     * 
+     * @param {string|number} ability 
+     * @returns {boolean}
+     */
+    hasSavingThrowProficiency(ability) {
+        if (AbilityEnum.hasOwnProperty(ability)) {}
+        else if (AbilityEnum.properties.hasOwnProperty(ability)) {
+            ability = AbilityEnum.properties[ability].key;
         }
         else {
             return false;
         }
-        return this.savingThrowProficiencies.indexOf(abilityEnum) != -1;
+        return this.savingThrowProficiencies.indexOf(ability) != -1;
     }
     /**
      * 
-     * @param {AbilityEnum} abilityEnum Required ability
+     * @param {string|number} ability Required ability
      * @param {number} score Ability's minimum score
+     * @returns {number}
      */
-    addMulticlassRequirement(abilityEnum, score) {
-        if (AbilityEnum.properties.hasOwnProperty(abilityEnum)) {}
-        else if (AbilityEnum.hasOwnProperty(abilityEnum)) {
-            abilityEnum = AbilityEnum[abilityEnum];
+    addMulticlassRequirement(ability, score) {
+        if (AbilityEnum.hasOwnProperty(ability)) {}
+        else if (AbilityEnum.properties.hasOwnProperty(ability)) {
+            ability = AbilityEnum.properties[ability].key;
         }
         else {
             return 1;
         }
-        score = Game.Tools.filterInteger(score);
+        score = Game.Tools.filterInt(score);
         if (score < 1) { 
             return 1;
         }
         else if (score > Number.MAX_SAFE_INTEGER) {
             return 1;
         }
-        this.multiclassRequirements[abilityEnum] = score;
+        this.multiclassRequirements[ability] = score;
         return 0;
     }
     /**
      * All requirements must be met, not just one
      * @param {boolean} requiresBoth 
+     * @returns {number}
      */
     setMulticlassRequiresBoth(requiresBoth = true) {
         this.multiclassRequiresBoth = requiresBoth == true;
