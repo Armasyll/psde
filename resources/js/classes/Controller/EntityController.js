@@ -175,21 +175,38 @@ class EntityController {
         this.propertiesChanged = false;
         return this;
     }
-    setParent(_mesh) {
-        if (!(_mesh instanceof BABYLON.AbstractMesh)) {
-            if (_mesh == undefined) {}
-            else if (Game.hasLoadedMesh(_mesh)) {
-                _mesh = Game.getMesh(_mesh);
+    setParentByMesh(mesh) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (Game.hasMesh(mesh)) {
+                mesh = Game.getMesh(mesh);
+            }
+            else {
+                return this;
             }
         }
-        this.getMesh().setParent(_mesh);
+        this.mesh.setParent(mesh);
+        return this;
+    }
+    setParent(controller = null) {
+        if (controller == null) {
+            return this.removeParent();
+        }
+        if (!(controller instanceof EntityController)) {
+            if (EntityController.has(controller)) {
+                controller = EntityController.get(controller);
+            }
+            else {
+                return this;
+            }
+        }
+        this.mesh.setParent(controller.getMesh());
         return this;
     }
     getParent() {
-        return this.getMesh().parent;
+        return this.mesh.parent;
     }
     removeParent() {
-        this.getMesh().setParent(null);
+        this.mesh.setParent(null);
         return this;
     }
 

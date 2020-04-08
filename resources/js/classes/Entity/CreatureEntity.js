@@ -916,7 +916,7 @@ class CreatureEntity extends Entity {
         if (ActionEnum.properties.hasOwnProperty(stance)) {
             this.stance = stance;
             if (this.hasController()) {
-                if (this.stance == ActionEnum.LAY) {
+                /*if (this.stance == ActionEnum.LAY) {
                     this.controller.setIdleAnim("90_idleLyingDown01", 1, true);
                 }
                 else if (this.stance == ActionEnum.SIT) {
@@ -929,7 +929,7 @@ class CreatureEntity extends Entity {
                 }
                 else if (this.stance == ActionEnum.STAND) {
                     this.controller.setIdleAnim("90_idle01", 1, true);
-                }
+                }*/
             }
             return 0;
         }
@@ -1039,6 +1039,9 @@ class CreatureEntity extends Entity {
         if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
             this.furniture = instancedFurnitureEntity.getID();
             instancedFurnitureEntity.addCharacter(this);
+        }
+        if (this.hasController() && instancedFurnitureEntity.hasController()) {
+            this.controller.setParent(instancedFurnitureEntity.getController());
         }
         return 0;
     }
@@ -1403,17 +1406,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageAbilityChecksEffectOverride != 0) {
-            return this.vantageAbilityChecksEffectOverride > 0;
+        if (this.vantageAbilityChecksEffectOverride[ability] != 0) {
+            return this.vantageAbilityChecksEffectOverride[ability] > 0;
         }
-        else if (this.vantageAbilityChecksConditionOverride != 0) {
-            return this.vantageAbilityChecksConditionOverride > 0;
+        else if (this.vantageAbilityChecksConditionOverride[ability] != 0) {
+            return this.vantageAbilityChecksConditionOverride[ability] > 0;
         }
-        else if (this.vantageAbilityChecksOverride != 0) {
-            return this.vantageAbilityChecksOverride > 0;
+        else if (this.vantageAbilityChecksOverride[ability] != 0) {
+            return this.vantageAbilityChecksOverride[ability] > 0;
         }
-        else if (this.vantageAbilityChecks != 0) {
-            return this.vantageAbilityChecks > 0;
+        else if (this.vantageAbilityChecks[ability] != 0) {
+            return this.vantageAbilityChecks[ability] > 0;
         }
         return false;
     }
@@ -1434,17 +1437,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageAbilityChecksEffectOverride != 0) {
-            return this.vantageAbilityChecksEffectOverride < 0;
+        if (this.vantageAbilityChecksEffectOverride[ability] != 0) {
+            return this.vantageAbilityChecksEffectOverride[ability] < 0;
         }
-        else if (this.vantageAbilityChecksConditionOverride != 0) {
-            return this.vantageAbilityChecksConditionOverride < 0;
+        else if (this.vantageAbilityChecksConditionOverride[ability] != 0) {
+            return this.vantageAbilityChecksConditionOverride[ability] < 0;
         }
-        else if (this.vantageAbilityChecksOverride != 0) {
-            return this.vantageAbilityChecksOverride < 0;
+        else if (this.vantageAbilityChecksOverride[ability] != 0) {
+            return this.vantageAbilityChecksOverride[ability] < 0;
         }
-        else if (this.vantageAbilityChecks != 0) {
-            return this.vantageAbilityChecks < 0;
+        else if (this.vantageAbilityChecks[ability] != 0) {
+            return this.vantageAbilityChecks[ability] < 0;
         }
         return false;
     }
@@ -1466,17 +1469,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageSenseChecksEffectOverride != 0) {
-            return this.vantageSenseChecksEffectOverride > 0;
+        if (this.vantageSenseChecksEffectOverride[sense] != 0) {
+            return this.vantageSenseChecksEffectOverride[sense] > 0;
         }
-        else if (this.vantageSenseChecksConditionOverride != 0) {
-            return this.vantageSenseChecksConditionOverride > 0;
+        else if (this.vantageSenseChecksConditionOverride[sense] != 0) {
+            return this.vantageSenseChecksConditionOverride[sense] > 0;
         }
-        else if (this.vantageSenseChecksOverride != 0) {
-            return this.vantageSenseChecksOverride > 0;
+        else if (this.vantageSenseChecksOverride[sense] != 0) {
+            return this.vantageSenseChecksOverride[sense] > 0;
         }
-        else if (this.vantageSenseChecks != 0) {
-            return this.vantageSenseChecks > 0;
+        else if (this.vantageSenseChecks[sense] != 0) {
+            return this.vantageSenseChecks[sense] > 0;
         }
         return false;
     }
@@ -1497,17 +1500,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageEffectOverrideSenseChecks != 0) {
-            return this.vantageEffectOverrideSenseChecks < 0;
+        if (this.vantageEffectOverrideSenseChecks[sense] != 0) {
+            return this.vantageEffectOverrideSenseChecks[sense] < 0;
         }
-        else if (this.vantageConditionOverrideSenseChecks != 0) {
-            return this.vantageConditionOverrideSenseChecks < 0;
+        else if (this.vantageConditionOverrideSenseChecks[sense] != 0) {
+            return this.vantageConditionOverrideSenseChecks[sense] < 0;
         }
-        else if (this.vantageOverrideSenseChecks != 0) {
-            return this.vantageOverrideSenseChecks < 0;
+        else if (this.vantageOverrideSenseChecks[sense] != 0) {
+            return this.vantageOverrideSenseChecks[sense] < 0;
         }
-        else if (this.vantageSenseChecks != 0) {
-            return this.vantageSenseChecks < 0;
+        else if (this.vantageSenseChecks[sense] != 0) {
+            return this.vantageSenseChecks[sense] < 0;
         }
         return false;
     }
@@ -1529,17 +1532,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageSavingThrowsEffectOverride != 0) {
-            return this.vantageSavingThrowsEffectOverride > 0;
+        if (this.vantageSavingThrowsEffectOverride[ability] != 0) {
+            return this.vantageSavingThrowsEffectOverride[ability] > 0;
         }
-        else if (this.vantageSavingThrowsConditionOverride != 0) {
-            return this.vantageSavingThrowsConditionOverride > 0;
+        else if (this.vantageSavingThrowsConditionOverride[ability] != 0) {
+            return this.vantageSavingThrowsConditionOverride[ability] > 0;
         }
-        else if (this.vantageSavingThrowsOverride != 0) {
-            return this.vantageSavingThrowsOverride > 0;
+        else if (this.vantageSavingThrowsOverride[ability] != 0) {
+            return this.vantageSavingThrowsOverride[ability] > 0;
         }
-        else if (this.vantageSavingThrows != 0) {
-            return this.vantageSavingThrows > 0;
+        else if (this.vantageSavingThrows[ability] != 0) {
+            return this.vantageSavingThrows[ability] > 0;
         }
         return false;
     }
@@ -1560,17 +1563,103 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.vantageSavingThrowsEffectOverride != 0) {
-            return this.vantageSavingThrowsEffectOverride < 0;
+        if (this.vantageSavingThrowsEffectOverride[ability] != 0) {
+            return this.vantageSavingThrowsEffectOverride[ability] < 0;
         }
-        else if (this.vantageSavingThrowsConditionOverride != 0) {
-            return this.vantageSavingThrowsConditionOverride < 0;
+        else if (this.vantageSavingThrowsConditionOverride[ability] != 0) {
+            return this.vantageSavingThrowsConditionOverride[ability] < 0;
         }
-        else if (this.vantageSavingThrowsOverride != 0) {
-            return this.vantageSavingThrowsOverride < 0;
+        else if (this.vantageSavingThrowsOverride[ability] != 0) {
+            return this.vantageSavingThrowsOverride[ability] < 0;
         }
-        else if (this.vantageSavingThrows != 0) {
-            return this.vantageSavingThrows < 0;
+        else if (this.vantageSavingThrows[ability] != 0) {
+            return this.vantageSavingThrows[ability] < 0;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param {string|number} damage DamageEnum
+     * @returns {boolean}
+     */
+    isResistantTo(damage) {
+        if (this.isGod()) {
+            return true;
+        }
+        if (!DamageEnum.hasOwnProperty(damage)) {
+            if (DamageEnum.properties.hasOwnProperty(damage)) {
+                damage = DamageEnum.properties[damage].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.resistanceToEffectOverride[damage] != 0) {
+            return this.resistanceToEffectOverride[damage] > 0;
+        }
+        else if (this.resistanceToConditionOverride[damage] != 0) {
+            return this.resistanceToConditionOverride[damage] > 0;
+        }
+        else if (this.resistanceTo[damage] != 0) {
+            return this.resistanceTo[damage] > 0;
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param {string|number} damage DamageEnum
+     * @returns {boolean}
+     */
+    isVulnerableTo(damage) {
+        if (this.isGod()) {
+            return false;
+        }
+        if (!DamageEnum.hasOwnProperty(damage)) {
+            if (DamageEnum.properties.hasOwnProperty(damage)) {
+                damage = DamageEnum.properties[damage].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.resistanceToEffectOverride[damage] != 0) {
+            return this.resistanceToEffectOverride[damage] < 0;
+        }
+        else if (this.resistanceToConditionOverride[damage] != 0) {
+            return this.resistanceToConditionOverride[damage] < 0;
+        }
+        else if (this.resistanceTo[damage] != 0) {
+            return this.resistanceTo[damage] < 0;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @param {string|number} damage DamageEnum
+     * @returns {boolean}
+     */
+    isImmuneTo(damage) {
+        if (this.isGod()) {
+            return true;
+        }
+        if (!DamageEnum.hasOwnProperty(damage)) {
+            if (DamageEnum.properties.hasOwnProperty(damage)) {
+                damage = DamageEnum.properties[damage].key;
+            }
+            else {
+                return false;
+            }
+        }
+        if (this.immuneToEffectOverride[damage] != 0) {
+            return this.immuneToEffectOverride[damage] > 0;
+        }
+        else if (this.immuneToConditionOverride[damage] != 0) {
+            return this.immuneToConditionOverride[damage] > 0;
+        }
+        else if (this.immuneTo[damage] != 0) {
+            return this.immuneTo[damage] > 0;
         }
         return false;
     }
@@ -1592,17 +1681,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.failSucceedSavingThrowsEffectOverride != 0) {
-            return this.failSucceedSavingThrowsEffectOverride > 0;
+        if (this.failSucceedSavingThrowsEffectOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsEffectOverride[ability] > 0;
         }
-        else if (this.failSucceedSavingThrowsConditionOverride != 0) {
-            return this.failSucceedSavingThrowsConditionOverride > 0;
+        else if (this.failSucceedSavingThrowsConditionOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsConditionOverride[ability] > 0;
         }
-        else if (this.failSucceedSavingThrowsOverride != 0) {
-            return this.failSucceedSavingThrowsOverride > 0;
+        else if (this.failSucceedSavingThrowsOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsOverride[ability] > 0;
         }
-        else if (this.failSucceedSavingThrows != 0) {
-            return this.failSucceedSavingThrows > 0;
+        else if (this.failSucceedSavingThrows[ability] != 0) {
+            return this.failSucceedSavingThrows[ability] > 0;
         }
         return false;
     }
@@ -1623,17 +1712,17 @@ class CreatureEntity extends Entity {
                 return false;
             }
         }
-        if (this.failSucceedSavingThrowsEffectOverride != 0) {
-            return this.failSucceedSavingThrowsEffectOverride < 0;
+        if (this.failSucceedSavingThrowsEffectOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsEffectOverride[ability] < 0;
         }
-        else if (this.failSucceedSavingThrowsConditionOverride != 0) {
-            return this.failSucceedSavingThrowsConditionOverride < 0;
+        else if (this.failSucceedSavingThrowsConditionOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsConditionOverride[ability] < 0;
         }
-        else if (this.failSucceedSavingThrowsOverride != 0) {
-            return this.failSucceedSavingThrowsOverride < 0;
+        else if (this.failSucceedSavingThrowsOverride[ability] != 0) {
+            return this.failSucceedSavingThrowsOverride[ability] < 0;
         }
-        else if (this.failSucceedSavingThrows != 0) {
-            return this.failSucceedSavingThrows < 0;
+        else if (this.failSucceedSavingThrows[ability] != 0) {
+            return this.failSucceedSavingThrows[ability] < 0;
         }
         return false;
     }

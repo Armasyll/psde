@@ -4583,6 +4583,12 @@ class Game {
         if (actor.getController().isAttacking) {
             return 1;
         }
+        if (entity instanceof CharacterEntity && actor instanceof CharacterEntity) {
+            return 0;
+        }
+        if (Game.withinRange(actor, entity) && Game.inFrontOf(actor, entity)) {
+            return 0;
+        }
         if (weapon == null) {
             let weaponL = actor.getEquipment()[ApparelSlotEnum.HAND_L];
             let weaponR = actor.getEquipment()[ApparelSlotEnum.HAND_R];
@@ -4599,22 +4605,18 @@ class Game {
         else {
             weapon = WeaponEntity.get("weaponHand");
         }
-        if (entity instanceof CharacterEntity && actor instanceof CharacterEntity) {
-            if (Game.withinRange(actor, entity) && Game.inFrontOf(actor, entity)) {
-                let attackRoll = Game.calculateAttack(actor, weapon);
-                if (attackRoll == 1) { }
-                else if (attackRoll > entity.getArmourClass()) {
-                    let damage = Game.calculateDamage(actor, weapon, attackRoll >= 20);
-                    if (weapon instanceof AbstractEntity) {
-                        entity.modifyHealth(-damage);
-                    }
-                    else if (actor.isArmed()) {
-                        entity.modifyHealth(-damage);
-                    }
-                    else {
-                        entity.modifyStamina(damage);
-                    }
-                }
+        let attackRoll = Game.calculateAttack(actor, weapon);
+        if (attackRoll == 1) { }
+        else if (attackRoll > entity.getArmourClass()) {
+            let damage = Game.calculateDamage(entity, actor, weapon, attackRoll >= 20);
+            if (weapon instanceof AbstractEntity) {
+                entity.modifyHealth(-damage);
+            }
+            else if (actor.isArmed()) {
+                entity.modifyHealth(-damage);
+            }
+            else {
+                entity.modifyStamina(damage);
             }
         }
         if (typeof callback == "function") {
@@ -5056,13 +5058,12 @@ class Game {
                 return 2;
             }
         }
+        actor.setFurniture(entity);
         actor.setStance(StanceEnum.SIT);
-        actor.getController().setParent(entity.getController().getMesh());
         let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
         actor.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
         actor.getController().getMesh().rotation.set(0, 0, 0);
-        actor.setFurniture(entity);
         actor.getController().doSit();
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
@@ -5488,43 +5489,72 @@ class Game {
         }
         return attackRoll;
     }
-    static calculateDamage(attacker, weapon, critical = false) {
+    static calculateDamage(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
-            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
-            if (weapon.isFinesse()) {
-                if (attacker.getDexterity() > attacker.getStrength()) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-                }
-                else {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
-                }
-            }
-            else if (weapon.isRange()) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-            }
-            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
-            }
-            return damageRoll;
+            damageRoll = Game.calculateDamageWithWeapon(target, attacker, weapon, critical);
         }
         else if (weapon instanceof Spell) {
-            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
-            damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
+            damageRoll = Game.calculateDamageWithSpell(target, attacker, weapon, critical);
         }
         else {
-            switch (attacker.getSize()) {
-                case SizeEnum.FINE:
-                case SizeEnum.DIMINUTIVE: { return 0; }
-                case SizeEnum.SMALL: { return Game.roll(1, 2) }
-                case SizeEnum.MEDIUM: { return Game.roll(1, 3) }
-                case SizeEnum.LARGE: { return Game.roll(1, 4) }
-                case SizeEnum.HUGE: { return Game.roll(1, 6) }
-                case SizeEnum.GARGANTUAN: { return Game.roll(1, 8) }
-                case SizeEnum.COLOSSAL: { return Game.roll(2, 6) }
+            damageRoll = Game.calculateDamageWithUnarmed(target, attacker, critical);
+        }
+        return damageRoll;
+    }
+    static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
+        let damageRoll = 0;
+        damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
+        if (weapon.isFinesse()) {
+            if (attacker.getDexterity() > attacker.getStrength()) {
+                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            else {
+                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
             }
         }
-        return 0;
+        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_RANGED) {
+            damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+        }
+        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_RANGED) {
+            damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+        }
+        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE) {
+            damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+        }
+        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+            damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+        }
+        if (target.isImmuneTo(weapon.getDamageType())) {
+            damageRoll = 0;
+        }
+        else if (target.isResistantTo(weapon.getDamageType())) {
+            damageRoll /= 2;
+        }
+        else if (target.isVulnerableTo(weapon.getDamageType())) {
+            damageRoll *= 2;
+        }
+        return damageRoll;
+    }
+    static calculateDamageWithSpell(target, attacker, spell, critical = false) {
+        let damageRoll = 0;
+        damageRoll = Game.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+        damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
+        return damageRoll;
+    }
+    static calculateDamageWithUnarmed(target, attacker, critical = false) {
+        let damageRoll = 0;
+        switch (attacker.getSize()) {
+            case SizeEnum.FINE:
+            case SizeEnum.DIMINUTIVE: { damageRoll = 0; }
+            case SizeEnum.SMALL: { damageRoll = Game.roll(1, 2) }
+            case SizeEnum.MEDIUM: { damageRoll = Game.roll(1, 3) }
+            case SizeEnum.LARGE: { damageRoll = Game.roll(1, 4) }
+            case SizeEnum.HUGE: { damageRoll = Game.roll(1, 6) }
+            case SizeEnum.GARGANTUAN: { damageRoll = Game.roll(1, 8) }
+            case SizeEnum.COLOSSAL: { damageRoll = Game.roll(2, 6) }
+        }
+        return damageRoll;
     }
     /**
      * Roll a die
