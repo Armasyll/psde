@@ -24,8 +24,9 @@ class CreatureController extends EntityController {
 
         this.walk = new AnimData("walk");
         this.walkBack = new AnimData("walkBack");
-        this.idle = new AnimData("idle");
-        this.idleJump = new AnimData("idleJump");
+        this.standIdle = new AnimData("idle");
+        this.idle = this.standIdle;
+        this.standIdleJump = new AnimData("idleJump");
         this.fall = new AnimData("fall");
         this.fallLong = new AnimData("fallLong");
         this.land = new AnimData("land");
@@ -39,9 +40,11 @@ class CreatureController extends EntityController {
         this.strafeRight = new AnimData("strafeRight");
         this.slideBack = new AnimData("slideBack");
         this.lieDown = new AnimData("lieDown");
+        this.lieIdle = new AnimData("lieIdle");
         this.sitDown = new AnimData("sitDown");
+        this.sitIdle = new AnimData("sitIdle");
         this.death = new AnimData("death");
-        this.animations = this.animations.concat([this.walk, this.walkBack, this.idleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
+        this.animations = this.animations.concat([this.walk, this.walkBack, this.standIdleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
 
         this.setIdleAnim("90_idle01", 1, true);
         this.setIdleJumpAnim("95_jump", 1, false);
@@ -52,7 +55,9 @@ class CreatureController extends EntityController {
         this.setTurnRightAnim("93_walkingKneesBent", 1, true);
         this.setRunJumpAnim("95_jump", 1, false);
         this.setAnimData(this.lieDown, "91_lieDown01", 1, false);
+        this.setAnimData(this.lieIdle, "90_idleLyingDown01", 1, true);
         this.setAnimData(this.sitDown, "91_sitDown01", 1, false);
+        this.setAnimData(this.sitIdle, "90_idleSittingDown01", 1, true);
         this.setDeathAnim("91_death01", 1, false);
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
@@ -106,13 +111,13 @@ class CreatureController extends EntityController {
         this.setAnimData(this.slideBack, rangeName, rate, loop, standalone);
     }
     setIdleAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.idle, rangeName, rate, loop, standalone);
+        this.setAnimData(this.standIdle, rangeName, rate, loop, standalone);
         /*if (this.idle instanceof AnimData && this.idle.exist) {
             this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 0.0, this.idle.loop, this.idle.rate);
         }*/
     }
     setIdleJumpAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.idleJump, rangeName, rate, loop, standalone);
+        this.setAnimData(this.standIdleJump, rangeName, rate, loop, standalone);
     }
     setTurnRightAnim(rangeName, rate, loop, standalone = true) {
         this.setAnimData(this.turnRight, rangeName, rate, loop, standalone);

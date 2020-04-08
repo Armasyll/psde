@@ -38,6 +38,20 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this._isLocked) {
             return this;
         }
+        if (this.standing) {
+            this.idle = this.standIdle;
+        }
+        else if (this.crouching) {
+        }
+        else if (this.sitting) {
+            this.idle = this.sitIdle;
+        }
+        else if (this.lying) {
+            this.idle = this.lieIdle;
+        }
+        else {
+            this.idle = this.standIdle;
+        }
         this.updateTargetRayOrigin();
         let anim = this.idle;
         if (this.anyMovement() || this.falling) {
@@ -45,7 +59,6 @@ class CharacterControllerRigidBody extends CharacterController {
             anim = this.doMove();
         }
         if (Game.player != this.entity && this.entity.target == null) {
-            
             this.targetRay.direction.y = 0; // up-down
             this.targetRay.direction.z = -this.mesh.forward.z;
         }
@@ -66,9 +79,11 @@ class CharacterControllerRigidBody extends CharacterController {
         return this;
     }
     doMove() {
+        console.log(`CharacterControllerRigidBody:${this.id}.doMove()`)
+        let anim = this.standIdle;
         let dt = Game.engine.getDeltaTime() / 1000;
-        let anim = this.idle;
         let u = this.fallTime * -Game.scene.gravity.y;
+        this.mesh.setParent(null);
         this.fallDistance = u * dt + -Game.scene.gravity.y * dt * dt / 2;
         this.fallTime = this.fallTime + dt;
         if (this.falling) {
@@ -114,6 +129,11 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
         if (this.moving) {
+            this.sitting = false;
+            this.lying = false;
+            if (!this.crouching) {
+                this.standing = true;
+            }
             if (this.key.shift) {
                 if (!this.standing) { // TODO: stall until transition from crouching/lying/sitting complete
                     return this.doStand();
