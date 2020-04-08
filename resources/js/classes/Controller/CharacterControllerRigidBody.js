@@ -38,11 +38,7 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this._isLocked) {
             return this;
         }
-        if (this.standing) {
-            this.idle = this.standIdle;
-        }
-        else if (this.crouching) {
-        }
+        if (this.crouching) {}
         else if (this.sitting) {
             this.idle = this.sitIdle;
         }
@@ -79,7 +75,6 @@ class CharacterControllerRigidBody extends CharacterController {
         return this;
     }
     doMove() {
-        console.log(`CharacterControllerRigidBody:${this.id}.doMove()`)
         let anim = this.standIdle;
         let dt = Game.engine.getDeltaTime() / 1000;
         let u = this.fallTime * -Game.scene.gravity.y;
