@@ -1,4 +1,7 @@
-class PathingNode extends Node {
+/**
+ * Pathing Node
+ */
+class PathingNode extends AbstractNode {
     /**
      * Creates a PathingNode
      * @param {string} [id] Unique ID, auto-generated if none given

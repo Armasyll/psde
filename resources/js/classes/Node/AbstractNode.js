@@ -1,6 +1,9 @@
-class Node {
+/**
+ * Abstract Node
+ */
+class AbstractNode {
     /**
-     * Creates a Node
+     * Creates a AbstractNode
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {BABYLON.Vector3} position Position
      * @param {number} [weight] Weight
@@ -15,7 +18,7 @@ class Node {
         this.weight = 20;
         this.setPosition(position);
         this.setWeight(weight);
-        Node.set(this.id, this);
+        AbstractNode.set(this.id, this);
     }
     getID() {
         return this.id;
@@ -59,39 +62,39 @@ class Node {
     }
     dispose() {
         this.position.dispose();
-        Node.remove(this.id);
+        AbstractNode.remove(this.id);
         return undefined;
     }
 
     static initialize() {
-        Node.nodeList = {};
+        AbstractNode.nodeList = {};
     }
     static get(id) {
         if (Node.has(id)) {
-            return Node.nodeList[id];
+            return AbstractNode.nodeList[id];
         }
         return 1;
     }
     static has(id) {
-        return Node.nodeList.hasOwnProperty(id);
+        return AbstractNode.nodeList.hasOwnProperty(id);
     }
     static set(id, abstractNode) {
-        Node.nodeList[id] = abstractNode;
+        AbstractNode.nodeList[id] = abstractNode;
         return 0;
     }
     static remove(id) {
-        delete Node.nodeList[id];
+        delete AbstractNode.nodeList[id];
         return 0;
     }
     static list() {
-        return Node.nodeList;
+        return AbstractNode.nodeList;
     }
     static clear() {
-        for (let i in Node.nodeList) {
-            Node.nodeList[i].dispose();
+        for (let i in AbstractNode.nodeList) {
+            AbstractNode.nodeList[i].dispose();
         }
-        Node.nodeList = {};
+        AbstractNode.nodeList = {};
         return 0;
     }
 }
-Node.initialize();
+AbstractNode.initialize();

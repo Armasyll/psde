@@ -1,4 +1,13 @@
+/**
+ * Creature Controller
+ */
 class CreatureController extends EntityController {
+    /**
+     * 
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {CretureEntity} entity 
+     */
     constructor(id, mesh, entity) {
         super(id, mesh, entity);
         if (!this.hasMesh()) {

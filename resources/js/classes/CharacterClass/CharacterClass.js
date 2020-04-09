@@ -1,4 +1,15 @@
+/**
+ * Character Class
+ */
 class CharacterClass {
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} [description] 
+     * @param {string} [iconID] 
+     * @param {CharacterClassEnum} characterClassType 
+     */
     constructor(id = "classless", name = "Classless", description = "Fake it 'til you make it.", iconID = "genericItem", characterClassType = CharacterClassEnum.CLASSLESS) {
         id = Tools.filterID(id);
         if (id.length == 0) {

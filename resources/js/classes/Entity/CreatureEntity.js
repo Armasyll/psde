@@ -1,3 +1,6 @@
+/**
+ * Creature Entity
+ */
 class CreatureEntity extends Entity {
     /**
      * Creates a CreatureEntity

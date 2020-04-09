@@ -1,3 +1,6 @@
+/**
+ * Cell
+ */
 class Cell {
     /**
      * Creates a Cell

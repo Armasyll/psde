@@ -1,3 +1,6 @@
+/**
+ * Entity
+ */
 class Entity extends AbstractEntity {
     /**
      * Creates an Entity

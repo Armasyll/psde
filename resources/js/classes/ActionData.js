@@ -1,4 +1,15 @@
+/**
+ * Action Data
+ */
 class ActionData {
+    /**
+     * 
+     * @param {ActionEnum|number} action 
+     * @param {function} [actionFunction] 
+     * @param {boolean} [runOnce] 
+     * @param {boolean} [overrideParent] 
+     * @param {boolean} [runBeforeParent] 
+     */
     constructor(action, actionFunction = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
         this.action = null;
         this.actionFunction = null;

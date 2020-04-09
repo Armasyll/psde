@@ -1,4 +1,13 @@
+/**
+ * Entity Controller
+ */
 class EntityController {
+    /**
+     * 
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {AbstractEntity} entity 
+     */
     constructor(id, mesh, entity) {
         id = Tools.filterID(id);
         if (typeof id != "string") {

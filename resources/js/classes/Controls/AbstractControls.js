@@ -1,3 +1,6 @@
+/**
+ * Abstract Controls for in-game UI
+ */
 class AbstractControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {

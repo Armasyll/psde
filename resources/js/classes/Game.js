@@ -1,3 +1,6 @@
+/**
+ * Main, static Game class
+ */
 class Game {
     constructor() {
         this.initialized = false;
@@ -22,7 +25,7 @@ class Game {
         Game.RAD_360 = 6.28318529;
         Game.currentTime = 0;
         Game.initialized = false;
-        Game.useRigidBodies = false;
+        Game.useRigidBodies = true;
         Game.debugMode = false;
         Game.godMode = false;
         Game.physicsEnabled = false;
@@ -5126,22 +5129,25 @@ class Game {
             return 2;
         }
         if (Game.playerCell instanceof Cell) {
-            let meshesToRemove = cell.meshIDDifference(Game.playerCell);
-            meshesToRemove.forEach(function (meshID) {
-                for (let i in Game.meshMaterialMeshes) {
-                    if (i == meshID) {
-                        for (let j in Game.meshMaterialMeshes[i]) {
-                            for (let k in Game.meshMaterialMeshes[i][j]) {
-                                Game.removeMesh(Game.meshMaterialMeshes[i][j][k]);
-                            }
+            cell.meshIDDifference(Game.playerCell).forEach(function (meshID) {
+                if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
+                    for (let i in Game.meshMaterialMeshes[meshID]) {
+                        for (let j in Game.meshMaterialMeshes[meshID][i]) {
+                            Game.removeMesh(Game.meshMaterialMeshes[meshID][i][j]);
                         }
                     }
                 }
             });
         }
         Game.playerCell = cell;
+        Game.loadCell(cell);
         return 0;
     }
+    /**
+     * 
+     * @param {Cell|string} cell Cell
+     * @returns {number}
+     */
     static unloadCell(cell) {
         if (!(cell instanceof Cell)) {
             if (Game.hasCell(cell)) {
@@ -5151,13 +5157,15 @@ class Game {
                 return 2;
             }
         }
+        AbstractNode.clear();
+        EntityController.clear();
+        InstancedEntity.clear();
+        AbstractEntity.clear();
         cell.getMeshIDs().forEach(function (meshID) {
-            for (let i in Game.meshMaterialMeshes) {
-                if (i == meshID) {
-                    for (let j in Game.meshMaterialMeshes[i]) {
-                        for (let k in Game.meshMaterialMeshes[i][j]) {
-                            Game.removeMesh(Game.meshMaterialMeshes[i][j][k]);
-                        }
+            if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
+                for (let i in Game.meshMaterialMeshes[meshID]) { // for each master mesh...
+                    for (let j in Game.meshMaterialMeshes[meshID][i]) { // and for each of the textures applied...
+                        Game.removeMesh(Game.meshMaterialMeshes[meshID][i][j]); // to its child meshes, remove them
                     }
                 }
             }

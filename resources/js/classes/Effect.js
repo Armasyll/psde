@@ -1,4 +1,14 @@
+/**
+ * Effect
+ */
 class Effect {
+    /**
+     * Creates an Effect
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} [description] 
+     * @param {string} [iconID] 
+     */
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         id = Tools.filterID(id);
         if (id.length == 0) {

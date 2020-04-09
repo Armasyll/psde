@@ -1,4 +1,18 @@
+/**
+ * Movement keys for EntityControllers
+ */
 class ControllerMovementKey {
+    /**
+     * 
+     * @param {boolean} forward 
+     * @param {boolean} shift 
+     * @param {boolean} backward 
+     * @param {boolean} turnRight 
+     * @param {boolean} turnLeft 
+     * @param {boolean} strafeRight 
+     * @param {boolean} strafeLeft 
+     * @param {boolean} jump 
+     */
     constructor(forward = false, shift = false, backward = false, turnRight = false, turnLeft = false, strafeRight = false, strafeLeft = false, jump = false) {
         this.forward = forward;
         this.shift = shift;

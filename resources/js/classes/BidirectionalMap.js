@@ -1,3 +1,6 @@
+/**
+ * Bidirectional Map
+ */
 class BidirectionalMap extends Map {
     constructor(...iterables) {
         super(...iterables);

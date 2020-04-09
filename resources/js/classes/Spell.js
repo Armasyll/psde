@@ -1,3 +1,6 @@
+/**
+ * Spell
+ */
 class Spell {
     /**
      * Creates a Spell

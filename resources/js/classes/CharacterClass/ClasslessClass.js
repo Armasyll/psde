@@ -1,6 +1,6 @@
 class ClasslessClass extends CharacterClass {
     constructor() {
-        super("classless", "Classless", "A class for the proper adventurer.");
+        super("classless", "Classless", "A class for the proper adventurer.", undefined, CharacterClassEnum.CLASSLESS);
 
         this.setHitDice(1, 8);
         this.setInitialHealth(8);

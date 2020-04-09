@@ -1,3 +1,6 @@
+/**
+ * Instanced Entity
+ */
 class InstancedEntity extends AbstractEntity {
     /**
      * Creates an InstancedEntity

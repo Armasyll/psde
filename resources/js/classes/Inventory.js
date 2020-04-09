@@ -1,4 +1,14 @@
+/**
+ * Inventory
+ */
 class Inventory {
+    /**
+     * Creates an Inventory
+     * @param {string} id 
+     * @param {string} name 
+     * @param {number} [maxSize] 
+     * @param {number} [maxWeight] 
+     */
     constructor(id = undefined, name = undefined, maxSize = 9, maxWeight = 10) {
         id = Tools.filterID(id);
         if (id.length == 0) {

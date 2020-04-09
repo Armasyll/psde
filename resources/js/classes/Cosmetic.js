@@ -1,4 +1,17 @@
+/**
+ * Cosmetic
+ */
 class Cosmetic {
+    /**
+     * Creates as Cosmetic
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} [description] 
+     * @param {string} [iconID] 
+     * @param {string} meshID 
+     * @param {string} materialID 
+     * @param {ApparelSlotEnum} equipmentSlot 
+     */
     constructor(id, name = "", description = "", iconID = "genericItemIcon", meshID = "", materialID = undefined, equipmentSlot = ApparelSlotEnum.HEAD) {
         id = Tools.filterID(id);
         if (typeof id != "string") {

@@ -1,3 +1,6 @@
+/**
+ * Dialogue
+ */
 class Dialogue {
     /**
      * Creates a Dialogue

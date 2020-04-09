@@ -1,3 +1,6 @@
+/**
+ * Abstract Entity
+ */
 class AbstractEntity {
     /**
      * Creates an AbstractEntity

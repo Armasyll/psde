@@ -1,6 +1,6 @@
 class SorcererClass extends CharacterClass {
     constructor() {
-        super("sorcerer", "Sorcerer", "Those born with innate magical abilities.");
+        super("sorcerer", "Sorcerer", "Those born with innate magical abilities.", undefined, CharacterClassEnum.SORCERER);
         this.spellcastingAbility = AbilityEnum.CHARISMA;
         this.spellSaveDCParam = 8;
 
