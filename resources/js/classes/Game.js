@@ -5075,7 +5075,7 @@ class Game {
         actor.setStance(StanceEnum.SIT);
         let seatingBoundingBox = Game.getMesh(entity.getController().getMesh().name).getBoundingInfo().boundingBox;
         let seatingWidth = (seatingBoundingBox.extendSize.x * entity.getController().getMesh().scaling.x);
-        actor.getController().getMesh().position.set(seatingWidth / 2, 0.4, -0.0125);
+        actor.getController().getMesh().position.set(seatingWidth / 2, 0, -0.45);
         actor.getController().getMesh().rotation.set(0, 0, 0);
         actor.getController().doSit();
         if (typeof callback == "function") {
