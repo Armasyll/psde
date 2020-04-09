@@ -14,8 +14,6 @@ class EquipmentEntity extends ItemEntity {
 
         this.abilityRequirements = {};
         this.abilityRequirementsModifier = {};
-        this.advantageOn = {};
-        this.disadvantageOn = {};
 
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);
@@ -81,48 +79,6 @@ class EquipmentEntity extends ItemEntity {
     removeAbilityRequirementModifier(abilityEnum) {
         if (this.abilityRequirementsModifier.hasOwnProperty(abilityEnum)) {
             delete this.abilityRequirementsModifier[abilityEnum];
-            return 0;
-        }
-        return 1;
-    }
-
-    hasAdvantageOn(proficiencyEnum) {
-        return this.advantageOn.hasOwnProperty(proficiencyEnum);
-    }
-    getAdvantageOn() {
-        return this.advantageOn;
-    }
-    addAdvantageOn(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
-            this.advantageOn[proficiencyEnum] = true;
-            return 0;
-        }
-        return 1;
-    }
-    removeAdvantageOn(proficiencyEnum) {
-        if (this.advantageOn.hasOwnProperty(proficiencyEnum)) {
-            delete this.advantageOn[proficiencyEnum];
-            return 0;
-        }
-        return 1;
-    }
-
-    hasDisadvantageOn(proficiencyEnum) {
-        return this.disadvantageOn.hasOwnProperty(proficiencyEnum);
-    }
-    getDisadvantageOn() {
-        return this.disadvantageOn;
-    }
-    addDisadvantageOn(proficiencyEnum) {
-        if (ProficiencyEnum.properties.hasOwnProperty(proficiencyEnum)) {
-            this.disadvantageOn[proficiencyEnum] = true;
-            return 0;
-        }
-        return 1;
-    }
-    removeDisadvantageOn(proficiencyEnum) {
-        if (this.disadvantageOn.hasOwnProperty(proficiencyEnum)) {
-            delete this.disadvantageOn[proficiencyEnum];
             return 0;
         }
         return 1;

@@ -4567,11 +4567,13 @@ class Game {
         return 1;
     }
     static actionAttack(entity = Game.player.getTarget(), actor = Game.player, weapon = null, callback = undefined) {
+        if (Game.debugMode) console.group("Running Game::actionAttack");
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
             }
             else {
+                if (Game.debugMode) { console.error("but the entity doesn't exist."); console.groupEnd(); }
                 return 2;
             }
         }
@@ -4580,33 +4582,40 @@ class Game {
                 actor = AbstractEntity.get(actor);
             }
             else {
+                if (Game.debugMode) { console.error("but the actor doesn't exist."); console.groupEnd(); }
                 return 2;
             }
         }
         if (actor.getController().isAttacking) {
+            if (Game.debugMode) { console.info("but the actor is already attacking."); console.groupEnd(); }
             return 1;
         }
-        if (entity instanceof CharacterEntity && actor instanceof CharacterEntity) {
-            return 0;
-        }
-        if (Game.withinRange(actor, entity) && Game.inFrontOf(actor, entity)) {
-            return 0;
-        }
-        if (weapon == null) {
-            let weaponL = actor.getEquipment()[ApparelSlotEnum.HAND_L];
-            let weaponR = actor.getEquipment()[ApparelSlotEnum.HAND_R];
-            if (actor.isLeftHanded() && weaponL instanceof InstancedWeaponEntity) {
-                weapon = weaponL;
-            }
-            else if (weaponR instanceof InstancedWeaponEntity) {
-                weapon = weaponR;
+        if (!(weapon instanceof AbstractEntity)) {
+            if (AbstractEntity.has(weapon)) {
+                weapon = AbstractEntity.get(weapon);
             }
             else {
-                weapon = WeaponEntity.get("weaponHand");
+                let weaponL = AbstractEntity.get(actor.getEquipment()[ApparelSlotEnum.HAND_L]);
+                let weaponR = AbstractEntity.get(actor.getEquipment()[ApparelSlotEnum.HAND_R]);
+                if (actor.isLeftHanded() && weaponL instanceof InstancedWeaponEntity) {
+                    weapon = weaponL;
+                }
+                else if (weaponR instanceof InstancedWeaponEntity) {
+                    weapon = weaponR;
+                }
+                else {
+                    weapon = WeaponEntity.get("weaponHand");
+                }
             }
         }
-        else {
-            weapon = WeaponEntity.get("weaponHand");
+        if (Game.debugMode) console.info(`with (${entity.getID()}, ${actor.getID()}, ${weapon.getID()})`);
+        if (!(entity instanceof AbstractEntity) || !(actor instanceof CharacterEntity)) {
+            if (Game.debugMode) { console.warn("but either the entity or actor weren't entities."); console.groupEnd(); }
+            return 0;
+        }
+        if (!Game.withinRange(actor, entity, 1.6) || !Game.inFrontOf(actor, entity)) {
+            if (Game.debugMode) { console.warn("but either the actor wasn't within range of the entity, or the entity wasn't in front of the actor."); console.groupEnd(); }
+            return 0;
         }
         let attackRoll = Game.calculateAttack(actor, weapon);
         if (attackRoll == 1) { }
@@ -4622,6 +4631,7 @@ class Game {
                 entity.modifyStamina(damage);
             }
         }
+        if (Game.debugMode) { console.info("and everything was successful."); console.groupEnd(); }
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
         }
@@ -5512,26 +5522,31 @@ class Game {
     }
     static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
-        damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
-        if (weapon.isFinesse()) {
-            if (attacker.getDexterity() > attacker.getStrength()) {
+        if (weapon.getHealth() == 0) { // It's basically an improvised weapon at this point
+            damageRoll = Game.roll(1, 4);
+        }
+        else {
+            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
+            if (weapon.isFinesse()) {
+                if (attacker.getDexterity() > attacker.getStrength()) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_RANGED) {
                 damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
             }
-            else {
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_RANGED) {
+                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE) {
                 damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
             }
-        }
-        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_RANGED) {
-            damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-        }
-        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_RANGED) {
-            damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-        }
-        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE) {
-            damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
-        }
-        else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-            damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            }
         }
         if (target.isImmuneTo(weapon.getDamageType())) {
             damageRoll = 0;
