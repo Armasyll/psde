@@ -5523,10 +5523,10 @@ class Game {
     static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
         if (weapon.getHealth() == 0) { // It's basically an improvised weapon at this point
-            damageRoll = Game.roll(1, 4);
+            damageRoll = Game.roll(1, 4); // roll 1d4
         }
         else {
-            damageRoll = Game.roll(weapon.getDamageRollCount(), weapon.getDamageRoll());
+            damageRoll = Game.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
                     damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
@@ -5535,17 +5535,20 @@ class Game {
                     damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
                 }
             }
-            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_RANGED) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-            }
-            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_RANGED) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
-            }
-            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
-            }
-            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-                damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            else {
+                let weaponCategory = weapon.getWeaponCategory();
+                if (weaponCategory == WeaponCategoryEnum.SIMPLE_RANGED) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.MARTIAL_RANGED) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.SIMPLE_MELEE) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.MARTIAL_MELEE) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
             }
         }
         if (target.isImmuneTo(weapon.getDamageType())) {
