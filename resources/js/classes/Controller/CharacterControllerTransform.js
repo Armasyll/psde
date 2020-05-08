@@ -7,7 +7,6 @@
 class CharacterControllerTransform extends CharacterController {
     constructor(id, mesh, entity) {
         super(id, mesh, entity);
-        this.groundRay = new BABYLON.Ray(mesh.position, mesh.position.add(BABYLON.Vector3.Down()), 0.01);
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
         this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
@@ -253,22 +252,23 @@ class CharacterControllerTransform extends CharacterController {
             this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDist, dist);
         }
         this.mesh.rotation.y = direction + (-Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90));
-        /*
-         *  Jittering in the Y direction caused by _moveVector
-         */
         if (moving && this.moveVector.length() > 0.001) {
-            this.updateGroundRay();
-            let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
-                if (_mesh.isPickable && _mesh.checkCollisions) {
-                    return true;
-                }
-                return false;
-            });
-            if (hit.hit) {
-                if (Game.Tools.arePointsEqual(this.mesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
-                    this.moveVector.y = 0;
+            // Start Mitigate jittering in Y direction
+            if (Game.useControllerGroundRay) {
+                this.updateGroundRay();
+                let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
+                    if (_mesh.isPickable && _mesh.checkCollisions) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (hit.hit) {
+                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                        this.moveVector.y = 0;
+                    }
                 }
             }
+            // End Mitigate jittering in Y direction
             this.mesh.moveWithCollisions(this.moveVector);
             if (this.mesh.position.y > this.avStartPos.y) {
                 let actDisp = this.mesh.position.subtract(this.avStartPos);
@@ -389,14 +389,6 @@ class CharacterControllerTransform extends CharacterController {
     unGroundIt() {
         this.grounded = false;
         this.groundFrameCount = 0;
-    }
-    updateGroundRay() {
-        if (!(this.groundRay instanceof BABYLON.Ray)) {
-            return this;
-        }
-        this.groundRay.origin = this.mesh.position;
-        this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
-        return this;
     }
 
     dispose() {

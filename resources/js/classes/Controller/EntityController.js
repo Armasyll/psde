@@ -57,6 +57,7 @@ class EntityController {
             ]
         });
         this.mesh.alwaysSelectAsActiveMesh = true;
+        this.groundRay = null;
         this.currentCell = null;
         EntityController.set(this.id, this);
     }
@@ -321,6 +322,17 @@ class EntityController {
     }
     hasCell() {
         return this.cell instanceof Cell;
+    }
+    updateGroundRay() {
+        if (!(this.hasMesh())) {
+            return this;
+        }
+        if (!(this.groundRay instanceof BABYLON.Ray)) {
+            this.groundRay = new BABYLON.Ray(mesh.position, mesh.position.add(BABYLON.Vector3.Down()), 0.01);
+        }
+        this.groundRay.origin = this.mesh.position;
+        this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
+        return this;
     }
 
     isEnabled() {

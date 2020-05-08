@@ -26,6 +26,7 @@ class Game {
         Game.currentTime = 0;
         Game.initialized = false;
         Game.useRigidBodies = true;
+        Game.useControllerGroundRay = true;
         Game.debugMode = false;
         Game.godMode = false;
         Game.physicsEnabled = false;

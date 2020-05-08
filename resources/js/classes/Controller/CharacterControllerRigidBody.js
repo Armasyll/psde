@@ -161,6 +161,22 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.mesh.rotation.y = this.intendedDirection;
             }
             this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            // Start Mitigate jittering in Y direction
+            if (Game.useControllerGroundRay) {
+                this.updateGroundRay();
+                let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
+                    if (_mesh.isPickable && _mesh.checkCollisions) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (hit.hit) {
+                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                        this.intendedMovement.y = 0;
+                    }
+                }
+            }
+            // End Mitigate jittering in Y direction
             this.mesh.moveWithCollisions(this.intendedMovement);
             if (this.mesh.position.y > this.startPosition.y) {
                 let actDisp = this.mesh.position.subtract(this.startPosition);
