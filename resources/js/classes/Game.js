@@ -54,6 +54,9 @@ class Game {
         Game.camera = null;
         Game.cameraFocus = null;
 
+        Game.ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
+        Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {size:1024.0}, Game.scene);
+
         Game.assignBoundingBoxCollisionQueue = new Set();
 
         Game._filesToLoad = 1;
@@ -1567,6 +1570,56 @@ class Game {
         Game.setLoadedMaterial(materialID, loadedMaterial);
         return 0;
     }
+    static changeMaterial(materialID, replacementMaterialID) {
+        materialID = Game.Tools.filterID(materialID);
+        if (!Game.hasMaterial(materialID)) {
+            return 1;
+        }
+        replacementMaterialID = Game.Tools.filterID(replacementMaterialID);
+        if (Game.hasMaterial(replacementMaterialID)) {
+            Game.loadMaterial(replacementMaterialID);
+        }
+        else {
+            return 2;
+        }
+        let material = Game.getLoadedMaterial(materialID);
+        let replacementMaterial = Game.getLoadedMaterial(replacementMaterialID);
+        for (let meshID in Game.meshMaterialMeshes) {
+            if (Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
+                if (!Game.meshMaterialMeshes[meshID].hasOwnProperty(replacementMaterialID)) {
+                    Game.meshMaterialMeshes[meshID][replacementMaterialID] = {};
+                }
+                for (let childMeshID in Game.meshMaterialMeshes[meshID][materialID]) {
+                    if (Game.meshMaterialMeshes[meshID][materialID][childMeshID] instanceof BABYLON.InstancedMesh) {
+                        Game.meshMaterialMeshes[meshID][materialID][childMeshID].sourceMesh.material = replacementMaterial;
+                    }
+                    else {
+                        Game.meshMaterialMeshes[meshID][materialID][childMeshID].material = replacementMaterial;
+                    }
+                    Game.meshMaterialMeshes[meshID][replacementMaterialID][childMeshID] = Game.meshMaterialMeshes[meshID][materialID][childMeshID];
+                    delete Game.meshMaterialMeshes[meshID][materialID][childMeshID];
+                }
+                delete Game.meshMaterialMeshes[meshID][materialID];
+            }
+        }
+        for (let meshID in Game.clonedMeshes) {
+            if (Game.clonedMeshes[meshID].material === material) {
+                Game.clonedMeshes[meshID].material = replacementMaterial;
+            }
+        }
+        return 0;
+    }
+    static unloadMaterial(materialID) {
+        materialID = Game.Tools.filterID(materialID);
+        if (!Game.hasLoadedMaterial(materialID)) {
+            return 1;
+        }
+        Game.changeMaterial(materialID, "missingMaterial");
+        let material = Game.loadedMaterials[materialID];
+        delete Game.loadedMaterials[materialID];
+        material.dispose();
+        return 0;
+    }
     /**
      * Loads and create a BABYLON.Mesh
      * @param {string} meshID Mesh ID
@@ -1814,8 +1867,21 @@ class Game {
             return 1;
         }
         if (Game.debugMode) console.log(`Running Game::removeMeshMaterialMeshes(${meshID},${materialID},${childMeshID})`);
-        Game.meshMaterialMeshes[meshID][materialID][childMeshID] = null;
+        let mesh = Game.meshMaterialMeshes[meshID][materialID][childMeshID];
+        if (mesh.hasController()) {
+            mesh.controller.dispose();
+        }
+        if (mesh instanceof BABYLON.InstancedMesh) {
+            delete Game.instancedMeshes[childMeshID];
+        }
+        else if (mesh instanceof BABYLON.Mesh) {
+            delete Game.clonedMeshes[childMeshID];
+        }
+        else {
+            return 2; // can't do anything :v
+        }
         delete Game.meshMaterialMeshes[meshID][materialID][childMeshID];
+        mesh.dispose();
         return 0;
     }
     static getMeshLocation(meshID) {
@@ -2182,7 +2248,22 @@ class Game {
         return Game.removeMesh(abstractMesh);
     }
     static removeMesh(abstractMesh) {
-        if (!abstractMesh instanceof BABYLON.AbstractMesh) {
+        if (abstractMesh instanceof BABYLON.AbstractMesh) {}
+        else if (typeof abstractMesh == "string") {
+            if (Game.clonedMeshes.hasOwnProperty(abstractMesh)) {
+                abstractMesh = Game.clonedMeshes[abstractMesh];
+            }
+            else if (Game.instancedMeshes.hasOwnProperty(abstractMesh)) {
+                abstractMesh = Game.instancedMeshes[abstractMesh];
+            }
+            else if (Game.loadedMeshes.hasOwnProperty(abstractMesh)) {
+                abstractMesh = Game.loadedMeshes[abstractMesh];
+            }
+            else {
+                return 2;
+            }
+        }
+        else {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::removeMesh(${abstractMesh.id}`);
@@ -2210,6 +2291,9 @@ class Game {
     }
     static removeMeshMaterial(meshID, materialID) {
         if (Game.hasMeshMaterial(meshID, materialID)) {
+            for (let childMeshID in Game.meshMaterialMeshes[meshID][materialID]) {
+                Game.removeMeshMaterialMeshes(meshID, materialID, childMeshID);
+            }
             Game.loadedMeshMaterials[meshID][materialID].dispose();
             delete Game.loadedMeshMaterials[meshID][materialID];
             return 0;
@@ -5197,7 +5281,25 @@ class Game {
                 return 2;
             }
         }
+        if (cell.skybox == "dayNightCycle") {
+            Game.loadSkyMaterial();
+        }
+        else {
+            Game.unloadMaterial("dayNightCycle");
+        }
         cell.createBackloggedAdditions();
+        return 0;
+    }
+    static loadSkyMaterial() {
+        if (Game.hasLoadedMaterial("dayNightCycle")) {
+            return 0;
+        }
+        let dayNightCycle = new BABYLON.SkyMaterial("dayNightCycle", Game.scene);
+        Game.setLoadedMaterial("dayNightCycle", dayNightCycle);
+        dayNightCycle.backFaceCulling = false;
+        dayNightCycle.azimuth = 0.25;
+        dayNightCycle.inclination = 0.0;
+        Game.skybox.material = dayNightCycle;
         return 0;
     }
     /**

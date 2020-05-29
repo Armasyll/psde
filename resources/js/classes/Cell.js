@@ -17,14 +17,10 @@ class Cell {
         this.setName(name);
         this.cellType = CellTypeEnum.NONE;
         this.owner = null;
-        this.skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1024.0}, Game.scene);
-        this.skyboxMaterial = new BABYLON.SkyMaterial("skyMaterial", Game.scene);
-        this.skyboxMaterial.backFaceCulling = false;
-        this.skyboxMaterial.azimuth = 0.25;
-        this.skyboxMaterial.inclination = 0.0;
-        this.skybox.material = this.skyboxMaterial;
-        this.ambientLight = new BABYLON.HemisphericLight("cellAmbientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
-        this.ambientLight.intensity = 0.9;
+        this.skybox = "skyMaterial";
+        this.skyboxAzimuth = 0.25;
+        this.skyboxInclination = 0.0;
+        this.ambientLightIntensity = 0.9;
         this.hasBackloggedAdditions = false;
         this.backloggedCollisionPlanes = [];
         this.hasBackloggedCollisionPlanes = false;
@@ -521,6 +517,15 @@ class Cell {
 
     static initialize() {
         Cell.cellList = {};
+        Cell.createLimbo();
+    }
+    static createLimbo() {
+        let limbo = new Cell("limbo", "Limbo");
+        limbo.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, 512), new BABYLON.Vector3(512, 512, 512));
+        limbo.addCollisionWall(new BABYLON.Vector3(512, -512, 512), new BABYLON.Vector3(512, 512, -512));
+        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(512, 512, -512));
+        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(-512, 512, 512));
     }
     static get(id) {
         if (Cell.has(id)) {
