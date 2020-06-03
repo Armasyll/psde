@@ -356,7 +356,10 @@ class EntityController {
         this._isLocked = _bool == true;
         return this;
     }
-    dispose() {
+    dispose(options = {}) {
+        if (this == Game.player.getController()) {
+            return false;
+        }
         this.setLocked(true);
         this.setEnabled(false);
         if (EditControls.pickedController == this) {
@@ -377,6 +380,11 @@ class EntityController {
         for (let animation in this.animations) {
             this.animations[animation] = null;
             delete this.animations[animation]
+        }
+        if (options instanceof Object) {
+            if (options.hasOwnProperty("disposeMesh") && options["disposeMesh"] == true) {
+                Game.removeMesh(this.mesh);
+            }
         }
         EntityController.remove(this.id);
         return null;

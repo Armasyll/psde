@@ -1187,7 +1187,9 @@ class CreatureEntity extends Entity {
      * @returns {number}
      */
     clearSkills() {
-        this.proficiencies.clear();
+        for (let proficiency in this.proficiencies) {
+            delete this.proficiencies[proficiency];
+        }
         return 0;
     }
 
@@ -2277,7 +2279,7 @@ class CreatureEntity extends Entity {
         this.setLocked(true);
         this.setEnabled(false);
         CreatureEntity.remove(this.id);
-        this.clearSkills();
+        //this.clearSkills();
         this.clearConditions();
         super.dispose();
         return undefined;

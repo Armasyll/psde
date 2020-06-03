@@ -218,8 +218,6 @@ class ClothingEntity extends EquipmentEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.physicalProtection.dispose();
-        this.magickProtection.dispose();
         ClothingEntity.remove(this.id);
         super.dispose();
         return undefined;

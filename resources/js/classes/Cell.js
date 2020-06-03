@@ -17,7 +17,7 @@ class Cell {
         this.setName(name);
         this.cellType = CellTypeEnum.NONE;
         this.owner = null;
-        this.skybox = "skyMaterial";
+        this.skybox = "dayNightCycle";
         this.skyboxAzimuth = 0.25;
         this.skyboxInclination = 0.0;
         this.ambientLightIntensity = 0.9;
@@ -28,6 +28,10 @@ class Cell {
         this.hasBackloggedCollisionRamps = false;
         this.backloggedCollisionWalls = [];
         this.hasBackloggedCollisionWalls = false;
+        this.backloggedMaterials = [];
+        this.hasBackloggedMaterials = false;
+        this.backloggedTiledMeshes = [];
+        this.hasBackloggedTiledMeshes = false;
         this.backloggedMeshes = [];
         this.hasBackloggedMeshes = false;
         this.backloggedDoors = [];
@@ -43,6 +47,7 @@ class Cell {
         this.meshIDs = new Set();
         this.collisionMeshIDs = new Set();
         this.meshes = new Array();
+        this.controllerIDs = new Set();
 
         Cell.set(this.id, this);
     }
@@ -155,6 +160,15 @@ class Cell {
         this.hasBackloggedAdditions = true;
         return 1;
     }
+    addMaterial(...parameters) {
+        if (Game.playerCell == this) {
+            Game.loadMaterial(...parameters);
+            return 0;
+        }
+        this.backloggedMaterials.push(parameters);
+        this.hasBackloggedMaterials = true;
+        this.hasBackloggedAdditions = true;
+    }
     /**
      * Creates a mesh from those stored in loadedMeshes
      * @param  {string} id New ID for BABYLON.Mesh and EntityController
@@ -189,6 +203,58 @@ class Cell {
         this.hasBackloggedMeshes = true;
         this.hasBackloggedAdditions = true;
         return 1;
+    }
+    /**
+     * 
+     * @param {string} id 
+     * @param {object} meshOptions 
+     * @param {string} material 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} rotation 
+     * @param {BABYLON.Vector3} scaling 
+     * @param {object} options 
+     */
+    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        this.meshIDs.add(id);
+        if (Game.playerCell == this) {
+            if (!Game.hasLoadedMaterial(materialID)) {
+                if (Game.hasAvailableTexture(materialID)) {
+                    if (!Game.hasLoadedTexture(materialID)) {
+                        Game.loadTexture(materialID);
+                    }
+                    Game.loadMaterial(materialID, materialID);
+                }
+                else if (Game.hasLoadedTexture(materialID)) {
+                    Game.loadMaterial(materialID, materialID);
+                }
+                else {
+                    materialID = "missingMaterial";
+                }
+            }
+            let mesh = new BABYLON.MeshBuilder.CreateTiledGround(id, meshOptions, Game.scene);
+            if (mesh instanceof BABYLON.AbstractMesh) {
+                mesh.material = Game.getLoadedMaterial(materialID);
+                mesh.position.copyFrom(position);
+                mesh.rotation.copyFrom(rotation);
+                mesh.scaling.copyFrom(scaling);
+                this.meshIDs.add(id);
+                this.meshes.push(mesh);
+                Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
+            }
+            return 0;
+        }
+        this.backloggedTiledMeshes.push([id, meshOptions, materialID, position, rotation, scaling, options]);
+        this.hasBackloggedTiledMeshes = true;
+        this.hasBackloggedAdditions = true;
+        return 1;
+    }
+    addTiledCeiling(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
+        scaling.y *= -1;
+        this.addTiledGround(id, meshOptions, materialID, position, rotation, scaling, options);
     }
     /**
      * Creates a mesh from those stored in loadedMeshes
@@ -253,6 +319,7 @@ class Cell {
         if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 let controller = Game.createCharacterInstance(...parameters).getController();
+                this.controllerIDs.add(controller.id);
                 this.meshes.push(controller.getMesh());
                 return 0;
             }
@@ -292,6 +359,7 @@ class Cell {
         if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[3])) {
                 let controller = Game.createDoor(...parameters);
+                this.controllerIDs.add(controller.id);
                 this.meshes.push(controller.getMesh());
                 return 0;
             }
@@ -328,6 +396,7 @@ class Cell {
         if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 let controller = Game.createFurnitureInstance(...parameters);
+                this.controllerIDs.add(controller.id);
                 this.meshes.push(controller.getMesh());
                 return 0;
             }
@@ -360,13 +429,14 @@ class Cell {
         if (typeof parameters[8] != "object" || !parameters[8].hasOwnProperty("filtered")) {
             parameters = Game.filterCreateLighting(...parameters);
         }
-        if (typeof parameters == "number") {
+        if (typeof parameters == "number" || !(parameters[1] instanceof InstancedFurnitureEntity)) {
             return 2;
         }
         this.meshIDs.add(parameters[2]);
         if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[2])) {
                 let controller = Game.createLighting(...parameters);
+                this.controllerIDs.add(controller.id);
                 this.meshes.push(controller.getMesh());
                 return 0;
             }
@@ -402,6 +472,7 @@ class Cell {
         if (Game.playerCell == this) {
             if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
                 let controller = Game.createItemInstance(...parameters);
+                this.controllerIDs.add(controller.id);
                 this.meshes.push(controller.getMesh());
                 return 0;
             }
@@ -438,6 +509,20 @@ class Cell {
                 this.hasBackloggedCollisionWalls = false;
                 this.backloggedCollisionWalls = [];
                 array.forEach((addition) => {this.addCollisionWall(...addition);});
+                array.clear();
+            }
+            if (this.hasBackloggedMaterials) {
+                array = this.backloggedMaterials;
+                this.hasBackloggedMaterials = false;
+                this.backloggedMaterials = [];
+                array.forEach((addition) => {this.addMaterial(...addition);});
+                array.clear();
+            }
+            if (this.hasBackloggedTiledMeshes) {
+                array = this.backloggedTiledMeshes;
+                this.hasBackloggedTiledMeshes = false;
+                this.backloggedTiledMeshes = [];
+                array.forEach((addition) => {this.addTiledGround(...addition);});
                 array.clear();
             }
             if (this.hasBackloggedMeshes) {

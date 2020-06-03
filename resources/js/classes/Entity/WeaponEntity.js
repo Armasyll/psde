@@ -563,7 +563,6 @@ class WeaponEntity extends EquipmentEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.weaponProperties.clear();
         WeaponEntity.remove(this.id);
         return undefined;
     }

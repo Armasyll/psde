@@ -1,3 +1,4 @@
+console.log("Can't talk to character; fix asap :v");
 /**
  * Main, static Game class
  */
@@ -8,6 +9,8 @@ class Game {
         Game.godMode = false;
     }
     static initialize() {
+        let initStart = new Date();
+        Game.initialized = false;
         Game.SECONDS_IN_DAY = 86400;
         Game.SECONDS_IN_HOUR = 3600;
         Game.RAD_0 = 0.0;
@@ -24,7 +27,6 @@ class Game {
         Game.RAD_315 = BABYLON.Tools.ToRadians(315);
         Game.RAD_360 = 6.28318529;
         Game.currentTime = 0;
-        Game.initialized = false;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
         Game.debugMode = false;
@@ -654,6 +656,7 @@ class Game {
         Game.attachmentsToCreate = {};
 
         Game.hasBackloggedEntities = false;
+        Game.hasBackloggedPlayer = false;
 
         Game.meshToEntityController = {};
 
@@ -849,6 +852,9 @@ class Game {
         Game.actionUnequipFunction = Game.actionUnequip;
         Game.actionUseFunction = Game.actionUse;
 
+        /**
+         * @type {GameGUI} GameGUI; alternative is HtmlGUI
+         */
         Game.gui = GameGUI;
         Game.gui.initialize();
         Game.initFreeCamera();
@@ -953,12 +959,17 @@ class Game {
         Game._filesToLoad -= 1;
         Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.previousInterfaceMode = null;
+        let initEnd = new Date();
+        console.log(`Time to initialize: ${initEnd.getTime() - initStart.getTime()}ms`);
         Game.initialized = true;
         Game.engine.runRenderLoop(Game._renderLoopFunction);
         Game.scene.registerBeforeRender(Game._beforeRenderFunction);
         Game.scene.registerAfterRender(Game._afterRenderFunction);
     }
     static _renderLoopFunction() {
+        if (!Game.initialized) {
+            return 1;
+        }
         Game.scene.render();
         if (!Game._finishedConfiguring) {
             if (Game._filesToLoad == 0) {
@@ -973,7 +984,9 @@ class Game {
                     Game.importBooks();
                     Game.importCosmetics();
                     Game.importFurniture();
+                    Game.importDialogues();
                     Game.importCharacters();
+                    Game.importCells();
                     Game._finishedInitializing = true;
 
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
@@ -1032,6 +1045,9 @@ class Game {
         }
     }
     static _beforeRenderFunction() {
+        if (!Game.initialized) {
+            return 1;
+        }
         if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
             return 1;
         }
@@ -1060,6 +1076,9 @@ class Game {
         }
     }
     static _afterRenderFunction() {
+        if (!Game.initialized) {
+            return 1;
+        }
         if (Game.hasBackloggedEntities) {
             Game.createBackloggedMeshes();
             Game.createBackloggedBoundingCollisions();
@@ -1149,12 +1168,14 @@ class Game {
         }
         if (CharacterEntity.has(characterID)) {
             Game.playerToCreate = characterID;
+            Game.hasBackloggedPlayer = true;
             return 0;
         }
         return 2;
     }
     static removePlayerToCreate() {
         Game.playerToCreate = null;
+        Game.hasBackloggedPlayer = false;
         return 0;
     }
     static hasPlayerToCreate() {
@@ -1210,7 +1231,12 @@ class Game {
      */
     static assignPlayer(characterEntity) { // TODO: allow for reassigning player :v
         if (!(characterEntity instanceof CharacterEntity)) {
-            return 2;
+            if (CharacterEntity.has(characterEntity)) {
+                characterEntity = CharacterEntity.get(characterEntity);
+            }
+            else {
+                return 2;
+            }
         }
         if (!characterEntity.hasController() || !characterEntity.getController().hasMesh() || !characterEntity.getController().hasSkeleton()) {
             return 1;
@@ -1234,6 +1260,7 @@ class Game {
         return 0;
     }
     static updateMenuKeyboardDisplayKeys() {
+        if (Game.debugMode) console.log("Running Game::updateMenuKeyboardDisplayKeys()");
         if (Game.initialized && Game.gui.initialized) {
             Game.gui.setActionTooltipLetter();
         }
@@ -1554,6 +1581,9 @@ class Game {
         }
         loadedMaterial.specularColor.set(0, 0, 0);
         if (typeof options == "object") {
+            if (options.hasOwnProperty("backFaceCulling")) {
+                loadedMaterial.backFaceCulling = Game.getLoadedTexture(options["backFaceCulling"]);
+            }
             if (options.hasOwnProperty("opacityTexture")) {
                 loadedMaterial.opacityTexture = Game.getLoadedTexture(options["opacityTexture"]);
             }
@@ -1570,6 +1600,12 @@ class Game {
         Game.setLoadedMaterial(materialID, loadedMaterial);
         return 0;
     }
+    /**
+     * 
+     * @param {string} materialID Material ID
+     * @param {string} replacementMaterialID Material ID
+     * @returns {number} Integer status code
+     */
     static changeMaterial(materialID, replacementMaterialID) {
         materialID = Game.Tools.filterID(materialID);
         if (!Game.hasMaterial(materialID)) {
@@ -1609,6 +1645,11 @@ class Game {
         }
         return 0;
     }
+    /**
+     * 
+     * @param {string} materialID Material ID
+     * @returns {number} Integer status code
+     */
     static unloadMaterial(materialID) {
         materialID = Game.Tools.filterID(materialID);
         if (!Game.hasLoadedMaterial(materialID)) {
@@ -1867,6 +1908,23 @@ class Game {
             return 1;
         }
         if (Game.debugMode) console.log(`Running Game::removeMeshMaterialMeshes(${meshID},${materialID},${childMeshID})`);
+        if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
+            if (Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
+                if (Game.meshMaterialMeshes[meshID][materialID].hasOwnProperty(childMeshID)) {}
+                else {
+                    if (Game.debugMode) console.log(`${meshID}:${materialID}:${childMeshID} doesn't exist`);
+                    return 1;
+                }
+            }
+            else {
+                if (Game.debugMode) console.log(`${meshID}:${materialID} doesn't exist`);
+                return 1;
+            }
+        }
+        else {
+            if (Game.debugMode) console.log(`${meshID} doesn't exist`);
+            return 1;
+        }
         let mesh = Game.meshMaterialMeshes[meshID][materialID][childMeshID];
         if (mesh.hasController()) {
             mesh.controller.dispose();
@@ -1882,6 +1940,12 @@ class Game {
         }
         delete Game.meshMaterialMeshes[meshID][materialID][childMeshID];
         mesh.dispose();
+        if (Object.keys(Game.meshMaterialMeshes[meshID][materialID]).length == 0) {
+            delete Game.meshMaterialMeshes[meshID][materialID];
+        }
+        if (Object.keys(Game.meshMaterialMeshes[meshID]).length == 0) {
+            delete Game.meshMaterialMeshes[meshID];
+        }
         return 0;
     }
     static getMeshLocation(meshID) {
@@ -1957,6 +2021,9 @@ class Game {
     static importConsumables() {
         return Game.importScript("resources/js/consumables.js");
     }
+    static importDialogues() {
+        return Game.importScript("resources/js/dialogues.js");
+    }
     static importCharacters() {
         return Game.importScript("resources/js/characters.js");
     }
@@ -1968,6 +2035,9 @@ class Game {
     }
     static importFurniture() {
         return Game.importScript("resources/js/furniture.js");
+    }
+    static importCells() {
+        return Game.importScript("resources/js/cells.js");
     }
     /**
      * Creates a primitive wall for collision
@@ -2267,25 +2337,25 @@ class Game {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::removeMesh(${abstractMesh.id}`);
-        if (Game.meshMaterialMeshes.hasOwnProperty(abstractMesh.name)) {
-            if (Game.meshMaterialMeshes[abstractMesh.name].hasOwnProperty(abstractMesh.material.name)) {
-                abstractMesh = Game.meshMaterialMeshes[abstractMesh.name][abstractMesh.material.name][abstractMesh.id];
-                Game.removeMeshMaterialMeshes(abstractMesh.name, abstractMesh.material.name, abstractMesh.id)
-            }
-        }
         if (abstractMesh == EditControls.pickedMesh) {
             EditControls.reset();
         }
         else if (abstractMesh == EditControls.previousPickedMesh) {
             EditControls.previousPickedMesh = null;
         }
-        if (abstractMesh instanceof BABYLON.InstancedMesh) {
-            delete Game.instancedMeshes[abstractMesh.id];
+        if (abstractMesh.skeleton instanceof BABYLON.Skeleton) {
+            if (abstractMesh.hasController()) {
+                abstractMesh.controller.dispose();
+            }
+            if (Game.clonedMeshes.hasOwnProperty(abstractMesh.id)) {
+                delete Game.clonedMeshes[abstractMesh.id];
+            }
             abstractMesh.dispose();
         }
-        else if (abstractMesh instanceof BABYLON.Mesh && Game.hasClonedMesh(abstractMesh.id)) {
-            delete Game.clonedMeshes[abstractMesh.id];
-            abstractMesh.dispose();
+        else if (Game.meshMaterialMeshes.hasOwnProperty(abstractMesh.name)) {
+            if (Game.meshMaterialMeshes[abstractMesh.name].hasOwnProperty(abstractMesh.material.name)) {
+                Game.removeMeshMaterialMeshes(abstractMesh.name, abstractMesh.material.name, abstractMesh.id);
+            }
         }
         return 0;
     }
@@ -2323,7 +2393,6 @@ class Game {
             return true;
         }
         else if (Game.hasAvailableMesh(meshID)) {
-            Game.loadMesh(meshID);
             return true;
         }
         return false;
@@ -2647,6 +2716,9 @@ class Game {
         return true;
     }
     static hasMeshToCreate(meshIndexID) {
+        if (typeof Game.meshesToCreateCounter != "object") {
+            return true;
+        }
         return Game.meshesToCreateCounter > 0 && Game.meshesToCreate.hasOwnProperty(meshIndexID);
     }
     static createBackloggedMeshes() {
@@ -2697,6 +2769,9 @@ class Game {
         return true;
     }
     static hasFurnitureToCreate(furnitureInstanceID) {
+        if (typeof Game.furnitureToCreateCounter != "object") {
+            return true;
+        }
         return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(furnitureInstanceID);
     }
     static createBackloggedFurniture() {
@@ -2746,6 +2821,9 @@ class Game {
         return true;
     }
     static hasLightingToCreate(lightingIndexID) {
+        if (typeof Game.lightingToCreateCounter != "object") {
+            return true;
+        }
         return Game.lightingToCreateCounter > 0 && Game.lightingToCreate.hasOwnProperty(lightingIndexID);
     }
     static createBackloggedLighting() {
@@ -2798,6 +2876,9 @@ class Game {
         return true;
     }
     static hasDisplayToCreate(displayIndexID) {
+        if (typeof Game.displaysToCreateCounter != "object") {
+            return true;
+        }
         return Game.displaysToCreateCounter > 0 && Game.displaysToCreate.hasOwnProperty(displayIndexID);
     }
     static createBackloggedDisplays() {
@@ -2850,6 +2931,9 @@ class Game {
         return true;
     }
     static hasDoorsToCreate(doorIndexID) {
+        if (typeof Game.doorsToCreateCounter != "object") {
+            return true;
+        }
         return Game.doorsToCreateCounter > 0 && Game.doorsToCreate.hasOwnProperty(doorIndexID);
     }
     static createBackloggedDoors() {
@@ -4258,15 +4342,35 @@ class Game {
         return 0;
     }
     static setPlayerTarget(entityController) {
+        if (Game.debugMode) console.group("Running Game::updateMenuKeyboardDisplayKeys()");
         if (!(Game.player.hasController())) {
+            if (Game.debugMode) {
+                console.error("Player doesn't have a controller; returning 1");
+                console.groupEnd();
+            }
             return 1;
         }
         if (entityController.getEntity() == Game.player.getTarget()) {
+            if (Game.debugMode) {
+                console.info("Somehow the player was trying to target itself.");
+                console.groupEnd();
+            }
             Game.gui.targetPortrait.updateWith(entityController.getEntity());
             return 0;
         }
-        if (!(entityController instanceof EntityController) || !entityController.isEnabled()) {
+        if (!(entityController instanceof EntityController)) {
+            if (Game.debugMode) {
+                console.error("Target doesn't have a controller; returning 1");
+                console.groupEnd();
+            }
             return 1;
+        }
+        else if (!entityController.isEnabled()) {
+            if (Game.debugMode) {
+                console.info("Target has a controller, but it is disabled; returning 0");
+                console.groupEnd();
+            }
+            return 0;
         }
         if (Game.highlightEnabled) {
             Game.highlightController(entityController);
@@ -4276,6 +4380,7 @@ class Game {
         Game.gui.targetPortrait.show();
         Game.gui.setActionTooltip(ActionEnum.properties[entityController.getEntity().getDefaultAction()].name);
         Game.gui.showActionTooltip();
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static clearPlayerTarget() {
@@ -5174,11 +5279,16 @@ class Game {
         return 0;
     }
     static actionTalk(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+        if (Game.debugMode) console.group(`Running Game::actionTalk(${typeof entity == "object" ? (entity instanceof AbstractEntity ? entity.id : "UNK") : entity}, ${typeof actor == "object" ? (actor instanceof AbstractEntity ? actor.id : "UNK") : actor})`)
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
             }
             else {
+                if (Game.debugMode) {
+                    console.error("Target entity was invalid.");
+                    console.groupEnd();
+                }
                 return 2;
             }
         }
@@ -5187,11 +5297,18 @@ class Game {
                 actor = AbstractEntity.get(actor);
             }
             else {
+                if (Game.debugMode) {
+                    console.error("Actor entity was invalid.");
+                    console.groupEnd();
+                }
                 return 2;
             }
         }
-        if (Game.debugMode) console.log(`Running Game::actionTalk(${entity.id}, ${actor.id})`);
         if (!(entity.hasDialogue())) {
+            if (Game.debugMode) {
+                console.error("Target entity doesn't have a dialogue.");
+                console.groupEnd();
+            }
             return 2;
         }
         Game.gui.dialogue.setDialogue(entity.getDialogue(), entity, actor);
@@ -5222,12 +5339,13 @@ class Game {
 
     static setPlayerCell(cell) {
         if (cell instanceof Cell) { }
-        else if (Game.hasCell(cell)) {
-            cell = Game.getCell(cell);
+        else if (Cell.has(cell)) {
+            cell = Cell.get(cell);
         }
         else {
             return 2;
         }
+        Game.playerCell = cell;
         if (Game.playerCell instanceof Cell) {
             cell.meshIDDifference(Game.playerCell).forEach(function (meshID) {
                 if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
@@ -5239,7 +5357,6 @@ class Game {
                 }
             });
         }
-        Game.playerCell = cell;
         Game.loadCell(cell);
         return 0;
     }
@@ -5250,17 +5367,14 @@ class Game {
      */
     static unloadCell(cell) {
         if (!(cell instanceof Cell)) {
-            if (Game.hasCell(cell)) {
-                cell = Game.getCell(cell);
+            if (Cell.has(cell)) {
+                cell = Cell.get(cell);
             }
             else {
                 return 2;
             }
         }
         AbstractNode.clear();
-        EntityController.clear();
-        InstancedEntity.clear();
-        AbstractEntity.clear();
         cell.getMeshIDs().forEach(function (meshID) {
             if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
                 for (let i in Game.meshMaterialMeshes[meshID]) { // for each master mesh...
@@ -5270,24 +5384,40 @@ class Game {
                 }
             }
         });
+        Game.playerCell.meshIDs.forEach((meshID) => {
+            Game.removeMesh(meshID);
+        });
+        Game.playerCell.collisionMeshIDs.forEach((meshID) => {
+            Game.removeMesh(meshID);
+        });
+        Game.playerCell.meshes.forEach((mesh) => {
+            Game.removeMesh(mesh);
+        });
         return 0;
     }
     static loadCell(cell) {
         if (!(cell instanceof Cell)) {
-            if (Game.hasCell(cell)) {
-                cell = Game.getCell(cell);
+            if (Cell.has(cell)) {
+                cell = Cell.get(cell);
             }
             else {
                 return 2;
             }
         }
+        if (Game.playerCell instanceof Cell) {
+            Game.unloadCell(Game.playerCell);
+        }
         if (cell.skybox == "dayNightCycle") {
             Game.loadSkyMaterial();
+            Game.skybox.material.azimuth = cell.skyboxAzimuth;
+            Game.skybox.material.inclination = cell.skyboxInclination;
+            Game.ambientLight.intensity = cell.ambientLightIntensity;
         }
         else {
             Game.unloadMaterial("dayNightCycle");
         }
         cell.createBackloggedAdditions();
+        Game.playerCell = cell;
         return 0;
     }
     static loadSkyMaterial() {

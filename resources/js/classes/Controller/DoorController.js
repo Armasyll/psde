@@ -38,8 +38,8 @@ class DoorController extends EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.avStartRot.dispose();
-        this.avEndRot.dispose();
+        delete this.avStartRot;
+        delete this.avEndRot;
         DoorController.remove(this.id);
         super.dispose();
         return undefined;

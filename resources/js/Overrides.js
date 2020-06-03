@@ -17,6 +17,10 @@ Object.defineProperty(BABYLON.AbstractMesh.prototype, "controller", {
     enumerable: true,
     configurable: true
 });
+BABYLON.AbstractMesh.prototype.hasController = function() {
+    if (!this.isEnabled()) return false;
+    return this._controller != null;
+}
 Object.defineProperty(BABYLON.AbstractMesh.prototype, "isHitbox", {
     get: function () {
         return this._isHitbox === true;
