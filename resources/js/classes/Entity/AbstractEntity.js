@@ -11,7 +11,7 @@ class AbstractEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         id = Tools.filterID(id);
-        if (id.length == 0) {
+        if (id.length == 0 || AbstractEntity.has(id)) {
             id = Tools.genUUIDv4();
         }
         this.id = id;

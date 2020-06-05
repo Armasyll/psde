@@ -8,9 +8,12 @@ class Game {
         Game.debugMode = false;
         Game.godMode = false;
     }
+    static preInitialize() {}
     static initialize() {
         let initStart = new Date();
         Game.initialized = false;
+        Game.postInitialized = false;
+        Game.postLoaded = false;
         Game.SECONDS_IN_DAY = 86400;
         Game.SECONDS_IN_HOUR = 3600;
         Game.RAD_0 = 0.0;
@@ -33,6 +36,9 @@ class Game {
         Game.godMode = false;
         Game.physicsEnabled = false;
         Game.Tools = Tools;
+
+        Game.loadingCells = true;
+        Game.loadingCell = false;
 
         if (Game.debugMode) console.log("Running initialize");
         Game.canvas = document.getElementById("canvas");
@@ -965,6 +971,55 @@ class Game {
         Game.engine.runRenderLoop(Game._renderLoopFunction);
         Game.scene.registerBeforeRender(Game._beforeRenderFunction);
         Game.scene.registerAfterRender(Game._afterRenderFunction);
+        Game.postInitialize();
+    }
+    static postInitialize() {
+        if (Game.postInitialized) {
+            return 0;
+        }
+        Game.postInitialized = true;
+        let url = new URL(window.location.href);
+        let urlMap = new Map(url.searchParams);
+        urlMap.forEach(function(val, key) {
+            switch(key) {
+                case "tgm": {
+                    Game.toggleGodMode();
+                    break;
+                }
+            }
+        });
+        return 0;
+    }
+    static postLoad() {
+        if (Game.postLoaded) {
+            return 0;
+        }
+        Game.postLoaded = true;
+        let url = new URL(window.location.href);
+        let urlMap = new Map(url.searchParams);
+        urlMap.forEach(function(val, key) {
+            switch(key) {
+                case "debugBook": {
+                    GameGUI.hideCharacterChoiceMenu();
+                    BookGameGUI.show();
+                    setTimeout(function() {
+                        BookGameGUI.updateWith(BookEntity.get("linedUp"), 1);
+                    }, 1000);
+                    break;
+                }
+                case "cell": {
+                    let cellID = "limbo";
+                    if (Cell.has(val)) {
+                        cellID = val;
+                    }
+                    Game.loadCell(cellID);
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", "Player", undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    GameGUI.hideCharacterChoiceMenu(true);
+                    GameGUI.hideMenu(true);
+                }
+            }
+        });
+        return 0;
     }
     static _renderLoopFunction() {
         if (!Game.initialized) {
@@ -988,6 +1043,7 @@ class Game {
                     Game.importCharacters();
                     Game.importCells();
                     Game._finishedInitializing = true;
+                    Game.postInitialize();
 
                     Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
                         Game.controls.onKeyDown(evt.sourceEvent);
@@ -1042,6 +1098,9 @@ class Game {
                     Game._finishedConfiguring = true;
                 }
             }
+        }
+        if (!Game.loadingCells && !Game.postLoaded) {
+            Game.postLoad();
         }
     }
     static _beforeRenderFunction() {
@@ -1994,12 +2053,16 @@ class Game {
             return Game.iconLocations["missingIcon"];
         }
     }
-    static importScript(file) {
+    static importScript(file, onload = null, onerror = null) {
         let script = document.createElement("script");
         script.type = "text/javascript";
         script.src = file;
-        script.onload = function () {
-        };
+        if (typeof onload == "function") {
+            script.onload = onload;
+        }
+        if (typeof onerror == "function") {
+            script.onerror = onerror;
+        }
         document.body.appendChild(script);
         return 0;
     }
@@ -2037,7 +2100,7 @@ class Game {
         return Game.importScript("resources/js/furniture.js");
     }
     static importCells() {
-        return Game.importScript("resources/js/cells.js");
+        return Game.importScript("resources/js/cells.js", function() {Game.loadingCells = false;});
     }
     /**
      * Creates a primitive wall for collision
@@ -4172,7 +4235,11 @@ class Game {
             return [id, abstractEntity, position, rotation, scaling, options];
         }
         let mesh = Game.createItemMesh(id, abstractEntity.getMeshID(), abstractEntity.getTextureID(), position, rotation, scaling, options);
+        if (abstractEntity instanceof Entity) {
+            abstractEntity = abstractEntity.createInstance(id);
+        }
         let itemController = new ItemController(id, mesh, abstractEntity);
+        abstractEntity.setController(itemController);
         return itemController;
     }
     /**
@@ -4182,7 +4249,7 @@ class Game {
      */
     static removeItem(instancedItemEntity) {
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            if (!Game.hasInstancedItem(instancedItemEntity)) {
+            if (!InstancedItemEntity.has(instancedItemEntity)) {
                 return 2;
             }
             instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
@@ -4200,15 +4267,16 @@ class Game {
      */
     static removeItemInSpace(instancedItemEntity) {
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            if (!Game.hasInstancedItem(instancedItemEntity)) {
+            if (!InstancedItemEntity.has(instancedItemEntity)) {
                 return 2;
             }
             instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
         if (Game.debugMode) console.log(`Game.removeItemInSpace(${instancedItemEntity.getID()})`);
         if (instancedItemEntity.hasController() && instancedItemEntity.getController().hasMesh()) {
-            Game.removeMesh(instancedItemEntity.getController().getMesh());
+            let mesh = instancedItemEntity.getController().getMesh();
             instancedItemEntity.getController().dispose();
+            Game.removeMesh(mesh);
             return 0;
         }
         else {
@@ -4342,7 +4410,7 @@ class Game {
         return 0;
     }
     static setPlayerTarget(entityController) {
-        if (Game.debugMode) console.group("Running Game::updateMenuKeyboardDisplayKeys()");
+        if (Game.debugMode) console.group("Running Game::setPlayerTarget()");
         if (!(Game.player.hasController())) {
             if (Game.debugMode) {
                 console.error("Player doesn't have a controller; returning 1");
@@ -4350,26 +4418,34 @@ class Game {
             }
             return 1;
         }
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
+            }
+            else {
+                if (Game.debugMode) {
+                    console.error("Target doesn't have a controller; returning 1");
+                    console.groupEnd();
+                }
+                return 1;
+            }
+        }
+        if (!entityController.isEnabled()) {
+            if (Game.debugMode) {
+                console.info("Target has a controller, but it is disabled; returning 0");
+                console.groupEnd();
+            }
+            if (entityController.getEntity() == Game.player.getTarget()) {
+                Game.clearPlayerTarget();
+            }
+            return 0;
+        }
         if (entityController.getEntity() == Game.player.getTarget()) {
             if (Game.debugMode) {
                 console.info("Somehow the player was trying to target itself.");
                 console.groupEnd();
             }
             Game.gui.targetPortrait.updateWith(entityController.getEntity());
-            return 0;
-        }
-        if (!(entityController instanceof EntityController)) {
-            if (Game.debugMode) {
-                console.error("Target doesn't have a controller; returning 1");
-                console.groupEnd();
-            }
-            return 1;
-        }
-        else if (!entityController.isEnabled()) {
-            if (Game.debugMode) {
-                console.info("Target has a controller, but it is disabled; returning 0");
-                console.groupEnd();
-            }
             return 0;
         }
         if (Game.highlightEnabled) {

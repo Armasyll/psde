@@ -10,7 +10,7 @@ class EntityController {
      */
     constructor(id, mesh, entity) {
         id = Tools.filterID(id);
-        if (typeof id != "string") {
+        if (typeof id != "string" || EntityController.has(id)) {
             id = Tools.genUUIDv4();
         }
         if (!(mesh instanceof BABYLON.AbstractMesh)) {

@@ -1,3 +1,6 @@
+/**
+ * Item Controller
+ */
 class ItemController extends EntityController {
     constructor(id, mesh, entity) {
         super(id, mesh, entity);

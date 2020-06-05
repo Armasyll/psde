@@ -508,3 +508,4 @@ let debugMovementCell = new Cell("debugMovementCell");
 debugMovementCell.addCollisionPlane({x:-5,z:-25}, {x:11,z:-9}, 0);
 debugMovementCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", new BABYLON.Vector3(-5, 0, -25));
 debugMovementCell.addCollidableMesh("debugMovementStairs", "craftsmanStairs", "missingMaterial", new BABYLON.Vector3(2, 0, -20), new BABYLON.Vector3(0, 180, 0));
+debugMovementCell.addItem("cheeseWedgeInstance01", "cheeseWedge", new BABYLON.Vector3(3, 0, -17));
