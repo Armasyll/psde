@@ -99,6 +99,8 @@ class CreatureController extends EntityController {
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set([this.mesh]);
 
+        this.targetController = null;
+
         this.updateTargetRayOrigin();
         CreatureController.set(this.id, this);
     }
@@ -641,6 +643,32 @@ class CreatureController extends EntityController {
         }
         this.targetRay.origin = this.mesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.mesh.scaling));
         return 0;
+    }
+
+    setTarget(entityController) {
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.targetController = entityController.id;
+        return 0;
+    }
+    getTarget() {
+        return this.targetController;
+    }
+    hasTarget() {
+        return this.targetController != null;
+    }
+    removeTarget() {
+        this.targetController = null;
+        return 0;
+    }
+    clearTarget() {
+        return this.removeTarget();
     }
 
     dispose() {

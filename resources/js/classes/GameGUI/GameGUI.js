@@ -667,7 +667,12 @@ class GameGUI {
         return 0;
     }
     static populateActionsMenuWithTarget() {
-        return GameGUI.populateActionsMenuWith(Game.player.getTarget());
+        if (Game.playerController.hasTarget()) {
+            return GameGUI.populateActionsMenuWith(Game.playerController.getTarget().getEntity());
+        }
+        else {
+            GameGUI.clearActionsMenu();
+        }
     }
     static addActionsMenuOption(actionID, abstractEntity) {
         if (!ActionEnum.properties.hasOwnProperty(actionID)) {

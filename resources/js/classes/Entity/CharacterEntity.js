@@ -16,8 +16,6 @@ class CharacterEntity extends CreatureEntity {
         this.entityType = EntityEnum.CHARACTER;
         this.surname = "";
         this.nickname = "";
-        this.gender = SexEnum.MALE;
-        this.handedness = HandednessEnum.RIGHT;
         /**
          * Attached cosmetics
          * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
@@ -60,25 +58,6 @@ class CharacterEntity extends CreatureEntity {
         this.equipment[ApparelSlotEnum.FOOT_R] = null;
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
-         * Base disposition this CharacterEntity has for others
-         * @type {number}  Passion
-         * @type {number}  Friendship
-         * @type {number}  Playfulness
-         * @type {number}  Soulmate
-         * @type {number}  Familial
-         * @type {number}  Obsession
-         * @type {number}  Hate
-         */
-        this.defaultDisposition = {
-            "passion":0,
-            "friendship":0,
-            "playfulness":0,
-            "soulmate":0,
-            "familial":0,
-            "obsession":0,
-            "hate":0
-        };
-        /**
          * Primary fur colour
          * @type {string}
          */
@@ -120,18 +99,6 @@ class CharacterEntity extends CreatureEntity {
          * @type {string} (PeltEnum)
          */
         this.peltType = PeltEnum.FUR;
-        /**
-         * Characters and this Character's disposition for them
-         * @type {object} {CharacterEntity: {string: number}}
-         */
-        this.characterDisposition = {};
-        /**
-         * Initial dialogue
-         * @type {Dialogue}
-         */
-        this.dialogue = undefined;
-
-        this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
 
         /**
          * @type {object} {CharacterClass: number}
@@ -636,139 +603,6 @@ class CharacterEntity extends CreatureEntity {
         return 0;
     }
 
-    setGender(gender = SexEnum.MALE) {
-        if (SexEnum.properties.hasOwnProperty(gender)) {
-            this.gender = gender;
-            return 0;
-        }
-        return 2;
-    }
-    getGender() {
-        return this.gender;
-    }
-
-    setDefaultDisposition(passion = 0, friendship = 0, playfulness = 0, soulmate = 0, familial = 0, obsession = 0, hate = 0) {
-        this.defaultDisposition["passion"] = Number.parseInt(passion) || 0;
-        this.defaultDisposition["friendship"] = Number.parseInt(friendship) || 0;
-        this.defaultDisposition["playfulness"] = Number.parseInt(playfulness) || 0;
-        this.defaultDisposition["soulmate"] = Number.parseInt(soulmate) || 0;
-        this.defaultDisposition["familial"] = Number.parseInt(familial) || 0;
-        this.defaultDisposition["obsession"] = Number.parseInt(obsession) || 0;
-        this.defaultDisposition["hate"] = Number.parseInt(hate) || 0;
-        return 0;
-    }
-    setCharacterPassion(_character, number) {
-        return this.characterDisposition[_character]["passion"] = number;
-    }
-    getCharacterPassion(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["passion"];
-    }
-    setCharacterFriendship(_character, number) {
-        return this.characterDisposition[_character]["friendship"] = number;
-    }
-    getCharacterFriendship(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["friendship"];
-    }
-    setCharacterPlayfulness(_character, number) {
-        return this.characterDisposition[_character]["playfulness"] = number;
-    }
-    getCharacterPlayfulness(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["playfulness"];
-    }
-    setCharacterSoulmate(_character, number) {
-        return this.characterDisposition[_character]["soulmate"] = number;
-    }
-    getCharacterSoulmate(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["soulmate"];
-    }
-    setCharacterFamilial(_character, number) {
-        return this.characterDisposition[_character]["familial"] = number;
-    }
-    getCharacterFamilial(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["familial"];
-    }
-    setCharacterObsession(_character, number) {
-        return this.characterDisposition[_character]["obsession"] = number;
-    }
-    getCharacterObsession(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-        return this.characterDisposition[_character]["obsession"];
-    }
-    setCharacterHate(_character, number) {
-        return this.characterDisposition[_character]["hate"] = number;
-    }
-    getCharacterHate(_character) {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER; // SO MUCH HATE >:VVVVV
-        }
-        return this.characterDisposition[_character]["hate"];
-    }
-    getCharacterDisposition(characterID) {
-        if (Game.enableDebug) console.log("Running getCharacterDisposition");
-        if (!(CharacterEntity.has(characterID))) {
-            return 2;
-        }
-        if (this.hasCharacterDisposition(characterID)) {
-            return this.characterDisposition[characterID];
-        }
-        else {
-            return {
-                "passion":0,
-                "friendship":0,
-                "playfulness":0,
-                "soulmate":0,
-                "familial":0,
-                "obsession":0,
-                "hate":0
-            };
-        }
-    }
-    hasCharacterDisposition(characterID) {
-        if (this.isGod()) {
-            return true;
-        }
-        return this.characterDisposition.hasOwnProperty(characterID);
-    }
-    getCharacterDispositions() {
-        return this.characterDisposition;
-    }
-    hasMet(characterID) {
-        return this.hasCharacterDisposition(characterID);
-    }
-
-    setHandedness(handedness) {
-        if (HandednessEnum.properties.has(handedness)) {
-            this.handedness = handedness;
-            return 0;
-        }
-        return 2;
-    }
-    getHandedness() {
-        return this.handedness;
-    }
-    isRightHanded() {
-        return this.handedness == HandednessEnum.RIGHT;
-    }
-    isLeftHanded() {
-        return this.handedness == HandednessEnum.LEFT;
-    }
     getMainWeapon() {
         if (this.isRightHanded()) {
             return this.equipment[ApparelSlotEnum.HAND_R];
@@ -866,52 +700,6 @@ class CharacterEntity extends CreatureEntity {
         this.setFurColourA(colourA);
         this.setFurColourB(colourB);
         return 0;
-    }
-    /**
-     * Adds a new disposition this character has for the specified character, by their ID.
-     * @param {string} characterEntity Character ID
-     * @param {number} [passionModifier] 
-     * @param {number} [friendshipModifier] 
-     * @param {number} [playfulnessModifier] 
-     * @param {number} [soulmateModifier] 
-     * @param {number} [familialModifier] 
-     * @param {number} [obsessionModifier] 
-     * @param {number} [hateModifier] 
-     */
-    addNewDisposition(characterEntity, passionModifier = 0, friendshipModifier = 0, playfulnessModifier = 0, soulmateModifier = 0, familialModifier = 0, obsessionModifier = 0, hateModifier = 0) {
-        if (characterEntity instanceof CharacterEntity) {
-            characterEntity = characterEntity.getID();
-        }
-        this.characterDisposition[characterEntity]["passion"] = passionModifier + this.defaultDisposition["passion"];
-        this.characterDisposition[characterEntity]["friendship"] = friendshipModifier + this.defaultDisposition["friendship"];
-        this.characterDisposition[characterEntity]["playfulness"] = playfulnessModifier + this.defaultDisposition["playfulness"];
-        this.characterDisposition[characterEntity]["soulmate"] = soulmateModifier + this.defaultDisposition["soulmate"];
-        this.characterDisposition[characterEntity]["familial"] = familialModifier + this.defaultDisposition["familial"];
-        this.characterDisposition[characterEntity]["obsession"] = obsessionModifier + this.defaultDisposition["obsession"];
-        this.characterDisposition[characterEntity]["hate"] = hateModifier + this.defaultDisposition["hate"];
-        return 0;
-    }
-
-    hasDialogue() {
-        return this.dialogue instanceof Dialogue;
-    }
-    setDialogue(dialogue) {
-        dialogue = Dialogue.get(dialogue);
-        if (dialogue instanceof Dialogue) {
-            this.dialogue = dialogue;
-            this.addAvailableAction(ActionEnum.TALK);
-            this.setDefaultAction(ActionEnum.TALK);
-        }
-        return 0;
-    }
-    removeDialogue() {
-        this.dialogue = undefined;
-        this.removeAvailableAction(ActionEnum.TALK);
-        this.setDefaultAction(ActionEnum.LOOK);
-        return 0;
-    }
-    getDialogue() {
-        return this.dialogue;
     }
 
     setClass(characterClass) {
@@ -1422,8 +1210,6 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         super.assign(entity, verify);
-        if (entity.hasOwnProperty("gender")) this.gender = entity.gender;
-        if (entity.hasOwnProperty("handedness")) this.handedness = entity.handedness;
         if (entity.hasOwnProperty("attachedCosmetics")) {
                 for (let apparelSlot in entity.attachedCosmetics) {
                 if (entity.attachedCosmetics[apparelSlot].length > 0) {
@@ -1443,7 +1229,6 @@ class CharacterEntity extends CreatureEntity {
         }
         // ...
         if (entity.hasOwnProperty("previousEquipment")) this.previousEquipment = Object.assign({}, entity.previousEquipment);
-        if (entity.hasOwnProperty("defaultDisposition")) this.defaultDisposition = Object.assign({}, entity.defaultDisposition);
         if (entity.hasOwnProperty("furColourA")) this.furColourA = entity.furColourA;
         if (entity.hasOwnProperty("_furColourAHex")) this._furColourAHex = entity._furColourAHex;
         if (entity.hasOwnProperty("furColourB")) this.furColourB = entity.furColourB;
@@ -1454,9 +1239,6 @@ class CharacterEntity extends CreatureEntity {
         if (entity.hasOwnProperty("_leftEyeColourHex")) this._leftEyeColourHex = entity._leftEyeColourHex;
         if (entity.hasOwnProperty("_rightEyeColourHex")) this._rightEyeColourHex = entity._rightEyeColourHex;
         if (entity.hasOwnProperty("peltType")) this.peltType = entity.peltType;
-        if (entity.hasOwnProperty("characterDisposition")) this.characterDisposition = Object.assign({}, entity.characterDisposition);
-        if (entity.hasOwnProperty("dialogue")) this.dialogue = entity.dialogue;
-        if (entity.hasOwnProperty("sexualOrientation")) this.sexualOrientation = entity.sexualOrientation;
         if (entity.hasOwnProperty("characterClasses")) this.characterClasses = Object.assign({}, entity.characterClasses);
         if (entity.hasOwnProperty("primaryCharacterClass")) this.primaryCharacterClass = entity.primaryCharacterClass;
         return 0;

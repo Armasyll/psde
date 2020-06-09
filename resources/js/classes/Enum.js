@@ -12,6 +12,7 @@ let EntityEnum = {
     "DOOR": 5,
     "SPELL": 6,
     "CREATURE": 7,
+    "SOUL": 8,
     /** @type {object} */
     "properties": {
         0: {
@@ -53,6 +54,11 @@ let EntityEnum = {
             "name": "Creature",
             "value": 7,
             "key": "CREATURE"
+        },
+        8: {
+            "name": "Soul",
+            "value": 8,
+            "key": "SOUL"
         }
     }
 };

@@ -3373,6 +3373,9 @@ class Game {
         }
         if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
+        let soulEntity = new SoulEntity(id, name, description, iconID);
+        soulEntity.assign(characterEntity, false);
+        characterEntity.setSoul(soulEntity, false);
         if (typeof options == "object") {
             for (let i in options) {
                 switch (i) {
@@ -4386,7 +4389,7 @@ class Game {
         if (entityController instanceof CharacterController) {
             color = BABYLON.Color3.White();
         }
-        else if (entityController instanceof ItemController) {
+        else if (entityController instanceof ItemController) { // implying its entity is an instance
             if (entityController.getEntity().getOwner() != Game.player) {
                 color = BABYLON.Color3.Red();
             }
@@ -4438,12 +4441,12 @@ class Game {
                 console.info("Target has a controller, but it is disabled; returning 0");
                 console.groupEnd();
             }
-            if (entityController.getEntity() == Game.player.getTarget()) {
+            if (entityController == Game.playerController.getTarget()) {
                 Game.clearPlayerTarget();
             }
             return 0;
         }
-        if (entityController.getEntity() == Game.player.getTarget()) {
+        if (entityController == Game.playerController.getTarget()) {
             if (Game.debugMode) {
                 console.info("Somehow the player was trying to target itself.");
                 console.groupEnd();
@@ -4454,7 +4457,7 @@ class Game {
         if (Game.highlightEnabled) {
             Game.highlightController(entityController);
         }
-        Game.player.setTarget(entityController.getEntity());
+        Game.playerController.setTarget(entityController);
         Game.gui.targetPortrait.set(entityController.getEntity());
         Game.gui.targetPortrait.show();
         Game.gui.setActionTooltip(ActionEnum.properties[entityController.getEntity().getDefaultAction()].name);
@@ -4472,7 +4475,7 @@ class Game {
         if (Game.highlightEnabled) {
             Game.clearHighlightedController();
         }
-        Game.player.clearTarget();
+        Game.playerController.clearTarget();
         Game.gui.targetPortrait.hide();
         Game.gui.hideActionTooltip();
         return 0;
@@ -4840,7 +4843,7 @@ class Game {
      * @param {WeaponEntity|InstancedWeaponEntity} [weapon] 
      * @param {function} [callback] 
      */
-    static actionAttack(entity = Game.player.getTarget(), actor = Game.player, weapon = null, callback = undefined) {
+    static actionAttack(entity = null, actor = Game.player, weapon = null, callback = undefined) {
         if (Game.debugMode) console.group("Running Game::actionAttack");
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
@@ -4911,6 +4914,12 @@ class Game {
         }
         return 0;
     }
+    /**
+     * 
+     * @param {AbstractEntity} entity 
+     * @param {CharacterEntity} actor 
+     * @param {function} callback 
+     */
     static actionDrop(entity, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
@@ -4958,7 +4967,13 @@ class Game {
         }
         return 0;
     }
-    static actionClose(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    /**
+     * 
+     * @param {AbstractEntity} entity 
+     * @param {CharacterEntity} actor 
+     * @param {function} callback 
+     */
+    static actionClose(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -4991,7 +5006,7 @@ class Game {
         }
         return 0;
     }
-    static actionConsume(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionConsume(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5169,7 +5184,7 @@ class Game {
         }
         return 0;
     }
-    static actionOpen(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionOpen(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5208,7 +5223,7 @@ class Game {
         }
         return 0;
     }
-    static actionUse(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionUse(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5233,7 +5248,7 @@ class Game {
         }
         return 0;
     }
-    static actionLook(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionLook(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5256,7 +5271,7 @@ class Game {
         }
         return 0;
     }
-    static actionRead(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionRead(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5279,7 +5294,7 @@ class Game {
         }
         return 0;
     }
-    static actionLay(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionLay(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5328,7 +5343,7 @@ class Game {
      * @param  {InstancedFurnitureEntity} entity Furniture
      * @param  {AbstractEntity} actor Entity to be placed
      */
-    static actionSit(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionSit(entity = null, actor = Game.player, callback = undefined) {
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5357,7 +5372,7 @@ class Game {
         }
         return 0;
     }
-    static actionTalk(entity = Game.player.getTarget(), actor = Game.player, callback = undefined) {
+    static actionTalk(entity = null, actor = Game.player, callback = undefined) {
         if (Game.debugMode) console.group(`Running Game::actionTalk(${typeof entity == "object" ? (entity instanceof AbstractEntity ? entity.id : "UNK") : entity}, ${typeof actor == "object" ? (actor instanceof AbstractEntity ? actor.id : "UNK") : actor})`)
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {

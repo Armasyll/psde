@@ -23,8 +23,6 @@ class AbstractEntity {
         this.iconID = "";
         this.setIcon(iconID);
         this.controller = null;
-        this.owner = "";
-        this.target = null;
 
         this.health = 10;
 
@@ -262,80 +260,6 @@ class AbstractEntity {
     removeController() {
         this.controller = undefined;
         return 0;
-    }
-    getPosition() {
-        if (this.hasController()) {
-            return this.controller.getPosition();
-        }
-        return BABYLON.Vector3.Zero();
-    }
-    getRotation() {
-        if (this.hasController()) {
-            return this.controller.getRotation();
-        }
-        return BABYLON.Vector3.Zero();
-    }
-    getScaling() {
-        if (this.hasController()) {
-            return this.controller.getScaling();
-        }
-        return BABYLON.Vector3.One();
-    }
-
-    /**
-     * Sets Owner
-     * @param {CharacterEntity} creatureEntity Character, or undefined
-     */
-    setOwner(creatureEntity) {
-        if (!(creatureEntity instanceof CreatureEntity)) {
-            if (CreatureEntity.has(creatureEntity)) {
-                creatureEntity = CreatureEntity.get(creatureEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        this.owner = creatureEntity.id;
-        return 0;
-    }
-    getOwner() {
-        return this.owner;
-    }
-    hasOwner() {
-        return CreatureEntity.has(this.owner);
-    }
-    removeOwner() {
-        this.owner = null;
-        return 0;
-    }
-    clearOwner() {
-        return this.removeOwner();
-    }
-
-    setTarget(abstractEntity) {
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(characterEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        this.target = abstractEntity.id;
-        return 0;
-    }
-    getTarget() {
-        return this.target;
-    }
-    hasTarget() {
-        return AbstractEntity.has(this.target);
-    }
-    removeTarget() {
-        this.target = null;
-        return 0;
-    }
-    clearTarget() {
-        return this.removeTarget();
     }
 
     setEssential(isEssential = true) {
@@ -873,7 +797,6 @@ class AbstractEntity {
         if (entity.hasOwnProperty("maxHealth")) this.maxHealth = entity.maxHealth;
         if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
         if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
-        if (entity.hasOwnProperty("owner")) this.setOwner(entity.owner);
         if (entity.hasOwnProperty("godMode")) this.godMode = godMode;
         if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = godModeOverride;
         if (entity.hasOwnProperty("essential")) this.essential = essential;

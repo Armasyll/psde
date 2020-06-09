@@ -54,7 +54,7 @@ class CharacterControllerRigidBody extends CharacterController {
             this.startPosition.copyFrom(this.mesh.position);
             anim = this.doMove();
         }
-        if (Game.player != this.entity && this.entity.target == null) {
+        if (Game.playerController != this && this.targetController == null) {
             this.targetRay.direction.y = 0; // up-down
             this.targetRay.direction.z = -this.mesh.forward.z;
         }

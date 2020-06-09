@@ -22,6 +22,7 @@ class InstancedEntity extends AbstractEntity {
         this.setDescription(description || this.entity.getDescription());
         this.setIcon(iconID || this.entity.getIcon());
         this.entityType = this.entity.entityType;
+        this.owner = "";
         this.weightModifier = 0;
         this.priceModifier = 0;
         this._useOwnAvailableActions = false;
@@ -70,6 +71,36 @@ class InstancedEntity extends AbstractEntity {
             return 0;
         }
         return this.entity.getPrice() + this.priceModifier;
+    }
+
+    /**
+     * Sets Owner
+     * @param {CharacterEntity} creatureEntity Character, or undefined
+     */
+    setOwner(creatureEntity) {
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            if (CreatureEntity.has(creatureEntity)) {
+                creatureEntity = CreatureEntity.get(creatureEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.owner = creatureEntity.id;
+        return 0;
+    }
+    getOwner() {
+        return this.owner;
+    }
+    hasOwner() {
+        return CreatureEntity.has(this.owner);
+    }
+    removeOwner() {
+        this.owner = null;
+        return 0;
+    }
+    clearOwner() {
+        return this.removeOwner();
     }
 
     _createOwnSpecialProperties() {
@@ -417,7 +448,7 @@ class InstancedEntity extends AbstractEntity {
             return 2;
         }
         //super.assign(entity);
-        this.setOwner(entity.owner);
+        if (entity.hasOwnProperty("owner")) this.setOwner(entity.owner);
         if (entity._useOwnAvailableActions) {
             this.availableActions = Object.assign({}, entity.availableActions);
         }

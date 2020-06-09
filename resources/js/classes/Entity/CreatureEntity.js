@@ -18,6 +18,22 @@ class CreatureEntity extends Entity {
         this.entityType = EntityEnum.CREATURE;
 
         /**
+         * @type {string|null}
+         */
+        this.soul = null;
+        /**
+         * @private
+         * @type {SoulEntity} 
+         */
+        this._soulEntity = null;
+        this.handedness = HandednessEnum.RIGHT;
+        this.gender = SexEnum.MALE;
+        this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
+        /**
+         * @type {string|null}
+         */
+        this.dialogue = null;
+        /**
          * @type {number}
          */
         this.age = 18;
@@ -106,26 +122,12 @@ class CreatureEntity extends Entity {
          * Ability Score
          * @type {Object.<string, number>}
          */
-        this.abilityScore = {
-            "STRENGTH":10,
-            "DEXTERITY":10,
-            "CONSTITUTION":10,
-            "INTELLIGENCE":10,
-            "WISDOM":10,
-            "CHARISMA":10
-        };
+        this.abilityScore = {"STRENGTH":10,"DEXTERITY":10,"CONSTITUTION":10,"INTELLIGENCE":10,"WISDOM":10,"CHARISMA":10};
         /**
          * Ability Score
          * @type {Object.<string, number>}
          */
-        this.abilityScoreModifier = {
-            "STRENGTH":0,
-            "DEXTERITY":0,
-            "CONSTITUTION":0,
-            "INTELLIGENCE":0,
-            "WISDOM":0,
-            "CHARISMA":0
-        };
+        this.abilityScoreModifier = {"STRENGTH":0,"DEXTERITY":0,"CONSTITUTION":0,"INTELLIGENCE":0,"WISDOM":0,"CHARISMA":0};
 
         /**
          * @type {number}
@@ -572,6 +574,249 @@ class CreatureEntity extends Entity {
         return 0;
     }
 
+    setSoul(soul, updateSelf = true) {
+        if (!(soul instanceof SoulEntity)) {
+            if (SoulEntity.has(soul)) {
+                soul = SoulEntity.get(soul);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.soul = soul.id;
+        this._soulEntity = soul;
+        if (updateSelf) {
+            this.abilityScore["INTELLIGENCE"] = soul.abilityScore["INTELLIGENCE"];
+            this.abilityScore["WISDOM"] = soul.abilityScore["WISDOM"];
+            this.setHandedness(soul.handedness, false);
+            this.setGender(soul.gender, false);
+            this.setSexualOrientation(soul.sexualOrientation, false);
+            //this.characterDisposition = Object.assign({}, soul.characterDisposition);
+            //this.defaultDisposition = Object.assign({}, soul.defaultDisposition);
+            this.setDialogue(soul.getDialogue());
+        }
+    }
+    getSoul() {
+        return this.soul;
+    }
+    hasSoul() {
+        if (this.soul != null) {
+            return this.soul != "soulless";
+        }
+        return false;
+    }
+    removeSoul() {
+        this.soul = null;
+        this._soulEntity = null;
+        this.removeDialogue();
+        if (SoulEntity.has("soulless")) {
+            this.setSoul("soulless");
+        }
+        return 0;
+    }
+    clearSoul() {
+        return this.removeSoul();
+    }
+
+    setGender(gender = SexEnum.MALE, updateChild = true) {
+        if (SexEnum.properties.hasOwnProperty(gender)) {
+            this.gender = gender;
+            if (this.hasSoul() && updateChild) {
+                this._soulEntity.gender = gender;
+            }
+            return 0;
+        }
+        return 2;
+    }
+    getGender() {
+        return this.gender;
+    }
+
+    setSexualOrientation(sexualOrientation = SexualOrientationEnum.STRAIGHT, updateChild = true) {
+        if (SexualOrientationEnum.properties.hasOwnProperty(sexualOrientation)) {
+            this.sexualOrientation = sexualOrientation;
+            if (this.hasSoul() && updateChild) {
+                this._soulEntity.sexualOrientation = sexualOrientation;
+            }
+            return 0;
+        }
+        return 2;
+    }
+    getSexualOrientation() {
+        return this.sexualOrientation;
+    }
+
+    setCharacterPassion(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterPassion(...parameters);
+        }
+        return 0;
+    }
+    getCharacterPassion(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterPassion(...parameters);
+        }
+        return 0;
+    }
+    setCharacterFriendship(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterFriendship(...parameters);
+        }
+        return 0;
+    }
+    getCharacterFriendship(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterFriendship(...parameters);
+        }
+        return 0;
+    }
+    setCharacterPlayfulness(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterPlayfulness(...parameters);
+        }
+        return 0;
+    }
+    getCharacterPlayfulness(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterPlayfulness(...parameters);
+        }
+        return 0;
+    }
+    setCharacterSoulmate(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterSoulmate(...parameters);
+        }
+        return 0;
+    }
+    getCharacterSoulmate(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterSoulmate(...parameters);
+        }
+        return 0;
+    }
+    setCharacterFamilial(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterFamilial(...parameters);
+        }
+        return 0;
+    }
+    getCharacterFamilial(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterFamilial(...parameters);
+        }
+        return 0;
+    }
+    setCharacterObsession(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterObsession(...parameters);
+        }
+        return 0;
+    }
+    getCharacterObsession(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterObsession(...parameters);
+        }
+        return 0;
+    }
+    setCharacterHate(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.setCharacterHate(...parameters);
+        }
+        return 0;
+    }
+    getCharacterHate(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterHate(...parameters);
+        }
+        return 0;
+    }
+    getCharacterDisposition(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterDisposition(...parameters);
+        }
+        return {"passion":0,"friendship":0,"playfulness":0,"soulmate":0,"familial":0,"obsession":0,"hate":0};
+    }
+    hasCharacterDisposition(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.hasCharacterDisposition(...parameters);
+        }
+        return false;
+    }
+    getCharacterDispositions(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.getCharacterDispositions(...parameters);
+        }
+        return {};
+    }
+    hasMet(...parameters) {
+        if (this.hasSoul()) {
+            return this._soulEntity.hasMet(...parameters);
+        }
+        return false;
+    }
+
+    setHandedness(handedness, updateChild = true) {
+        if (HandednessEnum.properties.has(handedness)) {
+            this.handedness = handedness;
+            if (this.hasSoul() && updateChild) {
+                this._soulEntity.handedness = handedness;
+            }
+            return 0;
+        }
+        return 2;
+    }
+    getHandedness() {
+        return this.handedness;
+    }
+    isRightHanded() {
+        return this.handedness == HandednessEnum.RIGHT;
+    }
+    isLeftHanded() {
+        return this.handedness == HandednessEnum.LEFT;
+    }
+
+    /**
+     * Adds a new disposition this character has for the specified character, by their ID.
+     * @param {string} characterEntity Character ID
+     * @param {number} [passionModifier] 
+     * @param {number} [friendshipModifier] 
+     * @param {number} [playfulnessModifier] 
+     * @param {number} [soulmateModifier] 
+     * @param {number} [familialModifier] 
+     * @param {number} [obsessionModifier] 
+     * @param {number} [hateModifier] 
+     */
+    addNewDisposition(...parameters) {
+        this._soulEntity.addDisposition(...parameters);
+        return 0;
+    }
+
+    hasDialogue() {
+        return this.dialogue != null;
+    }
+    setDialogue(dialogue) {
+        if (dialogue instanceof Dialogue) {
+            dialogue = dialogue.id;
+        }
+        else if (Dialoghe.has(dialogue)) {}
+        else {
+            return 2;
+        }
+        this.dialogue = dialogue;
+        this.addAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.TALK);
+        return 0;
+    }
+    removeDialogue() {
+        this.dialogue = null;
+        this.removeAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.LOOK);
+        return 0;
+    }
+    getDialogue() {
+        return this.dialogue;
+    }
+
     setSex(sex = SexEnum.MALE) {
         if (SexEnum.properties.hasOwnProperty(sex)) {
             this.sex = sex;
@@ -745,34 +990,52 @@ class CreatureEntity extends Entity {
     setIntelligence(number) {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
-        this.abilityScore["INTELLIGENCE"] = number;
+        if (this.hasSoul()) {
+            this._soulEntity.abilityScore["INTELLIGENCE"] = number;
+        }
+        this.abilityScore["INTELLIGENCE"] = number
         return 0;
     }
     modifyIntelligence(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
+        if (this.hasSoul()) {
+            return this.setIntelligence(this._soulEntity.abilityScore["INTELLIGENCE"] + number);
+        }
         return this.setIntelligence(this.abilityScore["INTELLIGENCE"] + number);
     }
     getIntelligence() {
         if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
+        if (this.hasSoul()) {
+            return this._soulEntity.abilityScore["INTELLIGENCE"] + this.abilityScoreModifier["INTELLIGENCE"];
+        }
         return this.abilityScore["INTELLIGENCE"] + this.abilityScoreModifier["INTELLIGENCE"];
     }
     setWisdom(number) {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
+        if (this.hasSoul()) {
+            this._soulEntity.abilityScore["WISDOM"] = number;
+        }
         this.abilityScore["WISDOM"] = number
         return 0;
     }
     modifyWisdom(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
+        if (this.hasSoul()) {
+            return this.setWisdom(this._soulEntity.abilityScore["WISDOM"] + number);
+        }
         return this.setWisdom(this.abilityScore["WISDOM"] + number);
     }
     getWisdom() {
         if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
+        }
+        if (this.hasSoul()) {
+            return this._soulEntity.abilityScore["WISDOM"] + this.abilityScoreModifier["WISDOM"];
         }
         return this.abilityScore["WISDOM"] + this.abilityScoreModifier["WISDOM"];
     }
