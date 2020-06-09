@@ -798,7 +798,7 @@ class CreatureEntity extends Entity {
         if (dialogue instanceof Dialogue) {
             dialogue = dialogue.id;
         }
-        else if (Dialoghe.has(dialogue)) {}
+        else if (Dialogue.has(dialogue)) {}
         else {
             return 2;
         }

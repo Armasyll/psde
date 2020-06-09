@@ -602,7 +602,6 @@ class Cell {
 
     static initialize() {
         Cell.cellList = {};
-        Cell.createLimbo();
     }
     static createLimbo() {
         let limbo = new Cell("limbo", "Limbo");

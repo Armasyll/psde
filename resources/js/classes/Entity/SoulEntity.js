@@ -9,8 +9,8 @@ class SoulEntity extends AbstractEntity {
      * @param  {string} description  Description
      * @param  {string} iconID       Icon ID
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItem") {
-        super(id, name, description, iconID);
+    constructor(id = undefined, name = undefined, description = undefined) {
+        super(id, name, description);
         this.entityType = EntityEnum.SOUL;
 
         this.abilityScore = {"INTELLIGENCE":10,"WISDOM":10};
@@ -322,9 +322,12 @@ class SoulEntity extends AbstractEntity {
 
     static initialize() {
         SoulEntity.soulList = {};
+    }
+    static createSoulless() {
         let soulless = new SoulEntity("soulless", "Soulless", "An empty soul.")
         soulless.abilityScore["INTELLIGENCE"] = 0;
         soulless.abilityScore["WISDOM"] = 0;
+        return 0;
     }
     static get(id) {
         if (SoulEntity.has(id)) {

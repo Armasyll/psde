@@ -20,7 +20,7 @@ class AbstractEntity {
         this.setName(name);
         this.description = "";
         this.setDescription(description);
-        this.iconID = "";
+        this.iconID = "genericItem";
         this.setIcon(iconID);
         this.controller = null;
 
@@ -797,10 +797,10 @@ class AbstractEntity {
         if (entity.hasOwnProperty("maxHealth")) this.maxHealth = entity.maxHealth;
         if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
         if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
-        if (entity.hasOwnProperty("godMode")) this.godMode = godMode;
-        if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = godModeOverride;
-        if (entity.hasOwnProperty("essential")) this.essential = essential;
-        if (entity.hasOwnProperty("essentialOverride")) this.essentialOverride = essentialOverride;
+        if (entity.hasOwnProperty("godMode")) this.godMode = entity.godMode;
+        if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = entity.godModeOverride;
+        if (entity.hasOwnProperty("essential")) this.essential = entity.essential;
+        if (entity.hasOwnProperty("essentialOverride")) this.essentialOverride = entity.essentialOverride;
         if (entity.hasOwnProperty("effects")) {
             for (let effect in entity.effects) {
                 for (let i = 0; i < entity.effects[effect]["currentStack"]; i++) {

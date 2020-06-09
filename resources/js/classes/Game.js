@@ -981,6 +981,8 @@ class Game {
             return 0;
         }
         Game.postInitialized = true;
+        Cell.createLimbo();
+        SoulEntity.createSoulless();
         let url = new URL(window.location.href);
         let urlMap = new Map(url.searchParams);
         urlMap.forEach(function(val, key) {
@@ -1241,6 +1243,9 @@ class Game {
         return 0;
     }
     static hasPlayerToCreate() {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.playerToCreate != null;
     }
     static createBackloggedPlayer() {
@@ -1430,12 +1435,21 @@ class Game {
         return Game.loadedVideos[videoID];
     }
     static hasAvailableVideo(videoID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.videoLocations.hasOwnProperty(videoID);
     }
     static hasLoadedVideo(videoID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.loadedVideos.hasOwnProperty(videoID);
     }
     static hasVideo(videoID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (Game.hasLoadedVideo(videoID)) {
             return true;
         }
@@ -1929,6 +1943,9 @@ class Game {
         return 2;
     }
     static hasClonedMesh(meshID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.clonedMeshes.hasOwnProperty(meshID);
     }
     static addInstancedMesh(mesh, newMeshID = undefined) {
@@ -1949,6 +1966,9 @@ class Game {
         return 2;
     }
     static hasInstancedMesh(meshID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.instancedMeshes.hasOwnProperty(meshID);
     }
     static addMeshMaterialMeshes(meshID, materialID, childMesh) {
@@ -2039,6 +2059,9 @@ class Game {
         return 2;
     }
     static hasIcon(iconID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.iconLocations.hasOwnProperty(iconID);
     }
     static addIcon(iconID, location) {
@@ -2443,18 +2466,30 @@ class Game {
         return 2;
     }
     static hasMeshMaterial(meshID, materialID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (Game.loadedMeshMaterials.hasOwnProperty(meshID)) {
             return Game.loadedMeshMaterials[meshID].hasOwnProperty(materialID);
         }
         return false;
     }
     static hasAvailableMesh(meshID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.meshLocations.hasOwnProperty(meshID);
     }
     static hasLoadedMesh(meshID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.loadedMeshes.hasOwnProperty(meshID);
     }
     static hasMesh(meshID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (Game.hasLoadedMesh(meshID)) {
             return true;
         }
@@ -2464,12 +2499,21 @@ class Game {
         return false;
     }
     static hasAvailableSound(soundID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.soundLocations.hasOwnProperty(soundID);
     }
     static hasLoadedSound(soundID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.loadedSounds.hasOwnProperty(soundID);
     }
     static hasSound(soundID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (Game.hasLoadedSound(soundID)) {
             return true;
         }
@@ -2510,12 +2554,21 @@ class Game {
         return 0;
     }
     static hasAvailableTexture(textureID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.textureLocations.hasOwnProperty(textureID);
     }
     static hasLoadedTexture(textureID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.loadedTextures.hasOwnProperty(textureID);
     }
     static hasTexture(textureID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (Game.hasLoadedTexture(textureID)) {
             return true;
         }
@@ -2526,12 +2579,21 @@ class Game {
         return false;
     }
     static hasAvailableMaterial(materialID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.hasLoadedMaterial(materialID);
     }
     static hasLoadedMaterial(materialID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.loadedMaterials.hasOwnProperty(materialID);
     }
     static hasMaterial(materialID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.hasLoadedMaterial(materialID);
     }
     /**
@@ -2782,6 +2844,9 @@ class Game {
         return true;
     }
     static hasMeshToCreate(meshIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (typeof Game.meshesToCreateCounter != "object") {
             return true;
         }
@@ -2835,6 +2900,9 @@ class Game {
         return true;
     }
     static hasFurnitureToCreate(furnitureInstanceID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (typeof Game.furnitureToCreateCounter != "object") {
             return true;
         }
@@ -2887,6 +2955,9 @@ class Game {
         return true;
     }
     static hasLightingToCreate(lightingIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (typeof Game.lightingToCreateCounter != "object") {
             return true;
         }
@@ -2942,6 +3013,9 @@ class Game {
         return true;
     }
     static hasDisplayToCreate(displayIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (typeof Game.displaysToCreateCounter != "object") {
             return true;
         }
@@ -2997,6 +3071,9 @@ class Game {
         return true;
     }
     static hasDoorsToCreate(doorIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         if (typeof Game.doorsToCreateCounter != "object") {
             return true;
         }
@@ -3049,6 +3126,9 @@ class Game {
         return true;
     }
     static hasCharacterToCreate(characterIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.charactersToCreateCounter > 0 && Game.charactersToCreate.hasOwnProperty(characterIndexID);
     }
     static createBackloggedCharacters() {
@@ -3095,6 +3175,9 @@ class Game {
         return true;
     }
     static hasItemToCreate(itemIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.itemsToCreateCounter > 0 && Game.itemsToCreate.hasOwnProperty(itemIndexID);
     }
     static createBackloggedItems() { // It's InstancedItemEntities :v
@@ -3144,6 +3227,9 @@ class Game {
         return true;
     }
     static hasAttachmentToCreate(attachmentIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
         return Game.attachmentsToCreateCounter > 0 && Game.attachmentsToCreate.hasOwnProperty(attachmentIndexID);
     }
     static createBackloggedAttachments() {
@@ -4466,10 +4552,10 @@ class Game {
         return 0;
     }
     static clearPlayerTarget() {
-        if (!(Game.player.hasController())) {
+        if (!(Game.playerController instanceof CreatureController)) {
             return 1;
         }
-        if (!Game.player.hasTarget()) {
+        if (!Game.playerController.hasTarget()) {
             return 0;
         }
         if (Game.highlightEnabled) {
