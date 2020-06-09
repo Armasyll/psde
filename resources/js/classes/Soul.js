@@ -7,7 +7,6 @@ class Soul {
      * @param  {string} id           Unique ID
      * @param  {string} name         Name
      * @param  {string} description  Description
-     * @param  {string} iconID       Icon ID
      */
     constructor(id = undefined, name = undefined, description = undefined) {
         id = Tools.filterID(id);
@@ -322,7 +321,7 @@ class Soul {
      * @return {Soul} new SoulEntity
      */
     clone(id = undefined) {
-        let clone = new Soul(id, this.name, this.description, this.icon);
+        let clone = new Soul(id, this.name, this.description);
         clone.assign(this);
         return clone;
     }
@@ -335,26 +334,27 @@ class Soul {
     }
     /**
      * Clones the soul's values over this
-     * @param {Soul} entity 
+     * @param {Soul} soul 
      * @param {boolean} [verify] Set to false to skip verification
      */
-    assign(entity, verify = true) {
-        if (verify && !(entity instanceof Soul)) {
+    assign(soul, verify = true) {
+        if (verify && !(soul instanceof Soul)) {
             return 2;
         }
-        super.assign(entity, verify);
-        if (entity.hasOwnProperty("abilityScore")) {
-            this.abilityScore["INTELLIGENCE"] = entity.abilityScore["INTELLIGENCE"];
-            this.abilityScore["WISDOM"] = entity.abilityScore["WISDOM"];
+        if (soul.hasOwnProperty("name")) this.name = soul.name;
+        if (soul.hasOwnProperty("description")) this.description = soul.description;
+        if (soul.hasOwnProperty("abilityScore")) {
+            this.abilityScore["INTELLIGENCE"] = soul.abilityScore["INTELLIGENCE"];
+            this.abilityScore["WISDOM"] = soul.abilityScore["WISDOM"];
         }
-        if (entity.hasOwnProperty("gender")) this.gender = entity.gender;
-        if (entity.hasOwnProperty("sexualOrientation")) this.sexualOrientation = entity.sexualOrientation;
-        if (entity.hasOwnProperty("creatureType")) this.creatureType = entity.creatureType;
-        if (entity.hasOwnProperty("creatureSubType")) this.creatureSubType = entity.creatureSubType;
-        if (entity.hasOwnProperty("handedness")) this.handedness = entity.handedness;
-        if (entity.hasOwnProperty("defaultDisposition")) this.defaultDisposition = Object.assign({}, entity.defaultDisposition);
-        if (entity.hasOwnProperty("characterDisposition")) this.characterDisposition = Object.assign({}, entity.characterDisposition);
-        if (entity.hasOwnProperty("dialogue")) this.dialogue = entity.dialogue;
+        if (soul.hasOwnProperty("gender")) this.gender = soul.gender;
+        if (soul.hasOwnProperty("sexualOrientation")) this.sexualOrientation = soul.sexualOrientation;
+        if (soul.hasOwnProperty("creatureType")) this.creatureType = soul.creatureType;
+        if (soul.hasOwnProperty("creatureSubType")) this.creatureSubType = soul.creatureSubType;
+        if (soul.hasOwnProperty("handedness")) this.handedness = soul.handedness;
+        if (soul.hasOwnProperty("defaultDisposition")) this.defaultDisposition = Object.assign({}, soul.defaultDisposition);
+        if (soul.hasOwnProperty("characterDisposition")) this.characterDisposition = Object.assign({}, soul.characterDisposition);
+        if (soul.hasOwnProperty("dialogue")) this.dialogue = soul.dialogue;
         return 0;
     }
     dispose() {
