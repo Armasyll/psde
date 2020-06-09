@@ -19,6 +19,7 @@ class Soul {
         this.setName(name);
         this.description = "";
         this.setDescription(description);
+        this.age = 18;
 
         this.abilityScore = {"INTELLIGENCE":10,"WISDOM":10};
         this.gender = SexEnum.MALE;
@@ -89,6 +90,21 @@ class Soul {
     }
     getDescription() {
         return this.description;
+    }
+
+    setAge(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        this.age = number;
+        return 0;
+    }
+    modifyAge(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        return this.setAge(this.age + number);
+    }
+    getAge() {
+        return this.age;
     }
 
     setIntelligence(number) {
@@ -343,6 +359,7 @@ class Soul {
         }
         if (soul.hasOwnProperty("name")) this.name = soul.name;
         if (soul.hasOwnProperty("description")) this.description = soul.description;
+        if (soul.hasOwnProperty("age")) this.age = soul.age;
         if (soul.hasOwnProperty("abilityScore")) {
             this.abilityScore["INTELLIGENCE"] = soul.abilityScore["INTELLIGENCE"];
             this.abilityScore["WISDOM"] = soul.abilityScore["WISDOM"];
