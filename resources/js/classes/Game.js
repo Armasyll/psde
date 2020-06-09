@@ -3458,10 +3458,10 @@ class Game {
             id = Tools.genUUIDv4();
         }
         if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
-        let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
-        let soulEntity = new SoulEntity(id, name, description, iconID);
-        soulEntity.assign(characterEntity, false);
-        characterEntity.setSoul(soulEntity, false);
+        let characterEntity = new CharacterEntity(String(id).concat("Body"), name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
+        let soul = new Soul(id, name, description, iconID);
+        soul.assign(characterEntity, false);
+        characterEntity.setSoul(soul, false);
         if (typeof options == "object") {
             for (let i in options) {
                 switch (i) {
