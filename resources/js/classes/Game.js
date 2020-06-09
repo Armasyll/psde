@@ -982,7 +982,7 @@ class Game {
         }
         Game.postInitialized = true;
         Cell.createLimbo();
-        SoulEntity.createSoulless();
+        Soul.createSoulless();
         let url = new URL(window.location.href);
         let urlMap = new Map(url.searchParams);
         urlMap.forEach(function(val, key) {
