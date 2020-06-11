@@ -21,7 +21,7 @@ class Soul {
         this.setDescription(description);
         this.age = 18;
 
-        this.abilityScore = {"INTELLIGENCE":10,"WISDOM":10};
+        this.abilityScore = {"INTELLIGENCE":10,"WISDOM":10,"CHARISMA":10};
         this.gender = SexEnum.MALE;
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
         this.creatureType = CreatureTypeEnum.HUMANOID;
@@ -110,7 +110,7 @@ class Soul {
     setIntelligence(number) {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
-        this.abilityScore["INTELLIGENCE"] = number
+        this.abilityScore["INTELLIGENCE"] = number;
         return 0;
     }
     modifyIntelligence(number) {
@@ -119,15 +119,12 @@ class Soul {
         return this.setIntelligence(this.abilityScore["INTELLIGENCE"] + number);
     }
     getIntelligence() {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.abilityScore["INTELLIGENCE"];
     }
     setWisdom(number) {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
-        this.abilityScore["WISDOM"] = number
+        this.abilityScore["WISDOM"] = number;
         return 0;
     }
     modifyWisdom(number) {
@@ -136,10 +133,21 @@ class Soul {
         return this.setWisdom(this.abilityScore["WISDOM"] + number);
     }
     getWisdom() {
-        if (this.isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.abilityScore["WISDOM"];
+    }
+    setCharisma(number) {
+        if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
+        else {number = number|0}
+        this.abilityScore["CHARISMA"] = number;
+        return 0;
+    }
+    modifyCharisma(number) {
+        if (typeof number != "number") {number = Number.parseInt(number) || 0;}
+        else {number = number|0}
+        return this.setCharisma(this.abilityScore["CHARISMA"] + number);
+    }
+    getCharisma() {
+        return this.abilityScore["CHARISMA"];
     }
 
     setGender(gender = SexEnum.MALE) {
@@ -179,9 +187,6 @@ class Soul {
         return 0;
     }
     getCharacterPassion(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["passion"];
     }
     setCharacterFriendship(creatureEntity, number) {
@@ -189,9 +194,6 @@ class Soul {
         return 0;
     }
     getCharacterFriendship(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["friendship"];
     }
     setCharacterPlayfulness(creatureEntity, number) {
@@ -199,9 +201,6 @@ class Soul {
         return 0;
     }
     getCharacterPlayfulness(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["playfulness"];
     }
     setCharacterSoulmate(creatureEntity, number) {
@@ -209,9 +208,6 @@ class Soul {
         return 0;
     }
     getCharacterSoulmate(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["soulmate"];
     }
     setCharacterFamilial(creatureEntity, number) {
@@ -219,9 +215,6 @@ class Soul {
         return 0;
     }
     getCharacterFamilial(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["familial"];
     }
     setCharacterObsession(creatureEntity, number) {
@@ -229,9 +222,6 @@ class Soul {
         return 0;
     }
     getCharacterObsession(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MAX_SAFE_INTEGER;
-        }
         return this.characterDisposition[creatureEntity]["obsession"];
     }
     setCharacterHate(creatureEntity, number) {
@@ -239,9 +229,6 @@ class Soul {
         return 0;
     }
     getCharacterHate(creatureEntity) {
-        if (CreatureEntity.has(creatureEntity) && CreatureEntity.get(creatureEntity).isGod()) {
-            return Number.MIN_SAFE_INTEGER; // so little hate :o
-        }
         return this.characterDisposition[creatureEntity]["hate"];
     }
     getCharacterDisposition(creatureEntity) {

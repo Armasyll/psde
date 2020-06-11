@@ -4982,7 +4982,7 @@ class Game {
         }
         let attackRoll = Game.calculateAttack(actor, weapon);
         if (attackRoll == 1) { }
-        else if (attackRoll > entity.getArmourClass()) {
+        else if (entity instanceof CreatureEntity && attackRoll > entity.getArmourClass()) {
             let damage = Game.calculateDamage(entity, actor, weapon, attackRoll >= 20);
             if (weapon instanceof AbstractEntity) {
                 entity.modifyHealth(-damage);

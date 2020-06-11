@@ -99,7 +99,8 @@ class CreatureController extends EntityController {
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set([this.mesh]);
 
-        this.targetController = null;
+        this.target = null;
+        this._target = null;
 
         this.updateTargetRayOrigin();
         CreatureController.set(this.id, this);
@@ -654,17 +655,19 @@ class CreatureController extends EntityController {
                 return 2;
             }
         }
-        this.targetController = entityController.id;
+        this._target = entityController;
+        this.target = entityController.id;
         return 0;
     }
     getTarget() {
-        return this.targetController;
+        return this.target;
     }
     hasTarget() {
-        return this.targetController != null;
+        return this.target != null;
     }
     removeTarget() {
-        this.targetController = null;
+        this._target = null;
+        this.target = null;
         return 0;
     }
     clearTarget() {

@@ -235,7 +235,7 @@ class CharacterControls extends AbstractControls {
         if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
             return 2;
         }
-        if (Game.playerController.getTarget() instanceof EntityController) {
+        if (Game.playerController.hasTarget()) {
             Game.gui.clearActionsMenu();
             Game.gui.populateActionsMenuWithTarget();
             Game.gui.updateActionsMenu();
@@ -261,7 +261,7 @@ class CharacterControls extends AbstractControls {
         CharacterControls.useTriggered = true;
         clearTimeout(CharacterControls.useTimeoutFunction);
         if (Date.now() - CharacterControls.usePressTime <= 750 && Game.playerController.hasTarget()) {
-            Game.doEntityActionFunction(Game.playerController.getTarget().getEntity(), Game.player);
+            Game.doEntityActionFunction(EntityController.get(Game.playerController.getTarget()).getEntity(), Game.player);
         }
         else {
             Game.gui.clearActionsMenu();
@@ -279,7 +279,7 @@ class CharacterControls extends AbstractControls {
         }
         CharacterControls.attackTriggered = true;
         if (Game.playerController.hasTarget()) {
-            Game.actionAttackFunction(Game.playerController.getTarget().getEntity(), Game.player);
+            Game.actionAttackFunction(EntityController.get(Game.playerController.getTarget()).getEntity(), Game.player);
         }
         clearTimeout(CharacterControls.attackTimeoutFunction);
         let pressTime = Date.now() - CharacterControls.attackPressTime;

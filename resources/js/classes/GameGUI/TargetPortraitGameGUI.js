@@ -64,7 +64,8 @@ class TargetPortraitGameGUI {
                     portraitStatsHealthSlider.height = GameGUI.getFontSize(1.25);
                     portraitStatsHealthSlider.thumbWidth = 0;
                     portraitStatsHealthSlider.isEnabled = false;
-                    portraitStatsHealthSlider.scaleX = -1;
+                    //portraitStatsHealthSlider.scaleX = -1;
+                    portraitStatsHealthSlider.rotation = BABYLON.Tools.ToRadians(180);
                     portraitStatsHealthSlider.color = "red";
                 var portraitStatsStaminaContainer = GameGUI.createRectangle("portraitStatsStaminaContainer");
                 portraitStatsStaminaContainer.height = GameGUI.getFontSize();
@@ -82,7 +83,8 @@ class TargetPortraitGameGUI {
                     portraitStatsStaminaSlider.height = GameGUI.getFontSize(1.25);
                     portraitStatsStaminaSlider.thumbWidth = 0;
                     portraitStatsStaminaSlider.isEnabled = false;
-                    portraitStatsStaminaSlider.scaleX = -1;
+                    //portraitStatsStaminaSlider.scaleX = -1;
+                    portraitStatsStaminaSlider.rotation = BABYLON.Tools.ToRadians(180);
                     portraitStatsStaminaSlider.color = "green";
         portrait.addControl(portraitBackground);
         portrait.addControl(portraitStats);
