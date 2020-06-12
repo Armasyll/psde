@@ -1,4 +1,3 @@
-console.log("Can't talk to character; fix asap :v");
 /**
  * Main, static Game class
  */
@@ -812,7 +811,7 @@ class Game {
         Game.playerCell = null;
         Game.castRayTargetIntervalFunction = undefined;
         Game.castRayTargetInterval = 250;
-        Game.pointerLockFunction = undefined;
+        Game.pointerLockTimeoutVar = undefined;
         Game.previousSelectedMesh = undefined;
         Game.currentSelectedMesh = undefined;
         Game.playerPortraitStatsUpdateIntervalFunction = undefined;
@@ -4629,11 +4628,11 @@ class Game {
         }
         Game.canvas.requestPointerLock();
         Game.engine.isPointerLock = true;
-        Game.pointerLockFunction = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);
+        Game.pointerLockTimeoutVar = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);
         return 0;
     }
     static pointerRelease(event) {
-        clearTimeout(Game.pointerLockFunction);
+        clearTimeout(Game.pointerLockTimeoutVar);
         document.removeEventListener("pointerlockchange", Game.pointerRelease);
         document.exitPointerLock();
         Game.engine.isPointerLock = false;
