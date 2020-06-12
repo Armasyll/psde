@@ -214,7 +214,7 @@ class Cell {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
+    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions":true}) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -241,6 +241,7 @@ class Cell {
                 mesh.position.copyFrom(position);
                 mesh.rotation.copyFrom(rotation);
                 mesh.scaling.copyFrom(scaling);
+                mesh.checkCollisions = true;
                 this.meshIDs.add(id);
                 this.meshes.push(mesh);
                 Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
