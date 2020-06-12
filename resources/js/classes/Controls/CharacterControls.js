@@ -80,7 +80,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.player.hasTarget()) {
+                if (Game.playerController.hasTarget()) {
                     Game.gui.clearActionsMenu();
                     Game.gui.populateActionsMenuWithTarget();
                     Game.gui.updateActionsMenu();
@@ -261,7 +261,7 @@ class CharacterControls extends AbstractControls {
         CharacterControls.useTriggered = true;
         clearTimeout(CharacterControls.useTimeoutFunction);
         if (Date.now() - CharacterControls.usePressTime <= 750 && Game.playerController.hasTarget()) {
-            Game.doEntityActionFunction(EntityController.get(Game.playerController.getTarget()).getEntity(), Game.player);
+            Game.doEntityActionFunction(Game.playerController.getTarget().getEntity(), Game.player);
         }
         else {
             Game.gui.clearActionsMenu();
@@ -279,7 +279,7 @@ class CharacterControls extends AbstractControls {
         }
         CharacterControls.attackTriggered = true;
         if (Game.playerController.hasTarget()) {
-            Game.actionAttackFunction(EntityController.get(Game.playerController.getTarget()).getEntity(), Game.player);
+            Game.actionAttackFunction(Game.playerController.getTarget().getEntity(), Game.player);
         }
         clearTimeout(CharacterControls.attackTimeoutFunction);
         let pressTime = Date.now() - CharacterControls.attackPressTime;

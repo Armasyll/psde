@@ -100,7 +100,6 @@ class CreatureController extends EntityController {
         this._attachedMeshes = new Set([this.mesh]);
 
         this.target = null;
-        this._target = null;
 
         this.updateTargetRayOrigin();
         CreatureController.set(this.id, this);
@@ -655,8 +654,7 @@ class CreatureController extends EntityController {
                 return 2;
             }
         }
-        this._target = entityController;
-        this.target = entityController.id;
+        this.target = entityController;
         return 0;
     }
     getTarget() {
@@ -666,7 +664,6 @@ class CreatureController extends EntityController {
         return this.target != null;
     }
     removeTarget() {
-        this._target = null;
         this.target = null;
         return 0;
     }
