@@ -102,16 +102,17 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "yellowWallpaperPlai
 apartmentCell.addFurniture("ozzyBed", "mattress01", new BABYLON.Vector3(-0.1, 0, -5.395), undefined, new BABYLON.Vector3(1.35,1.35,1.35));
 
 // Ozzy Bathroom
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
-apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
-apartmentCell.addFurniture("ozzyToilet", "animatedToilet01", new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
-apartmentCell.addFurniture("ozzySink", "animatedSink01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addCollidableMesh("bathroomWall01", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, 0));
+apartmentCell.addCollidableMesh("bathroomWall02", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, 0));
+apartmentCell.addCollidableMesh("bathroomWall03", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, 0), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addCollidableMesh("bathroomWall04", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addCollidableMesh("bathroomWall05", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(8, 0, -2), new BABYLON.Vector3(0, 180, 0));
+apartmentCell.addCollidableMesh("bathroomWall06", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 180, 0));
+apartmentCell.addCollidableMesh("bathroomWall07", "craftsmanWall", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, -2), new BABYLON.Vector3(0, 270, 0));
+apartmentCell.addCollidableMesh("bathroomDoorway", "craftsmanDoorway", "whiteWallpaperPlainWood", new BABYLON.Vector3(6, 0, 0), new BABYLON.Vector3(0, 270, 0));
+apartmentCell.addFurniture("ozzyBathroomToilet", "animatedToilet01", new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addFurniture("ozzyBathroomSink", "sink01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addFurniture("ozzyBathroomFaucet", "animatedFaucet01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
 
 // Ozzy Hallway
 apartmentCell.addCollidableMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood", new BABYLON.Vector3(4, 0, 0));
