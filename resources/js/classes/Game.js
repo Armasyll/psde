@@ -437,7 +437,8 @@ class Game {
             "grilledCheeseSandwich01": "resources/images/textures/items/grilledCheeseSandwich01.svg",
             "1980Computer": "resources/images/textures/static/1980Computer-notCC0.png",
             "californiaKnockdown01": "resources/images/textures/static/californiaKnockdown01.png",
-            "californiaKnockdown02": "resources/images/textures/static/californiaKnockdown02.png"
+            "californiaKnockdown02": "resources/images/textures/static/californiaKnockdown02.png",
+            "ceramicsAndPipes": "resources/images/textures/static/ceramicsAndPipes.png"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
