@@ -66,10 +66,10 @@ class CharacterController extends CreatureController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        if (this.meshIDesAttachedToBones.hasOwnProperty("head")) {
-            for (let mesh in this.meshIDesAttachedToBones["head"]) {
-                if (this.meshIDesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
-                    this.meshIDesAttachedToBones["head"][mesh].isVisible = false;
+        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
+            for (let mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][mesh].isVisible = false;
                 }
             }
         }
@@ -80,10 +80,10 @@ class CharacterController extends CreatureController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        if (this.meshIDesAttachedToBones.hasOwnProperty("head")) {
-            for (let mesh in this.meshIDesAttachedToBones["head"]) {
-                if (this.meshIDesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
-                    this.meshIDesAttachedToBones["head"][mesh].isVisible = true;
+        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
+            for (let mesh in this._meshesAttachedToBones["head"]) {
+                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this._meshesAttachedToBones["head"][mesh].isVisible = true;
                 }
             }
         }
