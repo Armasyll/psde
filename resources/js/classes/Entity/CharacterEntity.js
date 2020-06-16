@@ -516,12 +516,12 @@ class CharacterEntity extends CreatureEntity {
         }
         return false;
     }
-    getAttachedCosmetics(_bone = undefined) {
-        if (_bone instanceof BABYLON.Bone) {
-            _bone = _bone.id;
+    getAttachedCosmetics(bone = undefined) {
+        if (bone instanceof BABYLON.Bone) {
+            bone = bone.id;
         }
-        if (this.attachedCosmetics.has(_bone)) {
-            return this.attachedCosmetics[_bone];
+        if (this.attachedCosmetics.has(bone)) {
+            return this.attachedCosmetics[bone];
         }
         return this.attachedCosmetics;
     }
@@ -620,20 +620,28 @@ class CharacterEntity extends CreatureEntity {
         }
     }
 
-    hold(_instancedItem, _hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
-        if (_hand != ApparelSlotEnum.HAND_L && _hand != ApparelSlotEnum.HAND_R) {
+    /**
+     * 
+     * @param {InstancedEntity} instancedEntity 
+     * @param {HandednessEnum} hand 
+     */
+    hold(instancedEntity, hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
+        if (hand != ApparelSlotEnum.HAND_L && hand != ApparelSlotEnum.HAND_R) {
             if (this.handedness == HandednessEnum.LEFT) {
-                _hand = ApparelSlotEnum.HAND_L;
+                hand = ApparelSlotEnum.HAND_L;
             }
             else {
-                _hand = ApparelSlotEnum.HAND_R;
+                hand = ApparelSlotEnum.HAND_R;
             }
         }
-        return this.equip(_instancedItem, _hand);
+        return this.equip(instancedEntity, hand);
     }
-    // TODO: remove this
-    release(_instancedItemEntity, _hand = undefined) {
-        return this.unequip(_instancedItemEntity);
+    /**
+     * Wrapper for unequip
+     * @param {InstancedEntity} instancedEntity 
+     */
+    release(instancedEntity) {
+        return this.unequip(instancedEntity);
     }
 
     setPaws(pawEnum = PawEnum.PAD) {

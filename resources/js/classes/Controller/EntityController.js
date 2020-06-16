@@ -28,7 +28,7 @@ class EntityController {
         this.propertiesChanged = true;
         this.animations = new Array();
         this.started = false;
-        this._stopAnim = false;
+        this.stopAnim = false;
         this.currAnim = null;
         this.prevAnim = null;
         this.skeleton = null;
@@ -38,9 +38,9 @@ class EntityController {
          * @type {Object} <string:Array>
          */
         this.animationBones = {};
-        this._isEnabled = true;
-        this._isLocked = false;
-        this._isAnimated = false;
+        this.enabled = true;
+        this.locked = false;
+        this.animated = false;
         this.setMesh(mesh);
         this.setEntity(entity);
         this.entity.setController(this);
@@ -61,8 +61,8 @@ class EntityController {
         this.currentCell = null;
         EntityController.set(this.id, this);
     }
-    setID(_id) {
-        this.id = _id;
+    setID(id) {
+        this.id = id;
         return this;
     }
     getID() {
@@ -92,8 +92,8 @@ class EntityController {
             return BABYLON.Vector3.One();
         }
     }
-    setNetworkID(_id) {
-        this.networkID = _id;
+    setNetworkID(networkId) {
+        this.networkID = networkId;
         return this;
     }
     getNetworkID() {
@@ -159,9 +159,9 @@ class EntityController {
     hasSkeleton() {
         return this.skeleton instanceof BABYLON.Skeleton;
     }
-    setEntity(_entity) {
-        if (_entity instanceof AbstractEntity) {
-            this.entity = _entity;
+    setEntity(entity) {
+        if (entity instanceof AbstractEntity) {
+            this.entity = entity;
             this.propertiesChanged = true;
         }
     }
@@ -171,9 +171,9 @@ class EntityController {
     hasEntity() {
         return this.entity instanceof AbstractEntity;
     }
-    setMeshSkeleton(_skeleton) {
-        if (_skeleton instanceof BABYLON.Skeleton) {
-            this.skeleton = _skeleton;
+    setMeshSkeleton(skeleton) {
+        if (skeleton instanceof BABYLON.Skeleton) {
+            this.skeleton = skeleton;
             this.propertiesChanged = true;
         }
         return this;
@@ -220,67 +220,80 @@ class EntityController {
         return this;
     }
 
-    setAnimData(_anim, _rangeName, _rate = 1, _loop = true, _standalone = true) {
+    /**
+     * 
+     * @param {AnimData} animData 
+     * @param {string} rangeName 
+     * @param {number} rate 
+     * @param {boolean} loop 
+     * @param {boolean} standalone 
+     */
+    setAnimData(animData, rangeName, rate = 1, loop = true, standalone = true) {
         if (this.skeleton == null) {
             return;
         }
-        _anim.name = _rangeName;
-        _anim.rate = _rate;
-        _anim.loop = _loop;
-        _anim.standalone = _standalone;
-        if (this.skeleton.getAnimationRange(_anim.name) != null) {
-            _anim.exist = true;
-            this.skeleton.getAnimationRange(_rangeName).from += 1;
-            _anim.from = this.skeleton.getAnimationRange(_rangeName).from;
-            _anim.to = this.skeleton.getAnimationRange(_rangeName).to;
+        animData.name = rangeName;
+        animData.rate = rate;
+        animData.loop = loop;
+        animData.standalone = standalone;
+        if (this.skeleton.getAnimationRange(animData.name) != null) {
+            animData.exist = true;
+            this.skeleton.getAnimationRange(rangeName).from += 1;
+            animData.from = this.skeleton.getAnimationRange(rangeName).from;
+            animData.to = this.skeleton.getAnimationRange(rangeName).to;
         }
         else {
-            _anim.exist = false;
+            animData.exist = false;
         }
     }
-    checkAnims(_skel) {
-        for (var _i = 0; _i < this.animations.length; _i++) {
-            var anim = this.animations[_i];
-            if (_skel.getAnimationRange(anim.name) != null) {
+    checkAnims(skeleton) {
+        for (let i = 0; i < this.animations.length; i++) {
+            let anim = this.animations[i];
+            if (skeleton.getAnimationRange(anim.name) != null) {
                 anim.exist = true;
             }
         }
     }
-    beginAnimation(_animData, callback = null) {
-        if (this._stopAnim) {
+    /**
+     * 
+     * @param {AnimData} animData 
+     * @param {function} [callback] 
+     */
+    beginAnimation(animData, callback = null) {
+        if (this.stopAnim) {
             return false;
         }
-        else if (!(_animData instanceof AnimData)) {
+        else if (!(animData instanceof AnimData)) {
             return false;
         }
         else if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
         }
-        else if (this.prevAnim == _animData) {
+        else if (this.prevAnim == animData) {
             return false;
         }
-        else if (!_animData.exist) {
+        else if (!animData.exist) {
             return false;
         }
         if (this.bonesInUse.length > 0) {
             /*
             Have to cycle through all the bones just so I don't have to animate a handful :L
              */
-            this.skeleton.bones.difference(this.bonesInUse).forEach(function(_bone) {
-                Game.scene.beginAnimation(_bone, _animData.from, _animData.to, _animData.loop, _animData.rate, callback);
+            this.skeleton.bones.difference(this.bonesInUse).forEach(function(bone) {
+                Game.scene.beginAnimation(bone, animData.from, animData.to, animData.loop, animData.rate, callback);
             });
         }
         else {
-            this.skeleton.beginAnimation(_animData.name, _animData.loop, _animData.rate, callback);
+            this.skeleton.beginAnimation(animData.name, animData.loop, animData.rate, callback);
         }
-        this.prevAnim = _animData;
+        this.prevAnim = animData;
         return true;
     }
     pauseAnim() {
-        this._stopAnim = true;
+        this.stopAnim = true;
     }
     resumeAnim() {
-        this._stopAnim = false;
+        this.stopAnim = false;
     }
     start() {
         if (this.started) {
@@ -336,24 +349,24 @@ class EntityController {
     }
 
     isEnabled() {
-        return this._isEnabled;
+        return this.enabled;
     }
-    setEnabled(_bool = true) {
-        this._isEnabled = _bool == true;
+    setEnabled(enabled = true) {
+        this.enabled = enabled == true;
         return this;
     }
     isAnimated() {
-        return this._isAnimated;
+        return this.animated;
     }
-    setAnimated(_bool = true) {
-        this._isAnimated = _bool == true;
+    setAnimated(animated = true) {
+        this.animated = animated == true;
         return this;
     }
     isLocked() {
-        return this._isLocked;
+        return this.locked;
     }
-    setLocked(_bool = true) {
-        this._isLocked = _bool == true;
+    setLocked(locked = true) {
+        this.locked = locked == true;
         return this;
     }
     dispose(options = {}) {

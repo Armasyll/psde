@@ -35,7 +35,7 @@ class CharacterControllerRigidBody extends CharacterController {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
-        if (this._isLocked) {
+        if (this.locked) {
             return this;
         }
         if (this.crouching) {}
@@ -164,8 +164,8 @@ class CharacterControllerRigidBody extends CharacterController {
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
-                let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
-                    if (_mesh.isPickable && _mesh.checkCollisions) {
+                let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
+                    if (mesh.isPickable && mesh.checkCollisions) {
                         return true;
                     }
                     return false;

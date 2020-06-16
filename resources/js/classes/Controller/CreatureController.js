@@ -71,13 +71,13 @@ class CreatureController extends EntityController {
 
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.checkAnims(this.skeleton);
-            this._isAnimated = true;
+            this.animated = true;
             this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
             this.skeleton.animationPropertiesOverride.enableBlending = true;
             this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
         }
         else {
-            this._isAnimated = false;
+            this.animated = false;
         }
 
         //this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 1.0, this.idle.loop);
@@ -315,7 +315,7 @@ class CreatureController extends EntityController {
         }
         for (let bone in this._meshesAttachedToBones) {
             if (bone == "FOCUS" || bone == "ROOT") {}
-            else if (this._showHelmet && bone == "head") {}
+            else if (this.helmetVisible && bone == "head") {}
             for (let mesh in this._meshesAttachedToBones[bone]) {
                 if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
                     this._meshesAttachedToBones[bone][mesh].isVisible = false;
@@ -330,7 +330,7 @@ class CreatureController extends EntityController {
         }
         for (let bone in this._meshesAttachedToBones) {
             if (bone == "FOCUS" || bone == "ROOT") {}
-            else if (!this._showHelmet && bone == "head") {}
+            else if (!this.helmetVisible && bone == "head") {}
             else {
                 for (let mesh in this._meshesAttachedToBones[bone]) {
                     if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {

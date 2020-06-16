@@ -17,7 +17,7 @@ class FurnitureController extends EntityController {
             this.setAnimData(this.close, "80_close01", 1, false);
 
             this.checkAnims(this.skeleton);
-            this._isAnimated = true;
+            this.animated = true;
         }
 
         FurnitureController.set(this.id, this);

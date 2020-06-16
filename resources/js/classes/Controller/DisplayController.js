@@ -82,15 +82,15 @@ class DisplayController extends FurnitureController {
         return this.videoTexture instanceof BABYLON.Texture;
     }
 
-    setLocked(_bool = true) {
-        super.setLocked(_bool);
-        if (this._isLocked) {
+    setLocked(locked = true) {
+        super.setLocked(locked);
+        if (this.locked) {
             this.pause();
         }
     }
-    setEnabled(_bool = true) {
-        super.setEnabled(_bool);
-        if (!this._isEnabled) {
+    setEnabled(enabled = true) {
+        super.setEnabled(enabled);
+        if (!this.enabled) {
             this.pause();
         }
     }

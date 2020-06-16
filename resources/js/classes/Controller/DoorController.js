@@ -6,7 +6,7 @@ class DoorController extends EntityController {
         this.mesh.checkCollisions = true;
         this.avStartRot = this.mesh.rotation.clone();
         this.avEndRot = BABYLON.Vector3.Zero();
-        this._isAnimated = true;
+        this.animated = true;
 
         if (this.entity.getOpensInward()) {
             this.setOpensInward();

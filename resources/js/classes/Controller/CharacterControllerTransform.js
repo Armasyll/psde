@@ -10,9 +10,9 @@ class CharacterControllerTransform extends CharacterController {
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
         this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
-        this._stepOffset = 0.25;
-        this._vMoveTot = 0;
-        this._vMovStartPos = BABYLON.Vector3.Zero();
+        this.stepOffset = 0.25;
+        this.vMoveTot = 0;
+        this.vMovStartPos = BABYLON.Vector3.Zero();
         this.walkSpeed = 0.68 * this.mesh.scaling.z;
         this.runSpeed = 3.2 * this.mesh.scaling.z;
         this.sprintSpeed = this.runSpeed * 2;
@@ -33,7 +33,7 @@ class CharacterControllerTransform extends CharacterController {
         if (!(this.mesh instanceof BABYLON.Mesh)) {
             return this;
         }
-        if (this._isLocked) {
+        if (this.locked) {
             return this;
         }
         if (!this.entity.living) {
@@ -256,8 +256,8 @@ class CharacterControllerTransform extends CharacterController {
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
-                let hit = Game.scene.pickWithRay(this.groundRay, function(_mesh) {
-                    if (_mesh.isPickable && _mesh.checkCollisions) {
+                let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
+                    if (mesh.isPickable && mesh.checkCollisions) {
                         return true;
                     }
                     return false;
@@ -274,14 +274,14 @@ class CharacterControllerTransform extends CharacterController {
                 let actDisp = this.mesh.position.subtract(this.avStartPos);
                 let slope = Tools.verticalSlope(actDisp);
                 if (slope >= this.maxSlopeLimit) {
-                    if (this._stepOffset > 0) {
-                        if (this._vMoveTot == 0) {
-                            this._vMovStartPos.copyFrom(this.avStartPos);
+                    if (this.stepOffset > 0) {
+                        if (this.vMoveTot == 0) {
+                            this.vMovStartPos.copyFrom(this.avStartPos);
                         }
-                        this._vMoveTot = this._vMoveTot + (this.mesh.position.y - this.avStartPos.y);
-                        if (this._vMoveTot > this._stepOffset) {
-                            this._vMoveTot = 0;
-                            this.mesh.position.copyFrom(this._vMovStartPos);
+                        this.vMoveTot = this.vMoveTot + (this.mesh.position.y - this.avStartPos.y);
+                        if (this.vMoveTot > this.stepOffset) {
+                            this.vMoveTot = 0;
+                            this.mesh.position.copyFrom(this.vMovStartPos);
                             this.endFreeFall();
                         }
                     }
@@ -291,7 +291,7 @@ class CharacterControllerTransform extends CharacterController {
                     }
                 }
                 else {
-                    this._vMoveTot = 0;
+                    this.vMoveTot = 0;
                     if (slope > this.minSlopeLimit) {
                         this.fallFrameCount = 0;
                         this.falling = false;

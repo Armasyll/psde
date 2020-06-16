@@ -12,7 +12,7 @@ class CharacterController extends CreatureController {
         this.setAnimData(this.attackPunchRH, "71_punch01", 1, false, false);
         this.setAnimData(this.attackRunningPunchRH, "71_runningPunch01", 1, false, false);
         this.setAnimData(this.attackThrustRH, "71_stab01", 1, false, false);
-        this._showHelmet = true;
+        this.helmetVisible = true;
 
         this.generateOrganMeshes();
         this.generateCosmeticMeshes();
@@ -66,34 +66,34 @@ class CharacterController extends CreatureController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
-            for (let mesh in this._meshesAttachedToBones["head"]) {
-                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones["head"][mesh].isVisible = false;
+        if (this.meshIDesAttachedToBones.hasOwnProperty("head")) {
+            for (let mesh in this.meshIDesAttachedToBones["head"]) {
+                if (this.meshIDesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this.meshIDesAttachedToBones["head"][mesh].isVisible = false;
                 }
             }
         }
-        this._showHelmet = false;
+        this.helmetVisible = false;
         return this;
     }
     showHelmet() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        if (this._meshesAttachedToBones.hasOwnProperty("head")) {
-            for (let mesh in this._meshesAttachedToBones["head"]) {
-                if (this._meshesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones["head"][mesh].isVisible = true;
+        if (this.meshIDesAttachedToBones.hasOwnProperty("head")) {
+            for (let mesh in this.meshIDesAttachedToBones["head"]) {
+                if (this.meshIDesAttachedToBones["head"][mesh] instanceof BABYLON.AbstractMesh) {
+                    this.meshIDesAttachedToBones["head"][mesh].isVisible = true;
                 }
             }
         }
-        this._showHelmet = true;
+        this.helmetVisible = true;
         return this;
     }
 
-    attachToHead(_mesh, _texture, options) {
-        this.attachMeshIDToBone(_mesh, _texture, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), options);
-        if (this._showHelmet) {
+    attachToHead(meshID, textureID, options) {
+        this.attachMeshIDToBone(meshID, textureID, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), options);
+        if (this.helmetVisible) {
             this.showHelmet();
         }
         else {
@@ -104,86 +104,86 @@ class CharacterController extends CreatureController {
     detachFromHead() {
         return this.detachFromBone("head");
     }
-    attachToLeftEye(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
+    attachToLeftEye(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
     }
     detachFromLeftEye() {
         return this.detachFromBone("eye.l");
     }
-    attachToRightEye(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
+    attachToRightEye(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
     }
     detachFromRightEye() {
         return this.detachFromBone("eye.r");
     }
-    attachToLeftEar(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "ear.l", undefined, undefined, undefined, options);
+    attachToLeftEar(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "ear.l", undefined, undefined, undefined, options);
     }
     detachFromLeftEar() {
         return this.detachFromBone("ear.l");
     }
-    attachToRightEar(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "ear.r", undefined, undefined, undefined, options);
+    attachToRightEar(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "ear.r", undefined, undefined, undefined, options);
     }
     detachFromRightEar() {
         return this.detachFromBone("ear.r");
     }
-    attachToNeck(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "neck", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+    attachToNeck(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "neck", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
     }
     detachFromNeck() {
         return this.detachFromBone("neck");
     }
-    attachToLeftShoulder(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(315), BABYLON.Tools.ToRadians(120)), undefined, options);
+    attachToLeftShoulder(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(315), BABYLON.Tools.ToRadians(120)), undefined, options);
     }
     detachFromLeftShoulder() {
         return this.detachFromBone("shoulder.l");
     }
-    attachToRightShoulder(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(60)), undefined, options);
+    attachToRightShoulder(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(60)), undefined, options);
     }
     detachFromRightShoulder() {
         return this.detachFromBone("shoulder.r");
     }
-    attachToLeftForearm(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), undefined, options);
+    attachToLeftForearm(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), undefined, options);
     }
     detachFromLeftForearm() {
         return this.detachFromBone("forearm.l");
     }
-    attachToRightForearm(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)), undefined, options);
+    attachToRightForearm(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)), undefined, options);
     }
     detachFromRightForearm() {
         return this.detachFromBone("forearm.r");
     }
-    attachToLeftHand(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
+    attachToLeftHand(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
     }
     detachFromLeftHand() {
         return this.detachFromBone("hand.l");
     }
-    attachToRightHand(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
+    attachToRightHand(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
     }
     detachFromRightHand() {
         return this.detachFromBone("hand.r");
     }
-    attachToChest(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "chest", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+    attachToChest(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "chest", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
     }
     detachFromChest() {
         return this.detachFromBone("chest");
     }
-    attachToSpine(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "spine", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+    attachToSpine(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "spine", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
     }
     detachFromSpine() {
         return this.detachFromBone("spine");
     }
-    attachToPelvis(_mesh, _texture = "missingTexture", options) {
-        return this.attachMeshIDToBone(_mesh, _texture, "pelvis", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+    attachToPelvis(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "pelvis", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
     }
     detachFromPelvis() {
         return this.detachFromBone("pelvis");
@@ -196,40 +196,40 @@ class CharacterController extends CreatureController {
         if (!this.hasSkeleton()) {
             return;
         }
-        let _string = new String();
+        let eyeString = new String();
         switch (this.entity.getEyeType()) {
             case EyeEnum.FERAL: {
-                _string = _string.concat("feralEye");
+                eyeString = eyeString.concat("feralEye");
                 break;
             }
             case EyeEnum.OBLONG: {
-                _string = _string.concat("oblongEye");
+                eyeString = eyeString.concat("oblongEye");
                 break;
             }
             case EyeEnum.CIRCLE:
             default: {
-                _string = _string.concat("circularEye");
+                eyeString = eyeString.concat("circularEye");
             }
         }
         switch (this.entity.getEyeColour()) {
             case "yellow": {
-                _string = _string.concat("Yellow");
+                eyeString = eyeString.concat("Yellow");
                 break;
             }
             case "brown": {
-                _string = _string.concat("Brown");
+                eyeString = eyeString.concat("Brown");
                 break;
             }
             case "blue": {
-                _string = _string.concat("Blue");
+                eyeString = eyeString.concat("Blue");
                 break;
             }
             case "green": {
-                _string = _string.concat("Green");
+                eyeString = eyeString.concat("Green");
                 break;
             }
             case "violet": {
-                _string = _string.concat("Violet");
+                eyeString = eyeString.concat("Violet");
                 break;
             }
             case "grey":
@@ -239,8 +239,8 @@ class CharacterController extends CreatureController {
         }
         this.detachFromRightEye();
         this.detachFromLeftEye();
-        this.attachToRightEye("eye01", _string);
-        this.attachToLeftEye("eye01", _string);
+        this.attachToRightEye("eye01", eyeString);
+        this.attachToLeftEye("eye01", eyeString);
         return this;
     }
     /**
@@ -261,75 +261,75 @@ class CharacterController extends CreatureController {
         if (!this.hasSkeleton()) {
             return;
         }
-        for (let _equipmentIndex in this.entity.getEquipment()) {
-            switch (_equipmentIndex) {
+        for (let equipmentIndex in this.entity.getEquipment()) {
+            switch (equipmentIndex) {
                 case "HEAD": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromHead();
-                        this.attachToHead(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToHead(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "EAR_L": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftEar();
-                        this.attachToLeftEar(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToLeftEar(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "EAR_R": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightEar();
-                        this.attachToRightEar(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToRightEar(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "NECK": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromNeck();
-                        this.attachToNeck(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToNeck(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "SHOULDER_L": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftShoulder();
-                        this.attachToLeftShoulder(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToLeftShoulder(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "SHOULDER_R": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightShoulder();
-                        this.attachToRightShoulder(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToRightShoulder(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "FOREARM_L": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftForearm();
-                        this.attachToLeftForearm(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToLeftForearm(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "FOREARM_R": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightForearm();
-                        this.attachToRightForearm(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToRightForearm(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "HAND_L": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftHand();
-                        this.attachToLeftHand(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToLeftHand(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }
                 case "HAND_R": {
-                    if (this.entity.getEquipment()[_equipmentIndex] instanceof AbstractEntity) {
+                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightHand();
-                        this.attachToRightHand(this.entity.getEquipment()[_equipmentIndex].getMeshID(), this.entity.getEquipment()[_equipmentIndex].getTextureID());
+                        this.attachToRightHand(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
                     }
                     break;
                 }

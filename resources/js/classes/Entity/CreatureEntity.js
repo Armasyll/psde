@@ -16,16 +16,7 @@ class CreatureEntity extends Entity {
     constructor(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18) {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.CREATURE;
-
-        /**
-         * @type {string|null}
-         */
         this.soul = null;
-        /**
-         * @private
-         * @type {Soul} 
-         */
-        this._soul = null;
         this.handedness = HandednessEnum.RIGHT;
         this.gender = SexEnum.MALE;
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
@@ -559,8 +550,7 @@ class CreatureEntity extends Entity {
                 return 2;
             }
         }
-        this.soul = soul.id;
-        this._soul = soul;
+        this.soul = soul;
         if (updateSelf) {
             this.abilityScore["INTELLIGENCE"] = soul.abilityScore["INTELLIGENCE"];
             this.abilityScore["WISDOM"] = soul.abilityScore["WISDOM"];
@@ -584,7 +574,6 @@ class CreatureEntity extends Entity {
     }
     removeSoul() {
         this.soul = null;
-        this._soul = null;
         this.removeDialogue();
         this.abilityScore["INTELLIGENCE"] = 0;
         this.abilityScore["WISDOM"] = 0;
@@ -602,7 +591,7 @@ class CreatureEntity extends Entity {
         if (SexEnum.properties.hasOwnProperty(gender)) {
             this.gender = gender;
             if (this.hasSoul() && updateChild) {
-                this._soul.gender = gender;
+                this.soul.gender = gender;
             }
             return 0;
         }
@@ -616,7 +605,7 @@ class CreatureEntity extends Entity {
         if (SexualOrientationEnum.properties.hasOwnProperty(sexualOrientation)) {
             this.sexualOrientation = sexualOrientation;
             if (this.hasSoul() && updateChild) {
-                this._soul.sexualOrientation = sexualOrientation;
+                this.soul.sexualOrientation = sexualOrientation;
             }
             return 0;
         }
@@ -629,116 +618,116 @@ class CreatureEntity extends Entity {
     setCharacterPassion(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterPassion(...parameters);
+            return this.soul.setCharacterPassion(...parameters);
         }
         return 0;
     }
     getCharacterPassion(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterPassion(...parameters);
+            return this.soul.getCharacterPassion(...parameters);
         }
         return 0;
     }
     setCharacterFriendship(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterFriendship(...parameters);
+            return this.soul.setCharacterFriendship(...parameters);
         }
         return 0;
     }
     getCharacterFriendship(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterFriendship(...parameters);
+            return this.soul.getCharacterFriendship(...parameters);
         }
         return 0;
     }
     setCharacterPlayfulness(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterPlayfulness(...parameters);
+            return this.soul.setCharacterPlayfulness(...parameters);
         }
         return 0;
     }
     getCharacterPlayfulness(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterPlayfulness(...parameters);
+            return this.soul.getCharacterPlayfulness(...parameters);
         }
         return 0;
     }
     setCharacterSoulmate(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterSoulmate(...parameters);
+            return this.soul.setCharacterSoulmate(...parameters);
         }
         return 0;
     }
     getCharacterSoulmate(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterSoulmate(...parameters);
+            return this.soul.getCharacterSoulmate(...parameters);
         }
         return 0;
     }
     setCharacterFamilial(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterFamilial(...parameters);
+            return this.soul.setCharacterFamilial(...parameters);
         }
         return 0;
     }
     getCharacterFamilial(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterFamilial(...parameters);
+            return this.soul.getCharacterFamilial(...parameters);
         }
         return 0;
     }
     setCharacterObsession(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MAX_SAFE_INTEGER;
-            return this._soul.setCharacterObsession(...parameters);
+            return this.soul.setCharacterObsession(...parameters);
         }
         return 0;
     }
     getCharacterObsession(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterObsession(...parameters);
+            return this.soul.getCharacterObsession(...parameters);
         }
         return 0;
     }
     setCharacterHate(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return Number.MIN_SAFE_INTEGER;
-            return this._soul.setCharacterHate(...parameters);
+            return this.soul.setCharacterHate(...parameters);
         }
         return 0;
     }
     getCharacterHate(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterHate(...parameters);
+            return this.soul.getCharacterHate(...parameters);
         }
         return 0;
     }
     getCharacterDisposition(...parameters) {
         if (this.hasSoul()) {
             if (this.isGod()) return {"passion":0,"friendship":Number.MAX_SAFE_INTEGER,"playfulness":Number.MAX_SAFE_INTEGER,"soulmate":Number.MAX_SAFE_INTEGER,"familial":Number.MAX_SAFE_INTEGER,"obsession":Number.MAX_SAFE_INTEGER,"hate":Number.MIN_SAFE_INTEGER};
-            return this._soul.getCharacterDisposition(...parameters);
+            return this.soul.getCharacterDisposition(...parameters);
         }
         return {"passion":0,"friendship":0,"playfulness":0,"soulmate":0,"familial":0,"obsession":0,"hate":0};
     }
     hasCharacterDisposition(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.hasCharacterDisposition(...parameters);
+            return this.soul.hasCharacterDisposition(...parameters);
         }
         return false;
     }
     getCharacterDispositions(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.getCharacterDispositions(...parameters);
+            return this.soul.getCharacterDispositions(...parameters);
         }
         return {};
     }
     hasMet(...parameters) {
         if (this.hasSoul()) {
-            return this._soul.hasMet(...parameters);
+            return this.soul.hasMet(...parameters);
         }
         return false;
     }
@@ -747,7 +736,7 @@ class CreatureEntity extends Entity {
         if (HandednessEnum.properties.has(handedness)) {
             this.handedness = handedness;
             if (this.hasSoul() && updateChild) {
-                this._soul.handedness = handedness;
+                this.soul.handedness = handedness;
             }
             return 0;
         }
@@ -776,7 +765,7 @@ class CreatureEntity extends Entity {
      */
     addNewDisposition(...parameters) {
         if (this.hasSoul()) {
-            this._soul.addDisposition(...parameters);
+            this.soul.addDisposition(...parameters);
         }
         return 0;
     }
@@ -981,7 +970,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
         if (this.hasSoul()) {
-            this._soul.abilityScore["INTELLIGENCE"] = number;
+            this.soul.abilityScore["INTELLIGENCE"] = number;
             this.abilityScore["INTELLIGENCE"] = number;
         }
         return 0;
@@ -990,7 +979,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         if (this.hasSoul()) {
-            return this.setIntelligence(this._soul.abilityScore["INTELLIGENCE"] + number);
+            return this.setIntelligence(this.soul.abilityScore["INTELLIGENCE"] + number);
         }
         return 0;
     }
@@ -999,7 +988,7 @@ class CreatureEntity extends Entity {
             return Number.MAX_SAFE_INTEGER;
         }
         if (this.hasSoul()) {
-            return this._soul.abilityScore["INTELLIGENCE"] + this.abilityScoreModifier["INTELLIGENCE"];
+            return this.soul.abilityScore["INTELLIGENCE"] + this.abilityScoreModifier["INTELLIGENCE"];
         }
         return 0;
     }
@@ -1007,7 +996,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
         if (this.hasSoul()) {
-            this._soul.abilityScore["WISDOM"] = number;
+            this.soul.abilityScore["WISDOM"] = number;
             this.abilityScore["WISDOM"] = number;
         }
         return 0;
@@ -1016,7 +1005,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         if (this.hasSoul()) {
-            return this.setWisdom(this._soul.abilityScore["WISDOM"] + number);
+            return this.setWisdom(this.soul.abilityScore["WISDOM"] + number);
         }
         return 0;
     }
@@ -1025,7 +1014,7 @@ class CreatureEntity extends Entity {
             return Number.MAX_SAFE_INTEGER;
         }
         if (this.hasSoul()) {
-            return this._soul.abilityScore["WISDOM"] + this.abilityScoreModifier["WISDOM"];
+            return this.soul.abilityScore["WISDOM"] + this.abilityScoreModifier["WISDOM"];
         }
         return 0;
     }
@@ -1033,7 +1022,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Math.abs(Number.parseInt(number)) || 1;}
         else {number = number|0}
         if (this.hasSoul()) {
-            this._soul.abilityScore["CHARISMA"] = number;
+            this.soul.abilityScore["CHARISMA"] = number;
             this.abilityScore["CHARISMA"] = number;
         }
         return 0;
@@ -1042,7 +1031,7 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         if (this.hasSoul()) {
-            return this.setCharisma(this._soul.abilityScore["CHARISMA"] + number);
+            return this.setCharisma(this.soul.abilityScore["CHARISMA"] + number);
         }
         return 0;
     }
@@ -1051,7 +1040,7 @@ class CreatureEntity extends Entity {
             return Number.MAX_SAFE_INTEGER;
         }
         if (this.hasSoul()) {
-            return this._soul.abilityScore["CHARISMA"] + this.abilityScoreModifier["CHARISMA"];
+            return this.soul.abilityScore["CHARISMA"] + this.abilityScoreModifier["CHARISMA"];
         }
         return 0;
     }
@@ -2401,7 +2390,7 @@ class CreatureEntity extends Entity {
             case "WISDOM":
             case "CHARISMA": {
                 if (this.hasSoul()) {
-                    return this._soul.abilityScore[ability] + this.abilityScoreModifier[ability];
+                    return this.soul.abilityScore[ability] + this.abilityScoreModifier[ability];
                 }
                 else {
                     return this.abilityScoreModifier[ability];
