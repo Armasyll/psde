@@ -38,6 +38,9 @@ class FurnitureController extends EntityController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "FurnitureController";
+    }
 
     static initialize() {
         FurnitureController.furnitureControllerList = {};

@@ -31,7 +31,7 @@ class Dialogue {
         this.optionsCount = 0;
         this.parentOptions = {};
         this.parentOptionsCount = 0;
-        this._isEnabled = true;
+        this.enabled = true;
 
         this.setTitle(title);
         this.setText(text);
@@ -150,14 +150,14 @@ class Dialogue {
         return true;
     }
     isEnabled() {
-        return this._isEnabled == true;
+        return this.enabled == true;
     }
     setEnabled(isEnabled = true) {
-        this._isEnabled = (isEnabled == true);
+        this.enabled = (isEnabled == true);
         return this;
     }
     dispose() {
-        this._isEnabled = false;
+        this.enabled = false;
         for (let option in this.parentOptions) {
             this.parentOptions[option].dispose();
             delete this.parentOptions[option];
@@ -225,7 +225,7 @@ class DialogueOption {
         if (typeof condition == "function") {
             this.setCondition(condition);
         }
-        this._isEnabled = true;
+        this.enabled = true;
     }
     getID() {
         return this.id;
@@ -280,14 +280,14 @@ class DialogueOption {
         }
     }
     isEnabled() {
-        return this._isEnabled == true;
+        return this.enabled == true;
     }
     setEnabled(isEnabled = true) {
-        this._isEnabled = (isEnabled == true);
+        this.enabled = (isEnabled == true);
         return this;
     }
     dispose() {
-        this._isEnabled = false;
+        this.enabled = false;
         delete this.condition;
         this.dialogue.removeOption(this);
         return undefined;

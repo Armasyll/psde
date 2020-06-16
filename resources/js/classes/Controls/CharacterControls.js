@@ -3,12 +3,18 @@ class CharacterControls extends AbstractControls {
         if (!Game.initialized) {
             return 1;
         }
+        if (Game.debugMode) console.group(`Running CharacterControls.onKeyDown()`);
         if (!(keyboardEvent instanceof KeyboardEvent)) {
+            if (Game.debugMode) {console.error("keyboardEvent wasn't a KeyboardEvent"); console.groupEnd();}
             return 2;
         }
-        if (Game.debugMode) console.log(`Running CharacterControls::onKeyDown(${keyboardEvent.keyCode})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (Game.debugMode) console.info(`with ${keyboardEvent.keyCode}`);
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+            if (Game.debugMode) {console.error("Player, its controller, or its mesh don't exist"); console.groupEnd();}
             return 2;
+        }
+        if (!AbstractControls.keysPressed.hasOwnProperty(keyboardEvent.keyCode)) {
+            AbstractControls.keysPressed[keyboardEvent.keyCode] = Date.now();
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.jumpCode : {
@@ -19,31 +25,31 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case 16 : {
-                Game.player.getController().keyShift(true);
+                Game.playerController.keyShift(true);
                 break;
             }
             case AbstractControls.walkCode : {
-                Game.player.getController().keyMoveForward(true);
+                Game.playerController.keyMoveForward(true);
                 break;
             }
             case AbstractControls.turnLeftCode : {
-                Game.player.getController().keyTurnLeft(true);
+                Game.playerController.keyTurnLeft(true);
                 break;
             }
             case AbstractControls.turnRightCode : {
-                Game.player.getController().keyTurnRight(true);
+                Game.playerController.keyTurnRight(true);
                 break;
             }
             case AbstractControls.walkBackCode : {
-                Game.player.getController().keyMoveBackward(true);
+                Game.playerController.keyMoveBackward(true);
                 break;
             }
             case AbstractControls.strafeLeftCode : {
-                Game.player.getController().keyStrafeLeft(true);
+                Game.playerController.keyStrafeLeft(true);
                 break;
             }
             case AbstractControls.strafeRightCode : {
-                Game.player.getController().keyStrafeRight(true);
+                Game.playerController.keyStrafeRight(true);
                 break;
             }
             case AbstractControls.chatInputFocusCode : {
@@ -116,25 +122,32 @@ class CharacterControls extends AbstractControls {
                 break;
             }
         }
-        Game.player.getController().move = Game.player.getController().anyMovement();
-        if (!Game.player.getController().key.equals(Game.player.getController().prevKey)) {
+        if (!Game.playerController.key.equals(Game.playerController.prevKey)) {
             if (Client.isOnline()) {
                 Client.updateLocRotScaleSelf();
             }
-            Game.player.getController().prevKey.copyFrom(Game.player.getController().key);
+            Game.playerController.prevKey.copyFrom(Game.playerController.key);
         }
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static onKeyUp(keyboardEvent) {
         if (!Game.initialized) {
             return 1;
         }
+        if (Game.debugMode) console.group(`Running CharacterControls.onKeyUp()`);
         if (!(keyboardEvent instanceof KeyboardEvent)) {
+            if (Game.debugMode) {console.error("keyboardEvent wasn't a KeyboardEvent"); console.groupEnd();}
             return 2;
         }
-        if (Game.debugMode) console.log(`Running CharacterControls::onKeyUp(${keyboardEvent.keyCode})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (Game.debugMode) console.info(`with ${keyboardEvent.keyCode}`);
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+            if (Game.debugMode) {console.error("Player, its controller, or its mesh don't exist"); console.groupEnd();}
             return 2;
+        }
+        if (AbstractControls.keysPressed.hasOwnProperty(keyboardEvent.keyCode)) {
+            if (Game.debugMode) console.info(`pressed for ${Date.now() - AbstractControls.keysPressed[keyboardEvent.keyCode]}ms`);
+            delete AbstractControls.keysPressed[keyboardEvent.keyCode];
         }
         switch (keyboardEvent.keyCode) {
             case 49: case 50: case 51: case 52: case 53:
@@ -146,31 +159,31 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case 16 : {
-                Game.player.getController().keyShift(false);
+                Game.playerController.keyShift(false);
                 break;
             }
             case AbstractControls.walkCode : {
-                Game.player.getController().keyMoveForward(false);
+                Game.playerController.keyMoveForward(false);
                 break;
             }
             case AbstractControls.turnLeftCode : {
-                Game.player.getController().keyTurnLeft(false);
+                Game.playerController.keyTurnLeft(false);
                 break;
             }
             case AbstractControls.turnRightCode : {
-                Game.player.getController().keyTurnRight(false);
+                Game.playerController.keyTurnRight(false);
                 break;
             }
             case AbstractControls.walkBackCode : {
-                Game.player.getController().keyMoveBackward(false);
+                Game.playerController.keyMoveBackward(false);
                 break;
             }
             case AbstractControls.strafeLeftCode : {
-                Game.player.getController().keyStrafeLeft(false);
+                Game.playerController.keyStrafeLeft(false);
                 break;
             }
             case AbstractControls.strafeRightCode : {
-                Game.player.getController().keyStrafeRight(false);
+                Game.playerController.keyStrafeRight(false);
                 break;
             }
             case AbstractControls.useTargetedEntityCode : {
@@ -178,17 +191,17 @@ class CharacterControls extends AbstractControls {
                 break;
             }
         }
-        Game.player.getController().move = Game.player.getController().anyMovement();
         if (Client.isOnline()) {
             Client.updateLocRotScaleSelf();
         }
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static onKeyPress(keyboardEvent) {
         return 0;
     }
     static onMouseDown(mouseEvent) {
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (mouseEvent.button == 0) {
@@ -201,7 +214,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onMouseUp(mouseEvent) {
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (mouseEvent.button == 0) {
@@ -232,7 +245,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.debugMode) console.log(`Running CharacterControls::onContext(${mouseEvent.button})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (Game.playerController.hasTarget()) {
@@ -249,7 +262,7 @@ class CharacterControls extends AbstractControls {
         }
         CharacterControls.jumpTriggered = true;
         clearTimeout(CharacterControls.jumpTimeoutFunction);
-        Game.player.getController().keyJump(true);
+        Game.playerController.keyJump(true);
         CharacterControls.jumpPressTime = 0;
         CharacterControls.jumpTriggered = false;
         return 0;

@@ -395,4 +395,7 @@ class CharacterControllerTransform extends CharacterController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "CharacterControllerTransform";
+    }
 }

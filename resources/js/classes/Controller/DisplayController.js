@@ -106,6 +106,9 @@ class DisplayController extends FurnitureController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "DisplayController";
+    }
 
     static initialize() {
         DisplayController.displayControllerList = {};

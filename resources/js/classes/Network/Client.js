@@ -5,7 +5,7 @@ class Client {
          * @type {String: CharacterController}
          */
         Client.networkEntries = new BidirectionalMap();
-        Client._isOnline = false;
+        Client.online = false;
         Client.initialized = true;
         Client.sendCount = 1;
         Client.playersToCreate = {};
@@ -48,10 +48,10 @@ class Client {
         Game.actionUnequipFunction = Game.actionUnequip;
     }
     static isOnline() {
-        return Client._isOnline;
+        return Client.online;
     }
     static setOnline(isOnline) {
-        Client._isOnline = (isOnline == true);
+        Client.online = (isOnline == true);
         return 0;
     }
     static setPlayerEntry(networkID) {
@@ -94,7 +94,7 @@ class Client {
         return 1;
     }
     static getState() {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return "NONE";
         }
         switch (NetworkController.socket.readyState) {
@@ -106,7 +106,7 @@ class Client {
         return ;
     }
     static sendMessage(messageObject) {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         if (!(messageObject instanceof Object)) {
@@ -124,7 +124,7 @@ class Client {
         }
     }
     static requestJoinServer() {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         Client.sendMessage({
@@ -133,7 +133,7 @@ class Client {
         });
     }
     static sendChatMessage(stringMessage) {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         Client.sendMessage({
@@ -142,7 +142,7 @@ class Client {
         });
     }
     static requestUUID(stringUUID) {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         Client.sendMessage({
@@ -151,7 +151,7 @@ class Client {
         });
     }
     static initializeSelf(stringUUID, networkID) {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return 1;
         }
         if (!(Game.player instanceof CharacterEntity)) {
@@ -179,7 +179,7 @@ class Client {
         return 0;
     }
     static updateLocRotScaleSelf() {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         Client.sendMessage({
@@ -193,7 +193,7 @@ class Client {
         });
     }
     static updateMovementKeysSelf() {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         Client.sendMessage({
@@ -204,7 +204,7 @@ class Client {
         });
     }
     static requestPlayerByNetworkID(networkID) {
-        if (!Client._isOnline) {
+        if (!Client.online) {
             return null;
         }
         console.log(`Client::requestPlayerByNetworkID(${networkID})`);

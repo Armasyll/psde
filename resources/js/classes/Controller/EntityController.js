@@ -402,6 +402,9 @@ class EntityController {
         EntityController.remove(this.id);
         return null;
     }
+    getClassName() {
+        return "EntityController";
+    }
 
     static initialize() {
         EntityController.entityControllerList = {};

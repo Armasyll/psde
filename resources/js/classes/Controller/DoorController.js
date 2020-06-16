@@ -44,6 +44,9 @@ class DoorController extends EntityController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "DoorController";
+    }
 
     static initialize() {
         DoorController.doorControllerList = {};

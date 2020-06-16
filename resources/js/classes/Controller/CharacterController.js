@@ -349,6 +349,9 @@ class CharacterController extends CreatureController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "CharacterController";
+    }
 
     static initialize() {
         CharacterController.characterControllerList = {};

@@ -34,6 +34,9 @@ class LightingController extends FurnitureController {
         super.dispose();
         return undefined;
     }
+    getClassName() {
+        return "LightingController";
+    }
 
     static initialize() {
         LightingController.lightingControllerList = {};

@@ -631,6 +631,9 @@ class CreatureController extends EntityController {
     }
 
     updateTargetRayOrigin() {
+        if (Game.debugMode) {
+            console.info(`${this.id}.updateTargetRayOrigin()`);
+        }
         if (this.locked || !this.enabled) {
             return 0;
         }
@@ -681,6 +684,9 @@ class CreatureController extends EntityController {
         CreatureController.remove(this.id);
         super.dispose();
         return undefined;
+    }
+    getClassName() {
+        return "CreatureController";
     }
 
     static initialize() {

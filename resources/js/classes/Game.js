@@ -1145,7 +1145,7 @@ class Game {
             Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
         }
         for (let characterController in CharacterController.characterControllerList) {
-            if (CharacterController.characterControllerList[characterController]._isAnimated) {
+            if (CharacterController.characterControllerList[characterController].animated) {
                 CharacterController.characterControllerList[characterController].moveAV();
                 if (CharacterController.characterControllerList[characterController].propertiesChanged) {
                     CharacterController.characterControllerList[characterController].updateProperties();

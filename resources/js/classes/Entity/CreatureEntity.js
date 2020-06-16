@@ -560,8 +560,8 @@ class CreatureEntity extends Entity {
             this.setSexualOrientation(soul.sexualOrientation, false);
             //this.characterDisposition = Object.assign({}, soul.characterDisposition);
             //this.defaultDisposition = Object.assign({}, soul.defaultDisposition);
-            this.setDialogue(soul.getDialogue());
         }
+        this.setDialogue(soul.getDialogue());
     }
     getSoul() {
         return this.soul;

@@ -32,10 +32,19 @@ class CharacterControllerRigidBody extends CharacterController {
     }
 
     moveAV() {
+        if (Game.debugMode) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
         if (!(this.mesh instanceof BABYLON.Mesh)) {
+            if (Game.debugMode) {
+                console.error("missing mesh")
+                console.groupEnd();
+            }
             return this;
         }
         if (this.locked) {
+            if (Game.debugMode) {
+                console.info("locked")
+                console.groupEnd();
+            }
             return this;
         }
         if (this.crouching) {}
@@ -72,9 +81,13 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.mesh.rotation.asArray()
             ]
         });
+        if (Game.debugMode) {
+            console.groupEnd();
+        }
         return this;
     }
     doMove() {
+        if (Game.debugMode) console.group(`${this.id}.doMove()`)
         let anim = this.standIdle;
         let dt = Game.engine.getDeltaTime() / 1000;
         let u = this.fallTime * -Game.scene.gravity.y;
@@ -85,8 +98,14 @@ class CharacterControllerRigidBody extends CharacterController {
             this.intendedMovement.y = -this.fallDistance;
             this.moving = true;
             anim = this.fall;
+            if (Game.debugMode) {
+                console.info("not trying to move, falling")
+            }
         }
         else if (this.anyMovement()) {
+            if (Game.debugMode) {
+                console.info("not falling, trying to move")
+            }
             if (this.key.forward) {
                 if (this.key.strafeRight) {
                     this.intendedDirection = this.getAlpha() + Game.RAD_45;
@@ -124,6 +143,9 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
         if (this.moving) {
+            if (Game.debugMode) {
+                console.info("moving")
+            }
             this.sitting = false;
             this.lying = false;
             if (!this.crouching) {
@@ -225,6 +247,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             this.moving = false;
         }
+        if (Game.debugMode) console.groupEnd();
         return anim;
     }
     endFreeFall() {
@@ -253,5 +276,8 @@ class CharacterControllerRigidBody extends CharacterController {
     dispose() {
         super.dispose();
         return undefined;
+    }
+    getClassName() {
+        return "CharacterControllerRigidBody";
     }
 }

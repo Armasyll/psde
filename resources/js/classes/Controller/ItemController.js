@@ -16,6 +16,9 @@ class ItemController extends EntityController {
         ItemController.remove(this.id);
         super.dispose();
     }
+    getClassName() {
+        return "ItemController";
+    }
 
     static initialize() {
         ItemController.itemControllerList = {};
