@@ -201,7 +201,7 @@ class Game {
             "craftsmanWallCeilingFloorGap": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWallNoBaseboard": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWallNoCrown": "resources/meshes/static/craftsmanWalls.babylon",
-            "craftsmanWallNoTrimGreen": "resources/meshes/static/craftsmanWalls.babylon",
+            "craftsmanWallNoTrim": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWindow": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWindowDouble": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWindowframe": "resources/meshes/static/craftsmanWalls.babylon",

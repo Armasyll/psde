@@ -199,15 +199,19 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlain
 // Lobby stairwell
  apartmentCell.addCollisionRamp(new BABYLON.Vector3(0, 0, -22.5), new BABYLON.Vector3(2, 3, -17.5));
  apartmentCell.addCollidableMesh(undefined, "craftsmanCorner", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 0, -18), new BABYLON.Vector3(0, 270, 0));
- apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallSideRight", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 0, -20));
- apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallCornerRight", "greenWallpaperPlainWood",new BABYLON.Vector3(2, 0, -22));
+ apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallSide", "greenWallpaperPlainWood", new BABYLON.Vector3(2, 0, -20));
+ apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallCorner", "greenWallpaperPlainWood",new BABYLON.Vector3(2, 0, -22));
  apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
  apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 1.5, -20));
  apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 180, 0));
  apartmentCell.addDoor("packstreetApt3Basement", "Basement", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(0, 0, -19), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:true});
  apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
- apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallSideLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
- apartmentCell.addCollidableMesh(undefined, "craftsmanStairWallCornerLeft", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
+ apartmentCell.addMesh(undefined, "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
+ apartmentCell.addCollidableMesh("commonsFirstFloorCraftsmanStairWallSideNoTrim", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
+ apartmentCell.addMesh(undefined, "craftsmanStairCrownTrimLeftTop", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -20));
+ apartmentCell.addMesh(undefined, "craftsmanStairBaseTrimLeftBottom", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
+ apartmentCell.addCollidableMesh("commonsFirstFloorCraftsmanStairWallCornerNoTrim", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
+ apartmentCell.addMesh(undefined, "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -22));
 
 apartmentCell.addFurniture("commonsCouch", "couch01", new BABYLON.Vector3(8.25, 0, -22), new BABYLON.Vector3(0, -90, 0));
 apartmentCell.addCollidableMesh("commonsTableInstance01", "diningTable", undefined, new BABYLON.Vector3(10, 0, -22), new BABYLON.Vector3(0, -90, 0));
