@@ -31,46 +31,7 @@ class CreatureController extends EntityController {
         this.attacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
         this.canTransition = true;
 
-        this.walk = new AnimData("walk");
-        this.walkBack = new AnimData("walkBack");
-        this.standIdle = new AnimData("idle");
-        this.idle = this.standIdle;
-        this.standIdleJump = new AnimData("idleJump");
-        this.fall = new AnimData("fall");
-        this.fallLong = new AnimData("fallLong");
-        this.land = new AnimData("land");
-        this.landHard = new AnimData("landHard");
-        this.rollForward = new AnimData("rollForward");
-        this.run = new AnimData("run");
-        this.runJump = new AnimData("runJump");
-        this.turnLeft = new AnimData("turnLeft");
-        this.turnRight = new AnimData("turnRight");
-        this.strafeLeft = new AnimData("strafeLeft");
-        this.strafeRight = new AnimData("strafeRight");
-        this.slideBack = new AnimData("slideBack");
-        this.lieDown = new AnimData("lieDown");
-        this.lieIdle = new AnimData("lieIdle");
-        this.sitDown = new AnimData("sitDown");
-        this.sitIdle = new AnimData("sitIdle");
-        this.death = new AnimData("death");
-        this.animations = this.animations.concat([this.walk, this.walkBack, this.standIdleJump, this.run, this.runJump, this.fall, this.turnLeft, this.turnRight, this.strafeLeft, this.strafeRight, this.slideBack]);
-
-        this.setIdleAnim("90_idle01", 1, true);
-        this.setIdleJumpAnim("95_jump", 1, false);
-        this.setWalkAnim("93_walkingKneesBent", 1.2, true);
-        this.setRunAnim("94_runningKneesBent", 2, true);
-        this.setWalkBackAnim("93_walkingBackwardKneesBent", 1, true);
-        this.setTurnLeftAnim("93_walkingKneesBent", 1, true);
-        this.setTurnRightAnim("93_walkingKneesBent", 1, true);
-        this.setRunJumpAnim("95_jump", 1, false);
-        this.setAnimData(this.lieDown, "91_lieDown01", 1, false);
-        this.setAnimData(this.lieIdle, "90_idleLyingDown01", 1, true);
-        this.setAnimData(this.sitDown, "91_sitDown01", 1, false);
-        this.setAnimData(this.sitIdle, "90_idleSittingDown01", 1, true);
-        this.setDeathAnim("91_death01", 1, false);
-
         if (this.skeleton instanceof BABYLON.Skeleton) {
-            this.checkAnims(this.skeleton);
             this.animated = true;
             this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
             this.skeleton.animationPropertiesOverride.enableBlending = true;
@@ -79,10 +40,6 @@ class CreatureController extends EntityController {
         else {
             this.animated = false;
         }
-
-        //this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 1.0, this.idle.loop);
-        //this.walkAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.walk.from, this.walk.to, 0.0, this.walk.loop);
-        //this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.run.from, this.run.to, 0.0, this.run.loop);
 
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
@@ -105,52 +62,6 @@ class CreatureController extends EntityController {
         CreatureController.set(this.id, this);
     }
 
-    setWalkAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.walk, rangeName, rate, loop, standalone);
-    }
-    setRunAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.run, rangeName, rate, loop, standalone);
-        /*if (this.run instanceof AnimData && this.run.exist) {
-            this.runAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.run.from, this.run.to, 0.0, this.run.loop, this.run.rate);
-            //this.runAnim.syncWith(this.idleAnim);
-        }*/
-    }
-    setWalkBackAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.walkBack, rangeName, rate, loop, standalone);
-    }
-    setSlideBackAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.slideBack, rangeName, rate, loop, standalone);
-    }
-    setIdleAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.standIdle, rangeName, rate, loop, standalone);
-        /*if (this.idle instanceof AnimData && this.idle.exist) {
-            this.idleAnim = Game.scene.beginWeightedAnimation(this.skeleton, this.idle.from, this.idle.to, 0.0, this.idle.loop, this.idle.rate);
-        }*/
-    }
-    setIdleJumpAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.standIdleJump, rangeName, rate, loop, standalone);
-    }
-    setTurnRightAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.turnRight, rangeName, rate, loop, standalone);
-    }
-    setTurnLeftAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.turnLeft, rangeName, rate, loop, standalone);
-    }
-    setStrafeRightAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.strafeRight, rangeName, rate, loop, standalone);
-    }
-    setStrafeLeftAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.strafeLeft, rangeName, rate, loop, standalone);
-    }
-    setRunJumpAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.runJump, rangeName, rate, loop, standalone);
-    }
-    setFallAnim(rangeName, rate, loop, standalone = true) {
-        this.setAnimData(this.fall, rangeName, rate, loop, standalone);
-    }
-    setDeathAnim(rangeName, rate, loop = false, standalone = false) {
-        this.setAnimData(this.death, rangeName, rate, loop, standalone);
-    }
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }
@@ -249,6 +160,36 @@ class CreatureController extends EntityController {
         return this;
     }
 
+    updateAnimation() {
+        let anim = this.animationGroups.idleStanding01;
+        if (this.moving) {
+            if (this.falling) {}
+            else if (this.crouching) {}
+            else if (this.walking) {
+                anim = this.animationGroups.walking01;
+            }
+            else if (this.running) {
+                anim = this.animationGroups.running01;
+            }
+            else if (this.sprinting) {}
+            else if (this.climbing) {}
+            else if (this.flying) {}
+        }
+        else {
+            if (this.falling) {
+
+            }
+            else if (this.crouching) {}
+            else if (this.sitting) {
+                anim = this.animationGroups.idleSitting01;
+            }
+            else if (this.lying) {
+                anim = this.animationGroups.idleLying01;
+            }
+        }
+        this.beginAnimation(anim);
+        return 0;
+    }
     doDeath() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;

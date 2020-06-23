@@ -26,11 +26,16 @@ class EntityController {
         this.mesh = undefined;
         this.networkID = null;
         this.propertiesChanged = true;
-        this.animations = new Array();
+        this.animatables = {};
+        this.animations = {};
+        this.animationGroups = {};
+        this.additiveAnimations = {};
         this.started = false;
         this.stopAnim = false;
         this.currAnim = null;
         this.prevAnim = null;
+        this.animationTransitionCount = 0.0;
+        this.animationTransitionSpeed = 0.1;
         this.skeleton = null;
         this.bonesInUse = [];
         /**
@@ -41,6 +46,11 @@ class EntityController {
         this.enabled = true;
         this.locked = false;
         this.animated = false;
+        this.groundRay = null;
+        this.currentCell = null;
+        this.position = BABYLON.Vector3.Zero();
+        this.rotation = BABYLON.Vector3.Zero();
+        this.scaling = BABYLON.Vector3.One();
         this.setMesh(mesh);
         this.setEntity(entity);
         this.entity.setController(this);
@@ -56,9 +66,6 @@ class EntityController {
                 this.mesh.rotation.asArray()
             ]
         });
-        this.mesh.alwaysSelectAsActiveMesh = true;
-        this.groundRay = null;
-        this.currentCell = null;
         EntityController.set(this.id, this);
     }
     setID(id) {
@@ -69,28 +76,28 @@ class EntityController {
         return this.id;
     }
     getPosition() {
-        if (this.hasMesh()) {
-            return this.mesh.position.clone();
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            if (!this.mesh.position.equals(this.position)) {
+                this.position.copyFrom(this.mesh.position);
+            }
         }
-        else {
-            return BABYLON.Vector3.Zero();
-        }
+        return this.position;
     }
     getRotation() {
-        if (this.hasMesh()) {
-            return this.mesh.rotation.clone();
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            if (!this.mesh.rotation.equals(this.rotation)) {
+                this.rotation.copyFrom(this.mesh.rotation);
+            }
         }
-        else {
-            return BABYLON.Vector3.Zero();
-        }
+        return this.rotation;
     }
     getScaling() {
-        if (this.hasMesh()) {
-            return this.mesh.scaling.clone();
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            if (!this.mesh.scaling.equals(this.scaling)) {
+                this.scaling.copyFrom(this.mesh.scaling);
+            }
         }
-        else {
-            return BABYLON.Vector3.One();
-        }
+        return this.scaling;
     }
     setNetworkID(networkId) {
         this.networkID = networkId;
@@ -128,8 +135,12 @@ class EntityController {
                 this.setSkeleton(this.mesh.skeleton);
             }
             this.mesh.isPickable = true;
+            this.mesh.alwaysSelectAsActiveMesh = true;
             this.mesh.controller = this;
             this.propertiesChanged = true;
+            this.position.copyFrom(this.mesh.position);
+            this.rotation.copyFrom(this.mesh.rotation);
+            this.scaling.copyFrom(this.mesh.scaling);
         }
         return this;
     }
@@ -220,73 +231,153 @@ class EntityController {
         return this;
     }
 
-    /**
-     * 
-     * @param {AnimData} animData 
-     * @param {string} rangeName 
-     * @param {number} rate 
-     * @param {boolean} loop 
-     * @param {boolean} standalone 
-     */
-    setAnimData(animData, rangeName, rate = 1, loop = true, standalone = true) {
+    hasAnimatable(animatable) {
+        return this.animatables.hasOwnProperty(animatable);
+    }
+    hasAnimation(animation) {
+        return this.animations.hasOwnProperty(animation);
+    }
+    hasAnimationGroup(animationGroup) {
+        return this.animationGroups.hasOwnProperty(animationGroup);
+    }
+    createAnimatableFromRangeName(id, rangeName, loopAnimation = true, speedRatio = 1.0) {
         if (this.skeleton == null) {
-            return;
+            return 2;
         }
-        animData.name = rangeName;
-        animData.rate = rate;
-        animData.loop = loop;
-        animData.standalone = standalone;
-        if (this.skeleton.getAnimationRange(animData.name) != null) {
-            animData.exist = true;
-            this.skeleton.getAnimationRange(rangeName).from += 1;
-            animData.from = this.skeleton.getAnimationRange(rangeName).from;
-            animData.to = this.skeleton.getAnimationRange(rangeName).to;
+        let animationRange = this.skeleton.getAnimationRange(rangeName);
+        if (!(animationRange instanceof BABYLON.AnimationRange)) {
+            return 1;
         }
-        else {
-            animData.exist = false;
-        }
+        return this.createAnimatable(id, animationRange.from + 1, animationRange.to, loopAnimation, speedRatio);
     }
-    checkAnims(skeleton) {
-        for (let i = 0; i < this.animations.length; i++) {
-            let anim = this.animations[i];
-            if (skeleton.getAnimationRange(anim.name) != null) {
-                anim.exist = true;
-            }
+    createAnimatable(id, fromFrame = 0, toFrame = 0, loopAnimation = true, speedRatio = 1.0) {
+        if (this.skeleton == null) {
+            return 2;
         }
+        //let animatable = new BABYLON.Animatable(Game.scene, this.skeleton, fromFrame, toFrame, loopAnimation, speedRatio);
+        let animatable = Game.scene.beginWeightedAnimation(this.skeleton, fromFrame, toFrame, 0.0, loopAnimation, speedRatio);
+        this.animatables[id] = animatable;
+        return animatable;
+    }
+    setAnimatableWeight(id, weight = 1.0) {
+        if (this.skeleton == null) {
+            return 2;
+        }
+        if (!this.hasAnimatable(id)) {
+            return 2;
+        }
+        this.animations[id].weight = weight;
+        return 0;
     }
     /**
      * 
-     * @param {AnimData} animData 
+     * @param {string} id name of AnimationGroup to create
+     * @param {string|array} animatables ID of animation group(s)
+     * @param {number} weight 
+     * @param {boolean} loop 
+     * @param {number} speed 
+     * @param {boolean} start 
+     */
+    createAnimationGroupFromAnimatables(id, animatables, weight = 0.0, loop = -1, speed = -1, start = true) {
+        let hasValidAnimations = true;
+        let animationGroup = new BABYLON.AnimationGroup(id);
+        let maxFrameCount = 0;
+        let minFrameCount = Number.MAX_SAFE_INTEGER;
+        let tempFrameCount = 0;
+        let maxFrame = 0;
+        let minFrame = Number.MAX_SAFE_INTEGER;
+        if (typeof animatables != "array") {
+            animatables = [animatables];
+        }
+        for (let i = 0; i < animatables.length; i++) {
+            let animatable = animatables[i];
+            if (!(animatable instanceof BABYLON.Animation)) {
+                if (this.hasAnimatable(animatable)) {
+                    animatable = this.animatables[animatable];
+                }
+                else {
+                    hasValidAnimations = false;
+                    return 2;
+                }
+            }
+            if (i == 0) {
+                if (loop == -1) {
+                    loop = animatable.loopAnimation;
+                }
+                if (speed == -1) {
+                    speed = animatable._speedRatio;
+                }
+            }
+            for (let animation of animatable.getAnimations()) {
+                animationGroup.addTargetedAnimation(animation.animation, animation.target);
+            }
+            /*tempFrameCount = animatable.toFrame - animatable.fromFrame;
+            if (tempFrameCount > maxFrameCount) {
+                maxFrameCount = tempFrameCount;
+            }
+            if (tempFrameCount < minFrameCount) {
+                minFrameCount = tempFrameCount;
+            }
+            if (animatable.toFrame > maxFrame) {
+                maxFrame = animatable.toFrame;
+            }
+            if (animatable.fromFrame < minFrame) {
+                minFrame = animatable.fromFrame;
+            }*/
+            animationGroup.normalize(animatable.fromFrame, animatable.toFrame);
+        }
+        if (!hasValidAnimations) {
+            animationGroup.dispose();
+            return 1;
+        }
+        if (loop === -1) {
+            loop = true;
+        }
+        if (speed === -1) {
+            speed = 1.0;
+        }
+        /*if (maxFrameCount != minFrameCount) {
+            animationGroup.normalize(minFrame, maxFrame);
+        }*/
+        animationGroup.start(start);
+        animationGroup.loopAnimation = loop;
+        animationGroup.speedRatio = speed;
+        if (start) {
+            animationGroup.setWeightForAllAnimatables(weight);
+        }
+        this.animationGroups[id] = animationGroup;
+        return animationGroup;
+    }
+    updateAnimation() {
+        return 0;
+    }
+    /**
+     * 
+     * @param {BABYLON.Animation} animation 
      * @param {function} [callback] 
      */
-    beginAnimation(animData, callback = null) {
+    beginAnimation(animation, callback = null) {
         if (this.stopAnim) {
             return false;
         }
-        else if (!(animData instanceof AnimData)) {
-            return false;
+        if (!(animation instanceof BABYLON.AnimationGroup)) {
+            if (this.hasAnimationGroup(animation)) {
+                this.animation = this.animationGroup[animation];
+            }
+            else {
+                return false;
+            }
         }
-        else if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+        if (animation != this.currAnim) {
+            this.prevAnim = this.currAnim;
+            this.currAnim = animation;
+            this.animationTransitionCount = 0.0;
         }
-        else if (this.prevAnim == animData) {
-            return false;
+        this.animationTransitionCount += this.animationTransitionSpeed;
+        if (this.prevAnim instanceof BABYLON.AnimationGroup) {
+            this.prevAnim.setWeightForAllAnimatables(1 - this.animationTransitionCount);
         }
-        else if (!animData.exist) {
-            return false;
-        }
-        if (this.bonesInUse.length > 0) {
-            /*
-            Have to cycle through all the bones just so I don't have to animate a handful :L
-             */
-            this.skeleton.bones.difference(this.bonesInUse).forEach(function(bone) {
-                Game.scene.beginAnimation(bone, animData.from, animData.to, animData.loop, animData.rate, callback);
-            });
-        }
-        else {
-            this.skeleton.beginAnimation(animData.name, animData.loop, animData.rate, callback);
-        }
-        this.prevAnim = animData;
+        this.currAnim.setWeightForAllAnimatables(this.animationTransitionCount);
         return true;
     }
     pauseAnim() {

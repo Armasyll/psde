@@ -7,7 +7,9 @@ class CharacterControllerRigidBody extends CharacterController {
         this.startPosition = this.mesh.position.clone();
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
-        this.runSpeed = 3.2 * this.mesh.scaling.z; // if it's a fox mesh
+        this.crawlspeed = 1.0 * this.scaling.z;
+        this.walkSpeed = 1.4 * this.scaling.z;
+        this.runSpeed = 3.2 * this.scaling.z; // if it's a fox mesh
         this.lookAtCtl = new BABYLON.BoneLookController(
             this.mesh,
             this.getBoneByName("head"),
@@ -47,21 +49,11 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             return this;
         }
-        if (this.crouching) {}
-        else if (this.sitting) {
-            this.idle = this.sitIdle;
-        }
-        else if (this.lying) {
-            this.idle = this.lieIdle;
-        }
-        else {
-            this.idle = this.standIdle;
-        }
         this.updateTargetRayOrigin();
-        let anim = this.idle;
+        this.moving = false;
         if (this.anyMovement() || this.falling) {
             this.startPosition.copyFrom(this.mesh.position);
-            anim = this.doMove();
+            this.doMove();
         }
         if (Game.playerController != this && this.targetController == null) {
             this.targetRay.direction.y = 0; // up-down
@@ -69,7 +61,7 @@ class CharacterControllerRigidBody extends CharacterController {
         }
         this.lookAtCtl.target = this.targetRay.origin.add(this.targetRay.direction);
         this.lookAtCtl.update();
-        this.beginAnimation(anim);
+        this.updateAnimation();
         if (Game.player == this.entity) {
             Game.updateCameraTarget();
         }
@@ -88,7 +80,6 @@ class CharacterControllerRigidBody extends CharacterController {
     }
     doMove() {
         if (Game.debugMode) console.group(`${this.id}.doMove()`)
-        let anim = this.standIdle;
         let dt = Game.engine.getDeltaTime() / 1000;
         let u = this.fallTime * -Game.scene.gravity.y;
         this.mesh.setParent(null);
@@ -97,7 +88,6 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this.falling) {
             this.intendedMovement.y = -this.fallDistance;
             this.moving = true;
-            anim = this.fall;
             if (Game.debugMode) {
                 console.info("not trying to move, falling")
             }
@@ -159,6 +149,7 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.running = true;
             }
             else {
+                this.walking = true;
                 this.running = false;
             }
             /*
@@ -182,7 +173,15 @@ class CharacterControllerRigidBody extends CharacterController {
             else {
                 this.mesh.rotation.y = this.intendedDirection;
             }
-            this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            if (this.walking) {
+                this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            }
+            else if (this.running) {
+                this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            }
+            else if (this.crawling) {
+                this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+            }
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
@@ -234,21 +233,14 @@ class CharacterControllerRigidBody extends CharacterController {
                 else {
                     this.falling = true;
                     this.fallFrameCount++;
-                    if (this.fallFrameCount > this.fallFrameCountMin) {
-                        anim = this.fall;
-                    }
                 }
             }
             else {
                 this.endFreeFall();
             }
-            if (!Game.Tools.areVectorsEqual(this.mesh.position, this.startPosition, 0.001)) {
-                anim = this.run;
-            }
-            this.moving = false;
         }
         if (Game.debugMode) console.groupEnd();
-        return anim;
+        return 0;
     }
     endFreeFall() {
         this.fallTime = 0;

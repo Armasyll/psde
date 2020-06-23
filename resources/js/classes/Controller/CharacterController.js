@@ -4,14 +4,6 @@ class CharacterController extends CreatureController {
         if (!this.hasMesh()) {
             return;
         }
-        this.attackPunchRH = new AnimData("attackPunchRH");
-        this.attackRunningPunchRH = new AnimData("attackPunchRH");
-        this.attackThrustRH = new AnimData("attackThrustRH");
-        this.attackSlashRH = new AnimData("attackSlashRH");
-        this.attackChopRH = new AnimData("attackChopRH");
-        this.setAnimData(this.attackPunchRH, "71_punch01", 1, false, false);
-        this.setAnimData(this.attackRunningPunchRH, "71_runningPunch01", 1, false, false);
-        this.setAnimData(this.attackThrustRH, "71_stab01", 1, false, false);
         this.helmetVisible = true;
 
         this.generateOrganMeshes();
@@ -23,6 +15,28 @@ class CharacterController extends CreatureController {
         Standing Idle to Crouching Idle
         Crouching Idle to Standing Idle
         */
+        if (this.animated) {
+            this.createAnimatableFromRangeName("idleStanding01", "90_idle01");
+            this.createAnimatableFromRangeName("idleSitting01", "90_idleSittingDown01");
+            this.createAnimatableFromRangeName("idleLying01", "90_idleLyingDown01");
+            this.createAnimatableFromRangeName("idleDeath01", "91_death01");
+            this.createAnimatableFromRangeName("walking01", "93_walkingKneesBent");
+            this.createAnimatableFromRangeName("running01", "94_runningKneesBent");
+            /*this.createAnimatableFromRangeName("stabRight", "71_stabThrust.r");
+            this.createAnimatableFromRangeName("punchRight", "71_punch01");*/
+
+            this.createAnimationGroupFromAnimatables("idleStanding01", "idleStanding01", 1.0);
+            this.createAnimationGroupFromAnimatables("walking01", "walking01");
+            this.createAnimationGroupFromAnimatables("running01", "running01", 0.0, true, (2 * this.scaling.y));
+            this.createAnimationGroupFromAnimatables("idleSitting01", "idleSitting01");
+            this.createAnimationGroupFromAnimatables("idleLying01", "idleLying01");
+            this.createAnimationGroupFromAnimatables("idleDeath01", "idleDeath01");
+            /*this.createAnimationGroupFromAnimatables("punchRight", "punchRight");
+            this.createAnimationGroupFromAnimatables("stabRight", "stabRight");*/
+
+            /*this.additiveAnimations["punchRight"] = BABYLON.AnimationGroup.MakeAnimationAdditive(this.animationGroups["punchRight"]);
+            this.additiveAnimations["stabRight"] = BABYLON.AnimationGroup.MakeAnimationAdditive(this.animationGroups["stabRight"]);*/
+        }
         CharacterController.set(this.id, this);
     }
 
@@ -35,16 +49,7 @@ class CharacterController extends CreatureController {
         }
         this.attacking = true;
         setTimeout(() => {this.attacking = false;}, 800);
-        if (this.running) {
-            for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
-                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackRunningPunchRH.from, this.attackRunningPunchRH.to, this.attackRunningPunchRH.loop, this.attackRunningPunchRH.rate);
-            }
-        }
-        else {
-            for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
-                Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackPunchRH.from, this.attackPunchRH.to, this.attackPunchRH.loop, this.attackPunchRH.rate);
-            }
-        }
+        //
         return true;
     }
     doThrustRH() {
@@ -56,9 +61,7 @@ class CharacterController extends CreatureController {
         }
         this.attacking = true;
         setTimeout(() => {this.attacking = false;}, 800);
-        for (let i = 0; i < this.animationBones["rightArm"].length; i++) {
-            Game.scene.beginAnimation(this.skeleton.bones[this.animationBones["rightArm"][i]], this.attackThrustRH.from, this.attackThrustRH.to, this.attackThrustRH.loop, this.attackThrustRH.rate);
-        }
+        //
         return true;
     }
 
