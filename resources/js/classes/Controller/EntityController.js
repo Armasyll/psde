@@ -373,7 +373,12 @@ class EntityController {
             this.currAnim = animation;
             this.animationTransitionCount = 0.0;
         }
-        this.animationTransitionCount += this.animationTransitionSpeed;
+        if (this.animationTransitionCount < 1) {
+            this.animationTransitionCount += this.animationTransitionSpeed;
+        }
+        if (this.animationTransitionCount > 1) {
+            this.animationTransitionCount = 1;
+        }
         if (this.prevAnim instanceof BABYLON.AnimationGroup) {
             this.prevAnim.setWeightForAllAnimatables(1 - this.animationTransitionCount);
         }
