@@ -210,7 +210,7 @@ class Game {
             "aardwolfM": "resources/meshes/characters/aardwolf.babylon",
             "spiritN": "resources/meshes/characters/spiritN.babylon",
             "foxF": "resources/meshes/characters/fox.babylon",
-            "foxSkeletonN": "resources/meshes/characters/foxSkeletonN.babylon",
+            "foxSkeletonN": "resources/meshes/characters/fox.babylon",
             "foxM": "resources/meshes/characters/fox.babylon",
             "sheepF": "resources/meshes/characters/sheep.babylon",
             "sheepM": "resources/meshes/characters/sheep.babylon",
