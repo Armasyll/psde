@@ -35,6 +35,81 @@ class EditControls extends AbstractControls {
                 }
                 break;
             }
+            case EditControls.axisXKey: {
+                if (!EditControls.isEditing()) {
+                    break;
+                }
+                /**
+                 * Start of being able to use any axis
+                 * Initially hit Shift + X, only use Y and Z axis
+                 *  hit Shift + X again, still only use Y and Z axis
+                 *  or hit X, use any axis
+                 * Initially hit X, only use X axis
+                 *  hit X again, still only use X axis
+                 *  or hit Shift + X, use any axis
+                 */
+                if (EditControls.shiftPressed) {
+                    if (EditControls.allowAxisX && !EditControls.allowAxisY && !EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = false;
+                    EditControls.allowAxisY = true;
+                    EditControls.allowAxisZ = true;
+                }
+                else {
+                    if (!EditControls.allowAxisX && EditControls.allowAxisY && EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = true;
+                    EditControls.allowAxisY = false;
+                    EditControls.allowAxisZ = false;
+                }
+                break;
+            }
+            case EditControls.axisYKey: {
+                if (!EditControls.isEditing()) {
+                    break;
+                }
+                if (EditControls.shiftPressed) {
+                    if (!EditControls.allowAxisX && EditControls.allowAxisY && !EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = true;
+                    EditControls.allowAxisY = false;
+                    EditControls.allowAxisZ = true;
+                }
+                else {
+                    if (EditControls.allowAxisX && !EditControls.allowAxisY && EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = false;
+                    EditControls.allowAxisY = true;
+                    EditControls.allowAxisZ = false;
+                }
+                break;
+            }
+            case EditControls.axisZKey: {
+                if (!EditControls.isEditing()) {
+                    break;
+                }
+                if (EditControls.shiftPressed) {
+                    if (!EditControls.allowAxisX && !EditControls.allowAxisY && EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = true;
+                    EditControls.allowAxisY = true;
+                    EditControls.allowAxisZ = false;
+                }
+                else {
+                    if (EditControls.allowAxisX && EditControls.allowAxisY && !EditControls.allowAxisZ) {
+                        EditControls.allowAxisX = true; EditControls.allowAxisY = true; EditControls.allowAxisZ = true; break;
+                    }
+                    EditControls.allowAxisX = false;
+                    EditControls.allowAxisY = false;
+                    EditControls.allowAxisZ = true;
+                }
+                break;
+            }
             case EditControls.toggleCollision : {
                 break;
             }
@@ -145,6 +220,9 @@ class EditControls extends AbstractControls {
         }
         return 0;
     }
+    static isEditing() {
+        return EditControls.moving || EditControls.rotating || EditControls.scaling;
+    }
     static pickMesh(mesh) {
         if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
             EditControls.clearPickedMesh();
@@ -179,7 +257,7 @@ class EditControls extends AbstractControls {
         EditControls.pickedMesh = null;
         return 0;
     }
-    static pickedController(abstractController) {
+    static pickController(abstractController) {
         if (Game.interfaceMode != InterfaceModeEnum.EDIT) {
             EditControls.clearPickedController();
             return 1;
@@ -211,9 +289,9 @@ class EditControls extends AbstractControls {
         EditControls.rotating = false;
         EditControls.scaling = false;
         EditControls.moving = false;
-        EditControls.vectorLockX = false;
-        EditControls.vectorLockY = false;
-        EditControls.vectorLockZ = false;
+        EditControls.allowAxisX = true;
+        EditControls.allowAxisY = true;
+        EditControls.allowAxisZ = true;
         Game.camera.attachControl(Game.canvas);
         return 0;
     }
@@ -239,6 +317,9 @@ class EditControls extends AbstractControls {
         EditControls.scaleCode = 83; // s
         EditControls.moveCode = 71; // g
         EditControls.toggleCollision = 84; // t
+        EditControls.axisXKey = 88; // x
+        EditControls.axisYKey = 89; // y
+        EditControls.axisZKey = 90; // z
         EditControls.rotating = false;
         EditControls.rotatingIncrement = BABYLON.Tools.ToRadians(1);
         EditControls.xRotatingIncrement = EditControls.rotatingIncrement;
@@ -254,9 +335,9 @@ class EditControls extends AbstractControls {
         EditControls.xMovingIncrement = EditControls.movingIncrement;
         EditControls.yMovingIncrement = EditControls.movingIncrement;
         EditControls.zMovingIncrement = EditControls.movingIncrement;
-        EditControls.vectorLockX = false;
-        EditControls.vectorLockY = false;
-        EditControls.vectorLockZ = false;
+        EditControls.allowAxisX = true;
+        EditControls.allowAxisY = true;
+        EditControls.allowAxisZ = true;
         EditControls.localGridLock = false;
         EditControls.globalGridLock = false;
         EditControls.shiftPressed = false;
