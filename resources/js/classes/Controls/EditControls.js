@@ -35,7 +35,7 @@ class EditControls extends AbstractControls {
                 }
                 break;
             }
-            case EditControls.axisXKey: {
+            case EditControls.axisXCode: {
                 if (!EditControls.isEditing()) {
                     break;
                 }
@@ -66,7 +66,7 @@ class EditControls extends AbstractControls {
                 }
                 break;
             }
-            case EditControls.axisYKey: {
+            case EditControls.axisYCode: {
                 if (!EditControls.isEditing()) {
                     break;
                 }
@@ -88,7 +88,7 @@ class EditControls extends AbstractControls {
                 }
                 break;
             }
-            case EditControls.axisZKey: {
+            case EditControls.axisZCode: {
                 if (!EditControls.isEditing()) {
                     break;
                 }
@@ -110,7 +110,7 @@ class EditControls extends AbstractControls {
                 }
                 break;
             }
-            case EditControls.toggleCollision : {
+            case EditControls.toggleCollisionCode : {
                 break;
             }
             case AbstractControls.chatInputFocusCode : {
@@ -316,10 +316,10 @@ class EditControls extends AbstractControls {
         EditControls.rotateCode = 82; // r
         EditControls.scaleCode = 83; // s
         EditControls.moveCode = 71; // g
-        EditControls.toggleCollision = 84; // t
-        EditControls.axisXKey = 88; // x
-        EditControls.axisYKey = 89; // y
-        EditControls.axisZKey = 90; // z
+        EditControls.toggleCollisionCode = 84; // t
+        EditControls.axisXCode = 88; // x
+        EditControls.axisYCode = 89; // y
+        EditControls.axisZCode = 90; // z
         EditControls.rotating = false;
         EditControls.rotatingIncrement = BABYLON.Tools.ToRadians(1);
         EditControls.xRotatingIncrement = EditControls.rotatingIncrement;
