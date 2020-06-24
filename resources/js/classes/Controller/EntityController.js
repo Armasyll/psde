@@ -369,6 +369,10 @@ class EntityController {
             }
         }
         if (animation != this.currAnim) {
+            /* Prevents an animation from having its weight > 0 when it's swapped out before it reaches 0 */
+            if (this.prevAnim != null && animation != this.prevAnim) {
+                this.prevAnim.setWeightForAllAnimatables(0.0);
+            }
             this.prevAnim = this.currAnim;
             this.currAnim = animation;
             this.animationTransitionCount = 0.0;
