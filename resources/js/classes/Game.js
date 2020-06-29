@@ -2829,6 +2829,51 @@ class Game {
         return mesh;
     }
     /**
+     * 
+     * @param {string} id 
+     * @param {string} shape 
+     * @param {number} diameter 
+     * @param {number} height 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} [rotation] 
+     * @param {BABYLON.Vector3} [scaling] 
+     */
+    static createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        let mesh = null;
+        switch (shape) {
+            case "CYLINDER": {
+                mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameter": diameter, "height": height, "tessellation": 8}, Game.scene);
+                break;
+            }
+            case "CONE": {
+                mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": 0, "diameterBottom": diameter, "height": height, "tessellation": 8}, Game.scene);
+                break;
+            }
+            case "CUBE": {}
+            default: {
+                mesh = BABYLON.MeshBuilder.CreateBox(id, {"size": diameter, "height": height}, Game.scene);
+            }
+        }
+        mesh.id = id;
+        mesh.name = id;
+        mesh.material = Game.loadedMaterials["missingMaterial"];
+        Game.setLoadedMesh(id, mesh);
+        Game.setMeshMaterial(mesh, Game.loadedMaterials["missingMaterial"]);
+        if (position instanceof BABYLON.Vector3) {
+            mesh.position.copyFrom(position);
+        }
+        mesh.position.addInPlace(new BABYLON.Vector3(0, height/2, 0));
+        if (rotation instanceof BABYLON.Vector3) {
+            mesh.rotation.copyFrom(rotation);
+        }
+        if (scaling instanceof BABYLON.Vector3) {
+            mesh.scaling.copyFrom(scaling);
+        }
+        mesh.isVisible = true;
+        mesh.setEnabled(true);
+        return mesh;
+    }
+    /**
      * Creates a mesh from those stored in loadedMeshes
      * @param  {string} meshIndexID New ID for BABYLON.Mesh and EntityController
      * @param  {string} meshID String ID of Mesh to create

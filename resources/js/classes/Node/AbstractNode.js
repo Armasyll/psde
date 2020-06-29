@@ -70,7 +70,7 @@ class AbstractNode {
         AbstractNode.nodeList = {};
     }
     static get(id) {
-        if (Node.has(id)) {
+        if (AbstractNode.has(id)) {
             return AbstractNode.nodeList[id];
         }
         return 1;
