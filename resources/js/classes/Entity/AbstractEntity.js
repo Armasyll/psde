@@ -231,6 +231,9 @@ class AbstractEntity {
     isEnabled() {
         return this.enabled == true;
     }
+    isDisabled() {
+        return this.enabled == false;
+    }
     setEnabled(isEnabled = true) {
         this.enabled = (isEnabled == true);
         return 0;

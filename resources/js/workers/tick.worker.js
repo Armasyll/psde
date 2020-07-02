@@ -4,6 +4,7 @@ class SimpleEntity {
         this.id = id;
         this.effects = new Set();
         this.instancedEffects = new Set();
+        this.scheduledCommands = new Set();
         this.locked = false;
         this.enabled = true;
         SimpleEntity.set(id, this);
@@ -395,13 +396,18 @@ let effectsPerNthTick = new Map();
 let effectsPerNthTurn = new Map();
 let effectsPerNthRound = new Map();
 let effectsExpirationTick = new Map();
+/**
+ * Object<number, Object<entityID, string>>; map of ticks to arrays of entities and strings(commands)
+ */
+let scheduledCommands = {};
 
 function tickFunction() {
     currentTime += incrementor;
+    sendTimestamp();
     if (currentTime % roundTime == 0) { // Round
         currentRound++;
-        sendEntityTogglerRequest();
         sendRound();
+        sendEntityTogglerRequest();
     }
     if (currentTime % turnTime == 0) { // Turn
         currentTurn++;
@@ -409,11 +415,12 @@ function tickFunction() {
     }
     if (currentTime % gameTimeMultiplier == 0) { // Tick
         currentTick++;
+        sendTick();
+        triggerScheduledCommands();
         triggerScheduledEffects();
         removeScheduledEffectsByTick(currentTick); // effects are triggered first when they're applied; so they should be removed during their final tick
-        sendTick();
-        sendTimestamp();
     }
+    return 0;
 }
 function stopFunction() {
     paused = true;
@@ -742,6 +749,48 @@ function triggerScheduledEffects() {
 function sendScheduledEffect(effectID, abstractEntityID) {
     postMessage({"cmd":"triggerScheduledEffect", "msg":{"effectID":effectID, "abstractEntityID":abstractEntityID}});
 }
+function addScheduledCommand(addTick, abstractEntityID, commandString) {
+    addTick += currentTick;
+    return setScheduledCommand(addTick, abstractEntityID, commandString);
+}
+function setScheduledCommand(scheduledTick, abstractEntityID, commandString) {
+    if (scheduledCommands[scheduledTick] == undefined) {
+        scheduledCommands[scheduledTick] = {};
+    }
+    if (scheduledCommands[scheduledTick][abstractEntityID] == undefined) {
+        scheduledCommands[scheduledTick][abstractEntityID] = [];
+    }
+    scheduledCommands[scheduledTick][abstractEntityID].push(commandString);
+    return 0;
+}
+function triggerScheduledCommands() {
+    if (!scheduledCommands.hasOwnProperty(currentTick)) {
+        return 0;
+    }
+    let currentCommands = scheduledCommands[currentTick];
+    for (let abstractEntityID in currentCommands) {
+        if (currentCommands[abstractEntityID].length > 0) {
+            currentCommands[abstractEntityID].forEach((commandString) => {
+                sendScheduledCommand(abstractEntityID, commandString);
+            });
+            currentCommands[abstractEntityID].clear();
+        }
+        delete currentCommands[abstractEntityID];
+    }
+    delete scheduledCommands[currentTick];
+    return 0;
+}
+function cleanScheduledCommands() {
+    for (let i in scheduledCommands) {
+        if (i < currentTick) {
+            delete scheduledCommands[i];
+        }
+    }
+    return 0;
+}
+function sendScheduledCommand(abstractEntityID, commandString) {
+    postMessage({"cmd":"triggerScheduledCommand", "msg":{"command":commandString, "entityID":abstractEntityID}});
+}
 
 startFunction();
 addEventListener('message', (event) => {
@@ -852,6 +901,27 @@ addEventListener('message', (event) => {
             }
             let msg = event.data.msg;
             removeAscheduledEffect(msg.effect, msg.abstractEntity);
+            break;
+        }
+        case "addScheduledCommand": {
+            if (!event.data.hasOwnProperty("msg")) {
+                break;
+            }
+            else if (Object.keys(event.data.msg).length != 3) {
+                break;
+            }
+            addScheduledCommand(msg["tick"], msg["entity"], msg["commandString"]);
+            break;
+        }
+        case "setScheduledCommand": {
+            if (!event.data.hasOwnProperty("msg")) {
+                break;
+            }
+            else if (Object.keys(event.data.msg).length != 3) {
+                break;
+            }
+            let msg = event.data.msg;
+            setScheduledCommand(msg["tick"], msg["entity"], msg["commandString"]);
             break;
         }
     };

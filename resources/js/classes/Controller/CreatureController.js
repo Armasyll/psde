@@ -295,7 +295,7 @@ class CreatureController extends EntityController {
     }
 
     getBone(bone) {
-        if (Game.debugMode) console.log("Running getBone");
+        if (CreatureController.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
             if (bone instanceof BABYLON.Bone) {
                 return bone;
@@ -334,18 +334,18 @@ class CreatureController extends EntityController {
      * @returns {CharacterController} This character controller.
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (Game.debugMode) console.log("Running attachMeshIDToBone");
+        if (CreatureController.debugMode) console.log("Running attachMeshIDToBone");
         if (!Game.hasMesh(meshID)) {
-            if (Game.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
+            if (CreatureController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
             return this;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            if (Game.debugMode) console.log(`Couldn't find skeleton`);
+            if (CreatureController.debugMode) console.log(`Couldn't find skeleton`);
             return this;
         }
         let bone = this.getBone(boneID);
         if (!(bone instanceof BABYLON.Bone)) {
-            if (Game.debugMode) console.log(`Couldn't find bone:${boneID}`);
+            if (CreatureController.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return this;
         }
         if (!(position instanceof BABYLON.Vector3)) {
@@ -363,7 +363,7 @@ class CreatureController extends EntityController {
         if (!(Game.hasLoadedMesh(meshID))) {
             Game.loadMesh(meshID);
             Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
-            if (Game.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
+            if (CreatureController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
             return this;
         }
         if (materialID != "collisionMaterial") {
@@ -572,7 +572,7 @@ class CreatureController extends EntityController {
     }
 
     updateTargetRayOrigin() {
-        if (Game.debugMode) {
+        if (CreatureController.debugMode) {
             console.info(`${this.id}.updateTargetRayOrigin()`);
         }
         if (this.locked || !this.enabled) {
@@ -632,6 +632,7 @@ class CreatureController extends EntityController {
 
     static initialize() {
         CreatureController.creatureControllerList = {};
+        CreatureController.debugMode = false;
     }
     static get(id) {
         if (CreatureController.has(id)) {
@@ -659,6 +660,24 @@ class CreatureController extends EntityController {
         }
         CreatureController.creatureControllerList = {};
         return 0;
+    }
+    static setDebugMode(debugMode) {
+        if (debugMode == true) {
+            CreatureController.debugMode = true;
+            for (let creatureController in CreatureController.creatureControllerList) {
+                CreatureController.creatureControllerList[creatureController].debugMode = true;
+            }
+        }
+        else if (debugMode == false) {
+            CreatureController.debugMode = false;
+            for (let creatureController in CreatureController.creatureControllerList) {
+                CreatureController.creatureControllerList[creatureController].debugMode = false;
+            }
+        }
+        return 0;
+    }
+    static getDebugMode() {
+        return CreatureController.debugMode === true;
     }
 }
 CreatureController.initialize();

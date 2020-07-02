@@ -358,6 +358,7 @@ class CharacterController extends CreatureController {
 
     static initialize() {
         CharacterController.characterControllerList = {};
+        CharacterController.debugMode = false;
     }
     static get(id) {
         if (CharacterController.has(id)) {
@@ -385,6 +386,24 @@ class CharacterController extends CreatureController {
         }
         CharacterController.characterControllerList = {};
         return 0;
+    }
+    static setDebugMode(debugMode) {
+        if (debugMode == true) {
+            CharacterController.debugMode = true;
+            for (let characterController in CharacterController.characterControllerList) {
+                CharacterController.characterControllerList[characterController].debugMode = true;
+            }
+        }
+        else if (debugMode == false) {
+            CharacterController.debugMode = false;
+            for (let characterController in CharacterController.characterControllerList) {
+                CharacterController.characterControllerList[characterController].debugMode = false;
+            }
+        }
+        return 0;
+    }
+    static getDebugMode() {
+        return CharacterController.debugMode === true;
     }
 }
 CharacterController.initialize();

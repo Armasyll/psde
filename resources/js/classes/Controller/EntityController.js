@@ -20,6 +20,7 @@ class EntityController {
             return null;
         }
         this.id = id;
+        this.debugMode = false;
         this.entity = undefined;
         this.texture = null;
         this.material = null;
@@ -508,6 +509,7 @@ class EntityController {
 
     static initialize() {
         EntityController.entityControllerList = {};
+        EntityController.debugMode = false;
     }
     static get(id) {
         if (EntityController.has(id)) {
@@ -535,6 +537,24 @@ class EntityController {
         }
         EntityController.entityControllerList = {};
         return 0;
+    }
+    static setDebugMode(debugMode) {
+        if (debugMode == true) {
+            EntityController.debugMode = true;
+            for (let entityController in EntityController.entityControllerList) {
+                EntityController.entityControllerList[entityController].debugMode = true;
+            }
+        }
+        else if (debugMode == false) {
+            EntityController.debugMode = false;
+            for (let entityController in EntityController.entityControllerList) {
+                EntityController.entityControllerList[entityController].debugMode = false;
+            }
+        }
+        return 0;
+    }
+    static getDebugMode() {
+        return EntityController.debugMode === true;
     }
 }
 EntityController.initialize();

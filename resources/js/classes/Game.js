@@ -959,6 +959,10 @@ class Game {
                     abstractEntity.removeEffect(effect);
                     break;
                 }
+                case "triggerScheduledCommand": {
+                    console.log(e.data.msg);
+                    break;
+                }
                 case "tick": {
                     Game.currentTick = e.data.msg;
                     break;
@@ -5750,6 +5754,50 @@ class Game {
                 "entity":abstractEntity.getID()
             }
         });
+    }
+    static addScheduledCommand(addTick, abstractEntityID, commandString) {
+        addTick = (Number.parseInt(addTick)|0) + Game.currentTick;
+        return Game.setScheduledCommand(addTick, abstractEntityID, commandString);
+    }
+    static setScheduledCommand(scheduledTick = 0, abstractEntityID, commandString = "") {
+        if (Game.debugMode) {console.group(`Running Game.setScheduledCommand(...)`)}
+        scheduledTick = Number.parseInt(scheduledTick);
+        if (scheduledTick <= Game.currentTick) {
+            if (Game.debugMode) {console.error("Tick was below or at current tick; cannot use."); console.groupEnd();}
+            return 1;
+        }
+        if (abstractEntityID instanceof AbstractEntity) {
+            abstractEntityID = abstractEntityID.getID();
+        }
+        else if (!AbstractEntity.has(abstractEntityID)) {
+            if (Game.debugMode) {console.error(`Entity (${abstractEntityID}) doesn't exist.`); console.groupEnd();}
+            return 1;
+        }
+        if (AbstractEntity.get(abstractEntityID).isDisabled()) {
+            if (Game.debugMode) {console.warn(`Entity (${abstractEntityID}) is disabled and can't be used.`); console.groupEnd();}
+            return 1;
+        }
+        commandString = String(commandString);
+        if (commandString.length == 0) {
+            if (Game.debugMode) {console.error("Command missing or invalid."); console.groupEnd();}
+            return 1;
+        }
+        if (Game.debugMode) {
+            console.log("Sending scheduled command with...");
+            console.info(`tick: ${scheduledTick}`);
+            console.info(`entity: ${abstractEntityID}`);
+            console.info(`commandString: ${commandString}`);
+            console.groupEnd();
+        }
+        Game.tickWorker.postMessage({
+            cmd: "setScheduledCommand",
+            msg: {
+                "tick":scheduledTick,
+                "entity":abstractEntityID,
+                "commandString":commandString
+            }
+        });
+        return 0;
     }
     static setDebugMode(debugMode) {
         Game.debugMode = debugMode == true;
