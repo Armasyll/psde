@@ -825,7 +825,6 @@ class AbstractEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.clearTarget();
         if (this.hasController()) {
             this.controller.setLocked(true);
             this.controller.setEnabled(false);
