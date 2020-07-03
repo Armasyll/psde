@@ -48,12 +48,6 @@ class EntityController {
         this.animationTransitionCount = 0.0;
         this.animationTransitionSpeed = 0.1;
         this.skeleton = null;
-        this.bonesInUse = [];
-        /**
-         * Array of bones per animation
-         * @type {Object} <string:Array>
-         */
-        this.animationBones = {};
         this.enabled = true;
         this.locked = false;
         this.animated = false;
@@ -203,12 +197,6 @@ class EntityController {
     }
     setSkeleton(skeleton) {
         this.skeleton = skeleton;
-        for (let boneGroup in Game.entityAnimationBones) {
-            this.animationBones[boneGroup] = new Array();
-            for (let i = 0; i < Game.entityAnimationBones[boneGroup].length; i++) {
-                this.animationBones[boneGroup].push(this.skeleton.getBoneIndexByName(Game.entityAnimationBones[boneGroup][i]));
-            }
-        }
         return this;
     }
     getSkeleton() {
