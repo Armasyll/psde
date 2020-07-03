@@ -34,7 +34,7 @@ class EntityController {
          */
         this.mesh = undefined;
         this.meshStages = [];
-        this.meshStage = 0;
+        this.currentMeshStage = 0;
         this.networkID = null;
         this.propertiesChanged = true;
         this.animatables = {};
@@ -158,7 +158,7 @@ class EntityController {
             this.addMeshStage(mesh.name);
             this.addMaterialStage(mesh.material.name);
             this.addTextureStage(mesh.material.diffuseTexture.name);
-            this.meshStage = 0;
+            this.currentMeshStage = 0;
         }
         if (updateChild) {
             //this.entity.setMeshID(mesh.id, !updateChild);
@@ -174,8 +174,8 @@ class EntityController {
             return this;
         }
         Game.removeMesh(this.mesh);
-        let mesh = Game.createCharacterMesh(this.entity.id, this.meshStage[index], this.meshStage[index], this.position, this.rotation, this.scaling);
-        this.meshStage = index;
+        let mesh = Game.createCharacterMesh(this.entity.id, this.currentMeshStage[index], this.currentMeshStage[index], this.position, this.rotation, this.scaling);
+        this.currentMeshStage = index;
         this.setMesh(mesh);
         return this;
     }
