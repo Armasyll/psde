@@ -1,7 +1,7 @@
 class AreaNode extends AbstractNode {
     constructor(id, position = BABYLON.Vector3.Zero(), weight = 20, diameter = 0.5, height = 1.0, shape = "CUBE") {
         super(id, position, weight);
-        this.mesh = Game.createAreaMesh(this.id, shape, diameter, height, this.position);
+        this.mesh = Game.createAreaMesh(this.id, shape, diameter, height, diameter, this.position);
         this.possibleTargets = {};
         this.activeTargets = {};
         this.locked = false;

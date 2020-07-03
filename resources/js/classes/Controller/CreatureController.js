@@ -62,6 +62,13 @@ class CreatureController extends EntityController {
         CreatureController.set(this.id, this);
     }
 
+    /**
+     * @override
+     */
+    createCollisionMesh() {
+        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "SPHERE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.position, this.mesh.rotation);
+        return this;
+    }
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }

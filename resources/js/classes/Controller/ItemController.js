@@ -10,6 +10,11 @@ class ItemController extends EntityController {
         ItemController.set(this.id, this);
     }
 
+    createCollisionMesh() {
+        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
+        return this;
+    }
+
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);

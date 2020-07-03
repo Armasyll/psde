@@ -2773,7 +2773,7 @@ class Game {
      * @param {BABYLON.Vector3} [rotation] 
      * @param {BABYLON.Vector3} [scaling] 
      */
-    static createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    static createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
         let mesh = null;
         switch (shape) {
             case "CYLINDER": {
@@ -2784,20 +2784,27 @@ class Game {
                 mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": 0, "diameterBottom": diameter, "height": height, "tessellation": 8}, Game.scene);
                 break;
             }
+            case "SPHERE": {
+                mesh = BABYLON.MeshBuilder.CreateSphere(id, {"diameter": diameter, "diameterY": height, "diameterZ": depth, "segments": 8}, Game.scene);
+                break;
+            }
             case "CUBE": {}
             default: {
-                mesh = BABYLON.MeshBuilder.CreateBox(id, {"size": diameter, "height": height}, Game.scene);
+                mesh = BABYLON.MeshBuilder.CreateBox(id, {"width": diameter, "height": height, "depth": depth}, Game.scene);
             }
         }
+
+        let pivotAt = new BABYLON.Vector3(0, height / 2, 0);
+        mesh.bakeTransformIntoVertices(BABYLON.Matrix.Translation(pivotAt.x, pivotAt.y, pivotAt.z));
+        
         mesh.id = id;
         mesh.name = id;
-        mesh.material = Game.loadedMaterials["missingMaterial"];
+        mesh.material = Game.loadedMaterials["collisionMaterial"];
         Game.setLoadedMesh(id, mesh);
-        Game.setMeshMaterial(mesh, Game.loadedMaterials["missingMaterial"]);
+        Game.setMeshMaterial(mesh, Game.loadedMaterials["collisionMaterial"]);
         if (position instanceof BABYLON.Vector3) {
             mesh.position.copyFrom(position);
         }
-        mesh.position.addInPlace(new BABYLON.Vector3(0, height/2, 0));
         if (rotation instanceof BABYLON.Vector3) {
             mesh.rotation.copyFrom(rotation);
         }
@@ -2806,6 +2813,7 @@ class Game {
         }
         mesh.isVisible = true;
         mesh.setEnabled(true);
+
         return mesh;
     }
     /**

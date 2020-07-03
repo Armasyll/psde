@@ -24,7 +24,7 @@ class EntityController {
         /**
          * @type AbstractEntity
          */
-        this.entity = undefined;
+        this.entity = null;
         this.texture = null;
         this.textureStages = [];
         this.material = null;
@@ -32,7 +32,11 @@ class EntityController {
         /**
          * @type BABYLON.AbstractMesh
          */
-        this.mesh = undefined;
+        this.mesh = null;
+        /**
+         * @type BABYLON.AbstractMesh
+         */
+        this.collisionMesh = null;
         this.meshStages = [];
         this.currentMeshStage = 0;
         this.networkID = null;
@@ -129,6 +133,10 @@ class EntityController {
     getMaterial() {
         return this.material;
     }
+    setCollisionMesh(mesh) {
+        this.collisionMesh = mesh;
+        this.mesh.setParent(this.collisionMesh);
+    }
     setMesh(mesh, updateChild = false) {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return this;
@@ -154,9 +162,15 @@ class EntityController {
             this.addTextureStage(mesh.material.diffuseTexture.name);
             this.currentMeshStage = 0;
         }
+        this.createCollisionMesh();
+        this.mesh.setParent(this.collisionMesh);
         if (updateChild) {
             //this.entity.setMeshID(mesh.id, !updateChild);
         }
+        return this;
+    }
+    createCollisionMesh() {
+        //this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
         return this;
     }
     setMeshStage(index = 0) {
@@ -534,6 +548,7 @@ class EntityController {
                 Game.removeMesh(this.mesh);
             }
         }
+        Game.removeMesh(this.collisionMesh);
         EntityController.remove(this.id);
         return null;
     }
