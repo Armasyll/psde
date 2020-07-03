@@ -70,12 +70,15 @@ class Entity extends AbstractEntity {
         return 0;
     }
 
-    setMeshID(meshID) {
+    setMeshID(meshID, updateChild = false) {
         if (Game.hasAvailableMesh(meshID)) {
             this.meshID = meshID;
         }
         else {
             this.meshID = "missingMesh";
+        }
+        if (updateChild) {
+            //this.controller.setMesh(Game.getMesh(meshID), !updateChild);
         }
         return 0;
     }

@@ -653,6 +653,8 @@ class Game {
         Game.texturesToCreateCounter = 0;
         Game.materialsToCreate = {};
         Game.materialsToCreateCounter = 0;
+        Game.entityStagesToCreate = {};
+        Game.entityStagesToCreateCounter = 0;
         /**
          * Map of Furniture that are waiting to be created
          * @type {<string, <string:id, string:name, string:mesh, string:texture, string:type, string:position, string:rotation, string:scaling, object:options>}
@@ -2946,6 +2948,74 @@ class Game {
                     Game.meshesToCreate[i][6]
                 );
                 Game.removeMeshToCreate(i);
+            }
+        }
+    }
+    static addEntityStageToCreate(entityControllerID, stageIndex) {
+        if (Game.hasEntityStageToCreate(entityControllerID, stageIndex)) {
+            return true;
+        }
+        let meshID = "";
+        let materialID = "";
+        if (EntityController.hasOwnProperty(entityControllerID)) {
+            let controller = EntityController.get(entityControllerID);
+            meshID = controller.getMeshStage(stageIndex);
+            materialID = controller.getMaterialStage(stageIndex);
+            Game.loadMesh(meshID);
+            if (!Game.hasLoadedMaterial(materialID)) {
+                Game.loadMaterial(materialID);
+            }
+        }
+        else {
+            return false;
+        }
+        if (!Game.entityStagesToCreate.hasOwnProperty(entityControllerID)) {
+            Game.entityStagesToCreate[entityControllerID] = {};
+        }
+        Game.entityStagesToCreate[entityControllerID][stageIndex] = {
+            0: meshID,
+            1: materialID
+        };
+        Game.entityStagesToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
+        return true;
+    }
+    static removeEntityStageToCreate(entityControllerID, stageIndex = 0) {
+        if (!Game.hasEntityStageToCreate(entityControllerID, stageIndex)) {
+            return true;
+        }
+        delete Game.entityStagesToCreate[entityControllerID][stageIndex][1];
+        delete Game.entityStagesToCreate[entityControllerID][stageIndex][0];
+        delete Game.entityStagesToCreate[entityControllerID][stageIndex];
+        if (Object.keys(Game.entityStagesToCreate[entityControllerID]).length == 0) {
+            delete Game.entityStagesToCreate[entityControllerID];
+        }
+        Game.entityStagesToCreateCounter -= 1;
+        return true;
+    }
+    static hasEntityStageToCreate(entityControllerID, stageIndex = 0) {
+        if (!Game.initialized) {
+            return false;
+        }
+        if (typeof Game.entityStagesToCreateCounter != "object") {
+            return true;
+        }
+        return Game.entityStagesToCreateCounter > 0 && Game.entityStagesToCreate.hasOwnProperty(entityControllerID) && Game.entityStagesToCreate[entityControllerID].hasOwnProperty(stageIndex);
+    }
+    static createBackloggedEntityStages() {
+        if (Game.entityStagesToCreateCounter == 0) {
+            return true;
+        }
+        for (let entityControllerID in Game.entityStagesToCreate) {
+            if (EntityController.has(entityControllerID)) {
+                let entityController = EntityController.get(entityControllerID);
+                for (let stageIndex in Game.entityStagesToCreate[entityControllerID]) {
+                    let entry = Game.entityStagesToCreate[entityControllerID][stageIndex];
+                    if (Game.loadedMeshes.hasOwnProperty(entry[0])) {
+                        entityController.setMeshStage(stageIndex);
+                        Game.removeEntityStageToCreate(entityControllerID, stageIndex);
+                    }
+                }
             }
         }
     }

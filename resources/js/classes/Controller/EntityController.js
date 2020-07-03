@@ -21,10 +21,20 @@ class EntityController {
         }
         this.id = id;
         this.debugMode = false;
+        /**
+         * @type AbstractEntity
+         */
         this.entity = undefined;
         this.texture = null;
+        this.textureStages = [];
         this.material = null;
+        this.materialStages = [];
+        /**
+         * @type BABYLON.AbstractMesh
+         */
         this.mesh = undefined;
+        this.meshStages = [];
+        this.meshStage = 0;
         this.networkID = null;
         this.propertiesChanged = true;
         this.animatables = {};
@@ -125,24 +135,60 @@ class EntityController {
     getMaterial() {
         return this.material;
     }
-    setMesh(mesh) {
-        if (mesh instanceof BABYLON.AbstractMesh) {
-            this.mesh = mesh;
-            if (this.mesh.material instanceof BABYLON.Material) {
-                this.setMaterial(this.mesh.material);
-                this.setTexture(this.mesh.material.diffuseTexture);
-            }
-            if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
-                this.setSkeleton(this.mesh.skeleton);
-            }
-            this.mesh.isPickable = true;
-            this.mesh.alwaysSelectAsActiveMesh = true;
-            this.mesh.controller = this;
-            this.propertiesChanged = true;
-            this.position.copyFrom(this.mesh.position);
-            this.rotation.copyFrom(this.mesh.rotation);
-            this.scaling.copyFrom(this.mesh.scaling);
+    setMesh(mesh, updateChild = false) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return this;
         }
+        this.mesh = mesh;
+        if (this.mesh.material instanceof BABYLON.Material) {
+            this.setMaterial(this.mesh.material);
+            this.setTexture(this.mesh.material.diffuseTexture);
+        }
+        if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
+            this.setSkeleton(this.mesh.skeleton);
+        }
+        this.mesh.isPickable = true;
+        this.mesh.alwaysSelectAsActiveMesh = true;
+        this.mesh.controller = this;
+        this.propertiesChanged = true;
+        this.position.copyFrom(this.mesh.position);
+        this.rotation.copyFrom(this.mesh.rotation);
+        this.scaling.copyFrom(this.mesh.scaling);
+        if (this.meshStages.length == 0) {
+            this.addMeshStage(mesh.name);
+            this.addMaterialStage(mesh.material.name);
+            this.addTextureStage(mesh.material.diffuseTexture.name);
+            this.meshStage = 0;
+        }
+        if (updateChild) {
+            //this.entity.setMeshID(mesh.id, !updateChild);
+        }
+        return this;
+    }
+    setMeshStage(index = 0) {
+        if (this.hasMesh() && this.meshStages[index] == this.mesh.name) {
+            return this;
+        }
+        if (!Game.hasLoadedMesh(this.meshStages[index])) {
+            Game.addEntityStageToCreate(this.id, index);
+            return this;
+        }
+        Game.removeMesh(this.mesh);
+        let mesh = Game.createCharacterMesh(this.entity.id, this.meshStage[index], this.meshStage[index], this.position, this.rotation, this.scaling);
+        this.meshStage = index;
+        this.setMesh(mesh);
+        return this;
+    }
+    addMeshStage(meshID) {
+        this.meshStages.push(meshID);
+        return this;
+    }
+    addMaterialStage(materialID) {
+        this.materialStages.push(materialID);
+        return this;
+    }
+    addTextureStage(textureID) {
+        this.textureStages.push(textureID);
         return this;
     }
     /**
