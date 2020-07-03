@@ -18,8 +18,14 @@ class Entity extends AbstractEntity {
         this.price = 0;
         this.priceModifier = 0;
         this.meshID = "missingMesh";
+        this.meshStages = [];
+        this.currentMeshStage = 0;
         this.textureID = "missingTexture";
+        this.textureStages = [];
+        this.currentTextureStage = 0;
         this.materialID = "missingMaterial";
+        this.materialStages = [];
+        this.currentMaterialStage = 0;
 
         this.instances = {};
 
@@ -77,8 +83,12 @@ class Entity extends AbstractEntity {
         else {
             this.meshID = "missingMesh";
         }
-        if (updateChild) {
-            //this.controller.setMesh(Game.getMesh(meshID), !updateChild);
+        if (this.meshStages.length == 0) {
+            this.addMeshStage(meshID);
+            this.currentMeshStage = 0;
+        }
+        if (updateChild && this.hasController()) {
+            this.controller.setMesh(Game.getMesh(meshID), false);
         }
         return 0;
     }
@@ -92,6 +102,10 @@ class Entity extends AbstractEntity {
         else {
             this.textureID = "missingTexture";
         }
+        if (this.textureStages.length == 0) {
+            this.addTextureStage(textureID);
+            this.currentTextureStage = 0;
+        }
         return 0;
     }
     getTextureID() {
@@ -104,10 +118,58 @@ class Entity extends AbstractEntity {
         else {
             this.materialID = "missingMaterial";
         }
+        if (this.materialStages.length == 0) {
+            this.addMaterialStage(materialID);
+            this.currentMaterialStage = 0;
+        }
         return 0;
     }
     getMaterialID() {
         return this.materialID;
+    }
+    setMeshStage(index = 0, updateChild = true) {
+        if (!this.meshStages.indexOf(index) == -1) {
+            return 1;
+        }
+        if (this.currentMeshStage == index) {
+            return 0;
+        }
+        this.currentMeshStage = index;
+        this.setMeshID(this.meshStages[index]);
+        if (updateChild && this.hasController()) {
+            this.controller.setMeshStage(index, false);
+        }
+        return this;
+    }
+    addMeshStage(meshID) {
+        this.meshStages.push(meshID);
+        return this;
+    }
+    getMeshStage(index) {
+        if (!this.meshStages.hasOwnProperty(index)) {
+            index = this.currentMeshStage;
+        }
+        return this.meshStages[index];
+    }
+    addMaterialStage(materialID) {
+        this.materialStages.push(materialID);
+        return this;
+    }
+    getMaterialStage(index = this.currentMaterialStage) {
+        if (!this.materialStages.hasOwnProperty(index)) {
+            index = this.currentMaterialStage;
+        }
+        return this.materialStages[index];
+    }
+    addTextureStage(textureID) {
+        this.textureStages.push(textureID);
+        return this;
+    }
+    getTextureStage(index = this.currentTextureStage) {
+        if (!this.textureStages.hasOwnProperty(index)) {
+            index = this.currentTextureStage;
+        }
+        return this.textureStages[index];
     }
 
     /**
@@ -333,6 +395,12 @@ class Entity extends AbstractEntity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("meshStages")) this.meshStages = [...entity.meshStages];
+        if (entity.hasOwnProperty("currentMeshStage")) this.currentMeshStage = entity.currentMeshStage;
+        if (entity.hasOwnProperty("textureStages")) this.textureStages = [...entity.textureStages];
+        if (entity.hasOwnProperty("currentTextureStage")) this.currentTextureStage = entity.currentTextureStage;
+        if (entity.hasOwnProperty("materialStages")) this.materialStages = [...entity.materialStages];
+        if (entity.hasOwnProperty("currentMaterialStage")) this.currentMaterialStage = entity.currentMaterialStage;
         if (entity.hasOwnProperty("meshID")) this.setMeshID(entity.meshID);
         if (entity.hasOwnProperty("textureID")) this.setTextureID(entity.textureID);
         if (entity.hasOwnProperty("materialID")) this.setMaterialID(entity.materialID);

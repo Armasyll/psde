@@ -7,9 +7,9 @@ class CharacterControllerRigidBody extends CharacterController {
         this.startPosition = this.mesh.position.clone();
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
-        this.crawlspeed = 1.0 * this.scaling.z;
-        this.walkSpeed = 1.4 * this.scaling.z;
-        this.runSpeed = 3.2 * this.scaling.z; // if it's a fox mesh
+        this.crawlspeed = 1.0 * this.getScaling().z;
+        this.walkSpeed = 1.4 * this.getScaling().z;
+        this.runSpeed = 3.2 * this.getScaling().z; // if it's a fox mesh
         this.lookAtCtl = new BABYLON.BoneLookController(
             this.mesh,
             this.getBoneByName("head"),

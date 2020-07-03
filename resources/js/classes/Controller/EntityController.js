@@ -27,8 +27,10 @@ class EntityController {
         this.entity = null;
         this.texture = null;
         this.textureStages = [];
+        this.currentTextureStage = 0;
         this.material = null;
         this.materialStages = [];
+        this.currentMaterialStage = 0;
         /**
          * @type BABYLON.AbstractMesh
          */
@@ -57,15 +59,8 @@ class EntityController {
         this.animated = false;
         this.groundRay = null;
         this.currentCell = null;
-        this.position = BABYLON.Vector3.Zero();
-        this.rotation = BABYLON.Vector3.Zero();
-        this.scaling = BABYLON.Vector3.One();
-        this.setMesh(mesh);
         this.setEntity(entity);
-        this.entity.setController(this);
-        if (this.entity instanceof Entity) {
-            this.entity.setMeshID(this.mesh.name);
-        }
+        this.setMesh(mesh);
         Game.entityLocRotWorker.postMessage({
             cmd:"set",
             msg:[
@@ -86,27 +81,21 @@ class EntityController {
     }
     getPosition() {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            if (!this.mesh.position.equals(this.position)) {
-                this.position.copyFrom(this.mesh.position);
-            }
+            return this.mesh.position;
         }
-        return this.position;
+        return BABYLON.Vector3.Zero();
     }
     getRotation() {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            if (!this.mesh.rotation.equals(this.rotation)) {
-                this.rotation.copyFrom(this.mesh.rotation);
-            }
+            return this.mesh.rotation;
         }
-        return this.rotation;
+        return BABYLON.Vector3.Zero();
     }
     getScaling() {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            if (!this.mesh.scaling.equals(this.scaling)) {
-                this.scaling.copyFrom(this.mesh.scaling);
-            }
+            return this.mesh.scaling
         }
-        return this.scaling;
+        return BABYLON.Vector3.One();
     }
     setNetworkID(networkId) {
         this.networkID = networkId;
@@ -153,9 +142,6 @@ class EntityController {
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.controller = this;
         this.propertiesChanged = true;
-        this.position.copyFrom(this.mesh.position);
-        this.rotation.copyFrom(this.mesh.rotation);
-        this.scaling.copyFrom(this.mesh.scaling);
         if (this.meshStages.length == 0) {
             this.addMeshStage(mesh.name);
             this.addMaterialStage(mesh.material.name);
@@ -164,8 +150,8 @@ class EntityController {
         }
         this.createCollisionMesh();
         this.mesh.setParent(this.collisionMesh);
-        if (updateChild) {
-            //this.entity.setMeshID(mesh.id, !updateChild);
+        if (updateChild && this.hasEntity()) {
+            this.entity.setMeshID(mesh.id, false);
         }
         return this;
     }
@@ -173,31 +159,58 @@ class EntityController {
         //this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
         return this;
     }
-    setMeshStage(index = 0) {
-        if (this.hasMesh() && this.meshStages[index] == this.mesh.name) {
+    setMeshStage(index = 0, updateChild = false) {
+        if (!this.meshStages.hasOwnProperty(index)) {
+            return this;
+        }
+        if (this.currentMeshStage == index) {
             return this;
         }
         if (!Game.hasLoadedMesh(this.meshStages[index])) {
             Game.addEntityStageToCreate(this.id, index);
             return this;
         }
-        Game.removeMesh(this.mesh);
-        let mesh = Game.createCharacterMesh(this.entity.id, this.currentMeshStage[index], this.currentMeshStage[index], this.position, this.rotation, this.scaling);
         this.currentMeshStage = index;
+        let position = this.getPosition();
+        let rotation = this.getRotation();
+        let scaling = this.getScaling();
+        Game.removeMesh(this.mesh);
+        let mesh = Game.createCharacterMesh(this.entity.id, this.meshStages[index], this.meshStages[index], position, rotation, scaling);
         this.setMesh(mesh);
+        if (updateChild && this.hasEntity()) {
+            this.entity.setMeshStage(index, false);
+        }
         return this;
     }
     addMeshStage(meshID) {
         this.meshStages.push(meshID);
         return this;
     }
+    getMeshStage(index = this.currentMeshStage) {
+        if (!this.meshStages.hasOwnProperty(index)) {
+            index = this.currentMeshStage;
+        }
+        return this.meshStages[index];
+    }
     addMaterialStage(materialID) {
         this.materialStages.push(materialID);
         return this;
     }
+    getMaterialStage(index = this.currentMaterialStage) {
+        if (!this.materialStages.hasOwnProperty(index)) {
+            index = this.currentMaterialStage;
+        }
+        return this.materialStages[index];
+    }
     addTextureStage(textureID) {
         this.textureStages.push(textureID);
         return this;
+    }
+    getTextureStage(index = this.currentTextureStage) {
+        if (!this.textureStages.hasOwnProperty(index)) {
+            index = this.currentTextureStage;
+        }
+        return this.textureStages[index];
     }
     /**
      * Returns the primary mesh associated with this controller.
@@ -223,7 +236,18 @@ class EntityController {
         if (entity instanceof AbstractEntity) {
             this.entity = entity;
             this.propertiesChanged = true;
+            entity.setController(this);
+            if (this.mesh instanceof BABYLON.AbstractMesh) {
+                entity.setMeshID(this.mesh.name);
+            }
+            if (entity instanceof Entity) {
+                this.meshStages = [...entity.meshStages];
+                this.materialStages = [...entity.materialStages];
+                this.textureStages = [...entity.textureStages];
+                this.setMeshStage(entity.currentMeshStage, false);
+            }
         }
+        return this;
     }
     getEntity() {
         return this.entity;
