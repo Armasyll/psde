@@ -75,9 +75,6 @@ class Game {
          * @type {<string, string>}
          */
         Game.meshLocations = {
-            "missingMesh": null,
-            "loadingMesh": null,
-            "cameraFocus": null,
             "block": "resources/meshes/static/blocks.babylon",
             "blockSlabHorizontal": "resources/meshes/static/blocks.babylon",
             "blockSlabVertical": "resources/meshes/static/blocks.babylon",
@@ -1723,6 +1720,13 @@ class Game {
                 case "foxF":
                 case "foxSkeletonN": {
                     Game.importMeshes("resources/meshes/hitboxes/canine.babylon");
+                    break;
+                }
+                case "missingMesh":
+                case "loadingMesh":
+                case "cameraFocus": {
+                    return 1;
+                    break;
                 }
             }
             Game.importMeshes(Game.meshLocations[meshID]);
@@ -3284,6 +3288,9 @@ class Game {
         }
     }
     static addAttachmentToCreate(attachmentIndexID, attachToController, meshID, materialID, bone, position, rotation, scaling, options) {
+        if (!Game.hasMesh(meshID)) {
+            return false;
+        }
         if (Game.hasAttachmentToCreate(attachmentIndexID)) {
             return true;
         }
@@ -3353,6 +3360,9 @@ class Game {
         );
     }
     static importMeshes(file, meshIDs = undefined, callback = undefined) {
+        if (file == undefined) {
+            return 1;
+        }
         if (Game.loadedFiles.has(file)) {
             return 0;
         }

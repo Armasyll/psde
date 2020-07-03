@@ -368,7 +368,6 @@ class CreatureController extends EntityController {
             scaling = BABYLON.Vector3.One();
         }
         if (!(Game.hasLoadedMesh(meshID))) {
-            Game.loadMesh(meshID);
             Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
             if (CreatureController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
             return this;
