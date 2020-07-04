@@ -23,6 +23,16 @@ class FurnitureController extends EntityController {
         this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
         return this;
     }
+    createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            return 1;
+        }
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
+        }
+        return Game.createFurnitureMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+    }
 
     moveAV() { // animate it :V
         /*var anim = null;

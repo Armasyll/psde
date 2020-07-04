@@ -69,6 +69,23 @@ class CreatureController extends EntityController {
         this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "SPHERE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.position, this.mesh.rotation);
         return this;
     }
+    createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            return 1;
+        }
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
+        }
+        return Game.createCharacterMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+    }
+    createAttachedMeshes() {
+        this.generateOrganMeshes();
+        this.generateCosmeticMeshes();
+        this.generateEquippedMeshes();
+        return this;
+    }
+
     anyMovement() {
         return (this.key.forward || this.key.backward || this.key.turnLeft || this.key.turnRight || this.key.strafeLeft || this.key.strafeRight);
     }

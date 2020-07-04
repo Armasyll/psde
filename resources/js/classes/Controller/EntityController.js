@@ -159,6 +159,16 @@ class EntityController {
         //this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
         return this;
     }
+    createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
+        if (this.mesh instanceof BABYLON.AbstractMesh) {
+            return 1;
+        }
+        id = Tools.filterID(id);
+        if (typeof id != "string") {
+            id = Tools.genUUIDv4();
+        }
+        return Game.createMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+    }
     setMeshStage(index = 0, updateChild = false) {
         if (!this.meshStages.hasOwnProperty(index)) {
             return this;
@@ -170,16 +180,20 @@ class EntityController {
             Game.addEntityStageToCreate(this.id, index);
             return this;
         }
-        this.currentMeshStage = index;
+        this.setLocked(true);
         let position = this.getPosition();
         let rotation = this.getRotation();
         let scaling = this.getScaling();
+        this.currentMeshStage = index;
+        this.detachFromAllBones();
         Game.removeMesh(this.mesh);
-        let mesh = Game.createCharacterMesh(this.entity.id, this.meshStages[index], this.meshStages[index], position, rotation, scaling);
+        let mesh = this.createMesh(undefined, index, position, rotation, scaling);
         this.setMesh(mesh);
         if (updateChild && this.hasEntity()) {
             this.entity.setMeshStage(index, false);
         }
+        this.createAttachedMeshes();
+        this.setLocked(false);
         return this;
     }
     addMeshStage(meshID) {
@@ -519,6 +533,13 @@ class EntityController {
         this.groundRay.origin = this.mesh.position;
         this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
         return this;
+    }
+
+    createAttachedMeshes() {
+        return this;
+    }
+    detachFromAllBones() {
+        return [];
     }
 
     isEnabled() {
