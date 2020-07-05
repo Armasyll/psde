@@ -455,7 +455,8 @@ class Game {
             "wheat_stage_4": "resources/images/textures/blocks/wheat_stage_4.png",
             "wheat_stage_5": "resources/images/textures/blocks/wheat_stage_5.png",
             "wheat_stage_6": "resources/images/textures/blocks/wheat_stage_6.png",
-            "wheat_stage_7": "resources/images/textures/blocks/wheat_stage_7.png"
+            "wheat_stage_7": "resources/images/textures/blocks/wheat_stage_7.png",
+            "grass01": "resources/images/textures/blocks/grass_by_smeggo.png"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
