@@ -529,9 +529,10 @@ class EntityController {
         }
         if (!(this.groundRay instanceof BABYLON.Ray)) {
             this.groundRay = new BABYLON.Ray(this.mesh.position, this.mesh.position.add(BABYLON.Vector3.Down()), 0.01);
+            this.groundRay.direction = BABYLON.Vector3.Down();
         }
         this.groundRay.origin = this.mesh.position;
-        this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
+        //this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
         return this;
     }
 

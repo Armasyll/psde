@@ -183,7 +183,7 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.intendedMovement.copyFrom(this.mesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
             }
             // Start Mitigate jittering in Y direction
-            if (Game.useControllerGroundRay) {
+            /*if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
                 let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
                     if (mesh.isPickable && mesh.checkCollisions) {
@@ -192,11 +192,12 @@ class CharacterControllerRigidBody extends CharacterController {
                     return false;
                 });
                 if (hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                    console.log(hit);
+                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
                         this.intendedMovement.y = 0;
                     }
                 }
-            }
+            }*/
             // End Mitigate jittering in Y direction
             this.mesh.moveWithCollisions(this.intendedMovement);
             if (this.mesh.position.y > this.startPosition.y) {
@@ -219,9 +220,9 @@ class CharacterControllerRigidBody extends CharacterController {
                     }
                 }
             }
-            else if ((this.mesh.position.y) < this.startPosition.y) {
+            else if (this.mesh.position.y < this.startPosition.y) {
                 let actDisp = this.mesh.position.subtract(this.startPosition);
-                if (!(Game.Tools.areVectorsEqual(actDisp, this.intendedMovement, 0.001))) {
+                if (!(Game.Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
                     if (Game.Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endFreeFall();
                     }
@@ -231,8 +232,10 @@ class CharacterControllerRigidBody extends CharacterController {
                     }
                 }
                 else {
-                    this.falling = true;
                     this.fallFrameCount++;
+                    if (this.fallFrameCount > 60) {
+                        this.falling = true;
+                    }
                 }
             }
             else {
