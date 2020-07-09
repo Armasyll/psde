@@ -15,7 +15,7 @@ class CreatureController extends EntityController {
         }
         this.focus = undefined;
         this.root = undefined;
-        this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.mesh.calcMovePOV(0,0,1)), 2 * this.mesh.scaling.y);
+        this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), 2 * this.collisionMesh.scaling.y);
         this.targetRayHelper = undefined;
         this.grounded = false;
         this.jumping = false;
@@ -62,11 +62,59 @@ class CreatureController extends EntityController {
         CreatureController.set(this.id, this);
     }
 
+    hasLookController() {
+        if (!this.enabled) {
+            return false;
+        }
+        return this.lookController instanceof BABYLON.BoneLookController;
+    }
+    createLookController(bone = "head") {
+        if (!this.hasBone(bone)) {
+            return this;
+        }
+        let lookController = new BABYLON.BoneLookController(
+            this.mesh,
+            this.getBoneByName(bone),
+            this.targetRay.direction.add(this.targetRay.origin),
+            {
+                slerpAmount:0.05,
+                minPitch:BABYLON.Tools.ToRadians(-45),
+                maxPitch:BABYLON.Tools.ToRadians(45),
+                minYaw:BABYLON.Tools.ToRadians(-45),
+                maxYaw:BABYLON.Tools.ToRadians(45),
+            }
+        );
+        this.lookController = lookController;
+        return this;
+    }
     /**
      * @override
      */
     createCollisionMesh() {
-        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "SPHERE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.position, this.mesh.rotation);
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            if (this.hasMesh()) {
+                this.mesh.setParent(null);
+            }
+            Game.removeMesh(this.collisionMesh);
+        }
+        this.collisionMesh = Game.createAreaMesh(
+            String(this.id).concat("-collisionMesh"),
+            "CUBE",
+            this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2,
+            this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2,
+            this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2,
+            this.mesh.position,
+            this.mesh.rotation
+        );
+        this.collisionMesh.controller = this;
+        this.collisionMesh.checkCollisions = true;
+        if (this.hasMesh()) {
+            this.mesh.setParent(this.collisionMesh);
+        }
+        this.collisionMesh.ellipsoidOffset.y = this.mesh.getBoundingInfo().boundingBox.extendSize.y;
+        this.collisionMesh.ellipsoid.x = this.mesh.getBoundingInfo().boundingBox.extendSize.x;
+        this.collisionMesh.ellipsoid.y = this.mesh.getBoundingInfo().boundingBox.extendSize.y;
+        this.collisionMesh.ellipsoid.z = this.mesh.getBoundingInfo().boundingBox.extendSize.x;
         return this;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
@@ -318,6 +366,21 @@ class CreatureController extends EntityController {
         return this;
     }
 
+    hasBone(bone) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return false;
+        }
+        if (bone instanceof BABYLON.Bone) {
+            return this.skeleton.bones[this.skeleton.getBoneIndexByName(bone.id)] >= 0;
+        }
+        else if (typeof bone == "string") {
+            return this.skeleton.getBoneIndexByName(bone) >= 0;
+        }
+        else if (typeof bone == "number") {
+            return this.skeleton.bones.hasOwnProperty(number);
+        }
+        return false;
+    }
     getBone(bone) {
         if (CreatureController.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
@@ -367,11 +430,11 @@ class CreatureController extends EntityController {
             if (CreatureController.debugMode) console.log(`Couldn't find skeleton`);
             return this;
         }
-        let bone = this.getBone(boneID);
-        if (!(bone instanceof BABYLON.Bone)) {
+        if (!this.hasBone(boneID)) {
             if (CreatureController.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return this;
         }
+        let bone = this.getBone(boneID);
         if (!(position instanceof BABYLON.Vector3)) {
             position = Tools.filterVector(position);
         }
@@ -489,9 +552,13 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        bone = this.getBone(bone);
         if (!(bone instanceof BABYLON.Bone)) {
-            return this;
+            if (this.hasBone(bone)) {
+                bone = this.getBone(bone);
+            }
+            else {
+                return this;
+            }
         }
         if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
             return this;
@@ -531,7 +598,14 @@ class CreatureController extends EntityController {
         if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
             return this;
         }
-        bone = this.getBone(bone);
+        if (!(bone instanceof BABYLON.Bone)) {
+            if (this.hasBone(bone)) {
+                bone = this.getBone(bone);
+            }
+            else {
+                bone = null;
+            }
+        }
         if (bone instanceof BABYLON.Bone) {
             this._meshesAttachedToBones[bone.id][mesh.id].controller = null;
             delete this._meshesAttachedToBones[bone.id][mesh.id];
@@ -604,11 +678,11 @@ class CreatureController extends EntityController {
         if (!(this.targetRay instanceof BABYLON.Ray)) {
             return 2;
         }
-        if (!this.hasSkeleton() || this.mesh.skeleton.getBoneIndexByName("FOCUS") == -1) {
-            this.targetRay.origin = this.mesh.position.add(this.mesh.getBoundingInfo().boundingBox.center);
+        if (!this.hasSkeleton() || !this.hasBone("FOCUS")) {
+            this.targetRay.origin = this.collisionMesh.position.add(this.collisionMesh.getBoundingInfo().boundingBox.center);
             return 1;
         }
-        this.targetRay.origin = this.mesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.mesh.scaling));
+        this.targetRay.origin = this.collisionMesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.collisionMesh.scaling));
         return 0;
     }
 

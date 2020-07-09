@@ -4364,18 +4364,12 @@ class Game {
             Game.assignBoxPhysicsToMesh(instancedMesh, options);
         }
         else {
-            if (options.hasOwnProperty("checkCollisions")) {
-                //Game.assignBoxCollisionToMesh(instancedMesh);
-                instancedMesh.checkCollisions = options["checkCollisions"] == true;
-            }
-            else {
-                instancedMesh.checkCollisions = true;
-            }
             /*
                 Using X for Z size 'cause the tail throws my collision box size off
              */
-            instancedMesh.ellipsoid.set(instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.x, instancedMesh.getBoundingInfo().boundingBox.extendSize.y * scaling.y, instancedMesh.getBoundingInfo().boundingBox.extendSize.x * scaling.z);
-            instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
+            let boundingInfo = instancedMesh.getBoundingInfo();
+            instancedMesh.ellipsoid.set(boundingInfo.boundingBox.extendSize.x * scaling.x, boundingInfo.boundingBox.extendSize.y * scaling.y, boundingInfo.boundingBox.extendSize.x * scaling.z);
+            //instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
         }
         return instancedMesh;
     }

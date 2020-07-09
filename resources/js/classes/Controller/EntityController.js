@@ -66,8 +66,8 @@ class EntityController {
             msg:[
                 this.entity.getID(),
                 new Date().getTime(),
-                this.mesh.position.asArray(),
-                this.mesh.rotation.asArray()
+                this.getPosition().asArray(),
+                this.getRotation().asArray()
             ]
         });
         EntityController.set(this.id, this);
@@ -80,20 +80,20 @@ class EntityController {
         return this.id;
     }
     getPosition() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.position;
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.position;
         }
         return BABYLON.Vector3.Zero();
     }
     getRotation() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.rotation;
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.rotation;
         }
         return BABYLON.Vector3.Zero();
     }
     getScaling() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.scaling
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.scaling
         }
         return BABYLON.Vector3.One();
     }
@@ -130,6 +130,9 @@ class EntityController {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return this;
         }
+        if (this.mesh instanceof BABYLON.AbstractMesh && this.mesh != mesh) {
+            this.unsetMesh(this.mesh);
+        }
         this.mesh = mesh;
         if (this.mesh.material instanceof BABYLON.Material) {
             this.setMaterial(this.mesh.material);
@@ -149,15 +152,37 @@ class EntityController {
             this.currentMeshStage = 0;
         }
         this.createCollisionMesh();
-        this.mesh.setParent(this.collisionMesh);
+        if (this.hasCollisionMesh()) {
+            this.mesh.setParent(this.collisionMesh);
+        }
         if (updateChild && this.hasEntity()) {
             this.entity.setMeshID(mesh.id, false);
+        }
+        return this;
+    }
+    unsetMesh(mesh = this.mesh) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return this;
+        }
+        if (this.hasMesh()) {
+            mesh.controller = null;
+            mesh.setParent(null);
+        }
+        if (this.hasCollisionMesh()) {
+            this.collisionMesh.dispose();
+            this.collisionMesh = null;
         }
         return this;
     }
     createCollisionMesh() {
         //this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
         return this;
+    }
+    hasCollisionMesh() {
+        if (!this.enabled) {
+            return false;
+        }
+        return this.collisionMesh instanceof BABYLON.AbstractMesh;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
@@ -292,7 +317,7 @@ class EntityController {
                 return this;
             }
         }
-        this.mesh.setParent(mesh);
+        this.collisionMesh.setParent(mesh);
         return this;
     }
     setParent(controller = null) {
@@ -307,14 +332,20 @@ class EntityController {
                 return this;
             }
         }
-        this.mesh.setParent(controller.getMesh());
+        this.collisionMesh.setParent(controller.getMesh());
         return this;
     }
     getParent() {
-        return this.mesh.parent;
+        return this.collisionMesh.parent;
     }
     removeParent() {
-        this.mesh.setParent(null);
+        this.collisionMesh.setParent(null);
+        return this;
+    }
+    createLookController() {
+        return false;
+    }
+    createLookController() {
         return this;
     }
 
@@ -503,7 +534,7 @@ class EntityController {
      * @returns {Set<BABYLON.AbstractMesh>}
      */
     getMeshes() {
-        return [this.mesh];
+        return [this.collisionMesh, this.mesh];
     }
     setCell(cell) {
         if (cell instanceof Cell) {
@@ -528,11 +559,11 @@ class EntityController {
             return this;
         }
         if (!(this.groundRay instanceof BABYLON.Ray)) {
-            this.groundRay = new BABYLON.Ray(this.mesh.position, this.mesh.position.add(BABYLON.Vector3.Down()), 0.01);
+            this.groundRay = new BABYLON.Ray(this.collisionMesh.position, this.collisionMesh.position.add(BABYLON.Vector3.Down()), 0.01);
             this.groundRay.direction = BABYLON.Vector3.Down();
         }
-        this.groundRay.origin = this.mesh.position;
-        //this.groundRay.direction = this.mesh.position.add(BABYLON.Vector3.Down());
+        this.groundRay.origin = this.collisionMesh.position;
+        //this.groundRay.direction = this.collisionMesh.position.add(BABYLON.Vector3.Down());
         return this;
     }
 
@@ -581,10 +612,6 @@ class EntityController {
         if (this.hasEntity) {
             this.entity.removeController();
         }
-        /*if (this.mesh instanceof BABYLON.AbstractMesh) {
-            this.mesh.controller = null;
-            Game.removeMesh(this.mesh);
-        }*/
         for (let animation in this.animations) {
             this.animations[animation] = null;
             delete this.animations[animation]

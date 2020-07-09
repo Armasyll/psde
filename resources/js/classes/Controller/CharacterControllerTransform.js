@@ -13,10 +13,10 @@ class CharacterControllerTransform extends CharacterController {
         this.stepOffset = 0.25;
         this.vMoveTot = 0;
         this.vMovStartPos = BABYLON.Vector3.Zero();
-        this.walkSpeed = 0.68 * this.mesh.scaling.z;
-        this.runSpeed = 3.2 * this.mesh.scaling.z;
+        this.walkSpeed = 0.68 * this.collisionMesh.scaling.z;
+        this.runSpeed = 3.2 * this.collisionMesh.scaling.z;
         this.sprintSpeed = this.runSpeed * 2;
-        this.jumpSpeed = this.mesh.scaling.y * 4;
+        this.jumpSpeed = this.collisionMesh.scaling.y * 4;
         this.moveVector = new BABYLON.Vector3();
         this.avStartPos = BABYLON.Vector3.Zero();
         this.freeFallDist = 0;
@@ -30,7 +30,7 @@ class CharacterControllerTransform extends CharacterController {
         this.groundFrameMax = 10;
     }
     moveAV() {
-        if (!(this.mesh instanceof BABYLON.Mesh)) {
+        if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
             return this;
         }
         if (this.locked) {
@@ -44,7 +44,7 @@ class CharacterControllerTransform extends CharacterController {
         }
         let anim = this.idle;
         if (this.key.jump && !this.falling) {
-            this.avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.collisionMesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.grounded = false;
@@ -52,7 +52,7 @@ class CharacterControllerTransform extends CharacterController {
             anim = this.doJump();
         }
         else if (this.anyMovement() || this.falling) {
-            this.avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.collisionMesh.position);
             this.entity.removeFurniture();
             this.entity.setStance(StanceEnum.STAND);
             this.grounded = false;
@@ -62,13 +62,13 @@ class CharacterControllerTransform extends CharacterController {
                 cmd:"setLocRot",
                 msg:[
                     this.entity.getID(),
-                    this.mesh.position.asArray(),
-                    this.mesh.rotation.asArray()
+                    this.collisionMesh.position.asArray(),
+                    this.collisionMesh.rotation.asArray()
                 ]
             });
         }
         else if (!this.falling) {
-            this.avStartPos.copyFrom(this.mesh.position);
+            this.avStartPos.copyFrom(this.collisionMesh.position);
             this.entity.removeFurniture();
             anim = this.doIdle();
         }
@@ -121,7 +121,7 @@ class CharacterControllerTransform extends CharacterController {
         let dt = Game.engine.getDeltaTime() / 1000;
         let anim = this.runJump;
         if (this.jumpTime === 0) {
-            this.jumpStartPosY = this.mesh.position.y;
+            this.jumpStartPosY = this.collisionMesh.position.y;
         }
         let js = this.jumpSpeed - this.gravity * this.jumpTime;
         let jumpDist = js * dt * power - 0.5 * this.gravity * dt * dt;
@@ -129,7 +129,7 @@ class CharacterControllerTransform extends CharacterController {
         let forwardDist = 0;
         let disp = BABYLON.Vector3.Zero();
         if (this == Game.player.getController() && Game.enableCameraAvatarRotation) {
-            this.mesh.rotation.y = -4.69 - Game.camera.alpha;
+            this.collisionMesh.rotation.y = -4.69 - Game.camera.alpha;
         }
         if (this.sprinting || this.running || this.walking) {
             if (this.running) {
@@ -151,13 +151,13 @@ class CharacterControllerTransform extends CharacterController {
             disp = new BABYLON.Vector3(0, jumpDist, 0);
             anim = this.idleJump;
         }
-        this.mesh.moveWithCollisions(disp);
+        this.collisionMesh.moveWithCollisions(disp);
         if (jumpDist < 0) {
-            if ((this.mesh.position.y > this.avStartPos.y) || ((this.mesh.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
+            if ((this.collisionMesh.position.y > this.avStartPos.y) || ((this.collisionMesh.position.y === this.avStartPos.y) && (disp.length() > 0.001))) {
                 this.endJump();
             }
-            else if (this.mesh.position.y < this.jumpStartPosY) {
-                let actDisp = this.mesh.position.subtract(this.avStartPos);
+            else if (this.collisionMesh.position.y < this.jumpStartPosY) {
+                let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
                     if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endJump();
@@ -249,9 +249,9 @@ class CharacterControllerTransform extends CharacterController {
                 moving = false;
                 dist = 0;
             }
-            this.moveVector = this.mesh.calcMovePOV(0, -this.freeFallDist, dist);
+            this.moveVector = this.collisionMesh.calcMovePOV(0, -this.freeFallDist, dist);
         }
-        this.mesh.rotation.y = direction + (-Math.atan2((this.mesh.position.z - Game.camera.position.z), (this.mesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90));
+        this.collisionMesh.rotation.y = direction + (-Math.atan2((this.collisionMesh.position.z - Game.camera.position.z), (this.collisionMesh.position.x - Game.camera.position.x)) - BABYLON.Tools.ToRadians(90));
         if (moving && this.moveVector.length() > 0.001) {
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
@@ -263,30 +263,30 @@ class CharacterControllerTransform extends CharacterController {
                     return false;
                 });
                 if (hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.mesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                    if (Game.Tools.arePointsEqual(this.collisionMesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
                         this.moveVector.y = 0;
                     }
                 }
             }
             // End Mitigate jittering in Y direction
-            this.mesh.moveWithCollisions(this.moveVector);
-            if (this.mesh.position.y > this.avStartPos.y) {
-                let actDisp = this.mesh.position.subtract(this.avStartPos);
+            this.collisionMesh.moveWithCollisions(this.moveVector);
+            if (this.collisionMesh.position.y > this.avStartPos.y) {
+                let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
                 let slope = Tools.verticalSlope(actDisp);
                 if (slope >= this.maxSlopeLimit) {
                     if (this.stepOffset > 0) {
                         if (this.vMoveTot == 0) {
                             this.vMovStartPos.copyFrom(this.avStartPos);
                         }
-                        this.vMoveTot = this.vMoveTot + (this.mesh.position.y - this.avStartPos.y);
+                        this.vMoveTot = this.vMoveTot + (this.collisionMesh.position.y - this.avStartPos.y);
                         if (this.vMoveTot > this.stepOffset) {
                             this.vMoveTot = 0;
-                            this.mesh.position.copyFrom(this.vMovStartPos);
+                            this.collisionMesh.position.copyFrom(this.vMovStartPos);
                             this.endFreeFall();
                         }
                     }
                     else {
-                        this.mesh.position.copyFrom(this.avStartPos);
+                        this.collisionMesh.position.copyFrom(this.avStartPos);
                         this.endFreeFall();
                     }
                 }
@@ -301,8 +301,8 @@ class CharacterControllerTransform extends CharacterController {
                     }
                 }
             }
-            else if ((this.mesh.position.y) < this.avStartPos.y) {
-                let actDisp = this.mesh.position.subtract(this.avStartPos);
+            else if ((this.collisionMesh.position.y) < this.avStartPos.y) {
+                let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
                 if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
                     if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endFreeFall();
@@ -357,16 +357,16 @@ class CharacterControllerTransform extends CharacterController {
             return anim;
         }
         let disp = new BABYLON.Vector3(0, -this.freeFallDist, 0);
-        this.mesh.moveWithCollisions(disp);
-        if ((this.mesh.position.y > this.avStartPos.y) || (this.mesh.position.y === this.avStartPos.y)) {
+        this.collisionMesh.moveWithCollisions(disp);
+        if ((this.collisionMesh.position.y > this.avStartPos.y) || (this.collisionMesh.position.y === this.avStartPos.y)) {
             this.groundIt();
         }
-        else if (this.mesh.position.y < this.avStartPos.y) {
-            let actDisp = this.mesh.position.subtract(this.avStartPos);
+        else if (this.collisionMesh.position.y < this.avStartPos.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
             if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
                 if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                     this.groundIt();
-                    this.mesh.position.copyFrom(this.avStartPos);
+                    this.collisionMesh.position.copyFrom(this.avStartPos);
                 }
                 else {
                     this.unGroundIt();
