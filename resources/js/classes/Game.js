@@ -1607,7 +1607,7 @@ class Game {
         }
         diffuseTextureID = Tools.filterID(diffuseTextureID);
         if (diffuseTextureID.length > 0 && Game.hasAvailableTexture(diffuseTextureID) && !Game.hasLoadedTexture(diffuseTextureID)) {
-            Game.loadTexture(diffuseTextureID);
+            Game.loadTexture(diffuseTextureID, options);
         }
         else if (Game.hasAvailableTexture(materialID)) {
             diffuseTextureID = materialID;
@@ -1628,7 +1628,7 @@ class Game {
         loadedMaterial.specularColor.set(0, 0, 0);
         if (typeof options == "object") {
             if (options.hasOwnProperty("backFaceCulling")) {
-                loadedMaterial.backFaceCulling = Game.getLoadedTexture(options["backFaceCulling"]);
+                loadedMaterial.backFaceCulling = options["backFaceCulling"] == true;
             }
             if (options.hasOwnProperty("opacityTexture")) {
                 loadedMaterial.opacityTexture = Game.getLoadedTexture(options["opacityTexture"]);
@@ -2591,6 +2591,9 @@ class Game {
      * @return {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (Game.hasAvailableMesh(meshID) && !Game.hasLoadedMesh(meshID)) {
+            Game.loadMesh(meshID);
+        }
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateMesh(id, meshID, materialID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
