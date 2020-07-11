@@ -5827,6 +5827,10 @@ class Game {
                 return 2;
             }
         }
+        if (!(entity instanceof InstancedBookEntity)) {
+            // you're not suppose to read *not* books v:<
+            return 1;
+        }
         if (!(actor instanceof AbstractEntity)) {
             if (AbstractEntity.has(actor)) {
                 actor = AbstractEntity.get(actor);
@@ -5835,7 +5839,9 @@ class Game {
                 return 2;
             }
         }
-        //...
+        BookGameGUI.updateWith(entity, 1);
+        GameGUI.hideCharacterChoiceMenu();
+        BookGameGUI.show();
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
         }

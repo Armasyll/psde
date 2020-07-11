@@ -17,6 +17,7 @@ class BookGameGUI {
         BookGameGUI.locked = false;
         BookGameGUI.isVisible = false;
         BookGameGUI.generateController();
+        BookGameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
     }
     static resize() {
         BookGameGUI.controller.height = String(Game.engine.getRenderHeight() - GameGUI.fontSizeInPixels * 8).concat("px");
@@ -30,12 +31,17 @@ class BookGameGUI {
         BookGameGUI.footer.height = GameGUI.fontSize;
         BookGameGUI.footer.width = BookGameGUI.controller.width;
         BookGameGUI.previousPageContainer.height = BookGameGUI.footer.height;
-        BookGameGUI.previousPageContainer.width = String(BookGameGUI.footer.widthInPixels / 2).concat("px");
+        BookGameGUI.previousPageContainer.width = String(BookGameGUI.footer.widthInPixels / 3).concat("px");
         BookGameGUI.previousPageButton.height = BookGameGUI.previousPageContainer.height;
         BookGameGUI.previousPageButton.width = BookGameGUI.previousPageContainer.width;
         BookGameGUI.previousPageButton.fontSize = GameGUI.fontSize;
+        BookGameGUI.closeBookContainer.height = BookGameGUI.footer.height;
+        BookGameGUI.closeBookContainer.width = String(BookGameGUI.footer.widthInPixels / 3).concat("px");
+        BookGameGUI.closeBookButton.height = BookGameGUI.nextPageContainer.height;
+        BookGameGUI.closeBookButton.width = BookGameGUI.nextPageContainer.width;
+        BookGameGUI.closeBookButton.fontSize = GameGUI.fontSize;
         BookGameGUI.nextPageContainer.height = BookGameGUI.footer.height;
-        BookGameGUI.nextPageContainer.width = String(BookGameGUI.footer.widthInPixels / 2).concat("px");
+        BookGameGUI.nextPageContainer.width = String(BookGameGUI.footer.widthInPixels / 3).concat("px");
         BookGameGUI.nextPageButton.height = BookGameGUI.nextPageContainer.height;
         BookGameGUI.nextPageButton.width = BookGameGUI.nextPageContainer.width;
         BookGameGUI.nextPageButton.fontSize = GameGUI.fontSize;
@@ -80,7 +86,7 @@ class BookGameGUI {
                 footer.isVertical = false;
                 let previousPageContainer = GameGUI.createStackPanel("previousPageContainer");
                     previousPageContainer.height = footer.height;
-                    previousPageContainer.width = String(footer.widthInPixels / 2).concat("px");
+                    previousPageContainer.width = String(footer.widthInPixels / 3).concat("px");
                     previousPageContainer.isVertical = false;
                     previousPageContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                     let previousPageButton = GameGUI.createSimpleButton("previousPageButton", "Previous Page");
@@ -95,9 +101,26 @@ class BookGameGUI {
                         });
                     previousPageContainer.addControl(previousPageButton);
                 footer.addControl(previousPageContainer);
+                let closeBookContainer = GameGUI.createStackPanel();
+                    closeBookContainer.height = footer.height;
+                    closeBookContainer.width = String(footer.widthInPixels / 3).concat("px");
+                    closeBookContainer.isVertical = false;
+                    closeBookContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    let closeBookButton = GameGUI.createSimpleButton("closeBookButton", "Close Book");
+                        closeBookButton.height = closeBookContainer.height;
+                        closeBookButton.width = closeBookContainer.width;
+                        closeBookButton.onPointerUpObservable.add(function() {
+                            if (BookGameGUI.locked) {
+                                return 1;
+                            }
+                            BookGameGUI.hide();
+                            return 0;
+                        });
+                    closeBookContainer.addControl(closeBookButton);
+                footer.addControl(closeBookContainer);
                 let nextPageContainer = GameGUI.createStackPanel("nextPageContainer");
                     nextPageContainer.height = footer.height;
-                    nextPageContainer.width = String(footer.widthInPixels / 2).concat("px");
+                    nextPageContainer.width = String(footer.widthInPixels / 3).concat("px");
                     nextPageContainer.isVertical = false;
                     nextPageContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                     let nextPageButton = GameGUI.createSimpleButton("nextPageButton", "Next Page");
@@ -121,8 +144,11 @@ class BookGameGUI {
         BookGameGUI.footer = footer;
         BookGameGUI.previousPageContainer = previousPageContainer;
         BookGameGUI.previousPageButton = previousPageButton;
+        BookGameGUI.closeBookContainer = closeBookContainer;
+        BookGameGUI.closeBookButton = closeBookButton;
         BookGameGUI.nextPageContainer = nextPageContainer;
         BookGameGUI.nextPageButton = nextPageButton;
+        BookGameGUI.controller.zIndex = 75;
         return controller;
     }
     static getController() {
@@ -131,11 +157,19 @@ class BookGameGUI {
     static show() {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
+        BookGameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
+        GameGUI.showMenu();
+        if (Game.engine.isPointerLock) {
+            GameGUI.pointerRelease();
+        }
         return 0;
     }
     static hide() {
         BookGameGUI.controller.isVisible = false;
         BookGameGUI.isVisible = false;
+        if (BookGameGUI.pointerLockedBeforeShown && BookGameGUI.pointerLockedBeforeShown != Game.engine.isPointerLock) {
+            GameGUI.pointerLock();
+        }
         return 0;
     }
     static updateWith(abstractEntity, page = 1) {

@@ -59,6 +59,7 @@ class GameGUI {
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
+        GameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
         GameGUI.resize();
     }
     static _initHUD() {
@@ -134,6 +135,7 @@ class GameGUI {
     }
     static pointerLock() {
         Game.pointerLock();
+
         window.addEventListener("click", GameGUI.pointerLockEventFunction);
     }
     static pointerRelease() {
