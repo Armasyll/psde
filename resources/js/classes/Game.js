@@ -1092,10 +1092,10 @@ class Game {
         if (!Game.initialized) {
             return 1;
         }
-        if (!(Game.player instanceof CharacterEntity) || !(Game.player.getController() instanceof CharacterController)) {
+        if (!(Game.player instanceof CharacterEntity) || !(Game.playerController instanceof CharacterController)) {
             return 1;
         }
-        if (Game.camera instanceof BABYLON.Camera) {
+        if (Game.camera instanceof BABYLON.ArcRotateCamera) {
             Game.camera.alpha = Game.Tools.moduloRadians(Game.camera.alpha);
             if (Game.camera.beta < 0.087) {
                 Game.camera.beta = 0.087;
@@ -1104,8 +1104,8 @@ class Game {
                 Game.camera.beta = 3.054;
             }
         }
-        if (Game.player.controller.mesh instanceof BABYLON.AbstractMesh) {
-            Game.player.controller.mesh.rotation.y = Game.Tools.moduloRadians(Game.player.controller.mesh.rotation.y);
+        if (Game.playerController.mesh instanceof BABYLON.AbstractMesh) {
+            Game.playerController.mesh.rotation.y = Game.Tools.moduloRadians(Game.playerController.mesh.rotation.y);
         }
         for (let characterController in CharacterController.characterControllerList) {
             if (CharacterController.characterControllerList[characterController].animated) {
@@ -1219,15 +1219,49 @@ class Game {
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
         }
-        if (!(Game.player.getController() instanceof EntityController) || !(Game.player.getController().getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
+        if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
+            return 1;
+        }
+        Game.camera = new BABYLON.FollowCamera(
+            "camera",
+            Game.playerController.focus.getAbsolutePosition(),
+            Game.scene
+        );
+        //Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
+        //Game.camera.checkCollisions = true;
+        //Game.camera.wheelPrecision = 100;
+        Game.camera.upperRadiusLimit = 2;
+        Game.camera.lowerRadiusLimit = 0.1;
+        //Game.camera.angularSensibilityX = 3500;
+        //Game.camera.angularSensibilityY = 3500;
+        //Game.camera.keysLeft = [];
+        //Game.camera.keysRight = [];
+        //Game.camera.keysUp = [];
+        //Game.camera.keysDown = [];
+        Game.camera.attachControl(Game.canvas, false);
+
+        Game.camera.minZ = 0.001;
+        Game.camera.maxZ = 3;
+        Game.camera.lowerHeightOffsetLimit = -2;
+        Game.camera.upperHeightOffsetLimit = 2;
+        Game.camera.cameraAcceleration = 0.0035;
+        Game.camera.maxSpeed = 1;
+        Game.camera.lockedTarget = Game.playerController.focus;
+        Game.initPostProcessing();
+    }
+    static initArcRotateCamera(offset = BABYLON.Vector3.Zero()) {
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.camera.dispose();
+        }
+        if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
         }
         Game.camera = new BABYLON.ArcRotateCamera(
             "camera",
-            -Game.player.getController().getMesh().rotation.y - 4.69,
+            -Game.playerController.getMesh().rotation.y - 4.69,
             Math.PI / 2.5,
             3,
-            Game.player.getController().getBoneByName("FOCUS").getAbsolutePosition(Game.player.getController().getMesh()),
+            Game.playerController.getBoneByName("FOCUS").getAbsolutePosition(Game.playerController.getMesh()),
             Game.scene);
         Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
         Game.camera.checkCollisions = true;
@@ -1243,7 +1277,7 @@ class Game {
         Game.camera.attachControl(Game.canvas, false);
 
         Game.camera.minZ = 0.001;
-        Game.camera.lockedTarget = Game.player.getController().focus;
+        Game.camera.lockedTarget = Game.playerController.focus;
         Game.initPostProcessing();
     }
     static initFreeCamera(applyGravity = true) {
@@ -2579,9 +2613,17 @@ class Game {
                 materialID = "missingMaterial";
             }
         }
-        if (meshID == "craftsmanStairs") {
-            Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, { checkCollisions: true });
-            options["checkCollisions"] = false;
+        /* I'll make a better way of doing this some day :v */
+        switch (meshID) {
+            case "cameraFocus": {
+                options["createClone"] = true;
+                break;
+            }
+            case "craftsmanStairs": {
+                Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, { checkCollisions: true });
+                options["checkCollisions"] = false;
+                break;
+            }
         }
         if (!Game.hasLoadedMesh(meshID)) {
             if (Game.debugMode) console.log(`Mesh ${meshID} exists and will be loaded`);
@@ -2619,7 +2661,7 @@ class Game {
                 Game.setMeshMaterial(mesh, material);
             }
             if (options["createClone"]) {
-                if (Game.debugMode) console.log("  Creating clone...");
+                if (Game.debugMode) console.log("Creating clone...");
                 mesh = Game.loadedMeshMaterials[meshID][materialID].clone(id);
                 mesh.id = id;
                 mesh.material = material;
@@ -2628,7 +2670,7 @@ class Game {
                 Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
             else {
-                if (Game.debugMode) console.log(`  Creating instance of Mesh:(${meshID}), Material:(${materialID})...`);
+                if (Game.debugMode) console.log(`Creating instance of Mesh:(${meshID}), Material:(${materialID})...`);
                 mesh = Game.loadedMeshMaterials[meshID][materialID].createInstance(id);
                 mesh.id = id;
                 mesh.name = meshID;
@@ -4825,7 +4867,7 @@ class Game {
         Game.player.getController().attachToFOCUS(Game.cameraFocus); // and reassigning an instanced mesh without destroying it
         Game.player.getController().getMesh().isPickable = false;
         Game.gui.playerPortrait.set(Game.player);
-        Game.initFollowCamera();
+        Game.initArcRotateCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
         Game.entityLocRotWorker.postMessage({ cmd: "setPlayer", msg: Game.player.getID() });
@@ -5030,25 +5072,25 @@ class Game {
         return 0;
     }
     static castRayTarget() {
-        if (!Game.player.hasController() || !Game.player.controller.hasMesh() || !Game.player.controller.hasSkeleton()) {
+        if (!Game.player.hasController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
-        let ray = Game.camera.getForwardRay(2 * Game.player.controller.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.player.controller.focus.getAbsolutePosition());
-        if (Game.player.controller.targetRay == undefined) {
-            Game.player.controller.targetRay = ray;
+        let ray = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.playerController.focus.getAbsolutePosition());
+        if (Game.playerController.targetRay == undefined) {
+            Game.playerController.targetRay = ray;
         }
         else {
-            Game.player.controller.targetRay.origin = ray.origin;
-            Game.player.controller.targetRay.direction = ray.direction;
+            Game.playerController.targetRay.origin = ray.origin;
+            Game.playerController.targetRay.direction = ray.direction;
         }
         if (Game.debugMode) {
-            if (Game.player.controller.targetRayHelper != undefined) {
-                Game.player.controller.targetRayHelper.dispose();
+            if (Game.playerController.targetRayHelper != undefined) {
+                Game.playerController.targetRayHelper.dispose();
             }
-            Game.player.controller.targetRayHelper = new BABYLON.RayHelper(Game.player.controller.targetRay);
-            Game.player.controller.targetRayHelper.show(Game.scene);
+            Game.playerController.targetRayHelper = new BABYLON.RayHelper(Game.playerController.targetRay);
+            Game.playerController.targetRayHelper.show(Game.scene);
         }
-        let hit = Game.scene.pickWithRay(Game.player.controller.targetRay, function (pickedMesh) {
+        let hit = Game.scene.pickWithRay(Game.playerController.targetRay, function (pickedMesh) {
             if (pickedMesh.controller == null || pickedMesh.controller == Game.playerController) {
                 return false;
             }
@@ -5244,9 +5286,17 @@ class Game {
         return 0;
     }
     static updateCameraTarget() {
-        if (!(Game.camera instanceof BABYLON.ArcRotateCamera)) {
-            return 2;
+        if (Game.camera instanceof BABYLON.ArcRotateCamera) {
+            return Game.updateArcRotateCameraTarget()
         }
+        else if (Game.camera instanceof BABYLON.FollowCamera) {
+            return Game.updateFollowCameraTarget();
+        }
+    }
+    static updateFollowCameraTarget() {
+        return 0;
+    }
+    static updateArcRotateCameraTarget() {
         if (!(Game.playerController instanceof EntityController) || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }

@@ -38,6 +38,9 @@ class EntityController {
         /**
          * @type BABYLON.AbstractMesh
          */
+        this.height = 0.0;
+        this.width = 0.0;
+        this.depth = 0.0;
         this.collisionMesh = null;
         this.meshStages = [];
         this.currentMeshStage = 0;
@@ -155,6 +158,9 @@ class EntityController {
         if (this.hasCollisionMesh()) {
             this.mesh.setParent(this.collisionMesh);
         }
+        this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
+        this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
+        this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
         if (updateChild && this.hasEntity()) {
             this.entity.setMeshID(mesh.id, false);
         }
