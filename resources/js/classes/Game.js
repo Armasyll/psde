@@ -952,7 +952,7 @@ class Game {
         }
         Game.postInitialized = true;
         Cell.createLimbo();
-        Soul.createSoulless();
+        SoulEntity.createSoulless();
         let url = new URL(window.location.href);
         let urlMap = new Map(url.searchParams);
         urlMap.forEach(function(val, key) {
@@ -4520,7 +4520,7 @@ class Game {
         }
         if (Game.debugMode) console.log(`Running Game.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
-        let soul = new Soul(id, name, description);
+        let soul = new SoulEntity(id, name, description);
         soul.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
         characterEntity.setSoul(soul, false); // Assign the body its soul, without updating its properties, because they've already been set
         if (typeof options == "object") {

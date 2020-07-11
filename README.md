@@ -50,6 +50,7 @@ It works :V
 |-->SorcererClass
 
 ->AbstractEntity
+|-->SoulEntity
 |-->Entity
 | |--->CreatureEntity
 | |  |---->CharacterEntity

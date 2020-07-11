@@ -1,24 +1,16 @@
 /**
- * Soul
+ * SoulEntity
  */
-class Soul {
+class SoulEntity extends AbstractEntity {
     /**
-     * Creates a Soul
+     * Creates a SoulEntity
      * @param  {string} id           Unique ID
      * @param  {string} name         Name
      * @param  {string} description  Description
      */
     constructor(id = undefined, name = undefined, description = undefined) {
-        id = Tools.filterID(id);
-        if (id.length == 0 || Soul.has(id)) {
-            id = Tools.genUUIDv4();
-        }
-        this.id = id;
+        super(id, name, description);
         this.entityType = EntityEnum.SOUL;
-        this.name = "";
-        this.setName(name);
-        this.description = "";
-        this.setDescription(description);
         this.age = 18;
 
         this.abilityScore = {"INTELLIGENCE":10,"WISDOM":10,"CHARISMA":10};
@@ -49,47 +41,7 @@ class Soul {
          */
         this.dialogue = null;
 
-        Soul.set(this.id, this);
-    }
-
-    setID(id) {
-        this.locked = true;
-        Soul.remove(this.id);
-        id = Tools.filterID(id);
-        this.id = id;
-        Soul.set(this.id, this);
-        this.locked = false;
-        return 0;
-    }
-    getID() {
-        return this.id;
-    }
-    setID(id) {
-        if (this.locked) {
-            id = Tools.filterID(id);
-            if (id.length > 0) {
-                this.id = id;
-            }
-            return 0;
-        }
-        return 1;
-    }
-    getType() {
-        return this.entityType;
-    }
-    setName(name) {
-        this.name = Tools.filterName(name);
-        return 0;
-    }
-    getName() {
-        return this.name;
-    }
-    setDescription(description) {
-        this.description = Tools.filterName(description);
-        return 0;
-    }
-    getDescription() {
-        return this.description;
+        SoulEntity.set(this.id, this);
     }
 
     setAge(number) {
@@ -321,10 +273,10 @@ class Soul {
     /**
      * 
      * @param  {string} id ID
-     * @return {Soul} new SoulEntity
+     * @return {SoulEntity} new SoulEntity
      */
     clone(id = undefined) {
-        let clone = new Soul(id, this.name, this.description);
+        let clone = new SoulEntity(id, this.name, this.description);
         clone.assign(this);
         return clone;
     }
@@ -337,11 +289,11 @@ class Soul {
     }
     /**
      * Clones the soul's values over this
-     * @param {Soul} soul 
+     * @param {SoulEntity} soul 
      * @param {boolean} [verify] Set to false to skip verification
      */
     assign(soul, verify = true) {
-        if (verify && !(soul instanceof Soul)) {
+        if (verify && !(soul instanceof SoulEntity)) {
             return 2;
         }
         if (soul.hasOwnProperty("name")) this.name = soul.name;
@@ -364,48 +316,48 @@ class Soul {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        Soul.remove(this.id);
+        SoulEntity.remove(this.id);
         return undefined;
     }
     getClassName() {
-        return "Soul";
+        return "SoulEntity";
     }
 
     static initialize() {
-        Soul.soulList = {};
+        SoulEntity.soulEntityList = {};
     }
     static createSoulless() {
-        let soulless = new Soul("soulless", "Soulless", "An empty soul.")
+        let soulless = new SoulEntity("soulless", "Soulless", "An empty soul.")
         soulless.abilityScore["INTELLIGENCE"] = 0;
         soulless.abilityScore["WISDOM"] = 0;
         return 0;
     }
     static get(id) {
-        if (Soul.has(id)) {
-            return Soul.soulList[id];
+        if (SoulEntity.has(id)) {
+            return SoulEntity.soulEntityList[id];
         }
         return 1;
     }
     static has(id) {
-        return Soul.soulList.hasOwnProperty(id);
+        return SoulEntity.soulEntityList.hasOwnProperty(id);
     }
     static set(id, entity) {
-        Soul.soulList[id] = entity;
+        SoulEntity.soulEntityList[id] = entity;
         return 0;
     }
     static remove(id) {
-        delete Soul.soulList[id];
+        delete SoulEntity.soulEntityList[id];
         return 0;
     }
     static list() {
-        return Soul.soulList;
+        return SoulEntity.soulEntityList;
     }
     static clear() {
-        for (let i in Soul.soulList) {
-            Soul.soulList[i].dispose();
+        for (let i in SoulEntity.soulEntityList) {
+            SoulEntity.soulEntityList[i].dispose();
         }
-        Soul.soulList = {};
+        SoulEntity.soulEntityList = {};
         return 0;
     }
 }
-Soul.initialize();
+SoulEntity.initialize();

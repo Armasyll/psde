@@ -542,9 +542,9 @@ class CreatureEntity extends Entity {
     }
 
     setSoul(soul, updateSelf = true) {
-        if (!(soul instanceof Soul)) {
-            if (Soul.has(soul)) {
-                soul = Soul.get(soul);
+        if (!(soul instanceof SoulEntity)) {
+            if (SoulEntity.has(soul)) {
+                soul = SoulEntity.get(soul);
             }
             else {
                 return 2;
@@ -578,7 +578,7 @@ class CreatureEntity extends Entity {
         this.abilityScore["INTELLIGENCE"] = 0;
         this.abilityScore["WISDOM"] = 0;
         this.abilityScore["CHARISMA"] = 0;
-        if (Soul.has("soulless")) {
+        if (SoulEntity.has("soulless")) {
             this.setSoul("soulless");
         }
         return 0;
