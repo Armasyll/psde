@@ -608,7 +608,6 @@ class EntityController {
             EditControls.previousPickedController = null;
         }
         this.propertiesChanged = false;
-        this.animations.clear();
         if (this.hasEntity) {
             this.entity.removeController();
         }
