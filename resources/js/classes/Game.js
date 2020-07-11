@@ -1267,7 +1267,7 @@ class Game {
         Game.initPostProcessing();
     }
     static updateMenuKeyboardDisplayKeys() {
-        if (Game.debugMode) console.log("Running Game::updateMenuKeyboardDisplayKeys()");
+        if (Game.debugMode) console.log("Running Game.updateMenuKeyboardDisplayKeys()");
         if (Game.initialized && Game.gui.initialized) {
             Game.gui.setActionTooltipLetter();
         }
@@ -1687,7 +1687,7 @@ class Game {
             return 0;
         }
         else if (Game.hasAvailableMesh(meshID)) {
-            if (Game.debugMode) console.log(`Running Game::loadMesh(${meshID})`);
+            if (Game.debugMode) console.log(`Running Game.loadMesh(${meshID})`);
             switch (meshID) {
                 case "aardwolfM":
                 case "aardwolfF":
@@ -1932,7 +1932,7 @@ class Game {
         if (!Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
             return 1;
         }
-        if (Game.debugMode) console.log(`Running Game::removeMeshMaterialMeshes(${meshID},${materialID},${childMeshID})`);
+        if (Game.debugMode) console.log(`Running Game.removeMeshMaterialMeshes(${meshID},${materialID},${childMeshID})`);
         if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
             if (Game.meshMaterialMeshes[meshID].hasOwnProperty(materialID)) {
                 if (Game.meshMaterialMeshes[meshID][materialID].hasOwnProperty(childMeshID)) {}
@@ -2066,7 +2066,7 @@ class Game {
      * @param {number} yRotation 
      */
     static createCollisionWall(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
-        if (Game.debugMode) console.log("Running Game::createCollisionWallX");
+        if (Game.debugMode) console.log("Running Game.createCollisionWallX");
         if (yRotation != 0 && Tools.isInt(yRotation)) {
             yRotation = BABYLON.Tools.ToRadians(yRotation);
         }
@@ -2103,7 +2103,7 @@ class Game {
      * @param {number} yPosition 
      */
     static createCollisionPlane(start = { x: 0, z: 0 }, end = { x: 0, z: 0 }, yPosition = 0) {
-        if (Game.debugMode) console.log("Running Game::createCollisionPlane");
+        if (Game.debugMode) console.log("Running Game.createCollisionPlane");
         if (start instanceof BABYLON.AbstractMesh) {
             let xRadius = start.getBoundingInfo().boundingBox.extendSize.x * start.scaling.x;
             let zRadius = start.getBoundingInfo().boundingBox.extendSize.z * start.scaling.z;
@@ -2144,7 +2144,7 @@ class Game {
         if (start.x == end.x || start.y == end.y || start.z == end.z) {
             return 1;
         }
-        if (Game.debugMode) console.log("Running Game::createCollisionRamp");
+        if (Game.debugMode) console.log("Running Game.createCollisionRamp");
         if (start.y > end.y) {
             let tempVector = start;
             start = end;
@@ -2176,7 +2176,7 @@ class Game {
         return ramp;
     }
     static assignPlanePhysicsToMesh(mesh) {
-        if (Game.debugMode) console.log("Running Game::assignPlanePhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game.assignPlanePhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -2184,7 +2184,7 @@ class Game {
         return 0;
     }
     static assignCylinderPhysicsToMesh(mesh, options) {
-        if (Game.debugMode) console.log("Running Game::assignCylinderPhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game.assignCylinderPhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -2195,7 +2195,7 @@ class Game {
         return 0;
     }
     static assignBoxPhysicsToMesh(mesh, options) {
-        if (Game.debugMode) console.log("Running Game::assignBoxPhysicsToMesh");
+        if (Game.debugMode) console.log("Running Game.assignBoxPhysicsToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -2206,7 +2206,7 @@ class Game {
         return 0;
     }
     static assignBoxPhysicsToBone(bone, options) {
-        if (Game.debugMode) console.log("Running Game::assignBoxPhysicsToBone");
+        if (Game.debugMode) console.log("Running Game.assignBoxPhysicsToBone");
         if (!(bone instanceof BABYLON.Bone)) {
             return 2;
         }
@@ -2217,7 +2217,7 @@ class Game {
         return 2;
     }
     static assignBoxCollisionToMesh(mesh) {
-        if (Game.debugMode) console.log("Running Game::assignBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running Game.assignBoxCollisionToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -2225,7 +2225,7 @@ class Game {
         return 0;
     }
     static assignBoundingBoxCollisionToMesh(mesh) {
-        if (Game.debugMode) console.log("Running Game::assignBoundingBoxCollisionToMesh");
+        if (Game.debugMode) console.log("Running Game.assignBoundingBoxCollisionToMesh");
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
@@ -2279,7 +2279,7 @@ class Game {
         else {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::removeMesh(${abstractMesh.id}`);
+        if (Game.debugMode) console.log(`Running Game.removeMesh(${abstractMesh.id}`);
         if (abstractMesh == EditControls.pickedMesh) {
             EditControls.reset();
         }
@@ -2466,7 +2466,7 @@ class Game {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running Game::filterCreateMesh(${id}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.log(`Running Game.filterCreateMesh(${id}, ${meshID}, ${materialID})`);
         if (!(position instanceof BABYLON.Vector3)) {
             position = Tools.filterVector(position);
         }
@@ -2557,9 +2557,6 @@ class Game {
      * @return {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (Game.debugMode) {
-            console.group("Running Game.createMesh");
-        }
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateMesh(id, meshID, materialID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -2567,6 +2564,7 @@ class Game {
             }
             [id, meshID, materialID, position, rotation, scaling] = filteredParameters;
         }
+        if (Game.debugMode) console.group(`Running Game.createMesh(${id}, ${meshID}, ${materialID}, ${position.toString()})`);
         if (!Game.hasLoadedMaterial(materialID)) {
             if (Game.hasAvailableTexture(materialID)) {
                 if (!Game.hasLoadedTexture(materialID)) {
@@ -2586,11 +2584,12 @@ class Game {
             options["checkCollisions"] = false;
         }
         if (!Game.hasLoadedMesh(meshID)) {
-            if (Game.debugMode) console.log(`\tMesh ${meshID} exists and will be loaded`);
+            if (Game.debugMode) console.log(`Mesh ${meshID} exists and will be loaded`);
             Game.addMeshToCreate(id, meshID, materialID, position, rotation, scaling, options);
+            if (Game.debugMode) console.groupEnd();
             return [id, meshID, materialID, position, rotation, scaling, options];
         }
-        if (Game.debugMode) console.log(`\tMesh ${meshID} exists and is loaded`);
+        if (Game.debugMode) console.log(`Mesh ${meshID} exists and is loaded`);
         let mesh = Game.getLoadedMesh(meshID);
         let material = Game.getLoadedMaterial(materialID);
         if (mesh.skeleton instanceof BABYLON.Skeleton) {
@@ -2654,6 +2653,7 @@ class Game {
         if (options["isHitbox"]) {
             mesh.isHitbox = options["isHitbox"];
         }
+        if (Game.debugMode) console.groupEnd();
         return mesh;
     }
     /**
@@ -3023,7 +3023,7 @@ class Game {
      * @param {object} options 
      */
     static createFurnitureMesh(furnitureID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
-        if (Game.debugMode) console.log("Running Game::createFurnitureMesh");
+        if (Game.debugMode) console.log("Running Game.createFurnitureMesh");
         let instancedMesh = Game.createMesh(furnitureID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
             return 2;
@@ -3168,7 +3168,7 @@ class Game {
         else {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::filterCreateFurnitureInstance(${id}, ${furnitureEntity.getID()})`);
+        if (Game.debugMode) console.log(`Running Game.filterCreateFurnitureInstance(${id}, ${furnitureEntity.getID()})`);
         if (!(position instanceof BABYLON.Vector3)) {
             position = Tools.filterVector(position);
         }
@@ -3352,7 +3352,7 @@ class Game {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running Game::filterCreateDoor(${id}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.log(`Running Game.filterCreateDoor(${id}, ${meshID}, ${materialID})`);
         if (!(position instanceof BABYLON.Vector3)) {
             position = Tools.filterVector(position);
         }
@@ -4362,12 +4362,13 @@ class Game {
      * @param {object} options 
      */
     static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
-        if (Game.debugMode) console.log(`Running Game::createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.group(`Running Game.createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
         if (typeof options != "object") {
             options = { mass: 0.8, restitution: 0.1 };
         }
         let instancedMesh = Game.createMesh(characterID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
+            if (Game.debugMode) console.groupEnd();
             return 2;
         }
         if (Game.physicsEnabled) {
@@ -4381,6 +4382,7 @@ class Game {
             instancedMesh.ellipsoid.set(boundingInfo.boundingBox.extendSize.x * scaling.x, boundingInfo.boundingBox.extendSize.y * scaling.y, boundingInfo.boundingBox.extendSize.x * scaling.z);
             //instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
         }
+        if (Game.debugMode) console.groupEnd();
         return instancedMesh;
     }
     /**
@@ -4388,7 +4390,9 @@ class Game {
      * @memberof module:characters
      */
     static addCharacterToCreate(id, characterEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (Game.debugMode) console.group(`Running Game.addCharacterToCreate(${id}, ${characterEntity instanceof AbstractEntity ? characterEntity.id : String(characterEntity)}, ${position.toString()})`);
         if (Game.hasCharacterToCreate(id)) {
+            if (Game.debugMode) console.groupEnd();
             return true;
         }
         Game.loadMesh(characterEntity.getMeshID());
@@ -4402,6 +4406,7 @@ class Game {
         };
         Game.charactersToCreateCounter += 1;
         Game.hasBackloggedEntities = true;
+        if (Game.debugMode) console.groupEnd();
         return true;
     }
     /**
@@ -4412,8 +4417,10 @@ class Game {
         if (!Game.hasCharacterToCreate(characterIndexID)) {
             return true;
         }
+        if (Game.debugMode) console.group(`Running Game.removeCharacterToCreate(${characterIndexID})`);
         delete Game.charactersToCreate[characterIndexID];
         Game.charactersToCreateCounter -= 1;
+        if (Game.debugMode) console.groupEnd();
         return true;
     }
     /**
@@ -4469,7 +4476,7 @@ class Game {
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
-        if (Game.debugMode) console.log(`Running Game::createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
+        if (Game.debugMode) console.log(`Running Game.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
         let soul = new Soul(id, name, description);
         soul.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
@@ -4629,13 +4636,16 @@ class Game {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateCharacterInstance(id, characterEntity, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
+                if (Game.debugMode) console.groupEnd();
                 return 2;
             }
             [id, characterEntity, position, rotation, scaling, options] = filteredParameters;
         }
+        if (Game.debugMode) console.group(`Running Game.createCharacterInstance(${id}, ${characterEntity instanceof AbstractEntity ? characterEntity.id : String(characterEntity)}, ${position.toString()})`)
         if (!(Game.hasLoadedMesh(characterEntity.getMeshID()))) {
             Game.loadMesh(characterEntity.getMeshID());
             Game.addCharacterToCreate(id, characterEntity, position, rotation, scaling, options);
+            if (Game.debugMode) console.groupEnd();
             return [id, characterEntity, position, rotation, scaling, options];
         }
         let loadedMesh = Game.createCharacterMesh(characterEntity.getID(), characterEntity.getMeshID(), characterEntity.getMaterialID(), position, rotation, scaling, options);
@@ -4668,6 +4678,7 @@ class Game {
         }
         let newScaling = characterEntity.height / characterEntity.baseHeight;
         loadedMesh.scaling.set(newScaling, newScaling, newScaling);
+        if (Game.debugMode) console.groupEnd();
         return characterEntity;
     }
     /**
@@ -4834,7 +4845,7 @@ class Game {
      * @param {EntityController} entityController 
      */
     static setPlayerTarget(entityController) {
-        if (Game.debugMode) console.group("Running Game::setPlayerTarget()");
+        if (Game.debugMode) console.group("Running Game.setPlayerTarget()");
         if (!(Game.player.hasController())) {
             if (Game.debugMode) {
                 console.error("Player doesn't have a controller; returning 1");
@@ -4932,6 +4943,20 @@ class Game {
         }
         Game.loadCell(cell);
         return 0;
+    }
+    /**
+     * 
+     * @memberof module:player
+     */
+    static hasPlayerEntity() {
+        return Game.player instanceof AbstractEntity;
+    }
+    /**
+     * 
+     * @memberof module:player
+     */
+    static hasPlayerController() {
+        return Game.playerController instanceof EntityController;
     }
     /**
      * @memberof module:player
@@ -5222,19 +5247,21 @@ class Game {
         if (!(Game.camera instanceof BABYLON.ArcRotateCamera)) {
             return 2;
         }
-        if (!Game.player.hasController() || !Game.player.getController().hasMesh() || !Game.player.getController().hasSkeleton()) {
+        if (!(Game.playerController instanceof EntityController) || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
         if (Game.enableFirstPerson && Game.camera.radius <= 0.5) {
-            if (Game.player.getController().getMesh().isVisible) {
-                Game.player.getController().hideMesh();
+            console.log("Running Game.updateCameraTarget()");
+            if (Game.playerController.getMesh().isVisible) {
+                Game.playerController.hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
                 Game.gui.showCrosshair();
             }
         }
-        else if (!Game.player.getController().getMesh().isVisible) {
-            Game.player.getController().showMesh();
+        else if (!Game.playerController.mesh.isVisible) {
+            console.log("Running Game.updateCameraTarget()");
+            Game.playerController.showMesh();
             Game.camera.checkCollisions = true;
             Game.camera.inertia = 0.9;
             Game.gui.hideCrosshair();
@@ -5269,7 +5296,7 @@ class Game {
         else {
             actionID = Number.parseInt(actionID);
         }
-        if (Game.debugMode) console.log(`Running Game::doEntityAction(${entity.id}, ${actor.id}, ${actionID})`);
+        if (Game.debugMode) console.log(`Running Game.doEntityAction(${entity.id}, ${actor.id}, ${actionID})`);
         switch (actionID) {
             case ActionEnum.USE: {
                 if (entity instanceof LightingEntity) {
@@ -5368,7 +5395,7 @@ class Game {
      * @param {function} [callback] 
      */
     static actionAttack(entity = null, actor = Game.player, weapon = null, callback = undefined) {
-        if (Game.debugMode) console.group("Running Game::actionAttack");
+        if (Game.debugMode) console.group("Running Game.actionAttack");
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -5470,9 +5497,7 @@ class Game {
                 return 2;
             }
         }
-        if (Game.debugMode) {
-            console.info(`with <AbstractEntity>${entity.id}, <AbstractEntity>${actor.id}`);
-        }
+        if (Game.debugMode) console.info(`with <AbstractEntity>${entity.id}, <AbstractEntity>${actor.id}`);
         if (!actor.hasItem(entity)) {
             if (Game.debugMode) {
                 console.warn("Actor doesn't have the item.");
@@ -5509,9 +5534,7 @@ class Game {
         if (typeof callback == "function") {
             callback();
         }
-        if (Game.debugMode) {
-            console.groupEnd();
-        }
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     /**
@@ -5926,7 +5949,7 @@ class Game {
         return 0;
     }
     static actionTalk(entity = null, actor = Game.player, callback = undefined) {
-        if (Game.debugMode) console.group(`Running Game::actionTalk(${typeof entity == "object" ? (entity instanceof AbstractEntity ? entity.id : "UNK") : entity}, ${typeof actor == "object" ? (actor instanceof AbstractEntity ? actor.id : "UNK") : actor})`)
+        if (Game.debugMode) console.group(`Running Game.actionTalk(${typeof entity == "object" ? (entity instanceof AbstractEntity ? entity.id : "UNK") : entity}, ${typeof actor == "object" ? (actor instanceof AbstractEntity ? actor.id : "UNK") : actor})`)
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
@@ -6186,7 +6209,7 @@ class Game {
         else {
             return 2;
         }
-        if (Game.debugMode) console.log(`Running Game::setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
+        if (Game.debugMode) console.log(`Running Game.setInterfaceMode(${InterfaceModeEnum.properties[interfaceMode].name})`);
         if (interfaceMode == InterfaceModeEnum.WRITING) {
             Game.interfaceMode = InterfaceModeEnum.WRITING;
             return 0;
