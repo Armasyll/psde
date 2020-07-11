@@ -2557,6 +2557,9 @@ class Game {
      * @return {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (Game.debugMode) {
+            console.group("Running Game.createMesh");
+        }
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateMesh(id, meshID, materialID, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
@@ -4048,15 +4051,20 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
-        if (Game.debugMode) console.log("Running Game::createItemMesh");
+    static createItemMesh(itemID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false }) {
+        if (Game.debugMode) console.group(`Running Game.createItemMesh(${itemID}, ${meshID}, ${materialID}, ${position.toString()})`);
         let instancedMesh = Game.createMesh(itemID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
+            if (Game.debugMode) {
+                console.error("Failed to create a mesh.");
+                console.groupEnd();
+            }
             return 2;
         }
         if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(instancedMesh, options);
         }
+        if (Game.debugMode) console.groupEnd();
         return instancedMesh;
     }
 
@@ -4278,12 +4286,14 @@ class Game {
             if (Game.debugMode) console.log(`\tThe item's mesh needs to be loaded. Inserting it into the qeueu.`);
             return [id, abstractEntity, position, rotation, scaling, options];
         }
+        if (Game.debugMode) console.group(`Running Game.createItemInstance(${id}, ${abstractEntity.id}, ${position.toString()})`);
         let mesh = Game.createItemMesh(id, abstractEntity.getMeshID(), abstractEntity.getTextureID(), position, rotation, scaling, options);
         if (abstractEntity instanceof Entity) {
             abstractEntity = abstractEntity.createInstance(id);
         }
         let itemController = new ItemController(id, mesh, abstractEntity);
         abstractEntity.setController(itemController);
+        if (Game.debugMode) console.groupEnd();
         return itemController;
     }
     /**
@@ -5435,11 +5445,16 @@ class Game {
      * @param {function} callback 
      */
     static actionDrop(entity, actor = Game.player, callback = undefined) {
+        if (Game.debugMode) console.group("Running Game.actionDrop");
         if (!(entity instanceof AbstractEntity)) {
             if (AbstractEntity.has(entity)) {
                 entity = AbstractEntity.get(entity);
             }
             else {
+                if (Game.debugMode) {
+                    console.error("Entity doesn't exist.");
+                    console.groupEnd();
+                }
                 return 2;
             }
         }
@@ -5448,16 +5463,31 @@ class Game {
                 actor = AbstractEntity.get(actor);
             }
             else {
+                if (Game.debugMode) {
+                    console.error("Actor doesn't exist.");
+                    console.groupEnd();
+                }
                 return 2;
             }
         }
+        if (Game.debugMode) {
+            console.info(`with <AbstractEntity>${entity.id}, <AbstractEntity>${actor.id}`);
+        }
         if (!actor.hasItem(entity)) {
+            if (Game.debugMode) {
+                console.warn("Actor doesn't have the item.");
+                console.groupEnd();
+            }
             return 1;
         }
         if (actor instanceof CharacterController && actor.hasEquipment(entity)) {
             if (actor.unequip(entity) != 0) {
                 if (typeof callback == "function") {
                     callback();
+                }
+                if (Game.debugMode) {
+                    console.warn("Actor can't unequip item.");
+                    console.groupEnd();
                 }
                 return 0;
             }
@@ -5473,11 +5503,14 @@ class Game {
                 );
             }
             else {
-                Game.createItemInstance(undefined, entity, actor.getController().getMesh().position.clone(), actor.getController().getMesh().rotation.clone());
+                Game.createItemInstance(undefined, entity, actor.getController().getPosition());
             }
         }
         if (typeof callback == "function") {
             callback();
+        }
+        if (Game.debugMode) {
+            console.groupEnd();
         }
         return 0;
     }
