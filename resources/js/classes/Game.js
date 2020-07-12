@@ -682,6 +682,13 @@ class Game {
         Game.displaysToCreateCounter = 0;
         Game.displaysToCreate = {};
         /**
+         * Map of Plants that are waiting to be created;
+         * it's basically the same as furnitureToCreate :v
+         * @type {<string, <string:id, string:name, string:mesh, string:texture, string:position, string:rotation, string:scaling, object:options>}
+         */
+        Game.plantsToCreateCounter = 0;
+        Game.plantsToCreate = {};
+        /**
          * Map of Doors that are waiting to be created;
          * it's basically the same as furnitureToCreate :v
          * @type {<string, <string:id, string:name, Forgot:to, string:mesh, string:texture, string:position, string:rotation, string:scaling, object:options>}
@@ -1024,6 +1031,7 @@ class Game {
                     Game.importBooks();
                     Game.importCosmetics();
                     Game.importFurniture();
+                    Game.importPlants();
                     Game.importDialogues();
                     Game.importCharacters();
                     Game.importCells();
@@ -1126,11 +1134,12 @@ class Game {
         if (Game.hasBackloggedEntities) {
             Game.createBackloggedMeshes();
             Game.createBackloggedBoundingCollisions();
+            Game.createBackloggedItems();
             Game.createBackloggedFurniture();
+            Game.createBackloggedPlants();
             Game.createBackloggedLighting();
             Game.createBackloggedDisplays();
             Game.createBackloggedDoors();
-            Game.createBackloggedItems();
             Game.createBackloggedCharacters();
             Game.createBackloggedPlayer();
             Game.createBackloggedAttachments();
@@ -2802,7 +2811,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.meshesToCreateCounter != "object") {
+        if (typeof Game.meshesToCreate != "object") {
             return true;
         }
         return Game.meshesToCreateCounter > 0 && Game.meshesToCreate.hasOwnProperty(meshIndexID);
@@ -3019,7 +3028,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.entityStagesToCreateCounter != "object") {
+        if (typeof Game.entityStagesToCreate != "object") {
             return true;
         }
         return Game.entityStagesToCreateCounter > 0 && Game.entityStagesToCreate.hasOwnProperty(entityControllerID) && Game.entityStagesToCreate[entityControllerID].hasOwnProperty(stageIndex);
@@ -3127,7 +3136,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.furnitureToCreateCounter != "object") {
+        if (typeof Game.furnitureToCreate != "object") {
             return true;
         }
         return Game.furnitureToCreateCounter > 0 && Game.furnitureToCreate.hasOwnProperty(furnitureInstanceID);
@@ -3348,7 +3357,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.doorsToCreateCounter != "object") {
+        if (typeof Game.doorsToCreate != "object") {
             return true;
         }
         return Game.doorsToCreateCounter > 0 && Game.doorsToCreate.hasOwnProperty(doorIndexID);
@@ -3576,7 +3585,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.displaysToCreateCounter != "object") {
+        if (typeof Game.displaysToCreate != "object") {
             return true;
         }
         return Game.displaysToCreateCounter > 0 && Game.displaysToCreate.hasOwnProperty(displayIndexID);
@@ -3824,7 +3833,7 @@ class Game {
         if (!Game.initialized) {
             return false;
         }
-        if (typeof Game.lightingToCreateCounter != "object") {
+        if (typeof Game.lightingToCreate != "object") {
             return true;
         }
         return Game.lightingToCreateCounter > 0 && Game.lightingToCreate.hasOwnProperty(lightingIndexID);
@@ -3961,6 +3970,301 @@ class Game {
             Game.removeMesh(mesh);
         }
         return 0;
+    }
+
+    
+    /**
+     * @module plants
+     */
+    /**
+     * 
+     * @memberof module:plants
+     */
+    static importPlants() {
+        return Game.importScript("resources/js/plants.js");
+    }
+    /**
+     * 
+     * @memberof module:plants
+     * @param {string} plantID 
+     * @param {string} meshID 
+     * @param {string} materialID 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} rotation 
+     * @param {BABYLON.Vector3} scaling 
+     * @param {object} options 
+     */
+    static createPlantMesh(plantID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
+        if (Game.debugMode) console.log("Running Game.createPlantMesh");
+        let instancedMesh = Game.createMesh(plantID, meshID, materialID, position, rotation, scaling, options);
+        if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        return instancedMesh;
+    }
+    /**
+     * 
+     * @memberof module:plants
+     */
+    static addPlantToCreate(plantIndexID, plantEntity = null, stage, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (Game.hasPlantsToCreate(plantIndexID)) {
+            return true;
+        }
+        if (Game.debugMode) console.group(`Running Game.addPlantToCreate(${plantIndexID}, ${plantEntity.id}, ${stage}, ${position.toString()})`)
+        Game.loadMesh(plantEntity.meshID);
+        Game.plantsToCreate[plantIndexID] = {
+            0: plantIndexID,
+            1: plantEntity,
+            2: stage,
+            3: position,
+            4: rotation,
+            5: scaling,
+            6: options
+        };
+        Game.plantsToCreateCounter += 1;
+        Game.hasBackloggedEntities = true;
+        if (Game.debugMode) console.groupEnd();
+        return true;
+    }
+    /**
+     * 
+     * @memberof module:plants
+     */
+    static removePlantToCreate(plantIndexID) {
+        if (!Game.hasPlantsToCreate(plantIndexID)) {
+            return true;
+        }
+        delete Game.plantsToCreate[plantIndexID];
+        Game.plantsToCreateCounter -= 1;
+        return true;
+    }
+    /**
+     * 
+     * @memberof module:plants
+     */
+    static hasPlantsToCreate(plantIndexID) {
+        if (!Game.initialized) {
+            return false;
+        }
+        if (typeof Game.plantsToCreate != "object") {
+            return true;
+        }
+        return Game.plantsToCreateCounter > 0 && Game.plantsToCreate.hasOwnProperty(plantIndexID);
+    }
+    /**
+     * 
+     * @memberof module:plants
+     */
+    static createBackloggedPlants() {
+        if (Game.plantsToCreateCounter == 0) {
+            return true;
+        }
+        if (Game.debugMode) console.group(`Running Game.createBackloggedPlants for ${Game.plantsToCreateCounter} plants.`)
+        for (let i in Game.plantsToCreate) {
+            if (Game.loadedMeshes.hasOwnProperty(Game.plantsToCreate[i][1].meshID)) {
+                if (Game.debugMode) console.log(`Creating ${i}`);
+                Game.createPlantInstance(
+                    Game.plantsToCreate[i][0],
+                    Game.plantsToCreate[i][1],
+                    Game.plantsToCreate[i][2],
+                    Game.plantsToCreate[i][3],
+                    Game.plantsToCreate[i][4],
+                    Game.plantsToCreate[i][5],
+                    Game.plantsToCreate[i][6]
+                );
+                Game.removePlantToCreate(i);
+            }
+        }
+        if (Game.debugMode) console.groupEnd();
+    }
+    /**
+     * Filters the creation of a PlantController, PlantEntity, and BABYLON.InstancedMesh
+     * @memberof module:plants
+     * @param  {string} [id] Unique ID, auto-generated if none given
+     * @param  {string} [name] Name
+     * @param  {string} [meshID] Mesh ID
+     * @param  {string} [materialID] Texture ID
+     * @param  {BABYLON.Vector3} position Position
+     * @param  {BABYLON.Vector3} [rotation] Rotation
+     * @param  {BABYLON.Vector3} [scaling] Scaling
+     * @param  {object} [options] Options
+     * @return {array}
+     */
+    static filterCreatePlant(id = "", name = "Plant", meshID = "plant", materialID = "plainPlant", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { checkCollisions: true }) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        if (Game.debugMode) console.log(`Running Game.filterCreatePlant(${id}, ${meshID}, ${materialID})`);
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
+        }
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            if (typeof rotation == "number") {
+                rotation = new BABYLON.Vector3(0, rotation, 0);
+            }
+            else {
+                rotation = Tools.filterVector(rotation);
+            }
+        }
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            if (typeof scaling == "number") {
+                scaling = new BABYLON.Vector3(scaling, scaling, scaling);
+            }
+            else {
+                scaling = Tools.filterVector(scaling);
+            }
+        }
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
+        }
+        if (!Game.hasLoadedMaterial(materialID)) {
+            if (Game.hasAvailableTexture(materialID)) {
+                if (!Game.hasLoadedTexture(materialID)) {
+                    Game.loadTexture(materialID);
+                }
+                Game.loadMaterial(materialID, materialID);
+            }
+            else {
+                materialID = "plainPlant";
+            }
+        }
+        if (!Game.hasAvailableMesh(meshID)) {
+            if (Game.debugMode) console.log(`\tMesh ${meshID} doesn't exist`);
+            meshID = "plant";
+        }
+        if (typeof options != "object") {
+            options = {};
+        }
+        options["filtered"] = true;
+        return [id, name, to, meshID, materialID, position, rotation, scaling, options];
+    }
+    /**
+     * Removes a PlantEntity, its PlantController, and its BABYLON.InstancedMesh
+     * @memberof module:plants
+     * @param {(PlantController|string)} plantController A PlantController, or its string ID
+     * @returns {number} Integer status code
+     */
+    static removePlant(plantController) {
+        if (!(plantController instanceof PlantController)) {
+            if (!PlantController.has(plantController)) {
+                return 2;
+            }
+            plantController = Entity.getController(plantController);
+        }
+        let mesh = plantController.getMesh();
+        plantController.entity.dispose();
+        plantController.dispose();
+        if (mesh instanceof BABYLON.InstancedMesh) {
+            Game.removeMesh(mesh);
+        }
+        return 0;
+    }
+    /**
+     * Creates a PlantController, PlantEntity, and BABYLON.InstancedMesh
+     * @memberof module:plants
+     * @param  {string} [id] Unique ID, auto-generated if none given
+     * @param  {string} [name] Name
+     * @param  {string} [meshID] Mesh ID
+     * @param  {string} [materialID] Texture ID
+     * @param  {array} [stages] Stages
+     * @param  {object} [options] Options
+     * @return {(EntityController|array)} A PlantController or an integer status code
+     */
+    static createPlantEntity(id = "", name = "Plant",  description = "", iconID = "missingIcon", meshID = "missingMesh", materialID = "missingMaterial", plantType = PlantEnum.GRASS, stages = [], options = {}) {
+        id = Tools.filterID(id);
+        if ((id.length == 0)) {
+            id = Tools.genUUIDv4();
+        }
+        if (Game.debugMode) console.log(`Running Game.createPlantEntity(${id}, ${name}, ${description}, ${iconID}, ${meshID}, ${materialID}, ${plantType}, ${stages})`);
+        let plantEntity = new PlantEntity(id, name, description, iconID, plantType, stages);
+        plantEntity.setMeshID(meshID);
+        plantEntity.setMaterialID(materialID);
+        plantEntity.addStages(stages);
+        return plantEntity;
+    }
+    static filterCreatePlantInstance(id, plantEntity, stage, position, rotation, scaling, options) {
+        if (!(plantEntity instanceof CharacterEntity)) {
+            if (PlantEntity.has(plantEntity)) {
+                plantEntity = PlantEntity.get(plantEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        id = Game.Tools.filterID(id);
+        if (id.length == 0) {
+            id = plantEntity.getID();
+        }
+        stage = Number.parseInt(stage);
+        if (stage < 0) {
+            stage = 0;
+        }
+        if (!plantEntity.hasStage(stage)) {
+            stage = 0;
+        }
+        if (!(position instanceof BABYLON.Vector3)) {
+            position = Tools.filterVector(position);
+        }
+        if (!(rotation instanceof BABYLON.Vector3)) {
+            if (typeof rotation == "number") {
+                rotation = new BABYLON.Vector3(0, rotation, 0);
+            }
+            else {
+                rotation = Tools.filterVector(rotation);
+            }
+        }
+        if (!(scaling instanceof BABYLON.Vector3)) {
+            if (typeof scaling == "number") {
+                scaling = new BABYLON.Vector3(scaling, scaling, scaling);
+            }
+            else {
+                scaling = Tools.filterVector(scaling);
+            }
+        }
+        if (scaling.equals(BABYLON.Vector3.Zero())) {
+            scaling = BABYLON.Vector3.One();
+        }
+        if (typeof options != "object") {
+            options = {};
+        }
+        options["filtered"] = true;
+        return [id, plantEntity, stage, position, rotation, scaling, options];
+    }
+    /**
+     * 
+     * @memberof module:plants
+     * @param {string} id 
+     * @param {PlantEntity} plantEntity 
+     * @param {number} stage 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} [rotation] 
+     * @param {BABYLON.Vector3} [scaling] 
+     * @param {*} [options] 
+     * @returns PlantController
+     * @example Game.createPlantInstance("wheatInstance999", "wheat", 0, Game.playerController.getPosition())
+     */
+    static createPlantInstance(id, plantEntity, stage, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
+            let filteredParameters = Game.filterCreatePlantInstance(id, plantEntity, stage, position, rotation, scaling, options);
+            if (typeof filteredParameters == "number") {
+                return 2;
+            }
+            [id, plantEntity, stage, position, rotation, scaling, options] = filteredParameters;
+        }
+        if (Game.debugMode) console.group(`Running Game.createPlantInstance(${id}, ${plantEntity instanceof AbstractEntity ? plantEntity.id : String(plantEntity)}, ${stage}, ${position.toString()})`)
+        if (!(Game.hasLoadedMesh(plantEntity.getMeshID()))) {
+            Game.loadMesh(plantEntity.getMeshID());
+            if (Game.debugMode) console.info("Plant mesh isn't loaded yet");
+            Game.addPlantToCreate(id, plantEntity, stage, position, rotation, scaling, options);
+            if (Game.debugMode) console.groupEnd();
+            return [id, plantEntity, stage, position, rotation, scaling, options];
+        }
+        let instancedEntity = plantEntity.createInstance(id);
+        let loadedMesh = Game.createPlantMesh(plantEntity.getID(), plantEntity.getMeshID(), plantEntity.getMaterialID(), position, rotation, scaling, options);
+        let plantController = new PlantController(plantEntity.getID(), loadedMesh, instancedEntity);
+        if (Game.debugMode) console.groupEnd();
+        return plantController;
     }
 
     /**
@@ -4500,7 +4804,6 @@ class Game {
             }
         }
     }
-
     /**
      * 
      * @memberof module:characters
@@ -4681,7 +4984,6 @@ class Game {
         if (typeof options != "object" || !options.hasOwnProperty("filtered")) {
             let filteredParameters = Game.filterCreateCharacterInstance(id, characterEntity, position, rotation, scaling, options);
             if (typeof filteredParameters == "number") {
-                if (Game.debugMode) console.groupEnd();
                 return 2;
             }
             [id, characterEntity, position, rotation, scaling, options] = filteredParameters;
@@ -4826,7 +5128,7 @@ class Game {
      * @param {object} [options] 
      */
     static createPlayer(id = "", name = "", description = "", iconID = undefined, creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (Game.debugMode) console.log("Running createPlayer");
+        if (Game.debugMode) console.log("Running Game.createPlayer");
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();

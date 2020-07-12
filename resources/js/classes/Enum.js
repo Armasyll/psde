@@ -13,6 +13,7 @@ let EntityEnum = {
     "SPELL": 6,
     "CREATURE": 7,
     "SOUL": 8,
+    "PLANT": 9,
     /** @type {object} */
     "properties": {
         0: {
@@ -59,6 +60,11 @@ let EntityEnum = {
             "name": "Soul",
             "value": 8,
             "key": "SOUL"
+        },
+        9: {
+            "name": "Plant",
+            "value": 9,
+            "key": "PLANT"
         }
     }
 };
@@ -3484,5 +3490,32 @@ let SenseEnum = {
             "value": 5,
             "key": "SPACE"
         }
+    }
+}
+/**
+ * Enum for Plant types
+ * @readonly
+ * @enum {number}
+ */
+let PlantEnum = {
+    "GRASS": 0,
+    "WEEDS": 1,
+    "WHEAT": 2,
+    "properties": {
+        0: {
+            "name": "Grass",
+            "value": 0,
+            "key": "GRASS"
+        },
+        1: {
+            "name": "Weeds",
+            "value": 1,
+            "key": "WEEDS"
+        },
+        2: {
+            "name": "Wheat",
+            "value": 2,
+            "key": "WHEAT"
+        },
     }
 }

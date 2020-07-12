@@ -10,7 +10,7 @@ class Entity extends AbstractEntity {
      * @param  {string} iconID       Icon ID
      * @param  {EntityEnum} entityType EntityEnum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItem", entityType = EntityEnum.ENTITY) {
+    constructor(id = "", name = "", description = "", iconID = "genericItem", entityType = EntityEnum.ENTITY) {
         super(id, name, description, iconID);
         this.entityType = entityType;;
         this.weight = 0;
@@ -127,7 +127,10 @@ class Entity extends AbstractEntity {
     getMaterialID() {
         return this.materialID;
     }
-    setMeshStage(index = 0, updateChild = true) {
+    hasStage(index) {
+        return this.meshStages.hasOwnProperty(index);
+    }
+    setStage(index = 0, updateChild = true) {
         if (!this.meshStages.indexOf(index) == -1) {
             return 1;
         }
@@ -136,12 +139,14 @@ class Entity extends AbstractEntity {
         }
         this.currentMeshStage = index;
         this.setMeshID(this.meshStages[index]);
+        this.setMaterialID(this.materialStages[index]);
+        this.setTextureID(this.textureStages[index]);
         if (updateChild && this.hasController()) {
-            this.controller.setMeshStage(index, false);
+            this.controller.setStage(index, false);
         }
         return this;
     }
-    addMeshStage(meshID) {
+    addMeshStage(meshID = "missingMesh") {
         this.meshStages.push(meshID);
         return this;
     }
@@ -151,7 +156,7 @@ class Entity extends AbstractEntity {
         }
         return this.meshStages[index];
     }
-    addMaterialStage(materialID) {
+    addMaterialStage(materialID = "missingMaterial") {
         this.materialStages.push(materialID);
         return this;
     }
@@ -161,7 +166,7 @@ class Entity extends AbstractEntity {
         }
         return this.materialStages[index];
     }
-    addTextureStage(textureID) {
+    addTextureStage(textureID = "missingTexture") {
         this.textureStages.push(textureID);
         return this;
     }
@@ -170,6 +175,50 @@ class Entity extends AbstractEntity {
             index = this.currentTextureStage;
         }
         return this.textureStages[index];
+    }
+    setStages(stages) {
+        return this.addStages(stages, true);
+    }
+    addStages(stages, overwrite = false) {
+        if (!(stages instanceof Array)) {
+            return 2;
+        }
+        if (stages.length == 0) {
+            return 1;
+        }
+        if (overwrite) {
+            this.meshStages.clear();
+            this.materialStages.clear();
+            this.textureStages.clear();
+        }
+        for (let i in stages) {
+            if (stages[i] instanceof Array) {
+                this.addMeshStage(stages[i][0]);
+                if (stages[i].length > 1) {
+                    this.addMaterialStage(stages[i][1]);
+                }
+                else {
+                    if (this.meshStages.length == 1) {
+                        this.addMaterialStage("missingMaterial");
+                    }
+                    else {
+                        this.addMaterialStage(this.materialStages[i-1]);
+                    }
+                }
+                if (stages[i].length > 2) {
+                    this.addTextureStage(stages[i][2]);
+                }
+                else {
+                    if (this.meshStages.length == 1) {
+                        this.addTextureStage(this.materialStages[i]);
+                    }
+                    else {
+                        this.addTextureStage(this.textureStages[i-1]);
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     /**

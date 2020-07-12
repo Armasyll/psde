@@ -31,6 +31,9 @@ class InstancedEntity extends AbstractEntity {
         this._useOwnSpecialProperties = false;
         this._useOwnEffects = false;
         this._useOwnActionEffects = false;
+        this.currentMeshStage = 0;
+        this.currentTextureStage = 0;
+        this.currentMaterialStage = 0;
 
         this.entity.addInstance(this);
 

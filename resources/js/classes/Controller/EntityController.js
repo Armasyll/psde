@@ -200,7 +200,7 @@ class EntityController {
         }
         return Game.createMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
     }
-    setMeshStage(index = 0, updateChild = false) {
+    setStage(index = 0, updateChild = false) {
         if (!this.meshStages.hasOwnProperty(index)) {
             return this;
         }
@@ -257,6 +257,50 @@ class EntityController {
         }
         return this.textureStages[index];
     }
+    setStages(stages) {
+        return this.addStages(stages, true);
+    }
+    addStages(stages, overwrite = false) {
+        if (!(stages instanceof Array)) {
+            return 2;
+        }
+        if (stages.length == 0) {
+            return 1;
+        }
+        if (overwrite) {
+            this.meshStages.clear();
+            this.materialStages.clear();
+            this.textureStages.clear();
+        }
+        for (let i in stages) {
+            if (stages[i] instanceof Array) {
+                this.addMeshStage(stages[i][0]);
+                if (stages[i].length > 1) {
+                    this.addMaterialStage(stages[i][1]);
+                }
+                else {
+                    if (this.meshStages.length == 1) {
+                        this.addMaterialStage("missingMaterial");
+                    }
+                    else {
+                        this.addMaterialStage(this.materialStages[i-1]);
+                    }
+                }
+                if (stages[i].length > 2) {
+                    this.addTextureStage(stages[i][2]);
+                }
+                else {
+                    if (this.meshStages.length == 1) {
+                        this.addTextureStage(this.materialStages[i]);
+                    }
+                    else {
+                        this.addTextureStage(this.textureStages[i-1]);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
     /**
      * Returns the primary mesh associated with this controller.
      * @returns {BABYLON.AbstractMesh}
@@ -289,7 +333,7 @@ class EntityController {
                 this.meshStages = [...entity.meshStages];
                 this.materialStages = [...entity.materialStages];
                 this.textureStages = [...entity.textureStages];
-                this.setMeshStage(entity.currentMeshStage, false);
+                this.setStage(entity.currentMeshStage, false);
             }
         }
         return this;
