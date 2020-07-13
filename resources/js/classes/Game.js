@@ -5606,7 +5606,7 @@ class Game {
             return 1;
         }
         if (Game.enableFirstPerson && Game.camera.radius <= 0.5) {
-            console.log("Running Game.updateCameraTarget()");
+            if (Game.debugMode) console.log("Running Game.updateCameraTarget()");
             if (Game.playerController.getMesh().isVisible) {
                 Game.playerController.hideMesh();
                 Game.camera.checkCollisions = false;
@@ -5615,7 +5615,7 @@ class Game {
             }
         }
         else if (!Game.playerController.mesh.isVisible) {
-            console.log("Running Game.updateCameraTarget()");
+            if (Game.debugMode) console.log("Running Game.updateCameraTarget()");
             Game.playerController.showMesh();
             Game.camera.checkCollisions = true;
             Game.camera.inertia = 0.9;
