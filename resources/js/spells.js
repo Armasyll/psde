@@ -8,6 +8,6 @@ Game.createSpell("fireball", "Fireball", "It's a simple ball of fire.", "fireIco
     "targetRadius": 6,
     "targetType": TargetEnum.SPHERE,
     "savingAbility": AbilityEnum.DEXTERITY,
-    "casingTime": 1,
+    "castingTime": 1,
     "additionalSlotRolls": {4:[1,6],5:[2,6],6:[3,6],7:[4,6],8:[5,6],9:[6,6]}
 });
