@@ -3491,7 +3491,7 @@ let SenseEnum = {
             "key": "SPACE"
         }
     }
-}
+};
 /**
  * Enum for Plant types
  * @readonly
@@ -3518,4 +3518,55 @@ let PlantEnum = {
             "key": "WHEAT"
         },
     }
-}
+};
+/**
+ * Enum for Target types
+ * @readonly
+ * @enum {number}
+ */
+let TargetEnum = {
+    "SELF": 0,
+    "OTHER": 1,
+    "CONE": 2,
+    "CUBE": 3,
+    "SPHERE": 4,
+    "LINE": 5,
+    "CYLINDER": 6,
+    "properties": {
+        0: {
+            "name": "Self",
+            "value": 0,
+            "key": "SELF"
+        },
+        1: {
+            "name": "Other",
+            "value": 1,
+            "key": "OTHER"
+        },
+        2: {
+            "name": "Cone",
+            "value": 2,
+            "key": "CONE"
+        },
+        3: {
+            "name": "Cube",
+            "value": 3,
+            "key": "CUBE"
+        },
+        4: {
+            "name": "Sphere",
+            "value": 4,
+            "key": "SPHERE"
+        },
+        5: {
+            "name": "Line",
+            "value": 5,
+            "key": "LINE"
+        },
+        6: {
+            "name": "Cylinder",
+            "value": 6,
+            "key": "LINE"
+        }
+    }
+};

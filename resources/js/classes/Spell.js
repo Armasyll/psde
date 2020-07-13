@@ -16,12 +16,9 @@ class Spell {
             id = Tools.genUUIDv4();
         }
         this.id = id;
-        this.name = "";
-        this.setName(name);
-        this.description = "";
-        this.setDescription(description);
-        this.iconID = "";
-        this.setIcon(iconID);
+        this.name = name;
+        this.description = description;
+        this.iconID = iconID;
         this.spellType = SpellTypeEnum.NONE;
         this.spellLevel = 0;
         this.spellSlotsUsed = 1;
@@ -30,13 +27,13 @@ class Spell {
         this.ritual = false; // If true, caster's chosen spell slot cannot be higher than spell's
         this.castingTime = 0; // In actions; 0 is instant
         this.reaction = false;
-        this.range = 0;
+        this.targetRange = 0;
         this.spellComponents = {};
         this.duration = 0; // In actions; 0 is instant
         this.damageRollCount = 0;
         this.damageRollCountModifier = 0;
-        this.damageRoll = 0;
-        this.damageRollModifier = 0;
+        this.damageRollFaces = 0;
+        this.damageRollFacesModifier = 0;
         this.damageType = DamageEnum.NONE;
         this.bonusAction = false; // If this is true, ignore castingTime
         this.concentration = false;
@@ -46,6 +43,15 @@ class Spell {
         this.savingAbility = AbilityEnum.NONE;
         this.savingAbilityScore = 0;
         this.savingAbilityMultiplier = 0.0;
+
+        this.additionalSlotRolls = {1:[0,0],2:[0,0],3:[0,0],4:[0,0],5:[0,0],6:[0,0],7:[0,0],8:[0,0],9:[0,0]};
+
+        this.targetType = TargetEnum.SELF;
+        this.targetRadius = 0.0;
+
+        this.meshID = "missingMesh";
+        this.materialID = "missingMaterial";
+        this.textureID = "missingTexture";
 
         this.setSpellType(spellType);
         this.setSpellLevel(spellLevel);
@@ -104,23 +110,46 @@ class Spell {
     getCastingTime() {
         return this.castingTime;
     }
-    setRange(number) {
+    setTargetRange(number) {
         if (typeof number != "number") {number = Number.parseInt(number) | 0;}
         else {number = number|0}
-        this.range = number;
+        this.targetRange = number;
         return 0;
     }
-    getRange() {
-        return this.range;
+    getTargetRange() {
+        return this.targetRange;
     }
     getDamageType() {
         return this.damageType;
     }
-    getDamageRoll() {
-        return (this.damageRoll + this.damageRollModifier);
+    getDamageRollFaces() {
+        return (this.damageRollFaces + this.damageRollFacesModifier);
     }
     getDamageRollCount() {
         return (this.damageRollCount + this.damageRollCountModifier);
+    }
+    /**
+     * @returns {array} Returns an array with the number of die and their faces
+     */
+    getDamageRoll() {
+        return [this.getDamageRollCount(), this.getDamageRollFaces()];
+    }
+    /**
+     * Sets the number of die and their faces
+     * @param {number|Array} die Can be a number or an array of two numbers
+     * @param {number} [faces] 
+     */
+    setDamageRoll(die = 1, faces = 20) {
+        if (die instanceof Array) {
+            if (die.length != 2) {
+                return 1;
+            }
+            faces = die[1];
+            die = die[0];
+        }
+        this.damageRollCount = Number.parseInt(die)||1;
+        this.damageRollFaces = Number.parseInt(faces)||1;
+        return 0;
     }
 
     /**
@@ -154,8 +183,118 @@ class Spell {
             return {};
         }
     }
+    setTarget(targetType = TargetEnum.SELF, targetRadius = 0.0) {
+        this.setTargetType(targetType);
+        this.setTargetRadius(targetRadius);
+        return 0;
+    }
+    /**
+     * 
+     * @param {TargetEnum} targetType 
+     */
+    setTargetType(targetType = TargetEnum.SELF) {
+        if (!TargetEnum.properties.hasOwnProperty(targetType)) {
+            if (TargetEnum.hasOwnProperty(targetType)) {
+                targetType = TargetEnum[targetType];
+            }
+        }
+        this.targetType = targetType;
+        return 0;
+    }
+    setTargetRadius(radius = 0.0) {
+        Number.parseFloat(radius);
+        if (radius < 0) {
+            radius = 0.0;
+        }
+        this.targetRadius = radius;
+        return 0;
+    }
+    getTargetType() {
+        return this.targetType;
+    }
+    getTargetRadius() {
+        return this.targetRadius;
+    }
+    /**
+     * 
+     * @param {number} slot 
+     * @param {number|Array} die Can be a number or an array of two numbers
+     * @param {number} [faces] 
+     */
+    setAdditionalSlotRoll(slot, die = 1, faces = 20) {
+        slot = Number.parseInt(slot)||1;
+        if (slot < 1) {
+            slot = 1;
+        }
+        else if (slot > 9) {
+            slot = 9;
+        }
+        if (die instanceof Array) {
+            if (die.length != 2) {
+                return 1;
+            }
+            faces = die[1];
+            die = die[0];
+        }
+        die = Number.parseInt(die)||1;
+        if (die < 1) {
+            die = 1;
+        }
+        else if (die > 41) {
+            die = 41
+        }
+        faces = Number.parseInt(faces)||2;
+        if (faces < 2) {
+            faces = 2;
+        }
+        else if (faces > 41) {
+            faces = 41
+        }
+        this.additionalSlotRolls[slot] = [die, faces];
+        return 0;
+    }
 
-    assign(spell) {
+    setMeshID(meshID) {
+        if (Game.hasAvailableMesh(meshID)) {
+            this.meshID = meshID;
+        }
+        else {
+            this.meshID = "missingMesh";
+        }
+        return 0;
+    }
+    getMeshID() {
+        return this.meshID;
+    }
+    setTextureID(textureID) {
+        if (Game.hasAvailableTexture(textureID)) {
+            this.textureID = textureID;
+        }
+        else {
+            this.textureID = "missingTexture";
+        }
+        return 0;
+    }
+    getTextureID() {
+        return this.textureID;
+    }
+    setMaterialID(materialID) {
+        if (Game.hasAvailableMaterial(materialID) || Game.hasAvailableTexture(materialID)) {
+            this.materialID = materialID;
+            if (this.textureID == "missingTexture") {
+                this.setTextureID(materialID);
+            }
+        }
+        else {
+            this.materialID = "missingMaterial";
+        }
+        return 0;
+    }
+    getMaterialID() {
+        return this.materialID;
+    }
+
+    assign(spell, verify = false) {
         if (verify && !(spell instanceof Spell)) {
             return 2;
         }
@@ -163,8 +302,8 @@ class Spell {
         if (spell.hasOwnProperty("cantrip")) this.cantrip = spell.cantrip;
         if (spell.hasOwnProperty("castingTime")) this.setCastingTime(spell.castingTime);
         if (spell.hasOwnProperty("reaction")) this.reaction = spell.reaction;
-        if (spell.hasOwnProperty("range")) this.setRange(spell.range);
-        if (spell.hasOwnProperty("spellComponents")) {
+        if (spell.hasOwnProperty("targetRange")) this.setTargetRange(spell.targetRange);
+        if (spell.hasOwnProperty("spellComponents")) { // i wish i weren't lazy >:V
             for (let component in spell.spellComponents) {
                 this.addComponent(component, spell.spellComponents[component]);
             }
@@ -172,8 +311,13 @@ class Spell {
         if (spell.hasOwnProperty("duration")) this.duration = spell.duration;
         if (spell.hasOwnProperty("damageRollCount")) this.damageRollCount = spell.damageRollCount;
         if (spell.hasOwnProperty("damageRollCountModifier")) this.damageRollCountModifier = spell.damageRollCountModifier;
-        if (spell.hasOwnProperty("damageRoll")) this.damageRoll = spell.damageRoll;
-        if (spell.hasOwnProperty("damageRollModifier")) this.damageRollModifier = spell.damageRollModifier;
+        if (spell.hasOwnProperty("damageRollFaces")) this.damageRollFaces = spell.damageRollFaces;
+        if (spell.hasOwnProperty("damageRollModifier")) this.damageRollFacesModifier = spell.damageRollModifier;
+        if (spell.hasOwnProperty("damageRoll")) {
+            if (spell["damageRoll"] instanceof Array && spell["damageRoll"].length == 2) {
+                this.setDamageRoll(spell["damageRoll"]);
+            }
+        }
         if (spell.hasOwnProperty("damageType")) this.damageType = spell.damageType;
         if (spell.hasOwnProperty("bonusAction")) this.bonusAction = spell.bonusAction;
         if (spell.hasOwnProperty("concentration")) this.concentration = spell.concentration;
@@ -181,9 +325,19 @@ class Spell {
         if (spell.hasOwnProperty("savingAbilityScore")) this.savingAbilityScore = spell.savingAbilityScore;
         if (spell.hasOwnProperty("savingAbilityMultiplier")) this.savingAbilityMultiplier = spell.savingAbilityMultiplier;
         if (spell.hasOwnProperty("spellType")) this.setSpellType(spell.spellType);
-        if (spell.hasOwnProperty("spellLevel")) this.setSpellLevel(spell.spellLevel)
-        if (spell.hasOwnProperty("spellSlotsUsed")) this.setSpellSlotsUsed(spell.spellSlotsUsed)
-        if (spell.hasOwnProperty("ritual")) this.setRitual(spell.ritual)
+        if (spell.hasOwnProperty("spellLevel")) this.setSpellLevel(spell.spellLevel);
+        if (spell.hasOwnProperty("spellSlotsUsed")) this.setSpellSlotsUsed(spell.spellSlotsUsed);
+        if (spell.hasOwnProperty("ritual")) this.setRitual(spell.ritual);
+        if (spell.hasOwnProperty("targetType")) this.setTargetType(spell.targetType);
+        if (spell.hasOwnProperty("targetRadius")) this.setTargetRadius(spell.targetRadius);
+        if (spell.hasOwnProperty("additionalSlotRolls")) {
+            for (let i in spell["additionalSlotRolls"]) {
+                this.setAdditionalSlotRoll(i, spell["additionalSlotRolls"][i]);
+            }
+        }
+        if (spell.hasOwnProperty("meshID")) this.setMeshID(spell.meshID);
+        if (spell.hasOwnProperty("materialID")) this.setMaterialID(spell.materialID);
+        if (spell.hasOwnProperty("textureID")) this.setTextureID(spell.textureID);
         return 0;
     }
     dispose() {

@@ -85,6 +85,8 @@ class Game {
             "billboardInside2": "resources/meshes/static/blocks.babylon",
             "billboardInside2PyramidHalfBase": "resources/meshes/static/blocks.babylon",
             "billboardInside2PyramidBase": "resources/meshes/static/blocks.babylon",
+            "billboardInside3": "resources/meshes/static/blocks.babylon",
+            "billboardSidesInside2": "resources/meshes/static/blocks.babylon",
             "billboardCubeInside2": "resources/meshes/static/blocks.babylon",
             "billboardCubeInside4": "resources/meshes/static/blocks.babylon",
             "billboardCubeInside6": "resources/meshes/static/blocks.babylon",
@@ -395,7 +397,7 @@ class Game {
             "bone01": "resources/images/textures/items/bone01.svg",
             "icosphere30": "resources/images/textures/static/icosphere30.svg",
             "fireOpacityPNG": "resources/images/textures/effects/fireOpacity.png",
-            "fire": "resources/images/textures/effects/fire.png",
+            "fireEffect01": "resources/images/textures/effects/fire.png",
             "greenWallpaper": "resources/images/textures/static/greenWallpaper.png",
             "trimWood": "resources/images/textures/static/trimWood.png",
             "plainDoor": "resources/images/textures/static/plainDoor.svg",
@@ -493,7 +495,7 @@ class Game {
             "ring01GoldIcon": "resources/images/icons/items/ring01Gold.png",
             "ring02GoldIcon": "resources/images/icons/items/ring02Gold.png",
             "ring03GoldDRubyIcon": "resources/images/icons/items/ring03GoldDRuby.png",
-            "fireIcon": "resources/images/icons/effects/fire.png",
+            "fireIcon01": "resources/images/icons/effects/fire.png",
             "bottle05RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle05RedSarcophagusJuice.png",
             "bottle04RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle04RedSarcophagusJuice.png",
             "bottle03RedSarcophagusJuiceIcon": "resources/images/icons/items/bottle03RedSarcophagusJuice.png",
@@ -1026,6 +1028,7 @@ class Game {
                     Game.importDefaultMeshes();
                     Game.importEffects();
                     Game.importClasses();
+                    Game.importSpells();
                     Game.importItems();
                     Game.importConsumables();
                     Game.importBooks();
@@ -5054,6 +5057,34 @@ class Game {
             Game.removeMesh(mesh);
         }
         return 0;
+    }
+
+    /**
+     * @module spells
+     */
+    /**
+     * @memberof module:spells
+     */
+    static importSpells() {
+        return Game.importScript("resources/js/spells.js");
+    }
+    /**
+     * 
+     * @memberof module:spells
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} description 
+     * @param {string} iconID 
+     * @param {string} meshID 
+     * @param {string} materialID 
+     * @param {object} options 
+     */
+    static createSpell(id = "", name = "", description = "", iconID = "", meshID = "", materialID = "", options = {}) {
+        let spell = new Spell(id, name, description, iconID);
+        spell.setMeshID(meshID);
+        spell.setMaterialID(materialID);
+        spell.assign(options);
+        return spell;
     }
 
     /**

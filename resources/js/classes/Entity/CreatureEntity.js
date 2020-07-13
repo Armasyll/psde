@@ -89,7 +89,7 @@ class CreatureEntity extends Entity {
          * Ability Score
          * @type {Object.<string, number>}
          */
-        this.abilityScore = {"STRENGTH":10,"DEXTERITY":10,"CONSTITUTION":10,"INTELLIGENCE":10,"WISDOM":10,"CHARISMA":10};
+        this.abilityScore = {"STRENGTH":10,"DEXTERITY":10,"CONSTITUTION":10,"INTELLIGENCE":1,"WISDOM":1,"CHARISMA":1};
         /**
          * Ability Score
          * @type {Object.<string, number>}
