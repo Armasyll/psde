@@ -174,7 +174,7 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
             }
             // Start Mitigate jittering in Y direction
-            /*if (Game.useControllerGroundRay) {
+            if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
                 let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
                     if (mesh.isPickable && mesh.checkCollisions) {
@@ -183,12 +183,11 @@ class CharacterControllerRigidBody extends CharacterController {
                     return false;
                 });
                 if (hit.hit) {
-                    console.log(hit);
                     if (Game.Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
                         this.intendedMovement.y = 0;
                     }
                 }
-            }*/
+            }
             // End Mitigate jittering in Y direction
             this.collisionMesh.moveWithCollisions(this.intendedMovement);
             if (this.collisionMesh.position.y > this.startPosition.y) {
