@@ -217,7 +217,7 @@ class Game {
             "craftsmanWindowDouble": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWindowframe": "resources/meshes/static/craftsmanWalls.babylon",
             "craftsmanWindowframeNoTrim": "resources/meshes/static/craftsmanWalls.babylon",
-            "stairsCollision": "resources/static/craftsmanWalls.babylon",
+            "stairsCollision": "resources/meshes/static/craftsmanWalls.babylon",
             "aardwolfM": "resources/meshes/characters/aardwolf.babylon",
             "spiritN": "resources/meshes/characters/spiritN.babylon",
             "foxF": "resources/meshes/characters/fox.babylon",
