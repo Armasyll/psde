@@ -164,6 +164,7 @@ class CharacterControllerRigidBody extends CharacterController {
             else {
                 this.collisionMesh.rotation.y = this.intendedDirection;
             }
+            this.collisionMesh.rotation.y = Game.Tools.moduloRadians(this.collisionMesh.rotation.y);
             if (this.walking) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
             }

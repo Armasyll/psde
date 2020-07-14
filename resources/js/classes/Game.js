@@ -1115,9 +1115,6 @@ class Game {
                 Game.camera.beta = 3.054;
             }
         }
-        if (Game.playerController.collisionMesh instanceof BABYLON.AbstractMesh) {
-            Game.playerController.collisionMesh.rotation.y = Game.Tools.moduloRadians(Game.playerController.collisionMesh.rotation.y);
-        }
         for (let characterController in CharacterController.characterControllerList) {
             if (CharacterController.characterControllerList[characterController].animated) {
                 CharacterController.characterControllerList[characterController].moveAV();
