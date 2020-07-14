@@ -3186,6 +3186,10 @@ class Game {
         }
         let furnitureEntity = new FurnitureEntity(id, name, description, iconID, furnitureType);
         if (furnitureEntity instanceof FurnitureEntity) {
+            /**
+             * TODO: allow setMeshID to handle arrays
+             * eg, ["bathtub01", "showerPipes01"]
+             */
             furnitureEntity.setMeshID(meshID);
             furnitureEntity.setTextureID(textureID);
             furnitureEntity.setPrice(price);

@@ -113,6 +113,7 @@ apartmentCell.addCollidableMesh("bathroomDoorway", "craftsmanDoorway", "whiteWal
 apartmentCell.addFurniture("ozzyBathroomToilet", "animatedToilet01", new BABYLON.Vector3(8.5, 0, -1), new BABYLON.Vector3(0, 90, 0));
 apartmentCell.addFurniture("ozzyBathroomSink", "sink01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
 apartmentCell.addFurniture("ozzyBathroomFaucet", "animatedFaucet01", new BABYLON.Vector3(8.95, 0, -0.25), new BABYLON.Vector3(0, 90, 0));
+apartmentCell.addFurniture("ozzyBathroomTub", "bathtub01", new BABYLON.Vector3(8.85, 0, -2.5), new BABYLON.Vector3(0, 90, 0));
 
 // Ozzy Hallway
 apartmentCell.addCollidableMesh(undefined, "craftsmanWindowframe", "yellowWallpaperPlainWood", new BABYLON.Vector3(4, 0, 0));

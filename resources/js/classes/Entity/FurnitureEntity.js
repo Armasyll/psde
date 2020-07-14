@@ -1,3 +1,6 @@
+/**
+ * FurnitureEntity
+ */
 class FurnitureEntity extends Entity {
     /**
      * Creats Furniture
