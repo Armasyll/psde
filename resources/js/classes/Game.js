@@ -6288,17 +6288,17 @@ class Game {
             let posArray = Game.meshProperties[entity.getController().getMesh().name]["usableArea"];
             let newPos = new BABYLON.Vector3(0, posArray[0][0].y, 0);
             if (entity.getFurnitureType() == FurnitureEnum.BED) {
-                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().getCollisionMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().collisionMesh.getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
             }
             else if (entity.getFurnitureType() == FurnitureEnum.COUCH) {
-                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().getCollisionMesh().getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
+                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().collisionMesh.getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
             }
             actor.getController().getMesh().position.copyFrom(newPos);
         }
         else {
-            actor.getController().getCollisionMesh().position.set(actor.getController().width / 2, 0.4, 0);
+            actor.getController().collisionMesh.position.set(actor.getController().width / 2, 0.4, 0);
         }
-        actor.getController().getCollisionMesh().rotation.copyFrom(entity.getController().getCollisionMesh().rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
+        actor.getController().collisionMesh.rotation.copyFrom(entity.getController().collisionMesh.rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
         actor.setFurniture(entity);
         actor.getController().doLay();
         if (typeof callback == "function") {
@@ -6331,8 +6331,8 @@ class Game {
         }
         actor.setFurniture(entity);
         actor.setStance(StanceEnum.SIT);
-        actor.getController().getCollisionMesh().position.set(actor.getController().width / 2, 0, -0.45);
-        actor.getController().getCollisionMesh().rotation.set(0, 0, 0);
+        actor.getController().collisionMesh.position.set(actor.getController().width / 2, 0, -0.45);
+        actor.getController().collisionMesh.rotation.set(0, 0, 0);
         actor.getController().doSit();
         if (typeof callback == "function") {
             callback(entity, undefined, actor);
