@@ -5667,21 +5667,23 @@ class Game {
             Game.camera.inertia = 0.9;
             Game.gui.hideCrosshair();
         }
-        if (Game.playerController.mesh.isVisible && Game.useCameraRay && Game.cameraRay instanceof BABYLON.Ray) {
-            Game.cameraRay.origin = Game.camera.lockedTarget.absolutePosition;
-            Game.cameraRay.length = Game.camera.radius;
-            Game.cameraRay.direction.copyFrom(Game.camera.position.subtract(Game.camera.lockedTarget.absolutePosition).normalize());
-            let hit = Game.scene.pickWithRay(Game.cameraRay, (mesh) => {
-                if (!mesh.checkCollisions || mesh == Game.playerController.collisionMesh) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }, true);
-            if (hit.hit) {
-                if (Game.camera.checkCollisions) {
-                    Game.camera.position.copyFrom(hit.pickedPoint);
+        if (Game.useCameraRay) {
+            if (Game.playerController.mesh.isVisible && Game.cameraRay instanceof BABYLON.Ray) {
+                Game.cameraRay.origin = Game.camera.lockedTarget.absolutePosition;
+                Game.cameraRay.length = Game.camera.radius;
+                Game.cameraRay.direction.copyFrom(Game.camera.position.subtract(Game.camera.lockedTarget.absolutePosition).normalize());
+                let hit = Game.scene.pickWithRay(Game.cameraRay, (mesh) => {
+                    if (!mesh.checkCollisions || mesh == Game.playerController.collisionMesh) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                }, true);
+                if (hit.hit) {
+                    if (Game.camera.checkCollisions) {
+                        Game.camera.position.copyFrom(hit.pickedPoint);
+                    }
                 }
             }
         }
