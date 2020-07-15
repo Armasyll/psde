@@ -96,57 +96,6 @@ let SexEnum = {
     }
 };
 /**
- * Enum for Stances
- * @readonly
- * @enum {number}
- */
-let StanceEnum = {
-    "LAY": 0,
-    "SIT": 1,
-    "CROUCH": 2,
-    "STAND": 3,
-    "FLY": 4,
-    "FALL": 5,
-    "SWIM": 6,
-    "properties": {
-        0: {
-            "name": "Lay",
-            "value": 0,
-            "key": "LAY"
-        },
-        1: {
-            "name": "Sit",
-            "value": 1,
-            "key": "SIT"
-        },
-        2: {
-            "name": "Crouch",
-            "value": 2,
-            "key": "CROUCH"
-        },
-        3: {
-            "name": "Stand",
-            "value": 3,
-            "key": "STAND"
-        },
-        4: {
-            "name": "Fly",
-            "value": 4,
-            "key": "FLY"
-        },
-        5: {
-            "name": "Fall",
-            "value": 5,
-            "key": "FALL"
-        },
-        6: {
-            "name": "Swim",
-            "value": 6,
-            "key": "SWIM"
-        }
-    }
-};
-/**
  * Enum for Items
  * @readonly
  * @enum {number}
@@ -889,6 +838,21 @@ let ActionEnum = {
             "key": "READ"
         }
     }
+};
+/**
+ * Enum for Stances
+ * @readonly
+ * @enum {number}
+ */
+let StanceEnum = {
+    "LAY": ActionEnum.LAY,
+    "SIT": ActionEnum.SIT,
+    "CROUCH": ActionEnum.CROUCH,
+    "STAND": ActionEnum.STAND,
+    "FLY": ActionEnum.FLY,
+    "FALL": ActionEnum.FALL,
+    "SWIM": ActionEnum.SWIM,
+    "properties": ActionEnum.properties
 };
 /**
  * Enum for Consumables
