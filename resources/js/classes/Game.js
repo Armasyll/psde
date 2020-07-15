@@ -970,6 +970,14 @@ class Game {
                     Game.toggleGodMode();
                     break;
                 }
+                case "useRigidBodies": {
+                    Game.useRigidBodies = (val == "false" ? false : true);
+                    break;
+                }
+                case "useTransform": {
+                    Game.useRigidBodies = false;
+                    break;
+                }
             }
         });
         return 0;
