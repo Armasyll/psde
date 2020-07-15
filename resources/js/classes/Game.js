@@ -6282,24 +6282,14 @@ class Game {
                 return 2;
             }
         }
-        actor.setStance(StanceEnum.LAY);
-        actor.getController().setParent(entity.getController().getMesh());
-        if (Game.meshProperties.hasOwnProperty(entity.getController().getMesh().name)) {
-            let posArray = Game.meshProperties[entity.getController().getMesh().name]["usableArea"];
-            let newPos = new BABYLON.Vector3(0, posArray[0][0].y, 0);
-            if (entity.getFurnitureType() == FurnitureEnum.BED) {
-                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().collisionMesh.getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
-            }
-            else if (entity.getFurnitureType() == FurnitureEnum.COUCH) {
-                newPos.x = posArray[0][1].x - (0.0625 + actor.getController().collisionMesh.getBoundingInfo().boundingBox.center.z * (entity.getCharacters().size + 1));
-            }
-            actor.getController().getMesh().position.copyFrom(newPos);
-        }
-        else {
-            actor.getController().collisionMesh.position.set(actor.getController().width / 2, 0.4, 0);
-        }
-        actor.getController().collisionMesh.rotation.copyFrom(entity.getController().collisionMesh.rotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(270), 0)));
         actor.setFurniture(entity);
+        actor.setStance(StanceEnum.LAY);
+        let heightOffset = 0.2;
+        if (Game.meshProperties.hasOwnProperty(entity.meshID) && Game.meshProperties[entity.meshID].hasOwnProperty("usableArea")) {
+            heightOffset = Game.meshProperties[entity.meshID]["usableArea"][0][0].y;
+        }
+        actor.getController().collisionMesh.position.set(actor.getController().width / 2, heightOffset, 0);
+        actor.getController().collisionMesh.rotation.set(0, Game.RAD_270, 0);
         actor.getController().doLay();
         if (typeof callback == "function") {
             callback(entity, undefined, actor);

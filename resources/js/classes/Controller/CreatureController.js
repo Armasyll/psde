@@ -278,8 +278,7 @@ class CreatureController extends EntityController {
         this.crouching = false;
         this.sitting = false;
         this.lying = true;
-        this.setLocked(true);
-        this.beginAnimation(this.lieDown, () => {this.setLocked(false)});
+        this.beginAnimation(this.lieDown);
         return true;
     }
     doSit() {
@@ -290,8 +289,7 @@ class CreatureController extends EntityController {
         this.crouching = false;
         this.sitting = true;
         this.lying = false;
-        this.setLocked(true);
-        this.beginAnimation(this.sitDown, () => {this.setLocked(false)});
+        this.beginAnimation(this.sitDown);
         return true;
     }
     doStand() {
