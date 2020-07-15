@@ -5249,6 +5249,7 @@ class Game {
                     console.error("Target doesn't have a controller; returning 1");
                     console.groupEnd();
                 }
+                Game.clearPlayerTarget();
                 return 1;
             }
         }

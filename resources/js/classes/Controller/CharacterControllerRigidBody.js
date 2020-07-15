@@ -177,8 +177,8 @@ class CharacterControllerRigidBody extends CharacterController {
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
-                let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
-                    if (mesh.isPickable && mesh.checkCollisions) {
+                let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
+                    if (mesh.isPickable && mesh.checkCollisions && mesh != this.collisionMesh) {
                         return true;
                     }
                     return false;

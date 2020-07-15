@@ -609,8 +609,7 @@ class EntityController {
             return this;
         }
         if (!(this.groundRay instanceof BABYLON.Ray)) {
-            this.groundRay = new BABYLON.Ray(this.collisionMesh.position, this.collisionMesh.position.add(BABYLON.Vector3.Down()), 0.01);
-            this.groundRay.direction = BABYLON.Vector3.Down();
+            this.groundRay = new BABYLON.Ray(this.collisionMesh.position, BABYLON.Vector3.Down(), 0.01);
         }
         this.groundRay.origin = this.collisionMesh.position;
         //this.groundRay.direction = this.collisionMesh.position.add(BABYLON.Vector3.Down());
