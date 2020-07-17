@@ -5982,8 +5982,7 @@ class Game {
             }
         }
         if (entity.getController() instanceof FurnitureController) {
-            entity.getController().currAnim = entity.getController().closed;
-            entity.getController().beginAnimation(entity.getController().close);
+            entity.getController().doClose();
             entity.setDefaultAction(ActionEnum.OPEN);
             entity.addHiddenAvailableAction(ActionEnum.CLOSE);
             entity.removeHiddenAvailableAction(ActionEnum.OPEN);
@@ -6203,8 +6202,7 @@ class Game {
             Game.playSound("openDoor");
         }
         else if (entity.getController() instanceof FurnitureController) {
-            entity.getController().currAnim = entity.getController().opened;
-            entity.getController().beginAnimation(entity.getController().open);
+            entity.getController().doOpen();
             entity.setDefaultAction(ActionEnum.CLOSE);
             entity.addHiddenAvailableAction(ActionEnum.OPEN);
             entity.removeHiddenAvailableAction(ActionEnum.CLOSE);

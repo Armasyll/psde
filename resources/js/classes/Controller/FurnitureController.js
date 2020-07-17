@@ -6,14 +6,16 @@ class FurnitureController extends EntityController {
         // maybe make 90_idle01 closed
         if (this.skeleton instanceof BABYLON.Skeleton) {
             this.createAnimatableFromRangeName("closed", "10_closed01", false);
-            this.createAnimatableFromRangeName("open", "80_open01", false);
+            //this.createAnimatableFromRangeName("open", "80_open01", false);
             this.createAnimatableFromRangeName("opened", "10_opened01", false);
-            this.createAnimatableFromRangeName("close", "80_close01", false);
-            this.createAnimationGroupFromAnimatables("closed", "closed", 1.0, false);
-            this.createAnimationGroupFromAnimatables("open", "open", 0.0, false);
-            this.createAnimationGroupFromAnimatables("opened", "opened", 0.0, false);
-            this.createAnimationGroupFromAnimatables("close", "close", 0.0, false);
-            this.animated = true;
+            //this.createAnimatableFromRangeName("close", "80_close01", false);
+            if (this.hasAnimatable("opened") && this.hasAnimatable("closed")) {
+                this.createAnimationGroupFromAnimatables("closed", "closed", 1.0, false);
+                //this.createAnimationGroupFromAnimatables("open", "open", 0.0, false);
+                this.createAnimationGroupFromAnimatables("opened", "opened", 0.0, false);
+                //this.createAnimationGroupFromAnimatables("close", "close", 0.0, false);
+                this.animated = true;
+            }
         }
 
         FurnitureController.set(this.id, this);
@@ -40,6 +42,28 @@ class FurnitureController extends EntityController {
         anim = this.doIdle(dt);
         this.beginAnimation(anim);*/
         return this;
+    }
+    doOpen() {
+        if (!this.hasAnimationGroup("opened") || !this.hasAnimationGroup("closed")) {
+            return 1;
+        }
+        this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
+        //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
+        this.animationGroups["opened"].setWeightForAllAnimatables(1.0);
+        //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
+        this.animationGroups["opened"].play(false);
+        return 0;
+    }
+    doClose() {
+        if (!this.hasAnimationGroup("opened") || !this.hasAnimationGroup("closed")) {
+            return 1;
+        }
+        this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
+        //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
+        this.animationGroups["closed"].setWeightForAllAnimatables(1.0);
+        //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
+        this.animationGroups["closed"].play(false);
+        return 0;
     }
 
     dispose() {

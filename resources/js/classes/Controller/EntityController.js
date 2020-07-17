@@ -449,11 +449,11 @@ class EntityController {
     createAnimationGroupFromAnimatables(id, animatables, weight = 0.0, loop = -1, speed = -1, start = true) {
         let hasValidAnimations = true;
         let animationGroup = new BABYLON.AnimationGroup(id);
-        let maxFrameCount = 0;
+        /*let maxFrameCount = 0;
         let minFrameCount = Number.MAX_SAFE_INTEGER;
         let tempFrameCount = 0;
         let maxFrame = 0;
-        let minFrame = Number.MAX_SAFE_INTEGER;
+        let minFrame = Number.MAX_SAFE_INTEGER;*/
         if (typeof animatables != "array") {
             animatables = [animatables];
         }
