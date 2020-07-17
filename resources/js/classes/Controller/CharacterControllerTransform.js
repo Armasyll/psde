@@ -58,11 +58,12 @@ class CharacterControllerTransform extends CharacterController {
             this.idleFallTime = 0;
             this.doMove();
             Game.entityLocRotWorker.postMessage({
-                cmd:"setLocRot",
+                cmd:"updateEntity",
                 msg:[
-                    this.entity.getID(),
-                    this.collisionMesh.position.asArray(),
-                    this.collisionMesh.rotation.asArray()
+                    this.id,
+                    new Date().getTime(),
+                    this.getPosition().asArray(),
+                    this.getRotation().asArray()
                 ]
             });
         }

@@ -65,10 +65,12 @@ class EntityController {
         this.setEntity(entity);
         this.setMesh(mesh);
         Game.entityLocRotWorker.postMessage({
-            cmd:"set",
+            cmd:"createEntity",
             msg:[
-                this.entity.getID(),
-                new Date().getTime(),
+                this.id,
+                this.width,
+                this.height,
+                this.depth,
                 this.getPosition().asArray(),
                 this.getRotation().asArray()
             ]

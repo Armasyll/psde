@@ -1,14 +1,19 @@
-importScripts("../../../vendors/babylonjs/babylon.js", "../Overrides.js");
+importScripts("../../../vendors/babylonjs/babylon.js", "../Overrides.js", "../classes/Tools.js");
 class SimpleEntityController {
-    constructor(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), timestamp = 0) {
+    constructor(id, width = 0.0, height = 0.0, depth = 0.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), timestamp = 0) {
         this.id = id;
+        this.width = width;
+        this.weight = height;
+        this.depth = depth;
         this.position = BABYLON.Vector3.Zero();
         this.setPosition(position);
         this.rotation = BABYLON.Vector3.Zero();
         this.setRotation(rotation);
         this.timestamp = timestamp;
+        this.collisionMesh = null;
         this.locked = false;
         this.enabled = true;
+        this.createCollisionMesh();
         SimpleEntityController.set(this.id, this);
     }
     setPosition(position) {
@@ -21,10 +26,16 @@ class SimpleEntityController {
             }
         }
         this.position.copyFrom(position);
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            this.collisionMesh.position.copyFrom(position);
+        }
         return 0;
     }
     getPosition() {
-        return this.position;
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.position;
+        }
+        return new BABYLON.Vector3(0, -4096, 0);
     }
     setRotation(rotation) {
         if (!(rotation instanceof BABYLON.Vector3)) {
@@ -36,24 +47,41 @@ class SimpleEntityController {
             }
         }
         this.rotation.copyFrom(rotation);
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            this.collisionMesh.rotation.copyFrom(rotation);
+        }
         return 0;
     }
     getRotation() {
-        return this.rotation;
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.rotation;
+        }
+        return BABYLON.Vector3.Zero();
     }
     setTimestamp(timestamp) {
         this.timestamp = timestamp;
+        return 0;
     }
     getTimestamp() {
         return this.timestamp;
     }
 
+    hasCollisionMesh() {
+        return this.collisionMesh instanceof BABYLON.AbstractMesh;
+    }
+    createCollisionMesh() {
+        this.collisionMesh = createAreaMesh(this.id, "CUBE", this.width, this.height, this.depth, this.position, this.rotation);
+        return 0;
+    }
+
     dispose() {
         this.locked = true;
         this.enabled = false;
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            this.collisionMesh.dispose();
+        }
         SimpleEntityController.remove(this.id);
-        this.position.dispose();
-        this.rotation.dispose();
+        return undefined;
     }
     static initialize() {
         SimpleEntityController.simpleEntityControllerList = new Map();
@@ -81,6 +109,10 @@ let entityRadiusToPlayerLimit = 25.0;
 let entitiesEnabledByRadius = new Set();
 let entitiesDisabledByRadius = new Set();
 let entitiesProcessingByRadius = new Set();
+
+let engine = new BABYLON.NullEngine();
+let scene = new BABYLON.Scene(engine);
+let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene); // have to render in order to get intersects >:l
 function entityToggler() {
     if (player == null) {
         return 1;
@@ -95,7 +127,7 @@ function entityToggler() {
             entitiesEnabledByRadius.add(id);
             if (!simpleEntityController.enabled) {
                 simpleEntityController.enabled = true;
-                postMessage({0:0, 1:id});
+                postMessage({"cmd":"enable", "msg":{"entityID":id}});
             }
         }
         else {
@@ -103,11 +135,47 @@ function entityToggler() {
             entitiesDisabledByRadius.add(id);
             if (simpleEntityController.enabled) {
                 simpleEntityController.enabled = false;
-                postMessage({0:1, 1:id});
+                postMessage({"cmd":"disable", "msg":{"entityID":id}});
             }
         }
         entitiesProcessingByRadius.delete(id);
     });
+}
+function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+    let mesh = null;
+    switch (shape) {
+        case "CYLINDER": {
+            mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameter": diameter, "height": height, "tessellation": 8}, scene);
+            break;
+        }
+        case "CONE": {
+            mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": 0, "diameterBottom": diameter, "height": height, "tessellation": 8}, scene);
+            break;
+        }
+        case "SPHERE": {
+            mesh = BABYLON.MeshBuilder.CreateSphere(id, {"diameter": diameter, "diameterY": height, "diameterZ": depth, "segments": 8}, scene);
+            break;
+        }
+        case "CUBE": {}
+        default: {
+            mesh = BABYLON.MeshBuilder.CreateBox(id, {"width": diameter, "height": height, "depth": depth}, scene);
+        }
+    }
+
+    let pivotAt = new BABYLON.Vector3(0, height / 2, 0);
+    mesh.bakeTransformIntoVertices(BABYLON.Matrix.Translation(pivotAt.x, pivotAt.y, pivotAt.z));
+    
+    if (position instanceof BABYLON.Vector3) {
+        mesh.position.copyFrom(position);
+    }
+    if (rotation instanceof BABYLON.Vector3) {
+        mesh.rotation.copyFrom(rotation);
+    }
+    if (scaling instanceof BABYLON.Vector3) {
+        mesh.scaling.copyFrom(scaling);
+    }
+
+    return mesh;
 }
 addEventListener('message', function(event) {
     switch (event.data.cmd) {
@@ -115,12 +183,12 @@ addEventListener('message', function(event) {
             entityToggler();
             break;
         }
-        case "set": {
+        case "updateEntity": {
             if (!(event.data.msg instanceof Array) || event.data.msg.length != 4 || typeof event.data.msg[0] != "string" || typeof event.data.msg[1] != "number") {
                 return 2;
             }
             if (!SimpleEntityController.has(event.data.msg[0])) {
-                new SimpleEntityController(event.data.msg[0], BABYLON.Vector3.FromArray(event.data.msg[2]), BABYLON.Vector3.FromArray(event.data.msg[3]), event.data.msg[1]);
+                postMessage({"cmd":"requestCreate", "msg":event.data.msg[0]});
             }
             else {
                 let entity = SimpleEntityController.get(event.data.msg[0]);
@@ -130,12 +198,32 @@ addEventListener('message', function(event) {
             }
             break;
         }
+        case "createEntity": {
+            if (!SimpleEntityController.has(event.data.msg[0])) {
+                new SimpleEntityController(event.data.msg[0], event.data.msg[1], event.data.msg[2], event.data.msg[3], BABYLON.Vector3.FromArray(event.data.msg[4]), BABYLON.Vector3.FromArray(event.data.msg[5]));
+            }
+            break;
+        }
+        case "getEntitiesInArea": {
+            let areaMesh = createAreaMesh(Tools.genUUIDv4(), event.data.msg[1], event.data.msg[2], event.data.msg[3], event.data.msg[4], event.data.msg[5], event.data.msg[6]);
+            scene.render();
+            let controllers = [];
+            for (controller in SimpleEntityController.list()) {
+                if (controller.enabled) {
+                    if (areaMesh.intersectsMesh(controller.collisionMesh)) {
+                        controllers.push(controller.id);
+                    }
+                }
+            }
+            postMessage({"cmd":"entitiesInArea", "msg":controllers});
+        }
         case "remove":
         case "delete": {
             if (!SimpleEntityController.has(event.data.msg)) {
                 return 1;
             }
-            SimpleEntityController.remove(event.data.msg);
+            let controller = SimpleEntityController.get(event.data.msg);
+            controller.collisionMesh.dispose();
             break;
         }
         case "setLoc": {

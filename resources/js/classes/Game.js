@@ -878,7 +878,7 @@ class Game {
                     break;
                 }
                 case "entityToggler": {
-                    Game.entityLocRotWorker.postMessage({ cmd: "toggleEntities" });
+                    Game.entityLocRotWorker.postMessage({ "cmd": "toggleEntities" });
                     break;
                 }
                 case "triggerScheduledEffect": {
@@ -927,20 +927,38 @@ class Game {
         }
         Game.entityLocRotWorker = new Worker("resources/js/workers/entityLocationRotation.worker.js");
         Game.entityLocRotWorker.onmessage = function (e) {
-            if (!e.data.hasOwnProperty(0) || !e.data.hasOwnProperty(1)) {
+            if (!e.data.hasOwnProperty("cmd") || !e.data.hasOwnProperty("msg")) {
                 return 2;
             }
-            if (e.data[0] == 0) {
-                if (!EntityController.has(e.data[1])) {
-                    return 1;
+            switch (e.data["cmd"]) {
+                case "enable": {
+                    EntityController.get(e.data.msg["entityID"]).setEnabled(true);
+                    break;
                 }
-                EntityController.get(e.data[1]).setEnabled(true);
-            }
-            else if (e.data[0] == 1) {
-                if (!EntityController.has(e.data[1])) {
-                    return 1;
+                case "disable": {
+                    EntityController.get(e.data.msg["entityID"]).setEnabled(false);
+                    break;
                 }
-                EntityController.get(e.data[1]).setEnabled(false);
+                case "requestCreate": {
+                    let controller = EntityController.get(e.data.msg["entityID"]);
+                    if (controller instanceof EntityController) {
+                        Game.entityLocRotWorker.postMessage({
+                            cmd: "create",
+                            msg: [
+                                controller.id,
+                                controller.width,
+                                controller.height,
+                                controller.depth,
+                                controller.getPosition().toArray(),
+                                controller.getRotation().toArray()
+                            ]
+                        });
+                    }
+                    break;
+                }
+                case "requestUpdate": {
+                    break;
+                }
             }
         }
         Game.gameTimeMultiplier = 10;
@@ -5220,7 +5238,7 @@ class Game {
         Game.initArcRotateCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
-        Game.entityLocRotWorker.postMessage({ cmd: "setPlayer", msg: Game.player.getID() });
+        Game.entityLocRotWorker.postMessage({ "cmd": "setPlayer", "msg": Game.player.getID() });
         return 0;
     }
     /**
