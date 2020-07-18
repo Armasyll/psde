@@ -215,6 +215,7 @@ addEventListener('message', function(event) {
                     }
                 }
             }
+            areaMesh.dispose();
             postMessage({"cmd":"entitiesInArea", "msg":controllers});
         }
         case "remove":
