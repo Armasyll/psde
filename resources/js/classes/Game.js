@@ -978,8 +978,8 @@ class Game {
                                 controllers.push(EntityController.get(e.data.msg["controllerIDs"][i]));
                             }
                         }
-                        Game.callbacksForEntitiesInArea[e.data.msg](controllers);
-                        delete Game.callbacksForEntitiesInArea[e.data.msg];
+                        Game.callbacksForEntitiesInArea[e.data.msg["responseID"]](controllers);
+                        delete Game.callbacksForEntitiesInArea[e.data.msg["responseID"]];
                     }
                     break;
                 }
