@@ -979,6 +979,7 @@ class Game {
                             }
                         }
                         Game.callbacksForEntitiesInArea[e.data.msg](controllers);
+                        delete Game.callbacksForEntitiesInArea[e.data.msg];
                     }
                     break;
                 }
