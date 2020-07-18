@@ -719,6 +719,8 @@ class Game {
 
         Game.essentialEntities = new Set();
 
+        Game.callbacksForEntitiesInArea = [];
+
         Game.meshProperties = {
             "animatedCoffin01": {
                 usableArea: [
@@ -968,11 +970,16 @@ class Game {
                     }
                     break;
                 }
-                case "getEntitiesInArea": {
-                    /*
-                    let id = e.data.msg["id"];
-                    let controllerIDs = e.data.msg["controllers"];
-                    */
+                case "entitiesInArea": {
+                    if (Game.callbacksForEntitiesInArea.hasOwnProperty([e.data.msg["responseID"]])) {
+                        let controllers = [];
+                        for (let i in e.data.msg["controllerIDs"]) {
+                            if (EntityController.has(e.data.msg["controllerIDs"][i])) {
+                                controllers.push(EntityController.get(e.data.msg["controllerIDs"][i]));
+                            }
+                        }
+                        Game.callbacksForEntitiesInArea[e.data.msg](controllers);
+                    }
                     break;
                 }
                 case "requestUpdate": {
@@ -7072,5 +7079,32 @@ class Game {
             return true;
         }
         return false;
+    }
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} shape CYLINDER, CONE, SPHERE, CUBE
+     * @param {number} diameter 
+     * @param {number} height 
+     * @param {number} depth 
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} rotation 
+     * @param {function} [callback] 
+     */
+    static inArea(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), callback = undefined) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        if (typeof callback == "function") {
+            Game.callbacksForEntitiesInArea[id] = callback;
+        }
+        Game.entityLocRotWorker.postMessage({
+            "cmd": "getEntitiesInArea",
+            "msg": [
+                id, shape, diameter, height, depth, position, rotation
+            ]
+        });
+        return 0;
     }
 }

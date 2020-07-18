@@ -146,7 +146,7 @@ function entityToggler() {
     postMessage({"cmd":"enable", "msg":{"controllerIDs":enableControllers}});
     return 0;
 }
-function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero()) {
     let mesh = null;
     switch (shape) {
         case "CYLINDER": {
@@ -175,9 +175,6 @@ function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, d
     }
     if (rotation instanceof BABYLON.Vector3) {
         mesh.rotation.copyFrom(rotation);
-    }
-    if (scaling instanceof BABYLON.Vector3) {
-        mesh.scaling.copyFrom(scaling);
     }
 
     return mesh;
@@ -216,16 +213,17 @@ addEventListener('message', function(event) {
             }
             let areaMesh = createAreaMesh(Tools.genUUIDv4(), event.data.msg[1], event.data.msg[2], event.data.msg[3], event.data.msg[4], event.data.msg[5], event.data.msg[6]);
             scene.render();
-            let controllers = [];
-            for (controller in SimpleEntityController.list()) {
+            let controllerIDs = [];
+            for (let controllerID in SimpleEntityController.list()) {
+                let controller = SimpleEntityController.get(controllerID);
                 if (controller.enabled) {
                     if (areaMesh.intersectsMesh(controller.collisionMesh)) {
-                        controllers.push(controller.id);
+                        controllerIDs.push(controllerID);
                     }
                 }
             }
             areaMesh.dispose();
-            postMessage({"cmd":"entitiesInArea", "msg":{"responseID":event.data.msg[0], "controllerIDs":controllers}});
+            postMessage({"cmd":"entitiesInArea", "msg":{"responseID":event.data.msg[0], "controllerIDs":controllerIDs}});
             break;
         }
         case "remove":
