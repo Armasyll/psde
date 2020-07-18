@@ -117,6 +117,8 @@ function entityToggler() {
     if (player == null) {
         return 1;
     }
+    let enableControllers = [];
+    let disableControllers = [];
     SimpleEntityController.list().forEach((simpleEntityController, id) => {
         if (entitiesProcessingByRadius.has(id)) {
             return 1;
@@ -127,7 +129,7 @@ function entityToggler() {
             entitiesEnabledByRadius.add(id);
             if (!simpleEntityController.enabled) {
                 simpleEntityController.enabled = true;
-                postMessage({"cmd":"enable", "msg":{"entityID":id}});
+                enableControllers.push(id);
             }
         }
         else {
@@ -135,11 +137,14 @@ function entityToggler() {
             entitiesDisabledByRadius.add(id);
             if (simpleEntityController.enabled) {
                 simpleEntityController.enabled = false;
-                postMessage({"cmd":"disable", "msg":{"entityID":id}});
+                disableControllers.push(id);
             }
         }
         entitiesProcessingByRadius.delete(id);
     });
+    postMessage({"cmd":"disable", "msg":{"controllerIDs":disableControllers}});
+    postMessage({"cmd":"enable", "msg":{"controllerIDs":enableControllers}});
+    return 0;
 }
 function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
     let mesh = null;
@@ -189,6 +194,7 @@ addEventListener('message', function(event) {
             }
             if (!SimpleEntityController.has(event.data.msg[0])) {
                 postMessage({"cmd":"requestCreate", "msg":event.data.msg[0]});
+                return 1;
             }
             else {
                 let entity = SimpleEntityController.get(event.data.msg[0]);
@@ -205,6 +211,9 @@ addEventListener('message', function(event) {
             break;
         }
         case "getEntitiesInArea": {
+            if (!(event.data.msg instanceof Array) || event.data.msg.length != 7) {
+                return 2;
+            }
             let areaMesh = createAreaMesh(Tools.genUUIDv4(), event.data.msg[1], event.data.msg[2], event.data.msg[3], event.data.msg[4], event.data.msg[5], event.data.msg[6]);
             scene.render();
             let controllers = [];
@@ -216,7 +225,7 @@ addEventListener('message', function(event) {
                 }
             }
             areaMesh.dispose();
-            postMessage({"cmd":"entitiesInArea", "msg":{"id":event.data.msg[0], "entities":controllers}});
+            postMessage({"cmd":"entitiesInArea", "msg":{"responseID":event.data.msg[0], "controllerIDs":controllers}});
             break;
         }
         case "remove":

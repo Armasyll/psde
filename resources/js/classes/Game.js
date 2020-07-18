@@ -932,11 +932,23 @@ class Game {
             }
             switch (e.data["cmd"]) {
                 case "enable": {
-                    EntityController.get(e.data.msg["entityID"]).setEnabled(true);
+                    if (e.data.msg["controllerIDs"].length > 0) {
+                        for (let i in e.data.msg["controllerIDs"]) {
+                            if (EntityController.has(e.data.msg["controllerIDs"][i])) {
+                                EntityController.get(e.data.msg["controllerIDs"][i]).setEnabled(true);
+                            }
+                        }
+                    }
                     break;
                 }
                 case "disable": {
-                    EntityController.get(e.data.msg["entityID"]).setEnabled(false);
+                    if (e.data.msg["controllerIDs"].length > 0) {
+                        for (let i in e.data.msg["controllerIDs"]) {
+                            if (EntityController.has(e.data.msg["controllerIDs"][i])) {
+                                EntityController.get(e.data.msg["controllerIDs"][i]).setEnabled(false);
+                            }
+                        }
+                    }
                     break;
                 }
                 case "requestCreate": {
@@ -954,6 +966,13 @@ class Game {
                             ]
                         });
                     }
+                    break;
+                }
+                case "getEntitiesInArea": {
+                    /*
+                    let id = e.data.msg["id"];
+                    let controllerIDs = e.data.msg["controllers"];
+                    */
                     break;
                 }
                 case "requestUpdate": {
