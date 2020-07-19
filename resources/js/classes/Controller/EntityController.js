@@ -71,8 +71,8 @@ class EntityController {
                 this.width,
                 this.height,
                 this.depth,
-                this.getPosition().asArray(),
-                this.getRotation().asArray()
+                this.getPosition().toOtherArray(),
+                this.getRotation().toOtherArray()
             ]
         });
         EntityController.set(this.id, this);

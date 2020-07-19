@@ -21,6 +21,9 @@ BABYLON.AbstractMesh.prototype.hasController = function() {
     if (!this.isEnabled()) return false;
     return this._controller != null;
 }
+BABYLON.Vector3.prototype.toOtherArray = function() {
+    return [this._x, this._y, this._z];
+}
 Object.defineProperty(BABYLON.AbstractMesh.prototype, "isHitbox", {
     get: function () {
         return this._isHitbox === true;

@@ -18,7 +18,7 @@ class SimpleEntityController {
     }
     setPosition(position) {
         if (!(position instanceof BABYLON.Vector3)) {
-            if (typeof position == "array" && array.length == 3 && typeof array[2] == "number") {
+            if (typeof position == "array") {
                 position = BABYLON.Vector3.FromArray(position);
             }
             else {
@@ -39,7 +39,7 @@ class SimpleEntityController {
     }
     setRotation(rotation) {
         if (!(rotation instanceof BABYLON.Vector3)) {
-            if (typeof rotation == "array" && array.length == 3 && typeof array[2] == "number") {
+            if (typeof rotation == "array") {
                 rotation = BABYLON.Vector3.FromArray(rotation);
             }
             else {
@@ -84,23 +84,23 @@ class SimpleEntityController {
         return undefined;
     }
     static initialize() {
-        SimpleEntityController.simpleEntityControllerList = new Map();
+        SimpleEntityController.simpleEntityControllerList = {};
     }
     static set(id, simpleEntityController) {
-        SimpleEntityController.simpleEntityControllerList.set(id, simpleEntityController)
+        SimpleEntityController.simpleEntityControllerList[id] = simpleEntityController;
         return 0;
     }
     static get(id) {
-        return SimpleEntityController.simpleEntityControllerList.get(id);
+        return SimpleEntityController.simpleEntityControllerList[id];
     }
     static has(id) {
-        return SimpleEntityController.simpleEntityControllerList.has(id);
+        return SimpleEntityController.simpleEntityControllerList.hasOwnProperty[id];
     }
     static list() {
         return SimpleEntityController.simpleEntityControllerList;
     }
     static remove(id) {
-        SimpleEntityController.simpleEntityControllerList.delete(id);
+        delete SimpleEntityController.simpleEntityControllerList[id];
     }
 }
 SimpleEntityController.initialize();
@@ -112,7 +112,9 @@ let entitiesProcessingByRadius = new Set();
 
 let engine = new BABYLON.NullEngine();
 let scene = new BABYLON.Scene(engine);
-let camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene); // have to render in order to get intersects >:l
+let camera = new BABYLON.UniversalCamera("Camera", BABYLON.Vector3.Zero(), scene); // have to render in order to get intersects >:l
+    camera.rotation.x = BABYLON.Tools.ToRadians(90);
+    camera.position.y = 255;
 function entityToggler() {
     if (player == null) {
         return 1;
@@ -155,8 +157,8 @@ function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, d
         }
         case "CONE": {
             mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": diameter, "diameterBottom": 0, "height": height, "tessellation": 8}, scene);
-            mesh.rotation.x += Game.RAD_90;
-            mesh.rotation.z += Game.RAD_180;
+            mesh.rotation.x = BABYLON.Tools.ToRadians(90);
+            mesh.rotation.z = BABYLON.Tools.ToRadians(180);
             break;
         }
         case "SPHERE": {
@@ -172,11 +174,17 @@ function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, d
     let pivotAt = new BABYLON.Vector3(0, height / 2, 0);
     mesh.bakeTransformIntoVertices(BABYLON.Matrix.Translation(pivotAt.x, pivotAt.y, pivotAt.z));
     
+    if (position instanceof Array) {
+        position = BABYLON.Vector3.FromArray(position);
+    }
+    if (rotation instanceof Array) {
+        rotation = BABYLON.Vector3.FromArray(rotation);
+    }
     if (position instanceof BABYLON.Vector3) {
         mesh.position.copyFrom(position);
     }
     if (rotation instanceof BABYLON.Vector3) {
-        mesh.rotation.copyFrom(rotation);
+        mesh.rotation.addInPlace(rotation);
     }
 
     return mesh;
@@ -219,12 +227,11 @@ addEventListener('message', function(event) {
             for (let controllerID in SimpleEntityController.list()) {
                 let controller = SimpleEntityController.get(controllerID);
                 if (controller.enabled) {
-                    if (areaMesh.intersectsMesh(controller.collisionMesh)) {
+                    if (areaMesh.intersectsMesh(controller.collisionMesh, true)) {
                         controllerIDs.push(controllerID);
                     }
                 }
             }
-            areaMesh.dispose();
             postMessage({"cmd":"entitiesInArea", "msg":{"responseID":event.data.msg[0], "controllerIDs":controllerIDs}});
             break;
         }

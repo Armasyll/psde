@@ -62,8 +62,8 @@ class CharacterControllerTransform extends CharacterController {
                 msg:[
                     this.id,
                     new Date().getTime(),
-                    this.getPosition().asArray(),
-                    this.getRotation().asArray()
+                    this.getPosition().toOtherArray(),
+                    this.getRotation().toOtherArray()
                 ]
             });
         }

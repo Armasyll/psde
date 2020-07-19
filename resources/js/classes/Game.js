@@ -910,7 +910,7 @@ class Game {
                     break;
                 }
                 case "triggerScheduledCommand": {
-                    console.log(e.data.msg);
+                    //console.log(e.data.msg);
                     break;
                 }
                 case "tick": {
@@ -963,8 +963,8 @@ class Game {
                                 controller.width,
                                 controller.height,
                                 controller.depth,
-                                controller.getPosition().toArray(),
-                                controller.getRotation().toArray()
+                                controller.getPosition().toOtherArray(),
+                                controller.getRotation().toOtherArray()
                             ]
                         });
                     }
@@ -2787,8 +2787,8 @@ class Game {
             }
             case "CONE": {
                 mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": diameter, "diameterBottom": 0, "height": height, "tessellation": 8}, Game.scene);
-                mesh.rotation.x += Game.RAD_90;
-                mesh.rotation.z += Game.RAD_180;
+                mesh.rotation.x = BABYLON.Tools.ToRadians(90);
+                mesh.rotation.z = BABYLON.Tools.ToRadians(180);
                 break;
             }
             case "SPHERE": {
@@ -7101,6 +7101,12 @@ class Game {
         }
         if (typeof callback == "function") {
             Game.callbacksForEntitiesInArea[id] = callback;
+        }
+        if (position instanceof BABYLON.Vector3) {
+            position = position.toOtherArray();
+        }
+        if (rotation instanceof BABYLON.Vector3) {
+            rotation = rotation.toOtherArray();
         }
         Game.entityLocRotWorker.postMessage({
             "cmd": "getEntitiesInArea",
