@@ -154,7 +154,9 @@ function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, d
             break;
         }
         case "CONE": {
-            mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": 0, "diameterBottom": diameter, "height": height, "tessellation": 8}, scene);
+            mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": diameter, "diameterBottom": 0, "height": height, "tessellation": 8}, scene);
+            mesh.rotation.x += Game.RAD_90;
+            mesh.rotation.z += Game.RAD_180;
             break;
         }
         case "SPHERE": {

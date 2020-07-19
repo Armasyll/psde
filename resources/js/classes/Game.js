@@ -2775,7 +2775,7 @@ class Game {
      * @param {number} diameter 
      * @param {number} height 
      * @param {BABYLON.Vector3} position 
-     * @param {BABYLON.Vector3} [rotation] 
+     * @param {BABYLON.Vector3} [rotation] with CONE, x is incremented by RAD_90, z by RAD_180
      * @param {BABYLON.Vector3} [scaling] 
      */
     static createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
@@ -2786,7 +2786,9 @@ class Game {
                 break;
             }
             case "CONE": {
-                mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": 0, "diameterBottom": diameter, "height": height, "tessellation": 8}, Game.scene);
+                mesh = BABYLON.MeshBuilder.CreateCylinder(id, {"diameterTop": diameter, "diameterBottom": 0, "height": height, "tessellation": 8}, Game.scene);
+                mesh.rotation.x += Game.RAD_90;
+                mesh.rotation.z += Game.RAD_180;
                 break;
             }
             case "SPHERE": {
@@ -2811,7 +2813,7 @@ class Game {
             mesh.position.copyFrom(position);
         }
         if (rotation instanceof BABYLON.Vector3) {
-            mesh.rotation.copyFrom(rotation);
+            mesh.rotation.addInPlace(rotation);
         }
         if (scaling instanceof BABYLON.Vector3) {
             mesh.scaling.copyFrom(scaling);
