@@ -1363,7 +1363,7 @@ class Game {
         else {
             Game.camera.applyGravity = applyGravity;
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
-            Game.camera.checkCollisions = true;
+            Game.camera.checkCollisions = false;
         }
         Game.initPostProcessing();
     }
@@ -5710,7 +5710,7 @@ class Game {
         else if (!Game.playerController.mesh.isVisible) {
             if (Game.debugMode) console.log("Running Game.updateArcRotateCameraTarget()");
             Game.playerController.showMesh();
-            Game.camera.checkCollisions = true;
+            Game.camera.checkCollisions = false;
             Game.camera.inertia = 0.9;
             Game.gui.hideCrosshair();
         }
