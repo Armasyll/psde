@@ -1328,7 +1328,7 @@ class Game {
             Game.playerController.getBoneByName("FOCUS").getAbsolutePosition(Game.playerController.getMesh()),
             Game.scene);
         Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
-        Game.camera.checkCollisions = true;
+        Game.camera.checkCollisions = false;
         Game.camera.wheelPrecision = 100;
         Game.camera.upperRadiusLimit = 2;
         Game.camera.lowerRadiusLimit = 0.1;
