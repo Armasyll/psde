@@ -1,3 +1,6 @@
+/**
+ * WritingControls
+ */
 class WritingControls extends AbstractControls {
     static onKeyDown(keyboardEvent) {
         return 0;

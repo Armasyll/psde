@@ -38,7 +38,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             return this;
         }
-        this.updateTargetRayOrigin();
+        this.updateTargetRay();
         this.moving = false;
         if (this.anyMovement() || this.falling) {
             this.startPosition.copyFrom(this.collisionMesh.position);

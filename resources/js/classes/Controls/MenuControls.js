@@ -1,3 +1,6 @@
+/**
+ * MenuControls
+ */
 class MenuControls extends AbstractControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {

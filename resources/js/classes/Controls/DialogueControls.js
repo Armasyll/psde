@@ -1,3 +1,6 @@
+/**
+ * DialogueControls
+ */
 class DialogueControls extends MenuControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {

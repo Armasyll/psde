@@ -20,7 +20,35 @@ class DebugGameGUI {
     }
     static generateController() {
         DebugGameGUI.skyboxController = DebugGameGUI.generateSkyboxController();
+        DebugGameGUI.selectionMenu = DebugGameGUI.generateSelectionMenu();
         DebugGameGUI.initialized = true;
+    }
+    static generateSelectionMenu() {
+        let controller = GameGUI.createStackPanel("selectionMenu");
+        controller.background = GameGUI.background;
+        controller.isVertical = true;
+        controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        controller.height = GameGUI.getFontSize(14);
+        controller.width = DebugGameGUI.width;
+        controller.alpha = DebugGameGUI.containerAlpha;
+        let titleBar = GameGUI.createStackPanel("selectionMenuTitleBar");
+            titleBar.width = String(controller.widthInPixels).concat("px");
+            titleBar.height = GameGUI.getFontSize(2);
+            titleBar.isVertical = false;
+            titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            let title = GameGUI.createTextBlock("selectionMenuTitle");
+                title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+                title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
+                title.text = "Selection Menu";
+            titleBar.addControl(title);
+            let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
+                closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                closeButton.width = GameGUI.getFontSize(2);
+                closeButton.height = GameGUI.getFontSize(2);
+            titleBar.addControl(closeButton);
+        
+        controller.isVisible = false;
+        return controller;
     }
     static generateSkyboxController() {
         let controller = GameGUI.createStackPanel("skyboxController");
@@ -37,32 +65,35 @@ class DebugGameGUI {
                 title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
                 title.text = "Skybox UI Controller";
-            let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("close", "X");
+            let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
                 closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 closeButton.width = GameGUI.getFontSize(2);
                 closeButton.height = GameGUI.getFontSize(2);
-        if (Game.playerCell instanceof Cell) {
-            DebugGameGUI.skyboxIsEnabled = Game.playerCell.getSkybox().isEnabled;
-            DebugGameGUI.skyboxAzimuth = Game.playerCell.getSkyboxMaterial().azimuth;
-            DebugGameGUI.skyboxInclination = Game.playerCell.getSkyboxMaterial().inclination;
-            DebugGameGUI.skyboxLuminance = Game.playerCell.getSkyboxMaterial().luminance;
-            DebugGameGUI.skyboxMieDirectionalG = Game.playerCell.getSkyboxMaterial().mieDirectionalG;
-            DebugGameGUI.skyboxMieCoefficient = Game.playerCell.getSkyboxMaterial().mieCoefficient;
-            DebugGameGUI.skyboxRayleigh = Game.playerCell.getSkyboxMaterial().rayleigh;
+        if (Game.skybox.material instanceof BABYLON.SkyMaterial) {
+            DebugGameGUI.skyboxIsEnabled = Game.skybox.isEnabled();
+            DebugGameGUI.skyboxAzimuth = Game.skybox.material.azimuth;
+            DebugGameGUI.skyboxInclination = Game.skybox.material.inclination;
+            DebugGameGUI.skyboxLuminance = Game.skybox.material.luminance;
+            DebugGameGUI.skyboxMieDirectionalG = Game.skybox.material.mieDirectionalG;
+            DebugGameGUI.skyboxMieCoefficient = Game.skybox.material.mieCoefficient;
+            DebugGameGUI.skyboxRayleigh = Game.skybox.material.rayleigh;
         }
-        let isEnabledController = DebugGameGUI.createLabelledCheckbox("isEnabled", "Enabled", DebugGameGUI.skyboxIsEnabled, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkybox().setEnabled(value);});
+        if (!(Game.skybox.material instanceof BABYLON.SkyMaterial)) {
+            return controller;
+        }
+        let isEnabledController = DebugGameGUI.createLabelledCheckbox("isEnabled", "Enabled", DebugGameGUI.skyboxIsEnabled, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.setEnabled(value);});
         controller.addControl(isEnabledController);
-        let azimuthController = DebugGameGUI.createLabelledSlider("azimuth", "Azimuth", 0, 1, DebugGameGUI.skyboxAzimuth || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().azimuth = value;})
+        let azimuthController = DebugGameGUI.createLabelledSlider("azimuth", "Azimuth", 0, 1, DebugGameGUI.skyboxAzimuth || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.azimuth = value;})
         controller.addControl(azimuthController);
-        let inclinationController = DebugGameGUI.createLabelledSlider("inclination", "Inclination", -0.5, 0.5, DebugGameGUI.skyboxInclination || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().inclination = value;})
+        let inclinationController = DebugGameGUI.createLabelledSlider("inclination", "Inclination", -0.5, 0.5, DebugGameGUI.skyboxInclination || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.inclination = value;})
         controller.addControl(inclinationController);
-        let luminanceController = DebugGameGUI.createLabelledSlider("luminance", "Luminance", 0.000000001, 1.19, DebugGameGUI.skyboxLuminance || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().luminance = value;})
+        let luminanceController = DebugGameGUI.createLabelledSlider("luminance", "Luminance", 0.000000001, 1.19, DebugGameGUI.skyboxLuminance || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.luminance = value;})
         controller.addControl(luminanceController);
-        let mieDirectionalGController = DebugGameGUI.createLabelledSlider("mieDirectionalG", "MieDirectionalG", -0.9999, 0.9999, DebugGameGUI.skyboxMieDirectionalG || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().mieDirectionalG = value;})
+        let mieDirectionalGController = DebugGameGUI.createLabelledSlider("mieDirectionalG", "MieDirectionalG", -0.9999, 0.9999, DebugGameGUI.skyboxMieDirectionalG || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.mieDirectionalG = value;})
         controller.addControl(mieDirectionalGController);
-        let mieCoefficientController = DebugGameGUI.createLabelledSlider("mieCoefficient", "MieCoefficient", 0, 4, DebugGameGUI.skyboxMieCoefficient || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().mieCoefficient = value;})
+        let mieCoefficientController = DebugGameGUI.createLabelledSlider("mieCoefficient", "MieCoefficient", 0, 4, DebugGameGUI.skyboxMieCoefficient || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.mieCoefficient = value;})
         controller.addControl(mieCoefficientController);
-        let rayleighController = DebugGameGUI.createLabelledSlider("rayleigh", "Rayleigh", -111.9, 111.9, DebugGameGUI.skyboxRayleigh || 0, (value) => {if (!(Game.playerCell instanceof Cell) || DebugGameGUI.locked) {return 1;} Game.playerCell.getSkyboxMaterial().rayleigh = value;})
+        let rayleighController = DebugGameGUI.createLabelledSlider("rayleigh", "Rayleigh", -111.9, 111.9, DebugGameGUI.skyboxRayleigh || 0, (value) => {if (!(Game.skybox.material instanceof BABYLON.SkyMaterial) || DebugGameGUI.locked) {return 1;} Game.skybox.material.rayleigh = value;})
         controller.addControl(rayleighController);
         controller.isVisible = false;
         return controller;
@@ -86,14 +117,14 @@ class DebugGameGUI {
         return 0;
     }
     static updateSkyboxUI() {
-        if (Game.playerCell instanceof Cell) {
-            DebugGameGUI.skyboxIsEnabled = Game.playerCell.getSkybox().isEnabled;
-            DebugGameGUI.skyboxAzimuth = Game.playerCell.getSkyboxMaterial().azimuth;
-            DebugGameGUI.skyboxInclination = Game.playerCell.getSkyboxMaterial().inclination;
-            DebugGameGUI.skyboxLuminance = Game.playerCell.getSkyboxMaterial().luminance;
-            DebugGameGUI.skyboxMieDirectionalG = Game.playerCell.getSkyboxMaterial().mieDirectionalG;
-            DebugGameGUI.skyboxMieCoefficient = Game.playerCell.getSkyboxMaterial().mieCoefficient;
-            DebugGameGUI.skyboxRayleigh = Game.playerCell.getSkyboxMaterial().rayleigh;
+        if (Game.skybox.material instanceof BABYLON.SkyMaterial) {
+            DebugGameGUI.skyboxIsEnabled = Game.skybox.isEnabled();
+            DebugGameGUI.skyboxAzimuth = Game.skybox.material.azimuth;
+            DebugGameGUI.skyboxInclination = Game.skybox.material.inclination;
+            DebugGameGUI.skyboxLuminance = Game.skybox.material.luminance;
+            DebugGameGUI.skyboxMieDirectionalG = Game.skybox.material.mieDirectionalG;
+            DebugGameGUI.skyboxMieCoefficient = Game.skybox.material.mieCoefficient;
+            DebugGameGUI.skyboxRayleigh = Game.skybox.material.rayleigh;
         }
         DebugGameGUI.locked = true;
         DebugGameGUI.getSkyboxController().getChildByName("isEnabledContainer").getChildByName("isEnabledCheckbox").value = DebugGameGUI.skyboxIsEnabled;

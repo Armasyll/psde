@@ -789,6 +789,8 @@ class Game {
         Game.player = null;
         Game.playerController = null;
         Game.playerCell = null;
+        Game.playerTargetRayLengthOverride = -1;
+        Game.castRayTargetEnabled = true;
         Game.castRayTargetIntervalFunction = undefined;
         Game.castRayTargetInterval = 250;
         Game.pointerLockTimeoutVar = undefined;
@@ -5470,6 +5472,9 @@ class Game {
         return 0;
     }
     static castRayTarget() {
+        if (!Game.castRayTargetEnabled) {
+            return 0;
+        }
         if (!Game.player.hasController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
@@ -5502,7 +5507,17 @@ class Game {
         }
         return 0;
     }
+    static enableRayTarget() {
+        Game.castRayTargetEnabled = true;
+        Game.initCastRayInterval();
+    }
+    static disableRayTarget() {
+        Game.castRayTargetEnabled = false;
+    }
     static initCastRayInterval() {
+        if (!Game.castRayTargetEnabled) {
+            return 0;
+        }
         clearInterval(Game.castRayTargetIntervalFunction);
         Game.castRayTargetIntervalFunction = setInterval(Game.castRayTarget, Game.castRayTargetInterval);
         return 0;
@@ -6668,12 +6683,15 @@ class Game {
         }
         Game.previousInterfaceMode = Game.interfaceMode;
         Game.interfaceMode = interfaceMode;
-        if (Game.interfaceMode == InterfaceModeEnum.EDIT) {
-            EditControls.clearPickedMesh();
-            EditControls.clearPickedController();
+        Game.playerTargetRayLengthOverride = -1;
+        if (Game.hasPlayerController()) {
+            Game.playerController.targetRayLengthOverridee = -1;
         }
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
+                GameGUI._hideMenuChildren();
+                GameGUI.hideMenu();
+                GameGUI.showHUD();
                 Game.controls = CharacterControls;
                 break;
             }
@@ -6686,7 +6704,14 @@ class Game {
                 break;
             }
             case InterfaceModeEnum.EDIT: {
+                GameGUI._hideHUDChildren();
+                EditControls.clearPickedMesh();
+                EditControls.clearPickedController();
                 Game.controls = EditControls;
+                Game.playerTargetRayLengthOverride = 10;
+                if (Game.hasPlayerController()) {
+                    Game.playerController.targetRayLengthOverridee = Game.playerTargetRayLengthOverride;
+                }
                 break;
             }
         }

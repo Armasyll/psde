@@ -42,6 +42,7 @@ class EntityController {
         this.width = 0.0;
         this.depth = 0.0;
         this.collisionMesh = null;
+        this.targetRayLength = 1.125;
         this.meshStages = [];
         this.currentMeshStage = 0;
         this.networkID = null;

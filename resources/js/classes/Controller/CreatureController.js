@@ -15,7 +15,9 @@ class CreatureController extends EntityController {
         }
         this.focus = undefined;
         this.root = undefined;
-        this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), 2 * this.collisionMesh.scaling.y);
+        this.targetRayLength = 2 * this.collisionMesh.scaling.y;
+        this.targetRayLengthOverride = -1;
+        this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
         this.targetRayHelper = undefined;
         this.grounded = false;
         this.jumping = false;
@@ -58,7 +60,7 @@ class CreatureController extends EntityController {
 
         this.target = null;
 
-        this.updateTargetRayOrigin();
+        this.updateTargetRay();
         CreatureController.set(this.id, this);
     }
 
@@ -666,9 +668,9 @@ class CreatureController extends EntityController {
         return this._attachedMeshes;
     }
 
-    updateTargetRayOrigin() {
+    updateTargetRay() {
         if (CreatureController.debugMode) {
-            console.info(`${this.id}.updateTargetRayOrigin()`);
+            console.info(`${this.id}.updateTargetRay()`);
         }
         if (this.locked || !this.enabled) {
             return 0;
@@ -681,6 +683,12 @@ class CreatureController extends EntityController {
             return 1;
         }
         this.targetRay.origin = this.collisionMesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.collisionMesh.scaling));
+        if (this.targetRayLengthOverride >= 0) {
+            this.targetRay.length = this.targetRayLengthOverride;
+        }
+        else {
+            this.targetRay.length = this.targetRayLength;
+        }
         return 0;
     }
 

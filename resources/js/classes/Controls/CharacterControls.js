@@ -1,3 +1,6 @@
+/**
+ * CharacterControls
+ */
 class CharacterControls extends AbstractControls {
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {
@@ -53,7 +56,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.chatInputFocusCode : {
-                if (Game.gui.getHudVisible()) {
+                if (Game.gui.isHUDVisible()) {
                     if (!Game.gui.chat.isFocused()) {
                         Game.gui.chat.setFocused(true);
                     }

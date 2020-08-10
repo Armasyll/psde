@@ -169,10 +169,15 @@ class GameGUI {
         }
         GameGUI._hud.rootContainer.isVisible = false;
     }
-    static getHudVisible() {
+    static _hideHUDChildren() {
+        for (var _i = GameGUI._hud.rootContainer.children.length - 1; _i > -1; _i--) {
+            GameGUI._hud.rootContainer.children[_i].isVisible = false;
+        }
+    }
+    static isHUDVisible() {
         return GameGUI._hud.rootContainer.isVisible;
     }
-    static setHudVisible(_boolean) {
+    static setHUDVisible(_boolean) {
         if (GameGUI.locked) {
             return;
         }
@@ -210,7 +215,7 @@ class GameGUI {
             GameGUI._menu.rootContainer.children[_i].isVisible = false;
         }
     }
-    static getMenuVisible() {
+    static isMenuVisible() {
         return GameGUI._menu.rootContainer.isVisible;
     }
     static setMenuVisible(_boolean) {
