@@ -41,10 +41,9 @@ apartmentCell.addTiledGround("commonsFloor01c", {xmin:0, zmin:0, xmax: 2, zmax: 
 apartmentCell.addTiledGround("commonsFloor01d", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "woodenFloorDark26", new BABYLON.Vector3(-1, 0, -19));
 apartmentCell.addCollisionPlane({x:-1, z:-27}, {x:16, z:1});
 
-apartmentCell.addMaterial("ceilingMaterial", "greenWallpaper", undefined, {"specularColor":new BABYLON.Color3(0, 0, 0), "backFaceCulling": false});
-apartmentCell.addTiledCeiling("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, "ceilingMaterial", new BABYLON.Vector3(1, 2.9, -27));
-apartmentCell.addTiledCeiling("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, "ceilingMaterial", new BABYLON.Vector3(-1, 2.9, -19));
-apartmentCell.addTiledCeiling("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "ceilingMaterial", new BABYLON.Vector3(-1, 2.9, -27));
+apartmentCell.addTiledCeiling("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, "greenWallpaper", new BABYLON.Vector3(1, 2.9, -27));
+apartmentCell.addTiledCeiling("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, "greenWallpaper", new BABYLON.Vector3(-1, 2.9, -19));
+apartmentCell.addTiledCeiling("ceilingMesh01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "greenWallpaper", new BABYLON.Vector3(-1, 2.9, -27));
 
 // Building collision walls
 apartmentCell.addCollisionWall(new BABYLON.Vector3(-1, -4, 1), new BABYLON.Vector3(15, 12.125, 1)); // Back floor wall
@@ -207,7 +206,7 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlain
  apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -18), new BABYLON.Vector3(0, 180, 0));
  apartmentCell.addDoor("packstreetApt3Basement", "Basement", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(0, 0, -19), new BABYLON.Vector3(0, 180, 0), undefined, {opensInward:true});
  apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
- apartmentCell.addMesh(undefined, "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
+ apartmentCell.addMesh(undefined, "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 1.5, -20));
  apartmentCell.addCollidableMesh("commonsFirstFloorCraftsmanStairWallSideNoTrim", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -20));
  apartmentCell.addMesh(undefined, "craftsmanStairCrownTrimLeftTop", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 3, -20));
  apartmentCell.addMesh(undefined, "craftsmanStairBaseTrimLeftBottom", "greenWallpaperPlainWood", new BABYLON.Vector3(0, 0, -22));
@@ -230,9 +229,9 @@ apartmentCell.addLighting("commonsLamp", "Lamp", "lamp01", undefined, undefined,
 apartmentCell.addDoor("apartmentbuildingdoor", "Door", undefined, "craftsmanDoor", "plainDoor", new BABYLON.Vector3(4, 0, -27), undefined, undefined, {locked:true, key:"alBuildingLocationKey", opensInward:false});
 
 // Second Floor
-apartmentCell.addTiledCeiling("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, "ceilingMaterial", new BABYLON.Vector3(1, 5.9, -27));
-apartmentCell.addTiledCeiling("ceilingMesh02b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, "ceilingMaterial", new BABYLON.Vector3(-1, 5.9, -19));
-apartmentCell.addTiledCeiling("ceilingMesh02c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "ceilingMaterial", new BABYLON.Vector3(-1, 5.9, -27));
+apartmentCell.addTiledCeiling("ceilingMesh02", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, "greenWallpaper", new BABYLON.Vector3(1, 5.9, -27));
+apartmentCell.addTiledCeiling("ceilingMesh02b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, "greenWallpaper", new BABYLON.Vector3(-1, 5.9, -19));
+apartmentCell.addTiledCeiling("ceilingMesh02c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "greenWallpaper", new BABYLON.Vector3(-1, 5.9, -27));
 
 // Second Floor Hallway
 apartmentCell.addCollisionWall(new BABYLON.Vector3(-1, 3, -13), new BABYLON.Vector3(3, 6, -13)); // Front hallway wall

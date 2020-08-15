@@ -1,7 +1,6 @@
 window.addEventListener('resize', function() {
     if (Game.initialized) {
-        Game.engine.resize();
-        Game.gui.resize();
+        Game.resize();
     }
 });
 window.addEventListener("DOMContentLoaded", function() {

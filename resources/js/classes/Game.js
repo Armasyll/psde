@@ -29,6 +29,7 @@ class Game {
         Game.RAD_315 = BABYLON.Tools.ToRadians(315);
         Game.RAD_360 = 6.28318529;
         Game.currentTime = 0;
+        Game.useNative = true;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
         Game.debugMode = false;
@@ -40,10 +41,15 @@ class Game {
         Game.loadingCell = false;
 
         if (Game.debugMode) console.log("Running initialize");
-        Game.canvas = document.getElementById("canvas");
-        Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-        Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
-        Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
+        if (Game.useNative) {
+            Game.engine = new BABYLON.NativeEngine();
+        }
+        else {
+            Game.canvas = document.getElementById("canvas");
+            Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
+            Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
+        }
         Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
         Game.engine.isPointerLock = false;
         Game.scene = new BABYLON.Scene(Game.engine);
@@ -51,6 +57,8 @@ class Game {
         Game.scene.autoClearDepthAndStencil = false;
         Game.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
+        Game.renderWidth = Game.engine.getRenderWidth();
+        Game.renderHeight = Game.engine.getRenderHeight();
         if (Game.physicsEnabled) {
             Game.initPhysics();
         }
@@ -64,6 +72,8 @@ class Game {
         Game.cameraRay = null;
 
         Game.ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
+        Game.ambientLightCeiling = new BABYLON.HemisphericLight("ambientLightCeiling", new BABYLON.Vector3(0, -1, 0), Game.scene);
+        Game.ambientLightCeiling.intensity = 0.5;
         Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {size:1024.0}, Game.scene);
 
         Game.assignBoundingBoxCollisionQueue = new Set();
@@ -1004,6 +1014,13 @@ class Game {
         Game.scene.registerAfterRender(Game._afterRenderFunction);
         Game.postInitialize();
     }
+    static resize() {
+        Game.engine.resize();
+        Game.gui.resize();
+        Game.renderWidth = Game.engine.getRenderWidth();
+        Game.renderHeight = Game.engine.getRenderHeight();
+        return 0;
+    }
     static postInitialize() {
         if (Game.postInitialized) {
             return 0;
@@ -1304,7 +1321,12 @@ class Game {
         //Game.camera.keysRight = [];
         //Game.camera.keysUp = [];
         //Game.camera.keysDown = [];
-        Game.camera.attachControl(Game.canvas, false);
+        if (Game.useNative) {
+
+        }
+        else {
+            Game.camera.attachControl(Game.canvas, false);
+        }
 
         Game.camera.minZ = 0.001;
         Game.camera.maxZ = 3;
@@ -1340,7 +1362,12 @@ class Game {
         Game.camera.keysRight = [];
         Game.camera.keysUp = [];
         Game.camera.keysDown = [];
-        Game.camera.attachControl(Game.canvas, false);
+        if (Game.useNative) {
+
+        }
+        else {
+            Game.camera.attachControl(Game.canvas, false);
+        }
 
         Game.camera.minZ = 0.001;
         Game.camera.lockedTarget = Game.playerController.focus;
@@ -1360,7 +1387,12 @@ class Game {
         Game.camera.heightOffset = 1;
         Game.camera.rotationOffset = 0;
         Game.camera.speed = 0.25;
-        Game.camera.attachControl(Game.canvas, true);
+        if (Game.useNative) {
+
+        }
+        else {
+            Game.camera.attachControl(Game.canvas, true);
+        }
         if (Game.physicsEnabled) { }
         else {
             Game.camera.applyGravity = applyGravity;
@@ -5541,11 +5573,56 @@ class Game {
         Game.initPlayerPortraitStatsUpdateInterval();
         return 0;
     }
+    /**
+     * 
+     * @param {boolean} includeCollision 
+     */
+    static pickMesh() {
+        let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
+            if (mesh.isHitBox) {
+                return false;
+            }
+            else if (mesh.material instanceof BABYLON.Material && mesh.material.name == "collisionMaterial") {
+                return false;
+            }
+            else if (mesh.hasController()) {
+                return false;
+            }
+            else if (mesh == Game.playerController.collisionMesh || mesh == Game.playerController.mesh) {
+                return false;
+            }
+            return true;
+        });
+        if (pick.hit) {
+            return pick.pickedMesh;
+        }
+        return 1;
+    }
+    static pickController() {
+        let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
+            if (mesh.hasController()) {
+                if (mesh.controller == Game.playerController) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        });
+        if (pick.hit) {
+            return pick.pickedMesh;
+        }
+        return 1;
+    }
     static pointerLock(event) {
         if (Game.engine.isPointerLock) {
             return 0;
         }
-        Game.canvas.requestPointerLock();
+        if (Game.useNative) {
+            
+        }
+        else {
+            Game.canvas.requestPointerLock();
+        }
         Game.engine.isPointerLock = true;
         Game.pointerLockTimeoutVar = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);
         return 0;
