@@ -164,7 +164,7 @@ class EditControls extends AbstractControls {
             EditControls.pickedMeshOriginalRotation.copyFrom(EditControls.pickedMesh.rotation);
             EditControls.pickedMeshOriginalScaling.copyFrom(EditControls.pickedMesh.scaling);
         }
-        EditControls.resetControls();
+        EditControls.resetControls(true);
         return 0;
     }
     static onContext(mouseEvent) {
@@ -175,14 +175,15 @@ class EditControls extends AbstractControls {
             EditControls.clearPickedMesh();
         }
         else {
-            let pick = Game.scene.pick(window.innerWidth/2, window.innerHeight/2, (abstractMesh) => {
-                if (abstractMesh.isVisible && abstractMesh.isEnabled() && !abstractMesh.isHitbox && abstractMesh.material.id != "collisionMaterial") {
-                    return true;
+            let pick = Game.pickMesh(false);
+            if (pick instanceof BABYLON.AbstractMesh && pick.isEnabled()) {
+                EditControls.pickMesh(pick);
+                if (pick.hasController()) {
+                    EditControls.pickController(pick.controller);
                 }
-                return false;
-            });
-            if (pick.pickedMesh instanceof BABYLON.AbstractMesh && pick.pickedMesh.isEnabled()) {
-                EditControls.pickMesh(pick.pickedMesh);
+                else {
+                    EditControls.clearPickedController();
+                }
             }
         }
         EditControls.resetControls();
@@ -283,9 +284,9 @@ class EditControls extends AbstractControls {
             EditControls.clearPickedController();
             return 1;
         }
-        if (abstractController instanceof AbstractController) {}
-        else if (AbstractController.has(abstractController)) {
-            abstractController = AbstractController.get(abstractController);
+        if (abstractController instanceof EntityController) {}
+        else if (EntityController.has(abstractController)) {
+            abstractController = EntityController.get(abstractController);
         }
         else {
             EditControls.clearPickedController();
@@ -306,15 +307,17 @@ class EditControls extends AbstractControls {
         EditControls.pickedController = null;
         return 0;
     }
-    static resetControls() {
+    static resetControls(clearPicked = false) {
         EditControls.rotating = false;
         EditControls.scaling = false;
         EditControls.moving = false;
         EditControls.allowAxisX = true;
         EditControls.allowAxisY = true;
         EditControls.allowAxisZ = true;
-        EditControls.clearPickedMesh();
-        EditControls.clearPickedController();
+        if (clearPicked) {
+            EditControls.clearPickedMesh();
+            EditControls.clearPickedController();
+        }
         EditControls.tempIntendedPosition.set({"x":0.0,"y":0.0,"z":0.0});
         EditControls.tempIntendedRotation.set({"x":0.0,"y":0.0,"z":0.0});
         //EditControls.tempIntendedScaling.set({"x":0.0,"y":0.0,"z":0.0});
