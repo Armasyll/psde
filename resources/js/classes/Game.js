@@ -29,7 +29,7 @@ class Game {
         Game.RAD_315 = BABYLON.Tools.ToRadians(315);
         Game.RAD_360 = 6.28318529;
         Game.currentTime = 0;
-        Game.useNative = true;
+        Game.useNative = false;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
         Game.debugMode = false;
