@@ -112,7 +112,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.showMainMenuCode : {
-                if (Game.gui.getMenuVisible()) {
+                if (Game.gui.isMenuVisible()) {
                     if (Game.debugMode) console.log(`\tShowing HUD`);
                     Game.gui.hideMenu(false);
                     Game.gui.showHUD(false);

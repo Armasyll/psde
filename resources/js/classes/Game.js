@@ -5577,7 +5577,7 @@ class Game {
      * 
      * @param {boolean} includeCollision 
      */
-    static pickMesh(skipControllers = true) {
+    static pickMesh() {
         let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
             if (mesh.isHitBox) {
                 return false;
@@ -5585,7 +5585,7 @@ class Game {
             else if (mesh.material instanceof BABYLON.Material && mesh.material.name == "collisionMaterial") {
                 return false;
             }
-            else if (mesh.hasController() && skipControllers) {
+            else if (mesh.hasController() && mesh.controller == Game.playerController) {
                 return false;
             }
             else if (mesh == Game.playerController.collisionMesh || mesh == Game.playerController.mesh) {
