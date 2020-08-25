@@ -42,8 +42,6 @@ class GameGUI {
         GameGUI._hud.rootContainer.isVisible = false;
         GameGUI._hud.rootContainer.zIndex = 3;
 
-        GameGUI.pointerLockEventFunction = GameGUI.pointerLockEvent
-
         GameGUI.actionTooltip = undefined;
         GameGUI.actionTooltipLocked = false;
         GameGUI.actionsMenu = undefined;
@@ -104,7 +102,7 @@ class GameGUI {
         if (!GameGUI.initialized) {
             return;
         }
-        GameGUI.fontSizeInPixels = Math.max(Math.floor((window.innerWidth/16)/5), 24);
+        GameGUI.fontSizeInPixels = Math.max(Math.floor((Game.renderWidth/16)/5), 24);
         GameGUI.fontSizeSpacing = Math.max(Math.ceil(GameGUI.fontSizeInPixels/3), 8);
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
         GameGUI.fontSizeInPixelsWithSpacing = GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing;
@@ -135,17 +133,9 @@ class GameGUI {
     }
     static pointerLock() {
         Game.pointerLock();
-
-        window.addEventListener("click", GameGUI.pointerLockEventFunction);
     }
     static pointerRelease() {
         Game.pointerRelease();
-        window.removeEventListener("click", GameGUI.pointerLockEventFunction);
-    }
-    static pointerLockEvent(_event) {
-        if (GameGUI._hud.rootContainer.isVisible) {
-            Game.pointerLock();
-        }
     }
     static showHUD(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showHUD");

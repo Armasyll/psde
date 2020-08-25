@@ -2,6 +2,12 @@
  * Abstract Controls for in-game UI
  */
 class AbstractControls {
+    static _runBefore(event) {
+        return 0;
+    }
+    static _runAfter(event) {
+        return 0;
+    }
     static onKeyDown(keyboardEvent) {
         if (!Game.initialized) {
             return 1;
