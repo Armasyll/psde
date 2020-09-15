@@ -855,6 +855,81 @@ let StanceEnum = {
     "properties": ActionEnum.properties
 };
 /**
+ * Enum for Offensive Stances
+ * @readonly
+ * @enum {number}
+ */
+let OffensiveStanceEnum = {
+    "MARTIAL": 0,
+    "PIERCINGSHORT": 1,
+    "PIERCINGLONG": 2,
+    "SLASHINGSHORT": 3,
+    "SLASHINGLONG": 4,
+    "BLUDGEONINGSHORT": 5,
+    "BLUDGEONINGLONG": 6,
+    "SPELLSHORT": 7,
+    "SPELLLONG": 8,
+    "SPELLCHANNEL": 9,
+    "MARTIALFERAL": 10,
+    "properties": {
+        0: {
+            "name":"Martial",
+            "value":0,
+            "key":"MARTIAL"
+        },
+        1: {
+            "name":"Piercing, Short",
+            "value":1,
+            "key":"PIERCINGSHORT"
+        },
+        2: {
+            "name":"Piercing, Long",
+            "value":2,
+            "key":"PIERCINGLONG"
+        },
+        3: {
+            "name":"Slashing, Short",
+            "value":3,
+            "key":"SLASHINGSHORT"
+        },
+        4: {
+            "name":"Slashing, Long",
+            "value":4,
+            "key":"SLASHINGLONG"
+        },
+        5: {
+            "name":"Bludgeoning, Short",
+            "value":5,
+            "key":"BLUDGEONINGSHORT"
+        },
+        6: {
+            "name":"Bludgeoning, Long",
+            "value":6,
+            "key":"BLUDGEONINGLONG"
+        },
+        7: {
+            "name":"Spell, Short",
+            "value":7,
+            "key":"SPELLSHORT"
+        },
+        8: {
+            "name":"Spell, Long",
+            "value":8,
+            "key":"SPELLLONG"
+        },
+        9: {
+            "name":"Spell, Channel",
+            "value":9,
+            "key":"SPELLCHANNEL"
+        },
+        10: {
+            "name":"Martial, Feral",
+            "value":10,
+            "key":"MARTIALFERAL"
+        }
+    }
+};
+/**
  * Enum for Consumables
  * @readonly
  * @enum {number}

@@ -1,9 +1,18 @@
+/**
+ * Instanced Consumable Entity
+ */
 class InstancedConsumableEntity extends InstancedItemEntity {
-    constructor(id = undefined, consumableEntity = undefined, owner = undefined) {
-        super(id, consumableEntity, owner);
+    /**
+     * Creates an Instanced Consumable Entity
+     * @param {string} id 
+     * @param {ConsumableEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         InstancedConsumableEntity.set(this.id, this);
@@ -26,7 +35,7 @@ class InstancedConsumableEntity extends InstancedItemEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedConsumableEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -37,6 +46,11 @@ class InstancedConsumableEntity extends InstancedItemEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedConsumableEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -76,6 +90,14 @@ class InstancedConsumableEntity extends InstancedItemEntity {
             InstancedConsumableEntity.instancedConsumableEntityList[i].dispose();
         }
         InstancedConsumableEntity.instancedConsumableEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedConsumableEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedConsumableEntity.set(newID, InstancedConsumableEntity.get(oldID));
+        InstancedConsumableEntity.remove(oldID);
         return 0;
     }
 }

@@ -1,7 +1,20 @@
+/**
+ * Character Controller for Rigid Bodies
+ */
 class CharacterControllerRigidBody extends CharacterController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
-        this.turnSpeed = Game.RAD_90; // degrees per second
+    /**
+     * Creates a Character Controller with a Rigid Body
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
+
+        this.turnSpeed = Tools.RAD_90; // degrees per second
         this.moving = false;
         this.turning = false;
         this.startPosition = this.collisionMesh.position.clone();
@@ -26,14 +39,14 @@ class CharacterControllerRigidBody extends CharacterController {
         if (CharacterController.debugMode) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
             if (CharacterController.debugMode) {
-                console.error("missing mesh")
+                console.error("missing mesh");
                 console.groupEnd();
             }
             return this;
         }
         if (this.locked) {
             if (CharacterController.debugMode) {
-                console.info("locked")
+                console.info("locked");
                 console.groupEnd();
             }
             return this;
@@ -53,18 +66,13 @@ class CharacterControllerRigidBody extends CharacterController {
             this.lookController.update();
         }
         this.updateAnimation();
-        if (Game.player == this.entity) {
-            Game.updateCameraTarget();
+        if (this.moving) {
+            Game.transformsWorkerPostMessage(
+                "updateEntity",
+                0,
+                [this.id, new Date().getTime(), this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
+            );
         }
-        Game.entityLocRotWorker.postMessage({
-            cmd:"updateEntity",
-            msg:[
-                this.id,
-                new Date().getTime(),
-                this.getPosition().toOtherArray(),
-                this.getRotation().toOtherArray()
-            ]
-        });
         if (CharacterController.debugMode) {
             console.groupEnd();
         }
@@ -90,10 +98,10 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             if (this.key.forward) {
                 if (this.key.strafeRight) {
-                    this.intendedDirection = this.getAlpha() + Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() + Tools.RAD_45;
                 }
                 else if (this.key.strafeLeft) {
-                    this.intendedDirection = this.getAlpha() - Game.RAD_45;
+                    this.intendedDirection = this.getAlpha() - Tools.RAD_45;
                 }
                 else {
                     this.intendedDirection = this.getAlpha();
@@ -102,22 +110,22 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             else if (this.key.backward) {
                 if (this.key.strafeRight) {
-                    this.intendedDirection = this.getAlpha() + Game.RAD_135;
+                    this.intendedDirection = this.getAlpha() + Tools.RAD_135;
                 }
                 else if (this.key.strafeLeft) {
-                    this.intendedDirection = this.getAlpha() + Game.RAD_225;
+                    this.intendedDirection = this.getAlpha() + Tools.RAD_225;
                 }
                 else {
-                    this.intendedDirection = this.getAlpha() + Game.RAD_180;
+                    this.intendedDirection = this.getAlpha() + Tools.RAD_180;
                 }
                 this.moving = true;
             }
             else if (this.key.strafeRight) {
-                this.intendedDirection = this.getAlpha() + Game.RAD_90;
+                this.intendedDirection = this.getAlpha() + Tools.RAD_90;
                 this.moving = true;
             }
             else if (this.key.strafeLeft) {
-                this.intendedDirection = this.getAlpha() - Game.RAD_90;
+                this.intendedDirection = this.getAlpha() - Tools.RAD_90;
                 this.moving = true;
             }
             else {
@@ -165,7 +173,7 @@ class CharacterControllerRigidBody extends CharacterController {
             else {
                 this.collisionMesh.rotation.y = this.intendedDirection;
             }
-            this.collisionMesh.rotation.y = Game.Tools.moduloRadians(this.collisionMesh.rotation.y);
+            this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
             if (this.walking) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
             }
@@ -185,7 +193,7 @@ class CharacterControllerRigidBody extends CharacterController {
                     return false;
                 });
                 if (hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
+                    if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
                         this.intendedMovement.y = 0;
                     }
                 }
@@ -194,7 +202,7 @@ class CharacterControllerRigidBody extends CharacterController {
             this.collisionMesh.moveWithCollisions(this.intendedMovement);
             if (this.collisionMesh.position.y > this.startPosition.y) {
                 let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                let slope = Game.Tools.verticalSlope(actDisp);
+                let slope = Tools.verticalSlope(actDisp);
                 if (slope >= this.maxSlopeLimit) {
                     if (this.yDifference == 0) {
                         this.yDifferencePosition.copyFrom(this.startPosition);
@@ -214,8 +222,8 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             else if (this.collisionMesh.position.y < this.startPosition.y) {
                 let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                if (!(Game.Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
-                    if (Game.Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
+                if (!(Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
+                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endFreeFall();
                     }
                     else {
@@ -245,21 +253,25 @@ class CharacterControllerRigidBody extends CharacterController {
     }
     getAlpha() {
         if (this == Game.playerController) {
-            return Game.Tools.moduloRadians(Game.RAD_90 - Game.camera.alpha); // Anon_11487
+            return Tools.moduloRadians(Tools.RAD_90 - Game.camera.alpha); // Anon_11487
         }
         else {
-            return Game.RAD_90;
+            return Tools.RAD_90;
         }
     }
     getBeta() {
         if (this == Game.playerController) {
-            return Game.Tools.moduloRadians(Game.camera.beta - Game.RAD_90);
+            return Tools.moduloRadians(Game.camera.beta - Tools.RAD_90);
         }
         else {
-            return Game.RAD_270;
+            return Tools.RAD_270;
         }
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        return 0;
+    }
     dispose() {
         super.dispose();
         return undefined;

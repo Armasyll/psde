@@ -1,9 +1,18 @@
+/**
+ * Instanced Item Entity
+ */
 class InstancedItemEntity extends InstancedEntity {
-    constructor(id = undefined, itemEntity = undefined, owner = undefined) {
-        super(id, itemEntity);
+    /**
+     * Creates an Instanced Item Entity
+     * @param {string} id 
+     * @param {ItemEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         this.setOwner(owner);
@@ -61,7 +70,7 @@ class InstancedItemEntity extends InstancedEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedItemEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -72,6 +81,11 @@ class InstancedItemEntity extends InstancedEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedItemEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -115,6 +129,14 @@ class InstancedItemEntity extends InstancedEntity {
             InstancedItemEntity.instancedItemEntityList[i].dispose();
         }
         InstancedItemEntity.instancedItemEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedFurnitureEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedFurnitureEntity.set(newID, InstancedItemEntity.get(oldID));
+        InstancedFurnitureEntity.remove(oldID);
         return 0;
     }
 }

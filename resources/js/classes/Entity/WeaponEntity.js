@@ -1,13 +1,16 @@
+/**
+ * Weapon Entity
+ */
 class WeaponEntity extends EquipmentEntity {
     /**
-     * Creats Weapon
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID       Image ID
-     * @param  {WeaponEnum}  weaponType        WeaponEnum
+     * Creates a Weapon Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Image ID
+     * @param  {WeaponEnum}  weaponType WeaponEnum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, weaponType = WeaponEnum.CLUB) {
+    constructor(id = "", name = "", description = "", iconID = "", weaponType = WeaponEnum.CLUB) {
         super(id, name, description, iconID);
         this.itemType = ItemEnum.WEAPON;
 
@@ -560,6 +563,11 @@ class WeaponEntity extends EquipmentEntity {
         if (entity.hasOwnProperty("versatile")) this.versatile = entity.versatile;
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        WeaponEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -635,6 +643,14 @@ class WeaponEntity extends EquipmentEntity {
         console.info(`WeaponEntity (${entity.getID()}) has been created.`);
         console.groupEnd();
         return entity;
+    }
+    static updateID(oldID, newID) {
+        if (!WeaponEntity.has(oldID)) {
+            return 1;
+        }
+        WeaponEntity.set(newID, WeaponEntity.get(oldID));
+        WeaponEntity.remove(oldID);
+        return 0;
     }
 }
 WeaponEntity.initialize();

@@ -1,15 +1,18 @@
+/**
+ * Character Entity
+ */
 class CharacterEntity extends CreatureEntity {
     /**
-     * Creates a CharacterEntity
-     * @param  {string} id Unique ID
-     * @param  {string} name Name
-     * @param  {string} [description] Description
-     * @param  {string} [iconID] Icon ID
-     * @param  {CreatureTypeEnum} [creatureType] Creature Type
-     * @param  {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type; dependant upon creatureType
-     * @param  {SexEnum} [sex] SexEnum
-     * @param  {number} [age] Age
-     * @param  {CharacterClass} [characterClass] CharacterClass
+     * Creates a Character Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
+     * @param  {CreatureTypeEnum}  [creatureType] Creature Type
+     * @param  {CreatureSubTypeEnum}  [creatureSubType] Creature Sub-Type; dependant upon creatureType
+     * @param  {SexEnum}  [sex] SexEnum
+     * @param  {number}  [age] Age
+     * @param  {CharacterClass}  [characterClass] CharacterClass
      */
     constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, characterClass = CharacterClass.get("classless")) {
         super(id, name, description, iconID, creatureType, creatureSubType, sex, age);
@@ -79,12 +82,12 @@ class CharacterEntity extends CreatureEntity {
         this._furColourBHex = "#FFFDD0";
         /**
          * Paw type
-         * @type {number} (PawEnum)
+         * @type {PawEnum} 
          */
         this.pawType = PawEnum.PAD;
         /**
          * Eye type
-         * @type {string} (Game.kEyeTypes)
+         * @type {EyeEnum} 
          */
         this.eyeType = EyeEnum.CIRCLE;
         /**
@@ -96,12 +99,12 @@ class CharacterEntity extends CreatureEntity {
         this._rightEyeColourHex = "#00FF00";
         /**
          * Pelt type
-         * @type {string} (PeltEnum)
+         * @type {PeltEnum} 
          */
         this.peltType = PeltEnum.FUR;
 
         /**
-         * @type {object} {CharacterClass: number}
+         * @type {object} 
          */
         this.characterClasses = {};
         this.primaryCharacterClass = null;
@@ -113,10 +116,10 @@ class CharacterEntity extends CreatureEntity {
         this.setGender(sex);
         this.addAvailableAction(ActionEnum.ATTACK);
         this.addAvailableAction(ActionEnum.HOLD);
-        this.addAvailableAction(ActionEnum.OPEN); // inventory... maybe :v
+        this.addAvailableAction(ActionEnum.OPEN); // container... maybe :v
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
-        this.createInventory();
+        this.createContainer();
         this.setClass(characterClass);
         this.generateProperties();
         this.generateBaseStats(true);
@@ -166,23 +169,30 @@ class CharacterEntity extends CreatureEntity {
     getEquipment() {
         return this.equipment;
     }
-    equip(instancedItemEntity, equipmentSlot = undefined) {
+    equip(instancedItemEntity, equipmentSlot = -1) {
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
         */
         if (!(instancedItemEntity instanceof AbstractEntity)) {
-            if (InstancedItemEntity.has(instancedItemEntity)) {
-                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
+            if (AbstractEntity.has(instancedItemEntity)) {
+                instancedItemEntity = AbstractEntity.get(instancedItemEntity);
             }
             else {
+                if (AbstractEntity.debugMode) console.log(`\t The item (${instancedItemEntity}) doesn't exist.`);
                 return 2;
             }
         }
-        if (Game.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${instancedItemEntity.id}, ${equipmentSlot})`);
+        if (this.hasItem(instancedItemEntity)) {
+            instancedItemEntity = this.getItem(instancedItemEntity);
+        }
+        else {
+            if (AbstractEntity.debugMode) console.log(`\tCharacter (${this.id}) doesn't have the item (${instancedItemEntity.id}).`);
+            return 1;
+        }
+        if (AbstractEntity.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${instancedItemEntity.id}, ${equipmentSlot})`);
         /*
         Get an apparel slot out of whatever equipmentSlot is, otherwise fail
          */
-        equipmentSlot = Number.parseInt(equipmentSlot);
         if (this.equipment.hasOwnProperty(equipmentSlot)) {}
         else if (ApparelSlotEnum.properties.hasOwnProperty(instancedItemEntity.getEquipmentSlot())) {
             equipmentSlot = instancedItemEntity.getEquipmentSlot();
@@ -236,84 +246,25 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         else {
-            if (Game.debugMode) console.log(`\tNo equipment slot was defined.`);
+            if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
             return 2;
         }
         /*
         Clear out the equipment slot if it's in use, and set its value to _entity
          */
-        if (this.equipment[equipmentSlot] == instancedItemEntity.getID()) {}
+        if (this.equipment[equipmentSlot] == instancedItemEntity) {}
         else if (InstancedItemEntity.has(this.equipment[equipmentSlot])) {
             this.unequipBySlot(equipmentSlot);
-            this.equipment[equipmentSlot] = instancedItemEntity.getID();
+            this.equipment[equipmentSlot] = instancedItemEntity;
         }
         else {
-            this.equipment[equipmentSlot] = instancedItemEntity.getID();
+            this.equipment[equipmentSlot] = instancedItemEntity;
         }
         /*
         Flip bits and do tricks
          */
         if (instancedItemEntity instanceof InstancedWeaponEntity && (equipmentSlot == ApparelSlotEnum.HAND_L || equipmentSlot == ApparelSlotEnum.HAND_R)) {
             this.armed = true;
-        }
-        /*
-        If we've got a controller in the world, and it's got an active mesh, attach _entity's mesh to it
-         */
-        if (this.hasController()) {
-            switch (equipmentSlot) {
-                case ApparelSlotEnum.HEAD: {
-                    this.controller.attachToHead(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.NECK: {
-                    this.controller.attachToNeck(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.SHOULDER_L: {
-                    this.controller.attachToLeftShoulder(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.SHOULDER_R: {
-                    this.controller.attachToRightShoulder(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOREARM_L: {
-                    this.controller.attachToLeftForearm(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOREARM_R: {
-                    this.controller.attachToRightForearm(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.HAND_L: {
-                    this.controller.attachToLeftHand(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.HAND_R: {
-                    this.controller.attachToRightHand(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.CHEST: {
-                    this.controller.attachToChest(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.PELVIS: {
-                    this.controller.attachToPelvis(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.LEGS: {
-                    this.controller.attachToLegs(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOOT_L: {
-                    this.controller.attachToLeftFoot(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOOT_R: {
-                    this.controller.attachToRightFoot(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-            }
         }
         return 0;
     }
@@ -346,7 +297,7 @@ class CharacterEntity extends CreatureEntity {
                 return this.unequipBySlot(slot);
             }
         }
-        if (Game.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not equipped.`);
+        if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not equipped.`);
         return 0;
     }
     unequipByEntity(entity) {
@@ -358,7 +309,7 @@ class CharacterEntity extends CreatureEntity {
                 }
             }
         }
-        if (Game.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
+        if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
         return 0;
     }
     unequipBySlot(equipmentSlot) {
@@ -379,7 +330,7 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         else {
-            if (Game.debugMode) console.log(`\tNo equipment slot was defined.`);
+            if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
             return 2;
         }
         if (this.equipment[equipmentSlot] == null) {
@@ -398,62 +349,6 @@ class CharacterEntity extends CreatureEntity {
         }
         else {
             this.armed = false;
-        }
-        if (this.hasController()) {
-            switch (equipmentSlot) {
-                case ApparelSlotEnum.HEAD: {
-                    this.controller.detachFromHead(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.NECK: {
-                    this.controller.detachFromNeck(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.SHOULDER_L: {
-                    this.controller.detachFromLeftShoulder(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.SHOULDER_R: {
-                    this.controller.detachFromRightShoulder(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOREARM_L: {
-                    this.controller.detachFromLeftForearm(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOREARM_R: {
-                    this.controller.detachFromRightForearm(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.HAND_L: {
-                    this.controller.detachFromLeftHand(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.HAND_R: {
-                    this.controller.detachFromRightHand(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.CHEST: {
-                    this.controller.detachFromChest(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.PELVIS: {
-                    this.controller.detachFromPelvis(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.LEGS: {
-                    this.controller.detachFromLegs(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOOT_L: {
-                    this.controller.detachFromLeftFoot(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-                case ApparelSlotEnum.FOOT_R: {
-                    this.controller.detachFromRightFoot(instancedItemEntity.getMeshID(), instancedItemEntity.getTextureID());
-                    break;
-                }
-            }
         }
         return 0;
     }
@@ -516,7 +411,7 @@ class CharacterEntity extends CreatureEntity {
         }
         return false;
     }
-    getAttachedCosmetics(bone = undefined) {
+    getAttachedCosmetics(bone = null) {
         if (bone instanceof BABYLON.Bone) {
             bone = bone.id;
         }
@@ -546,17 +441,9 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         this.attachedCosmetics[slot][cosmetic.id] = cosmetic;
-        if (this.hasController()) {
-            switch (slot) {
-                case ApparelSlotEnum.HEAD: {
-                    this.controller.attachToHead(cosmetic.getMeshID(), cosmetic.getMaterialID());
-                    break;
-                }
-            }
-        }
         return 0;
     }
-    detachCosmetic(cosmetic, slot = undefined) {
+    detachCosmetic(cosmetic, slot = -1) {
         if (!(cosmetic instanceof Cosmetic)) {
             cosmetic = Cosmetic.get(cosmetic);
             if (!(cosmetic instanceof Cosmetic)) {
@@ -574,9 +461,6 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         delete this.attachedCosmetics[slot][cosmetic.id];
-        if (this.hasController()) { // TODO: is this right?
-            this.controller.detachMeshFromBone(cosmetic.getMeshID());
-        }
         return 0;
     }
 
@@ -584,10 +468,10 @@ class CharacterEntity extends CreatureEntity {
      * Removes an InstancedItemEntity from this entity's Item array
      * @override
      * @param  {InstancedItemEntity} instancedItemEntity InstancedItemEntity, or ItemEntity, to be removed
-     * @return {this}
+     * @returns {this}
      */
     removeItem(instancedItemEntity) {
-        if (!this.hasInventory()) {
+        if (!this.hasContainer()) {
             return 1;
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
@@ -674,7 +558,7 @@ class CharacterEntity extends CreatureEntity {
             colour = colour.toLowerCase();
         }
         this.eyeColour = colour;
-        this._leftEyeColourHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._leftEyeColourHex = Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         this._rightEyeColourHex = this._leftEyeColourHex;
         return 0;
     }
@@ -693,16 +577,16 @@ class CharacterEntity extends CreatureEntity {
     }
     setFurColourA(colour = "red") {
         this.furColourA = colour;
-        this._furColourAHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._furColourAHex = Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return 0;
     }
     setFurColourB(colour = "cream") {
         this.furColourB = colour;
-        this._furColourBHex = Game.Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
+        this._furColourBHex = Tools.colourNameToHex(colour.replace(/[^a-z]/g, ""));
         return 0;
     }
-    setFurColour(colourA, colourB = undefined) {
-        if (typeof colourB == 'undefined')
+    setFurColour(colourA, colourB = null) {
+        if (colourB == null)
             colourB = colourA;
         
         this.setFurColourA(colourA);
@@ -766,7 +650,7 @@ class CharacterEntity extends CreatureEntity {
             return 1;
         }
         if (this.characterClasses.hasOwnProperty(characterClass)) {
-            level = Game.Tools.filterInteger(level);
+            level = Tools.filterInteger(level);
             let number = this.characterClasses[characterClass] + level;
             if (number < 1) {
                 number = 1;
@@ -841,14 +725,14 @@ class CharacterEntity extends CreatureEntity {
                     case ApparelSlotEnum.HAND_R:
                     case ApparelSlotEnum.HANDS: {
                         multiplier = 0.05;
-                    }                      
+                    }
                 }
-                let modifier = Game.calculateAbilityModifier(this.getDexterity() - 10);
+                let modifier = DND5E.calculateAbilityModifier(this.getDexterity() - 10);
                 switch (this.equipment[slot].getArmourType()) {
                     case ArmourPropertyEnum.PADDED:
                     case ArmourPropertyEnum.LEATHER:
                     case ArmourPropertyEnum.STUDDEDLEATHER: {
-                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        modifier = DND5E.calculateAbilityModifier(this.getDexterity());
                         break;
                     }
                     case ArmourPropertyEnum.HIDE:
@@ -856,7 +740,7 @@ class CharacterEntity extends CreatureEntity {
                     case ArmourPropertyEnum.SCALEMAIL:
                     case ArmourPropertyEnum.BREASTPLATE:
                     case ArmourPropertyEnum.HALFPLATE: {
-                        modifier = Game.calculateAbilityModifier(this.getDexterity());
+                        modifier = DND5E.calculateAbilityModifier(this.getDexterity());
                         if (modifier > 2) {
                             modifier = 2;
                         }
@@ -1188,15 +1072,43 @@ class CharacterEntity extends CreatureEntity {
         return 0;
     }
 
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["age"] = this.age || 18;
+        obj["level"] = this.level || 1;
+        obj["stamina"] = this.stamina || 0;
+        obj["money"] = this.money || 0;
+        obj["size"] = this.size || 0;
+        obj["baseWeight"] = this.baseWeight || 0;
+        obj["baseHeight"] = this.baseHeight || 0;
+        obj["baseWidth"] = this.baseWidth || 0;
+        obj["weight"] = this.weight || 0;
+        obj["height"] = this.height || 0;
+        obj["width"] = this.width || 0;
+        obj["attachedCosmetics"] = this._objectifyProperty(this.attachedCosmetics);
+        obj["equipment"] = this._objectifyProperty(this.equipment);
+        obj["furColourA"] = this.furColourA;
+        obj["_furColourAHex"] = this._furColourAHex;
+        obj["furColourB"] = this.furColourB;
+        obj["_furColourBHex"] = this._furColourBHex;
+        obj["pawType"] = this.pawType;
+        obj["eyeType"] = this.eyeType;
+        obj["eyeColour"] = this.eyeColour;
+        obj["_leftEyeColourHex"] = this._leftEyeColourHex;
+        obj["_rightEyeColourHex"] = this._rightEyeColourHex;
+        obj["peltType"] = this.peltType;
+        return obj;
+    }
+
     /**
      * Overrides CreatureEntity.clone
      * @param  {string} id ID
-     * @return {CharacterEntity} new CharacterEntity
+     * @returns {CharacterEntity} new CharacterEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
         }
         clone.assign(this);
         return clone;
@@ -1251,10 +1163,12 @@ class CharacterEntity extends CreatureEntity {
         if (entity.hasOwnProperty("primaryCharacterClass")) this.primaryCharacterClass = entity.primaryCharacterClass;
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        CharacterEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
-        if (this == Game.player) {
-            return false;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         this.clearClasses();
@@ -1294,6 +1208,14 @@ class CharacterEntity extends CreatureEntity {
             CharacterEntity.characterEntityList[i].dispose();
         }
         CharacterEntity.characterEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!CharacterEntity.has(oldID)) {
+            return 1;
+        }
+        CharacterEntity.set(newID, CharacterEntity.get(oldID));
+        CharacterEntity.remove(oldID);
         return 0;
     }
 }

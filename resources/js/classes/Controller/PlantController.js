@@ -1,6 +1,18 @@
+/**
+ * Plant Controller
+ */
 class PlantController extends EntityController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    /**
+     * Creates a Plant Controller
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
 
         PlantController.set(this.id, this);
     }
@@ -20,6 +32,11 @@ class PlantController extends EntityController {
         return Game.createPlantMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        PlantController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -59,6 +76,14 @@ class PlantController extends EntityController {
             PlantController.plantControllerList[i].dispose();
         }
         PlantController.plantControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!PlantController.has(oldID)) {
+            return 1;
+        }
+        PlantController.set(newID, PlantController.get(oldID));
+        PlantController.remove(oldID);
         return 0;
     }
 }

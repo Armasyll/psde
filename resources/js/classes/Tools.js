@@ -1,4 +1,21 @@
 class Tools {
+    static initialize() {
+        Tools.RAD_0 = 0.00000000;
+        Tools.RAD_1_HALF = 0.00872665;
+        Tools.RAD_1_3RD = 0.00581776;
+        Tools.RAD_1_4TH = 0.00436332;
+        Tools.RAD_1 = 0.01745329;
+        Tools.RAD_45 = 0.78539816;
+        Tools.RAD_90 = 1.57079633;
+        Tools.RAD_135 = 2.35619449;
+        Tools.RAD_180 = 3.14159265;
+        Tools.RAD_225 = 3.92699082;
+        Tools.RAD_270 = 4.71238898;
+        Tools.RAD_315 = 5.49778714;
+        Tools.RAD_360 = 6.28318529;
+        Tools.RAD_360p1 = 6.28318530;
+        return 0;
+    }
     static isInt(n){
         return Number(n) === n && n % 1 === 0;
     }
@@ -16,25 +33,26 @@ class Tools {
         }
         return uuid.toUpperCase();
     }
-    static toFixed(number, decimals) {
+    static toFixed(number, decimals = 8) {
+        number = Number.parseFloat(number);
         decimals = Math.pow(10, decimals);
         return Math.round(number * decimals) / decimals;
     }
     static moduloDegrees(_float) {
         if (_float > 359.9999) {
-            return Tools.toFixed(_float%360, 4);
+            return Tools.toFixed(_float%360, 8);
         }
         else if (_float < 0) {
-            return Tools.toFixed(_float%360+360, 4);
+            return Tools.toFixed(_float%360+360, 8);
         }
         return _float;
     }
     static moduloRadians(_float) {
-        if (_float > 6.28318529) {
-            return Tools.toFixed(_float%6.28318530, 4);
+        if (_float > Tools.RAD_360) {
+            return Tools.toFixed(_float%Tools.RAD_360p1, 8);
         }
         else if (_float < 0) {
-            return Tools.toFixed(_float%6.28318530+6.28318530, 4);
+            return Tools.toFixed(_float%Tools.RAD_360p1+Tools.RAD_360p1, 8);
         }
         return _float;
     }
@@ -72,7 +90,7 @@ class Tools {
         else if (_float < Number.MIN_SAFE_INTEGER) {
             _float = Number.MIN_SAFE_INTEGER;
         }
-        return Number(_float.toFixed(4));
+        return Number(_float.toFixed(8));
     }
     static filterInt(_int) {
         if (_int > Number.MAX_SAFE_INTEGER) {
@@ -83,21 +101,61 @@ class Tools {
         }
         return (_int|0);
     }
-    static filterVector(..._vector) {
-        if (_vector == undefined || _vector[0] == undefined) {
+    /**
+     * 
+     * @param {(number|string)} value 
+     * @param {Enum} theEnumerator 
+     * @param {boolean} returnValue Return value, otherwise return key
+     */
+    static filterEnum(value, theEnumerator, returnValue = true) {
+        if (typeof theEnumerator != "object") {
+            return -1;
+        }
+        if (returnValue) {
+            if (typeof value == "number" && theEnumerator.properties.hasOwnProperty(value)) {
+                return value;
+            }
+            if (typeof value == "string") {
+                if (theEnumerator.hasOwnProperty(value)) {
+                    return theEnumerator[value];
+                }
+                value = value.toUpperCase();
+                if (theEnumerator.hasOwnProperty(value)) {
+                    return theEnumerator[value];
+                }
+            }
+        }
+        else {
+            if (typeof value == "number" && theEnumerator.properties.hasOwnProperty(value)) {
+                return theEnumerator.properties[value].key;
+            }
+            if (typeof value == "string") {
+                if (theEnumerator.hasOwnProperty(value)) {
+                    return value;
+                }
+                value = value.toUpperCase();
+                if (theEnumerator.hasOwnProperty(value)) {
+                    return value;
+                }
+            }
+        }
+        return -1;
+    }
+    static filterVector3(...vector3) {
+        if (vector3 == undefined || vector3[0] == undefined) {
             return BABYLON.Vector3.Zero();
         }
-        else if (_vector[0] instanceof BABYLON.Vector3) {
-            return _vector[0];
+        else if (vector3[0] instanceof BABYLON.Vector3) {
+            return vector3[0];
         }
-        else if (typeof _vector[0] == "object" && _vector[0].hasOwnProperty("x") && _vector[0].hasOwnProperty("y") && _vector[0].hasOwnProperty("z") && !isNaN(_vector[0].x) && !isNaN(_vector[0].y) && !isNaN(_vector[0].z)) {
-            return new BABYLON.Vector3(_vector[0].x, _vector[0].y, _vector[0].z);
+        else if (typeof vector3[0] == "object" && vector3[0].hasOwnProperty("x") && vector3[0].hasOwnProperty("y") && vector3[0].hasOwnProperty("z") && !isNaN(vector3[0].x) && !isNaN(vector3[0].y) && !isNaN(vector3[0].z)) {
+            return new BABYLON.Vector3(vector3[0].x, vector3[0].y, vector3[0].z);
         }
-        else if (!isNaN(_vector[0]) && !isNaN(_vector[1]) && !isNaN(_vector[2])) {
-            return new BABYLON.Vector3(_vector[0], _vector[1], _vector[2]);
+        else if (!isNaN(vector3[0]) && !isNaN(vector3[1]) && !isNaN(vector3[2])) {
+            return new BABYLON.Vector3(vector3[0], vector3[1], vector3[2]);
         }
-        else if (_vector[0] instanceof Array && _vector[0].length == 3) {
-            return new BABYLON.Vector3(_vector[0][0], _vector[0][1], _vector[0][2]);
+        else if (vector3[0] instanceof Array && vector3[0].length == 3) {
+            return new BABYLON.Vector3(vector3[0][0], vector3[0][1], vector3[0][2]);
         }
         else {
             return BABYLON.Vector3.Zero();
@@ -131,3 +189,4 @@ class Tools {
         }
     }
 }
+Tools.initialize();

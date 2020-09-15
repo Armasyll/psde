@@ -4,11 +4,11 @@
 class Entity extends AbstractEntity {
     /**
      * Creates an Entity
-     * @param  {string} id           Unique ID
-     * @param  {string} name         Name
-     * @param  {string} description  Description
-     * @param  {string} iconID       Icon ID
-     * @param  {EntityEnum} entityType EntityEnum
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
+     * @param  {EntityEnum}  entityType EntityEnum
      */
     constructor(id = "", name = "", description = "", iconID = "genericItem", entityType = EntityEnum.ENTITY) {
         super(id, name, description, iconID);
@@ -76,19 +76,11 @@ class Entity extends AbstractEntity {
         return 0;
     }
 
-    setMeshID(meshID, updateChild = false) {
-        if (Game.hasAvailableMesh(meshID)) {
-            this.meshID = meshID;
-        }
-        else {
-            this.meshID = "missingMesh";
-        }
+    setMeshID(meshID) {
+        this.meshID = meshID;
         if (this.meshStages.length == 0) {
             this.addMeshStage(meshID);
             this.currentMeshStage = 0;
-        }
-        if (updateChild && this.hasController()) {
-            this.controller.setMesh(Game.getMesh(meshID), false);
         }
         return 0;
     }
@@ -96,12 +88,7 @@ class Entity extends AbstractEntity {
         return this.meshID;
     }
     setTextureID(textureID) {
-        if (Game.hasAvailableTexture(textureID)) {
-            this.textureID = textureID;
-        }
-        else {
-            this.textureID = "missingTexture";
-        }
+        this.textureID = textureID;
         if (this.textureStages.length == 0) {
             this.addTextureStage(textureID);
             this.currentTextureStage = 0;
@@ -112,12 +99,7 @@ class Entity extends AbstractEntity {
         return this.textureID;
     }
     setMaterialID(materialID) {
-        if (Game.hasAvailableMaterial(materialID) || Game.hasAvailableTexture(materialID)) {
-            this.materialID = materialID;
-        }
-        else {
-            this.materialID = "missingMaterial";
-        }
+        this.materialID = materialID;
         if (this.materialStages.length == 0) {
             this.addMaterialStage(materialID);
             this.currentMaterialStage = 0;
@@ -141,9 +123,6 @@ class Entity extends AbstractEntity {
         this.setMeshID(this.meshStages[index]);
         this.setMaterialID(this.materialStages[index]);
         this.setTextureID(this.textureStages[index]);
-        if (updateChild && this.hasController()) {
-            this.controller.setStage(index, false);
-        }
         return this;
     }
     addMeshStage(meshID = "missingMesh") {
@@ -227,7 +206,7 @@ class Entity extends AbstractEntity {
      * @param {function} [actionFunction]
      * @param {boolean} [runOnce]
      */
-    addAvailableAction(action, actionFunction = undefined, runOnce = false) {
+    addAvailableAction(action, actionFunction = null, runOnce = false) {
         if (action instanceof ActionData) {
             action = action.action;
         }
@@ -240,7 +219,7 @@ class Entity extends AbstractEntity {
     /**
      * Removes an available Action when interacting with this Entity
      * @param  {ActionEnum} action (ActionEnum)
-     * @return {Booealn}          Whether or not the Action was removed
+     * @returns {boolean} Whether or not the Action was removed
      */
     removeAvailableAction(action) {
         if (action instanceof ActionData) {
@@ -298,7 +277,7 @@ class Entity extends AbstractEntity {
     /**
      * Removes a Hidden Available Action when interacting with this Entity
      * @param  {ActionEnum} action (ActionEnum)
-     * @return {Booealn}          Whether or not the Action was removed
+     * @returns {boolean} Whether or not the Action was removed
      */
     removeHiddenAvailableAction(action) {
         if (action instanceof ActionData) {
@@ -356,7 +335,7 @@ class Entity extends AbstractEntity {
     }
     /**
      * Returns this Entity's special properties
-     * @return {Set} <Number (SpecialPropertyEnum)>
+     * @returns {Set} <Number (SpecialPropertyEnum)>
      */
     getSpecialProperties() {
         return this.specialProperties;
@@ -364,7 +343,7 @@ class Entity extends AbstractEntity {
     /**
      * Returns whether or not this Entity has the specific special property
      * @param  {Number}  specialProperty (SpecialPropertyEnum)
-     * @return {Boolean} Whether or not this Entity has the specific SpecialPropertyEnum
+     * @returns {boolean} Whether or not this Entity has the specific SpecialPropertyEnum
      */
     hasSpecialProperty(specialProperty) {
         if (!SpecialPropertyEnum.properties.hasOwnProperty(specialProperty)) {
@@ -394,12 +373,12 @@ class Entity extends AbstractEntity {
     /**
      * Overrides AbstractEntity.clone
      * @param  {string} id ID
-     * @return {Entity} new Entity
+     * @returns {Entity} new Entity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new Entity(id, this.name, this.description, this.icon, this.entityType);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
         }
         clone.assign(this);
         return clone;
@@ -479,6 +458,11 @@ class Entity extends AbstractEntity {
         if (entity.hasOwnProperty("price")) this.setPrice(entity.price);
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        Entity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -486,9 +470,6 @@ class Entity extends AbstractEntity {
             if (this.instances[instanceID] instanceof InstancedEntity) {
                 this.instances[instanceID].dispose();
             }
-        }
-        if (this.hasController()) {
-            this.controller.dispose();
         }
         Entity.remove(this.id);
         super.dispose();
@@ -526,6 +507,14 @@ class Entity extends AbstractEntity {
             Entity.entityList[i].dispose();
         }
         Entity.entityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!Entity.has(oldID)) {
+            return 1;
+        }
+        Entity.set(newID, Entity.get(oldID));
+        Entity.remove(oldID);
         return 0;
     }
 }

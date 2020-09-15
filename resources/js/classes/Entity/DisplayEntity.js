@@ -1,5 +1,15 @@
+/**
+ * Display Entity
+ */
 class DisplayEntity extends FurnitureEntity {
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined) {
+    /**
+     * Creates a Display Entity
+     * @param  {string}  id 
+     * @param  {string}  name 
+     * @param  {string}  [description] 
+     * @param  {string}  [iconID] 
+     */
+    constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID, FurnitureEnum.TELEVISION);
 
         DisplayEntity.set(this.id, this);
@@ -8,10 +18,12 @@ class DisplayEntity extends FurnitureEntity {
     /**
      * Overrides FurnitureEntity.clone
      * @param  {string} id ID
-     * @return {DisplayEntity} new DisplayEntity
+     * @returns {DisplayEntity} new DisplayEntity
      */
     clone(id = "") {
-        return new DisplayEntity(id, this.name, this.description, this.icon, this.displayType);
+        let clone = new DisplayEntity(id, this.name, this.description, this.icon, this.displayType);
+        clone.assign(this);
+        return clone;
     }
     createInstance(id = "") {
         return new InstancedDisplayEntity(id, this);
@@ -21,6 +33,11 @@ class DisplayEntity extends FurnitureEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        DisplayEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -62,6 +79,14 @@ class DisplayEntity extends FurnitureEntity {
             DisplayEntity.displayEntityList[i].dispose();
         }
         DisplayEntity.displayEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!DisplayEntity.has(oldID)) {
+            return 1;
+        }
+        DisplayEntity.set(newID, DisplayEntity.get(oldID));
+        DisplayEntity.remove(oldID);
         return 0;
     }
 }

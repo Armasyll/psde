@@ -57,7 +57,7 @@ class GameGUI {
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
-        GameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
+        GameGUI.pointerLockedBeforeShown = Game.isPointerLock;
         GameGUI.resize();
     }
     static _initHUD() {
@@ -315,10 +315,10 @@ class GameGUI {
         submitOnline.width = 1.0;
 
         GameGUI._nameInput.onTextChangedObservable.add(function() {
-            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
+            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
         });
         GameGUI._ageInput.onTextChangedObservable.add(function() {
-            GameGUI._ageInput.text = String(Game.Tools.filterInt(GameGUI._ageInput.text));
+            GameGUI._ageInput.text = String(Tools.filterInt(GameGUI._ageInput.text));
         });
         buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
             AbstractControls.initQwertyKeyboardControls();
@@ -337,8 +337,8 @@ class GameGUI {
         });
         submitOnline.onPointerClickObservable.add(function() {
             let doNotPassGo = false;
-            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
-            GameGUI._ageInput.text = Game.Tools.filterInt(GameGUI._ageInput.text)
+            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
+            GameGUI._ageInput.text = Tools.filterInt(GameGUI._ageInput.text)
             if (GameGUI._nameInput.text.length < 1) {
                 GameGUI._nameInput.color = GameGUI.colorDanger;
                 GameGUI._nameInput.background = GameGUI.backgroundDanger;
@@ -358,7 +358,7 @@ class GameGUI {
                 GameGUI._ageInput.background = GameGUI.background;
             }
             if (!doNotPassGo) {
-                if (!(Game.player instanceof AbstractEntity)) {
+                if (!Game.hasPlayerController()) {
                     Game.setPlayerCell("apartmentCell");
                     Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
@@ -372,8 +372,8 @@ class GameGUI {
         });
         submitOffline.onPointerClickObservable.add(function() {
             let doNotPassGo = false;
-            GameGUI._nameInput.text = Game.Tools.filterID(GameGUI._nameInput.text);
-            GameGUI._ageInput.text = Game.Tools.filterInt(GameGUI._ageInput.text)
+            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
+            GameGUI._ageInput.text = Tools.filterInt(GameGUI._ageInput.text)
             if (GameGUI._nameInput.text.length < 1) {
                 GameGUI._nameInput.color = GameGUI.colorDanger;
                 GameGUI._nameInput.background = GameGUI.backgroundDanger;
@@ -393,7 +393,7 @@ class GameGUI {
                 GameGUI._ageInput.background = GameGUI.background;
             }
             if (!doNotPassGo) {
-                if (!(Game.player instanceof AbstractEntity)) {
+                if (!(Game.hasPlayerController())) {
                     Game.setPlayerCell("apartmentCell");
                     Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
@@ -636,7 +636,7 @@ class GameGUI {
     static _generateActionsRadialMenu() {
         if (Game.debugMode) console.log("Running GameGUI::_generateActionsRadialMenu");
         let actionsRadialMenu = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
-        actionsRadialMenu.width = String(Game.engine.getRenderWidth() / 4) + "px";
+        actionsRadialMenu.width = String(Game.renderWidth / 4) + "px";
         actionsRadialMenu.height = actionsRadialMenu.width;
         actionsRadialMenu.background = GameGUI.background;
         actionsRadialMenu.color = GameGUI.color;
@@ -645,20 +645,20 @@ class GameGUI {
         actionsRadialMenu.zIndex = 12;
         return actionsRadialMenu;
     }
-    static populateActionsMenuWith(abstractEntity) {
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+    static populateActionsMenuWith(entityController) {
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
             }
             else {
                 return 2;
             }
         }
         GameGUI.actionsMenuOptions.clear();
-        let actions = abstractEntity.getAvailableActions();
+        let actions = entityController.getAvailableActions();
         for (let actionID in actions) {
-            if (!abstractEntity.hasHiddenAvailableAction(actionID)) {
-                GameGUI.addActionsMenuOption(actionID, abstractEntity);
+            if (!entityController.hasHiddenAvailableAction(actionID)) {
+                GameGUI.addActionsMenuOption(actionID, entityController);
             }
         }
         return 0;

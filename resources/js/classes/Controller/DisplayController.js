@@ -1,6 +1,23 @@
+/**
+ * Display Controller
+ */
 class DisplayController extends FurnitureController {
-    constructor(id, mesh, entity, videoID = undefined, videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
-        super(id, mesh, entity);
+    /**
+     * 
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     * @param {string} videoID 
+     * @param {number} videoWidth 
+     * @param {number} videoHeight 
+     * @param {number} videoPosition 
+     */
+    constructor(id, mesh, entityObject, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
+
         this.videoMaterial = null;
         this.videoTexture = null;
         this.videoMesh = null;
@@ -95,6 +112,11 @@ class DisplayController extends FurnitureController {
         }
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        DisplayController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -138,6 +160,14 @@ class DisplayController extends FurnitureController {
             DisplayController.displayControllerList[i].dispose();
         }
         DisplayController.displayControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!DisplayController.has(oldID)) {
+            return 1;
+        }
+        DisplayController.set(newID, DisplayController.get(oldID));
+        DisplayController.remove(oldID);
         return 0;
     }
 }

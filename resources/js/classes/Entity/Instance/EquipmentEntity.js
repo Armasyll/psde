@@ -1,9 +1,18 @@
+/**
+ * Instanced Equipment Entity
+ */
 class InstancedEquipmentEntity extends InstancedItemEntity {
-    constructor(id = undefined, entity = undefined, owner = undefined) {
+    /**
+     * Creates an Instanced Equipment Entity
+     * @param {string} id 
+     * @param {EquipmentEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
         super(id, entity, owner);
         if (!(this.entity instanceof EquipmentEntity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
     }
 
@@ -36,7 +45,7 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedEquipmentEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -47,6 +56,10 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
         return 0;
     }
     dispose() {

@@ -4,28 +4,28 @@
 class Dialogue {
     /**
      * Creates a Dialogue
-     * @param  {String}    id       Unique ID
-     * @param  {String}    title    Title
-     * @param  {String}    text     String, or Function, with the parameters _them and _you, that returns a String
-     * @param  {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
-     * @return {Dialogue}  Dialogue
+     * @param {string} id       Unique ID
+     * @param {string} title    Title
+     * @param {string} text     String, or Function, with the parameters _them and _you, that returns a String
+     * @param {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
+     * @returns {Dialogue}  Dialogue
      * @example new Dialogue("exampleA", "Example A", "This is a test!")
      * @example new Dialogue("exampleB", "Example B", "This is another test!")
      * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
      * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
      */
-    constructor(id, title, text) {
+    constructor(id = "", title = "", text = "") {
         id = Tools.filterID(id);
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
         }
         if (typeof text != "string" && typeof text != "function") {
-            return undefined;
+            return null;
         }
 
         this.id = id;
-        this.title = undefined;
-        this.text = undefined;
+        this.title = "";
+        this.text = "";
         this.textType = 0;
         this.options = {};
         this.optionsCount = 0;
@@ -67,7 +67,7 @@ class Dialogue {
         }
         return this;
     }
-    getText(them = undefined, you = Game.player) {
+    getText(them = undefined, you) {
         if (typeof this.text == "string") {
             return this.text;
         }

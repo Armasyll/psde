@@ -3,12 +3,12 @@
  */
 class CharacterClass {
     /**
-     * 
+     * Creates a Character Class
      * @param {string} id 
      * @param {string} name 
      * @param {string} [description] 
      * @param {string} [iconID] 
-     * @param {CharacterClassEnum} characterClassType 
+     * @param {(CharacterClassEnum|number)} characterClassType 
      */
     constructor(id = "classless", name = "Classless", description = "Fake it 'til you make it.", iconID = "genericItem", characterClassType = CharacterClassEnum.CLASSLESS) {
         id = Tools.filterID(id);
@@ -24,7 +24,7 @@ class CharacterClass {
 
         /**
          * Roll for default hit points
-         * @type {Array.<number>}
+         * @type {Array<number>}
          * @property {number} Dice
          * @property {number} Faces
          */
@@ -36,7 +36,7 @@ class CharacterClass {
         this.healthInitial = 8;
         /**
          * Roll for incremental hit points per level
-         * @type {Array.<number>}
+         * @type {Array<number>}
          * @property {number} Dice
          * @property {number} Faces
          */
@@ -54,7 +54,7 @@ class CharacterClass {
         this.weaponProficiencyChoices = [];
         /**
          * Guaranteed tool proficiencies
-         * @type {Array.<string>}
+         * @type {Array<ProficiencyEnum>}
          */
         this.toolProficiencies = [];
         /**
@@ -75,25 +75,25 @@ class CharacterClass {
          * eg, You could choose one of any artisan tool, or navigation tools, or music instrument, buy only one!
          * @example [[ProficiencyEnum.ARTISANS_TOOLS, ProficiancyEnum.NAVIGATORS_TOOLS, ProficiencyEnum.MUSICAL_INSTRUMENTS]]
          * 
-         * @type {Array.<string|Array.<string>>} Array of ProficiencyEnum, or a nested array of ProficiencyEnum
+         * @type {Array<(ProficiencyEnum|Array<ProficiencyEnum>)>} Array of ProficiencyEnum, or a nested array of ProficiencyEnum
          */
         this.toolProficiencyChoices = [];
         /**
          * Guaranteed skill proficiencies
-         * @type {Array.<string>}
+         * @type {Array<ProficiencyEnum>}
          */
         this.skillProficiencies = [];
         /**
-         * @type {Array.<string|Array.<string>>} 
+         * @type {Array<(ProficiencyEnum|Array<ProficiencyEnum>)>} 
          */
         this.skillProficiencyChoices = [];
         /**
          * Guaranteed ability saving throws
-         * @type {Array.<string>} Array of abilities
+         * @type {Array<ProficiencyEnum>} Array of abilities
          */
         this.savingThrowProficiencies = [];
         /**
-         * @type {Array.<string|Array.<string>>} 
+         * @type {Array<(ProficiencyEnum|Array<ProficiencyEnum>)>} 
          */
         this.savingThrowProficiencyChoices = [];
 
@@ -174,7 +174,7 @@ class CharacterClass {
      * @returns {number}
      */
     rollHitDice() {
-        return Game.roll(this.hitDice[0], this.hitDice[1]);
+        return DND.roll(this.hitDice[0], this.hitDice[1]);
     }
     /**
      * 
@@ -182,7 +182,7 @@ class CharacterClass {
      * @returns {number}
      */
     setInitialHealth(healthInitial) {
-        healthInitial = Game.Tools.filterInt(healthInitial)||10;
+        healthInitial = Number.parseInt(healthInitial) || 10;
         this.healthInitial = healthInitial;
     }
     /**
@@ -216,7 +216,7 @@ class CharacterClass {
      * @returns {number}
      */
     rollHealthPerLevel() {
-        return Game.roll(this.healthPerLevel[0], this.healthPerLevel[1]);
+        return DND.roll(this.healthPerLevel[0], this.healthPerLevel[1]);
     }
     /**
      * 
@@ -257,7 +257,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|Array.<string>} proficiency ArmourCategoryEnum
+     * @param {(ProficiencyEnum|Array<ProficiencyEnum>)} proficiency ArmourCategoryEnum
      * @returns {number}
      */
     addArmourProficiencyChoice(proficiency) {
@@ -293,7 +293,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency ArmourCategoryEnum
+     * @param {ProficiencyEnum} proficiency ArmourCategoryEnum
      * @returns {number}
      */
     addArmourProficiency(proficiency) {
@@ -312,7 +312,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {boolean}
      */
     hasArmourProficiency(proficiency) {
@@ -327,7 +327,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|Array.<string>} proficiency WeaponEnum
+     * @param {(ProficiencyEnum|Array<ProficiencyEnum>)} proficiency WeaponEnum
      * @returns {number}
      */
     addWeaponProficiencyChoice(proficiency) {
@@ -363,7 +363,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {number}
      */
     addWeaponProficiency(proficiency) {
@@ -397,7 +397,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|Array.<string>} proficiency ProficiencyEnum
+     * @param {(ProficiencyEnum|Array<ProficiencyEnum>)} proficiency ProficiencyEnum
      * @returns {number}
      */
     addToolProficiencyChoice(proficiency) {
@@ -433,7 +433,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {number}
      */
     addToolProficiency(proficiency) {
@@ -453,7 +453,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {stirng|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {boolean}
      */
     hasToolProficiency(proficiency) {
@@ -468,7 +468,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|Array.<string>} proficiency SkillEnum
+     * @param {(ProficiencyEnum|Array<ProficiencyEnum>)} proficiency SkillEnum
      * @returns {number}
      */
     addSkillProficiencyChoice(proficiency) {
@@ -504,7 +504,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {number}
      */
     addSkillProficiency(proficiency) {
@@ -526,7 +526,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} proficiency 
+     * @param {ProficiencyEnum} proficiency 
      * @returns {boolean}
      */
     hasSkillProficiency(proficiency) {
@@ -541,7 +541,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|Array.<string>} ability AbilityEnum
+     * @param {(AbilityEnum|Array<AbilityEnum>)} ability AbilityEnum
      * @returns {number}
      */
     addSavingThrowProficiencyChoice(ability) {
@@ -577,7 +577,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} ability 
+     * @param {AbilityEnum} ability 
      * @returns {number}
      */
     addSavingThrowProficiency(ability) {
@@ -596,7 +596,7 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} ability 
+     * @param {AbilityEnum} ability 
      * @returns {boolean}
      */
     hasSavingThrowProficiency(ability) {
@@ -611,11 +611,11 @@ class CharacterClass {
     }
     /**
      * 
-     * @param {string|number} ability Required ability
+     * @param {AbilityEnum} ability Required ability
      * @param {number} score Ability's minimum score
      * @returns {number}
      */
-    addMulticlassRequirement(ability, score) {
+    addMulticlassRequirement(ability, score = 13) {
         if (AbilityEnum.hasOwnProperty(ability)) {}
         else if (AbilityEnum.properties.hasOwnProperty(ability)) {
             ability = AbilityEnum.properties[ability].key;
@@ -623,7 +623,7 @@ class CharacterClass {
         else {
             return 1;
         }
-        score = Game.Tools.filterInt(score);
+        score = Number.parseInt(score) || 13;
         if (score < 1) { 
             return 1;
         }
@@ -641,6 +641,10 @@ class CharacterClass {
     setMulticlassRequiresBoth(requiresBoth = true) {
         this.multiclassRequiresBoth = requiresBoth == true;
         return 0;
+    }
+
+    getClassName() {
+        return "CharacterClass";
     }
 
     static initialize() {

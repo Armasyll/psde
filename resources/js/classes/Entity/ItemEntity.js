@@ -1,13 +1,16 @@
+/**
+ * Item Entity
+ */
 class ItemEntity extends Entity {
     /**
-     * Creates an Item
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID       Image ID
-     * @param  {ItemEnum} itemType   ItemEnum
+     * Creates an Item Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Image ID
+     * @param  {ItemEnum}  itemType ItemEnum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItemIcon", itemType = ItemEnum.GENERAL) {
+    constructor(id = "", name = "", description = "", iconID = "genericItemIcon", itemType = ItemEnum.GENERAL) {
         super(id, name, description, iconID, EntityEnum.ITEM);
 
         this.itemType = ItemEnum.GENERAL;
@@ -56,14 +59,14 @@ class ItemEntity extends Entity {
     /**
      * Overrides Entity.clone
      * @param  {string} id ID
-     * @return {ItemEntity} new ItemEntity
+     * @returns {ItemEntity} new ItemEntity
      */
     clone(id = "") {
         let clone = new ItemEntity(id, this.name, this.description, this.icon, this.itemType);
         clone.assign(this);
         return clone;
     }
-    createInstance(id = undefined) {
+    createInstance(id = "") {
         return new InstancedItemEntity(id, this);
     }
     /**
@@ -79,6 +82,11 @@ class ItemEntity extends Entity {
         if (entity.hasOwnProperty("itemType")) this.setItemType(entity.itemType);
         if (entity.hasOwnProperty("maxStackCount")) this.setMaxStackCount(entity.maxStackCount);
     }
+    updateID(newID) {
+        super.updateID(newID);
+        ItemEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -92,6 +100,10 @@ class ItemEntity extends Entity {
 
     static initialize() {
         ItemEntity.itemEntityList = {};
+    }
+    static createGenericItem() {
+        let genericItem = new ItemEntity("genericItem", "Generic Item", "It's so perfectly generic.", "genericItemIcon", ItemEnum.GENERAL);
+        return 0;
     }
     static get(id) {
         if (ItemEntity.has(id)) {
@@ -156,5 +168,14 @@ class ItemEntity extends Entity {
         console.groupEnd();
         return entity;
     }
+    static updateID(oldID, newID) {
+        if (!ItemEntity.has(oldID)) {
+            return 1;
+        }
+        ItemEntity.set(newID, ItemEntity.get(oldID));
+        ItemEntity.remove(oldID);
+        return 0;
+    }
 }
 ItemEntity.initialize();
+ItemEntity.createGenericItem();

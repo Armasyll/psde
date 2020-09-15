@@ -1,9 +1,18 @@
+/**
+ * Instanced Key Entity
+ */
 class InstancedKeyEntity extends InstancedItemEntity {
-    constructor(id = undefined, keyEntity = undefined, owner = undefined) {
-        super(id, keyEntity, owner);
+    /**
+     * Creates an Instanced Key Entity
+     * @param {string} id 
+     * @param {KeyEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof KeyEntity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         this.skeletonKeyModifier = false;
@@ -33,6 +42,11 @@ class InstancedKeyEntity extends InstancedItemEntity {
             return 2;
         }
         super.assign(entity);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedKeyEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -72,6 +86,14 @@ class InstancedKeyEntity extends InstancedItemEntity {
             InstancedKeyEntity.instancedKeyEntityList[i].dispose();
         }
         InstancedKeyEntity.instancedKeyEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedKeyEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedKeyEntity.set(newID, InstancedKeyEntity.get(oldID));
+        InstancedKeyEntity.remove(oldID);
         return 0;
     }
 }

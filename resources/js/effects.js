@@ -33,8 +33,8 @@ new Effect("healingWord", "Healing Word", "Heals a target living creature.", und
     if (target.creatureType == CreatureTypeEnum.CONSTRUCT) {
         return 0;
     }
-    let roll = Game.roll(1, 4);
-    //roll += Game.calculateAbilityModifier(casterEntity.getSpellcastingAbility());
+    let roll = DND.roll(1, 4);
+    //roll += DND5E.calculateAbilityModifier(casterEntity.getSpellcastingAbility());
     if (target.creatureType == CreatureTypeEnum.UNDEAD) {
         return -70;
     }

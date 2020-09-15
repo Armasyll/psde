@@ -1,9 +1,18 @@
+/**
+ * Instanced Shield Entity
+ */
 class InstancedShieldEntity extends InstancedClothingEntity {
-    constructor(id = undefined, shieldEntity = undefined, owner = undefined) {
-        super(id, shieldEntity);
+    /**
+     * Creates an Instanced Shield Entity
+     * @param {string} id 
+     * @param {ShieldEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof ShieldEntity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         InstancedShieldEntity.set(this.id, this);
@@ -14,9 +23,9 @@ class InstancedShieldEntity extends InstancedClothingEntity {
      * @param  {string} id ID
      * @return {InstancedShieldEntity} new InstancedShieldEntity
      */
-    clone(id) {
+    clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedShieldEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -27,6 +36,11 @@ class InstancedShieldEntity extends InstancedClothingEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedShieldEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -66,6 +80,14 @@ class InstancedShieldEntity extends InstancedClothingEntity {
             InstancedShieldEntity.instancedShieldEntityList[i].dispose();
         }
         InstancedShieldEntity.instancedShieldEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedShieldEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedShieldEntity.set(newID, InstancedShieldEntity.get(oldID));
+        InstancedShieldEntity.remove(oldID);
         return 0;
     }
 }

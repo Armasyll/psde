@@ -1,13 +1,16 @@
+/**
+ * Consumable Entity
+ */
 class ConsumableEntity extends ItemEntity {
     /**
-     * Creates a consumable item
+     * Creates a Consumable Entity
      * @param  {string}  id Unique ID
      * @param  {string}  name Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID Image ID
-     * @param  {ConsumableEnum} consumableType ConsumableEnum
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Image ID
+     * @param  {ConsumableEnum}  consumableType ConsumableEnum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = "genericItemIcon", consumableType = ConsumableEnum.FOOD) {
+    constructor(id = "", name = "", description = "", iconID = "genericItemIcon", consumableType = ConsumableEnum.FOOD) {
         super(id, name, description, iconID, ItemEnum.CONSUMABLE);
 
         this.consumableType = ConsumableEnum.FOOD;
@@ -36,14 +39,14 @@ class ConsumableEntity extends ItemEntity {
     /**
      * Overrides Entity.clone
      * @param  {string} id ID
-     * @return {ConsumableEntity} new ConsumableEntity
+     * @returns {ConsumableEntity} new ConsumableEntity
      */
     clone(id = "") {
         let clone = new ConsumableEntity(id, this.name, this.description, this.icon, this.consumableType);
         clone.assign(this);
         return clone;
     }
-    createInstance(id = undefined) {
+    createInstance(id = "") {
         return new InstancedConsumableEntity(id, this);
     }
     /**
@@ -57,6 +60,11 @@ class ConsumableEntity extends ItemEntity {
         }
         super.assign(entity, verify);
         if (entity.hasOwnProperty("consumableType")) this.setConsumableType(entity.consumableType);
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        ConsumableEntity.updateID(this.id, newID);
+        return 0;
     }
     dispose() {
         this.setLocked(true);
@@ -134,6 +142,14 @@ class ConsumableEntity extends ItemEntity {
         console.info(`ConsumableEntity (${entity.getID()}) has been created.`);
         console.groupEnd();
         return entity;
+    }
+    static updateID(oldID, newID) {
+        if (!ConsumableEntity.has(oldID)) {
+            return 1;
+        }
+        ConsumableEntity.set(newID, ConsumableEntity.get(oldID));
+        ConsumableEntity.remove(oldID);
+        return 0;
     }
 }
 ConsumableEntity.initialize();

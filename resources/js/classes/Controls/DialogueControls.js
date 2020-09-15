@@ -10,7 +10,7 @@ class DialogueControls extends MenuControls {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::controlDialogueOnKeyDown(${keyboardEvent.keyCode})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         switch (keyboardEvent.keyCode) {
@@ -39,7 +39,7 @@ class DialogueControls extends MenuControls {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::controlDialogueOnKeyUp(${keyboardEvent.keyCode})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         return 0;

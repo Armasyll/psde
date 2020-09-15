@@ -1,4 +1,4 @@
-Game.createPlantEntity("wheat", "Wheat", "", "", "billboardHalfInside2", "wheat_stage_0", PlantEnum.WHEAT, [
+EntityLogic.createPlantEntity("wheat", "Wheat", "", "", "billboardHalfInside2", "wheat_stage_0", PlantEnum.WHEAT, [
     ["billboardHalfInside2","wheat_stage_0"],
     ["billboardHalfInside2","wheat_stage_1"],
     ["billboardHalfInside2","wheat_stage_2"],

@@ -3,11 +3,11 @@
  */
 class AbstractEntity {
     /**
-     * Creates an AbstractEntity
-     * @param  {string} id Unique ID, auto-generated if none given
-     * @param  {string} name Name
-     * @param  {string} [description] Description
-     * @param  {string} [iconID] Icon ID
+     * Creates an Abstract Entity
+     * @param  {string}  id Unique ID, auto-generated if none given
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
      */
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
         id = Tools.filterID(id);
@@ -34,6 +34,12 @@ class AbstractEntity {
         this.maxHealthEffectModifier = 0;
         this.maxHealthEffectOverride = -1;
 
+        /**
+         * Size
+         * @type {SizeEnum}
+         */
+        this.size = SizeEnum.SMALL;
+
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.specialProperties = {};
@@ -44,11 +50,12 @@ class AbstractEntity {
         this.godModeEffectOverride = -1;
         this.enabled = true;
         this.locked = false;
+        this.disposing = false;
         this.essential = false;
         this.essentialOverride = -1;
         this.essentialConditionOverride = -1;
         this.essentialEffectOverride = -1;
-        this.inventory = null;
+        this.container = null;
         /**
          * @type {object}
          * Object<EffectID: <"currentStack":StackNumber, "startTime":TimeStart, "endTime":TimeEnd>>
@@ -108,18 +115,20 @@ class AbstractEntity {
         return this.description;
     }
     setIcon(iconID) {
-        if (Game.hasIcon(iconID)) {
-            this.iconID = iconID;
-        }
-        else {
-            this.iconID = "missingIcon";
-        }
+        this.iconID = iconID;
         return 0;
     }
     getIcon() {
         return this.iconID;
     }
 
+    getSize() {
+        return this.size;
+    }
+    setSize(size) {
+        this.size = Tools.filterEnum(size) || SizeEnum.MEDIUM;
+        return 0;
+    }
     setHealth(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
@@ -141,9 +150,6 @@ class AbstractEntity {
         this.health = number;
         if (this.health <= 0) {
             this.living = false;
-            if (this.hasController()) {
-                this.controller.doDeath();
-            }
         }
         return 0;
     }
@@ -222,11 +228,6 @@ class AbstractEntity {
         }
         return this.godMode;
     }
-    applyGodMode() {
-        if (this.isGod()) {
-            // Tell Game.
-        }
-    }
 
     isEnabled() {
         return this.enabled == true;
@@ -247,32 +248,26 @@ class AbstractEntity {
         return 0;
     }
 
-    setController(entityController) {
-        if (entityController instanceof EntityController) {
-            this.controller = entityController;
-            return 0;
-        }
-        return 2;
+    /**
+     * 
+     * @param {string} entityControllerID 
+     */
+    setController(entityControllerID) {
+        this.controller = entityControllerID;
     }
     getController() {
         return this.controller;
     }
     hasController() {
-        return this.controller instanceof EntityController;
+        return this.controller != null;
     }
     removeController() {
-        this.controller = undefined;
+        this.controller = null;
         return 0;
     }
 
     setEssential(isEssential = true) {
         this.essential = isEssential == true;
-        if (this.essential) {
-            Game.setEssentialEntity(this);
-        }
-        else {
-            Game.removeEssentialEntity(this);
-        }
         return 0;
     }
     isEssential() {
@@ -286,11 +281,6 @@ class AbstractEntity {
             return this.essentialOverride;
         }
         return this.essential;
-    }
-    applyEssential() {
-        if (this.isEssential()) {
-            // Tell Game.
-        }
     }
 
     kill() {
@@ -335,7 +325,7 @@ class AbstractEntity {
                 return 2;
             }
         }
-        if (Game.debugMode) console.log(`Running ${this.getID()}.addEffect(${effect.getID()})`);
+        if (AbstractEntity.debugMode) console.log(`Running ${this.getID()}.addEffect(${effect.getID()})`);
         let id = effect.getID()
         if (this.effects.hasOwnProperty(id)) {
             if (this.effects[id]["currentStack"] < effect.getStackCount()) {
@@ -351,10 +341,9 @@ class AbstractEntity {
         }
         this.effectsPriority[priority].add(id);
         this.applyEffects();
-        if (effect.getDuration() <= 0) {
-            return 0;
+        if (effect.getDuration() > 0) {
+            Game.addScheduledEffect(effect, this);
         }
-        Game.addScheduledEffect(effect, this);
         return 0;
     }
     removeEffect(effect) {
@@ -366,7 +355,7 @@ class AbstractEntity {
                 return 2;
             }
         }
-        if (Game.debugMode) console.log(`Running ${this.getID()}.removeEffect(${effect.getID()})`);
+        if (AbstractEntity.debugMode) console.log(`Running ${this.getID()}.removeEffect(${effect.getID()})`);
         let id = effect.getID()
         let priority = effect.getPriority();
         if (this.effectsPriority.hasOwnProperty(priority)) {
@@ -390,7 +379,7 @@ class AbstractEntity {
         return 0;
     }
     applyEffects() {
-        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffects()`);
+        if (AbstractEntity.debugMode) console.log(`Running ${this.getID()}.applyEffects()`);
         this.resetModifiers();
         for (let priority in this.effectsPriority) {
             this.effectsPriority[priority].forEach((effectID) => {
@@ -412,9 +401,9 @@ class AbstractEntity {
                 return 2;
             }
         }
-        if (Game.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
+        if (AbstractEntity.debugMode) console.log(`Running ${this.getID()}.applyEffect(${effect.getID()})`);
         if (!this.hasEffect(effect)) {
-            if (Game.debugMode) console.log("\tBut this entity doesn't have the effect.");
+            if (AbstractEntity.debugMode) console.log("\tBut this entity doesn't have the effect.");
             return 1;
         }
         for (let property in effect.getModifiers()) { // for every property modified
@@ -489,100 +478,116 @@ class AbstractEntity {
         return 0;
     }
 
-    hasInventory() {
-        return this.inventory instanceof Inventory;
+    hasContainer() {
+        return this.container instanceof Container;
     }
-    getInventory() {
-        return this.inventory;
+    getContainer() {
+        return this.container;
     }
-    setInventory(inventory) {
-        if (!(inventory instanceof Inventory)) {
-            if (Inventory.has(inventory)) {
-                inventory = Inventory.get(inventory);
+    setContainer(container) {
+        if (!(container instanceof Container)) {
+            if (Container.has(container)) {
+                container = Container.get(container);
             }
             else {
                 return 2;
             }
         }
-        if (this.hasInventory()) {
-            if (this.inventory == inventory) {
+        if (this.hasContainer()) {
+            if (this.container == container) {
                 return 0;
             }
-            this.removeInventory();
+            this.removeContainer();
         }
-        if (Game.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.setInventory(${inventory.id})`);
-        this.inventory = inventory;
-        inventory.addEntity(this);
+        if (AbstractEntity.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.setContainer(${container.id})`);
+        this.container = container;
+        container.addEntity(this);
         return 0;
     }
-    removeInventory() {
-        if (!this.hasInventory()) {
+    removeContainer() {
+        if (!this.hasContainer()) {
             return 1;
         }
-        this.inventory = null;
-        this.inventory.removeEntity(this, false);
+        this.container = null;
+        this.container.removeEntity(this, false);
         return 0;
     }
-    createInventory(maxSize = 9, maxWeight = 10) {
-        if (this.hasInventory()) {
+    createContainer(maxSize = 9, maxWeight = 10) {
+        if (this.hasContainer()) {
             return 0;
         }
-        if (Game.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.createInventory(${maxSize}, ${maxWeight})`);
-        return this.setInventory(new Inventory(this.id + "Inventory", "Inventory", maxSize, maxWeight));
+        if (AbstractEntity.debugMode) console.log(`Running <${this.getClassName()}> ${this.id}.createContainer(${maxSize}, ${maxWeight})`);
+        return this.setContainer(new Container(this.id + "Container", "Container", maxSize, maxWeight));
     }
-    addItem(...parameters) {
-        if (!this.hasInventory()) {
-            if (this.createInventory() != 0) {
+    /**
+     * 
+     * @param {(ItemEntity|InstancedItemEntity)} instancedItemEntity 
+     * @param {number} [count]
+     * @returns {number} 
+     */
+    addItem(instancedItemEntity, count = 1) {
+        if (!this.hasContainer()) {
+            if (this.createContainer() != 0) {
                 return 2;
             }
         }
-        let result = this.inventory.addItem(...parameters);
+        let result = this.container.addItem(instancedItemEntity, count);
+        if (result.meta.status >= 400) {
+            return 2;
+        }
+        else if (result.meta.status >= 300) { /** Can't add the item because the container is full, locked, or disabled */
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    /**
+     * 
+     * @param {(ItemEntity|InstancedItemEntity)} instancedItemEntity 
+     * @param {number} [count] 
+     */
+    removeItem(instancedItemEntity, count = 1) {
+        if (!this.hasContainer()) {
+            return 1;
+        }
+        let result = this.container.removeItem(instancedItemEntity, count);
         if (result.meta.status >= 400) {
             return 2;
         }
         else if (result.meta.status >= 300) {
-            /** If the item exists in 3D space, don't do anything */
-            if (result.response.hasController()) {
-                return 1;
-            } /** Else if this, the entity trying to pick it up, has a controller, then create an instance of the item, or its own instance, in 3D space */
-            else if (this.hasController()) {
-                Game.createItemInstance(result.response.id, result.response, this.getPosition());
-            } /** Else, if there were something else, eg. the character was locked and the item doesn't exist, don't do anything 'cause idk how to handle that :v */
-            return 0;
-        }
-        else {
-            return 0;
-        }
-    }
-    removeItem(...parameters) {
-        if (!this.hasInventory()) {
             return 1;
         }
-        let result = this.inventory.removeItem(...parameters);
-        if (result.meta.status >= 400) {
-            return 2;
-        }
         else {
             return 0;
         }
     }
-    hasItem(...parameters) {
-        if (!this.hasInventory()) {
+    /**
+     * 
+     * @param {(ItemEntity|InstancedItemEntity)} instancedItemEntity 
+     * @param {number} [count] 
+     */
+    hasItem(instancedItemEntity, count = 1) {
+        if (!this.hasContainer()) {
             return false;
         }
-        return this.inventory.hasItem(...parameters);
+        return this.container.hasItem(instancedItemEntity, count);
     }
-    getItem(...parameters) {
-        if (!this.hasInventory()) {
+    /**
+     * 
+     * @param {(ItemEntity|InstancedItemEntity)} instancedItemEntity 
+     */
+    getItem(instancedItemEntity) {
+        if (!this.hasContainer()) {
             return 1;
         }
-        return this.inventory.getItem(...parameters);
+        return this.container.getItem(instancedItemEntity);
     }
     getItems() {
-        if (!this.hasInventory()) {
+        if (!this.hasContainer()) {
             return 1;
         }
-        return this.inventory.getItems();
+        return this.container.getItems();
     }
 
     /**
@@ -773,15 +778,144 @@ class AbstractEntity {
         return 0;
     }
 
+    stringify(minimal = false) {
+        if (minimal) {
+            return JSON.stringify(this.objectifyMinimal());
+        }
+        return JSON.stringify(this.objectify());
+    }
+    objectify() {
+        let obj = {};
+        for (let property in this) {
+            obj[property] = this._objectifyProperty(this[property]);
+        }
+        return obj;
+    }
+    objectifyMinimal() {
+        let obj = {};
+        obj["id"] = this.id;
+        obj["name"] = this.getName();
+        obj["description"] = this.getDescription();
+        obj["iconID"] = this.iconID || "missingIcon";
+        obj["meshID"] = this.meshID || "missingMesh";
+        obj["materialID"] = this.materialID || "missingMaterial";
+        obj["textureID"] = this.textureID || "missingTexture";
+        obj["controller"] = this.controller;
+        obj["defaultAction"] = this.defaultAction;
+        obj["availableActions"] = this.availableActions;
+        obj["container"] = this._objectifyProperty(this.container);
+        obj["enabled"] = this.enabled;
+        obj["health"] = this.getHealth();
+        obj["locked"] = this.locked;
+        obj["maxHealth"] = this.getMaxHealth();
+        obj["size"] = this.size;
+        return obj;
+    }
+    _objectifyProperty(property) {
+        let obj = null;
+        if (property instanceof AbstractEntity) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof ActionData) {
+            obj = property.action;
+        }
+        else if (property instanceof Cell) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof CharacterClass) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Container) {
+            obj = {};
+            obj["id"] = property.id;
+            obj["items"] = {};
+            for (let entry in property["items"]) {
+                obj["items"][entry] = this._objectifyProperty(property["items"][entry]);
+            }
+            obj["maxSize"] = property.maxSize;
+            obj["maxWeight"] = property.maxWeight;
+            obj["weight"] = property.weight;
+        }
+        else if (property instanceof Cosmetic) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Dialogue) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Effect) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Spell) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Array) {
+            obj = [];
+            for (let i = 0; i < property.length; i++) {
+                obj[i] = this._objectifyProperty(property[i]);
+            };
+        }
+        else if (property instanceof Object) {
+            obj = {};
+            for (let entry in property) {
+                obj[entry] = this._objectifyProperty(property[entry]);
+            }
+        }
+        else {
+            obj = property;
+        }
+        return obj;
+    }
     /**
      * Clones
      * @param  {string} id ID
-     * @return {AbstractEntity} new AbstractEntity
+     * @returns {AbstractEntity} new AbstractEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new AbstractEntity(id, this.name, this.description, this.icon, this.entityType);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(id).concat("Container")));
         }
         clone.assign(this);
         return clone;
@@ -818,20 +952,27 @@ class AbstractEntity {
                 }
             }
         }
-        this.applyGodMode();
-        this.applyEssential();
+        if (entity.hasOwnProperty("size")) this.size = entity.size;
+        return 0;
+    }
+    updateID(newID) {
+        this.setLocked(true);
+        AbstractEntity.updateID(this.id, newID);
+        this.id = newID;
+        this.setLocked(false);
         return 0;
     }
     dispose() {
+        if (this.disposing) {
+            return null;
+        }
+        else {
+            this.disposting = true;
+        }
         this.setLocked(true);
         this.setEnabled(false);
-        if (this.hasController()) {
-            this.controller.setLocked(true);
-            this.controller.setEnabled(false);
-            this.controller.dispose();
-        }
-        if (this.hasInventory()) {
-            this.inventory.removeEntity(this);
+        if (this.hasContainer()) {
+            this.container.removeEntity(this);
         }
         for (let action in this.availableActions) {
             if (this.availableActions[action] instanceof ActionData) {
@@ -847,6 +988,7 @@ class AbstractEntity {
 
     static initialize() {
         AbstractEntity.abstractEntityList = {};
+        AbstractEntity.debugMode = false;
     }
     static get(id) {
         if (AbstractEntity.has(id)) {
@@ -873,6 +1015,14 @@ class AbstractEntity {
             AbstractEntity.abstractEntityList[i].dispose();
         }
         AbstractEntity.abstractEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!AbstractEntity.has(oldID)) {
+            return 1;
+        }
+        AbstractEntity.set(newID, AbstractEntity.get(oldID));
+        AbstractEntity.remove(oldID);
         return 0;
     }
 }

@@ -1,12 +1,15 @@
+/**
+ * Book Entity
+ */
 class BookEntity extends ItemEntity {
     /**
-     * Creates a BookEntity
+     * Creates a Book Entity
      * @param  {string}  id Unique ID
      * @param  {string}  name Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID Image ID
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Image ID
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined) {
+    constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID);
 
         this.backgroundImages = {};
@@ -32,9 +35,6 @@ class BookEntity extends ItemEntity {
      * @param {number} nth 
      */
     setBackgroundImage(imageID, nth = 0) {
-        if (!Game.hasTexture(imageID)) {
-            return 1;
-        }
         this.backgrounds[nth] = imageID;
         return 0;
     }
@@ -61,7 +61,7 @@ class BookEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.clone
      * @param  {string} id ID
-     * @return {BookEntity} new BookEntity
+     * @returns {BookEntity} new BookEntity
      */
     clone(id = "") {
         let clone = new BookEntity(id, this.name, this.description, this.icon);
@@ -71,7 +71,7 @@ class BookEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedBookEntity} new InstancedBookEntity
+     * @returns {InstancedBookEntity} new InstancedBookEntity
      */
     createInstance(id = "") {
         return new InstancedBookEntity(id, this);
@@ -88,6 +88,11 @@ class BookEntity extends ItemEntity {
         super.assign(entity, verify);
         if (entity.hasOwnProperty("author")) this.setAuthor(entity.author);
         if (entity.hasOwnProperty("content")) this.setContent(entity.content);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        BookEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -129,6 +134,14 @@ class BookEntity extends ItemEntity {
             BookEntity.bookEntityList[i].dispose();
         }
         BookEntity.bookEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!BookEntity.has(oldID)) {
+            return 1;
+        }
+        BookEntity.set(newID, BookEntity.get(oldID));
+        BookEntity.remove(oldID);
         return 0;
     }
 }

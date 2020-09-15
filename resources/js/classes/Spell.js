@@ -4,13 +4,13 @@
 class Spell {
     /**
      * Creates a Spell
-     * @param  {string} id Unique ID
-     * @param  {string} name Name
-     * @param  {string} description Description
-     * @param  {string} iconID Image path of base64
-     * @param  {SpellTypeEnum} spellType Spell type
+     * @param {string} id Unique ID
+     * @param {string} name Name
+     * @param {string} [description] Description
+     * @param {string} [iconID] Image path of base64
+     * @param {SpellTypeEnum} spellType Spell type
      */
-    constructor(id, name = "", description = undefined, iconID = undefined, spellType = SpellTypeEnum.UNIVERSAL, spellLevel = 0, spellSlots = 1, ritual = false) {
+    constructor(id = "", name = "", description = "", iconID = "missingIcon", spellType = SpellTypeEnum.UNIVERSAL, spellLevel = 0, spellSlots = 1, ritual = false) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -255,39 +255,21 @@ class Spell {
     }
 
     setMeshID(meshID) {
-        if (Game.hasAvailableMesh(meshID)) {
-            this.meshID = meshID;
-        }
-        else {
-            this.meshID = "missingMesh";
-        }
+        this.meshID = meshID;
         return 0;
     }
     getMeshID() {
         return this.meshID;
     }
     setTextureID(textureID) {
-        if (Game.hasAvailableTexture(textureID)) {
-            this.textureID = textureID;
-        }
-        else {
-            this.textureID = "missingTexture";
-        }
+        this.textureID = textureID;
         return 0;
     }
     getTextureID() {
         return this.textureID;
     }
     setMaterialID(materialID) {
-        if (Game.hasAvailableMaterial(materialID) || Game.hasAvailableTexture(materialID)) {
-            this.materialID = materialID;
-            if (this.textureID == "missingTexture") {
-                this.setTextureID(materialID);
-            }
-        }
-        else {
-            this.materialID = "missingMaterial";
-        }
+        this.materialID = materialID;
         return 0;
     }
     getMaterialID() {
@@ -348,6 +330,7 @@ class Spell {
     }
 
     static initialize() {
+        Spell.debugMode = false;
         Spell.spellList = {};
     }
     static get(id) {

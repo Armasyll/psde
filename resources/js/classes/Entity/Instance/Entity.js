@@ -3,18 +3,19 @@
  */
 class InstancedEntity extends AbstractEntity {
     /**
-     * Creates an InstancedEntity
-     * @param  {string} id           Unique ID
-     * @param  {string} name         Name
-     * @param  {string} description  Description
-     * @param  {string} iconID       Icon ID
+     * Creates an Instanced Entity
+     * @param {string} id Unique ID
+     * @param {Entity} entity Entity
+     * @param {string} [name] Name
+     * @param {string} [description] Description
+     * @param {string} [iconID] Icon ID
      */
-    constructor(id, entity, name = undefined, description = undefined, iconID = undefined) {
+    constructor(id = "", entity = null, name = null, description = null, iconID = null) {
         super(id, name, description);
         if (!(entity instanceof Entity)) {
             entity = Entity.get(entity);
             if (!(entity instanceof Entity)) {
-                return undefined;
+                return null;
             }
         }
         this.entity = entity;
@@ -430,6 +431,29 @@ class InstancedEntity extends AbstractEntity {
         }
     }
 
+
+    objectify() {
+        let obj = super.objectify();
+        obj["availableActions"] = this.getAvailableActions();
+        obj["defaultAction"] = this.getDefaultAction();
+        obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
+        obj["materialID"] = this.getMaterialID();
+        obj["meshID"] = this.getMeshID();
+        obj["specialProperties"] = this.getSpecialProperties();
+        obj["textureID"] = this.getTextureID();
+        return obj;
+    }
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["availableActions"] = this.getAvailableActions();
+        obj["defaultAction"] = this.getDefaultAction();
+        obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
+        obj["materialID"] = this.getMaterialID();
+        obj["meshID"] = this.getMeshID();
+        obj["specialProperties"] = this.getSpecialProperties();
+        obj["textureID"] = this.getTextureID();
+        return obj;
+    }
     /**
      * Overrides AbstractEntity.clone
      * @param  {string} id ID
@@ -440,10 +464,10 @@ class InstancedEntity extends AbstractEntity {
             return 2;
         }
         let clone = new InstancedEntity(id, this.entity, this.name, this.description, this.iconID);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
-        }
         clone.assign(this);
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(id).concat("Container")));
+        }
         return clone;
     }
     assign(entity, verify = true) {
@@ -469,12 +493,14 @@ class InstancedEntity extends AbstractEntity {
         }
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        if (this.hasController()) {
-            this.controller.dispose();
-        }
         if (this.hasEntity()) {
             this.entity.removeInstance(this);
         }
@@ -535,6 +561,14 @@ class InstancedEntity extends AbstractEntity {
             InstancedEntity.instancedEntityList[i].dispose();
         }
         InstancedEntity.instancedEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedEntity.set(newID, InstancedEntity.get(oldID));
+        InstancedEntity.remove(oldID);
         return 0;
     }
 }

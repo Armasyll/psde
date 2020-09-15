@@ -1,4 +1,10 @@
+/**
+ * Classless Class
+ */
 class ClasslessClass extends CharacterClass {
+    /**
+     * 
+     */
     constructor() {
         super("classless", "Classless", "A class for the proper adventurer.", undefined, CharacterClassEnum.CLASSLESS);
 
@@ -25,5 +31,9 @@ class ClasslessClass extends CharacterClass {
 
         this.addSavingThrowProficiencyChoice("ANY");
         this.addSavingThrowProficiencyChoice("ANY");
+    }
+
+    getClassName() {
+        return "ClasslessClass";
     }
 }

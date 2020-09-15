@@ -1,4 +1,10 @@
+/**
+ * Sorcerer Class
+ */
 class SorcererClass extends CharacterClass {
+    /**
+     * 
+     */
     constructor() {
         super("sorcerer", "Sorcerer", "Those born with innate magical abilities.", undefined, CharacterClassEnum.SORCERER);
         this.spellcastingAbility = AbilityEnum.CHARISMA;
@@ -134,7 +140,7 @@ class SorcererClass extends CharacterClass {
         else {
             return 0;
         }
-        return this.spellSaveDCParam + creatureEntity.getProficiencyBonus() + Game.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
+        return this.spellSaveDCParam + creatureEntity.getProficiencyBonus() + DND5E.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
     }
     /**
      * Calculates spell attack modifier
@@ -148,6 +154,10 @@ class SorcererClass extends CharacterClass {
         else {
             return 0;
         }
-        return creatureEntity.getProficiencyBonus() + Game.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
+        return creatureEntity.getProficiencyBonus() + DND5E.calculateAbilityModifier(creatureEntity.getAbility(this.spellcastingAbility));
+    }
+
+    getClassName() {
+        return "SorcererClass";
     }
 }

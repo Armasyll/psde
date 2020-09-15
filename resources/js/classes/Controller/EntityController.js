@@ -3,28 +3,31 @@
  */
 class EntityController {
     /**
-     * 
+     * Creates an Entity Controller
      * @param {string} id 
      * @param {BABYLON.AbstractMesh} mesh 
-     * @param {AbstractEntity} entity 
+     * @param {object} entityObject 
      */
-    constructor(id, mesh, entity) {
+    constructor(id = "", mesh = null, entityObject = {}) {
         id = Tools.filterID(id);
         if (typeof id != "string" || EntityController.has(id)) {
             id = Tools.genUUIDv4();
         }
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (Game.debugMode) console.log("mesh is not a mesh");
             return null;
         }
-        if (!(entity instanceof AbstractEntity)) {
+        if (!(entityObject.hasOwnProperty("id"))) {
+            if (Game.debugMode) console.log("entityObject missing ID");
             return null;
         }
+
         this.id = id;
         this.debugMode = false;
         /**
-         * @type AbstractEntity
+         * @type string
          */
-        this.entity = null;
+        this.entityID = entityObject.id;
         this.texture = null;
         this.textureStages = [];
         this.currentTextureStage = 0;
@@ -38,6 +41,9 @@ class EntityController {
         /**
          * @type BABYLON.AbstractMesh
          */
+        this.defaultAction = 0;
+        this.availableActions = {};
+        this.hiddenAvailableActions = {};
         this.height = 0.0;
         this.width = 0.0;
         this.depth = 0.0;
@@ -60,22 +66,18 @@ class EntityController {
         this.skeleton = null;
         this.enabled = true;
         this.locked = false;
+        this.disposing = false;
         this.animated = false;
         this.groundRay = null;
         this.currentCell = null;
-        this.setEntity(entity);
+        this.assign(entityObject, false);
         this.setMesh(mesh);
-        Game.entityLocRotWorker.postMessage({
-            cmd:"createEntity",
-            msg:[
-                this.id,
-                this.width,
-                this.height,
-                this.depth,
-                this.getPosition().toOtherArray(),
-                this.getRotation().toOtherArray()
-            ]
-        });
+        Game.transformsWorkerPostMessage(
+            "createEntity",
+            0,
+            [this.id, this.width, this.height, this.depth, this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
+        );
+        Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
         EntityController.set(this.id, this);
     }
     setID(id) {
@@ -154,19 +156,23 @@ class EntityController {
         if (this.meshStages.length == 0) {
             this.addMeshStage(mesh.name);
             this.addMaterialStage(mesh.material.name);
-            this.addTextureStage(mesh.material.diffuseTexture.name);
+            if (mesh.material.diffuseTexture instanceof BABYLON.Texture) {
+                this.addTextureStage(mesh.material.diffuseTexture.name);
+            }
+            else {
+                this.addTextureStage(mesh.material.name);
+            }
             this.currentMeshStage = 0;
         }
+        let position = this.mesh.position.clone();
         this.createCollisionMesh();
         if (this.hasCollisionMesh()) {
+            this.collisionMesh.position.copyFrom(position);
             this.mesh.setParent(this.collisionMesh);
         }
         this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
-        if (updateChild && this.hasEntity()) {
-            this.entity.setMeshID(mesh.id, false);
-        }
         return this;
     }
     unsetMesh(mesh = this.mesh) {
@@ -178,7 +184,7 @@ class EntityController {
             mesh.setParent(null);
         }
         if (this.hasCollisionMesh()) {
-            this.collisionMesh.dispose();
+            Game.removeMesh(this.collisionMesh);
             this.collisionMesh = null;
         }
         return this;
@@ -203,7 +209,7 @@ class EntityController {
         }
         return Game.createMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
     }
-    setStage(index = 0, updateChild = false) {
+    setStage(index = 0) {
         if (!this.meshStages.hasOwnProperty(index)) {
             return this;
         }
@@ -223,9 +229,6 @@ class EntityController {
         Game.removeMesh(this.mesh);
         let mesh = this.createMesh(undefined, index, position, rotation, scaling);
         this.setMesh(mesh);
-        if (updateChild && this.hasEntity()) {
-            this.entity.setMeshStage(index, false);
-        }
         this.createAttachedMeshes();
         this.setLocked(false);
         return this;
@@ -305,6 +308,73 @@ class EntityController {
         return 0;
     }
     /**
+     * Adds an available Action when interacting with this Entity
+     * @param {ActionEnum} actionEnum ActionEnum
+     * @param {boolean} [runOnce]
+     */
+    addAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        if (actionEnum == -1) {return 1;}
+        this.availableActions[actionEnum] = true;
+        return 0;
+    }
+    /**
+     * Removes an available Action when interacting with this Entity
+     * @param  {ActionEnum} actionEnum (ActionEnum)
+     * @return {boolean} Whether or not the Action was removed
+     */
+    removeAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        delete this.availableActions[actionEnum];
+        return 0;
+    }
+    getAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        return this.availableActions[actionEnum] || -1;
+    }
+    getAvailableActions() {
+        return this.availableActions;
+    }
+    hasAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        return this.availableActions.hasOwnProperty(actionEnum);
+    }
+
+    /**
+     * Adds a Hidden Available Action when interacting with this Entity
+     * @param {ActionEnum} actionEnum (ActionEnum)
+     */
+    addHiddenAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        if (actionEnum == -1) {
+            return 1;
+        }
+        this.hiddenAvailableActions[actionEnum] = true;
+        return 0;
+    }
+    /**
+     * Removes a Hidden Available Action when interacting with this Entity
+     * @param  {ActionEnum} actionEnum (ActionEnum)
+     * @return {boolean} Whether or not the Action was removed
+     */
+    removeHiddenAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        delete this.hiddenAvailableActions[actionEnum];
+        return 0;
+    }
+    getHiddenAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        return this.hiddenAvailableActions[actionEnum] || -1;
+    }
+    getHiddenAvailableActions() {
+        return this.hiddenAvailableActions;
+    }
+    hasHiddenAvailableAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        return this.hiddenAvailableActions.hasOwnProperty(actionEnum);
+    }
+
+    /**
      * Returns the primary mesh associated with this controller.
      * @returns {BABYLON.AbstractMesh}
      */
@@ -324,28 +394,15 @@ class EntityController {
     hasSkeleton() {
         return this.skeleton instanceof BABYLON.Skeleton;
     }
-    setEntity(entity) {
-        if (entity instanceof AbstractEntity) {
-            this.entity = entity;
-            this.propertiesChanged = true;
-            entity.setController(this);
-            if (this.mesh instanceof BABYLON.AbstractMesh) {
-                entity.setMeshID(this.mesh.name);
-            }
-            if (entity instanceof Entity) {
-                this.meshStages = [...entity.meshStages];
-                this.materialStages = [...entity.materialStages];
-                this.textureStages = [...entity.textureStages];
-                this.setStage(entity.currentMeshStage, false);
-            }
-        }
+    setEntity(id) {
+        this.entityID = id;
         return this;
     }
     getEntity() {
-        return this.entity;
+        return this.entityID;
     }
     hasEntity() {
-        return this.entity instanceof AbstractEntity;
+        return this.entityID != null;
     }
     setMeshSkeleton(skeleton) {
         if (skeleton instanceof BABYLON.Skeleton) {
@@ -626,6 +683,15 @@ class EntityController {
         return [];
     }
 
+    setDefaultAction(actionEnum) {
+        actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        this.defaultAction = actionEnum;
+        return 0;
+    }
+    getDefaultAction() {
+        return this.defaultAction;
+    }
+
     isEnabled() {
         return this.enabled;
     }
@@ -647,10 +713,46 @@ class EntityController {
         this.locked = locked == true;
         return this;
     }
-    dispose(options = {}) {
-        if (this == Game.player.getController()) {
-            return false;
+    /**
+     * Clones the controller's values over this; but not really anything important :v
+     * @param {(EntityController|object)} controller 
+     * @param {boolean} [verify] Set to false to skip verification
+     */
+    assign(controller, verify = true) {
+        if (verify && !(controller instanceof EntityController)) {
+            return 2;
         }
+        if (controller.hasOwnProperty("height")) this.height = controller.height;
+        if (controller.hasOwnProperty("width")) this.width = controller.width;
+        if (controller.hasOwnProperty("depth")) this.depth = controller.depth;
+        if (controller.hasOwnProperty("defaultAction")) this.setDefaultAction(controller.defaultAction);
+        if (controller.hasOwnProperty("availableActions")) {
+            this.availableActions = {};
+            for (let action in controller.availableActions) {
+                this.addAvailableAction(action);
+            }
+        }
+        if (controller.hasOwnProperty("hiddenAvailableActions")) {
+            this.hiddenAvailableActions = {};
+            for (let action in controller.hiddenAvailableActions) {
+                this.addHiddenAvailableAction(action);
+            }
+        }
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        EntityController.updateID(this.id, newID);
+        return 0;
+    }
+    dispose() {
+        if (this.disposing) {
+            return null;
+        }
+        else {
+            this.disposting = true;
+        }
+        this.entityID = null;
         this.setLocked(true);
         this.setEnabled(false);
         if (EditControls.pickedController == this) {
@@ -660,18 +762,14 @@ class EntityController {
             EditControls.previousPickedController = null;
         }
         this.propertiesChanged = false;
-        if (this.hasEntity) {
-            this.entity.removeController();
+        if (this.hasEntity()) {
+            Game.entityLogicWorkerPostMessage("removeController", 0, [this.id]);
         }
         for (let animation in this.animations) {
             this.animations[animation] = null;
             delete this.animations[animation]
         }
-        if (options instanceof Object) {
-            if (options.hasOwnProperty("disposeMesh") && options["disposeMesh"] == true) {
-                Game.removeMesh(this.mesh);
-            }
-        }
+        Game.removeMesh(this.mesh);
         Game.removeMesh(this.collisionMesh);
         EntityController.remove(this.id);
         return null;
@@ -709,6 +807,14 @@ class EntityController {
             EntityController.entityControllerList[i].dispose();
         }
         EntityController.entityControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!EntityController.has(oldID)) {
+            return 1;
+        }
+        EntityController.set(newID, EntityController.get(oldID));
+        EntityController.remove(oldID);
         return 0;
     }
     static setDebugMode(debugMode) {

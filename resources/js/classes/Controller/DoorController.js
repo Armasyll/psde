@@ -1,20 +1,31 @@
+/**
+ * Door Controller
+ */
 class DoorController extends EntityController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
-        this.mesh = mesh;
-        this.entity = entity;
+    /**
+     * Creates a Door Controller
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
+
         this.mesh.checkCollisions = true;
         this.avStartRot = this.mesh.rotation.clone();
         this.avEndRot = BABYLON.Vector3.Zero();
         this.animated = true;
 
-        if (this.entity.getOpensInward()) {
+        if (entityObject.opensInward) {
             this.setOpensInward();
         }
         else {
             this.setOpensOutward();
         }
-        if (this.entity.getOpen()) {
+        if (entityObject.open) {
             this.doOpen();
         }
         else {
@@ -34,6 +45,11 @@ class DoorController extends EntityController {
     }
     doClose() {
         this.mesh.rotation = this.avStartRot;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        DoorController.updateID(this.id, newID);
+        return 0;
     }
     dispose() {
         this.setLocked(true);
@@ -76,6 +92,14 @@ class DoorController extends EntityController {
             DoorController.doorControllerList[i].dispose();
         }
         DoorController.doorControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!DoorController.has(oldID)) {
+            return 1;
+        }
+        DoorController.set(newID, DoorController.get(oldID));
+        DoorController.remove(oldID);
         return 0;
     }
 }

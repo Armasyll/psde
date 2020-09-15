@@ -59,7 +59,8 @@ class MessageRouter {
                     let characterController = Client.getController(_data.content[1]).getController();
                     characterController.setMovementKey(_data.content["movementKeys"]);
                     if (characterController.getID() != _data.content[0]) {
-                        Game.updateEntityID(characterController.getID(), _data.content[0]);
+                        characterController.updateID(_data.content[0]);
+                        characterController.entity.updateID(_data.content[0]);
                     }
                     characterController.mesh.position.copyFrom(BABYLON.Vector3.FromArray(_data.content[8]));
                     characterController.mesh.rotation.copyFrom(BABYLON.Vector3.FromArray(_data.content[9]));

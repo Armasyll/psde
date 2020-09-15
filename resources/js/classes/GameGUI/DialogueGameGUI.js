@@ -18,8 +18,8 @@ class DialogueGameGUI {
         if (DialogueGameGUI.initialized != true) {
             return 1;
         }
-        DialogueGameGUI.controller.width = String(Game.engine.getRenderWidth() / 2).concat("px");
-        DialogueGameGUI.controller.height = String(Game.engine.getRenderHeight() * 2 / 3).concat("px");
+        DialogueGameGUI.controller.width = String(Game.renderWidth / 2).concat("px");
+        DialogueGameGUI.controller.height = String(Game.renderHeight * 2 / 3).concat("px");
             DialogueGameGUI.titleBar.width = DialogueGameGUI.controller.width;
             DialogueGameGUI.titleBar.height = GameGUI.getFontSize(2);
                 DialogueGameGUI.title.width = String(DialogueGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
@@ -49,8 +49,8 @@ class DialogueGameGUI {
             [Options                     ]
          */
         var controller = GameGUI.createStackPanel("dialogueContainer");
-            controller.width = String(Game.engine.getRenderWidth() / 2).concat("px");
-            controller.height = String(Game.engine.getRenderHeight() * 2 / 3).concat("px");
+            controller.width = String(Game.renderWidth / 2).concat("px");
+            controller.height = String(Game.renderHeight * 2 / 3).concat("px");
             controller.isVertical = true;
             controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             var titleBar = GameGUI.createStackPanel("dialogueTitleBar");

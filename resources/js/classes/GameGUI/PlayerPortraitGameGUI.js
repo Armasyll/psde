@@ -10,6 +10,9 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.controller = PlayerPortraitGameGUI.generateController();
         PlayerPortraitGameGUI.initialized = true;
         PlayerPortraitGameGUI.containerAlpha = 0.75;
+        PlayerPortraitGameGUI.entityID = null;
+        PlayerPortraitGameGUI.cachedEntity = null;
+        PlayerPortraitGameGUI.targetIsCreature = null;
     }
     static generateController() {
         var portrait = GameGUI.createRectangle("playerPortrait");
@@ -109,41 +112,40 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.controller.isVisible = false;
         PlayerPortraitGameGUI.isVisible = false;
     }
-    static set(abstractEntity = Game.player) {
-        if (abstractEntity instanceof EntityController) {
-            abstractEntity = abstractEntity.getEntity();
+    static clear() {
+        PlayerPortraitGameGUI.hideHealth();
+        PlayerPortraitGameGUI.hideStamina();
+        PlayerPortraitGameGUI.hide();
+        PlayerPortraitGameGUI.entityID = null;
+        PlayerPortraitGameGUI.cachedEntity = null;
+        PlayerPortraitGameGUI.targetIsCreature = false;
+    }
+    static set(entityController = Game.player) {
+        if (!(entityController instanceof EntityController)) {
+            PlayerPortraitGameGUI.clear();
+            return 2;
         }
-        else if (!(abstractEntity instanceof AbstractEntity)) {
-            return undefined;
+        if (!Game.hasCachedEntity(entityController.entityID)) {
+            Game.getEntity(entityController.entityID);
+            PlayerPortraitGameGUI.clear();
+            return 1;
         }
-        if (!abstractEntity.isEnabled()) {
-            return undefined;
-        }
-        PlayerPortraitGameGUI.updateWith(abstractEntity);
-        PlayerPortraitGameGUI.setImage(abstractEntity.getIcon());
-        PlayerPortraitGameGUI.setName(abstractEntity.getName());
+        PlayerPortraitGameGUI.entityID = entityController.entityID;
+        PlayerPortraitGameGUI.cachedEntity = Game.getCachedEntity(entityController.entityID);
+        PlayerPortraitGameGUI.update();
+        PlayerPortraitGameGUI.setImage(PlayerPortraitGameGUI.cachedEntity.iconID);
+        PlayerPortraitGameGUI.setName(PlayerPortraitGameGUI.cachedEntity.name);
+        return 0;
     }
     static update() {
-        return PlayerPortraitGameGUI.updateWith(Game.player);
-    }
-    static updateWith(abstractEntity = Game.player) {
-        if (abstractEntity instanceof EntityController) {
-            abstractEntity = abstractEntity.getEntity();
-        }
-        else if (!(abstractEntity instanceof AbstractEntity)) {
-            return undefined;
-        }
-        if (!abstractEntity.isEnabled()) {
-            return undefined;
-        }
-        PlayerPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
-        PlayerPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        PlayerPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
-        let number = abstractEntity.getHealth() - abstractEntity.getStamina();
+        PlayerPortraitGameGUI.setHealthSlider(PlayerPortraitGameGUI.cachedEntity.health/PlayerPortraitGameGUI.cachedEntity.maxHealth*100);
+        PlayerPortraitGameGUI.setHealthText(PlayerPortraitGameGUI.cachedEntity.health + "/" + PlayerPortraitGameGUI.cachedEntity.maxHealth);
+        PlayerPortraitGameGUI.setStaminaSlider((PlayerPortraitGameGUI.cachedEntity.health-PlayerPortraitGameGUI.cachedEntity.stamina)/PlayerPortraitGameGUI.cachedEntity.health*100);
+        let number = PlayerPortraitGameGUI.cachedEntity.health - PlayerPortraitGameGUI.cachedEntity.stamina;
         if (number < 0) {
             number = 0;
         }
-        PlayerPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
+        PlayerPortraitGameGUI.setStaminaText(number + "/" + PlayerPortraitGameGUI.cachedEntity.health);
     }
     static setImage(iconID = "genericCharacter") {
         PlayerPortraitGameGUI.playerIcon.domImage.setAttribute("src", Game.getIcon(iconID));

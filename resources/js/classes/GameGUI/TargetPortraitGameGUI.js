@@ -10,6 +10,9 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.controller = TargetPortraitGameGUI.generateController();
         TargetPortraitGameGUI.initialized = true;
         TargetPortraitGameGUI.containerAlpha = 0.75;
+        TargetPortraitGameGUI.entityID = null;
+        TargetPortraitGameGUI.cachedEntity = null;
+        TargetPortraitGameGUI.targetIsCreature = false;
     }
     static generateController() {
         var portrait = GameGUI.createRectangle("targetPortrait");
@@ -114,54 +117,53 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.controller.isVisible = false;
         TargetPortraitGameGUI.isVisible = false;
     }
-    static set(abstractEntity) {
-        if (abstractEntity instanceof EntityController) {
-            abstractEntity = abstractEntity.getEntity();
+    static clear() {
+        TargetPortraitGameGUI.hideHealth();
+        TargetPortraitGameGUI.hideStamina();
+        TargetPortraitGameGUI.hide();
+        TargetPortraitGameGUI.entityID = null;
+        TargetPortraitGameGUI.cachedEntity = null;
+        TargetPortraitGameGUI.targetIsCreature = false;
+    }
+    static set(entityController) {
+        if (!(entityController instanceof EntityController)) {
+            TargetPortraitGameGUI.clear();
+            return 2;
         }
-        else if (!(abstractEntity instanceof AbstractEntity)) {
-            return undefined;
+        if (!Game.hasCachedEntity(entityController.entityID)) {
+            Game.getEntity(entityController.entityID);
+            TargetPortraitGameGUI.clear();
+            return 1;
         }
-        if (!abstractEntity.isEnabled()) {
-            return undefined;
-        }
-        if (abstractEntity instanceof CreatureEntity) {
-            TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
-            TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
-            TargetPortraitGameGUI.setStaminaText((abstractEntity.getHealth()-abstractEntity.getStamina()) + "/" + abstractEntity.getHealth());
+        TargetPortraitGameGUI.entityID = entityController.entityID;
+        TargetPortraitGameGUI.cachedEntity = Game.getCachedEntity(entityController.entityID);
+        if (entityController instanceof CreatureController) {
+            TargetPortraitGameGUI.update();
             TargetPortraitGameGUI.showHealth();
             TargetPortraitGameGUI.showStamina();
+            TargetPortraitGameGUI.targetIsCreature = true;
         }
         else {
             TargetPortraitGameGUI.hideHealth();
             TargetPortraitGameGUI.hideStamina();
+            TargetPortraitGameGUI.targetIsCreature = false;
         }
-        TargetPortraitGameGUI.setImage(abstractEntity.getIcon());
-        TargetPortraitGameGUI.setName(abstractEntity.getName());
+        TargetPortraitGameGUI.setImage(TargetPortraitGameGUI.cachedEntity.iconID);
+        TargetPortraitGameGUI.setName(TargetPortraitGameGUI.cachedEntity.name);
+        return 0;
     }
     static update() {
-        return TargetPortraitGameGUI.updateWith(Game.player);
-    }
-    static updateWith(abstractEntity = Game.player) {
-        if (abstractEntity instanceof EntityController) {
-            abstractEntity = abstractEntity.getEntity();
-        }
-        else if (!(abstractEntity instanceof AbstractEntity)) {
-            return undefined;
-        }
-        if (!abstractEntity.isEnabled()) {
-            return undefined;
-        }
-        TargetPortraitGameGUI.setHealthSlider(abstractEntity.getHealth()/abstractEntity.getMaxHealth()*100);
-        TargetPortraitGameGUI.setHealthText(abstractEntity.getHealth() + "/" + abstractEntity.getMaxHealth());
-        if (abstractEntity instanceof CreatureEntity) {
-            TargetPortraitGameGUI.setStaminaSlider((abstractEntity.getHealth()-abstractEntity.getStamina())/abstractEntity.getHealth()*100);
-            let number = abstractEntity.getHealth() - abstractEntity.getStamina();
+        if (TargetPortraitGameGUI.targetIsCreature) {
+            TargetPortraitGameGUI.setHealthSlider(TargetPortraitGameGUI.cachedEntity.health/TargetPortraitGameGUI.cachedEntity.maxHealth*100);
+            TargetPortraitGameGUI.setHealthText(TargetPortraitGameGUI.cachedEntity.health + "/" + TargetPortraitGameGUI.cachedEntity.maxHealth);
+            TargetPortraitGameGUI.setStaminaSlider((TargetPortraitGameGUI.cachedEntity.health-TargetPortraitGameGUI.cachedEntity.stamina)/TargetPortraitGameGUI.cachedEntity.health*100);
+            let number = TargetPortraitGameGUI.cachedEntity.health - TargetPortraitGameGUI.cachedEntity.stamina;
             if (number < 0) {
                 number = 0;
             }
-            TargetPortraitGameGUI.setStaminaText(number + "/" + abstractEntity.getHealth());
+            TargetPortraitGameGUI.setStaminaText(number + "/" + TargetPortraitGameGUI.cachedEntity.health);
         }
+        return 0;
     }
     static setImage(iconID = "genericItem") {
         TargetPortraitGameGUI.targetIcon.domImage.setAttribute("src", Game.getIcon(iconID));

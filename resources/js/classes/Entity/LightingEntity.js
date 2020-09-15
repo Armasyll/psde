@@ -1,15 +1,23 @@
+/**
+ * Lighting Entity
+ */
 class LightingEntity extends FurnitureEntity {
     /**
-     * Creats Lighting
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID       Image ID
+     * Creates a Lighting Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
+     * @param  {null}  lightingType
+     * @param  {Array<number>}  lightingPositionOffset
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, lightingType) {
+    constructor(id = "", name = "", description = "", iconID = "", lightingType = null, lightingPositionOffset = [0, 0, 0]) {
         super(id, name, description, iconID, FurnitureEnum.LAMP);
 
-        this.lightOn = true;
+        this.lightOn = false;
+        this.lightingPositionOffset = [0,0,0];
+
+        this.setLightingPositionOffset(lightingPositionOffset);
 
         this.addAvailableAction(ActionEnum.USE);
         this.setDefaultAction(ActionEnum.USE);
@@ -17,52 +25,41 @@ class LightingEntity extends FurnitureEntity {
         LightingEntity.set(this.id, this);
     }
 
-    on() {
-        if (this.locked) {
-            return this.lightOn;
-        }
-        this.lightOn = true;
-        if (this.hasController()) {
-            if (this.controller.hasLight()) {
-                this.controller.getLight().setEnabled(true);
-            }
-        }
+    setLightOn(lightOn = true) {
+        this.lightOn = (lightOn === true);
+        return 0;
     }
-    off() {
-        if (this.locked) {
-            return this.lightOn;
-        }
-        this.lightOn = false;
-        if (this.hasController()) {
-            if (this.controller.hasLight()) {
-                this.controller.getLight().setEnabled(false);
-            }
-        }
+    getLightOn() {
+        return this.lightOn;
     }
-    toggle() {
-        if (this.locked) {
-            return this.lightOn;
+    setLightingPositionOffset(x = 0, y = 0, z = 0) {
+        if (x instanceof Array) {
+            y = x[1] || 0;
+            z = x[2] || 0;
+            x = x[0] || 0;
         }
-        if (this.lightOn) {
-            this.off();
-            return false;
-        }
-        else {
-            this.on();
-            return true;
-        }
+        this.lightingPositionOffset = [x, y, z];
+        return 0;
     }
-    
+    getLightingPositionOffset() {
+        return this.lightingPositionOffset;
+    }
+
     /**
      * Overrides FurnitureEntity.clone
      * @param  {string} id ID
-     * @return {LightingEntity} new LightingEntity
+     * @returns {LightingEntity} new LightingEntity
      */
-    clone(id = undefined) {
-        return new LightingEntity(id, this.name, this.description, this.icon);
+    clone(id = "") {
+        let clone = new LightingEntity(id, this.name, this.description, this.icon);
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
+        }
+        clone.assign(this);
+        return clone;
     }
     createInstance(id = "") {
-        return new InstancedFurnitureEntity(id, this); // not really a door instance :v
+        return new InstancedLightingEntity(id, this);
     }
     /**
      * Clones the entity's values over this
@@ -74,14 +71,12 @@ class LightingEntity extends FurnitureEntity {
             return 2;
         }
         super.assign(entity, verify);
-        if (entity.hasOwnProperty("lightOn")) {
-            if (entity.lightOn === true) {
-                this.on();
-            }
-            else {
-                this.off();
-            }
-        }
+        if (entity.hasOwnProperty("lightOn")) this.setLightOn(entity.lightOn);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        LightingEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -106,7 +101,7 @@ class LightingEntity extends FurnitureEntity {
         return 1;
     }
     static has(id) {
-        return LightingEntity.lightningEntityList.hasOwnProperty(id);
+        return LightingEntity.lightingEntityList.hasOwnProperty(id);
     }
     static set(id, lightEntity) {
         LightingEntity.lightingEntityList[id] = lightEntity;
@@ -124,6 +119,14 @@ class LightingEntity extends FurnitureEntity {
             LightingEntity.lightingEntityList[i].dispose();
         }
         LightingEntity.lightingEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!LightingEntity.has(oldID)) {
+            return 1;
+        }
+        LightingEntity.set(newID, LightingEntity.get(oldID));
+        LightingEntity.remove(oldID);
         return 0;
     }
 }

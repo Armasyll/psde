@@ -3,15 +3,15 @@
  */
 class CreatureEntity extends Entity {
     /**
-     * Creates a CreatureEntity
-     * @param  {string} id Unique ID
-     * @param  {string} name Name
-     * @param  {string} [description] Description
-     * @param  {string} [iconID] Icon ID
-     * @param  {CreatureTypeEnum} [creatureType] Creature Type
-     * @param  {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type; dependant upon creatureType
-     * @param  {SexEnum} [sex] SexEnum
-     * @param  {number} [age] Age
+     * Creates a Creature Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
+     * @param  {CreatureTypeEnum}  [creatureType] Creature Type
+     * @param  {CreatureSubTypeEnum}  [creatureSubType] Creature Sub-Type; dependant upon creatureType
+     * @param  {SexEnum}  [sex] SexEnum
+     * @param  {number}  [age] Age
      */
     constructor(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18) {
         super(id, name, description, iconID);
@@ -365,11 +365,6 @@ class CreatureEntity extends Entity {
          */
         this._nearDeathThisWindow = false;
         /**
-         * Size
-         * @type {SizeEnum}
-         */
-        this.size = SizeEnum.SMALL;
-        /**
          * @type {boolean}
          */
         this.armed = false;
@@ -377,6 +372,10 @@ class CreatureEntity extends Entity {
          * @type {boolean}
          */
         this.armedOverride = false;
+        /**
+         * @type {OffensiveStanceEnum}
+         */
+        this.stanceOffensive = OffensiveStanceEnum.MARTIAL;
 
         /**
          * Average weight, in kilograms, of creature; updated by this.generateProperties()
@@ -527,7 +526,7 @@ class CreatureEntity extends Entity {
 
         this.setSex(sex);
         this.setCreatureType(creatureType);
-        this.createInventory();
+        this.createContainer();
         this.generateProperties(true);
         this.generateBaseStats(true);
         this.generateAdditionalStats();
@@ -1058,8 +1057,8 @@ class CreatureEntity extends Entity {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}
         else {number = number|0}
         this.experiencePoints = number;
-        this._level = Game.calculateLevel(this.experiencePoints);
-        this._proficiencyBonus = Game.calculateProficiencyByLevel(this._level);
+        this._level = DND5E.calculateLevel(this.experiencePoints);
+        this._proficiencyBonus = DND5E.calculateProficiencyByLevel(this._level);
         return 0;
     }
     modifyXP(number) {
@@ -1078,7 +1077,7 @@ class CreatureEntity extends Entity {
             this.health = this.getMaxHealth();
             return 0;
         }
-        let tempNumber = -Game.calculateAbilityModifier(this.getConstitution());
+        let tempNumber = -DND5E.calculateAbilityModifier(this.getConstitution());
         if (number > this.getMaxHealth()) {
             number = this.getMaxHealth();
         }
@@ -1097,9 +1096,6 @@ class CreatureEntity extends Entity {
                 this.stabilized = false;
                 this.addCondition(ConditionEnum.DEAD);
                 this._nearDeathThisWindow = true;
-            }
-            if (this.hasController()) {
-                this.controller.doDeath();
             }
         }
         else if (this.health <= 0) {
@@ -1125,10 +1121,7 @@ class CreatureEntity extends Entity {
         }
         this.stamina = number;
         if (this.getStamina() > this.getHealth()) {
-            if (this.hasController()) {
-                this.setStance("LAY");
-                this.controller.doLay();
-            }
+            this.setStance("LAY");
         }
         return 0;
     }
@@ -1158,33 +1151,17 @@ class CreatureEntity extends Entity {
             roll = roll|0;
         }
         else {
-            roll = Game.roll(1, 20);
+            roll = DND.roll(1, 20);
         }
         return roll + this.getSkillScore("PERCEPTION");
     }
 
-    setStance(stance = ActionEnum.STAND, updateChild = true) {
+    setStance(stance = ActionEnum.STAND) {
         if (this.stance == stance) {
             return 0;
         }
         if (ActionEnum.properties.hasOwnProperty(stance)) {
             this.stance = stance;
-            if (this.hasController() && updateChild) {
-                /*if (this.stance == ActionEnum.LAY) {
-                    this.controller.setIdleAnim("90_idleLyingDown01", 1, true);
-                }
-                else if (this.stance == ActionEnum.SIT) {
-                    if (this.hasFurniture()) {
-                        this.controller.setIdleAnim("90_idleSittingDown01", 1, true);
-                    }
-                    else {
-                        this.controller.setIdleAnim("90_idleSittingOnGround01", 1, true);
-                    }
-                }
-                else if (this.stance == ActionEnum.STAND) {
-                    this.controller.setIdleAnim("90_idle01", 1, true);
-                }*/
-            }
             return 0;
         }
         return 2;
@@ -1279,9 +1256,6 @@ class CreatureEntity extends Entity {
     isDead() {
         return !this.living;
     }
-    getSize() {
-        return this.size;
-    }
 
     getFurniture() {
         return this.furniture;
@@ -1293,9 +1267,6 @@ class CreatureEntity extends Entity {
         if (instancedFurnitureEntity instanceof InstancedFurnitureEntity) {
             this.furniture = instancedFurnitureEntity.getID();
             instancedFurnitureEntity.addCharacter(this);
-        }
-        if (this.hasController() && instancedFurnitureEntity.hasController()) {
-            this.controller.setParent(instancedFurnitureEntity.getController());
         }
         return 0;
     }
@@ -1428,7 +1399,7 @@ class CreatureEntity extends Entity {
                 return 0;
             }
         }
-        let number = Game.calculateAbilityModifier(this.getAbility(Game.getSkillAbility(proficiency)));
+        let number = DND5E.calculateAbilityModifier(this.getAbility(DND5E.getSkillAbility(proficiency)));
         if (this.hasProficiency(proficiency)) {
             number += this.getProficiencyBonus();
         }
@@ -2127,7 +2098,7 @@ class CreatureEntity extends Entity {
     applyExhaustion() {
         switch (this.getExaustion()) {
             case 6: {
-                this.health = -Game.calculateAbilityModifier(this.getConstitution());
+                this.health = -DND5E.calculateAbilityModifier(this.getConstitution());
             }
             case 5: {
                 this.movementSpeedConditionOverride = 0;
@@ -2443,12 +2414,12 @@ class CreatureEntity extends Entity {
     /**
      * Overrides Entity.clone
      * @param  {string} id ID
-     * @return {CreatureEntity} new CreatureEntity
+     * @returns {CreatureEntity} new CreatureEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new CharacterEntity(id, this.name, this.description, this.icon, this.creatureType, this.creatureSubType, this.sex, this.age, this.characterClass);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
         }
         clone.assign(this);
         return clone;
@@ -2510,7 +2481,6 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("money")) this.money = entity.money;
         if (entity.hasOwnProperty("moneyOverride")) this.moneyOverride = entity.moneyOverride;
         if (entity.hasOwnProperty("living")) this.living = entity.living;
-        if (entity.hasOwnProperty("size")) this.size = entity.size;
         if (entity.hasOwnProperty("baseWeight")) this.baseWeight = entity.baseWeight;
         if (entity.hasOwnProperty("baseHeight")) this.baseHeight = entity.baseHeight;
         if (entity.hasOwnProperty("baseWidth")) this.baseWidth = entity.baseWidth;
@@ -2539,10 +2509,12 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("reactionsOverride")) this.reactionsOverride = entity.reactionsOverride;
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        CreatureEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
-        if (this == Game.player) {
-            return false;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         CreatureEntity.remove(this.id);
@@ -2583,6 +2555,14 @@ class CreatureEntity extends Entity {
             CreatureEntity.creatureEntityList[i].dispose();
         }
         CreatureEntity.creatureEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!CreatureEntity.has(oldID)) {
+            return 1;
+        }
+        CreatureEntity.set(newID, CreatureEntity.get(oldID));
+        CreatureEntity.remove(oldID);
         return 0;
     }
 }

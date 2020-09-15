@@ -10,7 +10,7 @@ class ActionData {
      * @param {boolean} [overrideParent] 
      * @param {boolean} [runBeforeParent] 
      */
-    constructor(action, actionFunction = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
+    constructor(action = 0, actionFunction = null, runOnce = false, overrideParent = true, runBeforeParent = true) {
         this.action = null;
         this.actionFunction = null;
         this.runOnce = runOnce == true;

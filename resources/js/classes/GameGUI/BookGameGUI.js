@@ -17,11 +17,11 @@ class BookGameGUI {
         BookGameGUI.locked = false;
         BookGameGUI.isVisible = false;
         BookGameGUI.generateController();
-        BookGameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
+        BookGameGUI.pointerLockedBeforeShown = Game.isPointerLock;
     }
     static resize() {
-        BookGameGUI.controller.height = String(Game.engine.getRenderHeight() - GameGUI.fontSizeInPixels * 8).concat("px");
-        BookGameGUI.controller.width = String(Game.engine.getRenderWidth() - GameGUI.fontSizeInPixels * 8).concat("px");
+        BookGameGUI.controller.height = String(Game.renderHeight - GameGUI.fontSizeInPixels * 8).concat("px");
+        BookGameGUI.controller.width = String(Game.renderWidth - GameGUI.fontSizeInPixels * 8).concat("px");
         BookGameGUI.header.height = GameGUI.fontSize;
         BookGameGUI.header.width = BookGameGUI.controller.width;
         BookGameGUI.pageContainer.height = String(BookGameGUI.controller.heightInPixels - (GameGUI.fontSizeInPixels * 2)).concat("px");
@@ -57,8 +57,8 @@ class BookGameGUI {
     }
     static generateController() {
         let controller = GameGUI.createStackPanel("bookContainer");
-            controller.height = String(Game.engine.getRenderHeight() - GameGUI.fontSizeInPixels * 8).concat("px");
-            controller.width = String(Game.engine.getRenderWidth() - GameGUI.fontSizeInPixels * 8).concat("px");
+            controller.height = String(Game.renderHeight - GameGUI.fontSizeInPixels * 8).concat("px");
+            controller.width = String(Game.renderWidth - GameGUI.fontSizeInPixels * 8).concat("px");
             controller.isVertical = true;
             let header = GameGUI.createStackPanel("header");
                 header.height = GameGUI.fontSize;
@@ -157,9 +157,9 @@ class BookGameGUI {
     static show() {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
-        BookGameGUI.pointerLockedBeforeShown = Game.engine.isPointerLock;
+        BookGameGUI.pointerLockedBeforeShown = Game.isPointerLock;
         GameGUI.showMenu();
-        if (Game.engine.isPointerLock) {
+        if (Game.isPointerLock) {
             GameGUI.pointerRelease();
         }
         return 0;
@@ -167,7 +167,7 @@ class BookGameGUI {
     static hide() {
         BookGameGUI.controller.isVisible = false;
         BookGameGUI.isVisible = false;
-        if (BookGameGUI.pointerLockedBeforeShown && BookGameGUI.pointerLockedBeforeShown != Game.engine.isPointerLock) {
+        if (BookGameGUI.pointerLockedBeforeShown && BookGameGUI.pointerLockedBeforeShown != Game.isPointerLock) {
             GameGUI.pointerLock();
         }
         return 0;

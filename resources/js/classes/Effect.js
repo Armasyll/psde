@@ -89,9 +89,9 @@ class Effect {
     }
 
     addModifier(property, operation = OperationsEnum.ADD, modification = 1) {
-        if (Game.debugMode) console.log(`Running ${this.id}.addModifier(${property}, ${operation}, ${typeof modification == "function" ? "function()" : modification})`);
+        if (Effect.debugMode) console.log(`Running ${this.id}.addModifier(${property}, ${operation}, ${typeof modification == "function" ? "function()" : modification})`);
         if (!OperationsEnum.properties.hasOwnProperty(operation)) {
-            if (Game.debugMode) console.log("Incorrect operation");
+            if (Effect.debugMode) console.log("Incorrect operation");
             return this;
         }
         if (property == "conditions") {
@@ -272,6 +272,7 @@ class Effect {
     }
 
     static initialize() {
+        Effect.debugMode = false;
         Effect.effectList = {};
         Effect.allowedProperties = {
             // AbstractEntity

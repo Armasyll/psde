@@ -1,13 +1,16 @@
+/**
+ * Clothing Entity
+ */
 class ClothingEntity extends EquipmentEntity {
     /**
-     * Creats Clothing
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID       Image ID
-     * @param  {ApparelSlotEnum}  equipmentSlot  Apparel slot enum
+     * Creates a Clothing Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] 
+     * @param  {string}  [iconID] Image ID
+     * @param  {ApparelSlotEnum}  equipmentSlot Apparel slot enum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE, armourType = ArmourPropertyEnum.NONE) {
+    constructor(id = "", name = "", description = "", iconID = "", equipmentSlot = ApparelSlotEnum.NONE, armourType = ArmourPropertyEnum.NONE) {
         super(id, name, description, iconID, equipmentSlot);
         this.itemType = ItemEnum.APPAREL;
 
@@ -185,9 +188,9 @@ class ClothingEntity extends EquipmentEntity {
     /**
      * Overrides EquipmentEntity.clone
      * @param  {string} id ID
-     * @return {ClothingEntity} new ClothingEntity
+     * @returns {ClothingEntity} new ClothingEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new ClothingEntity(id, this.name, this.description, this.icon, this.equipmentSlot, this.armourType);
         clone.assign(this);
         return clone;
@@ -195,9 +198,9 @@ class ClothingEntity extends EquipmentEntity {
     /**
      * Overrides EquipmentEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedClothingEntity} new InstancedClothingEntity
+     * @returns {InstancedClothingEntity} new InstancedClothingEntity
      */
-    createInstance(id = undefined) {
+    createInstance(id = "") {
         return new InstancedClothingEntity(id, this);
     }
     /**
@@ -213,6 +216,11 @@ class ClothingEntity extends EquipmentEntity {
         if (entity.hasOwnProperty("armourClass")) this.setArmourClass(entity.armourClass);
         if (entity.hasOwnProperty("armourClassModifier")) this.setArmourClassModifier(entity.armourClassModifier);
         if (entity.hasOwnProperty("portionMultiplier")) this.setPortionMultiplier(entity.portionMultiplier);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        ClothingEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -291,6 +299,14 @@ class ClothingEntity extends EquipmentEntity {
         console.info(`ClothingEntity (${entity.getID()}) has been created.`);
         console.groupEnd();
         return entity;
+    }
+    static updateID(oldID, newID) {
+        if (!ClothingEntity.has(oldID)) {
+            return 1;
+        }
+        ClothingEntity.set(newID, ClothingEntity.get(oldID));
+        ClothingEntity.remove(oldID);
+        return 0;
     }
 }
 ClothingEntity.initialize();

@@ -3,13 +3,13 @@
  */
 class PlantEntity extends Entity {
     /**
-     * Creates an Entity
-     * @param  {string} id Unique ID
-     * @param  {string} name Name
-     * @param  {string} description Description
-     * @param  {string} iconID Icon ID
+     * Creates a Plant Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Icon ID
      */
-    constructor(id, name, description, iconID) {
+    constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.PLANT;
 
@@ -19,9 +19,9 @@ class PlantEntity extends Entity {
     /**
      * Overrides Entity.clone
      * @param  {string} id ID
-     * @return {PlantEntity} new PlantEntity
+     * @returns {PlantEntity} new PlantEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new PlantEntity(id, this.name, this.description, this.icon);
         clone.assign(this);
         return clone;
@@ -68,6 +68,11 @@ class PlantEntity extends Entity {
         super.assign(entity, verify);
         return 0;
     }
+    updateID(newID) {
+        super.updateID(newID);
+        PlantEntity.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -107,6 +112,14 @@ class PlantEntity extends Entity {
             PlantEntity.plantEntityList[i].dispose();
         }
         PlantEntity.plantEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!PlantEntity.has(oldID)) {
+            return 1;
+        }
+        PlantEntity.set(newID, PlantEntity.get(oldID));
+        PlantEntity.remove(oldID);
         return 0;
     }
 }

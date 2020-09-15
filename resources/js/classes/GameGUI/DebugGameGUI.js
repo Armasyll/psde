@@ -2,7 +2,7 @@ class DebugGameGUI {
     static initialize() {
         DebugGameGUI.initialized = false;
         DebugGameGUI.locked = false;
-        DebugGameGUI.width = Game.engine.getRenderWidth() / 2;
+        DebugGameGUI.width = Game.renderWidth / 2;
         DebugGameGUI.skyboxController = null;
         DebugGameGUI.skyboxIsEnabled = true;
         DebugGameGUI.skyboxAzimuth = 0;

@@ -1,12 +1,23 @@
 /**
+ * Character Controller with Transformative Physics
  * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
  * It's great :v you should check it out.
  * 
  * TODO: Rotate towards velocity
  */
 class CharacterControllerTransform extends CharacterController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    /**
+     * Creates a Character Controller with a Transformative Body
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
+
         this.gravity = -Game.scene.gravity.y;
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
         this.maxSlopeLimit = BABYLON.Tools.ToRadians(50);
@@ -36,46 +47,31 @@ class CharacterControllerTransform extends CharacterController {
         if (this.locked) {
             return this;
         }
-        if (!this.entity.living) {
-            return this;
-        }
         if (this.getParent() != undefined) {
             this.removeParent();
         }
         if (this.key.jump && !this.falling) {
             this.avStartPos.copyFrom(this.collisionMesh.position);
-            this.entity.removeFurniture();
-            this.entity.setStance(StanceEnum.STAND);
             this.grounded = false;
             this.idleFallTime = 0;
             this.doJump();
         }
         else if (this.anyMovement() || this.falling) {
             this.avStartPos.copyFrom(this.collisionMesh.position);
-            this.entity.removeFurniture();
-            this.entity.setStance(StanceEnum.STAND);
             this.grounded = false;
             this.idleFallTime = 0;
             this.doMove();
-            Game.entityLocRotWorker.postMessage({
-                cmd:"updateEntity",
-                msg:[
-                    this.id,
-                    new Date().getTime(),
-                    this.getPosition().toOtherArray(),
-                    this.getRotation().toOtherArray()
-                ]
-            });
+            Game.transformsWorkerPostMessage(
+                "updateEntity",
+                0,
+                [this.id, new Date().getTime(), this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
+            );
         }
         else if (!this.falling) {
             this.avStartPos.copyFrom(this.collisionMesh.position);
-            this.entity.removeFurniture();
             this.doIdle();
         }
         this.updateAnimation();
-        if (Game.player == this.entity) {
-            Game.updateCameraTarget();
-        }
         return this;
     }
     doJump(power = 1.0) {
@@ -123,9 +119,6 @@ class CharacterControllerTransform extends CharacterController {
                     }
                 }
             }
-        }
-        if (!this.entity.living) {
-            return null;
         }
         return 0;
     }
@@ -274,7 +267,7 @@ class CharacterControllerTransform extends CharacterController {
                     return false;
                 });
                 if (hit.hit) {
-                    if (Game.Tools.arePointsEqual(this.collisionMesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
+                    if (Tools.arePointsEqual(this.collisionMesh.position.y + this.moveVector.y, hit.pickedMesh.position.y+0.06125, 0.0125)) {
                         this.moveVector.y = 0;
                     }
                 }
@@ -332,9 +325,6 @@ class CharacterControllerTransform extends CharacterController {
                 this.endFreeFall();
             }
         }*/
-        if (!this.entity.living) {
-            return null;
-        }
         return 0;
     }
     endFreeFall() {
@@ -380,9 +370,6 @@ class CharacterControllerTransform extends CharacterController {
                 }
             }
         }
-        if (!this.entity.living) {
-            return null;
-        }
         return 0;
     }
     groundIt() {
@@ -397,6 +384,10 @@ class CharacterControllerTransform extends CharacterController {
         this.groundFrameCount = 0;
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        return 0;
+    }
     dispose() {
         super.dispose();
         return undefined;

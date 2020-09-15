@@ -10,7 +10,7 @@ class MenuControls extends AbstractControls {
             return 2;
         }
         if (Game.debugMode) console.log(`Running Game::controlMenuOnKeyDown(${keyboardEvent.keyCode})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.player.getController().hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         switch (keyboardEvent.keyCode) {
@@ -21,7 +21,7 @@ class MenuControls extends AbstractControls {
                     Game.gui.showHUD();
                 }
                 else {
-                    Game.gui.inventoryMenu.updateWith(Game.player);
+                    Game.gui.inventoryMenu.set(Game.playerEntityID);
                     Game.gui.inventoryMenu.show();
                 }
                 break;
@@ -33,7 +33,7 @@ class MenuControls extends AbstractControls {
                     Game.gui.showHUD();
                 }
                 else {
-                    Game.gui.characterStats.updateWith(Game.player);
+                    Game.gui.characterStats.set(Game.playerEntityID);
                     Game.gui.characterStats.show();
                 }
                 break;

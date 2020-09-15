@@ -1,20 +1,24 @@
 /**
- * FurnitureEntity
+ * Furniture Entity
  */
 class FurnitureEntity extends Entity {
     /**
-     * Creats Furniture
-     * @param  {string}  id            Unique ID
-     * @param  {string}  name          Name
-     * @param  {string}  description   Description
-     * @param  {string}  iconID         Image ID
-     * @param  {FurnitureEnum}  furnitureType          furnitureType
+     * Creates a Furniture Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  description Description
+     * @param  {string}  iconID Image ID
+     * @param  {FurnitureEnum}  furnitureType furnitureType
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, furnitureType = FurnitureEnum.CHAIR) {
+    constructor(id = "", name = "", description = "", iconID = "", furnitureType = FurnitureEnum.CHAIR) {
         super(id, name, description, iconID);
 
         this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = FurnitureEnum.NONE;
+        this.entityLocked = false;
+        this.key = null;
+        this.open = false;
+        this.availableSeats = 0;
 
         this.setFurnitureType(furnitureType);
 
@@ -172,16 +176,76 @@ class FurnitureEntity extends Entity {
     getFurnitureType() {
         return this.furnitureType;
     }
+    setAvailableSeats(availableSeats) {
+        this.availableSeats = Number.parseInt(availableSeats) || 0;
+        return 0;
+    }
+    getAvailableSeats() {
+        return this.availableSeats;
+    }
+    /**
+     * Entity lock, not to be confused with the functionality lock.
+     * @param {boolean} entityLocked 
+     */
+    setEntityLocked(entityLocked) {
+        this.entityLocked = entityLocked == true;
+    }
+    isEntityLocked() {
+        return this.entityLocked;
+    }
+    setKey(itemEntity) {
+        if (!(itemEntity instanceof ItemEntity)) {
+            if (ItemEntity.has(itemEntity)) {
+                itemEntity = ItemEntity.get(itemEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.key = itemEntity;
+        return 0;
+    }
+    getKey() {
+        return this.key;
+    }
+    setOpen(open = true) {
+        this.open = open == true;
+        if (this.open) {
+            this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+            this.setDefaultAction(ActionEnum.CLOSE);
+            this.addHiddenAvailableAction(ActionEnum.OPEN);
+        }
+        else {
+            this.removeHiddenAvailableAction(ActionEnum.OPEN);
+            this.setDefaultAction(ActionEnum.OPEN);
+            this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        }
+    }
+    setClose() {
+        this.open = false;
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+    }
+    getOpen() {
+        return this.open;
+    }
 
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["entityLocked"] = this.entityLocked;
+        obj["key"] = this.key;
+        obj["open"] = this.open;
+        return obj;
+    }
     /**
      * Overrides Entity.clone
      * @param  {string} id ID
-     * @return {FurnitureEntity} new FurnitureEntity
+     * @returns {FurnitureEntity} new FurnitureEntity
      */
     clone(id = "") {
         let clone = new FurnitureEntity(id, this.name, this.description, this.icon, this.furnitureType);
-        if (this.hasInventory()) {
-            clone.setInventory(this.inventory.clone(String(id).concat("Inventory")));
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
         }
         clone.assign(this);
         return clone;
@@ -199,7 +263,16 @@ class FurnitureEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("availableSeats")) this.availableSeats = entity.availableSeats;
+        if (entity.hasOwnProperty("entityLocked")) this.setEntityLocked(entity.entityLocked);
         if (entity.hasOwnProperty("furnitureType")) this.setFurnitureType(entity.furnitureType);
+        if (entity.hasOwnProperty("key")) this.setKey(entity.key);
+        if (entity.hasOwnProperty("open")) this.setOpen(entity.open);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        FurnitureEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -242,6 +315,14 @@ class FurnitureEntity extends Entity {
             FurnitureEntity.furnitureEntityList[i].dispose();
         }
         FurnitureEntity.furnitureEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!FurnitureEntity.has(oldID)) {
+            return 1;
+        }
+        FurnitureEntity.set(newID, FurnitureEntity.get(oldID));
+        FurnitureEntity.remove(oldID);
         return 0;
     }
 }

@@ -1,5 +1,15 @@
+/**
+ * Key Entity
+ */
 class KeyEntity extends ItemEntity {
-    constructor(id, name, description, iconID) {
+    /**
+     * Creates a Key Entity
+     * @param  {string}  id 
+     * @param  {string}  name 
+     * @param  {string}  [description] 
+     * @param  {string}  [iconID] 
+     */
+    constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID);
 
         this.skeletonKey = false;
@@ -31,7 +41,7 @@ class KeyEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.clone
      * @param  {string} id ID
-     * @return {KeyEntity} new KeyEntity
+     * @returns {KeyEntity} new KeyEntity
      */
     clone(id = "") {
         let clone = new KeyEntity(id, this.name, this.description, this.icon);
@@ -41,7 +51,7 @@ class KeyEntity extends ItemEntity {
     /**
      * Overrides EquipmentEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedWeaponEntity}     new InstancedWeaponEntity
+     * @returns {InstancedWeaponEntity}     new InstancedWeaponEntity
      */
     createInstance(id = "") {
         return new InstancedKeyEntity(id, this);
@@ -53,6 +63,11 @@ class KeyEntity extends ItemEntity {
         super.assign(entity, verify);
         if (entity.hasOwnProperty("skeletonKey")) this.setSkeletonKey(entity.skeletonKey);
         if (entity.hasOwnProperty("skeletonKeyModifier")) this.setSkeletonKeyModifier(entity.skeletonKeyModifier);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        KeyEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -95,6 +110,14 @@ class KeyEntity extends ItemEntity {
             KeyEntity.keyEntityList[i].dispose();
         }
         KeyEntity.keyEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!KeyEntity.has(oldID)) {
+            return 1;
+        }
+        KeyEntity.set(newID, KeyEntity.get(oldID));
+        KeyEntity.remove(oldID);
         return 0;
     }
 }

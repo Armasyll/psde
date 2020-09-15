@@ -257,7 +257,8 @@ class Client {
                 let newID = Client.playersToInitialize[i][1];
                 let networkID = Client.playersToInitialize[i][2];
                 let abstractEntity = CharacterEntity.get(oldID);
-                Game.updateEntityID(oldID, newID);
+                abstractEntity.updateID(newID);
+                abstractEntity.controller.updateID(newID);
                 if (abstractEntity == Game.player) {
                     Client.setPlayerEntry(networkID);
                 }

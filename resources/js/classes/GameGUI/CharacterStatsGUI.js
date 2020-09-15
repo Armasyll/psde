@@ -11,8 +11,8 @@ class CharacterStatsGUI {
         if (CharacterStatsGUI.initialized != true) {
             return 1;
         }
-        CharacterStatsGUI.controller.height = String(Math.max(Game.engine.getRenderHeight(), GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
-        CharacterStatsGUI.controller.width = String(Math.max(Game.engine.getRenderWidth(), GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.controller.height = String(Math.max(Game.renderHeight, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
+        CharacterStatsGUI.controller.width = String(Math.max(Game.renderWidth, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.header.height = String(Math.max(GameGUI.fontSizeInPixelsWithSpacing * 4, GameGUI.fontSizeInPixelsWithSpacing)).concat("px");
         CharacterStatsGUI.header.width = CharacterStatsGUI.controller.width;
         CharacterStatsGUI.nameContainer.height = CharacterStatsGUI.header.height;
@@ -415,8 +415,8 @@ class CharacterStatsGUI {
     }
     static generateController() {
         let controller = GameGUI.createStackPanel("stats");
-            controller.height = String(Game.engine.getRenderHeight()).concat("px");
-            controller.width = String(Game.engine.getRenderWidth()).concat("px");
+            controller.height = String(Game.renderHeight).concat("px");
+            controller.width = String(Game.renderWidth).concat("px");
             controller.isVertical = true;
             let header = GameGUI.createStackPanel("header");
                 header.height = String(GameGUI.fontSizeInPixelsWithSpacing * 4).concat("px");
@@ -1650,42 +1650,61 @@ class CharacterStatsGUI {
         CharacterStatsGUI.controller.isVisible = false;
         CharacterStatsGUI.isVisible = false;
     }
-    static updateWith(creatureEntity = Game.player) {
-        CharacterStatsGUI.nameField.text = creatureEntity.getName();
-        CharacterStatsGUI.classField.text = creatureEntity.getClass().getName();
+    static updateWith(creatureController = Game.playerController) {
+        if (!(creatureController instanceof EntityController)) {
+            if (CreatureController.has(creatureController)) {
+                creatureController = CreatureController.get(creatureController);
+            }
+            else {
+                return 2;
+            }
+        }
+        if (!Game.hasCachedEntity(creatureController.entityID)) {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, null, [creatureController], CharacterStatsGUI.updateWithResponse)
+            Game.getEntity(creatureController.entityID, callbackID);
+            return 1;
+        }
+        else {
+            return CharacterStatsGUI.updateWithResponse(creatureController, Game.getCachedEntity(creatureController.entityID));
+        }
+    }
+    static updateWithResponse(creatureController, response, callbackID) {
+        CharacterStatsGUI.nameField.text = creatureController.getName();
+        CharacterStatsGUI.classField.text = creatureController.getClass().getName();
         //CharacterStatsGUI.backgroundField.text = creatureEntity.get();
         //CharacterStatsGUI.accountNameField.text = creatureEntity.get();
-        CharacterStatsGUI.raceField.text = CreatureSubTypeEnum.properties[creatureEntity.getCreatureSubType()].name;
+        CharacterStatsGUI.raceField.text = CreatureSubTypeEnum.properties[creatureController.getCreatureSubType()].name;
         //CharacterStatsGUI.alignmentField.text = creatureEntity.get();
-        CharacterStatsGUI.xpField.text = String(creatureEntity.getXP());
+        CharacterStatsGUI.xpField.text = String(creatureController.getXP());
         let checkbox = false;
-        let number = Game.calculateAbilityModifier(creatureEntity.getStrength());
+        let number = DND5E.calculateAbilityModifier(creatureController.getStrength());
         CharacterStatsGUI.strengthAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.strengthAbilityField.text = String(creatureEntity.getStrength());
-        number = Game.calculateAbilityModifier(creatureEntity.getDexterity());
+        CharacterStatsGUI.strengthAbilityField.text = String(creatureController.getStrength());
+        number = DND5E.calculateAbilityModifier(creatureController.getDexterity());
         CharacterStatsGUI.dexterityAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.dexterityAbilityField.text = String(creatureEntity.getDexterity())
-        number = Game.calculateAbilityModifier(creatureEntity.getConstitution());
+        CharacterStatsGUI.dexterityAbilityField.text = String(creatureController.getDexterity())
+        number = DND5E.calculateAbilityModifier(creatureController.getConstitution());
         CharacterStatsGUI.constitutionAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.constitutionAbilityField.text = String(creatureEntity.getConstitution());
-        number = Game.calculateAbilityModifier(creatureEntity.getIntelligence());
+        CharacterStatsGUI.constitutionAbilityField.text = String(creatureController.getConstitution());
+        number = DND5E.calculateAbilityModifier(creatureController.getIntelligence());
         CharacterStatsGUI.intelligenceAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.intelligenceAbilityField.text = String(creatureEntity.getIntelligence());
-        number = Game.calculateAbilityModifier(creatureEntity.getWisdom());
+        CharacterStatsGUI.intelligenceAbilityField.text = String(creatureController.getIntelligence());
+        number = DND5E.calculateAbilityModifier(creatureController.getWisdom());
         CharacterStatsGUI.wisdomAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.wisdomAbilityField.text = String(creatureEntity.getWisdom());
-        number = Game.calculateAbilityModifier(creatureEntity.getCharisma());
+        CharacterStatsGUI.wisdomAbilityField.text = String(creatureController.getWisdom());
+        number = DND5E.calculateAbilityModifier(creatureController.getCharisma());
         CharacterStatsGUI.charismaAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.charismaAbilityField.text = String(creatureEntity.getCharisma());
+        CharacterStatsGUI.charismaAbilityField.text = String(creatureController.getCharisma());
         
-        CharacterStatsGUI.passiveWisdomField.text = String(creatureEntity.getPassivePerception());
-        number = creatureEntity.getProficiencyBonus();
+        CharacterStatsGUI.passiveWisdomField.text = String(creatureController.getPassivePerception());
+        number = creatureController.getProficiencyBonus();
         CharacterStatsGUI.proficiencyBonusField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.inspirationField.text = String(creatureEntity.getInspiration());
+        CharacterStatsGUI.inspirationField.text = String(creatureController.getInspiration());
         // saving throws
-        number = Game.calculateAbilityModifier(creatureEntity.getStrength());
-        if (creatureEntity.hasProficiency("STRENGTH")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getStrength());
+        if (creatureController.hasProficiency("STRENGTH")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1693,9 +1712,9 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowStrengthField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowStrengthCheckbox.isChecked = checkbox;
-        number = Game.calculateAbilityModifier(creatureEntity.getDexterity());
-        if (creatureEntity.hasProficiency("DEXTERITY")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getDexterity());
+        if (creatureController.hasProficiency("DEXTERITY")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1703,9 +1722,9 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowDexterityField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowDexterityCheckbox.isChecked = checkbox;
-        number = Game.calculateAbilityModifier(creatureEntity.getConstitution());
-        if (creatureEntity.hasProficiency("CONSTITUTION")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getConstitution());
+        if (creatureController.hasProficiency("CONSTITUTION")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1713,9 +1732,9 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowConstitutionField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowConstitutionCheckbox.isChecked = checkbox;
-        number = Game.calculateAbilityModifier(creatureEntity.getIntelligence());
-        if (creatureEntity.hasProficiency("INTELLIGENCE")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getIntelligence());
+        if (creatureController.hasProficiency("INTELLIGENCE")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1723,9 +1742,9 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowIntelligenceField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowIntelligenceCheckbox.isChecked = checkbox;
-        number = Game.calculateAbilityModifier(creatureEntity.getWisdom());
-        if (creatureEntity.hasProficiency("WISDOM")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getWisdom());
+        if (creatureController.hasProficiency("WISDOM")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1733,9 +1752,9 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowWisdomField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowWisdomCheckbox.isChecked = checkbox;
-        number = Game.calculateAbilityModifier(creatureEntity.getCharisma());
-        if (creatureEntity.hasProficiency("CHARISMA")) {
-            number += creatureEntity.getProficiencyBonus();
+        number = DND5E.calculateAbilityModifier(creatureController.getCharisma());
+        if (creatureController.hasProficiency("CHARISMA")) {
+            number += creatureController.getProficiencyBonus();
             checkbox = true;
         }
         else {
@@ -1744,57 +1763,57 @@ class CharacterStatsGUI {
         CharacterStatsGUI.savingThrowCharismaField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowCharismaCheckbox.isChecked = checkbox;
         // other proficiencies and languages
-        number = creatureEntity.getSkillScore(ProficiencyEnum.ACROBATICS);
+        number = creatureController.getSkillScore(ProficiencyEnum.ACROBATICS);
         CharacterStatsGUI.skillAcrobaticsField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillAcrobaticsCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ACROBATICS);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.ANIMAL_HANDLING);
+        CharacterStatsGUI.skillAcrobaticsCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.ACROBATICS);
+        number = creatureController.getSkillScore(ProficiencyEnum.ANIMAL_HANDLING);
         CharacterStatsGUI.skillAnimalHandlingField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillAnimalHandlingCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ANIMAL_HANDLING);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.ARCANA);
+        CharacterStatsGUI.skillAnimalHandlingCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.ANIMAL_HANDLING);
+        number = creatureController.getSkillScore(ProficiencyEnum.ARCANA);
         CharacterStatsGUI.skillArcanaField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillArcanaCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ARCANA);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.ATHLETICS);
+        CharacterStatsGUI.skillArcanaCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.ARCANA);
+        number = creatureController.getSkillScore(ProficiencyEnum.ATHLETICS);
         CharacterStatsGUI.skillAthleticsField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillAthleticsCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.ATHLETICS);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.DECEPTION);
+        CharacterStatsGUI.skillAthleticsCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.ATHLETICS);
+        number = creatureController.getSkillScore(ProficiencyEnum.DECEPTION);
         CharacterStatsGUI.skillDeceptionField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillDeceptionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.DECEPTION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.HISTORY);
+        CharacterStatsGUI.skillDeceptionCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.DECEPTION);
+        number = creatureController.getSkillScore(ProficiencyEnum.HISTORY);
         CharacterStatsGUI.skillHistoryField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillHistoryCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.HISTORY);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.INSIGHT);
+        CharacterStatsGUI.skillHistoryCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.HISTORY);
+        number = creatureController.getSkillScore(ProficiencyEnum.INSIGHT);
         CharacterStatsGUI.skillInsightField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillInsightCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INSIGHT);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.INTIMIDATION);
+        CharacterStatsGUI.skillInsightCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.INSIGHT);
+        number = creatureController.getSkillScore(ProficiencyEnum.INTIMIDATION);
         CharacterStatsGUI.skillIntimidationField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillIntimidationCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INTIMIDATION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.INVESTIGATION);
+        CharacterStatsGUI.skillIntimidationCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.INTIMIDATION);
+        number = creatureController.getSkillScore(ProficiencyEnum.INVESTIGATION);
         CharacterStatsGUI.skillInvestigationField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillInvestigationCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.INVESTIGATION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.MEDICINE);
+        CharacterStatsGUI.skillInvestigationCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.INVESTIGATION);
+        number = creatureController.getSkillScore(ProficiencyEnum.MEDICINE);
         CharacterStatsGUI.skillMedicineField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillMedicineCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.MEDICINE);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.NATURE);
+        CharacterStatsGUI.skillMedicineCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.MEDICINE);
+        number = creatureController.getSkillScore(ProficiencyEnum.NATURE);
         CharacterStatsGUI.skillNatureField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillNatureCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.NATURE);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.PERCEPTION);
+        CharacterStatsGUI.skillNatureCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.NATURE);
+        number = creatureController.getSkillScore(ProficiencyEnum.PERCEPTION);
         CharacterStatsGUI.skillPerceptionField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillPerceptionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERCEPTION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.PERFORMANCE);
+        CharacterStatsGUI.skillPerceptionCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.PERCEPTION);
+        number = creatureController.getSkillScore(ProficiencyEnum.PERFORMANCE);
         CharacterStatsGUI.skillPerformanceField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillPerformanceCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERFORMANCE);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.PERSUASION);
+        CharacterStatsGUI.skillPerformanceCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.PERFORMANCE);
+        number = creatureController.getSkillScore(ProficiencyEnum.PERSUASION);
         CharacterStatsGUI.skillPersuasionField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillPersuasionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.PERSUASION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.RELIGION);
+        CharacterStatsGUI.skillPersuasionCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.PERSUASION);
+        number = creatureController.getSkillScore(ProficiencyEnum.RELIGION);
         CharacterStatsGUI.skillReligionField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillReligionCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.RELIGION);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.SLEIGHT_OF_HAND);
+        CharacterStatsGUI.skillReligionCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.RELIGION);
+        number = creatureController.getSkillScore(ProficiencyEnum.SLEIGHT_OF_HAND);
         CharacterStatsGUI.skillSleightOfHandField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillSleightOfHandCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.SLEIGHT_OF_HAND);
-        number = creatureEntity.getSkillScore(ProficiencyEnum.STEALTH);
+        CharacterStatsGUI.skillSleightOfHandCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.SLEIGHT_OF_HAND);
+        number = creatureController.getSkillScore(ProficiencyEnum.STEALTH);
         CharacterStatsGUI.skillStealthField.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.skillStealthCheckbox.isChecked = creatureEntity.hasProficiency(ProficiencyEnum.STEALTH);
+        CharacterStatsGUI.skillStealthCheckbox.isChecked = creatureController.hasProficiency(ProficiencyEnum.STEALTH);
 
         // proficienciesAndLanguages will include Languages, Armour, Weapons, and Tools & Kits
     }

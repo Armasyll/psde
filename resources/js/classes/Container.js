@@ -1,15 +1,15 @@
 /**
- * Inventory
+ * Container
  */
-class Inventory {
+class Container {
     /**
-     * Creates an Inventory
+     * Creates a Container
      * @param {string} id 
      * @param {string} name 
      * @param {number} [maxSize] 
      * @param {number} [maxWeight] 
      */
-    constructor(id = undefined, name = undefined, maxSize = 9, maxWeight = 10) {
+    constructor(id = "", name = "", maxSize = 9, maxWeight = 10) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -33,15 +33,15 @@ class Inventory {
         this.locked = false;
         this.enabled = true;
 
-        Inventory.set(this.id, this);
+        Container.set(this.id, this);
     }
 
     setID(id) {
         this.locked = true;
-        Inventory.remove(this.id);
+        Container.remove(this.id);
         id = Tools.filterID(id);
         this.id = id;
-        Inventory.set(this.id, this);
+        Container.set(this.id, this);
         this.locked = false;
         return 0;
     }
@@ -108,33 +108,33 @@ class Inventory {
     }
     /**
      * Adds the InstancedItemEntity to this entity's Item array
-     * @param  {any} abstractEntity       InstancedItemEntity, or ItemEntity, to be added
+     * @param  {InstancedItemEntity} instancedItemEntity InstancedItemEntity, or ItemEntity, to be added
      * @return {number}
      */
-    addItem(abstractEntity) {
+    addItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, inventory is locked.");
+            return Tools.fresponse(423, "Error, container is locked.");
         }
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+        if (!(instancedItemEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(instancedItemEntity)) {
+                instancedItemEntity = AbstractEntity.get(instancedItemEntity);
             }
             else {
                 return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
-        if (abstractEntity instanceof InstancedEntity) {
-            return this.addItemToSlot(abstractEntity, this.getAvailableSlot());
+        if (instancedItemEntity instanceof InstancedEntity) {
+            return this.addItemToSlot(instancedItemEntity, this.getAvailableSlot());
         }
-        else if (abstractEntity instanceof ItemEntity) {
-            return this.addItemToSlot(abstractEntity.createInstance(), this.getAvailableSlot());
+        else if (instancedItemEntity instanceof ItemEntity) {
+            return this.addItemToSlot(instancedItemEntity.createInstance(), this.getAvailableSlot());
         }
-        if (Game.debugMode) console.log(`Failed to add item ${abstractEntity} to ${this.id}`);
+        if (Game.debugMode) console.log(`Failed to add item ${instancedItemEntity} to ${this.id}`);
         return Tools.fresponse(400, "Error");
     }
     addItemToSlot(instancedItemEntity, slot) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, inventory is locked.");
+            return Tools.fresponse(423, "Error, container is locked.");
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             if (InstancedItemEntity.has(instancedItemEntity)) {
@@ -152,14 +152,14 @@ class Inventory {
         else if (this.items[slot] instanceof InstancedEntity) {
             return Tools.fresponse(300, "Warning, item slot is already occupied.", instancedItemEntity);
         }
-        this.items[slot] = instancedItemEntity.getID();
+        this.items[slot] = instancedItemEntity;
         this.weight += instancedItemEntity.getWeight();
-        instancedItemEntity.setInventory(this);
+        instancedItemEntity.setContainer(this);
         return Tools.fresponse(200, "OK", instancedItemEntity);
     }
     swapSlots(slotA, slotB) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, inventory is locked.");
+            return Tools.fresponse(423, "Error, container is locked.");
         }
         slotA = Number.parseInt(slotA) || Number.MAX_SAFE_INTEGER;
         slotB = Number.parseInt(slotB) || Number.MAX_SAFE_INTEGER;
@@ -187,7 +187,7 @@ class Inventory {
      */
     removeItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, inventory is locked.");
+            return Tools.fresponse(423, "Error, container is locked.");
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             if (InstancedItemEntity.has(instancedItemEntity)) {
@@ -197,16 +197,16 @@ class Inventory {
                 return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
-        if (Game.debugMode) console.log(`Running <Inventory> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
+        if (Game.debugMode) console.log(`Running <Container> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
         let slot = this.getSlotByItem(instancedItemEntity);
         if (slot < 0) {
-            return Tools.fresponse(410, "Error, inventory doesn't have item.");
+            return Tools.fresponse(410, "Error, container doesn't have item.");
         }
         return this.removeItemFromSlot(slot);
     }
     removeItemFromSlot(slot) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, inventory is locked.");
+            return Tools.fresponse(423, "Error, container is locked.");
         }
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
@@ -217,7 +217,7 @@ class Inventory {
             if (InstancedItemEntity.has(this.items[slot])) {
                 let instancedItemEntity = InstancedItemEntity.get(this.items[slot]);
                 this.weight -= instancedItemEntity.getWeight();
-                instancedItemEntity.removeInventory(this);
+                instancedItemEntity.removeContainer(this);
             }
             delete this.items[slot];
         }
@@ -261,7 +261,7 @@ class Inventory {
     }
     /**
      * Returns the InstancedItemEntity of a passed ItemInstance or InstancedItemEntity, or their string IDs, if this entity has it in their Item array
-     * @param  {any} abstractEntity The ItemInstance or InstancedItemEntity to search for
+     * @param  {(ItemEntity|InstancedItemEntity)} abstractEntity The ItemInstance or InstancedItemEntity to search for
      * @return {InstancedItemEntity} The InstancedItemEntity that is found, or null if it isn't
      */
     getItem(abstractEntity) {
@@ -277,9 +277,11 @@ class Inventory {
             abstractEntity = abstractEntity.getEntity();
         }
         for (let slot in this.items) {
-            let instancedItemEntity = AbstractEntity.get(this.items[slot]);
-            if (instancedItemEntity.getEntity() == abstractEntity) {
-                return instancedItemEntity;
+            if (this.items[slot] instanceof InstancedItemEntity) {
+                let instancedItemEntity = this.items[slot];
+                if (instancedItemEntity.getEntity() == abstractEntity) {
+                    return instancedItemEntity;
+                }
             }
         }
         return 1;
@@ -313,7 +315,7 @@ class Inventory {
         }
         this.entities[abstractEntity.getID()] = true;
         if (updateChild) {
-            abstractEntity.setInventory(this, false);
+            abstractEntity.setContainer(this, false);
         }
         return 0;
     }
@@ -328,7 +330,7 @@ class Inventory {
         }
         delete this.entities[abstractEntity];
         if (updateChild) {
-            abstractEntity.removeInventory(false);
+            abstractEntity.removeContainer(false);
         }
         if (Object.keys(this.entities).length == 0) {
             this.dispose();
@@ -372,7 +374,7 @@ class Inventory {
     }
 
     clone(id = "") {
-        let clone = new Inventory(id, this.name, this.maxSize, this.maxWeight);
+        let clone = new Container(id, this.name, this.maxSize, this.maxWeight);
         for (let slot in this.items) {
             clone.addItemToSlot(InstancedItemEntity.get(this.items[slot]).clone(), slot);
         }
@@ -380,17 +382,17 @@ class Inventory {
         return clone;
     }
     /**
-     * Clones the inventory's values over this
-     * @param {Inventory} inventory 
+     * Clones the container's values over this
+     * @param {Container} container 
      * @param {boolean} [verify] Set to false to skip verification
      */
-    assign(inventory, verify = true) {
-        if (verify && !(inventory instanceof Inventory)) {
+    assign(container, verify = true) {
+        if (verify && !(container instanceof Container)) {
             return 2;
         }
-        this.setWeight(inventory.weight);
-        this.setMaxSize(inventory.maxSize);
-        this.setMaxWeight(inventory.maxWeight);
+        this.setWeight(container.weight);
+        this.setMaxSize(container.maxSize);
+        this.setMaxWeight(container.maxWeight);
         return 0;
     }
     dispose() {
@@ -406,38 +408,38 @@ class Inventory {
         return undefined;
     }
     getClassName() {
-        return "Inventory";
+        return "Container";
     }
 
     static initialize() {
-        Inventory.inventoryList = {};
+        Container.containerList = {};
     }
     static get(id) {
-        if (Inventory.has(id)) {
-            return Inventory.inventoryList[id];
+        if (Container.has(id)) {
+            return Container.containerList[id];
         }
         return 1;
     }
     static has(id) {
-        return Inventory.inventoryList.hasOwnProperty(id);
+        return Container.containerList.hasOwnProperty(id);
     }
     static set(id, lightEntity) {
-        Inventory.inventoryList[id] = lightEntity;
+        Container.containerList[id] = lightEntity;
         return 0;
     }
     static remove(id) {
-        delete Inventory.inventoryList[id];
+        delete Container.containerList[id];
         return 0;
     }
     static list() {
-        return Inventory.inventoryList;
+        return Container.containerList;
     }
     static clear() {
-        for (let i in Inventory.inventoryList) {
-            Inventory.inventoryList[i].dispose();
+        for (let i in Container.containerList) {
+            Container.containerList[i].dispose();
         }
-        Inventory.inventoryList = {};
+        Container.containerList = {};
         return 0;
     }
 }
-Inventory.initialize();
+Container.initialize();

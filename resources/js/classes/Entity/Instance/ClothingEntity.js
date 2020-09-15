@@ -1,9 +1,18 @@
+/**
+ * Instanced Clothing Entity
+ */
 class InstancedClothingEntity extends InstancedEquipmentEntity {
-    constructor(id = undefined, clothingEntity = undefined, owner = undefined) {
-        super(id, clothingEntity);
+    /**
+     * Creates an Instanced Clothing Entity
+     * @param {string} id 
+     * @param {ClothingEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof ClothingEntity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         InstancedClothingEntity.set(this.id, this);
@@ -27,9 +36,9 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
      * @param  {string} id ID
      * @return {InstancedClothingEntity} new InstancedClothingEntity
      */
-    clone(id) {
+    clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedClothingEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -40,6 +49,11 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedClothingEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -79,6 +93,14 @@ class InstancedClothingEntity extends InstancedEquipmentEntity {
             InstancedClothingEntity.instancedClothingEntityList[i].dispose();
         }
         InstancedClothingEntity.instancedClothingEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedClothingEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedClothingEntity.set(newID, InstancedClothingEntity.get(oldID));
+        InstancedClothingEntity.remove(oldID);
         return 0;
     }
 }

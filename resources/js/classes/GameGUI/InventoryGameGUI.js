@@ -25,8 +25,8 @@ class InventoryGameGUI {
         if (InventoryGameGUI.initialized != true) {
             return 1;
         }
-        InventoryGameGUI.controller.height = String(Game.engine.getRenderHeight()).concat("px");
-        InventoryGameGUI.controller.width = String(Game.engine.getRenderWidth()).concat("px");
+        InventoryGameGUI.controller.height = String(Game.renderHeight).concat("px");
+        InventoryGameGUI.controller.width = String(Game.renderWidth).concat("px");
             InventoryGameGUI.tabsAndItems.height = InventoryGameGUI.controller.height;
             InventoryGameGUI.tabsAndItems.width = String((InventoryGameGUI.controller.widthInPixels / 3) * 2).concat("px");
                 InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
@@ -65,8 +65,8 @@ class InventoryGameGUI {
     }
     static generateController() {
         var controller = GameGUI.createStackPanel("inventory");
-            controller.height = String(Game.engine.getRenderHeight()).concat("px");
-            controller.width = String(Game.engine.getRenderWidth()).concat("px");
+            controller.height = String(Game.renderHeight).concat("px");
+            controller.width = String(Game.renderWidth).concat("px");
             controller.isVertical = false;
             var tabsAndItems = GameGUI.createStackPanel("tabsAndItems");
                 tabsAndItems.height = controller.height;

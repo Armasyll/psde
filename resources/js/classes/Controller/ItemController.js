@@ -2,10 +2,19 @@
  * Item Controller
  */
 class ItemController extends EntityController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    /**
+     * Creates an Item Controller
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
 
-        this.entity.setDefaultAction(ActionEnum.TAKE);
+        this.setDefaultAction(ActionEnum.TAKE);
 
         ItemController.set(this.id, this);
     }
@@ -25,6 +34,11 @@ class ItemController extends EntityController {
         return Game.createItemMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        ItemController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -63,6 +77,14 @@ class ItemController extends EntityController {
             ItemController.itemControllerList[i].dispose();
         }
         ItemController.itemControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!ItemController.has(oldID)) {
+            return 1;
+        }
+        ItemController.set(newID, ItemController.get(oldID));
+        ItemController.remove(oldID);
         return 0;
     }
 }

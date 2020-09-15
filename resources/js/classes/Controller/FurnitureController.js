@@ -1,6 +1,18 @@
+/**
+ * Furniture Controller
+ */
 class FurnitureController extends EntityController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    /**
+     * Creates a Furniture Controller
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
+        if (!this.hasMesh()) {
+            return null;
+        }
 
         // containers, doors: opening, opened, closing, closed
         // maybe make 90_idle01 closed
@@ -66,6 +78,11 @@ class FurnitureController extends EntityController {
         return 0;
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        FurnitureController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
@@ -105,6 +122,14 @@ class FurnitureController extends EntityController {
             FurnitureController.furnitureControllerList[i].dispose();
         }
         FurnitureController.furnitureControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!FurnitureController.has(oldID)) {
+            return 1;
+        }
+        FurnitureController.set(newID, FurnitureController.get(oldID));
+        FurnitureController.remove(oldID);
         return 0;
     }
 }

@@ -1,4 +1,4 @@
-Game.createSpell("fireball", "Fireball", "It's a simple ball of fire.", "fireIcon01", "billboardInside3", "fireEffect01", {
+EntityLogic.createSpell("fireball", "Fireball", "It's a simple ball of fire.", "fireIcon01", "billboardInside3", "fireEffect01", {
     "spellType": SpellTypeEnum.EVOCATION,
     "spellLevel": 3,
     "spellSlots": 1,

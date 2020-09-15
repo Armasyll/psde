@@ -1,9 +1,18 @@
+/**
+ * Instanced Weapon Entity
+ */
 class InstancedWeaponEntity extends InstancedEquipmentEntity {
-    constructor(id = undefined, weaponEntity = undefined, owner = undefined) {
-        super(id, weaponEntity, owner);
+    /**
+     * Creates an Instanced Weapon Entity
+     * @param {string} id 
+     * @param {WeaponEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof WeaponEntity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         this.silveredModifier = false;
@@ -73,7 +82,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedWeaponEntity(id, this.entity, this.owner);
         clone.assign(this);
@@ -84,6 +93,11 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedWeaponEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -123,6 +137,14 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
             InstancedWeaponEntity.instancedWeaponEntityList[i].dispose();
         }
         InstancedWeaponEntity.instancedWeaponEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedWeaponEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedWeaponEntity.set(newID, InstancedWeaponEntity.get(oldID));
+        InstancedWeaponEntity.remove(oldID);
         return 0;
     }
 }

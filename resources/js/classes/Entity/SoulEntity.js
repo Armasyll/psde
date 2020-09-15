@@ -3,12 +3,12 @@
  */
 class SoulEntity extends AbstractEntity {
     /**
-     * Creates a SoulEntity
-     * @param  {string} id           Unique ID
-     * @param  {string} name         Name
-     * @param  {string} description  Description
+     * Creates a Soul Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] Description
      */
-    constructor(id = undefined, name = undefined, description = undefined) {
+    constructor(id = "", name = "", description = "") {
         super(id, name, description);
         this.entityType = EntityEnum.SOUL;
         this.age = 18;
@@ -184,7 +184,7 @@ class SoulEntity extends AbstractEntity {
         return this.characterDisposition[creatureEntity]["hate"];
     }
     getCharacterDisposition(creatureEntity) {
-        if (Game.enableDebug) console.log("Running getCharacterDisposition");
+        if (AbstractEntity.enableDebug) console.log("Running getCharacterDisposition");
         if (this.hasCharacterDisposition(creatureEntity)) {
             return this.characterDisposition[creatureEntity];
         }
@@ -273,9 +273,9 @@ class SoulEntity extends AbstractEntity {
     /**
      * 
      * @param  {string} id ID
-     * @return {SoulEntity} new SoulEntity
+     * @returns {SoulEntity} new SoulEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new SoulEntity(id, this.name, this.description);
         clone.assign(this);
         return clone;
@@ -311,6 +311,11 @@ class SoulEntity extends AbstractEntity {
         if (soul.hasOwnProperty("defaultDisposition")) this.defaultDisposition = Object.assign({}, soul.defaultDisposition);
         if (soul.hasOwnProperty("characterDisposition")) this.characterDisposition = Object.assign({}, soul.characterDisposition);
         if (soul.hasOwnProperty("dialogue")) this.dialogue = soul.dialogue;
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        SoulEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -359,5 +364,14 @@ class SoulEntity extends AbstractEntity {
         SoulEntity.soulEntityList = {};
         return 0;
     }
+    static updateID(oldID, newID) {
+        if (!SoulEntity.has(oldID)) {
+            return 1;
+        }
+        SoulEntity.set(newID, SoulEntity.get(oldID));
+        SoulEntity.remove(oldID);
+        return 0;
+    }
 }
 SoulEntity.initialize();
+SoulEntity.createSoulless();

@@ -1,14 +1,35 @@
+/**
+ * Character Controller
+ */
 class CharacterController extends CreatureController {
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    /**
+     * Creates a Character Controller
+     * @param {string} id 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {object} entityObject 
+     */
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return;
+            return null;
         }
-        this.helmetVisible = true;
 
-        this.generateOrganMeshes();
-        this.generateCosmeticMeshes();
-        this.generateEquippedMeshes();
+        this.helmetVisible = true;
+        /**
+         * @type {EyeEnum}
+         */
+        this.eyeType = 0;
+        /**
+         * @type {string}
+         */
+        this.eyeColour = "#C3C3C3";
+        /**
+         * ApparelSlotEnum key, mesh ID, material ID
+         * @type {object<string:object<string:string>>}
+         * @example {"HEAD":{"meshID":"helmet01MeshID","materialID":"helmet01MaterialID"}}
+         */
+        this.equipment = {};
+
         /*
         Standing Idle, Standing Walk, Standing Run
         Crouching Idle, Crouching Walk
@@ -40,6 +61,20 @@ class CharacterController extends CreatureController {
         CharacterController.set(this.id, this);
     }
 
+    generateAttachedMeshes() {
+        this.generateOrganMeshes();
+        this.generateCosmeticMeshes();
+        this.generateEquippedMeshes();
+    }
+    populateFromEntity(entity) {
+        super.populateFromEntity(entity);
+        this.eyeType = entity.eyeType;
+        this.eyeColour = entity.eyeColour;
+        for (let key in entity.equipment) {
+            this.equipment[key] = [entity.equipment[key]["meshID"], entity.equipment[key]["materialID"]];
+        }
+        return 0;
+    }
     doPunchRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return false;
@@ -200,7 +235,7 @@ class CharacterController extends CreatureController {
             return;
         }
         let eyeString = new String();
-        switch (this.entity.getEyeType()) {
+        switch (this.eyeType) {
             case EyeEnum.FERAL: {
                 eyeString = eyeString.concat("feralEye");
                 break;
@@ -214,7 +249,7 @@ class CharacterController extends CreatureController {
                 eyeString = eyeString.concat("circularEye");
             }
         }
-        switch (this.entity.getEyeColour()) {
+        switch (this.eyeColour) {
             case "yellow": {
                 eyeString = eyeString.concat("Yellow");
                 break;
@@ -264,75 +299,75 @@ class CharacterController extends CreatureController {
         if (!this.hasSkeleton()) {
             return;
         }
-        for (let equipmentIndex in this.entity.getEquipment()) {
+        for (let equipmentIndex in this.equipment) {
             switch (equipmentIndex) {
                 case "HEAD": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromHead();
-                        this.attachToHead(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToHead(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "EAR_L": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftEar();
-                        this.attachToLeftEar(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToLeftEar(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "EAR_R": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightEar();
-                        this.attachToRightEar(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToRightEar(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "NECK": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromNeck();
-                        this.attachToNeck(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToNeck(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "SHOULDER_L": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftShoulder();
-                        this.attachToLeftShoulder(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToLeftShoulder(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "SHOULDER_R": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightShoulder();
-                        this.attachToRightShoulder(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToRightShoulder(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "FOREARM_L": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftForearm();
-                        this.attachToLeftForearm(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToLeftForearm(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "FOREARM_R": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightForearm();
-                        this.attachToRightForearm(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToRightForearm(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "HAND_L": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromLeftHand();
-                        this.attachToLeftHand(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToLeftHand(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
                 case "HAND_R": {
-                    if (this.entity.getEquipment()[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
                         this.detachFromRightHand();
-                        this.attachToRightHand(this.entity.getEquipment()[equipmentIndex].getMeshID(), this.entity.getEquipment()[equipmentIndex].getTextureID());
+                        this.attachToRightHand(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
                     }
                     break;
                 }
@@ -341,10 +376,12 @@ class CharacterController extends CreatureController {
         return this;
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        CharacterController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
-        if (this == Game.player.getController()) {
-            return false;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         this.detachFromAllBones();
@@ -385,6 +422,14 @@ class CharacterController extends CreatureController {
             CharacterController.characterControllerList[i].dispose();
         }
         CharacterController.characterControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!CharacterController.has(oldID)) {
+            return 1;
+        }
+        CharacterController.set(newID, CharacterController.get(oldID));
+        CharacterController.remove(oldID);
         return 0;
     }
     static setDebugMode(debugMode) {

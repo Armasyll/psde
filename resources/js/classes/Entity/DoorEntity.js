@@ -1,109 +1,59 @@
-class DoorEntity extends Entity {
-    constructor(id = undefined, name = undefined, description = undefined, iconID = "plainDoorIcon", locked = false, key = undefined, opensInward = false, open = false) {
+/**
+ * Door Entity
+ */
+class DoorEntity extends FurnitureEntity {
+    /**
+     * Creates a Door Entity
+     * @param  {string}  id 
+     * @param  {string}  name 
+     * @param  {string}  [description] 
+     * @param  {string}  [iconID] 
+     * @param  {boolean}  [locked] 
+     * @param  {AbstractEntity}  [key] 
+     * @param  {boolean}  [opensInward] 
+     * @param  {boolean}  [open] 
+     */
+    constructor(id = "", name = "", description = "", iconID = "plainDoorIcon", locked = false, key = null, opensInward = false, open = false) {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.DOOR;
-        this.doorLocked = false;
-        this.key = null;
-        this.open = false;
         this.opensInward = false;
 
         this.addAvailableAction(ActionEnum.CLOSE);
         this.addAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
         this.setDefaultAction(ActionEnum.OPEN);
-        this.setDoorLocked(locked);
+        this.setEntityLocked(locked);
         this.setKey(key);
-        this.setOpensInward(opensInward);
         this.setOpen(open);
+        this.setOpensInward(opensInward);
 
         DoorEntity.set(this.id, this);
     }
 
-    /**
-     * Door lock, not to be confused with the functionality lock.
-     * @param {boolean} isDoorLocked 
-     */
-    setDoorLocked(isDoorLocked) {
-        this.doorLocked = isDoorLocked == true;
-    }
-    isDoorLocked() {
-        return this.doorLocked;
-    }
-    setKey(itemEntity) {
-        if (!(itemEntity instanceof ItemEntity)) {
-            if (ItemEntity.has(itemEntity)) {
-                itemEntity = ItemEntity.get(itemEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        this.key = itemEntity;
-        return 0;
-    }
-    getKey() {
-        return this.key;
-    }
-    setOpen(open = true) {
-        this.open = open == true;
-        if (this.open) {
-            if (this.hasController()) {
-                this.controller.doOpen();
-            }
-            this.removeHiddenAvailableAction(ActionEnum.CLOSE);
-            this.setDefaultAction(ActionEnum.CLOSE);
-            this.addHiddenAvailableAction(ActionEnum.OPEN);
-        }
-        else {
-            if (this.hasController()) {
-                this.controller.doClose();
-            }
-            this.removeHiddenAvailableAction(ActionEnum.OPEN);
-            this.setDefaultAction(ActionEnum.OPEN);
-            this.addHiddenAvailableAction(ActionEnum.CLOSE);
-        }
-    }
-    setClose() {
-        this.open = false;
-        if (this.hasController()) {
-            this.controller.doClose();
-        }
-        this.setDefaultAction(ActionEnum.OPEN);
-        this.addHiddenAvailableAction(ActionEnum.CLOSE);
-    }
-    getOpen() {
-        return this.open;
-    }
     setOpensInward(opensInward = true) {
         this.opensInward = opensInward == true;
-        if (this.opensInward) {
-            if (this.hasController()) {
-                this.controller.setOpensInward();
-            }
-        }
-        else {
-            if (this.hasController()) {
-                this.controller.setOpensOutward();
-            }
-        }
     }
     setOpensOutward() {
         this.opensInward = false;
-        if (this.hasController()) {
-            this.controller.setOpensOutward();
-        }
     }
     getOpensInward() {
         return this.opensInward;
     }
 
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["opensInward"] = this.opensInward;
+        return obj;
+    }
     /**
      * Overrides DoorEntity.clone
      * @param  {string} id ID
-     * @return {DoorEntity} new DoorEntity
+     * @returns {DoorEntity} new DoorEntity
      */
     clone(id = "") {
-        return new DoorEntity(id, this.name, this.description, this.icon, this.furnitureType);
+        let clone = new DoorEntity(id, this.name, this.description, this.icon, this.furnitureType);
+        clone.assign(this);
+        return clone;
     }
     createInstance(id = "") {
         return new InstancedFurnitureEntity(id, this); // not really a door instance :v
@@ -118,10 +68,12 @@ class DoorEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
-        if (entity.hasOwnProperty("doorLocked")) this.setDoorLocked(entity.doorLocked);
-        if (entity.hasOwnProperty("key")) this.setKey(entity.key);
-        if (entity.hasOwnProperty("open")) this.setOpen(entity.open);
         if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        DoorEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -163,6 +115,14 @@ class DoorEntity extends Entity {
             DoorEntity.doorEntityList[i].dispose();
         }
         DoorEntity.doorEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!DoorEntity.has(oldID)) {
+            return 1;
+        }
+        DoorEntity.set(newID, DoorEntity.get(oldID));
+        DoorEntity.remove(oldID);
         return 0;
     }
 }

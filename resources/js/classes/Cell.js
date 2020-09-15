@@ -4,8 +4,8 @@
 class Cell {
     /**
      * Creates a Cell
-     * @param  {string} id Unique ID, auto-generated if none given
-     * @param  {string} name Name
+     * @param {string} id Unique ID, auto-generated if none given
+     * @param {string} name Name
      */
     constructor(id = "", name = "") {
         id = Tools.filterID(id);
@@ -13,7 +13,7 @@ class Cell {
             id = Tools.genUUIDv4();
         }
         this.id = id;
-        this.name = null;
+        this.name = "";
         this.setName(name);
         this.cellType = CellTypeEnum.NONE;
         this.owner = null;
@@ -46,7 +46,6 @@ class Cell {
         this.hasBackloggedItems = false;
         this.meshIDs = new Set();
         this.collisionMeshIDs = new Set();
-        this.meshes = new Array();
         this.controllerIDs = new Set();
 
         Cell.set(this.id, this);
@@ -74,15 +73,12 @@ class Cell {
     getName() {
         return this.name;
     }
-    getSkyboxMaterial() {
-        return this.skyboxMaterial;
-    }
     getSkybox() {
-        return Game.skybox;
+        return this.skybox;
     }
-    setSkybox(skyboxMaterial) {
-        this.skyboxMaterial = skyboxMaterial;
-        Game.skybox.material = skyboxMaterial;
+    setSkybox(skybox) {
+        this.skybox = skybox;
+        return 0;
     }
 
     /**
@@ -119,87 +115,48 @@ class Cell {
     }
 
     addCollisionWall(...parameters) {
-        if (Game.playerCell == this) {
-            let mesh = Game.createCollisionWall(...parameters);
-            if (mesh instanceof BABYLON.AbstractMesh) {
-                this.collisionMeshIDs.add(mesh.id);
-                this.meshes.push(mesh);
-            }
-            return 0;
-        }
         this.backloggedCollisionWalls.push(parameters);
         this.hasBackloggedCollisionWalls = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     addCollisionPlane(...parameters) {
-        if (Game.playerCell == this) {
-            let mesh = Game.createCollisionPlane(...parameters);
-            if (mesh instanceof BABYLON.AbstractMesh) {
-                this.collisionMeshIDs.add(mesh.id);
-                this.meshes.push(mesh);
-            }
-            return 0;
-        }
+        this.backloggedCollisionPlanes.push(parameters);
+        this.hasBackloggedCollisionPlanes = true;
+        this.hasBackloggedAdditions = true;
+        return 1;
+    }
+    addCollisionPlaneByMesh(...parameters) {
         this.backloggedCollisionPlanes.push(parameters);
         this.hasBackloggedCollisionPlanes = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     addCollisionRamp(...parameters) {
-        if (Game.playerCell == this) {
-            let mesh = Game.createCollisionRamp(...parameters);
-            if (mesh instanceof BABYLON.AbstractMesh) {
-                this.collisionMeshIDs.add(mesh.id);
-                this.meshes.push(mesh);
-            }
-            return 0;
-        }
         this.backloggedCollisionRamps.push(parameters);
         this.hasBackloggedCollisionRamps = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     addMaterial(...parameters) {
-        if (Game.playerCell == this) {
-            Game.loadMaterial(...parameters);
-            return 0;
-        }
         this.backloggedMaterials.push(parameters);
         this.hasBackloggedMaterials = true;
         this.hasBackloggedAdditions = true;
     }
     /**
      * Creates a mesh from those stored in loadedMeshes
-     * @param  {string} id New ID for BABYLON.Mesh and EntityController
+     * @param  {string} id New ID for Mesh and EntityController
      * @param  {string} meshID String ID of Mesh to create
      * @param  {string} [materialID] String ID of Material to apply to Mesh
-     * @param  {BABYLON.Vector3} position Mesh position
-     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
-     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
+     * @param  {array} position Mesh position
+     * @param  {array} [rotation] Mesh rotation
+     * @param  {array} [scaling] Mesh scaling
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addMesh(...parameters) {
-        if (Game.debugMode) console.log(`Running Cell(${this.id}).addMesh(${parameters})`);
-        parameters = Game.filterCreateMesh(...parameters);
-        if (typeof parameters == "number") {
-            return 2;
-        }
-        this.meshIDs.add(parameters[1]);
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1])) {
-                let mesh = Game.createMesh(...parameters);
-                if (mesh instanceof BABYLON.AbstractMesh) {
-                    this.meshes.push(mesh);
-                }
-                return 0;
-            }
-            else {
-                Game.loadMesh(parameters[1]);
-            }
-        }
-        this.backloggedMeshes.push(parameters);
+    addMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        this.meshIDs.add(meshID);
+        this.backloggedMeshes.push([id, meshID, materialID, position, rotation, scaling, options]);
         this.hasBackloggedMeshes = true;
         this.hasBackloggedAdditions = true;
         return 1;
@@ -209,85 +166,51 @@ class Cell {
      * @param {string} id 
      * @param {object} meshOptions 
      * @param {string} material 
-     * @param {BABYLON.Vector3} position 
-     * @param {BABYLON.Vector3} rotation 
-     * @param {BABYLON.Vector3} scaling 
-     * @param {object} options 
+     * @param {array} position 
+     * @param {array} [rotation] 
+     * @param {array} [scaling] 
+     * @param {object} [options] 
      */
-    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions":true}) {
+    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {"checkCollisions":true}) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         this.meshIDs.add(id);
-        if (Game.playerCell == this) {
-            if (!Game.hasLoadedMaterial(materialID)) {
-                if (Game.hasAvailableTexture(materialID)) {
-                    if (!Game.hasLoadedTexture(materialID)) {
-                        Game.loadTexture(materialID);
-                    }
-                    Game.loadMaterial(materialID, materialID);
-                }
-                else if (Game.hasLoadedTexture(materialID)) {
-                    Game.loadMaterial(materialID, materialID);
-                }
-                else {
-                    materialID = "missingMaterial";
-                }
-            }
-            let mesh = new BABYLON.MeshBuilder.CreateTiledGround(id, meshOptions, Game.scene);
-            if (mesh instanceof BABYLON.AbstractMesh) {
-                mesh.material = Game.getLoadedMaterial(materialID);
-                mesh.position.copyFrom(position);
-                mesh.rotation.copyFrom(rotation);
-                mesh.scaling.copyFrom(scaling);
-                mesh.checkCollisions = true;
-                this.meshIDs.add(id);
-                this.meshes.push(mesh);
-                Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
-            }
-            return 0;
-        }
         this.backloggedTiledMeshes.push([id, meshOptions, materialID, position, rotation, scaling, options]);
         this.hasBackloggedTiledMeshes = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
-    addTiledCeiling(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
-        scaling.y *= -1;
-        this.addTiledGround(id, meshOptions, materialID, position, rotation, scaling, options);
+    /**
+     * 
+     * @param {string} id 
+     * @param {object} meshOptions 
+     * @param {string} material 
+     * @param {array} position 
+     * @param {array} [rotation] 
+     * @param {array} [scaling] 
+     * @param {object} [options] 
+     */
+    addTiledCeiling(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options) {
+        scaling[1] *= -1;
+        return this.addTiledGround(id, meshOptions, materialID, position, rotation, scaling, options);
     }
     /**
      * Creates a mesh from those stored in loadedMeshes
-     * @param  {string} id New ID for BABYLON.Mesh and EntityController
+     * @param  {string} id New ID for Mesh and EntityController
      * @param  {string} meshID String ID of Mesh to create
      * @param  {string} [materialID] String ID of Material to apply to Mesh
-     * @param  {BABYLON.Vector3} position Mesh position
-     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
-     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
+     * @param  {array} position Mesh position
+     * @param  {array} [rotation] Mesh rotation
+     * @param  {array} [scaling] Mesh scaling
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addCollidableMesh(...parameters) {
-        parameters = Game.filterCreateMesh(...parameters);
-        if (typeof parameters == "number") {
-            return 2;
-        }
-        this.meshIDs.add(parameters[1]);
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1])) {
-                let mesh = Game.createCollidableMesh(...parameters);
-                if (mesh instanceof BABYLON.AbstractMesh) {
-                    this.meshes.push(mesh);
-                }
-                return 0;
-            }
-            else {
-                Game.loadMesh(parameters[1]);
-            }
-        }
-        parameters[6]["checkCollisions"] = true;
-        this.backloggedMeshes.push(parameters);
+    addCollidableMesh(id = "", meshID = "", materialID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        this.meshIDs.add(meshID);
+        options["checkCollisions"] = true;
+        this.backloggedMeshes.push([id, meshID, materialID, position, rotation, scaling, options]);
         this.hasBackloggedMeshes = true;
         this.hasBackloggedAdditions = true;
         return 1;
@@ -295,157 +218,105 @@ class Cell {
     /**
      * Creates a character mesh, and controller.
      * @param  {string} [id] Unique ID, auto-generated if none given
-     * @param  {CharacterEntity} characterEntity Character entity
-     * @param  {BABYLON.Vector3} position Position
-     * @param  {BABYLON.Vector3} [rotation] Rotation
-     * @param  {BABYLON.Vector3} [scaling] Scale
+     * @param  {CharacterEntity} entity Character entity
+     * @param  {array} position Position
+     * @param  {array} [rotation] Rotation
+     * @param  {array} [scaling] Scale
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addCharacter(...parameters) {
-        if (this.backloggedCharacters.indexOf(parameters[0]) != -1) {
+    addCharacter(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        if (this.backloggedCharacters.indexOf(id) != -1) {
             return 1;
         }
-        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
-            parameters = Game.filterCreateCharacterInstance(...parameters);
-        }
-        if (typeof parameters == "number" || !(parameters[1] instanceof CharacterEntity)) {
-            if (CharacterEntity.has(parameters[1])) {
-                parameters[1] = CharacterEntity.get(parameters[1]);
+        if (!(entity instanceof CharacterEntity)) {
+            if (CharacterEntity.has(entity)) {
+                entity = CharacterEntity.get(entity);
             }
             else {
                 return 2;
             }
         }
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
-                let controller = Game.createCharacterInstance(...parameters).getController();
-                this.controllerIDs.add(controller.id);
-                this.meshes.push(controller.getMesh());
-                return 0;
-            }
-            else {
-                Game.loadMesh(parameters[1].getMeshID());
-            }
-        }
-        this.backloggedCharacters.push(parameters);
+        this.backloggedCharacters.push([id, entity, position, rotation, scaling, options]);
         this.hasBackloggedCharacters = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     /**
-     * Creates a DoorController, DoorEntity, and BABYLON.InstancedMesh
+     * Creates a DoorController, DoorEntity, and InstancedMesh
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} [name] Name
      * @param  {object} [to] Future movement between cells
      * @param  {string} [meshID] Mesh ID
      * @param  {string} [materialID] Texture ID
-     * @param  {BABYLON.Vector3} position Position
-     * @param  {BABYLON.Vector3} [rotation] Rotation
-     * @param  {BABYLON.Vector3} [scaling] Scaling
+     * @param  {array} position Position
+     * @param  {array} [rotation] Rotation
+     * @param  {array} [scaling] Scaling
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addDoor(...parameters) {
-        if (this.backloggedDoors.indexOf(parameters[0]) != -1) {
+    addDoor(id = "", name = "", to, meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        if (this.backloggedDoors.indexOf(id) != -1) {
             return 1;
         }
-        if (typeof parameters[8] != "object" || !parameters[8].hasOwnProperty("filtered")) {
-            parameters = Game.filterCreateDoor(...parameters);
-        }
-        if (typeof parameters == "number") {
-            return 2;
-        }
-        this.meshIDs.add(parameters[3]);
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[3])) {
-                let controller = Game.createDoor(...parameters);
-                this.controllerIDs.add(controller.id);
-                this.meshes.push(controller.getMesh());
-                return 0;
-            }
-            else {
-                Game.loadMesh(parameters[3]);
-            }
-        }
-        this.backloggedDoors.push(parameters);
+        this.meshIDs.add(meshID);
+        this.backloggedDoors.push([id, name, to, meshID, materialID, position, rotation, scaling, options]);
         this.hasBackloggedDoors = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     /**
-     * Creates a FurnitureController, FurnitureEntity, and BABYLON.InstancedMesh
+     * Creates a FurnitureController, FurnitureEntity, and InstancedMesh
      * @param  {string} [id] Unique ID, auto-generated if none given
-     * @param  {FurnitureEntity} furnitureEntity Furniture entity
-     * @param  {BABYLON.Vector3} position Position
-     * @param  {BABYLON.Vector3} [rotation] Rotation
-     * @param  {BABYLON.Vector3} [scaling] Scaling
+     * @param  {FurnitureEntity} entity Furniture entity
+     * @param  {array} position Position
+     * @param  {array} [rotation] Rotation
+     * @param  {array} [scaling] Scaling
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addFurniture(...parameters) {
-        if (this.backloggedFurniture.indexOf(parameters[0]) != -1) {
+    addFurniture(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        if (this.backloggedFurniture.indexOf(id) != -1) {
             return 1;
         }
-        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
-            parameters = Game.filterCreateFurnitureInstance(...parameters);
-        }
-        if (typeof parameters == "number" || !(parameters[1] instanceof InstancedFurnitureEntity)) {
-            return 2;
-        }
-        this.meshIDs.add(parameters[1].getMeshID());
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
-                let controller = Game.createFurnitureInstance(...parameters);
-                this.controllerIDs.add(controller.id);
-                this.meshes.push(controller.getMesh());
-                return 0;
+        if (!(entity instanceof FurnitureEntity)) {
+            if (FurnitureEntity.has(entity)) {
+                entity = FurnitureEntity.get(entity);
             }
             else {
-                Game.loadMesh(parameters[1].getMeshID());
+                return 2;
             }
         }
-        this.backloggedFurniture.push(parameters);
+        this.meshIDs.add(entity.meshID);
+        this.backloggedFurniture.push([id, entity, position, rotation, scaling, options]);
         this.hasBackloggedFurniture = true;
         this.hasBackloggedAdditions = true;
         return 1;
     }
     /**
-     * Creates a LightingEntity, LightingEntity, and BABYLON.InstancedMesh
+     * Creates a LightingEntity, LightingEntity, and InstancedMesh
      * @param {string} [id] Unique ID, auto-generated if none given
-     * @param {string} name Name
-     * @param {string} meshID Mesh ID
-     * @param {string} [materialID] Texture ID
-     * @param {number} [lightingType] IDK yet :v; TODO: this
-     * @param {BABYLON.Vector3} position Position
-     * @param {BABYLON.Vector3} [rotation] Rotation
-     * @param {BABYLON.Vector3} [scaling] Scaling
+     * @param {LightingEntity} entity Lighting entity
+     * @param {array} position Position
+     * @param {array} [rotation] Rotation
+     * @param {array} [scaling] Scaling
      * @param {object} [options] Options
      * @returns {number} Integer status code
      */
-    addLighting(...parameters) {
-        if (this.backloggedLighting.indexOf(parameters[0]) != -1) {
+    addLighting(id = "", entity = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        if (this.backloggedLighting.indexOf(id) != -1) {
             return 1;
         }
-        if (typeof parameters[8] != "object" || !parameters[8].hasOwnProperty("filtered")) {
-            parameters = Game.filterCreateLighting(...parameters);
-        }
-        if (typeof parameters == "number" || !(parameters[1] instanceof InstancedFurnitureEntity)) {
-            return 2;
-        }
-        this.meshIDs.add(parameters[2]);
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[2])) {
-                let controller = Game.createLighting(...parameters);
-                this.controllerIDs.add(controller.id);
-                this.meshes.push(controller.getMesh());
-                return 0;
+        if (!(entity instanceof LightingEntity)) {
+            if (LightingEntity.has(entity)) {
+                entity = LightingEntity.get(entity);
             }
             else {
-                Game.loadMesh(parameters[2]);
+                return 2;
             }
         }
-        this.backloggedLighting.push(parameters);
+        this.meshIDs.add(entity.meshID);
+        this.backloggedLighting.push([id, entity, position, rotation, scaling, options]);
         this.hasBackloggedLighting = true;
         this.hasBackloggedAdditions = true;
         return 1;
@@ -453,35 +324,26 @@ class Cell {
     /**
      * Places, or creates from an ItemEntity, an InstancedItemEntity in the world at the given position.
      * @param {string} [id] Unique ID, auto-generated if none given
-     * @param {(AbstractEntity|string)} abstractEntity Abstract entity; preferably an InstancedItemEntity
-     * @param {BABYLON.Vector3} position Position
-     * @param {BABYLON.Vector3} [rotation] Rotation
-     * @param {BABYLON.Vector3} [scaling] Scaling
+     * @param {(AbstractEntity|string)} entity Abstract entity; preferably an InstancedItemEntity
+     * @param {array} position Position
+     * @param {array} [rotation] Rotation
+     * @param {array} [scaling] Scaling
      * @param {object} [options] Options
      * @returns {number} Integer status code
      */
-    addItem(...parameters) {
-        if (this.backloggedItems.indexOf(parameters[0]) != -1) {
+    addItem(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        if (this.backloggedItems.indexOf(id) != -1) {
             return 1;
         }
-        if (typeof parameters[5] != "object" || !parameters[5].hasOwnProperty("filtered")) {
-            parameters = Game.filterCreateItemInstance(...parameters);
-        }
-        if (typeof parameters == "number" || !(parameters[1] instanceof InstancedItemEntity)) {
-            return 2;
-        }
-        if (Game.playerCell == this) {
-            if (Game.hasLoadedMesh(parameters[1].getMeshID())) {
-                let controller = Game.createItemInstance(...parameters);
-                this.controllerIDs.add(controller.id);
-                this.meshes.push(controller.getMesh());
-                return 0;
+        if (!(entity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(entity)) {
+                entity = AbstractEntity.get(entity);
             }
             else {
-                Game.loadMesh(parameters[1].getMeshID());
+                return 2;
             }
         }
-        this.backloggedItems.push(parameters);
+        this.backloggedItems.push([id, entity, position, rotation, scaling, options]);
         this.hasBackloggedItems = true;
         this.hasBackloggedAdditions = true;
         return 1;
@@ -570,9 +432,6 @@ class Cell {
             }
         }
     }
-    getMeshes() {
-        return this.meshes;
-    }
     getMeshIDs() {
         return this.meshIDs;
     }
@@ -586,11 +445,67 @@ class Cell {
         return new Set([cell.getMeshIDs()].filter(meshID => this.meshIDs.has(meshID)));
     }
 
-    updateSkybox() {
-        if (this.skybox instanceof BABYLON.AbstractMesh && this.skybox.material instanceof BABYLON.SkyMaterial) {
-            this.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
-            this.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
+    stringify() {
+        return JSON.stringify(this.objectify());
+    }
+    objectify() {
+        let obj = {};
+        for (let property in this) {
+            obj[property] = this._objectifyProperty(this[property]);
         }
+        return obj;
+    }
+    _objectifyProperty(property) {
+        let obj = null;
+        if (property instanceof AbstractEntity) {
+            obj = property.id;
+        }
+        else if (property instanceof ActionData) {
+            obj = property.action;
+        }
+        else if (property instanceof Cell) {
+            obj = property.id;
+        }
+        else if (property instanceof CharacterClass) {
+            obj = property.id;
+        }
+        else if (property instanceof Container) {
+            obj = this._objectifyProperty(property.items);
+        }
+        else if (property instanceof Cosmetic) {
+            obj = property.id;
+        }
+        else if (property instanceof Dialogue) {
+            obj = property.id;
+        }
+        else if (property instanceof Effect) {
+            obj = property.id;
+        }
+        else if (property instanceof Spell) {
+            obj = property.id;
+        }
+        else if (property instanceof Set) {
+            obj = [];
+            property.forEach((entry) => {
+                obj.push(this._objectifyProperty(entry));
+            });
+        }
+        else if (property instanceof Array) {
+            obj = [];
+            property.forEach((entry) => {
+                obj.push(this._objectifyProperty(entry));
+            });
+        }
+        else if (property instanceof Object) {
+            obj = {};
+            for (let entry in property) {
+                obj[entry] = this._objectifyProperty(property[entry]);
+            }
+        }
+        else {
+            obj = property;
+        }
+        return obj;
     }
 
     dispose() {
@@ -602,15 +517,17 @@ class Cell {
     }
 
     static initialize() {
+        Cell.debugMode = false;
         Cell.cellList = {};
     }
     static createLimbo() {
         let limbo = new Cell("limbo", "Limbo");
         limbo.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
-        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, 512), new BABYLON.Vector3(512, 512, 512));
-        limbo.addCollisionWall(new BABYLON.Vector3(512, -512, 512), new BABYLON.Vector3(512, 512, -512));
-        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(512, 512, -512));
-        limbo.addCollisionWall(new BABYLON.Vector3(-512, -512, -512), new BABYLON.Vector3(-512, 512, 512));
+        limbo.addCollisionWall([-512, -512, 512], [512, 512, 512]);
+        limbo.addCollisionWall([512, -512, 512], [512, 512, -512]);
+        limbo.addCollisionWall([-512, -512, -512], [512, 512, -512]);
+        limbo.addCollisionWall([-512, -512, -512], [-512, 512, 512]);
+        return 0;
     }
     static get(id) {
         if (Cell.has(id)) {
@@ -648,3 +565,4 @@ class Cell {
     }
 }
 Cell.initialize();
+Cell.createLimbo();

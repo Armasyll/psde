@@ -12,7 +12,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.debugMode) console.info(`with ${keyboardEvent.keyCode}`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             if (Game.debugMode) {console.error("Player, its controller, or its mesh don't exist"); console.groupEnd();}
             return 2;
         }
@@ -98,14 +98,14 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.showInventoryCode : {
-                Game.gui.inventoryMenu.updateWith(Game.player);
+                Game.gui.inventoryMenu.set(Game.playerEntityID);
                 Game.gui.showMenu(true);
                 Game.gui.inventoryMenu.show();
                 Game.gui.pointerRelease();
                 break;
             }
             case AbstractControls.showCharacterCode : {
-                Game.gui.characterStats.updateWith(Game.player);
+                Game.gui.characterStats.set(Game.playerEntityID);
                 Game.gui.showMenu(true);
                 Game.gui.characterStats.show();
                 Game.gui.pointerRelease();
@@ -144,7 +144,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.debugMode) console.info(`with ${keyboardEvent.keyCode}`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             if (Game.debugMode) {console.error("Player, its controller, or its mesh don't exist"); console.groupEnd();}
             return 2;
         }
@@ -207,7 +207,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onMouseDown(mouseEvent) {
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (mouseEvent.button == 0) {
@@ -220,7 +220,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onMouseUp(mouseEvent) {
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (mouseEvent.button == 0) {
@@ -254,7 +254,7 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.debugMode) console.log(`Running CharacterControls::onContext(${mouseEvent.button})`);
-        if (!(Game.player instanceof CharacterEntity) || !Game.player.hasController() || !Game.playerController.hasMesh()) {
+        if (!Game.hasPlayerController() || !Game.playerController.hasMesh()) {
             return 2;
         }
         if (Game.playerController.hasTarget()) {
@@ -283,7 +283,7 @@ class CharacterControls extends AbstractControls {
         CharacterControls.useTriggered = true;
         clearTimeout(CharacterControls.useTimeoutFunction);
         if (Date.now() - CharacterControls.usePressTime <= 750 && Game.playerController.hasTarget()) {
-            Game.doEntityActionFunction(Game.playerController.getTarget().getEntity(), Game.player);
+            Game.doEntityActionFunction(Game.playerController.getTarget(), Game.playerController);
         }
         else {
             Game.gui.clearActionsMenu();
@@ -301,7 +301,7 @@ class CharacterControls extends AbstractControls {
         }
         CharacterControls.attackTriggered = true;
         if (Game.playerController.hasTarget()) {
-            Game.actionAttackFunction(Game.playerController.getTarget().getEntity(), Game.player);
+            Game.actionAttackFunction(Game.playerController.getTarget(), Game.playerController);
         }
         clearTimeout(CharacterControls.attackTimeoutFunction);
         let pressTime = Date.now() - CharacterControls.attackPressTime;

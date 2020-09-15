@@ -3,22 +3,23 @@
  */
 class CreatureController extends EntityController {
     /**
-     * 
+     * Creates a Creature Controller
      * @param {string} id 
      * @param {BABYLON.AbstractMesh} mesh 
-     * @param {CretureEntity} entity 
+     * @param {object} entityObject 
      */
-    constructor(id, mesh, entity) {
-        super(id, mesh, entity);
+    constructor(id = "", mesh = null, entityObject = {}) {
+        super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return;
+            return null;
         }
-        this.focus = undefined;
-        this.root = undefined;
+
+        this.focus = null;
+        this.root = null;
         this.targetRayLength = 2 * this.collisionMesh.scaling.y;
         this.targetRayLengthOverride = -1;
         this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
-        this.targetRayHelper = undefined;
+        this.targetRayHelper = null;
         this.grounded = false;
         this.jumping = false;
         this.falling = false;
@@ -60,10 +61,15 @@ class CreatureController extends EntityController {
 
         this.target = null;
 
+        this.offensiveStance = OffensiveStanceEnum.MARTIAL;
         this.updateTargetRay();
         CreatureController.set(this.id, this);
     }
 
+    populateFromEntity(entity) {
+        this.offensiveStance = entity.offensiveStance;
+        return 0;
+    }
     hasLookController() {
         if (!this.enabled) {
             return false;
@@ -436,13 +442,13 @@ class CreatureController extends EntityController {
         }
         let bone = this.getBone(boneID);
         if (!(position instanceof BABYLON.Vector3)) {
-            position = Tools.filterVector(position);
+            position = Tools.filterVector3(position);
         }
         if (!(rotation instanceof BABYLON.Vector3)) {
-            rotation = Tools.filterVector(rotation);
+            rotation = Tools.filterVector3(rotation);
         }
         if (!(scaling instanceof BABYLON.Vector3)) {
-            scaling = Tools.filterVector(scaling);
+            scaling = Tools.filterVector3(scaling);
         }
         if (scaling.equals(BABYLON.Vector3.Zero())) {
             scaling = BABYLON.Vector3.One();
@@ -718,10 +724,12 @@ class CreatureController extends EntityController {
         return this.removeTarget();
     }
 
+    updateID(newID) {
+        super.updateID(newID);
+        CreatureController.updateID(this.id, newID);
+        return 0;
+    }
     dispose() {
-        if (this == Game.player.getController()) {
-            return false;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         this.detachFromAllBones();
@@ -762,6 +770,14 @@ class CreatureController extends EntityController {
             CreatureController.creatureControllerList[i].dispose();
         }
         CreatureController.creatureControllerList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!CreatureController.has(oldID)) {
+            return 1;
+        }
+        CreatureController.set(newID, CreatureController.get(oldID));
+        CreatureController.remove(oldID);
         return 0;
     }
     static setDebugMode(debugMode) {

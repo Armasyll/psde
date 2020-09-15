@@ -1,13 +1,16 @@
+/**
+ * Equipment Entity
+ */
 class EquipmentEntity extends ItemEntity {
     /**
-     * Creats an EquipmentEntity
+     * Creates an Equipment Entity
      * @param  {string}  id Unique ID
      * @param  {string}  name Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID Image ID
+     * @param  {string}  [description] Description
+     * @param  {string}  [iconID] Image ID
      * @param  {ApparelSlotEnum}  equipmentSlot Apparel slot enum
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined, equipmentSlot = ApparelSlotEnum.NONE) {
+    constructor(id = "", name = "", description = "", iconID = "", equipmentSlot = ApparelSlotEnum.NONE) {
         super(id, name, description, iconID);
 
         this.equipmentSlot = ApparelSlotEnum.NONE;
@@ -32,11 +35,11 @@ class EquipmentEntity extends ItemEntity {
         return this.equipmentSlot;
     }
 
-    hasAbilityScoreRequirement(abilityScoreEnum = undefined) {
+    hasAbilityScoreRequirement(abilityScoreEnum = -1) {
         if (this.abilityRequirements.hasOwnProperty(abilityScoreEnum) || this.abilityRequirementsModifier.hasOwnProperty(abilityScoreEnum)) {
             return true;
         }
-        else if (abilityScoreEnum == undefined) {
+        else if (abilityScoreEnum == -1) {
             return Object.keys(this.abilityRequirements).length > 0;
         }
         return false;
@@ -92,7 +95,7 @@ class EquipmentEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.clone
      * @param  {string} id ID
-     * @return {EquipmentEntity} new EquipmentEntity
+     * @returns {EquipmentEntity} new EquipmentEntity
      */
     clone(id = "") {
         let clone = new EquipmentEntity(id, this.name, this.description, this.icon, this.equipmentSlot);
@@ -102,9 +105,9 @@ class EquipmentEntity extends ItemEntity {
     /**
      * Overrides ItemEntity.createInstance; not meant to be run.
      * @param  {string} id ID
-     * @return {InstancedEquipmentEntity} new InstancedEquipmentEntity
+     * @returns {InstancedEquipmentEntity} new InstancedEquipmentEntity
      */
-    createInstance(id = undefined) {
+    createInstance(id = "") {
         return new InstancedEquipmentEntity(id, this);
     }
     /**
@@ -138,6 +141,10 @@ class EquipmentEntity extends ItemEntity {
                 this.addDisadvantageOn(proficiencyEnum);
             }
         }
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
         return 0;
     }
     dispose() {

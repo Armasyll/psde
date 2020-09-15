@@ -10,9 +10,9 @@ class Cosmetic {
      * @param {string} [iconID] 
      * @param {string} meshID 
      * @param {string} materialID 
-     * @param {ApparelSlotEnum} equipmentSlot 
+     * @param {(ApparelSlotEnum|number)} equipmentSlot 
      */
-    constructor(id, name = "", description = "", iconID = "genericItemIcon", meshID = "", materialID = undefined, equipmentSlot = ApparelSlotEnum.HEAD) {
+    constructor(id = "", name = "", description = "", iconID = "genericItemIcon", meshID = "missingMesh", materialID = "missingMaterial", equipmentSlot = ApparelSlotEnum.HEAD) {
         id = Tools.filterID(id);
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
@@ -20,9 +20,9 @@ class Cosmetic {
         this.id = id;
         this.name = "";
         this.description = "";
-        this.icon = "";
-        this.meshID = "";
-        this.materialID = "";
+        this.iconID = "missingIcon";
+        this.meshID = "missingMesh";
+        this.materialID = "missingMaterial";
         this.equipmentSlot = ApparelSlotEnum.HEAD;
 
         this.setName(name);
@@ -50,36 +50,21 @@ class Cosmetic {
         return this.description;
     }
     setIcon(icon) {
-        if (Game.hasIcon(icon)) {
-            this.icon = icon;
-        }
-        else {
-            this.icon = "missingIcon";
-        }
+        this.iconID = icon;
         return this;
     }
     getIcon() {
-        return this.icon;
+        return this.iconID;
     }
     setMeshID(meshID) {
-        if (Game.hasLoadedMesh(meshID)) {
-            this.meshID = meshID;
-        }
-        else {
-            this.meshID = "missingMesh";
-        }
+        this.meshID = meshID;
         return this;
     }
     getMeshID() {
         return this.meshID;
     }
     setMaterialID(materialID) {
-        if (Game.hasLoadedMaterial(materialID)) {
-            this.materialID = materialID;
-        }
-        else {
-            this.materialID = "missingMaterial";
-        }
+        this.materialID = materialID;
         return this;
     }
     getMaterialID() {

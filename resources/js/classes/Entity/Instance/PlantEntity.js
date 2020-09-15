@@ -1,9 +1,17 @@
+/**
+ * Instanced Plant Entity
+ */
 class InstancedPlantEntity extends InstancedEntity {
-    constructor(id = undefined, entity = undefined) {
+    /**
+     * Creates an Instanced Plant Entity
+     * @param {string} id 
+     * @param {PlantEntity} entity 
+     */
+    constructor(id = "", entity = null) {
         super(id, entity);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         InstancedPlantEntity.set(this.id, this);
@@ -19,7 +27,11 @@ class InstancedPlantEntity extends InstancedEntity {
      * @return {InstancedPlantEntity} new InstancedPlantEntity
      */
     clone(id = "") {
+        if (!this.hasEntity()) {
+            return 2;
+        }
         let clone = new InstancedPlantEntity(id, this.entity, this.owner);
+        clone.assign(this);
         return clone;
     }
     assign(entity) {
@@ -27,6 +39,11 @@ class InstancedPlantEntity extends InstancedEntity {
             return 2;
         }
         super.assign(entity);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedPlantEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -66,6 +83,14 @@ class InstancedPlantEntity extends InstancedEntity {
             InstancedPlantEntity.instancedPlantEntityList[i].dispose();
         }
         InstancedPlantEntity.instancedPlantEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedPlantEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedPlantEntity.set(newID, InstancedPlantEntity.get(oldID));
+        InstancedPlantEntity.remove(oldID);
         return 0;
     }
 }

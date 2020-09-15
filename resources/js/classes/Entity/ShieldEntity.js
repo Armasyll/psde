@@ -1,12 +1,15 @@
+/**
+ * Shield Entity
+ */
 class ShieldEntity extends ClothingEntity {
     /**
-     * Creats Shield
-     * @param  {string}  id          Unique ID
-     * @param  {string}  name        Name
-     * @param  {string}  description Description
-     * @param  {string}  iconID      Image ID
+     * Creates a Shield Entity
+     * @param  {string}  id Unique ID
+     * @param  {string}  name Name
+     * @param  {string}  [description] 
+     * @param  {string}  [iconID] Icon ID
      */
-    constructor(id = undefined, name = undefined, description = undefined, iconID = undefined) {
+    constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID, ApparelSlotEnum.HANDS, ArmourPropertyEnum.SHIELDS);
         this.itemType = ItemEnum.SHIELDS;
 
@@ -16,9 +19,9 @@ class ShieldEntity extends ClothingEntity {
     /**
      * Overrides EquipmentEntity.clone
      * @param  {string} id ID
-     * @return {ShieldEntity} new ShieldEntity
+     * @returns {ShieldEntity} new ShieldEntity
      */
-    clone(id = undefined) {
+    clone(id = "") {
         let clone = new ShieldEntity(id, this.name, this.description, this.icon);
         clone.assign(this);
         return clone;
@@ -26,9 +29,9 @@ class ShieldEntity extends ClothingEntity {
     /**
      * Overrides ClothingEntity.createInstance
      * @param  {string} id ID
-     * @return {InstancedShieldEntity} new InstancedShieldEntity
+     * @returns {InstancedShieldEntity} new InstancedShieldEntity
      */
-    createInstance(id = undefined) {
+    createInstance(id = "") {
         return new InstancedShieldEntity(id, this);
     }
     /**
@@ -41,6 +44,11 @@ class ShieldEntity extends ClothingEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        ShieldEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -119,6 +127,14 @@ class ShieldEntity extends ClothingEntity {
         console.info(`ShieldEntity (${entity.getID()}) has been created.`);
         console.groupEnd();
         return entity;
+    }
+    static updateID(oldID, newID) {
+        if (!ShieldEntity.has(oldID)) {
+            return 1;
+        }
+        ShieldEntity.set(newID, ShieldEntity.get(oldID));
+        ShieldEntity.remove(oldID);
+        return 0;
     }
 }
 ShieldEntity.initialize();

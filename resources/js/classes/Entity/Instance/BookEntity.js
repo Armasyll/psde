@@ -1,9 +1,18 @@
+/**
+ * Instanced Book Entity
+ */
 class InstancedBookEntity extends InstancedItemEntity {
-    constructor(id = undefined, bookEntity = undefined, owner = undefined) {
-        super(id, bookEntity, owner);
+    /**
+     * Creates an Instanced Book Entity
+     * @param {string} id 
+     * @param {BookEntity} entity 
+     * @param {(CreatureEntity|null)} [owner] 
+     */
+    constructor(id = "", entity = null, owner = null) {
+        super(id, entity, owner);
         if (!(this.entity instanceof Entity)) {
             this.dispose();
-            return undefined;
+            return null;
         }
 
         InstancedBookEntity.set(this.id, this);
@@ -26,10 +35,13 @@ class InstancedBookEntity extends InstancedItemEntity {
      */
     clone(id = "") {
         if (!this.hasEntity()) {
-            return this;
+            return 2;
         }
         let clone = new InstancedBookEntity(id, this.entity, this.owner);
         clone.assign(this);
+        if (this.hasContainer()) {
+            clone.setContainer(this.container.clone(String(clone.id).concat("Container")));
+        }
         return clone;
     }
     assign(entity, verify = true) {
@@ -37,6 +49,11 @@ class InstancedBookEntity extends InstancedItemEntity {
             return 2;
         }
         super.assign(entity, verify);
+        return 0;
+    }
+    updateID(newID) {
+        super.updateID(newID);
+        InstancedBookEntity.updateID(this.id, newID);
         return 0;
     }
     dispose() {
@@ -76,6 +93,14 @@ class InstancedBookEntity extends InstancedItemEntity {
             InstancedBookEntity.instancedBookEntityList[i].dispose();
         }
         InstancedBookEntity.instancedBookEntityList = {};
+        return 0;
+    }
+    static updateID(oldID, newID) {
+        if (!InstancedBookEntity.has(oldID)) {
+            return 1;
+        }
+        InstancedBookEntity.set(newID, InstancedBookEntity.get(oldID));
+        InstancedBookEntity.remove(oldID);
         return 0;
     }
 }
