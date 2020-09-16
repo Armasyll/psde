@@ -200,8 +200,8 @@ class EntityLogic {
                 }
                 if (canOpen) {
                     target.setOpen(true);
+                    EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
                 }
-                EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
                 EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
                 break;
             }
