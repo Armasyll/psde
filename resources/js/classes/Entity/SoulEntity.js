@@ -266,7 +266,7 @@ class SoulEntity extends AbstractEntity {
         this.setDefaultAction(ActionEnum.LOOK);
         return 0;
     }
-    getDialogue() {
+    getDialogue(target = null) {
         return this.dialogue;
     }
 

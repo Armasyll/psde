@@ -770,15 +770,16 @@ class CreatureEntity extends Entity {
     }
 
     hasDialogue() {
-        return this.dialogue != null;
+        return this.dialogue instanceof Dialogue;
     }
     setDialogue(dialogue) {
-        if (dialogue instanceof Dialogue) {
-            dialogue = dialogue.id;
-        }
-        else if (Dialogue.has(dialogue)) {}
-        else {
-            return 2;
+        if (!(dialogue instanceof Dialogue)) {
+            if (Dialogue.has(dialogue)) {
+                dialogue = Dialogue.get(dialogue);
+            }
+            else {
+                return 2;
+            }
         }
         this.dialogue = dialogue;
         this.addAvailableAction(ActionEnum.TALK);
@@ -791,7 +792,7 @@ class CreatureEntity extends Entity {
         this.setDefaultAction(ActionEnum.LOOK);
         return 0;
     }
-    getDialogue() {
+    getDialogue(target = null) {
         return this.dialogue;
     }
 

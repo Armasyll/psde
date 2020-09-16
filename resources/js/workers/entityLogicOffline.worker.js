@@ -210,6 +210,17 @@ class EntityLogic {
                 break;
             }
             case "actionTalk": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (target == 1 || actor == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, false, callbackID);
+                    break;
+                }
+                if (!target.hasDialogue()) {
+                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, false, callbackID);
+                    break;
+                }
+                EntityLogic.gameWorkerPostMessage("actionTalk", 0, target.getDialogue(target).stringify(false, target, actor), callbackID);
                 break;
             }
             case "addAllClothing": {

@@ -1045,7 +1045,7 @@ class Game {
         }
     }
 
-    static importScene(file, callback = undefined) {
+    static importScene(file, parentCallbackID = null) {
         BABYLON.SceneLoader.ImportMesh(
             undefined,
             file.substr(0, file.lastIndexOf("/") + 1),
@@ -4823,6 +4823,78 @@ class Game {
         }
         return 0;
     }
+    static actionAttack(targetController = null, actorController = Game.playerController, weapon = null, parentCallbackID = null) {
+        return 0;
+    }
+    static actionClose(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
+        if (Game.debugMode) console.log(`Game.actionClose(${targetController.id}, ${actorController.id})`);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
+        Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        return 0;
+    }
+    static actionCloseResponse(targetController, actorController, response, callbackID) {
+        if (Game.debugMode) console.log(`Game.actionCloseResponse(${targetController.id}, ${actorController.id})`);
+        if (targetController instanceof DoorController) {
+            if (response === true) {
+                targetController.doClose();
+            }
+        }
+        return 0;
+    }
+    static actionConsume(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionDrop(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionEquip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionHold(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionLay(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionLook(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionOpen(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
+        if (Game.debugMode) console.log(`Game.actionOpen(${targetController.id}, ${actorController.id})`);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionOpenResponse);
+        Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        return 0;
+    }
+    static actionOpenResponse(targetController, actorController, response, callbackID) {
+        if (Game.debugMode) console.log(`Game.actionOpenResponse(${targetController.id}, ${actorController.id})`);
+        if (targetController instanceof DoorController) {
+            if (response === true) {
+                targetController.doOpen();
+            }
+        }
+        return 0;
+    }
+    static actionRead(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionRelease(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
+    static actionSit(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        return 0;
+    }
     static actionTake(targetController, actorController = Game.playerController, parentCallbackID = null) {
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
@@ -4836,8 +4908,8 @@ class Game {
         // TODO: actorController.play("grab");
         return 0;
     }
-    static actionTakeResponse(targetController, actorController, response, callbackID) {
-        Game.setHasRunCallback(callbackID, true);
+    static actionTakeResponse(targetController, actorController, response, parentCallbackID) {
+        Game.setHasRunCallback(parentCallbackID, true);
         if (!(actorController instanceof EntityController)) {
             if (EntityController.has(actorController)) {
                 actorController = EntityController.get(actorController);
@@ -4862,88 +4934,31 @@ class Game {
             // TODO: actorController.stop("grab");
             // TODO: actorController.play("grabRecoil");
         }
-        Game.removeCallback(callbackID);
+        Game.removeCallback(parentCallbackID);
         return 0;
     }
-    static actionAttack(targetController = null, actorController = Game.playerController, weapon = null, callbackID) {
-        return 0;
-    }
-    static actionDrop(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionClose(targetController = null, actorController = Game.playerController, parentCallbackID = undefined) {
+    static actionTalk(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
         if (targetController == 1 || actorController == 1) {
             return 1;
         }
-        if (Game.debugMode) console.log(`Game.actionClose(${targetController.id}, ${actorController.id})`);
+        if (Game.debugMode) console.log(`Game.actionTalk(${targetController.id}, ${actorController.id})`);
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
-        Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionTalkResponse);
+        Game.entityLogicWorkerPostMessage("actionTalk", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         return 0;
     }
-    static actionCloseResponse(targetController, actorController, response, callbackID) {
-        if (Game.debugMode) console.log(`Game.actionCloseResponse(${targetController.id}, ${actorController.id})`);
-        if (targetController instanceof DoorController) {
-            if (response === true) {
-                targetController.doClose();
-            }
-        }
+    static actionTalkResponse(targetController, actorController, response, parentCallbackID) {
+        console.log(response);
+        Game.gui.dialogue.set(response, targetController, actorController);
+        Game.gui.dialogue.show();
         return 0;
     }
-    static actionConsume(targetController = null, actorController = Game.playerController, callback = undefined) {
+    static actionUnequip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         return 0;
     }
-    static actionHold(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionEquip(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionUnequip(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionRelease(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionOpen(targetController = null, actorController = Game.playerController, parentCallbackID = undefined) {
-        targetController = Game.filterController(targetController);
-        actorController = Game.filterController(actorController);
-        if (targetController == 1 || actorController == 1) {
-            return 1;
-        }
-        if (Game.debugMode) console.log(`Game.actionOpen(${targetController.id}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionOpenResponse);
-        Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
-        return 0;
-    }
-    static actionOpenResponse(targetController, actorController, response, callbackID) {
-        if (Game.debugMode) console.log(`Game.actionOpenResponse(${targetController.id}, ${actorController.id})`);
-        if (targetController instanceof DoorController) {
-            if (response === true) {
-                targetController.doOpen();
-            }
-        }
-        return 0;
-    }
-    static actionUse(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionLook(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionRead(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionLay(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionSit(targetController = null, actorController = Game.playerController, callback = undefined) {
-        return 0;
-    }
-    static actionTalk(targetController = null, actorController = Game.playerController, callback = undefined) {
+    static actionUse(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         return 0;
     }
 
@@ -5256,7 +5271,7 @@ class Game {
      * @param {string} callbackID 
      * @param {function} callback 
      */
-    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), callbackID = "", callback = undefined) {
+    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), callbackID = "", parentCallbackID = null) {
         if (callbackID == null) {
             let areaMesh = Game.createAreaMesh(Tools.genUUIDv4(), shape, diameter, height, depth, position, rotation);
             let controllerIDs = [];
@@ -5602,6 +5617,17 @@ class Game {
             case "actionClose":
             case "actionOpen": {
                 Game.runCallback(callbackID, message);
+                break;
+            }
+            case "actionTalk": {
+                if (status == 0) {
+                    let json = JSON.parse(message);
+                    Game.runCallback(callbackID, json);
+                }
+                else {
+                    Game.callbacks[callbackID]["hasRun"] = true;
+                    Game.callbacks[callbackID]["status"] = 2;
+                }
                 break;
             }
             case "createCharacterEntity":

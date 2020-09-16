@@ -137,63 +137,59 @@ class DialogueGameGUI {
         return DialogueGameGUI.controller;
     }
     static show() {
-        if (Game.debugMode) console.log("Running DialogueGameGUI::show");
+        if (Game.debugMode) console.log("Running DialogueGameGUI.show()");
         Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
         GameGUI.pointerRelease();
         DialogueGameGUI.controller.isVisible = true;
         DialogueGameGUI.isVisible = true;
     }
     static hide() {
-        if (Game.debugMode) console.log("Running DialogueGameGUI::hideDialogueMenu");
+        if (Game.debugMode) console.log("Running DialogueGameGUI.hideDialogueMenu()");
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         GameGUI.pointerLock();
         DialogueGameGUI.controller.isVisible = false;
         DialogueGameGUI.isVisible = false;
     }
-    static setDialogue(dialogue, them, you = Game.player) {
-        if (Game.debugMode) console.log("Running DialogueGameGUI::setDialogue");
+    static set(dialogue = null, target = null, actor = Game.playerController) {
+        if (dialogue.className != "Dialogue") {
+            return 2;
+        }
+        DialogueGameGUI.setDialogue(dialogue, target, actor);
+        return 0;
+    }
+    static setDialogue(dialogue = null, target = null, actor = Game.playerController) {
+        if (Game.debugMode) console.log("Running DialogueGameGUI.setDialogue()");
         DialogueGameGUI.clear();
-        if (!(dialogue instanceof Dialogue)) {
-            dialogue = Dialogue.get(dialogue);
-            if (!(dialogue instanceof Dialogue)) {
-                return 2;
-            }
+        if (dialogue.className != "Dialogue") {
+            return 2;
         }
-        if (!(them instanceof AbstractEntity)) {
-            if (InstancedEntity.has(them)) {
-                them = InstancedEntity.get(them)
-            }
-            else if (Entity.has(them)) {
-                them = Entity.get(them);
+        if (!(target instanceof EntityController)) {
+            if (EntityController.has(target)) {
+                target = EntityController.get(target)
             }
             else {
                 return 2;
             }
         }
-        if (!(you instanceof AbstractEntity)) {
-            if (InstancedEntity.has(you)) {
-                you = InstancedEntity.get(you)
-            }
-            else if (Entity.has(you)) {
-                you = Entity.get(you);
+        if (!(actor instanceof EntityController)) {
+            if (EntityController.has(actor)) {
+                actor = EntityController.get(actor)
             }
             else {
                 return 2;
             }
         }
-        DialogueGameGUI.setTitle(dialogue.getTitle());
-        let bodyString = dialogue.getText(them, you);
+        DialogueGameGUI.setTitle(dialogue.title);
+        let bodyString = dialogue.text;
         if (typeof bodyString == "function") {
             DialogueGameGUI.setBody(bodyString);
         }
         else {
             DialogueGameGUI.setBody(bodyString);
         }
-        if (dialogue.hasOptions()) {
-            for (let dialogueOption in dialogue.getOptions()) {
-                if (dialogue.getOptions()[dialogueOption].getCondition(them, you)) {
-                    DialogueGameGUI.addOption(dialogue.getOptions()[dialogueOption], them, you, true);
-                }
+        if (Object.keys(dialogue.options) > 0) {
+            for (let option in dialogue.options) {
+                DialogueGameGUI.addOption(dialogue.options[option], target, actor, true);
             }
         }
     }
@@ -212,18 +208,18 @@ class DialogueGameGUI {
     static clearBody() {
         DialogueGameGUI.setBody("");
     }
-    static addOption(dialogueOption, them, you = Game.player) {
-        if (!(dialogueOption instanceof DialogueOption)) {
-            return undefined;
+    static addOption(dialogueOption = null, target, actor = Game.playerController) {
+        if (dialogue.className != "Dialogue") {
+            return 2;
         }
-        if (DialogueGameGUI.dialogueOptions.length > 7 || DialogueGameGUI.dialogueOptions.hasOwnProperty(dialogueOption.getDialogue().getID())) {
-            return false;
+        if (DialogueGameGUI.dialogueOptions.length > 7 || DialogueGameGUI.dialogueOptions.hasOwnProperty(dialogueOption.dialogue.id)) {
+            return 1;
         }
-        let button = GameGUI.createSimpleButton(dialogueOption.getDialogue().getID(), dialogueOption.getTitle());
+        let button = GameGUI.createSimpleButton(dialogueOption.dialogue.id, dialogueOption.title);
         button.width = GameGUI.getFontSize(13);
         button.height = GameGUI.getFontSize(2);
         button.onPointerUpObservable.add(function() {
-            DialogueGameGUI.setDialogue(dialogueOption.getDialogue(), them, you);
+            DialogueGameGUI.setDialogue(dialogueOption.dialogue, target, actor);
         });
         if (DialogueGameGUI.dialogueOptions.length > 5) {
             DialogueGameGUI.optionsContainer.children[2].addControl(button);
@@ -238,13 +234,13 @@ class DialogueGameGUI {
         return true;
     }
     static removeOption(dialogueOption) {
-        if (!(dialogueOption instanceof DialogueOption)) {
-            return false;
+        if (dialogue.className != "Dialogue") {
+            return 2;
         }
         for (let i = 0; i < DialogueGameGUI.optionsContainer.children.length; i++) {
             for (let j = DialogueGameGUI.optionsContainer.children[i].children.length; j >= 0; j--) {
                 if (DialogueGameGUI.optionsContainer.children[i].children[j] instanceof BABYLON.GUI.Container) {
-                    if (DialogueGameGUI.optionsContainer.children[i].children[j].id == dialogueOption.getID()) {
+                    if (DialogueGameGUI.optionsContainer.children[i].children[j].id == dialogueOption.id) {
                         DialogueGameGUI.optionsContainer.children[i].children[j].dispose();
                     }
                 }

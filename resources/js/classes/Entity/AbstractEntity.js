@@ -866,9 +866,7 @@ class AbstractEntity {
         else if (property instanceof Dialogue) {
             obj = {
                 "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
+                "name":property.getTitle(),
                 "className":property.getClassName()
             };
         }

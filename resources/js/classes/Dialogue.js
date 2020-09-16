@@ -6,13 +6,12 @@ class Dialogue {
      * Creates a Dialogue
      * @param {string} id       Unique ID
      * @param {string} title    Title
-     * @param {string} text     String, or Function, with the parameters _them and _you, that returns a String
-     * @param {...Dialogue} _options  Dialogue, Dialogue and Function array, or a Dialogue, Title, and Function array, with the function returning true or false deciding whether or not the Dialogue is shown.
+     * @param {string} text     String, or Function, with the parameters 'them' and 'you', that returns a String
      * @returns {Dialogue}  Dialogue
      * @example new Dialogue("exampleA", "Example A", "This is a test!")
      * @example new Dialogue("exampleB", "Example B", "This is another test!")
      * @example new Dialogue("exampleC", "Example C", "Yet another test!", ["exampleA", function(){return true;}], exampleB, ["exampleB", "Overrides ExampleB Title", function(){return (1 == 1 ? true : false);}])
-     * @example new Dialogue("exampleD", "Example D", function(_them, _you) {return `Last example, ${_you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
+     * @example new Dialogue("exampleD", "Example D", function('them', 'you') {return `Last example, ${you.getFullName()}, I swear!`;}, "exampleA", "exampleB", "exampleC")
      */
     constructor(id = "", title = "", text = "") {
         id = Tools.filterID(id);
@@ -26,11 +25,8 @@ class Dialogue {
         this.id = id;
         this.title = "";
         this.text = "";
-        this.textType = 0;
         this.options = {};
-        this.optionsCount = 0;
         this.parentOptions = {};
-        this.parentOptionsCount = 0;
         this.enabled = true;
 
         this.setTitle(title);
@@ -41,33 +37,27 @@ class Dialogue {
     getID() {
         return this.id;
     }
-    setTitle(title) {
+    setTitle(title = "") {
         title = Tools.filterName(title);
         if (typeof title != "string") {
             title = "";
         }
         this.title = title;
-        return this;
+        return 0;
     }
     getTitle() {
         return this.title;
     }
-    setText(text) {
-        if (typeof text == "string") {
+    setText(text = "") {
+        if (typeof text == "function") {
             this.text = text;
-            this.textType = 0;
-        }
-        else if (typeof text == "function") {
-            this.text = text;
-            this.textType = 1;
         }
         else {
-            this.text = "";
-            this.textType = 0;
+            this.text = String(text);
         }
-        return this;
+        return 0;
     }
-    getText(them = undefined, you) {
+    getText(them = null, you = null) {
         if (typeof this.text == "string") {
             return this.text;
         }
@@ -77,7 +67,7 @@ class Dialogue {
                     them = Entity.get(them);
                 }
                 else {
-                    them = undefined;
+                    them = null;
                 }
             }
             if (!(you instanceof AbstractEntity)) {
@@ -87,74 +77,82 @@ class Dialogue {
             }
             return this.text(them, you);
         }
-        else {
-            return "";
-        }
-    }
-    /**
-     * Returns a numerical value representing this dialogue's type of text.
-     * @return {number} 0: String, 1: Function.
-     */
-    getTextType() {
-        return this.textType || 0;
+        return "";
     }
     hasOptions() {
-        return this.optionsCount > 0;
+        return Object.keys(this.options).length > 0;
     }
     getOptions() {
         return this.options;
     }
-    setOption(id = undefined, dialogue, title, condition) {
+    setOption(id = "", dialogue = null, title = null, condition = null) {
         let dialogueOption = new DialogueOption(id, dialogue, title, condition);
         if (!(dialogueOption instanceof DialogueOption)) {
-            return undefined;
+            return 2;
         }
         this.options[dialogueOption.getID()] = dialogueOption;
-        this.optionsCount += 1;
-        return dialogueOption;
+        return 0;
     }
-    removeOption(dialogueOption) {
+    removeOption(dialogueOption = null) {
         if (dialogueOption instanceof DialogueOption) {
             dialogueOption = dialogueOption.getID();
         }
         dialogueOption = Tools.filterID(dialogueOption);
         if (!(this.options.hasOwnProperty(dialogueOption))) {
-            return true;
+            return 0;
         }
         if (this.options[dialogueOption].getDialogue() instanceof Dialogue) {
             this.options[dialogueOption].getDialogue().removeParentOption(dialogueOption);
         }
         this.options[dialogueOption].dispose();
         delete this.options[dialogueOption];
-        this.optionsCount -= 1;
-        return true;
+        return 0;
     }
-    setParentOption(dialogueOption) {
+    setParentOption(dialogueOption = null) {
         if (!(dialogueOption instanceof DialogueOption)) {
-            return undefined;
+            return 2;
         }
         this.parentOptions[dialogueOption.getID()] = dialogueOption;
-        this.parentOptionsCount += 1;
+        return 0;
     }
-    removeParentOption(dialogueOption) {
+    removeParentOption(dialogueOption = null) {
         if (dialogueOption instanceof DialogueOption) {
             dialogueOption = dialogueOption.getID();
         }
         dialogueOption = Tools.filterID(dialogueOption);
         if (!(this.parentOptions.hasOwnProperty(dialogueOption))) {
-            return true;
+            return 0;
         }
         this.parentOptions[dialogueOption].dispose();
         delete this.parentOptions[dialogueOption];
-        this.parentOptionsCount -= 1;
-        return true;
+        return 0;
+    }
+
+    stringify(minify = false, target = null, actor = null) {
+        return JSON.stringify(this.objectify(target, actor));
+    }
+    objectify(target = null, actor = null) {
+        let obj = {};
+        obj["id"] = this.id;
+        obj["title"] = this.title;
+        obj["text"] = this.getText(target, actor);
+        obj["options"] = {};
+        for (let option in this.options) {
+            obj["options"][option] = this.options[option].objectify();
+        }
+        obj["parentOptions"] = {};
+        for (let option in this.parentOptions) {
+            obj["parentOptions"][option] = this.parentOptions[option].objectify();
+        }
+        obj["className"] = this.getClassName();
+        return obj;
     }
     isEnabled() {
         return this.enabled == true;
     }
     setEnabled(isEnabled = true) {
         this.enabled = (isEnabled == true);
-        return this;
+        return 0;
     }
     dispose() {
         this.enabled = false;
@@ -206,15 +204,15 @@ class Dialogue {
 }
 Dialogue.initialize();
 class DialogueOption {
-    constructor(id = undefined, dialogue, title = undefined, condition = undefined) {
+    constructor(id = "", dialogue = null, title = null, condition = null) {
         id = Tools.filterID(id);
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
         }
         this.id = id;
-        this.dialogue = undefined;
-        this.title = undefined;
-        this.condition = undefined;
+        this.dialogue = null;
+        this.title = null;
+        this.condition = null;
         this.setDialogue(dialogue);
         if (typeof title == "string") {
             this.setTitle(title);
@@ -241,7 +239,7 @@ class DialogueOption {
         }
         this.dialogue = dialogue;
         this.dialogue.setParentOption(this);
-        return this;
+        return 0;
     }
     getDialogue() {
         return this.dialogue;
@@ -254,43 +252,62 @@ class DialogueOption {
         else {
             this.title = "";
         }
-        return this;
+        return 0;
     }
     getTitle() {
         return this.title;
     }
     setCondition(condition) {
         if (!(this.dialogue instanceof Dialogue)) {
-            return this;
+            return 2;
         }
         if (typeof condition == "function") {
             this.condition = condition;
         }
         else {
-            this.condition = undefined;
+            this.condition = null;
         }
-        return this;
+        return 0;
     }
-    getCondition(them = undefined, you = undefined) {
+    getCondition(them = null, you = null) {
         if (typeof this.condition == "function") {
             return this.condition(them, you);
         }
-        else {
-            return true;
+        return true;
+    }
+
+    stringify() {
+        return JSON.stringify(this.objectify);
+    }
+    objectify() {
+        let obj = {};
+        obj["id"] = this.id;
+        if (this.dialogue instanceof Dialogue) {
+            obj["dialogue"] = this.dialogue.id;
         }
+        else {
+            obj["dialogue"] = null;
+        }
+        obj["title"] = this.title;
+        obj["condition"] = this.condition;
+        obj["className"] = this.getClassName();
+        return obj;
     }
     isEnabled() {
         return this.enabled == true;
     }
     setEnabled(isEnabled = true) {
         this.enabled = (isEnabled == true);
-        return this;
+        return 0;
     }
     dispose() {
         this.enabled = false;
         delete this.condition;
         this.dialogue.removeOption(this);
         return undefined;
+    }
+    getClassName() {
+        return "DialogueOption";
     }
 
     static createFromArray(oArray) {
