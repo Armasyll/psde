@@ -74,6 +74,9 @@ class Dialogue {
                 if (Entity.has(you)) {
                     you = Entity.get(you);
                 }
+                else {
+                    you = null;
+                }
             }
             return this.text(them, you);
         }
