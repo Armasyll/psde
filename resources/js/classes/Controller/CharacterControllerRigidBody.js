@@ -187,12 +187,15 @@ class CharacterControllerRigidBody extends CharacterController {
             if (Game.useControllerGroundRay) {
                 this.updateGroundRay();
                 let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
-                    if (mesh.isPickable && mesh.checkCollisions && mesh != this.collisionMesh) {
+                    if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
                         return true;
                     }
                     return false;
                 });
                 if (hit.hit) {
+                    if (hit.pickedMesh.id == "wall") {
+                        console.log(hit.pickedMesh);
+                    }
                     if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
                         this.intendedMovement.y = 0;
                     }

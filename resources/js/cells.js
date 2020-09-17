@@ -28,7 +28,6 @@ apartmentCell.addTiledGround("commonsFloor01a", {xmin:0, zmin:0, xmax: 4, zmax: 
 apartmentCell.addTiledGround("commonsFloor01b", {xmin:0, zmin:0, xmax: 10, zmax: 10, subdivisions: {w:10, h:10}}, "woodenFloorDark26", [5, 0, -27]);
 apartmentCell.addTiledGround("commonsFloor01c", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "woodenFloorDark26", [-1, 0, -27]);
 apartmentCell.addTiledGround("commonsFloor01d", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "woodenFloorDark26", [-1, 0, -19]);
-apartmentCell.addCollisionPlane([-1, -27], [16, 1]);
 
 apartmentCell.addTiledCeiling("ceilingMesh01", {xmin:0, zmin:0, xmax: 14, zmax: 28, subdivisions: {w:14, h:28}}, "greenWallpaper", [1, 2.9, -27]);
 apartmentCell.addTiledCeiling("ceilingMesh01b", {xmin:0, zmin:0, xmax: 2, zmax: 20, subdivisions: {w:2, h:20}}, "greenWallpaper", [-1, 2.9, -19]);
@@ -385,7 +384,7 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlain
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, 0], [0, 270, 0]);
 
 // Kyle's Apartment
-apartmentCell.addCollisionPlane([5, -27], [15, -13], 3);
+//apartmentCell.addCollisionPlane([5, -27], [15, -13], 3);
 
 // Third Floor Hallway
 apartmentCell.addCollisionWall([-1, 6, -13], [3, 9, -13]); // Front hallway wall

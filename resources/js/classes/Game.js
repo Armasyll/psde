@@ -2099,8 +2099,12 @@ class Game {
      * @param {BABYLON.Vector3} end 
      * @param {number} yRotation 
      */
-    static createCollisionWall(start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
-        if (Game.debugMode) console.log("Running Game.createCollisionWallX");
+    static createCollisionWall(id = "", start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
+        if (Game.debugMode) console.log("Running Game.createCollisionWall");
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = String("wall-").concat(Tools.genUUIDv4());
+        }
         if (yRotation != 0 && Tools.isInt(yRotation)) {
             yRotation = BABYLON.Tools.ToRadians(yRotation);
         }
@@ -2118,7 +2122,7 @@ class Game {
         let xPosition = (start.x + end.x) / 2;
         let yPosition = (start.y + end.y) / 2;
         let zPosition = (start.z + end.z) / 2;
-        let wall = BABYLON.MeshBuilder.CreateBox("wall", { "height": end.y - start.y, "depth": 0.125, "width": wallWidth }, Game.scene);
+        let wall = BABYLON.MeshBuilder.CreateBox(id, { "height": end.y - start.y, "depth": 0.125, "width": wallWidth }, Game.scene);
         wall.material = Game.loadedMaterials["collisionMaterial"];
         wall.position.set(xPosition, yPosition, zPosition);
         wall.rotation.y = yRotation;
@@ -2139,8 +2143,12 @@ class Game {
      * @param {(BABYLON.Vector2|Array)} end 
      * @param {number} yPosition 
      */
-    static createCollisionPlane(start = BABYLON.Vector2.Zero(), end = BABYLON.Vector2.One(), yPosition = 0) {
+    static createCollisionPlane(id = "", start = BABYLON.Vector2.Zero(), end = BABYLON.Vector2.One(), yPosition = 0) {
         if (Game.debugMode) console.log("Running Game.createCollisionPlane");
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = String("plane-").concat(Tools.genUUIDv4());
+        }
         if (start instanceof BABYLON.AbstractMesh || typeof start == "string") {
             return Game.createCollisionPlaneByMesh(start);
         }
@@ -2161,7 +2169,7 @@ class Game {
         let xPosition = (start.x + end.x) / 2;
         yPosition -= 0.06125;
         let zPosition = (start.y + end.y) / 2;
-        let floor = BABYLON.MeshBuilder.CreateBox("wall", { "height": 0.125, "depth": depth, "width": width }, Game.scene);
+        let floor = BABYLON.MeshBuilder.CreateBox(id, { "height": 0.125, "depth": depth, "width": width }, Game.scene);
         floor.material = Game.loadedMaterials["collisionMaterial"];
         floor.position.set(xPosition, yPosition, zPosition);
         if (Game.physicsEnabled) {
