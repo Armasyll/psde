@@ -151,13 +151,6 @@ class DialogueGameGUI {
         DialogueGameGUI.isVisible = false;
     }
     static set(dialogue = null, target = null, actor = Game.playerController) {
-        if (dialogue.className != "Dialogue") {
-            return 2;
-        }
-        DialogueGameGUI.setDialogue(dialogue, target, actor);
-        return 0;
-    }
-    static setDialogue(dialogue = null, target = null, actor = Game.playerController) {
         if (Game.debugMode) console.log("Running DialogueGameGUI.setDialogue()");
         DialogueGameGUI.clear();
         if (dialogue.className != "Dialogue") {
@@ -219,7 +212,7 @@ class DialogueGameGUI {
         button.width = GameGUI.getFontSize(13);
         button.height = GameGUI.getFontSize(2);
         button.onPointerUpObservable.add(function() {
-            DialogueGameGUI.setDialogue(dialogueOption.dialogue, target, actor);
+            DialogueGameGUI.set(dialogueOption.dialogue, target, actor);
         });
         if (DialogueGameGUI.dialogueOptions.length > 5) {
             DialogueGameGUI.optionsContainer.children[2].addControl(button);

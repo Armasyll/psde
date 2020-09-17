@@ -17,7 +17,7 @@ class DialogueHTMLGUI {
     static hide() {
         
     }
-    static setDialogue() {
+    static set() {
         
     }
     static setTitle() {

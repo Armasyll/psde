@@ -4958,7 +4958,6 @@ class Game {
         return 0;
     }
     static actionTalkResponse(targetController, actorController, response, parentCallbackID) {
-        console.log(response);
         Game.gui.dialogue.set(response, targetController, actorController);
         Game.gui.dialogue.show();
         return 0;
