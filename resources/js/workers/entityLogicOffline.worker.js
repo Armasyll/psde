@@ -547,7 +547,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("setDialogue", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(true, targetEntity, actorEntity), callbackID);
                 }
                 break;
             }

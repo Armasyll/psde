@@ -221,7 +221,6 @@ class DialogueGameGUI {
         button.width = GameGUI.getFontSize(13);
         button.height = GameGUI.getFontSize(2);
         button.onPointerUpObservable.add(function() {
-            //DialogueGameGUI.set(dialogueOption.dialogue, target, actor);
             Game.setDialogue(dialogueOption.dialogue, target, actor);
         });
         if (DialogueGameGUI.dialogueOptions.length > 5) {

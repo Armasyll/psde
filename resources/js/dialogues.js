@@ -46,13 +46,23 @@ new Dialogue(
 new Dialogue(
     "rinehartTakeChocolate",
     "Steal Giant Toblerone",
-    function(_them, _you) {
-        var _item = _them.getItem("mountainChocolateBar");
-        if (_item instanceof InstancedItemEntity) {
-            _them.removeItem(_item);
-            _you.addItem(_item);
-            return "I guess I didn't deserve that giant Toblerone.";
+    function(them, you) {
+        let string = "";
+        if (them instanceof CharacterEntity && you instanceof CharacterEntity) {
+            let item = them.getItem("mountainChocolateBar");
+            if (item instanceof InstancedItemEntity) {
+                them.removeItem(item);
+                you.addItem(item);
+                string = "I guess I didn't deserve that giant Toblerone.";
+            }
+            else {
+                string = "I don't have a giant Toblerone anymore.";
+            }
         }
+        else {
+            string = "Neither of us exist.";
+        }
+        return string;
     }
 );
 new Dialogue(
@@ -72,9 +82,9 @@ Dialogue.get("rinehartTalk").setOption(
     "rinehartTakeChocolateOption",
     "rinehartTakeChocolate",
     undefined,
-    function(_them, _you) {
-        if (_them instanceof CharacterEntity) {
-            return _them.hasItem("mountainChocolateBar");
+    function(them, you) {
+        if (them instanceof CharacterEntity) {
+            return them.hasItem("mountainChocolateBar");
         }
         return false;
     }

@@ -63,16 +63,16 @@ class Dialogue {
         }
         else if (typeof this.text == "function") {
             if (!(them instanceof AbstractEntity)) {
-                if (Entity.has(them)) {
-                    them = Entity.get(them);
+                if (AbstractEntity.has(them)) {
+                    them = AbstractEntity.get(them);
                 }
                 else {
                     them = null;
                 }
             }
             if (!(you instanceof AbstractEntity)) {
-                if (Entity.has(you)) {
-                    you = Entity.get(you);
+                if (AbstractEntity.has(you)) {
+                    you = AbstractEntity.get(you);
                 }
                 else {
                     you = null;
