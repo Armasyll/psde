@@ -782,12 +782,13 @@ class Game {
         Game.highlightLayer = null;
         Game.highlightedController = null;
 
+        Game.cachedCells = {};
+        Game.cachedDialogues = {};
         /**
          * Entity ID:Object of the entity
          * @type {object<string:object<>>}
          */
         Game.cachedEntities = {};
-        Game.cachedCells = {};
 
         Game.xhr = new XMLHttpRequest();
         Game.parser = new DOMParser();
@@ -1965,6 +1966,13 @@ class Game {
             return blob;
         }
         return null;
+    }
+    static filterID(string) {
+        string = Tools.filterID(string);
+        if (string.length == 0) {
+            string = Tools.genUUIDv4();
+        }
+        return string;
     }
     static filterMeshID(id) {
         id = Tools.filterID(id);
@@ -4235,6 +4243,7 @@ class Game {
         Game.initArcRotateCamera();
         Game.initCastRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
+        Game.entityLogicWorkerPostMessage("setPlayer", 0, {"entityID": characterController.entityID});
         Game.transformsWorkerPostMessage("setPlayer", 0, [characterController.id]);
         if (Game.debug) console.groupEnd();
         return 0;
@@ -4945,7 +4954,7 @@ class Game {
         Game.removeCallback(parentCallbackID);
         return 0;
     }
-    static actionTalk(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+    static actionTalk(targetController = Game.playerController.getTarget(), actorController = Game.playerController, parentCallbackID = null) {
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
         if (targetController == 1 || actorController == 1) {
@@ -5669,6 +5678,27 @@ class Game {
                 }
                 break;
             }
+            case "getDialogue": {
+                if (status == 0) {
+                    if (message instanceof Object) {
+                        for (let entry in message) {
+                            if (typeof message[entry] == "string") {
+                                let json = JSON.parse(message[entry]);
+                                Game.setCachedDialogue(entry, json);
+                                Game.runCallback(callbackID, json);
+                            }
+                        }
+                    }
+                    else {
+                        if (typeof message == "string") {
+                            let json = JSON.parse(message);
+                            Game.setCachedDialogue(json.id, json);
+                            Game.runCallback(callbackID, json);
+                        }
+                    }
+                }
+                break;
+            }
             case "getEntity": {
                 if (status == 0) {
                     if (message instanceof Object) {
@@ -5798,6 +5828,16 @@ class Game {
                 }
                 break;
             }
+            case "setDialogue": {
+                if (status == 0) {
+                    if (typeof message == "string") {
+                        let json = JSON.parse(message);
+                        Game.setCachedDialogue(json.id, json);
+                        Game.runCallback(callbackID, json);
+                    }
+                }
+                break;
+            }
             case "setMoney": {
                 if (status == 0) {
                     Game.gui.chat.appendOutput(`${message["targetName"]} has had their money set to \$${message["amount"]}.`);
@@ -5849,35 +5889,48 @@ class Game {
         return 0;
     }
 
-    static setCachedEntity(id, object) {
-        if (Game.cachedEntities.hasOwnProperty(id)) {
-            return Game.updateCachedEntity(id, object);
+    static getCachedCell(id) {
+        if (Game.cachedCells.hasOwnProperty(id)) {
+            return Game.cachedCell[id];
         }
-        Game.cachedEntities[id] = object;
+        return 1;
+    }
+    static hasCachedCell(id) {
+        return Game.cachedCells.hasOwnProperty(id);
+    }
+    static removeCachedCell(id) {
+        delete Game.cachedCells[id];
         return 0;
     }
-    static updateCachedEntity(id, object) {
-        if (!Game.cachedEntities.hasOwnProperty(id)) {
-            return Game.getEntity(id);
-        }
-        Object.assign(Game.cachedEntities[id], object);
-        /**
-         * @type {EntityController}
-         */
-        let controller = EntityController.get(object.controller);
-        if (controller == 1) {
-            return 0;
-        }
-        /*
-         This could be a bad idea :v the differing IDs would be a problem when overwrite-assigning, if I actually did that
-         */
-        controller.assign(object, false);
+    static setCachedCell(id, object) {
+        Game.cachedCells[id] = object;
         return 0;
     }
-    static removeCachedEntity(id) {
-        delete Game.cachedEntities[id];
+
+    static getCachedDialogue(id) {
+        if (Game.cachedDialogues.hasOwnProperty(id)) {
+            return Game.cachedDialogues[id];
+        }
+        return 1;
+    }
+    static getCachedDialogue(id) {
+        if (Game.cachedDialogues.hasOwnProperty(id)) {
+            return Game.cachedDialogues[id];
+        }
+        return 1;
+    }
+    static hasCachedDialogue(id) {
+        return Game.cachedDialogues.hasOwnProperty(id);
+    }
+    static removeCachedDialogue(id) {
+        delete Game.cachedDialogues[id];
         return 0;
     }
+    static setCachedDialogue(id, object) {
+        Game.cachedDialogues[id] = object;
+        return 0;
+    }
+
     /**
      * 
      * @param {string} id 
@@ -5886,102 +5939,76 @@ class Game {
         if (Game.cachedEntities.hasOwnProperty(id)) {
             return Game.cachedEntities[id];
         }
-        else {
-            /*return {
-                "id": "genericEntity",
-                "name": "Generic Entity",
-                "description": "Generic Entity",
-                "iconID": "genericItemIcon",
-                "meshID": "missingMesh",
-                "meshStages": ["missingMesh"],
-                "materialID": "missingMaterial",
-                "materialStages": ["missingMaterial"]
-            };*/
-        }
-        return 1;
-    }
-    /**
-     * 
-     * @param {string} id 
-     */
-    static getCachedCharacter(id) {
-        if (Game.cachedEntities.hasOwnProperty(id)) {
-            return Game.cachedEntities[id];
-        }
-        else {
-            /*return {
-                "id": "genericCharacter",
-                "name": "Generic Character",
-                "description": "Generic Character",
-                "iconID": "genericCharacterIcon",
-                "sex": SexEnum.MALE,
-                "health": 100,
-                "maxHealth": 100,
-                "money": 1,
-                "meshID": "foxSkeletonN",
-                "meshStages": ["foxSkeletonN"],
-                "materialID": "bone01",
-                "materialStages": ["bone01"],
-                "textureID": "bone01",
-                "creatureType": CreatureType.HUMANOID,
-                "creatureSubType": CreatureSubType.FOX,
-                "eyeType": EyeEnum.CIRCLE,
-                "eyeColour": "red",
-                "furColourA": "black",
-                "furColourB": "red",
-                "pawType": PawEnum.PAD,
-                "peltType": PeltEnum.FUR,
-                "height": 1.0,
-                "width": 0.3,
-                "weight": 32
-            };*/
-        }
         return 1;
     }
     static hasCachedEntity(id) {
-        return this.cachedEntities.hasOwnProperty(id);
+        return Game.cachedEntities.hasOwnProperty(id);
+    }
+    static removeCachedEntity(id) {
+        delete Game.cachedEntities[id];
+        return 0;
+    }
+    static updateCachedEntity(id, object) {
+        if (!Game.cachedEntities.hasOwnProperty(id)) {
+            return Game.getEntity(id);
+        }
+        Object.assign(Game.cachedEntities[id], object);
+        let controller = EntityController.get(object.controller);
+        if (controller == 1) {
+            return 0;
+        }
+        controller.assign(object, false);
+        return 0;
+    }
+    static setCachedEntity(id, object) {
+        if (Game.cachedEntities.hasOwnProperty(id)) {
+            return Game.updateCachedEntity(id, object);
+        }
+        Game.cachedEntities[id] = object;
+        return 0;
+    }
+
+    static getCell(id, callbackID) {
+        if (!(id instanceof Object)) {
+            id = [id];
+        }
+        callbackID = Game.filterID(callbackID);
+        Game.entityLogicWorkerPostMessage("getCell", 0, id, callbackID);
+        return 0;
+    }
+    static getDialogue(id = "", targetController = Game.playerController.getTarget(), actorController = Game.playerController, callbackID = null) {
+        if (!(id instanceof Object)) {
+            id = [id];
+        }
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        callbackID = Game.filterID(callbackID);
+        Game.entityLogicWorkerPostMessage("getDialogue", 0, {"dialogueID": id, "targetID": targetController.entityID, "actorID": actorController.entityID}, callbackID);
+        return 0;
+    }
+    static setDialogue(id = "", targetController = Game.playerController.getTarget(), actorController = Game.playerController, parentCallbackID = null) {
+        id = Tools.filterID(id);
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        parentCallbackID = Game.filterID(parentCallbackID);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [id, targetController, actorController], Game.gui.dialogue.set)
+        Game.entityLogicWorkerPostMessage("setDialogue", 0, {"dialogueID": id, "targetID": targetController.entityID, "actorID": actorController.entityID}, callbackID);
+        return 0;
     }
     static getEntity(id, callbackID) {
         if (!(id instanceof Object)) {
             id = [id];
         }
+        callbackID = Game.filterID(callbackID);
         Game.entityLogicWorkerPostMessage("getEntity", 0, id, callbackID);
         return 0;
     }
 
-    static setCachedCell(id, object) {
-        Game.cachedCells[id] = object;
-        return 0;
-    }
-    static removeCachedCell(id) {
-        delete Game.cachedCells[id];
-        return 0;
-    }
-    static getCachedCell(id) {
-        if (Game.cachedCells.hasOwnProperty(id)) {
-            return Game.cachedCell[id];
-        }
-        return 1;
-    }
-    static hasCachedCell(id) {
-        return this.cachedCells.hasOwnProperty(id);
-    }
-    static getCell(cellID, callbackID) {
-        if (typeof cellID == "string") {
-            cellID = [cellID];
-        }
-        callbackID = Tools.filterID(callbackID);
-        if (callbackID.length == 0) {
-            callbackID = Tools.genUUIDv4();
-        }
-        Game.entityLogicWorkerPostMessage("getCell", 0, [cellID], callbackID);
-        return 0;
-    }
-
     static updateSkybox() {
-        if (this.skybox instanceof BABYLON.AbstractMesh && this.skybox.material instanceof BABYLON.SkyMaterial) {
-            this.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
-            this.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
+        if (Game.skybox instanceof BABYLON.AbstractMesh && Game.skybox.material instanceof BABYLON.SkyMaterial) {
+            Game.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
+            Game.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
         }
     }
 }

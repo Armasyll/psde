@@ -508,8 +508,8 @@ class AbstractEntity {
         if (!this.hasContainer()) {
             return 1;
         }
-        this.container = null;
         this.container.removeEntity(this, false);
+        this.container = null;
         return 0;
     }
     createContainer(maxSize = 9, maxWeight = 10) {
@@ -970,7 +970,7 @@ class AbstractEntity {
         this.setLocked(true);
         this.setEnabled(false);
         if (this.hasContainer()) {
-            this.container.removeEntity(this);
+            this.removeContainer();
         }
         for (let action in this.availableActions) {
             if (this.availableActions[action] instanceof ActionData) {

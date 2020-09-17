@@ -150,9 +150,17 @@ class DialogueGameGUI {
         DialogueGameGUI.controller.isVisible = false;
         DialogueGameGUI.isVisible = false;
     }
-    static set(dialogue = null, target = null, actor = Game.playerController) {
+    static set(dialogue = null, target = Game.playerController.getTarget(), actor = Game.playerController) {
         if (Game.debugMode) console.log("Running DialogueGameGUI.setDialogue()");
         DialogueGameGUI.clear();
+        if (typeof dialogue == "string") {
+            if (Game.hasCachedDialogue(dialogue)) {
+                dialogue = Game.getCachedDialogue(dialogue);
+            }
+            else {
+                return 2;
+            }
+        }
         if (dialogue.className != "Dialogue") {
             return 2;
         }
@@ -180,11 +188,12 @@ class DialogueGameGUI {
         else {
             DialogueGameGUI.setBody(bodyString);
         }
-        if (Object.keys(dialogue.options) > 0) {
+        if (Object.keys(dialogue.options).length > 0) {
             for (let option in dialogue.options) {
                 DialogueGameGUI.addOption(dialogue.options[option], target, actor, true);
             }
         }
+        return 0;
     }
     static setTitle(titleString) {
         DialogueGameGUI.title.text = new String(titleString);
@@ -202,7 +211,7 @@ class DialogueGameGUI {
         DialogueGameGUI.setBody("");
     }
     static addOption(dialogueOption = null, target, actor = Game.playerController) {
-        if (dialogue.className != "Dialogue") {
+        if (dialogueOption.className != "DialogueOption") {
             return 2;
         }
         if (DialogueGameGUI.dialogueOptions.length > 7 || DialogueGameGUI.dialogueOptions.hasOwnProperty(dialogueOption.dialogue.id)) {
@@ -212,7 +221,8 @@ class DialogueGameGUI {
         button.width = GameGUI.getFontSize(13);
         button.height = GameGUI.getFontSize(2);
         button.onPointerUpObservable.add(function() {
-            DialogueGameGUI.set(dialogueOption.dialogue, target, actor);
+            //DialogueGameGUI.set(dialogueOption.dialogue, target, actor);
+            Game.setDialogue(dialogueOption.dialogue, target, actor);
         });
         if (DialogueGameGUI.dialogueOptions.length > 5) {
             DialogueGameGUI.optionsContainer.children[2].addControl(button);
@@ -227,7 +237,7 @@ class DialogueGameGUI {
         return true;
     }
     static removeOption(dialogueOption) {
-        if (dialogue.className != "Dialogue") {
+        if (dialogueOption.className != "Dialogue") {
             return 2;
         }
         for (let i = 0; i < DialogueGameGUI.optionsContainer.children.length; i++) {

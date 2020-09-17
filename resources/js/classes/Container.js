@@ -129,7 +129,7 @@ class Container {
         else if (instancedItemEntity instanceof ItemEntity) {
             return this.addItemToSlot(instancedItemEntity.createInstance(), this.getAvailableSlot());
         }
-        if (Game.debugMode) console.log(`Failed to add item ${instancedItemEntity} to ${this.id}`);
+        if (Container.debugMode) console.log(`Failed to add item ${instancedItemEntity} to ${this.id}`);
         return Tools.fresponse(400, "Error");
     }
     addItemToSlot(instancedItemEntity, slot) {
@@ -197,7 +197,7 @@ class Container {
                 return Tools.fresponse(404, "Error, item doesn't exist.");
             }
         }
-        if (Game.debugMode) console.log(`Running <Container> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
+        if (Container.debugMode) console.log(`Running <Container> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
         let slot = this.getSlotByItem(instancedItemEntity);
         if (slot < 0) {
             return Tools.fresponse(410, "Error, container doesn't have item.");
@@ -413,6 +413,7 @@ class Container {
 
     static initialize() {
         Container.containerList = {};
+        Container.debugMode = false;
     }
     static get(id) {
         if (Container.has(id)) {

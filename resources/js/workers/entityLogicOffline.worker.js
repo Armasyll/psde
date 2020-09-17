@@ -36,6 +36,8 @@ class EntityLogic {
         EntityLogic.roundTime = 6;
         EntityLogic.turnTime = 60;
 
+        EntityLogic.playerEntity = null;
+
         EntityLogic.importEffects();
         EntityLogic.importClasses();
         EntityLogic.importSpells();
@@ -378,6 +380,31 @@ class EntityLogic {
                 }
                 break;
             }
+            case "getDialogue": {
+                if (!(message instanceof Object)) {
+                    break;
+                }
+                let ids = {};
+                let targetEntity = AbstractEntity.get(message["targetID"]);
+                let actorEntity = AbstractEntity.get(message["actorID"]);
+                message["dialogueID"].forEach((dialogueID) => {
+                    if (Dialogue.has(dialogueID)) {
+                        let dialogue = Dialogue.get(dialogueID);
+                        ids[dialogueID] = dialogue.stringify(true, targetEntity, actorEntity);
+                        for (let option in dialogue.options) {
+                            let subDialogue = dialogue.options[option].dialogue;
+                            ids[subDialogue.id] = subDialogue.stringify(true, targetEntity, actorEntity)
+                        }
+                    }
+                });
+                if (Object.keys(ids).length == 0) {
+                    EntityLogic.gameWorkerPostMessage("getDialogue", 1, null, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("getDialogue", 0, ids, callbackID);
+                }
+                break;
+            }
             case "getEntity": {
                 if (!(message instanceof Array)) {
                     break;
@@ -508,6 +535,22 @@ class EntityLogic {
                 }
                 break;
             }
+            case "setDialogue": {
+                if (!(message instanceof Object)) {
+                    break;
+                }
+                let dialogue = Dialogue.get(message["dialogueID"]);
+                let targetEntity = AbstractEntity.get(message["targetID"]);
+                let actorEntity = AbstractEntity.get(message["actorID"]);
+                
+                if (dialogue == 1 || targetEntity == 1 || actorEntity == 1) {
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 1, null, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
+                }
+                break;
+            }
             case "setMoney": {
                 let target = null;
                 if (!AbstractEntity.has(message["target"])) {
@@ -522,6 +565,12 @@ class EntityLogic {
                 let amount = Number.parseInt(message["amount"]) || 1;
                 target.setMoney(amount);
                 EntityLogic.gameWorkerPostMessage("setMoney", 0, {"targetName": target.getName(), "targetID": target.id, "amount": target.money}, callbackID);
+                break;
+            }
+            case "setPlayer": {
+                if (AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.playerEntity = AbstractEntity.get(message["entityID"]);
+                }
                 break;
             }
         };
