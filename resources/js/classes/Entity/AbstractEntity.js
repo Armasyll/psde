@@ -803,7 +803,12 @@ class AbstractEntity {
         obj["controller"] = this.controller;
         obj["defaultAction"] = this.defaultAction;
         obj["availableActions"] = this.availableActions;
-        obj["container"] = this._objectifyProperty(this.container);
+        if (this.hasContainer()) {
+            obj["container"] = this.container.objectify();
+        }
+        else {
+            obj["container"] = null;
+        }
         obj["enabled"] = this.enabled;
         obj["health"] = this.getHealth();
         obj["locked"] = this.locked;
@@ -844,15 +849,7 @@ class AbstractEntity {
             };
         }
         else if (property instanceof Container) {
-            obj = {};
-            obj["id"] = property.id;
-            obj["items"] = {};
-            for (let entry in property["items"]) {
-                obj["items"][entry] = this._objectifyProperty(property["items"][entry]);
-            }
-            obj["maxSize"] = property.maxSize;
-            obj["maxWeight"] = property.maxWeight;
-            obj["weight"] = property.weight;
+            obj = this.container.objectify();
         }
         else if (property instanceof Cosmetic) {
             obj = {

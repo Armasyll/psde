@@ -42,6 +42,7 @@ class DoorEntity extends FurnitureEntity {
 
     objectifyMinimal() {
         let obj = super.objectifyMinimal();
+        obj["key"] = this._objectifyProperty(this.key);
         obj["opensInward"] = this.opensInward;
         return obj;
     }

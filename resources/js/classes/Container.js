@@ -376,6 +376,37 @@ class Container {
         this.isLocked = false;
     }
 
+    stringify(minimal = false) {
+        return JSON.stringify(this.objectify());
+    }
+    objectifyMinimal() {
+        let obj = {};
+        return obj;
+    }
+    objectify() {
+        let obj = {};
+        obj["className"] = this.getClassName();
+        obj["id"] = this.id;
+        obj["name"] = this.name;
+        obj["items"] = {};
+        for (let slot in this.items) {
+            if (this.items[slot] instanceof InstancedItemEntity) {
+                let item = this.items[slot].entity;
+                obj["items"][slot] = {
+                    "id": item.id,
+                    "name": item.getName(),
+                    "description": item.getDescription(),
+                    "iconID": item.iconID
+                }
+            }
+        }
+        obj["maxSize"] = this.maxSize;
+        obj["maxWeight"] = this.maxWeight;
+        obj["size"] = Object.keys(this.items).length;
+        obj["weight"] = this.weight;
+        return obj;
+    }
+
     clone(id = "") {
         let clone = new Container(id, this.name, this.maxSize, this.maxWeight);
         for (let slot in this.items) {

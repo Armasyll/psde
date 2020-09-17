@@ -226,12 +226,51 @@ class EntityLogic {
                 break;
             }
             case "addAllClothing": {
+                if (!AbstractEntity.has(message["target"])) {
+                    EntityLogic.gameWorkerPostMessage("addAllClothing", 2, {}, callbackID);
+                    return 2;
+                }
+                let target = AbstractEntity.get(message["target"]);
+                for (let item in ClothingEntity.list()) {
+                    target.addItem(ClothingEntity.get(item));
+                }
+                EntityLogic.gameWorkerPostMessage("addAllClothing", 0, {"targetName": target.getName(), "targetID": target.id}, callbackID);
                 break;
             }
             case "addAllItems": {
+                if (!AbstractEntity.has(message["target"])) {
+                    EntityLogic.gameWorkerPostMessage("addAllItems", 2, {}, callbackID);
+                    return 2;
+                }
+                let target = AbstractEntity.get(message["target"]);
+                for (let item in ItemEntity.list()) {
+                    target.addItem(ItemEntity.get(item));
+                }
+                EntityLogic.gameWorkerPostMessage("addAllItems", 0, {"targetName": target.getName(), "targetID": target.id}, callbackID);
+                break;
+            }
+            case "addAllKeys": {
+                if (!AbstractEntity.has(message["target"])) {
+                    EntityLogic.gameWorkerPostMessage("addAllKeys", 2, {}, callbackID);
+                    return 2;
+                }
+                let target = AbstractEntity.get(message["target"]);
+                for (let item in KeyEntity.list()) {
+                    target.addItem(KeyEntity.get(item));
+                }
+                EntityLogic.gameWorkerPostMessage("addAllKeys", 0, {"targetName": target.getName(), "targetID": target.id}, callbackID);
                 break;
             }
             case "addAllWeapons": {
+                if (!AbstractEntity.has(message["target"])) {
+                    EntityLogic.gameWorkerPostMessage("addAllWeapons", 2, {}, callbackID);
+                    return 2;
+                }
+                let target = AbstractEntity.get(message["target"]);
+                for (let item in WeaponEntity.list()) {
+                    target.addItem(WeaponEntity.get(item));
+                }
+                EntityLogic.gameWorkerPostMessage("addAllWeapons", 0, {"targetName": target.getName(), "targetID": target.id}, callbackID);
                 break;
             }
             case "addItem": {

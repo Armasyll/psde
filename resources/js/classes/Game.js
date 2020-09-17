@@ -4613,6 +4613,14 @@ class Game {
                 }
                 break;
             }
+            case "addallkeys": {
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(1)) {
+                    target = commandArray[1];
+                }
+                Game.entityLogicWorkerPostMessage("addAllKeys", 0, {"target": target});
+                break;
+            }
             case "addallitems": {
                 let target = Game.playerEntityID;
                 if (commandArray.hasOwnProperty(1)) {
