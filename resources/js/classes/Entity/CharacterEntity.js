@@ -475,12 +475,10 @@ class CharacterEntity extends CreatureEntity {
             return 1;
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            if (InstancedItemEntity.has(instancedItemEntity)) {
-                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
-            }
-            else {
-                return false;
-            }
+            this.container.getItem(instancedItemEntity);
+        }
+        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
+            return 1;
         }
         this.unequip(instancedItemEntity);
         super.removeItem(instancedItemEntity);

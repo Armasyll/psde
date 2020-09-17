@@ -181,17 +181,17 @@ class Container {
         return Tools.fresponse(200, "OK");
     }
     /**
-     * Removes an InstancedItemEntity from this entity's Item array
-     * @param  {InstancedItemEntity} instancedItemEntity InstancedItemEntity, or ItemEntity, to be removed
+     * Removes an AbstractEntity from this entity's Item array
+     * @param  {AbstractEntity} instancedItemEntity AbstractEntity, or ItemEntity, to be removed
      * @return {this}
      */
     removeItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
             return Tools.fresponse(423, "Error, container is locked.");
         }
-        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            if (InstancedItemEntity.has(instancedItemEntity)) {
-                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
+        if (!(instancedItemEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(instancedItemEntity)) {
+                instancedItemEntity = AbstractEntity.get(instancedItemEntity);
             }
             else {
                 return Tools.fresponse(404, "Error, item doesn't exist.");
@@ -240,20 +240,22 @@ class Container {
             }
         }
         if (abstractEntity instanceof InstancedEntity) {
-            let instancedItemEntity = "";
+            let instancedItemEntity = null;
             for (let slot in this.items) {
                 instancedItemEntity = this.items[slot];
-                if (instancedItemEntity == abstractEntity.getID()) {
+                if (instancedItemEntity == abstractEntity) {
                     return Number.parseInt(slot);
                 }
             };
         }
         else if (abstractEntity instanceof Entity) {
-            let instancedItemEntity = "";
+            let instancedItemEntity = null;
             for (let slot in this.items) {
-                instancedItemEntity = InstancedEntity.get(this.items[slot]);
-                if (instancedItemEntity.getEntity() == abstractEntity) {
-                    return Number.parseInt(slot);
+                instancedItemEntity = this.items[slot];
+                if (instancedItemEntity instanceof InstancedEntity) {
+                    if (instancedItemEntity.getEntity() == abstractEntity) {
+                        return Number.parseInt(slot);
+                    }
                 }
             };
         }
@@ -276,9 +278,10 @@ class Container {
         if (abstractEntity instanceof InstancedEntity) {
             abstractEntity = abstractEntity.getEntity();
         }
+        let instancedItemEntity = null;
         for (let slot in this.items) {
-            if (this.items[slot] instanceof InstancedItemEntity) {
-                let instancedItemEntity = this.items[slot];
+            instancedItemEntity = this.items[slot];
+            if (instancedItemEntity instanceof InstancedEntity) {
                 if (instancedItemEntity.getEntity() == abstractEntity) {
                     return instancedItemEntity;
                 }

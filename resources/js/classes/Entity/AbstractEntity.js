@@ -544,14 +544,14 @@ class AbstractEntity {
     }
     /**
      * 
-     * @param {(ItemEntity|InstancedItemEntity)} instancedItemEntity 
+     * @param {abstractEntity} abstractEntity 
      * @param {number} [count] 
      */
-    removeItem(instancedItemEntity, count = 1) {
+    removeItem(abstractEntity, count = 1) {
         if (!this.hasContainer()) {
             return 1;
         }
-        let result = this.container.removeItem(instancedItemEntity, count);
+        let result = this.container.removeItem(abstractEntity, count);
         if (result.meta.status >= 400) {
             return 2;
         }
