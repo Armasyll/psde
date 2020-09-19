@@ -367,6 +367,21 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("createFurnitureInstance", 0, instance.objectifyMinimal(), callbackID);
                 break;
             }
+            case "createItemInstance": {
+                let entity = null;
+                if (ItemEntity.has(message["entityID"])) {
+                    entity = ItemEntity.get(message["entityID"]).createInstance();
+                }
+                else if (InstancedItemEntity.has(message["entityID"])) {
+                    entity = InstancedItemEntity.get(message["entityID"]).clone();
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("createItemInstance", 1, entity, callbackID);
+                    break;
+                }
+                EntityLogic.gameWorkerPostMessage("createItemInstance", 0, entity.objectifyMinimal(), callbackID);
+                break;
+            }
             case "createLightingEntity": {
                 let entity = new LightingEntity(message["id"], message["name"], message["description"], message["iconID"], message["lightingType"], message["lightingPositionOffset"]);
                 entity.setMeshID(message["meshID"]);

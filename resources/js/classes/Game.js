@@ -3860,31 +3860,48 @@ class Game {
      * Places, or creates from an ItemEntity, an InstancedItemEntity in the world at the given position.
      * @memberof module:items
      * @param {string} [id] Unique ID, auto-generated if none given
-     * @param {(AbstractEntity|string)} abstractEntity Abstract entity; preferably an InstancedItemEntity
+     * @param {(AbstractEntity|string)} entityID Abstract entity; preferably an InstancedItemEntity
      * @param {BABYLON.Vector3} position Position
      * @param {BABYLON.Vector3} [rotation] Rotation
      * @param {BABYLON.Vector3} [scaling] Scaling
      * @param {object} [options] Options
      * @returns {(ItemController|array|number)} An EntityController or an integer status code
      */
-    static createItemInstance(id = "", abstractEntity, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (!(Game.hasLoadedMesh(abstractEntity.meshID))) {
-            Game.loadMesh(abstractEntity.meshID);
-            Game.loadTexture(abstractEntity.textureID);
-            Game.loadMaterial(abstractEntity.textureID); // TODO: Work out a real system of materials :v
-            Game.addBackloggedItem(id, abstractEntity, position, rotation, scaling, options);
-            if (Game.debugMode) console.log(`\tThe item's mesh needs to be loaded. Inserting it into the qeueu.`);
-            return [id, abstractEntity, position, rotation, scaling, options];
+    static createItemInstance(id = "", entityID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
+        if (Game.hasCachedEntity(entityID)) {
+            Game.createItemInstanceResponsePhaseOne(id, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
-        if (Game.debugMode) console.group(`Running Game.createItemInstance(${id}, ${abstractEntity.id}, ${position.toString()})`);
-        let mesh = Game.createItemMesh(id, abstractEntity.meshID, abstractEntity.textureID, position, rotation, scaling, options);
-        if (abstractEntity instanceof Entity) {
-            abstractEntity = abstractEntity.createInstance(id);
+        else {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [id, entityID, position, rotation, scaling, options], Game.createItemInstanceResponsePhaseOne);
+            Game.getEntity(entityID, callbackID);
         }
-        let itemController = new ItemController(id, mesh, abstractEntity);
-        abstractEntity.setController(itemController);
-        if (Game.debugMode) console.groupEnd();
-        return itemController;
+        return 0;
+    }
+    static createItemInstanceResponsePhaseOne(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
+        entityID = response.id; // why? just in case :v
+        if (Game.hasLoadedMesh(response.meshID)) {
+            Game.createItemInstanceResponsePhaseTwo(id, entityID, position, rotation, scaling, options, response);
+        }
+        else {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [id, entityID, position, rotation, scaling, options], Game.createItemInstanceResponsePhaseTwo);
+            Game.loadTexture(response.textureID);
+            Game.loadMaterial(response.textureID); // TODO: Work out a real system of materials :v
+            Game.loadMesh(response.meshID, callbackID);
+        }
+        return 0;
+    }
+    static createItemInstanceResponsePhaseTwo(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
+        let callbackID = Tools.genUUIDv4()
+        Game.createCallback(callbackID, parentCallbackID, [id, entityID, position, rotation, scaling, options], Game.createItemInstanceResponsePhaseThree);
+        Game.entityLogicWorkerPostMessage("createItemInstance", 0, {"entityID": entityID}, callbackID);
+        return 0;
+    }
+    static createItemInstanceResponsePhaseThree(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
+        let mesh = Game.createItemMesh(id, response.meshID, response.textureID, position, rotation, scaling, options);
+        new ItemController(id, mesh, response);
+        return 0;
     }
     /**
      * Removes an InstancedItemEntity, its ItemController, and its BABYLON.InstancedMesh
@@ -5662,6 +5679,7 @@ class Game {
             case "createDoorEntity":
             case "createFurnitureEntity":
             case "createFurnitureInstance":
+            case "createItemInstance":
             case "createLightingEntity":
             case "createLightingInstance":
             case "createPlantInstance": {
