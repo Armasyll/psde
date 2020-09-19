@@ -53,30 +53,41 @@ class EntityLogic {
         addEventListener('message', EntityLogic.gameWorkerOnMessage, false);
     }
     static tickWorkerOnMessage(event) {
+        if (EntityLogic.debugMode) console.group(`Running EntityLogic.tickWorkerOnMessage`);
+        if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
+            if (EntityLogic.debugMode) console.groupEnd();
+            return 2;
+        }
+        let status = event.data["sta"];
+        if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
+        let callbackID = event.data["callbackID"];
+        if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
+        let message = event.data["msg"];
+        if (EntityLogic.debugMode && message) console.info(`and message`);
         switch (event.data.cmd) {
             case "triggerScheduledEffect": {
-                if (!Effect.has(event.data["msg"][0])) {
+                if (!Effect.has(message[0])) {
                     return 2;
                 }
-                if (!AbstractEntity.has(event.data["msg"][1])) {
+                if (!AbstractEntity.has(message[1])) {
                     return 2;
                 }
-                if (EntityLogic.debugMode) console.log(`Caught triggerScheduledEffect(${event.data["msg"][0]}, ${event.data["msg"][1]})`);
-                let effect = Effect.get(event.data["msg"][0]);
-                let abstractEntity = AbstractEntity.get(event.data["msg"][1]);
+                if (EntityLogic.debugMode) console.log(`Caught triggerScheduledEffect(${message[0]}, ${message[1]})`);
+                let effect = Effect.get(message[0]);
+                let abstractEntity = AbstractEntity.get(message[1]);
                 abstractEntity.applyEffect(effect);
                 break;
             }
             case "removeScheduledEffect": {
-                if (!Effect.has(event.data["msg"][0])) {
+                if (!Effect.has(message[0])) {
                     return 2;
                 }
-                if (!AbstractEntity.has(event.data["msg"][1])) {
+                if (!AbstractEntity.has(message[1])) {
                     return 2;
                 }
-                if (EntityLogic.debugMode) console.log(`Caught removeScheduledEffect(${event.data["msg"][0]}, ${event.data["msg"][1]})`);
-                let effect = Effect.get(event.data["msg"][0]);
-                let abstractEntity = AbstractEntity.get(event.data["msg"][1]);
+                if (EntityLogic.debugMode) console.log(`Caught removeScheduledEffect(${message[0]}, ${message[1]})`);
+                let effect = Effect.get(message[0]);
+                let abstractEntity = AbstractEntity.get(message[1]);
                 abstractEntity.removeEffect(effect);
                 break;
             }
@@ -85,15 +96,15 @@ class EntityLogic {
                 break;
             }
             case "tick": {
-                EntityLogic.currentTick = event.data["msg"];
+                EntityLogic.currentTick = message;
                 break;
             }
             case "turn": {
-                EntityLogic.currentTurn = event.data["msg"];
+                EntityLogic.currentTurn = message;
                 break;
             }
             case "round": {
-                EntityLogic.currentRound = event.data["msg"];
+                EntityLogic.currentRound = message;
                 break;
             }
         }
@@ -120,17 +131,28 @@ class EntityLogic {
         }
         return 0;
     }
-    static transformsWorkerOnMessage() {
+    static transformsWorkerOnMessage(event) {
+        if (EntityLogic.debugMode) console.group(`Running EntityLogic.transformsWorkerOnMessage`);
+        if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
+            if (EntityLogic.debugMode) console.groupEnd();
+            return 2;
+        }
+        let status = event.data["sta"];
+        if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
+        let callbackID = event.data["callbackID"];
+        if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
+        let message = event.data["msg"];
+        if (EntityLogic.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
-            case "withinRangeResponse": {
-                if (EntityLogic.hasCallback(event.data["callbackID"])) {
-                    let callbackBlob = EntityLogic.getCallback(event.data["callbackID"]);
-                    if (callbackBlob["params"].length == 0) {
-                        callbackBlob["callback"](event.data["msg"][0], callbackBlob["parentCallbackID"]);
-                    }
-                    else {
-                        callbackBlob["callback"](...callbackBlob["params"], event.data["msg"][0], callbackBlob["parentCallbackID"]);
-                    }
+            case "inArea":
+            case "inFrontOf":
+            case "withinRange": {
+                if (status == 0) {
+                    EntityLogic.runCallback(callbackID, message);
+                }
+                else if (EntityLogic.hasCallback(callbackID)) {
+                    EntityLogic.callbacks[callbackID]["hasRun"] = true;
+                    EntityLogic.callbacks[callbackID]["status"] = 1;
                 }
                 break;
             }
@@ -161,16 +183,15 @@ class EntityLogic {
     static gameWorkerOnMessage(event) {
         if (EntityLogic.debugMode) console.group(`Running EntityLogic.gameWorkerOnMessage`);
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
+            if (EntityLogic.debugMode) console.groupEnd();
             return 2;
         }
+        let status = event.data["sta"];
         if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
         let callbackID = event.data["callbackID"];
         if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
         let message = event.data["msg"];
-        if (message && EntityLogic.debugMode) {
-            console.info(`and message`);
-            console.info(message);
-        }
+        if (EntityLogic.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
             case "actionClose": {
                 let actor = AbstractEntity.get(message["actorID"]);
@@ -208,7 +229,13 @@ class EntityLogic {
                 break;
             }
             case "actionTake": {
-                EntityLogic.withinRange(message["targetID"], message["actorID"], undefined, callbackID, EntityLogic.actionTakeResponse);
+                let target = AbstractEntity.get(message["targetID"]);
+                let actor = AbstractEntity.get(message["actorID"]);
+                if (target == 1 || actor == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionTake", 1, null, callbackID);
+                    break;
+                }
+                EntityLogic.actionTake(target, actor, callbackID);
                 break;
             }
             case "actionTalk": {
@@ -405,7 +432,7 @@ class EntityLogic {
             }
             case "getCell": {
                 let ids = {};
-                event.data["msg"].forEach((entityID) => {
+                message.forEach((entityID) => {
                     if (Cell.has(entityID)) {
                         ids[entityID] = Cell.get(entityID).stringify();
                     }
@@ -506,7 +533,7 @@ class EntityLogic {
             }
             case "hasCell": {
                 let ids = {};
-                event.data["msg"].forEach((entityID) => {
+                message.forEach((entityID) => {
                     if (Cell.has(entityID)) {
                         ids[entityID] = true;
                     }
@@ -519,7 +546,7 @@ class EntityLogic {
             }
             case "hasEntity": {
                 let ids = {};
-                event.data["msg"].forEach((entityID) => {
+                message.forEach((entityID) => {
                     if (AbstractEntity.has(entityID)) {
                         ids[entityID] = true;
                     }
@@ -532,7 +559,7 @@ class EntityLogic {
             }
             case "hasInstancedEntity": {
                 let ids = {};
-                event.data["msg"].forEach((entityID) => {
+                message.forEach((entityID) => {
                     if (InstancedEntity.has(entityID)) {
                         ids[entityID] = true;
                     }
@@ -545,7 +572,7 @@ class EntityLogic {
             }
             case "hasInventory": {
                 let ids = {};
-                event.data["msg"].forEach((entityID) => {
+                message.forEach((entityID) => {
                     if (Container.has(entityID)) {
                         ids[entityID] = true;
                     }
@@ -630,8 +657,16 @@ class EntityLogic {
         };
         console.groupEnd();
     }
-    static actionTakeResponse(targetID, actorID, response, callbackID) {
-
+    static actionTake(target, actor, parentCallbackID) {
+        let callbackID = Tools.genUUIDv4();
+        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor], EntityLogic.actionTakeResponse);
+        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.0], callbackID);
+        return 0;
+    }
+    static actionTakeResponse(target, actor, response, callbackID) {
+        actor.addItem(target);
+        EntityLogic.gameWorkerPostMessage("removeItem", 0, target.controller);
+        return 0;
     }
     /**
      * 
@@ -1074,56 +1109,6 @@ class EntityLogic {
         );
         return 0;
     }
-    /**
-     * Returns whether or not entityB is within distance of entityA
-     * @param {AbstractEntity} entityA The entity
-     * @param {AbstractEntity} entityB Its target
-     * @param {number} distance Distance
-     * @param {string} parentCallbackID 
-     * @param {function} callback 
-     * @returns {string} new Callback ID
-     */
-    static withinRange(entityA, entityB, distance = 0.6, parentCallbackID = null, callback = null) {
-        distance = Number.parseFloat(distance) || 0.6;
-        let callbackID = Tools.genUUIDv4();
-        EntityLogic.addCallback(callbackID, parentCallbackID, [entityA, entityB, distance], callback);
-        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [entityA, entityB, distance, parentCallbackID]);
-        return callbackID;
-    }
-    /**
-     * Whether or not entityB is in entityA's point of view (epislon value)
-     * @param {AbstractEntity} entityA The entity that's looking
-     * @param {AbstractEntity} entityB Its target
-     * @param {number} epsilon Episode in radians
-     * @param {string} parentCallbackID 
-     * @param {function} callback 
-     * @returns {string} new Callback ID
-     */
-    static inFrontOf(entityA, entityB, epsilon = 0.3926991, parentCallbackID = null, callback = null) {
-        epsilon = Number.parseFloat(epsilon) || 0.3926991;
-        let callbackID = Tools.genUUIDv4();
-        EntityLogic.addCallback(callbackID, parentCallbackID, [entityA, entityB, epsilon], callback);
-        EntityLogic.transformsWorkerPostMessage("inFrontOf", 0, [entityA, entityB, epsilon, parentCallbackID]);
-        return callbackID;
-    }
-    /**
-     * 
-     * @param {string} shape CYLINDER, CONE, SPHERE, CUBE
-     * @param {number} diameter 
-     * @param {number} height 
-     * @param {number} depth 
-     * @param {Array<number, number, number>} position 
-     * @param {Array<number, number, number>} rotation 
-     * @param {string} parentCallbackID 
-     * @param {function} callback 
-     * @returns {string} new Callback ID
-     */
-    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = [0,0,0], rotation = [0,0,0], parentCallbackID = null, callback = null) {
-        let callbackID = Tools.genUUIDv4();
-        EntityLogic.addCallback(callbackID, parentCallbackID, [shape, diameter, height, depth, position, rotation], callback);
-        EntityLogic.transformsWorkerPostMessage("inArea", 0, [shape, diameter, height, depth, position, rotation, parentCallbackID]);
-        return callbackID;
-    }
 
     /**
      * 
@@ -1132,23 +1117,91 @@ class EntityLogic {
      * @param {function} callback Function to call
      * @param {object} params Params to pass
      */
-    static addCallback(id, parentID, params, callback) {
-        EntityLogic.callbacks[id] = {"parent":parentID, "hasRun":false, "callback":callback, "params":params};
-        return 0;
+    static createCallback(id = "", parentID = null, params = [], callback = null) {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        if (!(params instanceof Array)) {
+            params = [params];
+        }
+        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCallback(${id}, ${parentID}, ${params.toString()}, function())`);
+        EntityLogic.callbacks[id] = {"parent":parentID, "params":params, "callback":callback, "hasRun":false, "status":0};
+        return id;
     }
     static removeCallback(id) {
         delete EntityLogic.callbacks[id]["parent"];
-        delete EntityLogic.callbacks[id]["hasRun"];
-        delete EntityLogic.callbacks[id]["callback"];
         delete EntityLogic.callbacks[id]["params"];
+        delete EntityLogic.callbacks[id]["callback"];
+        delete EntityLogic.callbacks[id]["hasRun"];
         delete EntityLogic.callbacks[id];
         return 0;
+    }
+    static getCallback(id) {
+        if (EntityLogic.callbacks.hasOwnProperty(id)) {
+            return EntityLogic.callbacks[id];
+        }
+        return 1;
+    }
+    static getCallbacks(parent = null, callback = null, hasRun = null, status = null) {
+        let obj = {};
+        for (let entry in EntityLogic.callbacks) {
+            if (
+                (parent == null || parent == EntityLogic.callbacks[entry]["parent"]) &&
+                (callback == null || callback == EntityLogic.callbacks[entry]["callback"]) &&
+                (hasRun == null || hasRun == EntityLogic.callbacks[entry]["hasRun"]) &&
+                (status == null || status == EntityLogic.callbacks[entry]["status"])
+            ) {
+                obj[entry] = EntityLogic.callbacks[entry];
+            }
+        }
+        return obj;
     }
     static hasCallback(id) {
         return EntityLogic.callbacks.hasOwnProperty(id);
     }
-    static getCallback(id) {
-        return EntityLogic.callbacks[id];
+    /**
+     * 
+     * @param {string} id 
+     * @param {(object|null)} [response] 
+     */
+    static runCallback(id, response = null) {
+        if (!EntityLogic.hasCallback(id)) {
+            return 1;
+        }
+        let callback = EntityLogic.getCallback(id);
+        if (callback["hasRun"]) {
+            return 0;
+        }
+        callback["hasRun"] = true;
+        if (EntityLogic.debugMode) console.group(`Running EntityLogic.runCallback(${id}, ${response})`);
+        if (typeof callback["callback"] == "function") {
+            callback["callback"](...callback["params"], response, id);
+        }
+        if (EntityLogic.debugMode) console.groupEnd();
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} id 
+     * @param {(object|null)} [response] 
+     */
+    static runCallbackParent(id, response = null) {
+        if (EntityLogic.callbacks.hasOwnProperty(id)) {
+            if (EntityLogic.callbacks.hasOwnProperty(EntityLogic.callbacks[id]["parent"])) {
+                EntityLogic.runCallback(EntityLogic.callbacks[id]["parent"], response);
+            }
+        }
+        return 0;
+    }
+    static hasRunCallback(id) {
+        return EntityLogic.callbacks.hasOwnProperty(id) && EntityLogic.callbacks[id]["hasRun"] === true;
+    }
+    static setHasRunCallback(id, hasRun = true) {
+        if (EntityLogic.hasCallback(id)) {
+            EntityLogic.getCallback(id)["hasRun"] = (hasRun === true);
+        }
+        return 0;
     }
 }
 EntityLogic.initialize();

@@ -854,11 +854,11 @@ class Game {
         Game.entityLogicWorker = new Worker("resources/js/workers/entityLogicOffline.worker.js");
         Game.entityLogicWorker.onmessage = Game.entityLogicWorkerOnMessage;
         Game.entityLogicTickChannel = new MessageChannel();
-        Game.tickWorker.postMessage({"cmd":"connectEntityLogic"}, [Game.entityLogicTickChannel.port1]);
-        Game.entityLogicWorker.postMessage({"cmd":"connectTick"}, [Game.entityLogicTickChannel.port2]);
+        Game.tickWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTickChannel.port1]);
+        Game.entityLogicWorker.postMessage({"cmd":"connectTick","sta":0,"msg":null}, [Game.entityLogicTickChannel.port2]);
         Game.entityLogicTransformsChannel = new MessageChannel();
-        Game.transformsWorker.postMessage({"cmd":"connectEntityLogic"}, [Game.entityLogicTransformsChannel.port1]);
-        Game.entityLogicWorker.postMessage({"cmd":"connectTransforms"}, [Game.entityLogicTransformsChannel.port2]);
+        Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
+        Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
 
         let initEnd = new Date();
         console.log(`Time to initialize: ${initEnd.getTime() - initStart.getTime()}ms`);
@@ -3906,17 +3906,19 @@ class Game {
     /**
      * Removes an InstancedItemEntity, its ItemController, and its BABYLON.InstancedMesh
      * @memberof module:items
-     * @param {(ItemController|string)} instancedItemEntity An ItemController, or its string ID
+     * @param {(ItemController|string)} itemController An ItemController, or its string ID
      * @returns {number} Integer status code
      */
-    static removeItem(instancedItemEntity) {
-        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            if (!InstancedItemEntity.has(instancedItemEntity)) {
+    static removeItem(itemController) {
+        if (!(itemController instanceof ItemController)) {
+            if (ItemController.has(itemController)) {
+                itemController = ItemController.get(itemController);
+            }
+            else {
                 return 2;
             }
-            instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
         }
-        instancedItemEntity.dispose();
+        itemController.dispose();
         return 0;
     }
 
@@ -5845,6 +5847,24 @@ class Game {
                     }
                 });
                 Game.entityLogicWorkerPostMessage("hasTexture", 0, ids, callbackID);
+                break;
+            }
+            case "removeItem": {
+                if (status == 0) {
+                    if (message instanceof Array) {
+                        message.forEach((entry) => {
+                            Game.removeItem(entry);
+                        });
+                    }
+                    else if (message instanceof Object) {
+                        for (let entry in message) {
+                            Game.removeItem(message[entry]);
+                        }
+                    }
+                    else if (typeof message == "string") {
+                        Game.removeItem(message);
+                    }
+                }
                 break;
             }
             case "setControllerEntity": {

@@ -202,16 +202,11 @@ function createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, d
     return mesh;
 }
 function withinRange(entityControllerA, entityControllerB, distance = 0.6) {
-    console.group(`Running withinRange(${entityControllerA}, ${entityControllerB}, ${distance})`);
     distance = Number.parseFloat(distance) || 0;
     if (!SimpleEntityController.has(entityControllerA)) {
-        console.error(`EntityA (${entityControllerA} doesn't exist.)`);
-        console.groupEnd();
         return false;
     }
     else if (!SimpleEntityController.has(entityControllerB)) {
-        console.error(`EntityB (${entityControllerB} doesn't exist.)`);
-        console.groupEnd();
         return false;
     }
     entityControllerA = SimpleEntityController.get(entityControllerA);
@@ -224,21 +219,14 @@ function withinRange(entityControllerA, entityControllerB, distance = 0.6) {
         distance = distance * 0.5;
     }
     let result = entityControllerA.position.equalsWithEpsilon(entityControllerB.position, distance) || false;
-    console.log(`which returns ${result}`);
-    console.groupEnd();
     return result;
 }
 function inFrontOf(entityControllerA, entityControllerB, epsilon = 0.3926991) {
-    console.group(`Running inFrontOf(${entityControllerA}, ${entityControllerB}, ${epsilon})`);
     epsilon = Number.parseFloat(epsilon) || 0;
     if (!SimpleEntityController.has(entityControllerA)) {
-        console.error(`EntityA (${entityControllerA} doesn't exist.)`);
-        console.groupEnd();
         return false;
     }
     else if (!SimpleEntityController.has(entityControllerB)) {
-        console.error(`EntityB (${entityControllerB} doesn't exist.)`);
-        console.groupEnd();
         return false;
     }
     entityControllerA = SimpleEntityController.get(entityControllerA);
@@ -250,8 +238,6 @@ function inFrontOf(entityControllerA, entityControllerB, epsilon = 0.3926991) {
     let bAng = BABYLON.Angle.BetweenTwoPoints(aPos, bPos);
     let aAng = BABYLON.Angle.BetweenTwoPoints(aPos, cPos);
     let result = aAng.radians() - bAng.radians() <= epsilon;
-    console.log(`which returns ${result}`);
-    console.groupEnd();
     return result;
 }
 function inArea(shape, diameter, height, depth, position, rotation) {
@@ -269,9 +255,19 @@ function inArea(shape, diameter, height, depth, position, rotation) {
 }
 function entityLogicWorkerOnMessage(event) {
     switch (event.data["cmd"]) {
+        case "inArea": {
+            let result = withinRange(...event.data["msg"]);
+            entityLogicWorkerPostMessage("inArea", 0, result, event.data["callbackID"]);
+            break;
+        }
+        case "inFrontOf": {
+            let result = withinRange(...event.data["msg"]);
+            entityLogicWorkerPostMessage("inFrontOf", 0, result, event.data["callbackID"]);
+            break;
+        }
         case "withinRange": {
             let result = withinRange(...event.data["msg"]);
-            entityLogicWorkerPostMessage("withinRangeResponse", 0, [result], event.data["callbackID"]);
+            entityLogicWorkerPostMessage("withinRange", 0, result, event.data["callbackID"]);
             break;
         }
     }
@@ -310,15 +306,12 @@ function gameWorkerOnMessage(event) {
             break;
         }
         case "updateEntity": {
-            if (!(event.data["msg"] instanceof Array)) {
-                console.log("Missing msg for updateEntity");
-            }
+            if (!(event.data["msg"] instanceof Array)) {}
             else if (!SimpleEntityController.has(event.data["msg"][0])) {
                 if (!requestedEntities.hasOwnProperty(event.data["msg"][0])) {
                     let entityID = event.data["msg"][0];
                     requestedEntities[entityID] = true;
                     postMessage({"cmd":"createEntity", "sta":0, "msg":[entityID]});
-                    console.log(`Character (${entityID}) doesn't exist yet, requesting creation`);
                 }
             }
             else {
