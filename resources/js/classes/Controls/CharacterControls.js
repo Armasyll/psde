@@ -82,7 +82,7 @@ class CharacterControls extends AbstractControls {
                         _radialEndInterval() {}
                         _radianIntervalFunction() {}
                  */
-                if (CharacterControls.usePressTime == 0 && !Game.gui.actionsMenu.isVisible && !Game.gui.dialogue.isVisible) {
+                if (CharacterControls.usePressTime == 0 && !Game.gui.radialMenu.isVisible && !Game.gui.dialogue.isVisible) {
                     CharacterControls.usePressTime = Date.now();
                     CharacterControls.useTimeoutFunction = setTimeout(function() {CharacterControls.triggerUse()}, CharacterControls.useTimeout);
                 }
@@ -90,10 +90,10 @@ class CharacterControls extends AbstractControls {
             }
             case AbstractControls.interfaceTargetedEntityCode : {
                 if (Game.playerController.hasTarget()) {
-                    Game.gui.clearActionsMenu();
-                    Game.gui.populateActionsMenuWithTarget();
-                    Game.gui.updateActionsMenu();
-                    Game.gui.showActionsMenu();
+                    Game.gui.clearRadialMenu();
+                    Game.gui.populateRadialMenuWithTarget();
+                    Game.gui.updateRadialMenu();
+                    Game.gui.showRadialMenu();
                 }
                 break;
             }
@@ -258,10 +258,10 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.playerController.hasTarget()) {
-            Game.gui.clearActionsMenu();
-            Game.gui.populateActionsMenuWithTarget();
-            Game.gui.updateActionsMenu();
-            Game.gui.showActionsMenu();
+            Game.gui.clearRadialMenu();
+            Game.gui.populateRadialMenuWithTarget();
+            Game.gui.updateRadialMenu();
+            Game.gui.showRadialMenu();
         }
         return 0;
     }
@@ -277,7 +277,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static triggerUse() {
-        if (CharacterControls.usePressTime == 0 || CharacterControls.useTriggered || Game.gui.dialogue.isVisible || Game.gui.actionsMenu.isVisible) {
+        if (CharacterControls.usePressTime == 0 || CharacterControls.useTriggered || Game.gui.dialogue.isVisible || Game.gui.radialMenu.isVisible) {
             return 1;
         }
         CharacterControls.useTriggered = true;
@@ -285,11 +285,11 @@ class CharacterControls extends AbstractControls {
         if (Date.now() - CharacterControls.usePressTime <= 750 && Game.playerController.hasTarget()) {
             Game.doEntityActionFunction(Game.playerController.getTarget(), Game.playerController);
         }
-        else {
-            Game.gui.clearActionsMenu();
-            Game.gui.populateActionsMenuWithTarget();
-            Game.gui.updateActionsMenu();
-            Game.gui.showActionsMenu();
+        else if (Game.playerController.hasTarget()) {
+            Game.gui.clearRadialMenu();
+            Game.gui.populateRadialMenuWithTarget();
+            Game.gui.updateRadialMenu();
+            Game.gui.showRadialMenu();
         }
         CharacterControls.usePressTime = 0;
         CharacterControls.useTriggered = false;

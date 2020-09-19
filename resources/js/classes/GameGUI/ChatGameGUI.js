@@ -105,17 +105,17 @@ class ChatGameGUI {
         if (boolean === true) {
             ChatGameGUI.focused = true;
             Game.setInterfaceMode(InterfaceModeEnum.WRITING);
-            GameGUI._hud.moveFocusToControl(ChatGameGUI.input);
+            GameGUI.hud.moveFocusToControl(ChatGameGUI.input);
         }
         else {
             ChatGameGUI.focused = false;
-            GameGUI._hud.moveFocusToControl(null);
+            GameGUI.hud.moveFocusToControl(null);
         }
     }
     static isFocused() {
         if (ChatGameGUI.focused) {
             return true;
         }
-        return GameGUI._hud.focusedControl == ChatGameGUI.input;
+        return GameGUI.hud.focusedControl == ChatGameGUI.input;
     }
 }

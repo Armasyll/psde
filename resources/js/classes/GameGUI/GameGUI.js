@@ -33,27 +33,27 @@ class GameGUI {
         GameGUI.focusedBackground = "#3c3c3c";
         GameGUI.focusedBackgroundDisabled = "#0c3c3c";
 
-        GameGUI._nameInput = undefined;
-        GameGUI._ageInput = undefined;
-        GameGUI._menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
-        GameGUI._menu.rootContainer.isVisible = false;
-        GameGUI._menu.rootContainer.zIndex = 5;
-        GameGUI._hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
-        GameGUI._hud.rootContainer.isVisible = false;
-        GameGUI._hud.rootContainer.zIndex = 3;
+        GameGUI._nameInput = "";
+        GameGUI._ageInput = "";
+        GameGUI.menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
+        GameGUI.menu.rootContainer.isVisible = false;
+        GameGUI.menu.rootContainer.zIndex = 5;
+        GameGUI.hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
+        GameGUI.hud.rootContainer.isVisible = false;
+        GameGUI.hud.rootContainer.zIndex = 3;
 
-        GameGUI.actionTooltip = undefined;
+        GameGUI.actionTooltip = null;
         GameGUI.actionTooltipLocked = false;
-        GameGUI.actionsMenu = undefined;
-        GameGUI.actionsMenuOptions = new Array();
-        GameGUI.dialogue = undefined;
+        GameGUI.radialMenu = null;
+        GameGUI.radialMenuOptions = new Array();
+        GameGUI.dialogue = null;
         GameGUI._initHUD();
 
-        GameGUI._characterChoiceMenu = undefined;
-        GameGUI.inventoryMenu = undefined;
-        GameGUI.characterStats = undefined;
+        GameGUI.characterChoiceMenu = null;
+        GameGUI.inventoryMenu = null;
+        GameGUI.characterStats = null;
         GameGUI._initMenu();
-        GameGUI.debugMenu = undefined;
+        GameGUI.debugMenu = null;
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
@@ -61,42 +61,42 @@ class GameGUI {
         GameGUI.resize();
     }
     static _initHUD() {
-        GameGUI._crosshair = GameGUI._generateCrosshair();
+        GameGUI.crosshair = GameGUI._generateCrosshair();
         GameGUI.actionTooltip = GameGUI._generateTargetActionTooltip();
-        GameGUI.actionsMenu = GameGUI._generateActionsRadialMenu();
-        GameGUI._hud.addControl(GameGUI._crosshair);
-        GameGUI._hud.addControl(GameGUI.actionsMenu);
-        GameGUI._hud.addControl(GameGUI.actionTooltip);
+        GameGUI.radialMenu = GameGUI._generateActionsRadialMenu();
+        GameGUI.hud.addControl(GameGUI.crosshair);
+        GameGUI.hud.addControl(GameGUI.radialMenu);
+        GameGUI.hud.addControl(GameGUI.actionTooltip);
 
         GameGUI.debugMenu = DebugGameGUI;
         GameGUI.debugMenu.initialize();
-        GameGUI._hud.addControl(GameGUI.debugMenu.getSkyboxController());
+        GameGUI.hud.addControl(GameGUI.debugMenu.getSkyboxController());
         GameGUI.chat = ChatGameGUI;
         GameGUI.chat.initialize();
-        GameGUI._hud.addControl(GameGUI.chat.getController());
+        GameGUI.hud.addControl(GameGUI.chat.getController());
         GameGUI.dialogue = DialogueGameGUI;
         GameGUI.dialogue.initialize();
-        GameGUI._hud.addControl(GameGUI.dialogue.getController());
+        GameGUI.hud.addControl(GameGUI.dialogue.getController());
         GameGUI.playerPortrait = PlayerPortraitGameGUI;
         GameGUI.playerPortrait.initialize();
-        GameGUI._hud.addControl(GameGUI.playerPortrait.getController());
+        GameGUI.hud.addControl(GameGUI.playerPortrait.getController());
         GameGUI.targetPortrait = TargetPortraitGameGUI;
         GameGUI.targetPortrait.initialize();
-        GameGUI._hud.addControl(GameGUI.targetPortrait.getController());
+        GameGUI.hud.addControl(GameGUI.targetPortrait.getController());
     }
     static _initMenu() {
-        GameGUI._characterChoiceMenu = GameGUI._generateCharacterChoiceMenu()
-        GameGUI._menu.addControl(GameGUI._characterChoiceMenu);
+        GameGUI.characterChoiceMenu = GameGUI._generateCharacterChoiceMenu()
+        GameGUI.menu.addControl(GameGUI.characterChoiceMenu);
 
         GameGUI.inventoryMenu = InventoryGameGUI;
         GameGUI.inventoryMenu.initialize();
-        GameGUI._menu.addControl(GameGUI.inventoryMenu.getController());
+        GameGUI.menu.addControl(GameGUI.inventoryMenu.getController());
         GameGUI.characterStats = CharacterStatsGUI;
         GameGUI.characterStats.initialize();
-        GameGUI._menu.addControl(GameGUI.characterStats.getController());
+        GameGUI.menu.addControl(GameGUI.characterStats.getController());
         GameGUI.book = BookGameGUI;
         GameGUI.book.initialize();
-        GameGUI._menu.addControl(GameGUI.book.getController());
+        GameGUI.menu.addControl(GameGUI.book.getController());
     }
     static resize() {
         if (!GameGUI.initialized) {
@@ -113,8 +113,8 @@ class GameGUI {
         GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
         GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
-        GameGUI._hud.rootContainer.fontSize = GameGUI.fontSize;
-        GameGUI._menu.rootContainer.fontSize = GameGUI.fontSize;
+        GameGUI.hud.rootContainer.fontSize = GameGUI.fontSize;
+        GameGUI.menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
         GameGUI.dialogue.resize();
         GameGUI.characterStats.resize();
@@ -146,7 +146,7 @@ class GameGUI {
         if (_updateChild === true) {
             GameGUI.hideMenu(false);
         }
-        GameGUI._hud.rootContainer.isVisible = true;
+        GameGUI.hud.rootContainer.isVisible = true;
         GameGUI.pointerLock();
     }
     static hideHUD(_updateChild = false) {
@@ -157,25 +157,25 @@ class GameGUI {
         if (_updateChild === true) {
             GameGUI.showMenu(false);
         }
-        GameGUI._hud.rootContainer.isVisible = false;
+        GameGUI.hud.rootContainer.isVisible = false;
     }
     static _hideHUDChildren() {
-        for (var _i = GameGUI._hud.rootContainer.children.length - 1; _i > -1; _i--) {
-            GameGUI._hud.rootContainer.children[_i].isVisible = false;
+        for (var _i = GameGUI.hud.rootContainer.children.length - 1; _i > -1; _i--) {
+            GameGUI.hud.rootContainer.children[_i].isVisible = false;
         }
     }
     static isHUDVisible() {
-        return GameGUI._hud.rootContainer.isVisible;
+        return GameGUI.hud.rootContainer.isVisible;
     }
     static setHUDVisible(_boolean) {
         if (GameGUI.locked) {
             return;
         }
         if (_boolean === true) {
-            GameGUI._hud.rootContainer.isVisible = true;
+            GameGUI.hud.rootContainer.isVisible = true;
         }
         else {
-            GameGUI._hud.rootContainer.isVisible = false;
+            GameGUI.hud.rootContainer.isVisible = false;
         }
     }
     static showMenu(_updateChild = true) {
@@ -187,7 +187,7 @@ class GameGUI {
         if (_updateChild === true) {
             GameGUI.hideHUD(false);
         }
-        GameGUI._menu.rootContainer.isVisible = true;
+        GameGUI.menu.rootContainer.isVisible = true;
     }
     static hideMenu(_updateChild = false) {
         if (Game.debugMode) console.log("Running GameGUI::hideMenu");
@@ -198,25 +198,25 @@ class GameGUI {
         if (_updateChild === true) {
             GameGUI.showHUD(false);
         }
-        GameGUI._menu.rootContainer.isVisible = false;
+        GameGUI.menu.rootContainer.isVisible = false;
     }
     static _hideMenuChildren() {
-        for (var _i = GameGUI._menu.rootContainer.children.length - 1; _i > -1; _i--) {
-            GameGUI._menu.rootContainer.children[_i].isVisible = false;
+        for (var _i = GameGUI.menu.rootContainer.children.length - 1; _i > -1; _i--) {
+            GameGUI.menu.rootContainer.children[_i].isVisible = false;
         }
     }
     static isMenuVisible() {
-        return GameGUI._menu.rootContainer.isVisible;
+        return GameGUI.menu.rootContainer.isVisible;
     }
     static setMenuVisible(_boolean) {
         if (GameGUI.locked) {
             return;
         }
         if (_boolean === true) {
-            GameGUI._menu.rootContainer.isVisible = true;
+            GameGUI.menu.rootContainer.isVisible = true;
         }
         else {
-            GameGUI._menu.rootContainer.isVisible = false;
+            GameGUI.menu.rootContainer.isVisible = false;
         }
     }
     static _generateCrosshair() {
@@ -235,13 +235,13 @@ class GameGUI {
         if (GameGUI.locked) {
             return;
         }
-        GameGUI._crosshair.isVisible = true;
+        GameGUI.crosshair.isVisible = true;
     }
     static hideCrosshair() {
         if (GameGUI.locked) {
             return;
         }
-        GameGUI._crosshair.isVisible = false;
+        GameGUI.crosshair.isVisible = false;
     }
     static _generateCharacterChoiceMenu() {
         if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");
@@ -430,14 +430,14 @@ class GameGUI {
         GameGUI.hideHUD()
         GameGUI.showMenu();
         GameGUI._hideMenuChildren();
-        GameGUI._characterChoiceMenu.isVisible = true;
+        GameGUI.characterChoiceMenu.isVisible = true;
     }
     static hideCharacterChoiceMenu() {
         if (GameGUI.locked) {
             return;
         }
         GameGUI.pointerLock();
-        GameGUI._characterChoiceMenu.isVisible = false;
+        GameGUI.characterChoiceMenu.isVisible = false;
     }
     static createSimpleButton(...params) {
         let button = BABYLON.GUI.Button.CreateSimpleButton(...params);
@@ -645,7 +645,7 @@ class GameGUI {
         actionsRadialMenu.zIndex = 12;
         return actionsRadialMenu;
     }
-    static populateActionsMenuWith(entityController) {
+    static populateRadialMenuWith(entityController) {
         if (!(entityController instanceof EntityController)) {
             if (EntityController.has(entityController)) {
                 entityController = EntityController.get(entityController);
@@ -654,24 +654,27 @@ class GameGUI {
                 return 2;
             }
         }
-        GameGUI.actionsMenuOptions.clear();
-        let actions = entityController.getAvailableActions();
-        for (let actionID in actions) {
+        GameGUI.radialMenuOptions.clear();
+        if (Object.keys(entityController.availableActions).length == 0) {
+            return 1;
+        }
+        for (let actionID in entityController.availableActions) {
             if (!entityController.hasHiddenAvailableAction(actionID)) {
-                GameGUI.addActionsMenuOption(actionID, entityController);
+                GameGUI.addRadialMenuOption(actionID, entityController);
             }
         }
         return 0;
     }
-    static populateActionsMenuWithTarget() {
+    static populateRadialMenuWithTarget() {
         if (Game.playerController.hasTarget()) {
-            return GameGUI.populateActionsMenuWith(Game.playerController.getTarget().getEntity());
+            return GameGUI.populateRadialMenuWith(Game.playerController.getTarget());
         }
         else {
-            GameGUI.clearActionsMenu();
+            GameGUI.clearRadialMenu();
         }
+        return 0;
     }
-    static addActionsMenuOption(actionID, abstractEntity) {
+    static addRadialMenuOption(actionID, entityController) {
         if (!ActionEnum.properties.hasOwnProperty(actionID)) {
             if (ActionEnum.hasOwnProperty(actionID)) {
                 actionID = ActionEnum[actionID];
@@ -683,24 +686,24 @@ class GameGUI {
         else {
             actionID = Number.parseInt(actionID);
         }
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
             }
             else {
                 return 2;
             }
         }
-        GameGUI.actionsMenuOptions.push({
+        GameGUI.radialMenuOptions.push({
             action:actionID,
-            target:abstractEntity
+            target:entityController
         });
-        if (GameGUI.actionsMenu.isVisible) {
-            GameGUI.updateActionsMenu();
+        if (GameGUI.radialMenu.isVisible) {
+            GameGUI.updateRadialMenu();
         }
-        return true;
+        return 0;
     }
-    static removeActionsMenuOption(actionID) {
+    static removeRadialMenuOption(actionID) {
         if (!ActionEnum.properties.hasOwnProperty(actionID)) {
             if (ActionEnum.hasOwnProperty(actionID)) {
                 actionID = ActionEnum[actionID];
@@ -712,42 +715,46 @@ class GameGUI {
         else {
             actionID = Number.parseInt(actionID);
         }
-        for (var _i = 0; _i < GameGUI.actionsMenuOptions.length; _i++) {
-            if (GameGUI.actionsMenuOptions[_i].action == actionID) {
-                GameGUI.actionsMenuOptions.splice(_i, 1);
-                _i = _actionsMenuOptions.length;
+        for (var _i = 0; _i < GameGUI.radialMenuOptions.length; _i++) {
+            if (GameGUI.radialMenuOptions[_i].action == actionID) {
+                GameGUI.radialMenuOptions.splice(_i, 1);
+                _i = _radialMenuOptions.length;
             }
         }
-        if (GameGUI.actionsMenu.isVisible) {
-            GameGUI.updateActionsMenu();
+        if (GameGUI.radialMenu.isVisible) {
+            GameGUI.updateRadialMenu();
         }
-        return true;
+        return 0;
     }
-    static clearActionsMenu() {
-        for (let i = GameGUI.actionsMenu.children.length - 1; i >= 0; i--) {
-            GameGUI.actionsMenu.children[i].dispose();
+    static clearRadialMenu() {
+        for (let i = GameGUI.radialMenu.children.length - 1; i >= 0; i--) {
+            GameGUI.radialMenu.children[i].dispose();
         }
-        GameGUI.actionsMenuOptions.clear();
-        return true;
+        GameGUI.radialMenuOptions.clear();
+        return 0;
     }
-    static showActionsMenu(pointerRelease = true, updateChild = true) {
+    static showRadialMenu(pointerRelease = true, updateChild = true) {
         if (GameGUI.locked) {
-            return;
+            return 1;
+        }
+        if (GameGUI.radialMenuOptions.length == 0) {
+            return 1;
         }
         if (updateChild) {
             GameGUI.hideActionTooltip();
             GameGUI.lockActionTooltip();
         }
-        GameGUI.actionsMenu.isVisible = true;
+        GameGUI.radialMenu.isVisible = true;
         if (pointerRelease) {
             GameGUI.pointerRelease();
         }
+        return 0;
     }
-    static hideActionsMenu(pointerLock = true, updateChild = true) {
+    static hideRadialMenu(pointerLock = true, updateChild = true) {
         if (GameGUI.locked) {
-            return;
+            return 1;
         }
-        GameGUI.actionsMenu.isVisible = false;
+        GameGUI.radialMenu.isVisible = false;
         if (updateChild) {
             GameGUI.unlockActionTooltip();
             GameGUI.showActionTooltip();
@@ -755,10 +762,11 @@ class GameGUI {
         if (pointerLock) {
             GameGUI.pointerLock();
         }
+        return 0;
     }
-    static updateActionsMenu() {
-        for (let i = GameGUI.actionsMenu.children.length - 1; i >= 0; i--) {
-            GameGUI.actionsMenu.children[i].dispose();
+    static updateRadialMenu() {
+        for (let i = GameGUI.radialMenu.children.length - 1; i >= 0; i--) {
+            GameGUI.radialMenu.children[i].dispose();
         }
         let xPosition = 0;
         let yPosition = 0;
@@ -766,24 +774,24 @@ class GameGUI {
         button.width = "24px";
         button.height = "24px";
         button.onPointerClickObservable.add(function() {
-            GameGUI.hideActionsMenu();
+            GameGUI.hideRadialMenu();
             GameGUI.pointerLock();
         });
         button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
-        GameGUI.actionsMenu.addControl(button);
-        if (GameGUI.actionsMenuOptions.length > 0) {
-            for (let i = 0; i < GameGUI.actionsMenuOptions.length; i++) {
-                xPosition = (GameGUI.actionsMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI.actionsMenuOptions.length*i - 90));
-                yPosition = (GameGUI.actionsMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI.actionsMenuOptions.length*i - 90));
-                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI.actionsMenuOptions[i].action].name);
+        GameGUI.radialMenu.addControl(button);
+        if (GameGUI.radialMenuOptions.length > 0) {
+            for (let i = 0; i < GameGUI.radialMenuOptions.length; i++) {
+                xPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
+                yPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
+                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI.radialMenuOptions[i].action].name);
                 button.width = "96px";
                 button.height = "24px";
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
-                    GameGUI.hideActionsMenu();
-                    Game.doEntityActionFunction(GameGUI.actionsMenuOptions[i].target, Game.player, GameGUI.actionsMenuOptions[i].action);
+                    GameGUI.hideRadialMenu();
+                    Game.doEntityActionFunction(GameGUI.radialMenuOptions[i].target, Game.player, GameGUI.radialMenuOptions[i].action);
                 });
-                GameGUI.actionsMenu.addControl(button);
+                GameGUI.radialMenu.addControl(button);
             }
         }
     }

@@ -111,6 +111,10 @@ class Tools {
         if (typeof theEnumerator != "object") {
             return -1;
         }
+        let tempValue = Number.parseInt(value);
+        if (!isNaN(tempValue)) {
+            value = tempValue;
+        }
         if (returnValue) {
             if (typeof value == "number" && theEnumerator.properties.hasOwnProperty(value)) {
                 return value;

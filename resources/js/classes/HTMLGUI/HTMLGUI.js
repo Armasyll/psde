@@ -57,22 +57,22 @@ class HTMLGUI {
     static unlockActionTooltip() {
 
     }
-    static addActionsMenuOption(actionID, abstractEntity) {
+    static addRadialMenuOption(actionID, abstractEntity) {
 
     }
-    static removeActionsMenuOption(actionID) {
+    static removeRadialMenuOption(actionID) {
 
     }
-    static clearActionsMenu() {
+    static clearRadialMenu() {
 
     }
-    static showActionsMenu() {
+    static showRadialMenu() {
 
     }
-    static hideActionsMenu() {
+    static hideRadialMenu() {
 
     }
-    static updateActionsMenu() {
+    static updateRadialMenu() {
 
     }
     static lock() {
