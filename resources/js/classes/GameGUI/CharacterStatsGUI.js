@@ -1698,7 +1698,7 @@ class CharacterStatsGUI {
         // saving throws
         number = DND5E.calculateAbilityModifier(response.strength);
         if (response.proficiencies.hasOwnProperty("STRENGTH")) {
-            number += response.getProficiencyBonus();
+            number += response.proficiencyBonus;
             checkbox = true;
         }
         else {
