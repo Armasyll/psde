@@ -19,7 +19,7 @@ class TargetPortraitGameGUI {
         portrait.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         portrait.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         portrait.height = GameGUI.getFontSize(4);
-        portrait.width = GameGUI.getFontSize(14)
+        portrait.width = GameGUI.getFontSize(14);
         portrait.top = 0;
         portrait.left = "26%";
         portrait.isVisible = false;

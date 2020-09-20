@@ -224,7 +224,7 @@ class InventoryGameGUI {
                 let itemEntity = response.container.items[id];
                 let button = InventoryGameGUI._generateInventoryItemsButton(itemEntity.id, itemEntity.name, Game.getIcon(itemEntity.iconID));
                 button.onPointerUpObservable.add(function() {
-                    InventoryGameGUI.updateSelectedWith(itemEntity.id, entityController);
+                    InventoryGameGUI.setSelected(itemEntity.id, entityController);
                 });
                 InventoryGameGUI.items.addControl(button);
                 itemsHeightInPixels += button.heightInPixels;
@@ -252,7 +252,7 @@ class InventoryGameGUI {
      * @param {EntityController} targetController The EntityController storing the entityObject
      * @param {EntityController} actorController The EntityController viewing the entityObject; the player controller.
      */
-    static updateSelectedWith(itemID, targetController = Game.player, actorController = Game.player, parentCallbackID = null) {
+    static setSelected(itemID, targetController = Game.player, actorController = Game.player, parentCallbackID = null) {
         if (typeof itemID == "string") {}
         else if (itemID.hasOwnProperty("id")) {
             itemID = itemID.id;
@@ -266,11 +266,11 @@ class InventoryGameGUI {
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.updateSelectedWithResponse);
+        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponse);
         Game.entityLogicWorkerPostMessage("getEntity", 0, [itemID], callbackID);
         return 0;
     }
-    static updateSelectedWithResponse(itemID, targetController, actorController, response, parentCallbackID) {
+    static setSelectedResponse(itemID, targetController, actorController, response, parentCallbackID) {
         InventoryGameGUI.selectedEntity = response.id;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
@@ -293,43 +293,43 @@ class InventoryGameGUI {
             let actionButton = null;
             switch (action) {
                 case ActionEnum.CONSUME : {
-                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton = GameGUI._generateButton("actionConsumeButton", ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.DROP : {
-                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton = GameGUI._generateButton("actionDropButton", ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.EQUIP : {
                     if (response.equipped) {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.UNEQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(response.id, actorController, InventoryGameGUI.updateSelectedWith);});
+                        actionButton = GameGUI._generateButton("actionUnequipButton", ActionEnum.properties[ActionEnum.UNEQUIP].name);
+                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(response.id, actorController, InventoryGameGUI.setSelected);});
                     }
                     else {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.EQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(response.id, actorController, InventoryGameGUI.updateSelectedWith);});
+                        actionButton = GameGUI._generateButton("actionEquipButton", ActionEnum.properties[ActionEnum.EQUIP].name);
+                        actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(response.id, actorController, InventoryGameGUI.setSelected);});
                     }
                     break;
                 }
                 case ActionEnum.HOLD : {
                     if (response.held) {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(itemID, actorController, InventoryGameGUI.updateSelectedWith);});
+                        actionButton = GameGUI._generateButton("actionReleaseButton", ActionEnum.properties[ActionEnum.RELEASE].name);
+                        actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     else {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(itemID, actorController, InventoryGameGUI.updateSelectedWith);});
+                        actionButton = GameGUI._generateButton("actionHoldButton", ActionEnum.properties[ActionEnum.HOLD].name);
+                        actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     break;
                 }
                 case ActionEnum.LOOK : {
-                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton = GameGUI._generateButton("actionLookButton", ActionEnum.properties[action].name);
                     break;
                 }
                 case ActionEnum.READ : {
-                    actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                    actionButton = GameGUI._generateButton("actionReadButton", ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {Game.actionReadFunction(itemID, actorController);});
                     break;
                 }
@@ -338,14 +338,14 @@ class InventoryGameGUI {
                         break;
                     }
                     else if (targetController.hasInventory) {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                        actionButton = GameGUI._generateButton("actionPutButton", ActionEnum.properties[action].name);
                     }
                     break;
                 }
                 case ActionEnum.TAKE : {
                     if (actorController == Game.playerController) {}
                     else {
-                        actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
+                        actionButton = GameGUI._generateButton("actionTakeButton", ActionEnum.properties[action].name);
                     }
                     break;
                 }
@@ -368,7 +368,8 @@ class InventoryGameGUI {
             InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
         }
     }
-    static _generateInventoryItemsButton(id = undefined, title = undefined, icon = undefined) {
+    static _generateInventoryItemsButton(id = "", title = "", iconPath = null) {
+        id = Game.filterID(id);
         let button = new BABYLON.GUI.Button(id);
             button.width = InventoryGameGUI.items.width;
             button.height = String(InventoryGameGUI.items.heightInPixels / 10).concat("px");
@@ -378,7 +379,7 @@ class InventoryGameGUI {
                 container.height = button.height;
                 container.isVertical = false;
                 button.addControl(container);
-                let image = new BABYLON.GUI.Image(id + "Image", icon);
+                let image = new BABYLON.GUI.Image(id + "Image", iconPath);
                     image.width = button.height;
                     image.height = button.height;
                     image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;

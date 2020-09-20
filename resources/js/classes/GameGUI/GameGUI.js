@@ -360,7 +360,7 @@ class GameGUI {
             if (!doNotPassGo) {
                 if (!Game.hasPlayerController()) {
                     Game.setPlayerCell("apartmentCell");
-                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
                 if (!Client.isOnline()) {
                     Client.connect();
@@ -395,7 +395,7 @@ class GameGUI {
             if (!doNotPassGo) {
                 if (!(Game.hasPlayerController())) {
                     Game.setPlayerCell("apartmentCell");
-                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, undefined, undefined, CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.createPlayer("00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 }
                 if (Client.isOnline()) {
                     Client.disconnect();
@@ -509,25 +509,35 @@ class GameGUI {
         stackPanel.background = GameGUI.background;
         return stackPanel;
     }
-    static _generateButton(_id = undefined, _title = undefined, _subTitle = undefined, _icon = undefined) {
-        var _button = new BABYLON.GUI.Button(_id);
-            _button.width = GameGUI.getFontSize(9);
-            _button.height = GameGUI.getFontSize(2);
-        var _buttonImage = new BABYLON.GUI.Image("", _icon);
-            _buttonImage.width = GameGUI.getFontSize(2);
-            _buttonImage.height = GameGUI.getFontSize(2);
-            _buttonImage.left = "-40%";
-            _buttonImage.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-            _button.addControl(_buttonImage);
-        var _buttonText = new BABYLON.GUI.TextBlock();
-            _buttonText.width = GameGUI.getFontSize(7);
-            _buttonText.height = GameGUI.getFontSize(2);
-            _buttonText.top = "5%";
-            _buttonText.left = "10%";
-            _buttonText.text = _title;
-            _buttonText.color = GameGUI.color;
-            _button.addControl(_buttonText);
-        return _button;
+    /**
+     * 
+     * @param {string} [id] 
+     * @param {string} title 
+     * @param {string} [subTitle] 
+     * @param {string} [iconPath] 
+     */
+    static _generateButton(id = "", title = "", subTitle = "", iconPath = null) {
+        id = Game.filterID(id);
+        let button = new BABYLON.GUI.Button(id);
+        button.width = GameGUI.getFontSize(9);
+        button.height = GameGUI.getFontSize(2);
+        if (typeof iconPath == "string") {
+            let buttonImage = new BABYLON.GUI.Image("", iconPath);
+            buttonImage.width = GameGUI.getFontSize(2);
+            buttonImage.height = GameGUI.getFontSize(2);
+            buttonImage.left = "-40%";
+            buttonImage.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+            button.addControl(buttonImage);
+        }
+        let buttonText = new BABYLON.GUI.TextBlock();
+        buttonText.width = GameGUI.getFontSize(7);
+        buttonText.height = GameGUI.getFontSize(2);
+        buttonText.top = "5%";
+        buttonText.left = "10%";
+        buttonText.text = title;
+        buttonText.color = GameGUI.color;
+        button.addControl(buttonText);
+        return button;
     }
     static _generateTargetActionTooltip() {
         if (Game.debugMode) console.log("Running GameGUI::_generateTargetActionTooltip");
@@ -780,16 +790,22 @@ class GameGUI {
         button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
         GameGUI.radialMenu.addControl(button);
         if (GameGUI.radialMenuOptions.length > 0) {
+            let name = "";
+            let key = "";
+            let value = 0;
             for (let i = 0; i < GameGUI.radialMenuOptions.length; i++) {
+                value = GameGUI.radialMenuOptions[i].action;
+                name = ActionEnum.properties[GameGUI.radialMenuOptions[i].action].name;
+                key = ActionEnum.properties[GameGUI.radialMenuOptions[i].action].key;
                 xPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
                 yPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
-                button = GameGUI.createSimpleButton(undefined, ActionEnum.properties[GameGUI.radialMenuOptions[i].action].name);
+                button = GameGUI.createSimpleButton(String(`action${name}Button`), name);
                 button.width = "96px";
                 button.height = "24px";
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
                     GameGUI.hideRadialMenu();
-                    Game.doEntityActionFunction(GameGUI.radialMenuOptions[i].target, Game.player, GameGUI.radialMenuOptions[i].action);
+                    Game.doEntityActionFunction(GameGUI.radialMenuOptions[i].target, Game.player, value);
                 });
                 GameGUI.radialMenu.addControl(button);
             }

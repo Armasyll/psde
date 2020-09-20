@@ -1045,7 +1045,14 @@ class CreatureEntity extends Entity {
         return 0;
     }
     getAbilityScores() {
-        return this.abilityScore;
+        let obj = {};
+        obj["STRENGTH"] = this.getStrength();
+        obj["DEXTERITY"] = this.getDexterity();
+        obj["CONSTITUTION"] = this.getConstitution();
+        obj["INTELLIGENCE"] = this.getIntelligence();
+        obj["WISDOM"] = this.getWisdom();
+        obj["CHARISMA"] = this.getCharisma();
+        return obj;
     }
 
     getLevel() {
@@ -1392,14 +1399,7 @@ class CreatureEntity extends Entity {
      * @returns {number}
      */
     getSkillScore(proficiency) {
-        if (!ProficiencyEnum.hasOwnProperty(proficiency)) {
-            if (ProficiencyEnum.properties.hasOwnProperty(proficiency)) {
-                proficiency = ProficiencyEnum.properties[proficiency].key;
-            }
-            else {
-                return 0;
-            }
-        }
+        proficiency = Tools.filterEnum(proficiency, SkillEnum, false);
         let number = DND5E.calculateAbilityModifier(this.getAbility(DND5E.getSkillAbility(proficiency)));
         if (this.hasProficiency(proficiency)) {
             number += this.getProficiencyBonus();
@@ -1414,6 +1414,13 @@ class CreatureEntity extends Entity {
             delete this.proficiencies[proficiency];
         }
         return 0;
+    }
+    getSkillScores() {
+        let obj = {};
+        for (let skill in SkillEnum) {
+            obj[skill] = this.getSkillScore(skill);
+        }
+        return obj;
     }
 
     canMove() {
@@ -1517,6 +1524,9 @@ class CreatureEntity extends Entity {
         }
         this.resetConditionProperties();
         return 0;
+    }
+    getConditions() {
+        return this.conditions;
     }
 
     /**
@@ -2412,6 +2422,60 @@ class CreatureEntity extends Entity {
         return this.alerted;
     }
 
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["abilityScore"] = this.getAbilityScores();
+        obj["activePerception"] = this.getActivePerception();
+        obj["armourClass"] = this.getArmourClass();
+        obj["charisma"] = this.getCharisma();
+        obj["constitution"] = this.getConstitution();
+        obj["dexterity"] = this.getDexterity();
+        obj["exhaustion"] = this.getExhaustion();
+        obj["gender"] = this.getGender();
+        obj["handedness"] = this.getHandedness();
+        obj["health"] = this.getHealth();
+        obj["inspiration"] = this.getInspiration();
+        obj["intelligence"] = this.getIntelligence();
+        obj["maxHealth"] = this.getMaxHealth();
+        obj["movementSpeed"] = this.getMovementSpeed();
+        obj["passivePerception"] = this.getPassivePerception();
+        obj["proficiencies"] = this.proficiencies;
+        obj["proficiencyBonus"] = this.getProficiencyBonus();
+        obj["sex"] = this.getSex();
+        obj["spellSlotsUsed"] = this.spellSlotsUsed;
+        obj["spellsKnown"] = this._objectifyProperty(this.spellsKnown);
+        obj["spellSlots"] = this._objectifyProperty(this.spellSlots);
+        obj["stabilized"] = this.stabilized;
+        obj["stance"] = this.getStance();
+        obj["strength"] = this.getStrength();
+        obj["wisdom"] = this.getWisdom();
+        return obj;
+    }
+    objectify() {
+        let obj = super.objectify();
+        obj["abilityScore"] = this.getAbilityScores();
+        obj["activePerception"] = this.getActivePerception();
+        obj["armourClass"] = this.getArmourClass();
+        obj["charisma"] = this.getCharisma();
+        obj["constitution"] = this.getConstitution();
+        obj["dexterity"] = this.getDexterity();
+        obj["exhaustion"] = this.getExhaustion();
+        obj["gender"] = this.getGender();
+        obj["handedness"] = this.getHandedness();
+        obj["health"] = this.getHealth();
+        obj["inspiration"] = this.getInspiration();
+        obj["intelligence"] = this.getIntelligence();
+        obj["maxHealth"] = this.getMaxHealth();
+        obj["movementSpeed"] = this.getMovementSpeed();
+        obj["passivePerception"] = this.getPassivePerception();
+        obj["proficiencyBonus"] = this.getProficiencyBonus();
+        obj["sex"] = this.getSex();
+        obj["stance"] = this.getStance();
+        obj["strength"] = this.getStrength();
+        obj["wisdom"] = this.getWisdom();
+        obj["skillScores"] = this.getSkillScores();
+        return obj;
+    }
     /**
      * Overrides Entity.clone
      * @param  {string} id ID

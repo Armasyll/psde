@@ -3936,8 +3936,12 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createCharacterMesh(characterID = undefined, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
+    static createCharacterMesh(characterID = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }) {
         if (Game.debugMode) console.group(`Running Game.createCharacterMesh(${characterID}, ${meshID}, ${materialID})`);
+        characterID = Game.filterID(characterID);
+        position = Tools.filterVector3(position);
+        rotation = Tools.filterVector3(rotation);
+        scaling = Tools.filterVector3(scaling);
         if (typeof options != "object") {
             options = { "mass": 0.8, "restitution": 0.1 };
         }
@@ -4214,6 +4218,9 @@ class Game {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
+        position = Tools.filterVector3(position);
+        rotation = Tools.filterVector3(rotation);
+        scaling = Tools.filterVector3(scaling);
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [id, name, description, iconID, creatureType, creatureSubType, sex, age, meshID, materialID, position, rotation, scaling, options], Game.createPlayerResponsePhaseOne);
         Game.createCharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, meshID, materialID, options, callbackID);
@@ -4247,8 +4254,8 @@ class Game {
             if (CharacterController.has(characterController)) {
                 characterController = CharacterController.get(characterController);
             }
-            else if (CharacterController.has(response)) {
-                characterController = CharacterController.get(response);
+            else {
+                return 2;
             }
         }
         if (Game.playerController == characterController) {

@@ -302,6 +302,7 @@ class SoulEntity extends AbstractEntity {
         if (soul.hasOwnProperty("description")) this.description = soul.description;
         if (soul.hasOwnProperty("age")) this.age = soul.age;
         if (soul.hasOwnProperty("abilityScore")) {
+            this.abilityScore["CHARISMA"] = soul.abilityScore["CHARISMA"];
             this.abilityScore["INTELLIGENCE"] = soul.abilityScore["INTELLIGENCE"];
             this.abilityScore["WISDOM"] = soul.abilityScore["WISDOM"];
         }

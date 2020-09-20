@@ -373,11 +373,13 @@ class EntityLogic {
                 break;
             }
             case "createCharacterEntity": {
-                let entity = new CharacterEntity(message["id"], message["name"], message["description"], message["iconID"], message["creatureType"], message["creatureSubType"], message["sex"], message["age"]);
-                entity.setMeshID(message["meshID"]);
-                entity.setMaterialID(message["materialID"]);
-                entity.assign(message["options"]);
-                EntityLogic.gameWorkerPostMessage("createCharacterEntity", 0, entity, callbackID);
+                let entity = EntityLogic.createCharacterEntity(message["id"], message["name"], message["description"], message["iconID"], message["creatureType"], message["creatureSubType"], message["sex"], message["age"], message["meshID"], message["materialID"], message["options"]);
+                if (entity instanceof CreatureEntity) {
+                    EntityLogic.gameWorkerPostMessage("createCharacterEntity", 0, entity, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("createCharacterEntity", 1, null, callbackID);
+                }
                 break;
             }
             case "createCharacterInstance": {
@@ -921,6 +923,9 @@ class EntityLogic {
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
         let soul = new SoulEntity(id, name, description);
         soul.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
+        soul.setCharisma(10);
+        soul.setIntelligence(10);
+        soul.setWisdom(10);
         characterEntity.setSoul(soul, false); // Assign the body its soul, without updating its properties, because they've already been set
         if (typeof options == "object") {
             for (let i in options) {

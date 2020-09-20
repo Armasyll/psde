@@ -12,9 +12,9 @@ class CharacterEntity extends CreatureEntity {
      * @param  {CreatureSubTypeEnum}  [creatureSubType] Creature Sub-Type; dependant upon creatureType
      * @param  {SexEnum}  [sex] SexEnum
      * @param  {number}  [age] Age
-     * @param  {CharacterClass}  [characterClass] CharacterClass
+     * @param  {CharacterClass}  [primaryCharacterClass] CharacterClass
      */
-    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, characterClass = CharacterClass.get("classless")) {
+    constructor(id = "nickWilde", name = "Wilde, Nicholas", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 33, primaryCharacterClass = CharacterClass.get("classless")) {
         super(id, name, description, iconID, creatureType, creatureSubType, sex, age);
         this.entityType = EntityEnum.CHARACTER;
         this.surname = "";
@@ -111,7 +111,6 @@ class CharacterEntity extends CreatureEntity {
 
         this.setName(name);
         this.setIcon(iconID);
-        this.setClass(characterClass);
         this.setAge(age);
         this.setGender(sex);
         this.addAvailableAction(ActionEnum.ATTACK);
@@ -120,7 +119,7 @@ class CharacterEntity extends CreatureEntity {
         this.addAvailableAction(ActionEnum.GIVE);
         this.addAvailableAction(ActionEnum.TAKE);
         this.createContainer();
-        this.setClass(characterClass);
+        this.setClass(primaryCharacterClass);
         this.generateProperties();
         this.generateBaseStats(true);
         this.generateAdditionalStats();

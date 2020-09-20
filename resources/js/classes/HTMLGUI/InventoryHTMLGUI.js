@@ -17,10 +17,10 @@ class InventoryHTMLGUI {
     static hide() {
         
     }
-    static updateWith(abstractEntity) {
+    static set(entityController) {
 
     }
-    static updateSelectedWith(abstractEntity) {
+    static setSelected(entityObject, targetController, actorController) {
 
     }
     static clearSelected() {
