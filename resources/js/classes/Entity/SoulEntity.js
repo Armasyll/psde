@@ -10,6 +10,8 @@ class SoulEntity extends AbstractEntity {
      */
     constructor(id = "", name = "", description = "") {
         super(id, name, description);
+        this.equiptable = true;
+        this.holdable = true;
         this.entityType = EntityEnum.SOUL;
         this.age = 18;
 

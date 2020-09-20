@@ -169,7 +169,10 @@ class CharacterEntity extends CreatureEntity {
     getEquipment() {
         return this.equipment;
     }
-    equip(instancedItemEntity, equipmentSlot = -1) {
+    equip(instancedItemEntity, equipmentSlot = -1, hold = false) {
+        if (equipmentSlot == null) {
+            equipmentSlot = -1;
+        }
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
         */
@@ -266,9 +269,13 @@ class CharacterEntity extends CreatureEntity {
         if (instancedItemEntity instanceof InstancedWeaponEntity && (equipmentSlot == ApparelSlotEnum.HAND_L || equipmentSlot == ApparelSlotEnum.HAND_R)) {
             this.armed = true;
         }
+        instancedItemEntity.equipped = true;
+        if (hold) {
+            instancedItemEntity.held = true;
+        }
         return 0;
     }
-    unequip(any) {
+    unequip(any, release = false) {
         if (any instanceof InstancedEntity) {
             return this.unequipByInstancedEntity(any)
         }
@@ -291,7 +298,7 @@ class CharacterEntity extends CreatureEntity {
         }
         return 2;
     }
-    unequipByInstancedEntity(instancedEntity, strict = false) {
+    unequipByInstancedEntity(instancedEntity) {
         for (let slot in this.equipment) {
             if (InstancedEntity.has(this.equipment[slot]) && this.equipment[slot] == instancedEntity.getID()) {
                 return this.unequipBySlot(slot);
@@ -350,6 +357,8 @@ class CharacterEntity extends CreatureEntity {
         else {
             this.armed = false;
         }
+        instancedItemEntity.equipped = false;
+        instancedItemEntity.held = false;
         return 0;
     }
     hasEquipment(abstractEntity) {

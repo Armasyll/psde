@@ -194,49 +194,51 @@ class InventoryGameGUI {
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
-     * @param {AbstractEntity} abstractEntity The Entity with the inventory.
+     * @param {AbstractEntity} entityController The Entity with the inventory.
      */
-    static updateWith(abstractEntity = Game.player) {
-        InventoryGameGUI.resize();
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+    static set(entityController = Game.playerController, parentCallbackID = null) {
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
             }
             else {
                 return 2;
             }
         }
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setResponse);
+        Game.entityLogicWorkerPostMessage("getInventory", 0, [entityController.entityID], callbackID);
+        return 0;
+    }
+    static setResponse(entityController, response, parentCallbackID) {
+        InventoryGameGUI.resize();
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             let entry = InventoryGameGUI.items.children[i];
             InventoryGameGUI.items.removeControl(entry);
             entry.dispose();
         }
         InventoryGameGUI.items.clearControls();
-        if (abstractEntity.hasInventory()) {
+        if (Object.keys(response.container.items).length > 0) {
             let itemsHeightInPixels = 0;
-            for (let id in abstractEntity.getItems()) {
-                if (InstancedItemEntity.has(abstractEntity.getItems()[id])) {
-                    let instancedItemEntity = InstancedItemEntity.get(abstractEntity.getItems()[id]);
-                    let button = InventoryGameGUI._generateInventoryItemsButton(id, instancedItemEntity.getName(), Game.getIcon(instancedItemEntity.getIcon()));
-                    button.onPointerUpObservable.add(function() {
-                        InventoryGameGUI.updateSelectedWith(instancedItemEntity.getID(), abstractEntity);
-                    });
-                    InventoryGameGUI.items.addControl(button);
-                    itemsHeightInPixels += button.heightInPixels;
-                }
+            for (let id in response.container.items) {
+                let itemEntity = response.container.items[id];
+                let button = InventoryGameGUI._generateInventoryItemsButton(itemEntity.id, itemEntity.name, Game.getIcon(itemEntity.iconID));
+                button.onPointerUpObservable.add(function() {
+                    InventoryGameGUI.updateSelectedWith(itemEntity.id, entityController);
+                });
+                InventoryGameGUI.items.addControl(button);
+                itemsHeightInPixels += button.heightInPixels;
             };
             InventoryGameGUI.items.height = String(itemsHeightInPixels).concat("px");
-            InventoryGameGUI.tAISWeight.text = String(abstractEntity.getInventory().getSize());
+            InventoryGameGUI.tAISWeight.text = String(response.container.size);
             InventoryGameGUI.tAISWeightContainer.isVisible = true;
-            if (!abstractEntity.hasItem(InventoryGameGUI.selectedEntity) || InventoryGameGUI.selectedEntity == null) {
-                InventoryGameGUI.clearSelected();
-            }
+            InventoryGameGUI.clearSelected();
         }
         else {
             InventoryGameGUI.tAISWeightContainer.isVisible = false;
         }
-        if (abstractEntity instanceof CreatureEntity) {
-            InventoryGameGUI.tAISMoney.text = String(abstractEntity.getMoney());
+        if (response.hasOwnProperty("money")) {
+            InventoryGameGUI.tAISMoney.text = String(response.money);
             InventoryGameGUI.tAISMoneyContainer.isVisible = true;
         }
         else {
@@ -246,88 +248,79 @@ class InventoryGameGUI {
     }
     /**
      * Sets the inventory menu's selected item section.
-     * @param {InstancedItemEntity} instancedItemEntity [description]
-     * @param {Entity} targetEntity        The Entity storing the InstancedItemEntity
-     * @param {Entity} playerEntity        The Entity viewing the item; the player.
+     * @param {object} itemID 
+     * @param {EntityController} targetController The EntityController storing the entityObject
+     * @param {EntityController} actorController The EntityController viewing the entityObject; the player controller.
      */
-    static updateSelectedWith(instancedItemEntity, targetEntity = Game.player, playerEntity = Game.player) {
-        if (!(instancedItemEntity instanceof AbstractEntity)) {
-            if (InstancedItemEntity.has(instancedItemEntity)) {
-                instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
-            }
-            else if (instancedItemEntity == undefined) {
-                InventoryGameGUI.clearSelected;
-                return 0;
-            }
-        }
-        if (!(targetEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(targetEntity)) {
-                targetEntity = AbstractEntity.get(targetEntity);
-            }
-            else {
-                targetEntity = Game.player;
-            }
-        }
-        if (!(playerEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(playerEntity)) {
-                playerEntity = AbstractEntity.get(playerEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-
-        InventoryGameGUI.selectedEntity = instancedItemEntity.getID();
-
-        InventoryGameGUI.selectedName.text = instancedItemEntity.getName();
-        InventoryGameGUI.selectedImage.source = Game.getIcon(instancedItemEntity.getIcon());
-        InventoryGameGUI.selectedDescription.text = instancedItemEntity.getDescription();
-        let weightString = "";
-        if (instancedItemEntity.getWeight() < 1) {
-            weightString = String(instancedItemEntity.getWeight() * 1000) + "g";
+    static updateSelectedWith(itemID, targetController = Game.player, actorController = Game.player, parentCallbackID = null) {
+        if (typeof itemID == "string") {}
+        else if (itemID.hasOwnProperty("id")) {
+            itemID = itemID.id;
         }
         else {
-            weightString = String(instancedItemEntity.getWeight()) + "kg";
+            return 2;
         }
-        InventoryGameGUI.selectedDetails.text = `Price: $${instancedItemEntity.getPrice()}, Weight: ${weightString}`;
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (actorController == -1) {
+            return 1;
+        }
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.updateSelectedWithResponse);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, [itemID], callbackID);
+        return 0;
+    }
+    static updateSelectedWithResponse(itemID, targetController, actorController, response, parentCallbackID) {
+        InventoryGameGUI.selectedEntity = response.id;
+        InventoryGameGUI.selectedName.text = response.name;
+        InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
+        InventoryGameGUI.selectedDescription.text = response.description;
+        let weightString = "";
+        if (response.weight < 1) {
+            weightString = String(response.weight * 1000) + "g";
+        }
+        else {
+            weightString = String(response.weight) + "kg";
+        }
+        InventoryGameGUI.selectedDetails.text = `Price: $${response.price}, Weight: ${weightString}`;
         for (let i = InventoryGameGUI.selectedActions.children.length - 1; i > -1; i--) {
             let child = InventoryGameGUI.selectedActions.children[i];
             InventoryGameGUI.selectedActions.removeControl(child);
             child.dispose();
         }
-        for (let action in instancedItemEntity.getAvailableActions()) {
+        for (let action in response.availableActions) {
             action = Tools.filterInt(action);
             let actionButton = null;
             switch (action) {
                 case ActionEnum.CONSUME : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.EQUIP : {
-                    if (Game.player.hasEquipment(instancedItemEntity)) {
+                    if (response.equipped) {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.UNEQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateSelectedWith);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(response.id, actorController, InventoryGameGUI.updateSelectedWith);});
                     }
                     else {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.EQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateSelectedWith);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(response.id, actorController, InventoryGameGUI.updateSelectedWith);});
                     }
                     break;
                 }
                 case ActionEnum.HOLD : {
-                    if (Game.player.hasHeldItem(instancedItemEntity)) {
+                    if (response.held) {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.RELEASE].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateSelectedWith);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(itemID, actorController, InventoryGameGUI.updateSelectedWith);});
                     }
-                    else if (!Game.player.hasEquipment(instancedItemEntity)) {
+                    else {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[ActionEnum.HOLD].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(instancedItemEntity, playerEntity, InventoryGameGUI.updateSelectedWith);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(itemID, actorController, InventoryGameGUI.updateSelectedWith);});
                     }
                     break;
                 }
@@ -337,20 +330,20 @@ class InventoryGameGUI {
                 }
                 case ActionEnum.READ : {
                     actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionReadFunction(instancedItemEntity, playerEntity);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionReadFunction(itemID, actorController);});
                     break;
                 }
                 case ActionEnum.PUT : {
-                    if (playerEntity != Game.player) {
+                    if (actorController != Game.playerController) {
                         break;
                     }
-                    else if (targetEntity instanceof Entity && targetEntity.hasInventory()) {
+                    else if (targetController.hasInventory) {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
                     }
                     break;
                 }
                 case ActionEnum.TAKE : {
-                    if (playerEntity == Game.player) {}
+                    if (actorController == Game.playerController) {}
                     else {
                         actionButton = GameGUI._generateButton(undefined, ActionEnum.properties[action].name);
                     }

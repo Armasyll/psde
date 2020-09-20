@@ -14,6 +14,7 @@ class InstancedConsumableEntity extends InstancedItemEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         InstancedConsumableEntity.set(this.id, this);
     }

@@ -11,6 +11,7 @@ class PlantEntity extends Entity {
      */
     constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID);
+        this.holdable = true;
         this.entityType = EntityEnum.PLANT;
 
         PlantEntity.set(this.id, this);

@@ -14,6 +14,7 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         this.silveredModifier = false;
 

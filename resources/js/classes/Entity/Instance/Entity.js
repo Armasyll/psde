@@ -431,7 +431,6 @@ class InstancedEntity extends AbstractEntity {
         }
     }
 
-
     objectify() {
         let obj = super.objectify();
         obj["availableActions"] = this.getAvailableActions();
@@ -439,8 +438,11 @@ class InstancedEntity extends AbstractEntity {
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
         obj["meshID"] = this.getMeshID();
+        obj["owner"] = this._objectifyProperty(this.getOwner());
+        obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();
         obj["textureID"] = this.getTextureID();
+        obj["weight"] = this.getWeight();
         return obj;
     }
     objectifyMinimal() {
@@ -450,8 +452,11 @@ class InstancedEntity extends AbstractEntity {
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
         obj["meshID"] = this.getMeshID();
+        obj["owner"] = this._objectifyProperty(this.getOwner());
+        obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();
         obj["textureID"] = this.getTextureID();
+        obj["weight"] = this.getWeight();
         return obj;
     }
     /**

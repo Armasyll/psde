@@ -14,6 +14,7 @@ class InstancedEquipmentEntity extends InstancedItemEntity {
             this.dispose();
             return null;
         }
+        this.equipable = true;
     }
 
     getEquipmentSlot() {

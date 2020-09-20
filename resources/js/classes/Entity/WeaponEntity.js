@@ -12,6 +12,7 @@ class WeaponEntity extends EquipmentEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "", weaponType = WeaponEnum.CLUB) {
         super(id, name, description, iconID);
+        this.holdable = true;
         this.itemType = ItemEnum.WEAPON;
 
         this.equipmentSlot = ApparelSlotEnum.HANDS;

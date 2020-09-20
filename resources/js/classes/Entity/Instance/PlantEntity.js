@@ -13,6 +13,7 @@ class InstancedPlantEntity extends InstancedEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         InstancedPlantEntity.set(this.id, this);
     }

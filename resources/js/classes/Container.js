@@ -380,8 +380,7 @@ class Container {
         return JSON.stringify(this.objectify());
     }
     objectifyMinimal() {
-        let obj = {};
-        return obj;
+        return this.objectify();
     }
     objectify() {
         let obj = {};

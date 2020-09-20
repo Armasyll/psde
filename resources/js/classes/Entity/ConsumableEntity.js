@@ -12,6 +12,7 @@ class ConsumableEntity extends ItemEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "genericItemIcon", consumableType = ConsumableEnum.FOOD) {
         super(id, name, description, iconID, ItemEnum.CONSUMABLE);
+        this.holdable = true;
 
         this.consumableType = ConsumableEnum.FOOD;
 

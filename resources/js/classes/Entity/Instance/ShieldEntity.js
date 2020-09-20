@@ -14,6 +14,7 @@ class InstancedShieldEntity extends InstancedClothingEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         InstancedShieldEntity.set(this.id, this);
     }

@@ -5751,6 +5751,25 @@ class Game {
                 }
                 break;
             }
+            case "getInventory": {
+                if (status == 0) {
+                    let target = null;
+                    if (Game.hasCallback(callbackID)) {
+                        let callback = Game.getCallback(callbackID);
+                        if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
+                            target = callback["params"][0]["entityID"];
+                        }
+                    }
+                    for (let entry in message) {
+                        let json = JSON.parse(message[entry]);
+                        Game.updateCachedEntity(json.id, json);
+                        if (entry == target) {
+                            Game.runCallback(callbackID, json);
+                        }
+                    }
+                }
+                break;
+            }
             case "getMoney": {
                 if (status == 0) {
                     let amount = Number.parseFloat(message["amount"]) || 0;

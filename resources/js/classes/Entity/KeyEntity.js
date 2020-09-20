@@ -11,6 +11,7 @@ class KeyEntity extends ItemEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID);
+        this.holdable = true;
 
         this.skeletonKey = false;
         this.skeletonKeyModifier = false;

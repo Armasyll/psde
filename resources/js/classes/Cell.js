@@ -448,6 +448,9 @@ class Cell {
     stringify() {
         return JSON.stringify(this.objectify());
     }
+    objectifyMinimal() {
+        return this.objectify();
+    }
     objectify() {
         let obj = {};
         for (let property in this) {

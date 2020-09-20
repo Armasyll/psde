@@ -11,6 +11,7 @@ class ShieldEntity extends ClothingEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID, ApparelSlotEnum.HANDS, ArmourPropertyEnum.SHIELDS);
+        this.holdable = true;
         this.itemType = ItemEnum.SHIELDS;
 
         ShieldEntity.set(this.id, this);

@@ -63,6 +63,20 @@ class InstancedItemEntity extends InstancedEntity {
         return this.stackCount;
     }
 
+    objectifyMinimal() {
+        let obj = super.objectifyMinimal();
+        obj["itemType"] = this.getItemType();
+        obj["maxStackCount"] = this.getMaxStackCount();
+        obj["stackCount"] = this.stackCount;
+        return obj;
+    }
+    objectify() {
+        let obj = super.objectify();
+        obj["itemType"] = this.getItemType();
+        obj["maxStackCount"] = this.getMaxStackCount();
+        obj["stackCount"] = this.stackCount;
+        return obj;
+    }
     /**
      * Overrides InstancedEntity.clone
      * @param  {string} id ID

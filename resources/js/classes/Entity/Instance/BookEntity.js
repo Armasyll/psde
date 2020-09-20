@@ -14,6 +14,7 @@ class InstancedBookEntity extends InstancedItemEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         InstancedBookEntity.set(this.id, this);
     }

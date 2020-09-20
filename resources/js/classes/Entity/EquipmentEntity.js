@@ -17,6 +17,7 @@ class EquipmentEntity extends ItemEntity {
 
         this.abilityRequirements = {};
         this.abilityRequirementsModifier = {};
+        this.equipable = true;
 
         this.addAvailableAction(ActionEnum.EQUIP);
         this.addAvailableAction(ActionEnum.UNEQUIP);

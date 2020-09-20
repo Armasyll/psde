@@ -14,6 +14,7 @@ class InstancedKeyEntity extends InstancedItemEntity {
             this.dispose();
             return null;
         }
+        this.holdable = true;
 
         this.skeletonKeyModifier = false;
 

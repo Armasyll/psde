@@ -56,6 +56,10 @@ class AbstractEntity {
         this.essentialConditionOverride = -1;
         this.essentialEffectOverride = -1;
         this.container = null;
+        this.held = false;
+        this.holdable = false;
+        this.equipped = false;
+        this.equipable = false;
         /**
          * @type {object}
          * Object<EffectID: <"currentStack":StackNumber, "startTime":TimeStart, "endTime":TimeEnd>>
@@ -793,27 +797,31 @@ class AbstractEntity {
     }
     objectifyMinimal() {
         let obj = {};
-        obj["id"] = this.id;
-        obj["name"] = this.getName();
-        obj["description"] = this.getDescription();
-        obj["iconID"] = this.iconID || "missingIcon";
-        obj["meshID"] = this.meshID || "missingMesh";
-        obj["materialID"] = this.materialID || "missingMaterial";
-        obj["textureID"] = this.textureID || "missingTexture";
+        obj["availableActions"] = this.availableActions;
+        obj["container"] = null;
         obj["controller"] = this.controller;
         obj["defaultAction"] = this.defaultAction;
-        obj["availableActions"] = this.availableActions;
+        obj["description"] = this.getDescription();
+        obj["enabled"] = this.enabled;
+        obj["equipped"] = false;
+        obj["equipable"] = false;
+        obj["hasContainer"] = false;
+        obj["health"] = this.getHealth();
+        obj["held"] = false;
+        obj["holdable"] = false;
+        obj["iconID"] = this.iconID || "missingIcon";
+        obj["id"] = this.id;
+        obj["locked"] = this.locked;
+        obj["materialID"] = this.materialID || "missingMaterial";
+        obj["maxHealth"] = this.getMaxHealth();
+        obj["meshID"] = this.meshID || "missingMesh";
+        obj["name"] = this.getName();
+        obj["textureID"] = this.textureID || "missingTexture";
+        obj["size"] = this.size;
         if (this.hasContainer()) {
             obj["container"] = this.container.objectify();
+            obj["hasContainer"] = true;
         }
-        else {
-            obj["container"] = null;
-        }
-        obj["enabled"] = this.enabled;
-        obj["health"] = this.getHealth();
-        obj["locked"] = this.locked;
-        obj["maxHealth"] = this.getMaxHealth();
-        obj["size"] = this.size;
         return obj;
     }
     _objectifyProperty(property) {
@@ -924,13 +932,13 @@ class AbstractEntity {
         if (verify && !(entity instanceof AbstractEntity)) {
             return 2;
         }
-        if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
-        if (entity.hasOwnProperty("health")) this.health = entity.health;
-        if (entity.hasOwnProperty("maxHealth")) this.maxHealth = entity.maxHealth;
-        if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
-        if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
-        if (entity.hasOwnProperty("godMode")) this.godMode = entity.godMode;
-        if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = entity.godModeOverride;
+        if (entity.hasOwnProperty("actionEffects")) {
+            for (let action in entity.actionEffects) {
+                for (let effect in entity.actionEffects[action]) {
+                    this.addActionEffect(action, effect, entity.actionEffects[action][effect]);
+                }
+            }
+        }
         if (entity.hasOwnProperty("essential")) this.essential = entity.essential;
         if (entity.hasOwnProperty("essentialOverride")) this.essentialOverride = entity.essentialOverride;
         if (entity.hasOwnProperty("effects")) {
@@ -940,13 +948,17 @@ class AbstractEntity {
                 }
             }
         }
-        if (entity.hasOwnProperty("actionEffects")) {
-            for (let action in entity.actionEffects) {
-                for (let effect in entity.actionEffects[action]) {
-                    this.addActionEffect(action, effect, entity.actionEffects[action][effect]);
-                }
-            }
-        }
+        if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
+        if (entity.hasOwnProperty("equipable")) this.equipable = entity.equipable;
+        if (entity.hasOwnProperty("equipped")) this.equipped = entity.equipped;
+        if (entity.hasOwnProperty("health")) this.health = entity.health;
+        if (entity.hasOwnProperty("held")) this.held = entity.held;
+        if (entity.hasOwnProperty("holdable")) this.holdable = entity.holdable;
+        if (entity.hasOwnProperty("maxHealth")) this.maxHealth = entity.maxHealth;
+        if (entity.hasOwnProperty("maxHealthModifier")) this.maxHealthModifier = entity.maxHealthModifier;
+        if (entity.hasOwnProperty("maxHealthOverride")) this.maxHealthOverride = entity.maxHealthOverride;
+        if (entity.hasOwnProperty("godMode")) this.godMode = entity.godMode;
+        if (entity.hasOwnProperty("godModeOverride")) this.godModeOverride = entity.godModeOverride;
         if (entity.hasOwnProperty("size")) this.size = entity.size;
         return 0;
     }
