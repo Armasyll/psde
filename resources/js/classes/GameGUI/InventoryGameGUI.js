@@ -19,7 +19,7 @@ class InventoryGameGUI {
         InventoryGameGUI.isVisible = false;
         InventoryGameGUI.generateController();
         InventoryGameGUI.containerAlpha = 1.0;
-        InventoryGameGUI.selectedEntity = null;
+        InventoryGameGUI.selectedObject = null;
     }
     static resize() {
         if (InventoryGameGUI.initialized != true) {
@@ -224,7 +224,7 @@ class InventoryGameGUI {
                 let itemEntity = response.container.items[id];
                 let button = InventoryGameGUI._generateInventoryItemsButton(itemEntity.id, itemEntity.name, Game.getIcon(itemEntity.iconID));
                 button.onPointerUpObservable.add(function() {
-                    InventoryGameGUI.setSelected(itemEntity.id, entityController);
+                    InventoryGameGUI.setSelected(itemEntity.id, entityController, entityController);
                 });
                 InventoryGameGUI.items.addControl(button);
                 itemsHeightInPixels += button.heightInPixels;
@@ -252,7 +252,7 @@ class InventoryGameGUI {
      * @param {EntityController} targetController The EntityController storing the entityObject
      * @param {EntityController} actorController The EntityController viewing the entityObject; the player controller.
      */
-    static setSelected(itemID, targetController = Game.player, actorController = Game.player, parentCallbackID = null) {
+    static setSelected(itemID, targetController = Game.playerController, actorController = Game.playerController, parentCallbackID = null) {
         if (typeof itemID == "string") {}
         else if (itemID.hasOwnProperty("id")) {
             itemID = itemID.id;
@@ -271,7 +271,7 @@ class InventoryGameGUI {
         return 0;
     }
     static setSelectedResponse(itemID, targetController, actorController, response, parentCallbackID) {
-        InventoryGameGUI.selectedEntity = response.id;
+        InventoryGameGUI.selectedObject = response;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
         InventoryGameGUI.selectedDescription.text = response.description;
@@ -360,7 +360,7 @@ class InventoryGameGUI {
      * Clears the inventory menu's selected item section.
      */
     static clearSelected() {
-        InventoryGameGUI.selectedEntity = null;
+        InventoryGameGUI.selectedObject = null;
         InventoryGameGUI.selectedName.text = "";
         InventoryGameGUI.selectedImage.source = "";
         InventoryGameGUI.selectedDescription.text = "";

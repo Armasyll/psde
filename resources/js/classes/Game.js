@@ -4907,7 +4907,43 @@ class Game {
     static actionDrop(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         return 0;
     }
+    /**
+     * 
+     * @param {(EntityController|string)} targetController Can be an EntityController, or an Entity ID
+     * @param {(EntityController|string)} actorController 
+     * @param {string} [parentCallbackID] 
+     */
     static actionEquip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasCachedEntity(targetController)) {}
+        else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
+            targetController = targetController.entityID;
+        }
+        else {
+            let tempController = Game.filterController(actorController);
+            if (tempController instanceof EntityController) {
+                targetController = tempController.entityID;
+            }
+            else {
+                return 2;
+            }
+        }
+        actorController = Game.filterController(actorController);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionEquipResponsePhaseOne);
+        Game.entityLogicWorkerPostMessage("actionEquip", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
+        return 0;
+    }
+    static actionEquipResponsePhaseOne(targetController, actorController, response, parentCallbackID) {
+        if (response) {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionEquipResponsePhaseTwo);
+            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID], callbackID);
+        }
+        return 0;
+    }
+    static actionEquipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
+        actorController.populateFromEntity(response);
+        actorController.generateAttachedMeshes();
         return 0;
     }
     static actionHold(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -5668,6 +5704,7 @@ class Game {
         }
         switch (event.data["cmd"]) {
             case "actionClose":
+            case "actionEquip":
             case "actionOpen": {
                 Game.runCallback(callbackID, message);
                 break;
@@ -5752,6 +5789,28 @@ class Game {
                         if (typeof message == "string") {
                             let json = JSON.parse(message);
                             Game.setCachedEntity(json.id, json);
+                            Game.runCallback(callbackID, json);
+                        }
+                    }
+                }
+                break;
+            }
+            case "getEquipment": {
+                if (status == 0) {
+                    let target = null;
+                    if (Game.hasCallback(callbackID)) {
+                        let callback = Game.getCallback(callbackID);
+                        if (callback["params"].length > 0 && callback["params"][1].hasOwnProperty("entityID")) {
+                            target = callback["params"][1]["entityID"];
+                        }
+                        else if (callback["params"].length > 0 && callback["params"][0].hasOwnProperty("entityID")) {
+                            target = callback["params"][0]["entityID"];
+                        }
+                    }
+                    for (let entry in message) {
+                        let json = JSON.parse(message[entry]);
+                        Game.updateCachedEntity(json.id, json);
+                        if (entry == target) {
                             Game.runCallback(callbackID, json);
                         }
                     }

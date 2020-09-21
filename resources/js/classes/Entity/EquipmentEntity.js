@@ -25,12 +25,9 @@ class EquipmentEntity extends ItemEntity {
     }
 
     setEquipmentSlot(equipmentSlot) {
-        if (ApparelSlotEnum.properties.hasOwnProperty(equipmentSlot)) {
-            this.equipmentSlot = equipmentSlot;
-            return 0;
-        }
-        this.equipmentSlot = ApparelSlotEnum.NONE;
-        return 1;
+        equipmentSlot = Tools.filterEnum(equipmentSlot, ApparelSlotEnum, true);
+        this.equipmentSlot = equipmentSlot;
+        return 0;
     }
     getEquipmentSlot() {
         return this.equipmentSlot;
@@ -151,7 +148,6 @@ class EquipmentEntity extends ItemEntity {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        delete this.equipmentSlot;
         super.dispose();
         return undefined;
     }

@@ -229,7 +229,7 @@ class EntityController {
         Game.removeMesh(this.mesh);
         let mesh = this.createMesh(undefined, index, position, rotation, scaling);
         this.setMesh(mesh);
-        this.createAttachedMeshes();
+        this.generateAttachedMeshes();
         this.setLocked(false);
         return this;
     }
@@ -676,8 +676,8 @@ class EntityController {
         return this;
     }
 
-    createAttachedMeshes() {
-        return this;
+    generateAttachedMeshes() {
+        return 0;
     }
     detachFromAllBones() {
         return [];

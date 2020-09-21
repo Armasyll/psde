@@ -62,10 +62,18 @@ class CreatureController extends EntityController {
         this.target = null;
 
         this.offensiveStance = OffensiveStanceEnum.MARTIAL;
+        //this.populateFromEntity(entityObject);
+        this.generateAttachedMeshes();
         this.updateTargetRay();
         CreatureController.set(this.id, this);
     }
 
+    generateAttachedMeshes() {
+        this.generateOrganMeshes();
+        this.generateCosmeticMeshes();
+        this.generateEquippedMeshes();
+        return 0;
+    }
     populateFromEntity(entity) {
         this.offensiveStance = entity.offensiveStance;
         return 0;
@@ -134,12 +142,6 @@ class CreatureController extends EntityController {
             id = Tools.genUUIDv4();
         }
         return Game.createCharacterMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
-    }
-    createAttachedMeshes() {
-        this.generateOrganMeshes();
-        this.generateCosmeticMeshes();
-        this.generateEquippedMeshes();
-        return this;
     }
 
     anyMovement() {
@@ -454,7 +456,7 @@ class CreatureController extends EntityController {
             scaling = BABYLON.Vector3.One();
         }
         if (!(Game.hasLoadedMesh(meshID))) {
-            Game.addAttachmentToCreate((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
+            Game.addBackloggedAttachment((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
             if (CreatureController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
             return this;
         }

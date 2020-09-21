@@ -24,41 +24,41 @@ class CharacterEntity extends CreatureEntity {
          * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
          */
         this.attachedCosmetics = {};
-        this.attachedCosmetics[ApparelSlotEnum.HEAD] = [];
-        this.attachedCosmetics[ApparelSlotEnum.EAR_L] = [];
-        this.attachedCosmetics[ApparelSlotEnum.EAR_R] = [];
-        this.attachedCosmetics[ApparelSlotEnum.NECK] = [];
-        this.attachedCosmetics[ApparelSlotEnum.SHOULDER_L] = [];
-        this.attachedCosmetics[ApparelSlotEnum.SHOULDER_R] = [];
-        this.attachedCosmetics[ApparelSlotEnum.FOREARM_L] = [];
-        this.attachedCosmetics[ApparelSlotEnum.FOREARM_R] = [];
-        this.attachedCosmetics[ApparelSlotEnum.HAND_L] = [];
-        this.attachedCosmetics[ApparelSlotEnum.HAND_R] = [];
-        this.attachedCosmetics[ApparelSlotEnum.CHEST] = [];
-        this.attachedCosmetics[ApparelSlotEnum.PELVIS] = [];
-        this.attachedCosmetics[ApparelSlotEnum.LEGS] = [];
-        this.attachedCosmetics[ApparelSlotEnum.FOOT_L] = [];
-        this.attachedCosmetics[ApparelSlotEnum.FOOT_R] = [];
+        this.attachedCosmetics["HEAD"] = [];
+        this.attachedCosmetics["EAR_L"] = [];
+        this.attachedCosmetics["EAR_R"] = [];
+        this.attachedCosmetics["NECK"] = [];
+        this.attachedCosmetics["SHOULDER_L"] = [];
+        this.attachedCosmetics["SHOULDER_R"] = [];
+        this.attachedCosmetics["FOREARM_L"] = [];
+        this.attachedCosmetics["FOREARM_R"] = [];
+        this.attachedCosmetics["HAND_L"] = [];
+        this.attachedCosmetics["HAND_R"] = [];
+        this.attachedCosmetics["CHEST"] = [];
+        this.attachedCosmetics["PELVIS"] = [];
+        this.attachedCosmetics["LEGS"] = [];
+        this.attachedCosmetics["FOOT_L"] = [];
+        this.attachedCosmetics["FOOT_R"] = [];
         /**
          * Equipment
          * @type {<number, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
          */
         this.equipment = {};
-        this.equipment[ApparelSlotEnum.HEAD] = null;
-        this.equipment[ApparelSlotEnum.EAR_L] = null;
-        this.equipment[ApparelSlotEnum.EAR_R] = null;
-        this.equipment[ApparelSlotEnum.NECK] = null;
-        this.equipment[ApparelSlotEnum.SHOULDER_L] = null;
-        this.equipment[ApparelSlotEnum.SHOULDER_R] = null;
-        this.equipment[ApparelSlotEnum.FOREARM_L] = null;
-        this.equipment[ApparelSlotEnum.FOREARM_R] = null;
-        this.equipment[ApparelSlotEnum.HAND_L] = null;
-        this.equipment[ApparelSlotEnum.HAND_R] = null;
-        this.equipment[ApparelSlotEnum.CHEST] = null;
-        this.equipment[ApparelSlotEnum.PELVIS] = null;
-        this.equipment[ApparelSlotEnum.LEGS] = null;
-        this.equipment[ApparelSlotEnum.FOOT_L] = null;
-        this.equipment[ApparelSlotEnum.FOOT_R] = null;
+        this.equipment["HEAD"] = null;
+        this.equipment["EAR_L"] = null;
+        this.equipment["EAR_R"] = null;
+        this.equipment["NECK"] = null;
+        this.equipment["SHOULDER_L"] = null;
+        this.equipment["SHOULDER_R"] = null;
+        this.equipment["FOREARM_L"] = null;
+        this.equipment["FOREARM_R"] = null;
+        this.equipment["HAND_L"] = null;
+        this.equipment["HAND_R"] = null;
+        this.equipment["CHEST"] = null;
+        this.equipment["PELVIS"] = null;
+        this.equipment["LEGS"] = null;
+        this.equipment["FOOT_L"] = null;
+        this.equipment["FOOT_R"] = null;
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * Primary fur colour
@@ -168,9 +168,10 @@ class CharacterEntity extends CreatureEntity {
     getEquipment() {
         return this.equipment;
     }
-    equip(instancedItemEntity, equipmentSlot = -1, hold = false) {
-        if (equipmentSlot == null) {
-            equipmentSlot = -1;
+    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false) {
+        equipmentSlot = Tools.filterEnum(equipmentSlot, ApparelSlotEnum, false);
+        if (equipmentSlot == -1) {
+            equipmentSlot = "NONE";
         }
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
@@ -195,54 +196,56 @@ class CharacterEntity extends CreatureEntity {
         /*
         Get an apparel slot out of whatever equipmentSlot is, otherwise fail
          */
+        if (equipmentSlot == "NONE") {
+            equipmentSlot = Tools.filterEnum(instancedItemEntity.getEquipmentSlot(), ApparelSlotEnum, false);
+        }
         if (this.equipment.hasOwnProperty(equipmentSlot)) {}
-        else if (ApparelSlotEnum.properties.hasOwnProperty(instancedItemEntity.getEquipmentSlot())) {
-            equipmentSlot = instancedItemEntity.getEquipmentSlot();
-            if (equipmentSlot == ApparelSlotEnum.HANDS) {
+        else if (equipmentSlot != -1) {
+            if (equipmentSlot == "HANDS") {
                 if (this.handedness == HandednessEnum.LEFT) {
-                    if (this.equipment[ApparelSlotEnum.HAND_L] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.HAND_L;
+                    if (this.equipment["HAND_L"] == null) {
+                        equipmentSlot = "HAND_L";
                     }
-                    else if (this.equipment[ApparelSlotEnum.HAND_R] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.HAND_R;
+                    else if (this.equipment["HAND_R"] == null) {
+                        equipmentSlot = "HAND_R";
                     }
                     else {
-                        equipmentSlot = ApparelSlotEnum.HAND_L;
+                        equipmentSlot = "HAND_L";
                     }
                 }
                 else {
-                    if (this.equipment[ApparelSlotEnum.HAND_R] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.HAND_R;
+                    if (this.equipment["HAND_R"] == null) {
+                        equipmentSlot = "HAND_R";
                     }
-                    else if (this.equipment[ApparelSlotEnum.HAND_L] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.HAND_L;
+                    else if (this.equipment["HAND_L"] == null) {
+                        equipmentSlot = "HAND_L";
                     }
                     else {
-                        equipmentSlot = ApparelSlotEnum.HAND_R;
+                        equipmentSlot = "HAND_R";
                     }
                 }
             }
-            else if (equipmentSlot == ApparelSlotEnum.EARS) {
+            else if (equipmentSlot == "EARS") {
                 if (this.sexualOrientation == SexualOrientationEnum.STRAIGHT || this.sexualOrientation == SexualOrientationEnum.ASEXUAL) {
-                    if (this.equipment[ApparelSlotEnum.EAR_L] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.EAR_L;
+                    if (this.equipment["EAR_L"] == null) {
+                        equipmentSlot = "EAR_L";
                     }
-                    else if (this.equipment[ApparelSlotEnum.EAR_R] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.EAR_R;
+                    else if (this.equipment["EAR_R"] == null) {
+                        equipmentSlot = "EAR_R";
                     }
                     else {
-                        equipmentSlot = ApparelSlotEnum.EAR_L;
+                        equipmentSlot = "EAR_L";
                     }
                 }
                 else {
-                    if (this.equipment[ApparelSlotEnum.EAR_R] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.EAR_R;
+                    if (this.equipment["EAR_R"] == null) {
+                        equipmentSlot = "EAR_R";
                     }
-                    else if (this.equipment[ApparelSlotEnum.EAR_L] == undefined) {
-                        equipmentSlot = ApparelSlotEnum.EAR_L;
+                    else if (this.equipment["EAR_L"] == null) {
+                        equipmentSlot = "EAR_L";
                     }
                     else {
-                        equipmentSlot = ApparelSlotEnum.EAR_R;
+                        equipmentSlot = "EAR_R";
                     }
                 }
             }
@@ -265,16 +268,14 @@ class CharacterEntity extends CreatureEntity {
         /*
         Flip bits and do tricks
          */
-        if (instancedItemEntity instanceof InstancedWeaponEntity && (equipmentSlot == ApparelSlotEnum.HAND_L || equipmentSlot == ApparelSlotEnum.HAND_R)) {
+        if (instancedItemEntity instanceof InstancedWeaponEntity && (equipmentSlot == "HAND_L" || equipmentSlot == "HAND_R")) {
             this.armed = true;
-        }
-        instancedItemEntity.equipped = true;
-        if (hold) {
             instancedItemEntity.held = true;
         }
+        instancedItemEntity.equipped = true;
         return 0;
     }
-    unequip(any, release = false) {
+    unequip(any) {
         if (any instanceof InstancedEntity) {
             return this.unequipByInstancedEntity(any)
         }
@@ -289,75 +290,77 @@ class CharacterEntity extends CreatureEntity {
                 return this.unequipByEntity(Entity.get(any));
             }
             else if (ApparelSlotEnum.hasOwnProperty(any)) {
-                return this.unequipBySlot(ApparelSlotEnum[any]);
+                return this.unequipBySlot(any);
             }
         }
         else if (ApparelSlotEnum.properties.hasOwnProperty(any)) {
-            return this.unequipBySlot(any);
+            return this.unequipBySlot(ApparelSlotEnum.properties[any].key);
         }
         return 2;
     }
     unequipByInstancedEntity(instancedEntity) {
-        for (let slot in this.equipment) {
-            if (InstancedEntity.has(this.equipment[slot]) && this.equipment[slot] == instancedEntity.getID()) {
-                return this.unequipBySlot(slot);
+        for (let bone in this.equipment) {
+            if (this.equipment[bone] instanceof AbstractEntity) {
+                if (this.equipment[bone] == instancedEntity) {
+                    return this.unequipBySlot(bone);
+                }
             }
         }
         if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not equipped.`);
-        return 0;
+        return 1;
     }
     unequipByEntity(entity) {
-        for (let slot in this.equipment) {
-            if (InstancedEntity.has(this.equipment[slot])) {
-                let instancedEntity = InstancedEntity.get(this.equipment[slot]);
-                if (instancedEntity.getEntity() == entity) {
-                    return this.unequipBySlot(slot);
+        for (let bone in this.equipment) {
+            if (this.equipment[bone] instanceof AbstractEntity) {
+                if (this.equipment[bone].entity == entity) {
+                    return this.unequipBySlot(bone);
                 }
             }
         }
         if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
-        return 0;
+        return 1;
     }
-    unequipBySlot(equipmentSlot) {
-        if (this.equipment.hasOwnProperty(equipmentSlot)) {
-            equipmentSlot = Number.parseInt(equipmentSlot);
-        }
-        else if (ApparelSlotEnum.hasOwnProperty(equipmentSlot)) {
-            if (equipmentSlot == ApparelSlotEnum.HANDS) {
-                this.unequipBySlot(ApparelSlotEnum.HAND_L);
-                this.unequipBySlot(ApparelSlotEnum.HAND_R);
-                return 0;
+    unequipBySlot(bone) {
+        console.log(bone);
+        if (this.equipment.hasOwnProperty(bone)) {}
+        else if (ApparelSlotEnum.hasOwnProperty(bone)) {
+            if (bone == "HANDS") {
+                let result = this.unequipBySlot("HAND_L");
+                let result2 = this.unequipBySlot("HAND_R");
+                return result2 || result;
             }
-            else if (equipmentSlot == ApparelSlotEnum.EARS) {
-                this.unequipBySlot(ApparelSlotEnum.EAR_L);
-                this.unequipBySlot(ApparelSlotEnum.EAR_R);
+            else if (bone == "EARS") {
+                let result = this.unequipBySlot("EAR_L");
+                let result2 = this.unequipBySlot("EAR_R");
+                return result2 || result;
             }
-            else if (equipmentSlot == ApparelSlotEnum.FINGERS) { // TODO: ugh, this
+            else if (bone == "FINGERS") { // TODO: ugh, this
             }
         }
         else {
             if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
             return 2;
         }
-        if (this.equipment[equipmentSlot] == null) {
-            return 0;
-        }
-        if (!InstancedItemEntity.has(this.equipment[equipmentSlot])) {
+        if (this.equipment[bone] == null) {
             return 1;
         }
-        let instancedItemEntity = InstancedItemEntity.get(this.equipment[equipmentSlot]);
-        this.equipment[equipmentSlot] = null;
+        else if (!(this.equipment[bone] instanceof AbstractEntity)) {
+            this.equipment[bone] = null;
+            this.armed = false;
+            return 1;
+        }
+        this.equipment[bone].equipped = false;
+        this.equipment[bone].held = false;
+        this.equipment[bone] = null;
         /*
         Flip bits and do tricks
          */
-        if (this.equipment[ApparelSlotEnum.HAND_R] instanceof InstancedWeaponEntity || this.equipment[ApparelSlotEnum.HAND_L] instanceof InstancedWeaponEntity) {
+        if (this.equipment["HAND_R"] instanceof InstancedWeaponEntity || this.equipment["HAND_L"] instanceof InstancedWeaponEntity) {
             this.armed = true;
         }
         else {
             this.armed = false;
         }
-        instancedItemEntity.equipped = false;
-        instancedItemEntity.held = false;
         return 0;
     }
     hasEquipment(abstractEntity) {
@@ -370,9 +373,9 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         if (abstractEntity instanceof Entity) {
-            for (let slot in this.equipment) {
-                if (InstancedItemEntity.has(this.equipment[slot])) {
-                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[slot]);
+            for (let bone in this.equipment) {
+                if (InstancedItemEntity.has(this.equipment[bone])) {
+                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[bone]);
                     if (instancedItemEntity.getEntity() == abstractEntity) {
                         return true;
                     }
@@ -380,8 +383,8 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         else if (abstractEntity instanceof InstancedEntity) {
-            for (let slot in this.equipment) {
-                if (this.equipment[slot] == abstractEntity.getID()) {
+            for (let bone in this.equipment) {
+                if (this.equipment[bone] == abstractEntity.getID()) {
                     return true;
                 }
             }
@@ -397,13 +400,13 @@ class CharacterEntity extends CreatureEntity {
                 return false;
             }
         }
-        let slots = {};
-        slots[ApparelSlotEnum.HAND_L] = true;
-        slots[ApparelSlotEnum.HAND_R] = true;
+        let bones = {};
+        bones["HAND_L"] = true;
+        bones["HAND_R"] = true;
         if (abstractEntity instanceof Entity) {
-            for (let slot in slots) {
-                if (InstancedItemEntity.has(this.equipment[slot])) {
-                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[slot]);
+            for (let bone in bones) {
+                if (InstancedItemEntity.has(this.equipment[bone])) {
+                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[bone]);
                     if (instancedItemEntity.getEntity() == abstractEntity) {
                         return true;
                     }
@@ -411,64 +414,55 @@ class CharacterEntity extends CreatureEntity {
             }
         }
         else if (abstractEntity instanceof InstancedEntity) {
-            for (let slot in slots) {
-                if (this.equipment[slot] == abstractEntity.getID()) {
+            for (let bone in bones) {
+                if (this.equipment[bone] == abstractEntity.getID()) {
                     return true;
                 }
             }
         }
         return false;
     }
-    getAttachedCosmetics(bone = null) {
-        if (bone instanceof BABYLON.Bone) {
-            bone = bone.id;
-        }
-        if (this.attachedCosmetics.has(bone)) {
+    getAttachedCosmetic(bone = "") {
+        if (this.attachedCosmetics.hasOwnProperty(bone)) {
             return this.attachedCosmetics[bone];
         }
+        return null;
+    }
+    getAttachedCosmetics() {
         return this.attachedCosmetics;
     }
-    attachCosmetic(cosmetic, slot) {
+    attachCosmetic(cosmetic, bone = "") {
         if (!(cosmetic instanceof Cosmetic)) {
             cosmetic = Cosmetic.get(cosmetic);
             if (!(cosmetic instanceof Cosmetic)) {
                 return 2;
             }
         }
-        if (this.attachedCosmetics.hasOwnProperty(slot)) {}
-        else if (slot instanceof BABYLON.Bone && ApparelSlotEnum.hasOwnProperty(slot.id)) {
-            slot = ApparelSlotEnum[slot.id];
-        }
-        else if (ApparelSlotEnum.hasOwnProperty(slot)) {
-            slot = ApparelSlotEnum[slot];
+        if (this.attachedCosmetics.hasOwnProperty(bone)) {}
+        else if (ApparelSlotEnum.properties.hasOwnProperty(bone)) {
+            bone = ApparelSlotEnum.properties[bone].key;
         }
         else {
             return 2;
         }
-        if (!this.attachedCosmetics.hasOwnProperty(slot)) {
-            return 2;
-        }
-        this.attachedCosmetics[slot][cosmetic.id] = cosmetic;
+        this.attachedCosmetics[bone][cosmetic.id] = cosmetic;
         return 0;
     }
-    detachCosmetic(cosmetic, slot = -1) {
+    detachCosmetic(cosmetic, bone = "") {
         if (!(cosmetic instanceof Cosmetic)) {
             cosmetic = Cosmetic.get(cosmetic);
             if (!(cosmetic instanceof Cosmetic)) {
                 return 2;
             }
         }
-        if (this.attachedCosmetics.hasOwnProperty(slot)) {}
-        else if (slot instanceof BABYLON.Bone && ApparelSlotEnum.hasOwnProperty(slot.id)) {
-            slot = ApparelSlotEnum[slot.id];
-        }
-        else if (ApparelSlotEnum.hasOwnProperty(slot)) {
-            slot = ApparelSlotEnum[slot];
+        if (this.attachedCosmetics.hasOwnProperty(bone)) {}
+        else if (ApparelSlotEnum.properties.hasOwnProperty(bone)) {
+            bone = ApparelSlotEnum.properties[bone].key;
         }
         else {
             return 2;
         }
-        delete this.attachedCosmetics[slot][cosmetic.id];
+        delete this.attachedCosmetics[bone][cosmetic.id];
         return 0;
     }
 
@@ -719,22 +713,24 @@ class CharacterEntity extends CreatureEntity {
      */
     generateAdditionalStats() {
         this.armourClass = 0;
-        for (let slot in this.equipment) {
-            if (this.equipment[slot] instanceof InstancedEquipmentEntity) {
+        for (let bone in this.equipment) {
+            if (this.equipment[bone] instanceof InstancedEquipmentEntity) {
                 let multiplier = 0.1;
-                switch (this.equipment[slot].getEquipmentSlot()) {
-                    case ApparelSlotEnum.CHEST: {
+                let equipmentSlot = Tools.filterEnum(this.equipment[bone].getEquipmentSlot());
+                switch (equipmentSlot) {
+                    case "CHEST": {
                         multiplier = 0.3;
                         break;
                     }
-                    case ApparelSlotEnum.HAND_L:
-                    case ApparelSlotEnum.HAND_R:
-                    case ApparelSlotEnum.HANDS: {
+                    case "HAND_L":
+                    case "HAND_R":
+                    case "HANDS": {
                         multiplier = 0.05;
+                        break;
                     }
                 }
                 let modifier = DND5E.calculateAbilityModifier(this.getDexterity() - 10);
-                switch (this.equipment[slot].getArmourType()) {
+                switch (this.equipment[bone].getArmourType()) {
                     case ArmourPropertyEnum.PADDED:
                     case ArmourPropertyEnum.LEATHER:
                     case ArmourPropertyEnum.STUDDEDLEATHER: {
@@ -753,7 +749,7 @@ class CharacterEntity extends CreatureEntity {
                         break;
                     }
                 }
-                this.armourClass += this.equipment[slot].getArmourClass() + (modifier * multiplier);
+                this.armourClass += this.equipment[bone].getArmourClass() + (modifier * multiplier);
             }
         }
         return 0;
@@ -1137,19 +1133,20 @@ class CharacterEntity extends CreatureEntity {
         }
         super.assign(entity, verify);
         if (entity.hasOwnProperty("attachedCosmetics")) {
-                for (let apparelSlot in entity.attachedCosmetics) {
-                if (entity.attachedCosmetics[apparelSlot].length > 0) {
-                    entity.attachedCosmetics[apparelSlot].forEach((cosmetic) => {
+            for (let bone in entity.attachedCosmetics) {
+                if (Object.keys(entity.attachedCosmetics[bone]).length > 0) {
+                    for (let cosmetic in entity.attachedCosmetics[bone]) {
                         this.attachCosmetic(cosmetic);
-                    });
+                    }
                 }
             }
         }
         if (entity.hasOwnProperty("equipment")) {
-                for (let i in entity.equipment) {
-                let equipment = AbstractEntity.get(entity.equipment[i]);
-                if (equipment instanceof AbstractEntity) {
-                    this.equipment[i] = equipment.clone();
+            for (let bone in entity.equipment) {
+                if (Object.keys(entity.equipment[bone]).length > 0) {
+                    for (let item in entity.equipment[bone]) {
+                        this.equip(item, bone);
+                    }
                 }
             }
         }

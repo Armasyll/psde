@@ -22,6 +22,9 @@ class AbstractEntity {
         this.setDescription(description);
         this.iconID = "genericItem";
         this.setIcon(iconID);
+        this.meshID = "missingMesh";
+        this.materialID = "missingMaterial";
+        this.textureID = "missingTexture";
         this.controller = null;
 
         this.health = 10;
@@ -250,6 +253,16 @@ class AbstractEntity {
     setLocked(isLocked = true) {
         this.locked = (isLocked == true);
         return 0;
+    }
+
+    getMaterialID() {
+        return this.materialID;
+    }
+    getTextureID() {
+        return this.textureID;
+    }
+    getMeshID() {
+        return this.meshID;
     }
 
     /**
@@ -832,6 +845,9 @@ class AbstractEntity {
                 "name":property.getName(),
                 "description":property.getDescription(),
                 "iconID":property.iconID,
+                "materialID":property.getMaterialID(),
+                "meshID":property.getMeshID(),
+                "textureID":property.getTextureID(),
                 "className":property.getClassName()
             };
         }
@@ -865,6 +881,9 @@ class AbstractEntity {
                 "name":property.getName(),
                 "description":property.getDescription(),
                 "iconID":property.iconID,
+                "materialID":property.materialID,
+                "meshID":property.meshID,
+                "textureID":property.textureID,
                 "className":property.getClassName()
             };
         }

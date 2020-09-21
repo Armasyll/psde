@@ -84,19 +84,16 @@ class Entity extends AbstractEntity {
         }
         return 0;
     }
-    getMeshID() {
-        return this.meshID;
-    }
     setTextureID(textureID) {
         this.textureID = textureID;
         if (this.textureStages.length == 0) {
             this.addTextureStage(textureID);
             this.currentTextureStage = 0;
         }
+        if (this.materialID == "missingMaterial") {
+            this.materialID = this.textureID;
+        }
         return 0;
-    }
-    getTextureID() {
-        return this.textureID;
     }
     setMaterialID(materialID) {
         this.materialID = materialID;
@@ -104,10 +101,10 @@ class Entity extends AbstractEntity {
             this.addMaterialStage(materialID);
             this.currentMaterialStage = 0;
         }
+        if (this.textureID == "missingTexture") {
+            this.textureID = this.materialID;
+        }
         return 0;
-    }
-    getMaterialID() {
-        return this.materialID;
     }
     hasStage(index) {
         return this.meshStages.hasOwnProperty(index);

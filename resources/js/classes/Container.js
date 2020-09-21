@@ -390,12 +390,16 @@ class Container {
         obj["items"] = {};
         for (let slot in this.items) {
             if (this.items[slot] instanceof InstancedItemEntity) {
-                let item = this.items[slot].entity;
                 obj["items"][slot] = {
-                    "id": item.id,
-                    "name": item.getName(),
-                    "description": item.getDescription(),
-                    "iconID": item.iconID
+                    "id": this.items[slot].id,
+                    "name": this.items[slot].getName(),
+                    "description": this.items[slot].getDescription(),
+                    "iconID": this.items[slot].getIcon(),
+                    "meshID": this.items[slot].getMeshID(),
+                    "materialID": this.items[slot].getMaterialID(),
+                    "textureID": this.items[slot].getTextureID(),
+                    "weight": this.items[slot].getWeight(),
+                    "price": this.items[slot].getPrice()
                 }
             }
         }

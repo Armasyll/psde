@@ -205,6 +205,18 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("actionClose", 0, !target.getOpen(), callbackID);
                 break;
             }
+            case "actionEquip": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionEquip", 1, null, callbackID);
+                    break;
+                }
+                let result = actor.equip(target) == 0;
+                EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
+                EntityLogic.gameWorkerPostMessage("actionEquip", 0, result, callbackID);
+                break;
+            }
             case "actionOpen": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
@@ -506,7 +518,6 @@ class EntityLogic {
                 }
                 break;
             }
-            case "getItem":
             case "getEntity": {
                 if (!(message instanceof Array)) {
                     break;
@@ -525,11 +536,26 @@ class EntityLogic {
                 }
                 break;
             }
+            case "getEquipment": {
+                let obj = {};
+                message.forEach((entityID) => {
+                    let entity = AbstractEntity.get(entityID);
+                    if (entity != 1 && entity.hasOwnProperty("equipment")) {
+                        let entityObj = {};
+                        entityObj["id"] = entity.id;
+                        entityObj["controller"] = entity.controller;
+                        entityObj["equipment"] = entity._objectifyProperty(entity.equipment);
+                        obj[entityID] = JSON.stringify(entityObj);
+                    }
+                });
+                EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
+                break;
+            }
             case "getInventory": {
                 let obj = {};
                 message.forEach((entityID) => {
                     let entity = AbstractEntity.get(entityID);
-                    if (entity != -1 && entity.hasContainer()) {
+                    if (entity != 1 && entity.hasContainer()) {
                         let entityObj = {};
                         entityObj["id"] = entity.id;
                         entityObj["controller"] = entity.controller;

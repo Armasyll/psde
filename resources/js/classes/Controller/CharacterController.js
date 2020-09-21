@@ -26,9 +26,24 @@ class CharacterController extends CreatureController {
         /**
          * ApparelSlotEnum key, mesh ID, material ID
          * @type {object<string:object<string:string>>}
-         * @example {"HEAD":{"meshID":"helmet01MeshID","materialID":"helmet01MaterialID"}}
+         * @example {"HEAD":[meshID, materialID]}
          */
         this.equipment = {};
+        this.equipment["HEAD"] = [];
+        this.equipment["EAR_L"] = [];
+        this.equipment["EAR_R"] = [];
+        this.equipment["NECK"] = [];
+        this.equipment["SHOULDER_L"] = [];
+        this.equipment["SHOULDER_R"] = [];
+        this.equipment["FOREARM_L"] = [];
+        this.equipment["FOREARM_R"] = [];
+        this.equipment["HAND_L"] = [];
+        this.equipment["HAND_R"] = [];
+        this.equipment["CHEST"] = [];
+        this.equipment["PELVIS"] = [];
+        this.equipment["LEGS"] = [];
+        this.equipment["FOOT_L"] = [];
+        this.equipment["FOOT_R"] = [];
 
         /*
         Standing Idle, Standing Walk, Standing Run
@@ -65,13 +80,17 @@ class CharacterController extends CreatureController {
         this.generateOrganMeshes();
         this.generateCosmeticMeshes();
         this.generateEquippedMeshes();
+        return 0;
     }
-    populateFromEntity(entity) {
-        super.populateFromEntity(entity);
-        this.eyeType = entity.eyeType;
-        this.eyeColour = entity.eyeColour;
-        for (let key in entity.equipment) {
-            this.equipment[key] = [entity.equipment[key]["meshID"], entity.equipment[key]["materialID"]];
+    populateFromEntity(entityObject) {
+        super.populateFromEntity(entityObject);
+        this.eyeType = entityObject.eyeType;
+        this.eyeColour = entityObject.eyeColour;
+        for (let key in entityObject.equipment) {
+            if (entityObject.equipment[key] == null) {
+                continue;
+            }
+            this.equipment[key] = [entityObject.equipment[key]["meshID"], entityObject.equipment[key]["materialID"]];
         }
         return 0;
     }
@@ -299,75 +318,75 @@ class CharacterController extends CreatureController {
         if (!this.hasSkeleton()) {
             return;
         }
-        for (let equipmentIndex in this.equipment) {
-            switch (equipmentIndex) {
+        for (let equipmentSlot in this.equipment) {
+            switch (equipmentSlot) {
                 case "HEAD": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromHead();
-                        this.attachToHead(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToHead(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "EAR_L": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromLeftEar();
-                        this.attachToLeftEar(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToLeftEar(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "EAR_R": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromRightEar();
-                        this.attachToRightEar(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToRightEar(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "NECK": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromNeck();
-                        this.attachToNeck(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToNeck(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "SHOULDER_L": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromLeftShoulder();
-                        this.attachToLeftShoulder(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToLeftShoulder(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "SHOULDER_R": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromRightShoulder();
-                        this.attachToRightShoulder(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToRightShoulder(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "FOREARM_L": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromLeftForearm();
-                        this.attachToLeftForearm(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToLeftForearm(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "FOREARM_R": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromRightForearm();
-                        this.attachToRightForearm(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToRightForearm(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "HAND_L": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromLeftHand();
-                        this.attachToLeftHand(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToLeftHand(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
                 case "HAND_R": {
-                    if (this.equipment[equipmentIndex] instanceof AbstractEntity) {
+                    if (this.equipment[equipmentSlot] instanceof Array && typeof this.equipment[equipmentSlot][0] == "string") {
                         this.detachFromRightHand();
-                        this.attachToRightHand(this.equipment[equipmentIndex][0], this.equipment[equipmentIndex][1]);
+                        this.attachToRightHand(this.equipment[equipmentSlot][0], this.equipment[equipmentSlot][1]);
                     }
                     break;
                 }
