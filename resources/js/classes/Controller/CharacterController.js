@@ -9,20 +9,13 @@ class CharacterController extends CreatureController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
+        if (EntityController.debugMode) console.group(`Creating new CharacterController(${id}, meshObject, entityObject)`);
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
             return null;
         }
 
         this.helmetVisible = true;
-        /**
-         * @type {EyeEnum}
-         */
-        this.eyeType = 0;
-        /**
-         * @type {string}
-         */
-        this.eyeColour = "#C3C3C3";
         /**
          * ApparelSlotEnum key, mesh ID, material ID
          * @type {object<string:object<string:string>>}
@@ -74,24 +67,39 @@ class CharacterController extends CreatureController {
             this.additiveAnimations["stabRight"] = BABYLON.AnimationGroup.MakeAnimationAdditive(this.animationGroups["stabRight"]);*/
         }
         CharacterController.set(this.id, this);
+        if (EntityController.debugMode) console.info(`Finished creating new CharacterController(${this.id})`);
+        if (EntityController.debugMode) console.groupEnd();
     }
 
-    generateAttachedMeshes() {
-        this.generateOrganMeshes();
-        this.generateCosmeticMeshes();
-        this.generateEquippedMeshes();
-        return 0;
-    }
     populateFromEntity(entityObject) {
-        super.populateFromEntity(entityObject);
-        this.eyeType = entityObject.eyeType;
-        this.eyeColour = entityObject.eyeColour;
-        for (let key in entityObject.equipment) {
-            if (entityObject.equipment[key] == null) {
-                continue;
-            }
-            this.equipment[key] = [entityObject.equipment[key]["meshID"], entityObject.equipment[key]["materialID"]];
+        if (EntityController.debugMode) console.group(`Running {CharacterController} ${this.id}.populateFromEntity(entityObject)`);
+        if (!(entityObject instanceof Object)) {
+            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
+            if (EntityController.debugMode) console.groupEnd();
+            return 2;
         }
+        super.populateFromEntity(entityObject);
+        if (entityObject.hasOwnProperty("equipment")) {
+            for (let key in entityObject["equipment"]) {
+                if (!(entityObject["equipment"][key] instanceof Object)) {
+                    continue;
+                }
+                if (!this.equipment.hasOwnProperty(key)) {
+                    continue;
+                }
+                let equipmentObject = entityObject["equipment"][key];
+                if (equipmentObject.hasOwnProperty("meshID")) {
+                    if (equipmentObject.hasOwnProperty("materialID")) {
+                        this.equipment[key] = [entityObject.equipment[key]["meshID"], entityObject.equipment[key]["materialID"]];
+                    }
+                    else if (equipmentObject.hasOwnProperty("textureID")) {
+                        this.equipment[key] = [entityObject.equipment[key]["meshID"], entityObject.equipment[key]["textureID"]];
+                    }
+                }
+            }
+        }
+        if (EntityController.debugMode) console.info(`Finished running {CharacterController} ${this.id}.populateFromEntity(entityObject)`);
+        if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
     doPunchRH() {
@@ -251,54 +259,10 @@ class CharacterController extends CreatureController {
      */
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
-            return;
+            return 1;
         }
-        let eyeString = new String();
-        switch (this.eyeType) {
-            case EyeEnum.FERAL: {
-                eyeString = eyeString.concat("feralEye");
-                break;
-            }
-            case EyeEnum.OBLONG: {
-                eyeString = eyeString.concat("oblongEye");
-                break;
-            }
-            case EyeEnum.CIRCLE:
-            default: {
-                eyeString = eyeString.concat("circularEye");
-            }
-        }
-        switch (this.eyeColour) {
-            case "yellow": {
-                eyeString = eyeString.concat("Yellow");
-                break;
-            }
-            case "brown": {
-                eyeString = eyeString.concat("Brown");
-                break;
-            }
-            case "blue": {
-                eyeString = eyeString.concat("Blue");
-                break;
-            }
-            case "green": {
-                eyeString = eyeString.concat("Green");
-                break;
-            }
-            case "violet": {
-                eyeString = eyeString.concat("Violet");
-                break;
-            }
-            case "grey":
-            case "gray":
-            default: {
-            }
-        }
-        this.detachFromRightEye();
-        this.detachFromLeftEye();
-        this.attachToRightEye("eye01", eyeString);
-        this.attachToLeftEye("eye01", eyeString);
-        return this;
+        super.generateOrganMeshes();
+        return 0;
     }
     /**
      * Generates attached cosmetic meshes according to entity's cosmetics
@@ -306,9 +270,9 @@ class CharacterController extends CreatureController {
      */
     generateCosmeticMeshes() { // TODO
         if (!this.hasSkeleton()) {
-            return;
+            return 1;
         }
-        return this;
+        return 0;
     }
     /**
      * Generated attached equipment meshes according to entity's equipment
@@ -316,7 +280,7 @@ class CharacterController extends CreatureController {
      */
     generateEquippedMeshes() {
         if (!this.hasSkeleton()) {
-            return;
+            return 1;
         }
         for (let equipmentSlot in this.equipment) {
             switch (equipmentSlot) {
@@ -392,7 +356,7 @@ class CharacterController extends CreatureController {
                 }
             }
         }
-        return this;
+        return 0;
     }
 
     updateID(newID) {
@@ -414,7 +378,8 @@ class CharacterController extends CreatureController {
 
     static initialize() {
         CharacterController.characterControllerList = {};
-        CharacterController.debugMode = false;
+        EntityController.debugMode = false;
+        EntityController.debugVerbosity = 2;
     }
     static get(id) {
         if (CharacterController.has(id)) {
@@ -453,13 +418,13 @@ class CharacterController extends CreatureController {
     }
     static setDebugMode(debugMode) {
         if (debugMode == true) {
-            CharacterController.debugMode = true;
+            EntityController.debugMode = true;
             for (let characterController in CharacterController.characterControllerList) {
                 CharacterController.characterControllerList[characterController].debugMode = true;
             }
         }
         else if (debugMode == false) {
-            CharacterController.debugMode = false;
+            EntityController.debugMode = false;
             for (let characterController in CharacterController.characterControllerList) {
                 CharacterController.characterControllerList[characterController].debugMode = false;
             }
@@ -467,7 +432,7 @@ class CharacterController extends CreatureController {
         return 0;
     }
     static getDebugMode() {
-        return CharacterController.debugMode === true;
+        return EntityController.debugMode === true;
     }
 }
 CharacterController.initialize();

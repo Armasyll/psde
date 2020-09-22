@@ -793,10 +793,8 @@ class Game {
          */
         Game.cachedEntities = {};
 
-        Game.xhr = new XMLHttpRequest();
-        Game.parser = new DOMParser();
-        Game.serializer = new XMLSerializer();
         Game.loadDefaultTextures();
+        Game.loadDefaultImages();
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
@@ -1430,22 +1428,24 @@ class Game {
      * @returns {number} Integer status code
      */
     static loadSVG(imageID) {
-        Game.xhr.open("GET", Game.textureLocations[imageID], true);
-        Game.xhr.overrideMimeType("image/svg+xml");
-        Game.xhr.onload = (e) => {
+        let xhr = new XMLHttpRequest();
+        let parser = new DOMParser();
+        xhr.open("GET", Game.textureLocations[imageID], true);
+        xhr.overrideMimeType("image/svg+xml");
+        xhr.onload = (e) => {
             if (e.target.status == 200) {
-                Game.loadedSVGDocuments[imageID] = Game.parser.parseFromString(e.target.response, "image/svg+xml");
+                Game.loadedSVGDocuments[imageID] = parser.parseFromString(e.target.response, "image/svg+xml");
             }
             else {
                 Game.textureLocations[imageID] = Game.textureLocations["missingTexture"];
             }
         };
-        Game.xhr.onerror = (e) => {
+        xhr.onerror = (e) => {
             if (e.target.status == 404) {
                 Game.textureLocations[imageID] = Game.textureLocations["missingTexture"];
             }
         };
-        Game.xhr.send();
+        xhr.send();
         return 0;
     }
     /**
@@ -1456,6 +1456,7 @@ class Game {
      * @returns {SVGElement}
      */
     static modifySVG(imageID, newImageID, elementStyles) {
+        if (Game.debugMode) console.log(`Running Game.modifySVG(${imageID}, ${newImageID}, ${elementStyles})`);
         if (!Game.loadedSVGDocuments.hasOwnProperty(imageID)) {
             return 2;
         }
@@ -1464,14 +1465,15 @@ class Game {
             if (newSVGDocument.hasChildNodes(element)) {
                 for (let style in elementStyles[element]) {
                     newSVGDocument.getElementById(element).style.setProperty(style, elementStyles[element][style]);
+                    newSVGDocument.getElementById(element).setAttribute("fill", elementStyles[element][style]);
                 }
             }
         }
-        let markup = Game.serializer.serializeToString(newSVGDocument);
-        let newImage = new Image();
-        newImage.src = 'data:image/svg+xml,' + encodeURIComponent(markup);
-        Game.loadedImages[newImageID] = newImage;
-        return newImage;
+        let serializer = new XMLSerializer();
+        let markup = serializer.serializeToString(newSVGDocument);
+        let encodedData = 'data:image/svg+xml;base64,' + window.btoa(markup);
+        Game.setLoadedTexture(newImageID, BABYLON.Texture.LoadFromDataString(newImageID, encodedData, Game.scene));
+        return 0;
     }
     /**
      * Loads and creates a BABYLON.Texture
@@ -1515,7 +1517,7 @@ class Game {
         if (diffuseTextureID.length > 0 && Game.hasAvailableTexture(diffuseTextureID) && !Game.hasLoadedTexture(diffuseTextureID)) {
             Game.loadTexture(diffuseTextureID, options);
         }
-        else if (Game.hasAvailableTexture(materialID)) {
+        else if (Game.hasAvailableTexture(materialID) || Game.hasLoadedTexture(materialID)) {
             diffuseTextureID = materialID;
         }
         else {
@@ -4144,6 +4146,12 @@ class Game {
         else {
             characterController = new CharacterControllerTransform(characterID, loadedMesh, character);
         }
+        //characterController.assign(character);
+        characterController.populateFromEntity(character);
+        characterController.generateOrganMeshes();
+        characterController.generateCosmeticMeshes();
+        characterController.generateEquippedMeshes();
+        characterController.updateTargetRay();
         Game.entityLogicWorkerPostMessage("setEntityController", 0, {"entityID":characterID, "controllerID":characterID});
         switch (character.meshID) {
             case "aardwolfM":
@@ -5698,10 +5706,6 @@ class Game {
         if (Game.debugMode) console.info(`and callbackID (${callbackID})`);
         let message = event.data["msg"];
         if (Game.debugMode && message) console.info(`and message`);
-        let callback = null;
-        if (Game.hasCallback(callbackID)) {
-            callback = Game.getCallback(callbackID);
-        }
         switch (event.data["cmd"]) {
             case "actionClose":
             case "actionEquip":

@@ -9,6 +9,7 @@ class CreatureController extends EntityController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
+        if (EntityController.debugMode) console.group(`Creating new CreatureController(${id}, meshObject, entityObject)`);
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
             return null;
@@ -43,6 +44,13 @@ class CreatureController extends EntityController {
         else {
             this.animated = false;
         }
+        /**
+         * @type {EyeEnum}
+         */
+        this.eyeType = 0;
+        this.eyeImageID = "circularEye";
+        this.eyeBackground = "#FFFFFF";
+        this.eyeColour = "#C3C3C3";
 
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
@@ -62,20 +70,86 @@ class CreatureController extends EntityController {
         this.target = null;
 
         this.offensiveStance = OffensiveStanceEnum.MARTIAL;
-        //this.populateFromEntity(entityObject);
-        this.generateAttachedMeshes();
-        this.updateTargetRay();
         CreatureController.set(this.id, this);
+        if (EntityController.debugMode) console.info(`Finished creating new CreatureController(${this.id})`);
+        if (EntityController.debugMode) console.groupEnd();
     }
 
-    generateAttachedMeshes() {
-        this.generateOrganMeshes();
-        this.generateCosmeticMeshes();
-        this.generateEquippedMeshes();
+    generateOrganMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        let eyeString = String(this.eyeImageID).concat(this.eyeColour.slice(1)).concat(this.eyeBackground.slice(1));
+        if (!Game.hasLoadedTexture(eyeString)) {
+            Game.modifySVG(
+                this.eyeImageID,
+                eyeString,
+                {
+                    "iris": {"background":this.eyeColour},
+                    "sclera": {"background":this.eyeBackground}
+                }
+            );
+        }
+        this.detachFromRightEye();
+        this.detachFromLeftEye();
+        this.attachToRightEye("eye01", eyeString);
+        this.attachToLeftEye("eye01", eyeString);
         return 0;
     }
-    populateFromEntity(entity) {
-        this.offensiveStance = entity.offensiveStance;
+    generateCosmeticMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        return 0;
+    }
+    generateEquippedMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        return 0;
+    }
+    populateFromEntity(entityObject) {
+        if (EntityController.debugMode) console.group(`Running {CreatureController} ${this.id}.populateFromEntity(entityObject)`);
+        if (!(entityObject instanceof Object)) {
+            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
+            if (EntityController.debugMode) console.groupEnd();
+            return 2;
+        }
+        super.populateFromEntity(entityObject);
+        if (entityObject.hasOwnProperty("eyeType")) this.eyeType = entityObject.eyeType;
+        switch (this.eyeType) {
+            case EyeEnum.SLIT: {
+                this.eyeImageID = "feralEye";
+                break;
+            }
+            case EyeEnum.OBLONG: {
+                this.eyeImageID = "oblongEye";
+                break;
+            }
+            case EyeEnum.CIRCLE:
+            default: {
+                this.eyeImageID = "circularEye";
+            }
+        }
+        if (entityObject.hasOwnProperty("eyeColour")) {
+            if (String(entityObject.eyeColour).slice(0,1) == '#') {
+                this.eyeColour = entityObject.eyeColour;
+            }
+            else {
+                this.eyeColour = Tools.colourNameToHex(entityObject.eyeColour);
+            }
+        }
+        if (entityObject.hasOwnProperty("eyeBackground")) {
+            if (String(entityObject.eyeBackground).slice(0,1) == '#') {
+                this.eyeBackground = entityObject.eyeBackground;
+            }
+            else {
+                this.eyeBackground = Tools.colourNameToHex(entityObject.eyeBackground);
+            }
+        }
+        this.offensiveStance = entityObject.offensiveStance;
+        if (EntityController.debugMode) console.info(`Finished running {CreatureController} ${this.id}.populateFromEntity(entityObject)`);
+        if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
     hasLookController() {
@@ -390,7 +464,7 @@ class CreatureController extends EntityController {
         return false;
     }
     getBone(bone) {
-        if (CreatureController.debugMode) console.log("Running getBone");
+        if (EntityController.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
             if (bone instanceof BABYLON.Bone) {
                 return bone;
@@ -429,17 +503,17 @@ class CreatureController extends EntityController {
      * @returns {CharacterController} This character controller.
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (CreatureController.debugMode) console.log("Running attachMeshIDToBone");
+        if (EntityController.debugMode) console.log("Running attachMeshIDToBone");
         if (!Game.hasMesh(meshID)) {
-            if (CreatureController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
+            if (EntityController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
             return this;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            if (CreatureController.debugMode) console.log(`Couldn't find skeleton`);
+            if (EntityController.debugMode) console.log(`Couldn't find skeleton`);
             return this;
         }
         if (!this.hasBone(boneID)) {
-            if (CreatureController.debugMode) console.log(`Couldn't find bone:${boneID}`);
+            if (EntityController.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return this;
         }
         let bone = this.getBone(boneID);
@@ -457,7 +531,7 @@ class CreatureController extends EntityController {
         }
         if (!(Game.hasLoadedMesh(meshID))) {
             Game.addBackloggedAttachment((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
-            if (CreatureController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
+            if (EntityController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
             return this;
         }
         if (materialID != "collisionMaterial") {
@@ -677,9 +751,7 @@ class CreatureController extends EntityController {
     }
 
     updateTargetRay() {
-        if (CreatureController.debugMode) {
-            console.info(`${this.id}.updateTargetRay()`);
-        }
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.info(`${this.id}.updateTargetRay()`);
         if (this.locked || !this.enabled) {
             return 0;
         }
@@ -745,7 +817,7 @@ class CreatureController extends EntityController {
 
     static initialize() {
         CreatureController.creatureControllerList = {};
-        CreatureController.debugMode = false;
+        EntityController.debugMode = false;
     }
     static get(id) {
         if (CreatureController.has(id)) {
@@ -784,13 +856,13 @@ class CreatureController extends EntityController {
     }
     static setDebugMode(debugMode) {
         if (debugMode == true) {
-            CreatureController.debugMode = true;
+            EntityController.debugMode = true;
             for (let creatureController in CreatureController.creatureControllerList) {
                 CreatureController.creatureControllerList[creatureController].debugMode = true;
             }
         }
         else if (debugMode == false) {
-            CreatureController.debugMode = false;
+            EntityController.debugMode = false;
             for (let creatureController in CreatureController.creatureControllerList) {
                 CreatureController.creatureControllerList[creatureController].debugMode = false;
             }
@@ -798,7 +870,7 @@ class CreatureController extends EntityController {
         return 0;
     }
     static getDebugMode() {
-        return CreatureController.debugMode === true;
+        return EntityController.debugMode === true;
     }
 }
 CreatureController.initialize();

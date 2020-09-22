@@ -9,21 +9,23 @@ class EntityController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
+        if (EntityController.debugMode) console.group(`Creating new EntityController(${id}, meshObject, entityObject)`);
         id = Tools.filterID(id);
         if (typeof id != "string" || EntityController.has(id)) {
             id = Tools.genUUIDv4();
         }
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (Game.debugMode) console.log("mesh is not a mesh");
+            if (EntityController.debugMode) console.error(`Failed to create EntityController ${id} due to invalid mesh`);
+            if (EntityController.debugMode) console.groupEnd();
             return null;
         }
         if (!(entityObject.hasOwnProperty("id"))) {
-            if (Game.debugMode) console.log("entityObject missing ID");
+            if (EntityController.debugMode) console.error(`Failed to create EntityController ${id} due to invalid entityObject`);
+            if (EntityController.debugMode) console.groupEnd();
             return null;
         }
 
         this.id = id;
-        this.debugMode = false;
         /**
          * @type string
          */
@@ -79,6 +81,8 @@ class EntityController {
         );
         Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
         EntityController.set(this.id, this);
+        if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
+        if (EntityController.debugMode) console.groupEnd();
     }
     setID(id) {
         this.id = id;
@@ -135,8 +139,11 @@ class EntityController {
         this.mesh.setParent(this.collisionMesh);
     }
     setMesh(mesh, updateChild = false) {
+        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.setMesh(meshObject, ${updateChild})`);
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            return this;
+            if (EntityController.debugMode) console.error(`meshObject wasn't an instance of BABYLON.AbstractMesh`);
+            if (EntityController.debugMode) console.groupEnd();
+            return 2;
         }
         if (this.mesh instanceof BABYLON.AbstractMesh && this.mesh != mesh) {
             this.unsetMesh(this.mesh);
@@ -173,7 +180,8 @@ class EntityController {
         this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
-        return this;
+        if (EntityController.debugMode) console.groupEnd();
+        return 0;
     }
     unsetMesh(mesh = this.mesh) {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
@@ -372,6 +380,35 @@ class EntityController {
     hasHiddenAvailableAction(actionEnum) {
         actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
         return this.hiddenAvailableActions.hasOwnProperty(actionEnum);
+    }
+    generateOrganMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        return 0;
+    }
+    generateCosmeticMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        return 0;
+    }
+    generateEquippedMeshes() {
+        if (!this.hasSkeleton()) {
+            return 1;
+        }
+        return 0;
+    }
+    populateFromEntity(entityObject) {
+        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.populateFromEntity(entityObject)`);
+        if (!(entityObject instanceof Object)) {
+            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
+            if (EntityController.debugMode) console.groupEnd();
+            return 2;
+        }
+        if (EntityController.debugMode) console.info(`Finished running {EntityController} ${this.id}.populateFromEntity(entityObject)`);
+        if (EntityController.debugMode) console.groupEnd();
+        return 0;
     }
 
     /**
@@ -722,6 +759,7 @@ class EntityController {
         if (verify && !(controller instanceof EntityController)) {
             return 2;
         }
+        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject, ${verify})`);
         if (controller.hasOwnProperty("height")) this.height = controller.height;
         if (controller.hasOwnProperty("width")) this.width = controller.width;
         if (controller.hasOwnProperty("depth")) this.depth = controller.depth;
@@ -738,6 +776,7 @@ class EntityController {
                 this.addHiddenAvailableAction(action);
             }
         }
+        if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
     updateID(newID) {
@@ -781,6 +820,7 @@ class EntityController {
     static initialize() {
         EntityController.entityControllerList = {};
         EntityController.debugMode = false;
+        EntityController.debugVerbosity = 2;
     }
     static get(id) {
         if (EntityController.has(id)) {

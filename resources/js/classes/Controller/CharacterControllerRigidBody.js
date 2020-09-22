@@ -36,16 +36,16 @@ class CharacterControllerRigidBody extends CharacterController {
     }
 
     moveAV() {
-        if (CharacterController.debugMode) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
-            if (CharacterController.debugMode) {
+            if (EntityController.debugMode) {
                 console.error("missing mesh");
                 console.groupEnd();
             }
             return this;
         }
         if (this.locked) {
-            if (CharacterController.debugMode) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("locked");
                 console.groupEnd();
             }
@@ -73,13 +73,13 @@ class CharacterControllerRigidBody extends CharacterController {
                 [this.id, new Date().getTime(), this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
             );
         }
-        if (CharacterController.debugMode) {
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
             console.groupEnd();
         }
         return this;
     }
     doMove() {
-        if (CharacterController.debugMode) console.group(`${this.id}.doMove()`)
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`)
         let dt = Game.engine.getDeltaTime() / 1000;
         let u = this.fallTime * -Game.scene.gravity.y;
         this.collisionMesh.setParent(null);
@@ -88,12 +88,12 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this.falling) {
             this.intendedMovement.y = -this.fallDistance;
             this.moving = true;
-            if (CharacterController.debugMode) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("not trying to move, falling")
             }
         }
         else if (this.anyMovement()) {
-            if (CharacterController.debugMode) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("not falling, trying to move")
             }
             if (this.key.forward) {
@@ -133,7 +133,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
         if (this.moving) {
-            if (CharacterController.debugMode) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("moving")
             }
             this.sitting = false;
@@ -245,7 +245,7 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.endFreeFall();
             }
         }
-        if (CharacterController.debugMode) console.groupEnd();
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.groupEnd();
         return 0;
     }
     endFreeFall() {
