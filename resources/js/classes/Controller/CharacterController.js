@@ -165,6 +165,20 @@ class CharacterController extends CreatureController {
         return this;
     }
 
+    detachFromAllBones(destroyMesh = true) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return this;
+        }
+        for (let boneID in this._meshesAttachedToBones) {
+            if (this.equipment.hasOwnProperty(boneID)) {
+                this.equipment[boneID][0] = null;
+                this.equipment[boneID][1] = null;
+            }
+        }
+        super.detachFromAllBones(destroyMesh);
+        return 0;
+    }
+
     attachEquipmentToBone(meshID, materialID, boneID, options) {
         let result = 0;
         switch (boneID) {

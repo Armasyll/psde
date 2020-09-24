@@ -62,6 +62,24 @@ class CreatureController extends EntityController {
         this.organs["LEGS"] = [];
         this.organs["FOOT_L"] = [];
         this.organs["FOOT_R"] = [];
+        this.cosmetics = {};
+        this.cosmetics["HEAD"] = [];
+        this.cosmetics["EAR_L"] = [];
+        this.cosmetics["EAR_R"] = [];
+        this.cosmetics["EYE_L"] = [];
+        this.cosmetics["EYE_R"] = [];
+        this.cosmetics["NECK"] = [];
+        this.cosmetics["SHOULDER_L"] = [];
+        this.cosmetics["SHOULDER_R"] = [];
+        this.cosmetics["FOREARM_L"] = [];
+        this.cosmetics["FOREARM_R"] = [];
+        this.cosmetics["HAND_L"] = [];
+        this.cosmetics["HAND_R"] = [];
+        this.cosmetics["CHEST"] = [];
+        this.cosmetics["PELVIS"] = [];
+        this.cosmetics["LEGS"] = [];
+        this.cosmetics["FOOT_L"] = [];
+        this.cosmetics["FOOT_R"] = [];
         /**
          * @type {EyeEnum}
          */
@@ -347,14 +365,21 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return this;
         }
-        let meshes = new Array();
-        for (let bone in this._meshesAttachedToBones) {
-            if (bone == "FOCUS" || bone == "ROOT") {}
+        for (let boneID in this._meshesAttachedToBones) {
+            if (boneID == "FOCUS" || boneID == "ROOT") {}
             else {
-                meshes.push(...this.detachAllFromBone(bone, destroyMesh));
+                this.detachAllFromBone(boneID, destroyMesh);
+            }
+            if (this.organs.hasOwnProperty(boneID)) {
+                this.organs[boneID][0] = null;
+                this.organs[boneID][1] = null;
+            }
+            if (this.cosmetics.hasOwnProperty(boneID)) {
+                this.cosmetics[boneID][0] = null;
+                this.cosmetics[boneID][1] = null;
             }
         }
-        return meshes;
+        return 0;
     }
     attachToROOT(mesh) {
         if (mesh instanceof BABYLON.AbstractMesh) {
@@ -930,6 +955,470 @@ class CreatureController extends EntityController {
         return result;
     }
 
+    attachCosmeticToBone(meshID, materialID, boneID, options) {
+        let result = 0;
+        switch (boneID) {
+            case "head":
+            case "HEAD": {
+                result = this.attachCosmeticToHead(meshID, materialID, options);
+                break;
+            }
+            case "ear.l":
+            case "EAR_L": {
+                result = this.attachCosmeticToLeftEar(meshID, materialID, options);
+                break;
+            }
+            case "ear.r":
+            case "EAR_R": {
+                result = this.attachCosmeticToRightEar(meshID, materialID, options);
+                break;
+            }
+            case "neck":
+            case "NECK": {
+                result = this.attachCosmeticToNeck(meshID, materialID, options);
+                break;
+            }
+            case "shoulder.l":
+            case "SHOULDER_L": {
+                result = this.attachCosmeticToLeftShoulder(meshID, materialID, options);
+                break;
+            }
+            case "shoulder.r":
+            case "SHOULDER_R": {
+                result = this.attachCosmeticToRightShoulder(meshID, materialID, options);
+                break;
+            }
+            case "forearm.l":
+            case "FOREARM_L": {
+                result = this.attachCosmeticToLeftForearm(meshID, materialID, options);
+                break;
+            }
+            case "forearm.r":
+            case "FOREARM_R": {
+                result = this.attachCosmeticToRightForearm(meshID, materialID, options);
+                break;
+            }
+            case "hand.l":
+            case "HAND_L": {
+                result = this.attachCosmeticToLeftHand(meshID, materialID, options);
+                break;
+            }
+            case "hand.r":
+            case "HAND_R": {
+                result = this.attachCosmeticToRightHand(meshID, materialID, options);
+                break;
+            }
+            default: {
+                result = 1;
+            }
+        }
+        return result;
+    }
+    detachCosmeticFromBone(boneID, destroyMesh = true) {
+        let result = 0;
+        switch (boneID) {
+            case "head":
+            case "HEAD": {
+                result = this.detachCosmeticFromHead(destroyMesh);
+                break;
+            }
+            case "ear.l":
+            case "EAR_L": {
+                result = this.detachCosmeticFromLeftEar(destroyMesh);
+                break;
+            }
+            case "ear.r":
+            case "EAR_R": {
+                result = this.detachCosmeticFromRightEar(destroyMesh);
+                break;
+            }
+            case "neck":
+            case "NECK": {
+                result = this.detachCosmeticFromNeck(destroyMesh);
+                break;
+            }
+            case "shoulder.l":
+            case "SHOULDER_L": {
+                result = this.detachCosmeticFromLeftShoulder(destroyMesh);
+                break;
+            }
+            case "shoulder.r":
+            case "SHOULDER_R": {
+                result = this.detachCosmeticFromRightShoulder(destroyMesh);
+                break;
+            }
+            case "forearm.l":
+            case "FOREARM_L": {
+                result = this.detachCosmeticFromLeftForearm(destroyMesh);
+                break;
+            }
+            case "forearm.r":
+            case "FOREARM_R": {
+                result = this.detachCosmeticFromRightForearm(destroyMesh);
+                break;
+            }
+            case "hand.l":
+            case "HAND_L": {
+                result = this.detachCosmeticFromLeftHand(destroyMesh);
+                break;
+            }
+            case "hand.r":
+            case "HAND_R": {
+                result = this.detachCosmeticFromRightHand(destroyMesh);
+                break;
+            }
+            default: {
+                result = 1;
+            }
+        }
+        return result;
+    }
+    attachCosmeticToHead(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["HEAD"][0] == "string") {
+            if (this.cosmetics["HEAD"][0] == meshID && this.cosmetics["HEAD"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromHead();
+        }
+        this.cosmetics["HEAD"][0] = meshID;
+        this.cosmetics["HEAD"][1] = materialID;
+        return this.attachToHead(meshID, materialID, options);
+    }
+    detachCosmeticFromHead(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["HEAD"][0], this.cosmetics["HEAD"][1], destroyMesh);
+        this.cosmetics["HEAD"][0] = null;
+        this.cosmetics["HEAD"][1] = null;
+        return result;
+    }
+    attachCosmeticToLeftEye(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["EYE_L"][0] == "string") {
+            if (this.cosmetics["EYE_L"][0] == meshID && this.cosmetics["EYE_L"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromLeftEye();
+        }
+        this.cosmetics["EYE_L"][0] = meshID;
+        this.cosmetics["EYE_L"][1] = materialID;
+        return this.attachToLeftEye(meshID, materialID, options);
+    }
+    detachCosmeticFromLeftEye(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["EYE_L"][0], this.cosmetics["EYE_L"][1], destroyMesh);
+        this.cosmetics["EYE_L"][0] = null;
+        this.cosmetics["EYE_L"][1] = null;
+        return result;
+    }
+    attachCosmeticToRightEye(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["EYE_R"][0] == "string") {
+            if (this.cosmetics["EYE_R"][0] == meshID && this.cosmetics["EYE_R"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromRightEye();
+        }
+        this.cosmetics["EYE_R"][0] = meshID;
+        this.cosmetics["EYE_R"][1] = materialID;
+        return this.attachToRightEye(meshID, materialID, options);
+    }
+    detachCosmeticFromRightEye(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["EYE_R"][0], this.cosmetics["EYE_R"][1], destroyMesh);
+        this.cosmetics["EYE_R"][0] = null;
+        this.cosmetics["EYE_R"][1] = null;
+        return result;
+    }
+    attachCosmeticToLeftEar(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["EAR_L"][0] == "string") {
+            if (this.cosmetics["EAR_L"][0] == meshID && this.cosmetics["EAR_L"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromLeftEar();
+        }
+        this.cosmetics["EAR_L"][0] = meshID;
+        this.cosmetics["EAR_L"][1] = materialID;
+        return this.attachToLeftEar(meshID, materialID, options);
+    }
+    detachCosmeticFromLeftEar(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["EAR_L"][0], this.cosmetics["EAR_L"][1], destroyMesh);
+        this.cosmetics["EAR_L"][0] = null;
+        this.cosmetics["EAR_L"][1] = null;
+        return result;
+    }
+    attachCosmeticToRightEar(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["EAR_R"][0] == "string") {
+            if (this.cosmetics["EAR_R"][0] == meshID && this.cosmetics["EAR_R"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromRightEar();
+        }
+        this.cosmetics["EAR_R"][0] = meshID;
+        this.cosmetics["EAR_R"][1] = materialID;
+        return this.attachToRightEar(meshID, materialID, options);
+    }
+    detachCosmeticFromRightEar(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["EAR_R"][0], this.cosmetics["EAR_R"][1], destroyMesh);
+        this.cosmetics["EAR_R"][0] = null;
+        this.cosmetics["EAR_R"][1] = null;
+        return result;
+    }
+    attachCosmeticToNeck(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["NECK"][0] == "string") {
+            if (this.cosmetics["NECK"][0] == meshID && this.cosmetics["NECK"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromNeck();
+        }
+        this.cosmetics["NECK"][0] = meshID;
+        this.cosmetics["NECK"][1] = materialID;
+        return this.attachToNeck(meshID, materialID, options);
+    }
+    detachCosmeticFromNeck(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["NECK"][0], this.cosmetics["NECK"][1], destroyMesh);
+        this.cosmetics["NECK"][0] = null;
+        this.cosmetics["NECK"][1] = null;
+        return result;
+    }
+    attachCosmeticToLeftShoulder(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["SHOULDER_L"][0] == "string") {
+            if (this.cosmetics["SHOULDER_L"][0] == meshID && this.cosmetics["SHOULDER_L"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromLeftShoulder();
+        }
+        this.cosmetics["SHOULDER_L"][0] = meshID;
+        this.cosmetics["SHOULDER_L"][1] = materialID;
+        return this.attachToLeftShoulder(meshID, materialID, options);
+    }
+    detachCosmeticFromLeftShoulder(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["SHOULDER_L"][0], this.cosmetics["SHOULDER_L"][1], destroyMesh);
+        this.cosmetics["SHOULDER_L"][0] = null;
+        this.cosmetics["SHOULDER_L"][1] = null;
+        return result;
+    }
+    attachCosmeticToRightShoulder(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["SHOULDER_R"][0] == "string") {
+            if (this.cosmetics["SHOULDER_R"][0] == meshID && this.cosmetics["SHOULDER_R"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromRightShoulder();
+        }
+        this.cosmetics["SHOULDER_R"][0] = meshID;
+        this.cosmetics["SHOULDER_R"][1] = materialID;
+        return this.attachToRightShoulder(meshID, materialID, options);
+    }
+    detachCosmeticFromRightShoulder(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["SHOULDER_R"][0], this.cosmetics["SHOULDER_R"][1], destroyMesh);
+        this.cosmetics["SHOULDER_R"][0] = null;
+        this.cosmetics["SHOULDER_R"][1] = null;
+        return result;
+    }
+    attachCosmeticToLeftForearm(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["FOREARM_L"][0] == "string") {
+            if (this.cosmetics["FOREARM_L"][0] == meshID && this.cosmetics["FOREARM_L"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromLeftForearm();
+        }
+        this.cosmetics["FOREARM_L"][0] = meshID;
+        this.cosmetics["FOREARM_L"][1] = materialID;
+        return this.attachToLeftForearm(meshID, materialID, options);
+    }
+    detachCosmeticFromLeftForearm(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["FOREARM_L"][0], this.cosmetics["FOREARM_L"][1], destroyMesh);
+        this.cosmetics["FOREARM_L"][0] = null;
+        this.cosmetics["FOREARM_L"][1] = null;
+        return result;
+    }
+    attachCosmeticToRightForearm(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["FOREARM_R"][0] == "string") {
+            if (this.cosmetics["FOREARM_R"][0] == meshID && this.cosmetics["FOREARM_R"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromRightForearm();
+        }
+        this.cosmetics["FOREARM_R"][0] = meshID;
+        this.cosmetics["FOREARM_R"][1] = materialID;
+        return this.attachToRightForearm(meshID, materialID, options);
+    }
+    detachCosmeticFromRightForearm(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["FOREARM_R"][0], this.cosmetics["FOREARM_R"][1], destroyMesh);
+        this.cosmetics["FOREARM_R"][0] = null;
+        this.cosmetics["FOREARM_R"][1] = null;
+        return result;
+    }
+    attachCosmeticToLeftHand(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["HAND_L"][0] == "string") {
+            if (this.cosmetics["HAND_L"][0] == meshID && this.cosmetics["HAND_L"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromLeftHand();
+        }
+        this.cosmetics["HAND_L"][0] = meshID;
+        this.cosmetics["HAND_L"][1] = materialID;
+        return this.attachToLeftHand(meshID, materialID, options);
+    }
+    detachCosmeticFromLeftHand(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["HAND_L"][0], this.cosmetics["HAND_L"][1], destroyMesh);
+        this.cosmetics["HAND_L"][0] = null;
+        this.cosmetics["HAND_L"][1] = null;
+        return result;
+    }
+    attachCosmeticToRightHand(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["HAND_R"][0] == "string") {
+            if (this.cosmetics["HAND_R"][0] == meshID && this.cosmetics["HAND_R"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromRightHand();
+        }
+        this.cosmetics["HAND_R"][0] = meshID;
+        this.cosmetics["HAND_R"][1] = materialID;
+        return this.attachToRightHand(meshID, materialID, options);
+    }
+    detachCosmeticFromRightHand(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["HAND_R"][0], this.cosmetics["HAND_R"][1], destroyMesh);
+        this.cosmetics["HAND_R"][0] = null;
+        this.cosmetics["HAND_R"][1] = null;
+        return result;
+    }
+    attachCosmeticToChest(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["CHEST"][0] == "string") {
+            if (this.cosmetics["CHEST"][0] == meshID && this.cosmetics["CHEST"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromChest();
+        }
+        this.cosmetics["CHEST"][0] = meshID;
+        this.cosmetics["CHEST"][1] = materialID;
+        return this.attachToChest(meshID, materialID, options);
+    }
+    detachCosmeticFromChest(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["CHEST"][0], this.cosmetics["CHEST"][1], destroyMesh);
+        this.cosmetics["CHEST"][0] = null;
+        this.cosmetics["CHEST"][1] = null;
+        return result;
+    }
+    attachCosmeticToSpine(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["SPINE"][0] == "string") {
+            if (this.cosmetics["SPINE"][0] == meshID && this.cosmetics["SPINE"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromSpine();
+        }
+        this.cosmetics["SPINE"][0] = meshID;
+        this.cosmetics["SPINE"][1] = materialID;
+        return this.attachToSpine(meshID, materialID, options);
+    }
+    detachCosmeticFromSpine(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["SPINE"][0], this.cosmetics["SPINE"][1], destroyMesh);
+        this.cosmetics["SPINE"][0] = null;
+        this.cosmetics["SPINE"][1] = null;
+        return result;
+    }
+    attachCosmeticToPelvis(meshID, materialID, options) {
+        if (meshID instanceof BABYLON.AbstractMesh) {
+            if (meshID.material instanceof BABYLON.Material) {
+                materialID = meshID.material.name;
+            }
+            meshID = meshID.name;
+        }
+        if (typeof this.cosmetics["PELVIS"][0] == "string") {
+            if (this.cosmetics["PELVIS"][0] == meshID && this.cosmetics["PELVIS"][1] == materialID) {
+                return 0;
+            }
+            this.detachCosmeticFromPelvis();
+        }
+        this.cosmetics["PELVIS"][0] = meshID;
+        this.cosmetics["PELVIS"][1] = materialID;
+        return this.attachToPelvis(meshID, materialID, options);
+    }
+    detachCosmeticFromPelvis(destroyMesh = true) {
+        let result = this.detachMeshID(this.cosmetics["PELVIS"][0], this.cosmetics["PELVIS"][1], destroyMesh);
+        this.cosmetics["PELVIS"][0] = null;
+        this.cosmetics["PELVIS"][1] = null;
+        return result;
+    }
+
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
             return 1;
@@ -998,6 +1487,31 @@ class CreatureController extends EntityController {
             }
             else {
                 this.eyeBackground = Tools.colourNameToHex(entityObject.eyeBackground);
+            }
+        }
+        if (entityObject.hasOwnProperty("cosmetics")) {
+            for (let boneID in entityObject["cosmetics"]) {
+                if (!(entityObject["cosmetics"][boneID] instanceof Object)) {
+                    if (overwrite) {
+                        this.detachCosmeticFromBone(boneID, true);
+                    }
+                }
+                else {
+                    cosmeticsObject = entityObject["cosmetics"][boneID];
+                    if (cosmeticsObject.hasOwnProperty("meshID")) {
+                        meshID = entityObject.cosmetics[boneID]["meshID"];
+                        if (cosmeticsObject.hasOwnProperty("materialID")) {
+                            materialID = entityObject.cosmetics[boneID]["materialID"];
+                        }
+                        else if (cosmeticsObject.hasOwnProperty("textureID")) {
+                            materialID = entityObject.cosmetics[boneID]["textureID"];
+                        }
+                        else {
+                            material = "missingMaterial";
+                        }
+                        this.attachCosmeticToBone(meshID, materialID, boneID);
+                    }
+                }
             }
         }
         this.offensiveStance = entityObject.offensiveStance;
