@@ -4586,29 +4586,38 @@ class Game {
                 Game.gui.chat.appendOutput("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
                 break;
             }
-            case "clear": {
-                Game.gui.chat.clearOutput();
+            case "addallarmour":
+            case "addallarmor":
+            case "addallclothing": {
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(1)) {
+                    target = commandArray[1];
+                }
+                Game.entityLogicWorkerPostMessage("addAllClothing", 0, {"target": target});
                 break;
             }
-            case "menu": {
-                Game.gui.showCharacterChoiceMenu();
+            case "addallitems": {
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(1)) {
+                    target = commandArray[1];
+                }
+                Game.entityLogicWorkerPostMessage("addAllItems", 0, {"target": target});
                 break;
             }
-            case "login": {
+            case "addallkeys": {
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(1)) {
+                    target = commandArray[1];
+                }
+                Game.entityLogicWorkerPostMessage("addAllKeys", 0, {"target": target});
                 break;
             }
-            case "logout": {
-                Client.disconnect();
-                break;
-            }
-            case "exit":
-            case "quit": {
-                break;
-            }
-            case "save": {
-                break;
-            }
-            case "load": {
+            case "addallweapons": {
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(1)) {
+                    target = commandArray[1];
+                }
+                Game.entityLogicWorkerPostMessage("addAllWeapons", 0, {"target": target});
                 break;
             }
             case "additem": {
@@ -4631,40 +4640,6 @@ class Game {
                 }
                 break;
             }
-            case "addallkeys": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllKeys", 0, {"target": target});
-                break;
-            }
-            case "addallitems": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllItems", 0, {"target": target});
-                break;
-            }
-            case "addallweapons": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllWeapons", 0, {"target": target});
-                break;
-            }
-            case "addallarmour":
-            case "addallarmor":
-            case "addallclothing": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllClothing", 0, {"target": target});
-                break;
-            }
             case "addmoney": {
                 let money = Tools.filterInt(commandArray[1]) || 1;
                 let target = Game.playerEntityID;
@@ -4674,13 +4649,11 @@ class Game {
                 Game.entityLogicWorkerPostMessage("addMoney", 0, {"amount": money, "target": target});
                 break;
             }
-            case "setmoney": {
-                let money = Tools.filterInt(commandArray[1]) || 1;
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(2)) {
-                    target = commandArray[2];
-                }
-                Game.entityLogicWorkerPostMessage("setMoney", 0, {"amount": money, "target": target});
+            case "clear": {
+                Game.gui.chat.clearOutput();
+                break;
+            }
+            case "exit": {
                 break;
             }
             case "getmoney": {
@@ -4699,6 +4672,43 @@ class Game {
                 Game.entityLogicWorkerPostMessage("kill", 0, {"target": target});
                 break;
             }
+            case "load": {
+                break;
+            }
+            case "login": {
+                break;
+            }
+            case "logout": {
+                Client.disconnect();
+                break;
+            }
+            case "menu": {
+                Game.gui.showCharacterChoiceMenu();
+                break;
+            }
+            case "quit": {
+                break;
+            }
+            case "save": {
+                break;
+            }
+            case "setmoney": {
+                let money = Tools.filterInt(commandArray[1]) || 1;
+                let target = Game.playerEntityID;
+                if (commandArray.hasOwnProperty(2)) {
+                    target = commandArray[2];
+                }
+                Game.entityLogicWorkerPostMessage("setMoney", 0, {"amount": money, "target": target});
+                break;
+            }
+            case "showdebug": {
+                Game.gui.debug.show();
+                break;
+            }
+            case "unloadcell": {
+                Game.unloadCell();
+                break;
+            }
             case ":v":
             case "v:":
             case ":V":
@@ -4711,10 +4721,6 @@ class Game {
                     Game.gui.chat.appendOutput("\n    A developer is you :V\n");
                     Game.setInterfaceMode(InterfaceModeEnum.EDIT);
                 }
-                break;
-            }
-            case "showdebug": {
-                Game.gui.debug.show();
                 break;
             }
             default: {
