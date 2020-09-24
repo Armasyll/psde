@@ -5086,7 +5086,10 @@ class Game {
      */
     static loadCell(cellID, parentCallbackID = null) {
         let callbackID = Tools.genUUIDv4();
-        if (Game.debugMode) console.group(`Running Game.loadCell(${cellID}, ${parentCallbackID})`)
+        if (Game.debugMode) console.group(`Running Game.loadCell(${cellID}, ${parentCallbackID})`);
+        if (cellID == Game.playerCellID) {
+            return 0;
+        }
         Game.createCallback(callbackID, parentCallbackID, [cellID], Game.loadCellResponse);
         Game.getCell(cellID, callbackID);
         if (Game.debugMode) console.groupEnd();
@@ -5096,6 +5099,9 @@ class Game {
         Game.setHasRunCallback(callbackID, true);
         if (!response.hasOwnProperty("id")) {
             return 2;
+        }
+        if (response.id == Game.playerCellID) {
+            return 0;
         }
         if (Game.debugMode) console.group(`Running Game.loadCellResponse(${cellID}, ${response["id"]}, ${callbackID})`);
         Game.playerCellID = response.id;
