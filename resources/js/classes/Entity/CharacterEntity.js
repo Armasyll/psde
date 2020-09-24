@@ -321,7 +321,6 @@ class CharacterEntity extends CreatureEntity {
         return 1;
     }
     unequipBySlot(bone) {
-        console.log(bone);
         if (this.equipment.hasOwnProperty(bone)) {}
         else if (ApparelSlotEnum.hasOwnProperty(bone)) {
             if (bone == "HANDS") {

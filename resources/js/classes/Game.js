@@ -4953,7 +4953,7 @@ class Game {
     }
     static actionEquipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
         actorController.populateFromEntity(response);
-        actorController.generateAttachedMeshes();
+        actorController.generateEquippedMeshes();
         return 0;
     }
     static actionHold(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -5055,6 +5055,36 @@ class Game {
         return 0;
     }
     static actionUnequip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasCachedEntity(targetController)) {}
+        else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
+            targetController = targetController.entityID;
+        }
+        else {
+            let tempController = Game.filterController(actorController);
+            if (tempController instanceof EntityController) {
+                targetController = tempController.entityID;
+            }
+            else {
+                return 2;
+            }
+        }
+        actorController = Game.filterController(actorController);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseOne);
+        Game.entityLogicWorkerPostMessage("actionUnequip", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
+        return 0;
+    }
+    static actionUnequipResponsePhaseOne(targetController, actorController, response, parentCallbackID) {
+        if (response) {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
+            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID], callbackID);
+        }
+        return 0;
+    }
+    static actionUnequipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
+        actorController.populateFromEntity(response);
+        actorController.generateEquippedMeshes();
         return 0;
     }
     static actionUse(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -5731,7 +5761,8 @@ class Game {
         switch (event.data["cmd"]) {
             case "actionClose":
             case "actionEquip":
-            case "actionOpen": {
+            case "actionOpen":
+            case "actionUnequip": {
                 Game.runCallback(callbackID, message);
                 break;
             }

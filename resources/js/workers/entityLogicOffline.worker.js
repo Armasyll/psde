@@ -19,6 +19,8 @@ importScripts("../classes/Entity/Instance/ConsumableEntity.js", "../classes/Enti
 
 class EntityLogic {
     static initialize() {
+        EntityLogic.debugMode = false;
+        EntityLogic.debugVerbosity = 0;
         EntityLogic.tickPort = null;
         EntityLogic.transformsPort = null;
         EntityLogic.callbacks = {};
@@ -53,17 +55,17 @@ class EntityLogic {
         addEventListener('message', EntityLogic.gameWorkerOnMessage, false);
     }
     static tickWorkerOnMessage(event) {
-        if (EntityLogic.debugMode) console.group(`Running EntityLogic.tickWorkerOnMessage`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.group(`Running EntityLogic.tickWorkerOnMessage`);
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
-            if (EntityLogic.debugMode) console.groupEnd();
+            if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
             return 2;
         }
         let status = event.data["sta"];
-        if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`with command (${event.data["cmd"]})`);
         let callbackID = event.data["callbackID"];
-        if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`and callbackID (${callbackID})`);
         let message = event.data["msg"];
-        if (EntityLogic.debugMode && message) console.info(`and message`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3 && message) console.info(`and message`);
         switch (event.data.cmd) {
             case "triggerScheduledEffect": {
                 if (!Effect.has(message[0])) {
@@ -72,7 +74,7 @@ class EntityLogic {
                 if (!AbstractEntity.has(message[1])) {
                     return 2;
                 }
-                if (EntityLogic.debugMode) console.log(`Caught triggerScheduledEffect(${message[0]}, ${message[1]})`);
+                if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.log(`Caught triggerScheduledEffect(${message[0]}, ${message[1]})`);
                 let effect = Effect.get(message[0]);
                 let abstractEntity = AbstractEntity.get(message[1]);
                 abstractEntity.applyEffect(effect);
@@ -85,7 +87,7 @@ class EntityLogic {
                 if (!AbstractEntity.has(message[1])) {
                     return 2;
                 }
-                if (EntityLogic.debugMode) console.log(`Caught removeScheduledEffect(${message[0]}, ${message[1]})`);
+                if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.log(`Caught removeScheduledEffect(${message[0]}, ${message[1]})`);
                 let effect = Effect.get(message[0]);
                 let abstractEntity = AbstractEntity.get(message[1]);
                 abstractEntity.removeEffect(effect);
@@ -108,6 +110,7 @@ class EntityLogic {
                 break;
             }
         }
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
         return 0;
     }
     /**
@@ -132,17 +135,17 @@ class EntityLogic {
         return 0;
     }
     static transformsWorkerOnMessage(event) {
-        if (EntityLogic.debugMode) console.group(`Running EntityLogic.transformsWorkerOnMessage`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.group(`Running EntityLogic.transformsWorkerOnMessage`);
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
-            if (EntityLogic.debugMode) console.groupEnd();
+            if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
             return 2;
         }
         let status = event.data["sta"];
-        if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`with command (${event.data["cmd"]})`);
         let callbackID = event.data["callbackID"];
-        if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`and callbackID (${callbackID})`);
         let message = event.data["msg"];
-        if (EntityLogic.debugMode && message) console.info(`and message`);
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3 && message) console.info(`and message`);
         switch (event.data["cmd"]) {
             case "inArea":
             case "inFrontOf":
@@ -157,6 +160,7 @@ class EntityLogic {
                 break;
             }
         }
+        if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
         return 0;
     }
     /**
@@ -201,7 +205,6 @@ class EntityLogic {
                     break;
                 }
                 target.setOpen(false);
-                EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
                 EntityLogic.gameWorkerPostMessage("actionClose", 0, !target.getOpen(), callbackID);
                 break;
             }
@@ -213,7 +216,6 @@ class EntityLogic {
                     break;
                 }
                 let result = actor.equip(target) == 0;
-                EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
                 EntityLogic.gameWorkerPostMessage("actionEquip", 0, result, callbackID);
                 break;
             }
@@ -235,7 +237,6 @@ class EntityLogic {
                 }
                 if (canOpen) {
                     target.setOpen(true);
-                    EntityLogic.gameWorkerPostMessage("updateEntity", 0, target.stringify(true));
                 }
                 EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
                 break;
@@ -262,6 +263,17 @@ class EntityLogic {
                     break;
                 }
                 EntityLogic.gameWorkerPostMessage("actionTalk", 0, target.getDialogue(target).stringify(false, target, actor), callbackID);
+                break;
+            }
+            case "actionUnequip": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionUnequip", 1, null, callbackID);
+                    break;
+                }
+                let result = actor.unequip(target) == 0;
+                EntityLogic.gameWorkerPostMessage("actionUnequip", 0, result, callbackID);
                 break;
             }
             case "addAllClothing": {
