@@ -4653,6 +4653,16 @@ class Game {
                 Game.gui.chat.clearOutput();
                 break;
             }
+            case "createplayer": {
+                let position = new BABYLON.Vector3(commandArray[1] || 0, commandArray[2] || 0, commandArray[3] || 0);
+                if (EntityController.has("00000000-0000-0000-0000-000000000000")) {
+                    Game.initFreeCamera();
+                    EntityController.get("00000000-0000-0000-0000-000000000000").dispose();
+                }
+                Game.createPlayer("00000000-0000-0000-0000-000000000000", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", position, undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                Game.initArcRotateCamera();
+                break;
+            }
             case "exit": {
                 break;
             }
@@ -4673,6 +4683,11 @@ class Game {
                 break;
             }
             case "load": {
+                break;
+            }
+            case "loadcell": {
+                let cellID = commandArray[1];
+                Game.setPlayerCell(cellID);
                 break;
             }
             case "login": {
@@ -5052,6 +5067,9 @@ class Game {
      * @returns {number}
      */
     static unloadCell(parentCallbackID = null) {
+        if (Game.playerCellID == null) {
+            return 1;
+        }
         Game.initFreeCamera();
         AbstractNode.clear();
         let cellID = Game.playerCellID;
@@ -5108,6 +5126,9 @@ class Game {
         }
         if (response.id == Game.playerCellID) {
             return 0;
+        }
+        else {
+            Game.unloadCell();
         }
         if (Game.debugMode) console.group(`Running Game.loadCellResponse(${cellID}, ${response["id"]}, ${callbackID})`);
         Game.playerCellID = response.id;

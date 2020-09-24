@@ -367,7 +367,6 @@ class CharacterController extends CreatureController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.detachFromAllBones();
         CharacterController.remove(this.id);
         super.dispose();
         return undefined;

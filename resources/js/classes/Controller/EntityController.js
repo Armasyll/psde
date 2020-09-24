@@ -799,6 +799,9 @@ class EntityController {
         else if (EditControls.previousPickedController == this) {
             EditControls.previousPickedController = null;
         }
+        if (Game.playerController == this) {
+            Game.playerController = null;
+        }
         this.propertiesChanged = false;
         if (this.hasEntity()) {
             Game.entityLogicWorkerPostMessage("removeController", 0, [this.id]);
