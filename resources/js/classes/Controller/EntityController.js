@@ -791,7 +791,6 @@ class EntityController {
         else {
             this.disposting = true;
         }
-        this.entityID = null;
         this.setLocked(true);
         this.setEnabled(false);
         if (EditControls.pickedController == this) {
@@ -803,10 +802,7 @@ class EntityController {
         this.propertiesChanged = false;
         if (this.hasEntity()) {
             Game.entityLogicWorkerPostMessage("removeController", 0, [this.id]);
-        }
-        for (let animation in this.animations) {
-            this.animations[animation] = null;
-            delete this.animations[animation]
+            this.entityID = null;
         }
         Game.removeMesh(this.mesh);
         Game.removeMesh(this.collisionMesh);

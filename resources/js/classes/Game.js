@@ -647,6 +647,7 @@ class Game {
          * @type {<string, <string, BABYLON.AbstractMesh>>}
          */
         Game.meshMaterialMeshes = {};
+        Game.tiledMeshes = {};
         /**
          * Map of Meshes that are waiting to be created; one to many
          * @type {<string, <Objects...>>}
@@ -2088,6 +2089,7 @@ class Game {
             mesh.checkCollisions = true;
             Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
         }
+        Game.tiledMeshes[id] = mesh;
         if (Game.debugMode && Game.debugVerbosity > 3) console.groupEnd();
         return mesh;
     }
@@ -2372,9 +2374,6 @@ class Game {
             delete Game.collisionMeshes[abstractMesh.id];
         }
         if (abstractMesh.skeleton instanceof BABYLON.Skeleton) {
-            if (abstractMesh.hasController()) {
-                abstractMesh.controller.dispose();
-            }
             if (Game.clonedMeshes.hasOwnProperty(abstractMesh.id)) {
                 delete Game.clonedMeshes[abstractMesh.id];
             }
@@ -3089,22 +3088,19 @@ class Game {
     /**
      * Removes a FurnitureEntity, its FurnitureController, and its BABYLON.InstancedMesh
      * @memberof module:furniture
-     * @param {(FurnitureController|string)} controller A FurnitureController, or its string ID
+     * @param {(FurnitureController|string)} furnitureController A FurnitureController, or its string ID
      * @returns {number} Integer status code
      */
-    static removeFurniture(controller) {
-        if (!(controller instanceof FurnitureController)) {
-            if (!FurnitureController.has(controller)) {
+    static removeFurniture(furnitureController) {
+        if (!(furnitureController instanceof FurnitureController)) {
+            if (FurnitureController.has(furnitureController)) {
+                furnitureController = FurnitureController.get(furnitureController);
+            }
+            else {
                 return 2;
             }
-            controller = FurnitureController.get(controller);
         }
-        let mesh = controller.getMesh();
-        controller.entity.dispose();
-        controller.dispose();
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
-        }
+        furnitureController.dispose();
         return 0;
     }
 
@@ -3232,17 +3228,14 @@ class Game {
      */
     static removeDoor(doorController) {
         if (!(doorController instanceof DoorController)) {
-            if (!DoorController.has(doorController)) {
+            if (DoorController.has(doorController)) {
+                doorController = Entity.getController(doorController);
+            }
+            else {
                 return 2;
             }
-            doorController = Entity.getController(doorController);
         }
-        let mesh = doorController.getMesh();
-        doorController.entity.dispose();
         doorController.dispose();
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
-        }
         return 0;
     }
 
@@ -3341,17 +3334,14 @@ class Game {
      */
     static removeDisplay(displayController) {
         if (!(displayController instanceof DisplayController)) {
-            if (!(DisplayController.has(displayController))) {
+            if (DisplayController.has(displayController)) {
+                displayController = DisplayController.get(displayController);
+            }
+            else {
                 return 2;
             }
-            displayController = DisplayController.get(displayController);
         }
-        let mesh = displayController.getMesh();
-        displayController.entityID.dispose();
         displayController.dispose();
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
-        }
         return 0;
     }
 
@@ -3540,10 +3530,12 @@ class Game {
      */
     static removeLightingInstance(lightingController) {
         if (!(lightingController instanceof LightingController)) {
-            if (!(LightingController.has(lightingController))) {
+            if (LightingController.has(lightingController)) {
+                lightingController = LightingController.get(lightingController);
+            }
+            else {
                 return 2;
             }
-            lightingController = LightingController.get(lightingController);
         }
         lightingController.dispose();
         return 0;
@@ -3649,17 +3641,14 @@ class Game {
      */
     static removePlant(plantController) {
         if (!(plantController instanceof PlantController)) {
-            if (!PlantController.has(plantController)) {
+            if (PlantController.has(plantController)) {
+                plantController = PlantController.get(plantController);
+            }
+            else {
                 return 2;
             }
-            plantController = Entity.getController(plantController);
         }
-        let mesh = plantController.getMesh();
-        plantController.entity.dispose();
         plantController.dispose();
-        if (mesh instanceof BABYLON.InstancedMesh) {
-            Game.removeMesh(mesh);
-        }
         return 0;
     }
     /**
@@ -4388,16 +4377,8 @@ class Game {
      * @param {string} cellID 
      * @param {(string|null)} [parentCallbackID] 
      */
-    static setPlayerCell(cellID, parentCallbackID = null) {
-        let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [cellID], Game.setPlayerCellResponse);
-        Game.loadCell(cellID, callbackID);
-        return 0;
-    }
-    static setPlayerCellResponse(cellID, response, callbackID) {
-        Game.setHasRunCallback(callbackID, true);
-        Game.setCell
-        Game.playerCellID = response.id;
+    static setPlayerCell(cellID) {
+        Game.loadCell(cellID);
         return 0;
     }
     /**
@@ -5061,37 +5042,41 @@ class Game {
 
     /**
      * 
-     * @param {Cell|string} cell Cell
+     * @param {(string|null)} parentCallbackID 
      * @returns {number}
      */
-    static unloadCell(cell, parentCallbackID = null) {
-        if (!(cell instanceof Cell)) {
-            if (Cell.has(cell)) {
-                cell = Cell.get(cell);
-            }
-            else {
-                return 2;
-            }
-        }
+    static unloadCell(parentCallbackID = null) {
+        Game.initFreeCamera();
         AbstractNode.clear();
-        cell.getMeshIDs().forEach(function (meshID) {
-            if (Game.meshMaterialMeshes.hasOwnProperty(meshID)) {
-                for (let i in Game.meshMaterialMeshes[meshID]) { // for each master mesh...
-                    for (let j in Game.meshMaterialMeshes[meshID][i]) { // and for each of the textures applied...
-                        Game.removeMesh(Game.meshMaterialMeshes[meshID][i][j]); // to its child meshes, remove them
-                    }
-                }
-            }
-        });
-        Game.playerCellID.meshIDs.forEach((meshID) => {
+        let cellID = Game.playerCellID;
+        Game.playerCellID = null;
+        for (let entityController in EntityController.list()) {
+            EntityController.get(entityController).dispose();
+        }
+        for (let i in Game.cachedCells[cellID].meshIDs) {
+            Game.removeMesh(Game.cachedCells[cellID].meshIDs[i]);
+        }
+        for (let i in Game.cachedCells[cellID].tiledMeshes) {
+            Game.removeMesh(Game.cachedCells[cellID].tiledMeshes[i]);
+        }
+        for (let i in Game.cachedCells[cellID].collisionPlanes) {
+            Game.removeMesh(Game.cachedCells[cellID].collisionPlanes[i]);
+        }
+        for (let i in Game.cachedCells[cellID].collisionRamps) {
+            Game.removeMesh(Game.cachedCells[cellID].collisionRamps[i]);
+        }
+        for (let i in Game.cachedCells[cellID].collisionWalls) {
+            Game.removeMesh(Game.cachedCells[cellID].collisionWalls[i]);
+        }
+        for (let meshID in Game.instancedMeshes) {
             Game.removeMesh(meshID);
-        });
-        Game.playerCellID.collisionMeshIDs.forEach((meshID) => {
+        }
+        for (let meshID in Game.clonedMeshes) {
             Game.removeMesh(meshID);
-        });
-        Game.playerCellID.meshes.forEach((mesh) => {
-            Game.removeMesh(mesh);
-        });
+        }
+        for (let meshID in Game.tiledMeshes) {
+            Game.tiledMeshes[meshID].dispose();
+        }
         return 0;
     }
     /**
@@ -5109,7 +5094,11 @@ class Game {
     }
     static loadCellResponse(cellID, response, callbackID) {
         Game.setHasRunCallback(callbackID, true);
+        if (!response.hasOwnProperty("id")) {
+            return 2;
+        }
         if (Game.debugMode) console.group(`Running Game.loadCellResponse(${cellID}, ${response["id"]}, ${callbackID})`);
+        Game.playerCellID = response.id;
         if (response.skybox == "dayNightCycle") {
             Game.loadSkyMaterial();
             Game.skybox.material.azimuth = response.skyboxAzimuth;
