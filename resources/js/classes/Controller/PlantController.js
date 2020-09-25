@@ -19,7 +19,7 @@ class PlantController extends EntityController {
 
     createCollisionMesh() {
         this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
-        return this;
+        return this.collisionMesh;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
@@ -29,7 +29,12 @@ class PlantController extends EntityController {
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
         }
-        return Game.createPlantMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+        this.locked = true;
+        let mesh = Game.createPlantMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+        Game.removeMesh(this.mesh);
+        this.mesh = mesh;
+        this.locked = false;
+        return mesh;
     }
 
     updateID(newID) {
@@ -42,7 +47,7 @@ class PlantController extends EntityController {
         this.setEnabled(false);
         PlantController.remove(this.id);
         super.dispose();
-        return undefined;
+        return null;
     }
     getClassName() {
         return "PlantController";

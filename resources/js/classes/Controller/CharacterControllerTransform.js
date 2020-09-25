@@ -42,10 +42,10 @@ class CharacterControllerTransform extends CharacterController {
     }
     moveAV() {
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
-            return this;
+            return 2;
         }
         if (this.locked) {
-            return this;
+            return 0;
         }
         if (this.getParent() != undefined) {
             this.removeParent();
@@ -72,7 +72,7 @@ class CharacterControllerTransform extends CharacterController {
             this.doIdle();
         }
         this.updateAnimation();
-        return this;
+        return 0;
     }
     doJump(power = 1.0) {
         let dt = Game.engine.getDeltaTime() / 1000;
@@ -128,6 +128,7 @@ class CharacterControllerTransform extends CharacterController {
         this.walking = false;
         this.running = false;
         this.sprinting = false;
+        return 0;
     }
     doMove() {
         let dt = Game.engine.getDeltaTime() / 1000;
@@ -331,10 +332,11 @@ class CharacterControllerTransform extends CharacterController {
         this.movFallTime = 0;
         this.fallFrameCount = 0;
         this.falling = false;
+        return 0;
     }
     doIdle() {
         if (this.grounded) {
-            return this.idle;
+            return 0;
         }
         let dt = Game.engine.getDeltaTime() / 1000;
         this.walking = false;
@@ -378,10 +380,12 @@ class CharacterControllerTransform extends CharacterController {
             this.grounded = true;
             this.idleFallTime = 0;
         }
+        return 0;
     }
     unGroundIt() {
         this.grounded = false;
         this.groundFrameCount = 0;
+        return 0;
     }
 
     updateID(newID) {

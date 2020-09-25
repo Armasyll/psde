@@ -208,22 +208,16 @@ class FurnitureEntity extends Entity {
     getKey() {
         return this.key;
     }
-    setOpen(open = true) {
-        this.open = open == true;
-        if (this.open) {
-            this.removeHiddenAvailableAction(ActionEnum.CLOSE);
-            this.setDefaultAction(ActionEnum.CLOSE);
-            this.addHiddenAvailableAction(ActionEnum.OPEN);
-        }
-        else {
-            this.removeHiddenAvailableAction(ActionEnum.OPEN);
-            this.setDefaultAction(ActionEnum.OPEN);
-            this.addHiddenAvailableAction(ActionEnum.CLOSE);
-        }
+    setOpen() {
+        this.open = true;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
     }
     setClose() {
         this.open = false;
         this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
     }
     getOpen() {

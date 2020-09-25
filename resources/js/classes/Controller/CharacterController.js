@@ -113,32 +113,32 @@ class CharacterController extends CreatureController {
     }
     doPunchRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+            return 2;
         }
         if (this.attacking) {
-            return false;
+            return 1;
         }
         this.attacking = true;
         setTimeout(() => {this.attacking = false;}, 800);
         //
-        return true;
+        return 0;
     }
     doThrustRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+            return 2;
         }
         if (this.attacking) {
-            return false;
+            return 1;
         }
         this.attacking = true;
         setTimeout(() => {this.attacking = false;}, 800);
         //
-        return true;
+        return 0;
     }
 
     hideHelmet() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return 2;
         }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
             for (let mesh in this._meshesAttachedToBones["head"]) {
@@ -148,11 +148,11 @@ class CharacterController extends CreatureController {
             }
         }
         this.helmetVisible = false;
-        return this;
+        return 0;
     }
     showHelmet() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return 2;
         }
         if (this._meshesAttachedToBones.hasOwnProperty("head")) {
             for (let mesh in this._meshesAttachedToBones["head"]) {
@@ -162,12 +162,12 @@ class CharacterController extends CreatureController {
             }
         }
         this.helmetVisible = true;
-        return this;
+        return 0;
     }
 
     detachFromAllBones(destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return 2;
         }
         for (let boneID in this._meshesAttachedToBones) {
             if (this.equipment.hasOwnProperty(boneID)) {

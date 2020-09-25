@@ -204,7 +204,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("actionOpen", 1, false, callbackID);
                     break;
                 }
-                target.setOpen(false);
+                target.setClose();
                 EntityLogic.gameWorkerPostMessage("actionClose", 0, !target.getOpen(), callbackID);
                 break;
             }
@@ -236,7 +236,7 @@ class EntityLogic {
                     canOpen = true;
                 }
                 if (canOpen) {
-                    target.setOpen(true);
+                    target.setOpen();
                 }
                 EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
                 break;

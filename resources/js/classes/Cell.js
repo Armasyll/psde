@@ -259,6 +259,20 @@ class Cell {
         if (this.backloggedDoors.indexOf(id) != -1) {
             return 1;
         }
+        if (!(options instanceof Object)) {
+            options = {};
+        }
+        options["locked"] = options["locked"] == true;
+        if (options["key"] == null || options["key"] instanceof AbstractEntity) {}
+        else if (AbstractEntity.has(options["key"])) {
+            options["key"] = AbstractEntity.get(options["key"]);
+        }
+        else {
+            options["key"] = null;
+        }
+        options["opensInward"] = options["opensInward"] == true;
+        options["open"] = options["open"] == true;
+        options["checkCollisions"] = options["checkCollisions"] == true;
         this.meshIDs.add(meshID);
         this.backloggedDoors.push([id, name, to, meshID, materialID, position, rotation, scaling, options]);
         this.hasBackloggedDoors = true;

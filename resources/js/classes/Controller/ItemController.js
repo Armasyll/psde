@@ -44,6 +44,7 @@ class ItemController extends EntityController {
         this.setEnabled(false);
         ItemController.remove(this.id);
         super.dispose();
+        return null;
     }
     getClassName() {
         return "ItemController";

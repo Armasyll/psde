@@ -24,7 +24,12 @@ class DoorEntity extends FurnitureEntity {
         this.setDefaultAction(ActionEnum.OPEN);
         this.setEntityLocked(locked);
         this.setKey(key);
-        this.setOpen(open);
+        if (open === true) {
+            this.setOpen();
+        }
+        else {
+            this.setClose();
+        }
         this.setOpensInward(opensInward);
 
         DoorEntity.set(this.id, this);

@@ -112,7 +112,7 @@ class LightingController extends FurnitureController {
         this.light.dispose();
         LightingController.remove(this.id);
         super.dispose();
-        return undefined;
+        return null;
     }
     getClassName() {
         return "LightingController";

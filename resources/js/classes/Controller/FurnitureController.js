@@ -34,12 +34,16 @@ class FurnitureController extends EntityController {
     }
 
     createCollisionMesh() {
-        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
-        return this;
+        let collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
+        if (collisionMesh instanceof BABYLON.AbstractMesh) {
+            this.collisionMesh = collisionMesh;
+            return this.collisionMesh;
+        }
+        return null;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return 1;
+            return null;
         }
         id = Tools.filterID(id);
         if (typeof id != "string") {
@@ -53,28 +57,32 @@ class FurnitureController extends EntityController {
         var dt = Game.engine.getDeltaTime() / 1000;
         anim = this.doIdle(dt);
         this.beginAnimation(anim);*/
-        return this;
+        return 0;
     }
     doOpen() {
-        if (!this.hasAnimationGroup("opened") || !this.hasAnimationGroup("closed")) {
-            return 1;
+        if (this.animated && this.hasAnimationGroup("opened") && this.hasAnimationGroup("closed")) {
+            this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
+            //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
+            this.animationGroups["opened"].setWeightForAllAnimatables(1.0);
+            //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
+            this.animationGroups["opened"].play(false);
         }
-        this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
-        //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
-        this.animationGroups["opened"].setWeightForAllAnimatables(1.0);
-        //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
-        this.animationGroups["opened"].play(false);
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
         return 0;
     }
     doClose() {
-        if (!this.hasAnimationGroup("opened") || !this.hasAnimationGroup("closed")) {
-            return 1;
+        if (this.animated && this.hasAnimationGroup("opened") && this.hasAnimationGroup("closed")) {
+            this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
+            //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
+            this.animationGroups["closed"].setWeightForAllAnimatables(1.0);
+            //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
+            this.animationGroups["closed"].play(false);
         }
-        this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
-        //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
-        this.animationGroups["closed"].setWeightForAllAnimatables(1.0);
-        //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
-        this.animationGroups["closed"].play(false);
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
         return 0;
     }
 
@@ -88,7 +96,7 @@ class FurnitureController extends EntityController {
         this.setEnabled(false);
         FurnitureController.remove(this.id);
         super.dispose();
-        return undefined;
+        return null;
     }
     getClassName() {
         return "FurnitureController";

@@ -487,9 +487,9 @@ networkTestCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPla
 networkTestCell.addCollidableMesh("yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [3, 0, -20], [0, 180, 0]);
 networkTestCell.addCollidableMesh("pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", [5, 0, -20], [0, 180, 0]);
 networkTestCell.addCollidableMesh("secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", [7, 0, -20], [0, 180, 0]);
-networkTestCell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", [1, 0, -21], [0, 180, 0], undefined, {opensInward:true});
-networkTestCell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", [3, 0, -21], [0, 180, 0], undefined, {opensInward:false});
-networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "craftsmanDoor", "plainDoor", [5, 0, -21], [0, 180, 0], undefined, {open:true, opensInward:true});
+networkTestCell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", [1, 0, -21], [0, 180, 0], undefined, {"opensInward":true});
+networkTestCell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", [3, 0, -21], [0, 180, 0], undefined, {"opensInward":false});
+networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "craftsmanDoor", "plainDoor", [5, 0, -21], [0, 180, 0], undefined, {"open":true, "opensInward":true});
 networkTestCell.addCollidableMesh(undefined, "stick01", "stick01", [0, 0, -17], undefined, [10, 10, 10]);
 networkTestCell.addCollidableMesh(undefined, "stopSign", "stopSign", [3, 0, -14]);
 networkTestCell.addLighting("commonsLamp", "lamp01", [6, 0, -17]);

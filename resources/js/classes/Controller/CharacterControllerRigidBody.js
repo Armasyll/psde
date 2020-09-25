@@ -42,14 +42,14 @@ class CharacterControllerRigidBody extends CharacterController {
                 console.error("missing mesh");
                 console.groupEnd();
             }
-            return this;
+            return 2;
         }
         if (this.locked) {
             if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("locked");
                 console.groupEnd();
             }
-            return this;
+            return 0;
         }
         this.updateTargetRay();
         this.moving = false;
@@ -76,7 +76,7 @@ class CharacterControllerRigidBody extends CharacterController {
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
             console.groupEnd();
         }
-        return this;
+        return 0;
     }
     doMove() {
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`)

@@ -3181,7 +3181,7 @@ class Game {
      * @param  {(string|null)} [parentCallbackID]
      * @returns {number} Integer status code
      */
-    static createDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { locked: false, key: null, opensInward: false, open: false, checkCollisions: true }, parentCallbackID = null) {
+    static createDoor(id = "", name = "Door", to = undefined, meshID = "door", materialID = "plainDoor", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "locked": false, "key": null, "opensInward": false, "open": false, "checkCollisions": true }, parentCallbackID = null) {
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
         scaling = Tools.filterVector3(scaling);
@@ -3205,10 +3205,10 @@ class Game {
             "iconID": "missingIcon",
             "meshID": meshID,
             "materialID": materialID,
-            "locked": options["locked"],
+            "locked": options["locked"] == true,
             "key": options["key"],
-            "opensInward": options["opensInward"],
-            "open": options["open"]
+            "opensInward": options["opensInward"] == true,
+            "open": options["open"] == true
         }, callbackID);
         return 0;
     }

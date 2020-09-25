@@ -623,14 +623,14 @@ class EntityController {
      */
     beginAnimation(animation, callback = null) {
         if (this.stopAnim) {
-            return false;
+            return 1;
         }
         if (!(animation instanceof BABYLON.AnimationGroup)) {
             if (this.hasAnimationGroup(animation)) {
                 this.animation = this.animationGroup[animation];
             }
             else {
-                return false;
+                return 1;
             }
         }
         if (animation != this.currAnim) {
@@ -652,29 +652,31 @@ class EntityController {
             this.prevAnim.setWeightForAllAnimatables(1 - this.animationTransitionCount);
         }
         this.currAnim.setWeightForAllAnimatables(this.animationTransitionCount);
-        return true;
+        return 0;
     }
     pauseAnim() {
         this.stopAnim = true;
+        return 0;
     }
     resumeAnim() {
         this.stopAnim = false;
+        return 0;
     }
     start() {
         if (this.started) {
-            return;
+            return 0;
         }
         this.started = true;
     }
     stop() {
         if (!this.started) {
-            return;
+            return 0;
         }
         this.started = false;
         this.prevAnim = null;
     }
     moveAV() {
-        return this;
+        return 0;
     }
     /**
      * Returns all meshes associated with this controller.
@@ -710,14 +712,14 @@ class EntityController {
         }
         this.groundRay.origin = this.collisionMesh.position;
         //this.groundRay.direction = this.collisionMesh.position.add(BABYLON.Vector3.Down());
-        return this;
+        return 0;
     }
 
     generateAttachedMeshes() {
         return 0;
     }
     detachFromAllBones() {
-        return [];
+        return 0;
     }
 
     setDefaultAction(actionEnum) {
@@ -734,21 +736,21 @@ class EntityController {
     }
     setEnabled(enabled = true) {
         this.enabled = enabled == true;
-        return this;
+        return 0;
     }
     isAnimated() {
         return this.animated;
     }
     setAnimated(animated = true) {
         this.animated = animated == true;
-        return this;
+        return 0;
     }
     isLocked() {
         return this.locked;
     }
     setLocked(locked = true) {
         this.locked = locked == true;
-        return this;
+        return 0;
     }
     /**
      * Clones the controller's values over this; but not really anything important :v

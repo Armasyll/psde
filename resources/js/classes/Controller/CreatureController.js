@@ -226,6 +226,7 @@ class CreatureController extends EntityController {
         }
         options["checkCollisions"] = true
         this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
+        return 0;
     }
     /**
      * Attaches a collision mesh to a bone
@@ -276,10 +277,10 @@ class CreatureController extends EntityController {
         if (mesh.material.name != "collisionMaterial") {
             this._attachedMeshes.add(mesh);
         }
-        return this;
+        return 0;
     }
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
-        this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
+        return this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
     }
     detachAllFromBone(bone, destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
@@ -1527,7 +1528,7 @@ class CreatureController extends EntityController {
     }
     createLookController(bone = "head") {
         if (!this.hasBone(bone)) {
-            return this;
+            return null;
         }
         let lookController = new BABYLON.BoneLookController(
             this.mesh,
@@ -1542,7 +1543,7 @@ class CreatureController extends EntityController {
             }
         );
         this.lookController = lookController;
-        return this;
+        return this.lookController;
     }
     /**
      * @override
@@ -1572,11 +1573,11 @@ class CreatureController extends EntityController {
         this.collisionMesh.ellipsoid.x = this.mesh.getBoundingInfo().boundingBox.extendSize.x;
         this.collisionMesh.ellipsoid.y = this.mesh.getBoundingInfo().boundingBox.extendSize.y;
         this.collisionMesh.ellipsoid.z = this.mesh.getBoundingInfo().boundingBox.extendSize.x;
-        return this;
+        return this.collisionMesh;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
         if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return 1;
+            return null;
         }
         id = Tools.filterID(id);
         if (typeof id != "string") {
@@ -1602,7 +1603,7 @@ class CreatureController extends EntityController {
             this.key.turnRight = key[6];
             this.key.jump = key[7];
         }
-        return this;
+        return 0;
     }
     keyMoveForward(pressed = true) {
         if (pressed === true) {
@@ -1612,7 +1613,7 @@ class CreatureController extends EntityController {
         else {
             this.key.forward = false;
         }
-        return this;
+        return 0;
     }
     keyShift(pressed = true) {
         if (pressed === true) {
@@ -1621,7 +1622,7 @@ class CreatureController extends EntityController {
         else {
             this.key.shift = false;
         }
-        return this;
+        return 0;
     }
     keyMoveBackward(pressed = true) {
         if (pressed === true) {
@@ -1631,7 +1632,7 @@ class CreatureController extends EntityController {
         else {
             this.key.backward = false;
         }
-        return this;
+        return 0;
     }
     keyTurnLeft(pressed = true) {
         if (pressed === true) {
@@ -1641,7 +1642,7 @@ class CreatureController extends EntityController {
         else {
             this.key.turnLeft = false;
         }
-        return this;
+        return 0;
     }
     keyTurnRight(pressed = true) {
         if (pressed === true) {
@@ -1651,7 +1652,7 @@ class CreatureController extends EntityController {
         else {
             this.key.turnRight = false;
         }
-        return this;
+        return 0;
     }
     keyStrafeLeft(pressed = true) {
         if (pressed === true) {
@@ -1661,7 +1662,7 @@ class CreatureController extends EntityController {
         else {
             this.key.strafeLeft = false;
         }
-        return this;
+        return 0;
     }
     keyStrafeRight(pressed = true) {
         if (pressed === true) {
@@ -1671,7 +1672,7 @@ class CreatureController extends EntityController {
         else {
             this.key.strafeRight = false;
         }
-        return this;
+        return 0;
     }
     keyJump(pressed = true) {
         if (pressed === true) {
@@ -1680,7 +1681,7 @@ class CreatureController extends EntityController {
         else {
             this.key.jump = false;
         }
-        return this;
+        return 0;
     }
 
     updateAnimation() {
@@ -1715,37 +1716,37 @@ class CreatureController extends EntityController {
     }
     doDeath() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+            return 1;
         }
         this.setLocked(true);
         this.beginAnimation(this.death);
-        return true;
+        return 0;
     }
     doLay() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+            return 1;
         }
         this.standing = false;
         this.crouching = false;
         this.sitting = false;
         this.lying = true;
         this.beginAnimation(this.lieDown);
-        return true;
+        return 0;
     }
     doSit() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
+            return 1;
         }
         this.standing = false;
         this.crouching = false;
         this.sitting = true;
         this.lying = false;
         this.beginAnimation(this.sitDown);
-        return true;
+        return 0;
     }
     doStand() {
         if (this.standing) {
-            return true;
+            return 1;
         }
         this.standing = true;
         this.crouching = false;
@@ -1753,10 +1754,11 @@ class CreatureController extends EntityController {
         this.lying = false;
         this.setLocked(true);
         this.beginAnimation(this.stand, () => {this.setLocked(false)});
+        return 0;
     }
     doCrouch() {
         if (this.crouching) {
-            return this;
+            return 1;
         }
         this.standing = false;
         this.crouching = true;
@@ -1764,16 +1766,18 @@ class CreatureController extends EntityController {
         this.lying = false;
         this.setLocked(true);
         this.beginAnimation(this.crouch, () => {this.setLocked(false)});
+        return 0;
     }
 
     setAttacking(bool = true) {
         this.attacking = bool == true;
         console.log(`running setAttacking(${this.attacking ? "true" : "false"})`);
+        return 0;
     }
 
     hideAttachedMeshes() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return 2;
         }
         for (let bone in this._meshesAttachedToBones) {
             if (bone == "FOCUS" || bone == "ROOT") {}
@@ -1784,11 +1788,11 @@ class CreatureController extends EntityController {
                 }
             }
         }
-        return this;
+        return 0;
     }
     showAttachedMeshes() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
+            return 2;
         }
         for (let bone in this._meshesAttachedToBones) {
             if (bone == "FOCUS" || bone == "ROOT") {}
@@ -1801,18 +1805,18 @@ class CreatureController extends EntityController {
                 }
             }
         }
-        return this;
+        return 0;
     }
 
     hideMesh() {
         this.mesh.isVisible = false;
         this.hideAttachedMeshes();
-        return this;
+        return 0;
     }
     showMesh() {
         this.mesh.isVisible = true;
         this.showAttachedMeshes();
-        return this;
+        return 0;
     }
 
     /**
@@ -1882,7 +1886,7 @@ class CreatureController extends EntityController {
         this.detachFromAllBones();
         CreatureController.remove(this.id);
         super.dispose();
-        return undefined;
+        return null;
     }
     getClassName() {
         return "CreatureController";

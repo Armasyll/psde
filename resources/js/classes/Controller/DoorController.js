@@ -25,7 +25,7 @@ class DoorController extends EntityController {
         else {
             this.setOpensOutward();
         }
-        if (entityObject.open) {
+        if (entityObject.open === true) {
             this.doOpen();
         }
         else {
@@ -36,15 +36,25 @@ class DoorController extends EntityController {
     }
     setOpensOutward() {
         this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
+        return 0;
     }
     setOpensInward() {
         this.avEndRot = this.avStartRot.subtract(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
+        return 0;
     }
     doOpen() {
         this.mesh.rotation = this.avEndRot;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        return 0;
     }
     doClose() {
         this.mesh.rotation = this.avStartRot;
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        return 0;
     }
     updateID(newID) {
         super.updateID(newID);
@@ -58,7 +68,7 @@ class DoorController extends EntityController {
         delete this.avEndRot;
         DoorController.remove(this.id);
         super.dispose();
-        return undefined;
+        return null;
     }
     getClassName() {
         return "DoorController";
