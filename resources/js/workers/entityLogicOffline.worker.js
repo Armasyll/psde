@@ -197,6 +197,12 @@ class EntityLogic {
         let message = event.data["msg"];
         if (EntityLogic.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
+            case "actionAttack": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                EntityLogic.actionAttack(target, actor, callbackID);
+                break;
+            }
             case "actionClose": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
@@ -206,6 +212,9 @@ class EntityLogic {
                 }
                 target.setClose();
                 EntityLogic.gameWorkerPostMessage("actionClose", 0, !target.getOpen(), callbackID);
+                break;
+            }
+            case "actionDrop": {
                 break;
             }
             case "actionEquip": {
@@ -723,10 +732,29 @@ class EntityLogic {
         };
         console.groupEnd();
     }
+    static actionAttack(target, actor, parentCallbackID) {
+        let callbackID = Tools.genUUIDv4();
+        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor], EntityLogic.actionAttackResponse);
+        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
+        return 0;
+    }
+    static actionAttackResponse(target, actor, response, callbackID) {
+        let attackRoll = EntityLogic.calculateAttack(actor);
+
+
+        let targetObject = {
+            "id":target.id,
+            "health":target.getHealth()
+        };
+        let entityJSON = JSON.stringify(targetObject);
+        EntityLogic.gameWorkerPostMessage("updateEntity", 0, entityJSON);
+        EntityLogic.gameWorkerPostMessage("actionAttack", 0, {"blocked":false, "finished":true, "channeling":false}, EntityLogic.getCallback(callbackID).parentCallbackID);
+        return 0;
+    }
     static actionTake(target, actor, parentCallbackID) {
         let callbackID = Tools.genUUIDv4();
         EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor], EntityLogic.actionTakeResponse);
-        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.0], callbackID);
+        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
     static actionTakeResponse(target, actor, response, callbackID) {
@@ -1180,6 +1208,123 @@ class EntityLogic {
             [scheduledTick, abstractEntityID, commandString]
         );
         return 0;
+    }
+
+    static calculateAttack(attacker, weapon = null, advantage = null) {
+        let attackRoll = Game.roll(1, 20);
+        if (advantage === true) {
+            let tempRoll = Game.roll(1, 20);
+            if (tempRoll > attackRoll) {
+                attackRoll = tempRoll;
+            }
+        }
+        else if (advantage === false) {
+            let tempRoll = Game.roll(1, 20);
+            if (tempRoll < attackRoll) {
+                attackRoll = tempRoll;
+            }
+        }
+        if (attackRoll == 20) {
+            return 20;
+        }
+        else if (attackRoll == 1) {
+            return 1;
+        }
+        if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
+            if (attacker.hasProficiency(weapon)) {
+                attackRoll += attacker.getProficiencyBonus();
+            }
+            if (weapon.isFinesse()) {
+                if (attacker.getDexterity() > attacker.getStrength()) {
+                    attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else {
+                    attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+            else if (weapon.isRange()) {
+                attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+            }
+            else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
+                attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+            }
+        }
+        return attackRoll;
+    }
+    static calculateDamage(target, attacker, weapon, critical = false) {
+        let damageRoll = 0;
+        if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
+            damageRoll = Game.calculateDamageWithWeapon(target, attacker, weapon, critical);
+        }
+        else if (weapon instanceof Spell) {
+            damageRoll = Game.calculateDamageWithSpell(target, attacker, weapon, critical);
+        }
+        else {
+            damageRoll = Game.calculateDamageWithUnarmed(target, attacker, critical);
+        }
+        return damageRoll;
+    }
+    static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
+        let damageRoll = 0;
+        if (weapon.getHealth() == 0) { // It's basically an improvised weapon at this point
+            damageRoll = Game.roll(1, 4); // roll 1d4
+        }
+        else {
+            damageRoll = Game.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
+            if (weapon.isFinesse()) {
+                if (attacker.getDexterity() > attacker.getStrength()) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+            else {
+                let weaponCategory = weapon.getWeaponCategory();
+                if (weaponCategory == WeaponCategoryEnum.SIMPLE_RANGED) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.MARTIAL_RANGED) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.SIMPLE_MELEE) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+                else if (weaponCategory == WeaponCategoryEnum.MARTIAL_MELEE) {
+                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                }
+            }
+        }
+        if (target.isImmuneTo(weapon.getDamageType())) {
+            damageRoll = 0;
+        }
+        else if (target.isResistantTo(weapon.getDamageType())) {
+            damageRoll /= 2;
+        }
+        else if (target.isVulnerableTo(weapon.getDamageType())) {
+            damageRoll *= 2;
+        }
+        return damageRoll;
+    }
+    static calculateDamageWithSpell(target, attacker, spell, critical = false) {
+        let damageRoll = 0;
+        damageRoll = Game.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+        damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
+        return damageRoll;
+    }
+    static calculateDamageWithUnarmed(target, attacker, critical = false) {
+        let damageRoll = 0;
+        switch (attacker.getSize()) {
+            case SizeEnum.FINE:
+            case SizeEnum.DIMINUTIVE: { damageRoll = 0; }
+            case SizeEnum.SMALL: { damageRoll = Game.roll(1, 2) }
+            case SizeEnum.MEDIUM: { damageRoll = Game.roll(1, 3) }
+            case SizeEnum.LARGE: { damageRoll = Game.roll(1, 4) }
+            case SizeEnum.HUGE: { damageRoll = Game.roll(1, 6) }
+            case SizeEnum.GARGANTUAN: { damageRoll = Game.roll(1, 8) }
+            case SizeEnum.COLOSSAL: { damageRoll = Game.roll(2, 6) }
+        }
+        return damageRoll;
     }
 
     /**

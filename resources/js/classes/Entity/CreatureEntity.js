@@ -365,6 +365,23 @@ class CreatureEntity extends Entity {
          */
         this._nearDeathThisWindow = false;
         /**
+         * Equipment
+         * @type {<number, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
+         */
+        this.equipment = {};
+        this.equipment["HEAD"] = null;
+        this.equipment["EAR_L"] = null;
+        this.equipment["EAR_R"] = null;
+        this.equipment["NECK"] = null;
+        this.equipment["FOREARM_L"] = null;
+        this.equipment["FOREARM_R"] = null;
+        this.equipment["HAND_L"] = null;
+        this.equipment["HAND_R"] = null;
+        this.equipment["CHEST"] = null;
+        this.equipment["FOOT_L"] = null;
+        this.equipment["FOOT_R"] = null;
+        this.previousEquipment = Object.assign({}, this.equipment);
+        /**
          * @type {boolean}
          */
         this.armed = false;

@@ -4890,7 +4890,32 @@ class Game {
         }
         return 0;
     }
-    static actionAttack(targetController = null, actorController = Game.playerController, weapon = null, parentCallbackID = null) {
+    static actionAttack(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
+        if (Game.debugMode) console.log(`Game.actionAttack(${targetController.id}, ${actorController.id})`);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
+        Game.entityLogicWorkerPostMessage("actionAttack", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        actorController.doAttack();
+        return 0;
+    }
+    static actionAttackResponsePhase(targetController, actorController, response, parentCallbackID) {
+        if (Game.debugMode) console.log(`Game.actionAttackResponsePhase(${targetController.id}, ${actorController.id})`);
+        if (response.blocked) {
+            targetController.doBlockAttack();
+            actorController.doAttackBlocked();
+        }
+        else if (response.finished) {
+            targetController.doAttacked();
+            actorController.doAttackFinished();
+        }
+        else if (response.channeling) {
+            // TODO: wip
+        }
         return 0;
     }
     static actionClose(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4905,7 +4930,7 @@ class Game {
         Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         return 0;
     }
-    static actionCloseResponse(targetController, actorController, response, callbackID) {
+    static actionCloseResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) console.log(`Game.actionCloseResponse(${targetController.id}, ${actorController.id})`);
         if (targetController instanceof DoorController) {
             if (response === true) {
@@ -4918,6 +4943,34 @@ class Game {
         return 0;
     }
     static actionDrop(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasCachedEntity(targetController)) {}
+        else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
+            targetController = targetController.entityID;
+        }
+        else {
+            let tempController = Game.filterController(actorController);
+            if (tempController instanceof EntityController) {
+                targetController = tempController.entityID;
+            }
+            else {
+                return 2;
+            }
+        }
+        actorController = Game.filterController(actorController);
+        if (Game.debugMode) console.log(`Game.actionDrop(${targetController}, ${actorController.id})`);
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionDropResponse);
+        Game.entityLogicWorkerPostMessage("actionDrop", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
+        return 0;
+    }
+    static actionDropResponse(targetController, actorController, response, parentCallbackID) {
+        if (response) {
+            /*
+            TODO: if the inventory is open, update it;
+                if the inventory selection was the target, clear it
+            */
+            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID]);
+        }
         return 0;
     }
     /**
@@ -4955,6 +5008,9 @@ class Game {
         return 0;
     }
     static actionEquipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
+        /*
+        TODO: if the inventory selection was the target, update its button
+        */
         actorController.populateFromEntity(response);
         actorController.generateEquippedMeshes();
         return 0;
@@ -4980,7 +5036,7 @@ class Game {
         Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         return 0;
     }
-    static actionOpenResponse(targetController, actorController, response, callbackID) {
+    static actionOpenResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) console.log(`Game.actionOpenResponse(${targetController.id}, ${actorController.id})`);
         if (targetController instanceof DoorController) {
             if (response === true) {

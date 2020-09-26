@@ -1714,6 +1714,30 @@ class CreatureController extends EntityController {
         this.beginAnimation(anim);
         return 0;
     }
+    doAttack() {
+        this.setAttacking(true);
+        return 0;
+    }
+    doAttackBlocked() {
+        this.setAttacking(false);
+        return 0;
+    }
+    doAttackFinished() {
+        this.setAttacking(false);
+        return 0;
+    }
+    doCrouch() {
+        if (this.crouching) {
+            return 1;
+        }
+        this.standing = false;
+        this.crouching = true;
+        this.sitting = false;
+        this.lying = false;
+        this.setLocked(true);
+        this.beginAnimation(this.crouch, () => {this.setLocked(false)});
+        return 0;
+    }
     doDeath() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
@@ -1756,22 +1780,10 @@ class CreatureController extends EntityController {
         this.beginAnimation(this.stand, () => {this.setLocked(false)});
         return 0;
     }
-    doCrouch() {
-        if (this.crouching) {
-            return 1;
-        }
-        this.standing = false;
-        this.crouching = true;
-        this.sitting = false;
-        this.lying = false;
-        this.setLocked(true);
-        this.beginAnimation(this.crouch, () => {this.setLocked(false)});
-        return 0;
-    }
 
     setAttacking(bool = true) {
         this.attacking = bool == true;
-        console.log(`running setAttacking(${this.attacking ? "true" : "false"})`);
+        console.log(`Running {CreatureController} ${this.id}.setAttacking(${this.attacking ? "true" : "false"})`);
         return 0;
     }
 

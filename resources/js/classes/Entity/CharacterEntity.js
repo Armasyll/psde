@@ -43,7 +43,7 @@ class CharacterEntity extends CreatureEntity {
          * Equipment
          * @type {<number, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
          */
-        this.equipment = {};
+        //this.equipment = {};
         this.equipment["HEAD"] = null;
         this.equipment["EAR_L"] = null;
         this.equipment["EAR_R"] = null;
@@ -165,14 +165,69 @@ class CharacterEntity extends CreatureEntity {
         return this.getLastName();
     }
 
-    getEquipment() {
-        return this.equipment;
-    }
-    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false) {
+    filterEquipmentSlot(equipmentSlot) {
         equipmentSlot = Tools.filterEnum(equipmentSlot, ApparelSlotEnum, false);
         if (equipmentSlot == -1) {
             equipmentSlot = "NONE";
         }
+        if (this.equipment.hasOwnProperty(equipmentSlot)) {}
+        else if (equipmentSlot == "HANDS") {
+            if (this.handedness == HandednessEnum.LEFT) {
+                if (this.equipment["HAND_L"] == null) {
+                    equipmentSlot = "HAND_L";
+                }
+                else if (this.equipment["HAND_R"] == null) {
+                    equipmentSlot = "HAND_R";
+                }
+                else {
+                    equipmentSlot = "HAND_L";
+                }
+            }
+            else {
+                if (this.equipment["HAND_R"] == null) {
+                    equipmentSlot = "HAND_R";
+                }
+                else if (this.equipment["HAND_L"] == null) {
+                    equipmentSlot = "HAND_L";
+                }
+                else {
+                    equipmentSlot = "HAND_R";
+                }
+            }
+        }
+        else if (equipmentSlot == "EARS") {
+            if (this.sexualOrientation == SexualOrientationEnum.STRAIGHT || this.sexualOrientation == SexualOrientationEnum.ASEXUAL) {
+                if (this.equipment["EAR_L"] == null) {
+                    equipmentSlot = "EAR_L";
+                }
+                else if (this.equipment["EAR_R"] == null) {
+                    equipmentSlot = "EAR_R";
+                }
+                else {
+                    equipmentSlot = "EAR_L";
+                }
+            }
+            else {
+                if (this.equipment["EAR_R"] == null) {
+                    equipmentSlot = "EAR_R";
+                }
+                else if (this.equipment["EAR_L"] == null) {
+                    equipmentSlot = "EAR_L";
+                }
+                else {
+                    equipmentSlot = "EAR_R";
+                }
+            }
+        }
+        else {
+            equipmentSlot = "NONE";
+        }
+        return equipmentSlot;
+    }
+    getEquipment() {
+        return this.equipment;
+    }
+    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false) {
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
         */
@@ -199,64 +254,14 @@ class CharacterEntity extends CreatureEntity {
         if (equipmentSlot == "NONE") {
             equipmentSlot = Tools.filterEnum(instancedItemEntity.getEquipmentSlot(), ApparelSlotEnum, false);
         }
-        if (this.equipment.hasOwnProperty(equipmentSlot)) {}
-        else if (equipmentSlot != -1) {
-            if (equipmentSlot == "HANDS") {
-                if (this.handedness == HandednessEnum.LEFT) {
-                    if (this.equipment["HAND_L"] == null) {
-                        equipmentSlot = "HAND_L";
-                    }
-                    else if (this.equipment["HAND_R"] == null) {
-                        equipmentSlot = "HAND_R";
-                    }
-                    else {
-                        equipmentSlot = "HAND_L";
-                    }
-                }
-                else {
-                    if (this.equipment["HAND_R"] == null) {
-                        equipmentSlot = "HAND_R";
-                    }
-                    else if (this.equipment["HAND_L"] == null) {
-                        equipmentSlot = "HAND_L";
-                    }
-                    else {
-                        equipmentSlot = "HAND_R";
-                    }
-                }
-            }
-            else if (equipmentSlot == "EARS") {
-                if (this.sexualOrientation == SexualOrientationEnum.STRAIGHT || this.sexualOrientation == SexualOrientationEnum.ASEXUAL) {
-                    if (this.equipment["EAR_L"] == null) {
-                        equipmentSlot = "EAR_L";
-                    }
-                    else if (this.equipment["EAR_R"] == null) {
-                        equipmentSlot = "EAR_R";
-                    }
-                    else {
-                        equipmentSlot = "EAR_L";
-                    }
-                }
-                else {
-                    if (this.equipment["EAR_R"] == null) {
-                        equipmentSlot = "EAR_R";
-                    }
-                    else if (this.equipment["EAR_L"] == null) {
-                        equipmentSlot = "EAR_L";
-                    }
-                    else {
-                        equipmentSlot = "EAR_R";
-                    }
-                }
-            }
-        }
-        else {
-            if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
-            return 2;
-        }
         /*
         Clear out the equipment slot if it's in use, and set its value to _entity
          */
+        equipmentSlot = this.filterEquipmentSlot(equipmentSlot);
+        if (equipmentSlot == "NONE") {
+            if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
+            return 2;
+        }
         if (this.equipment[equipmentSlot] == instancedItemEntity) {}
         else if (InstancedItemEntity.has(this.equipment[equipmentSlot])) {
             this.unequipBySlot(equipmentSlot);
@@ -268,9 +273,9 @@ class CharacterEntity extends CreatureEntity {
         /*
         Flip bits and do tricks
          */
-        if (instancedItemEntity instanceof InstancedWeaponEntity && (equipmentSlot == "HAND_L" || equipmentSlot == "HAND_R")) {
-            this.armed = true;
+        if (equipmentSlot == "HAND_L" || equipmentSlot == "HAND_R") {
             instancedItemEntity.held = true;
+            this.calculateIsArmed();
         }
         instancedItemEntity.equipped = true;
         return 0;
@@ -323,17 +328,28 @@ class CharacterEntity extends CreatureEntity {
     unequipBySlot(bone) {
         if (this.equipment.hasOwnProperty(bone)) {}
         else if (ApparelSlotEnum.hasOwnProperty(bone)) {
-            if (bone == "HANDS") {
-                let result = this.unequipBySlot("HAND_L");
-                let result2 = this.unequipBySlot("HAND_R");
-                return result2 || result;
-            }
-            else if (bone == "EARS") {
-                let result = this.unequipBySlot("EAR_L");
-                let result2 = this.unequipBySlot("EAR_R");
-                return result2 || result;
-            }
-            else if (bone == "FINGERS") { // TODO: ugh, this
+            switch(bone) {
+                case "HANDS": {
+                    let result = this.unequipBySlot("HAND_L");
+                    let result2 = this.unequipBySlot("HAND_R");
+                    return result2 || result;
+                    break;
+                }
+                case "EARS": {
+                    let result = this.unequipBySlot("EAR_L");
+                    let result2 = this.unequipBySlot("EAR_R");
+                    return result2 || result;
+                    break;
+                }
+                case "FEET": {
+                    let result = this.unequipBySlot("FOOT_L");
+                    let result2 = this.unequipBySlot("FOOT_R");
+                    return result2 || result;
+                    break;
+                }
+                case "FINGERS": {
+                    break;
+                }
             }
         }
         else {
@@ -345,20 +361,13 @@ class CharacterEntity extends CreatureEntity {
         }
         else if (!(this.equipment[bone] instanceof AbstractEntity)) {
             this.equipment[bone] = null;
-            this.armed = false;
             return 1;
         }
         this.equipment[bone].equipped = false;
         this.equipment[bone].held = false;
         this.equipment[bone] = null;
-        /*
-        Flip bits and do tricks
-         */
-        if (this.equipment["HAND_R"] instanceof InstancedWeaponEntity || this.equipment["HAND_L"] instanceof InstancedWeaponEntity) {
-            this.armed = true;
-        }
-        else {
-            this.armed = false;
+        if (bone == "HAND_R" || bone == "HAND_L") {
+            this.calculateIsArmed();
         }
         return 0;
     }
@@ -701,6 +710,36 @@ class CharacterEntity extends CreatureEntity {
         delete this.characterClasses[this.primaryCharacterClass];
         this.addClass("classless");
         return 0;
+    }
+
+    calculateIsArmed() {
+        let weapon = null;
+        if (this.isRightHanded() && this.equipment["HAND_R"] instanceof InstancedWeaponEntity) {
+            weapon = this.equipment["HAND_R"] || this.equipment["HAND_L"];
+        }
+        else if (this.isLeftHanded() && this.equipment["HAND_L"] instanceof InstancedWeaponEntity) {
+            weapon = this.equipment["HAND_L"] || this.equipment["HAND_R"];
+        }
+        else {
+            /*if (this.predator) {
+                this.armed = true;
+            }
+            else {
+                this.armed = false;
+            }*/
+            this.armed = false;
+            return this.armed;
+        }
+        if (weapon.entity == WeaponEntity.get("weaponHand") || weapon.entity == WeaponEntity.get("weaponClaw")) {
+            this.armed = this.hasProficiency(ProficiencyEnum.MARTIAL);
+        }
+        else if (weapon instanceof InstancedWeaponEntity) {
+            this.armed = true;
+        }
+        else {
+            this.armed = false;
+        }
+        return this.armed;
     }
 
     resetModifiers() {
