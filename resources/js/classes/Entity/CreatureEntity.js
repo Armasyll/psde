@@ -616,6 +616,14 @@ class CreatureEntity extends Entity {
     getGender() {
         return this.gender;
     }
+    setPredator(isPredator = true) {
+        this.predator = isPredator == true;
+        this.generateEquipment();
+        return 0;
+    }
+    getPredator() {
+        return this.predator;
+    }
 
     setSexualOrientation(sexualOrientation = SexualOrientationEnum.STRAIGHT, updateChild = true) {
         if (SexualOrientationEnum.properties.hasOwnProperty(sexualOrientation)) {
@@ -748,6 +756,9 @@ class CreatureEntity extends Entity {
         return false;
     }
 
+    getHeld() {
+        return {"HAND_R":this.equipment["HAND_R"], "HAND_L":this.equipment["HAND_L"]};
+    }
     setHandedness(handedness, updateChild = true) {
         if (HandednessEnum.properties.has(handedness)) {
             this.handedness = handedness;
@@ -2430,6 +2441,24 @@ class CreatureEntity extends Entity {
         this.armourClass = 0;
         return 0;
     }
+    generateEquipment() {
+        if (this.predator) {
+            if (this.equipment["HAND_R"] == null) {
+                this.equipment["HAND_R"] = InstancedWeaponEntity.get("weaponClawInstance");
+            }
+            if (this.equipment["HAND_L"] == null) {
+                this.equipment["HAND_L"] = InstancedWeaponEntity.get("weaponClawInstance");
+            }
+        }
+        else {
+            if (this.equipment["HAND_R"] == null) {
+                this.equipment["HAND_R"] = InstancedWeaponEntity.get("weaponHandInstance");
+            }
+            if (this.equipment["HAND_L"] == null) {
+                this.equipment["HAND_L"] = InstancedWeaponEntity.get("weaponHandInstance");
+            }
+        }
+    }
 
     isArmed() {
         return this.armed || this.armedOverride;
@@ -2569,7 +2598,7 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("weight")) this.weight = entity.weight;
         if (entity.hasOwnProperty("height")) this.height = entity.height;
         if (entity.hasOwnProperty("width")) this.width = entity.width;
-        if (entity.hasOwnProperty("predator")) this.predator = entity.predator;
+        if (entity.hasOwnProperty("predator")) this.setPredator(entity.predator);
         if (entity.hasOwnProperty("proficiencies")) this.proficiencies = Object.assign({}, entity.proficiencies);
         if (entity.hasOwnProperty("proficiencyBonusModifier")) this.proficiencyBonusModifier = entity.proficiencyBonusModifier;
         if (entity.hasOwnProperty("conditions")) this.conditions = Object.assign({}, entity.conditions);

@@ -112,6 +112,8 @@ class InstancedWeaponEntity extends InstancedEquipmentEntity {
 
     static initialize() {
         InstancedWeaponEntity.instancedWeaponEntityList = {};
+        new InstancedWeaponEntity("weaponHandInstance", WeaponEntity.get("weaponHand"));
+        new InstancedWeaponEntity("weaponClawInstance", WeaponEntity.get("weaponClaw"));
     }
     static get(id) {
         if (InstancedWeaponEntity.has(id)) {

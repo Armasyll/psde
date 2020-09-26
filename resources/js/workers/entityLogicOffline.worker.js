@@ -1211,15 +1211,15 @@ class EntityLogic {
     }
 
     static calculateAttack(attacker, weapon = null, advantage = null) {
-        let attackRoll = Game.roll(1, 20);
+        let attackRoll = EntityLogic.roll(1, 20);
         if (advantage === true) {
-            let tempRoll = Game.roll(1, 20);
+            let tempRoll = EntityLogic.roll(1, 20);
             if (tempRoll > attackRoll) {
                 attackRoll = tempRoll;
             }
         }
         else if (advantage === false) {
-            let tempRoll = Game.roll(1, 20);
+            let tempRoll = EntityLogic.roll(1, 20);
             if (tempRoll < attackRoll) {
                 attackRoll = tempRoll;
             }
@@ -1236,17 +1236,17 @@ class EntityLogic {
             }
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
-                    attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                    attackRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else {
-                    attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                    attackRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
                 }
             }
             else if (weapon.isRange()) {
-                attackRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                attackRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
             }
             else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-                attackRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                attackRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
             }
         }
         return attackRoll;
@@ -1254,44 +1254,44 @@ class EntityLogic {
     static calculateDamage(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
-            damageRoll = Game.calculateDamageWithWeapon(target, attacker, weapon, critical);
+            damageRoll = EntityLogic.calculateDamageWithWeapon(target, attacker, weapon, critical);
         }
         else if (weapon instanceof Spell) {
-            damageRoll = Game.calculateDamageWithSpell(target, attacker, weapon, critical);
+            damageRoll = EntityLogic.calculateDamageWithSpell(target, attacker, weapon, critical);
         }
         else {
-            damageRoll = Game.calculateDamageWithUnarmed(target, attacker, critical);
+            damageRoll = EntityLogic.calculateDamageWithUnarmed(target, attacker, critical);
         }
         return damageRoll;
     }
     static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
         if (weapon.getHealth() == 0) { // It's basically an improvised weapon at this point
-            damageRoll = Game.roll(1, 4); // roll 1d4
+            damageRoll = EntityLogic.roll(1, 4); // roll 1d4
         }
         else {
-            damageRoll = Game.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
+            damageRoll = EntityLogic.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
                 }
             }
             else {
                 let weaponCategory = weapon.getWeaponCategory();
                 if (weaponCategory == WeaponCategoryEnum.SIMPLE_RANGED) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.MARTIAL_RANGED) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.SIMPLE_MELEE) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.MARTIAL_MELEE) {
-                    damageRoll += Game.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
                 }
             }
         }
@@ -1308,8 +1308,8 @@ class EntityLogic {
     }
     static calculateDamageWithSpell(target, attacker, spell, critical = false) {
         let damageRoll = 0;
-        damageRoll = Game.roll(spell.getDamageRollCount(), spell.getDamageRoll());
-        damageRoll += Game.calculateAbilityModifier(attacker.getIntelligence());
+        damageRoll = EntityLogic.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+        damageRoll += EntityLogic.calculateAbilityModifier(attacker.getIntelligence());
         return damageRoll;
     }
     static calculateDamageWithUnarmed(target, attacker, critical = false) {
@@ -1317,12 +1317,12 @@ class EntityLogic {
         switch (attacker.getSize()) {
             case SizeEnum.FINE:
             case SizeEnum.DIMINUTIVE: { damageRoll = 0; }
-            case SizeEnum.SMALL: { damageRoll = Game.roll(1, 2) }
-            case SizeEnum.MEDIUM: { damageRoll = Game.roll(1, 3) }
-            case SizeEnum.LARGE: { damageRoll = Game.roll(1, 4) }
-            case SizeEnum.HUGE: { damageRoll = Game.roll(1, 6) }
-            case SizeEnum.GARGANTUAN: { damageRoll = Game.roll(1, 8) }
-            case SizeEnum.COLOSSAL: { damageRoll = Game.roll(2, 6) }
+            case SizeEnum.SMALL: { damageRoll = EntityLogic.roll(1, 2) }
+            case SizeEnum.MEDIUM: { damageRoll = EntityLogic.roll(1, 3) }
+            case SizeEnum.LARGE: { damageRoll = EntityLogic.roll(1, 4) }
+            case SizeEnum.HUGE: { damageRoll = EntityLogic.roll(1, 6) }
+            case SizeEnum.GARGANTUAN: { damageRoll = EntityLogic.roll(1, 8) }
+            case SizeEnum.COLOSSAL: { damageRoll = EntityLogic.roll(2, 6) }
         }
         return damageRoll;
     }
