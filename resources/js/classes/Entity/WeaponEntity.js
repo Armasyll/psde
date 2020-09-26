@@ -594,8 +594,12 @@ class WeaponEntity extends EquipmentEntity {
 
     static initialize() {
         WeaponEntity.weaponEntityList = {};
-        new WeaponEntity("weaponHand", "Hand", "A hand.", "missingIcon", WeaponEnum.NONE);
-        new WeaponEntity("weaponClaw", "Claw", "A clawed hand.", "missingIcon", WeaponEnum.DAGGER);
+        let weaponHand = new WeaponEntity("weaponHand", "Hand", "A hand.", "missingIcon", WeaponEnum.NONE);
+        weaponHand.setMeshID("missingMesh");
+        weaponHand.setMaterialID("collisionMaterial");
+        let weaponClaw = new WeaponEntity("weaponClaw", "Claw", "A clawed hand.", "missingIcon", WeaponEnum.DAGGER);
+        weaponClaw.setMeshID("NONE");
+        weaponClaw.setMaterialID("collisionMaterial");
     }
     static get(id) {
         if (WeaponEntity.has(id)) {

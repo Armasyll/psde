@@ -1251,6 +1251,7 @@ class Game {
         return 0;
     }
     static loadDefaultMeshes() {
+        Game.setLoadedMesh("NONE", BABYLON.MeshBuilder.CreateBox("missingMesh", { height: 0.0125, width: 0.0125, depth: 0.0125 }, Game.scene));
         Game.setLoadedMesh("missingMesh", BABYLON.MeshBuilder.CreateBox("missingMesh", { height: 0.3, width: 0.3, depth: 0.3 }, Game.scene));
         Game.setLoadedMesh("loadingMesh", BABYLON.MeshBuilder.CreateSphere("loadingMesh", { diameter: 0.6 }, Game.scene));
         Game.setLoadedMesh("cameraFocus", BABYLON.MeshBuilder.CreateBox("cameraFocus", { height: 0.05, width: 0.05, depth: 0.05 }, Game.scene));
@@ -3887,7 +3888,7 @@ class Game {
         return 0;
     }
     static createItemInstanceResponsePhaseTwo(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
-        let callbackID = Tools.genUUIDv4()
+        let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [id, entityID, position, rotation, scaling, options], Game.createItemInstanceResponsePhaseThree);
         Game.entityLogicWorkerPostMessage("createItemInstance", 0, {"entityID": entityID}, callbackID);
         return 0;
