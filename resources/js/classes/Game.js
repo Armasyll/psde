@@ -830,7 +830,7 @@ class Game {
          */
         Game.gui = GameGUI;
         Game.gui.initialize();
-        Game.initFreeCamera();
+        Game.initFreeCamera(false, false);
         Game.initPostProcessing();
         window.addEventListener("contextmenu", Game.controls.onContext);
 
@@ -1182,8 +1182,11 @@ class Game {
         }
         Game.initPostProcessing();
     }
-    static initFreeCamera(applyGravity = true) {
+    static initFreeCamera(applyGravity = false, updateChild = false) {
         if (Game.debugMode) console.log("Running initFreeCamera");
+        if (Game.hasPlayerController() && updateChild) {
+            Game.unassignPlayer(!updateChild);
+        }
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
         }
@@ -4278,12 +4281,12 @@ class Game {
      * 
      * @memberof module:player
      */
-    static unassignPlayer() {
+    static unassignPlayer(updateChild = true) {
         if (Game.debug) console.group("Running Game.unassignPlayer()")
         Game.transformsWorkerPostMessage("clearPlayer", 0);
         Game.clearPlayerPortraitStatsUpdateInterval();
         Game.clearCastRayInterval();
-        Game.initFreeCamera();
+        Game.initFreeCamera(false, !updateChild);
         Game.gui.playerPortrait.hide();
         Game.playerController.getMesh().isPickable = true;
         Game.playerController.detachFromFOCUS();
@@ -4656,7 +4659,7 @@ class Game {
             case "createplayer": {
                 let position = new BABYLON.Vector3(commandArray[1] || 0, commandArray[2] || 0, commandArray[3] || 0);
                 if (EntityController.has("00000000-0000-0000-0000-000000000000")) {
-                    Game.initFreeCamera();
+                    Game.initFreeCamera(false, false);
                     EntityController.get("00000000-0000-0000-0000-000000000000").dispose();
                 }
                 Game.createPlayer("00000000-0000-0000-0000-000000000000", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", position, undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
@@ -5100,7 +5103,7 @@ class Game {
         if (Game.playerCellID == null) {
             return 1;
         }
-        Game.initFreeCamera();
+        Game.initFreeCamera(false, false);
         AbstractNode.clear();
         let cellID = Game.playerCellID;
         Game.playerCellID = null;
