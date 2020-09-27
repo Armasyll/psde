@@ -770,7 +770,7 @@ class Game {
         Game.playerTargetRayLengthOverride = -1;
         Game.castRayTargetEnabled = true;
         Game.castRayTargetIntervalFunction = null;
-        Game.castRayTargetInterval = 250;
+        Game.castRayTargetInterval = 100;
         Game.pointerLockTimeoutVar = null;
         Game.previousSelectedMesh = null;
         Game.currentSelectedMesh = null;

@@ -739,7 +739,7 @@ class EntityLogic {
         return 0;
     }
     static actionAttackResponse(target, actor, response, callbackID) {
-        let attackRoll = EntityLogic.calculateAttack(actor);
+        let attackRoll = EntityLogic.calculateAttack(actor, actor.getHeld());
 
 
         let targetObject = {
