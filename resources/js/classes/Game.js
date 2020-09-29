@@ -807,23 +807,6 @@ class Game {
          */
         Game.controls = AbstractControls;
         Game.updateMenuKeyboardDisplayKeys();
-        Game.doEntityActionFunction = Game.doEntityAction;
-        Game.actionAttackFunction = Game.actionAttack;
-        Game.actionCloseFunction = Game.actionClose;
-        Game.actionConsumeFunction = Game.actionConsume;
-        Game.actionDropFunction = Game.actionDrop;
-        Game.actionEquipFunction = Game.actionEquip;
-        Game.actionHoldFunction = Game.actionHold;
-        Game.actionLayFunction = Game.actionLay;
-        Game.actionLookFunction = Game.actionLook;
-        Game.actionOpenFunction = Game.actionOpen;
-        Game.actionReadFunction = Game.actionRead;
-        Game.actionReleaseFunction = Game.actionRelease;
-        Game.actionSitFunction = Game.actionSit;
-        Game.actionTakeFunction = Game.actionTake;
-        Game.actionTalkFunction = Game.actionTalk;
-        Game.actionUnequipFunction = Game.actionUnequip;
-        Game.actionUseFunction = Game.actionUse;
 
         /**
          * @type {GameGUI} GameGUI; alternative is HtmlGUI

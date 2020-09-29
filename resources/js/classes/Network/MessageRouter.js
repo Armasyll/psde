@@ -31,19 +31,6 @@ class MessageRouter {
             }
             case "S_ACCEPT_INIT_SELF" : {
                 console.log("S_ACCEPT_INIT_SELF");
-                Game.doEntityActionFunction = Client.requestEntityAction;
-                Game.actionAttackFunction = Client.actionAttack;
-                Game.actionCloseFunction = Client.actionClose;
-                Game.actionDropFunction = Client.actionDrop;
-                Game.actionEquipFunction = Client.actionEquip;
-                Game.actionHoldFunction = Client.actionHold;
-                Game.actionLayFunction = Client.actionLay;
-                Game.actionOpenFunction = Client.actionOpen;
-                Game.actionReleaseFunction = Client.actionRelease;
-                Game.actionSitFunction = Client.actionSit;
-                Game.actionTakeFunction = Client.actionTake;
-                Game.actionTalkFunction = Client.actionTalk;
-                Game.actionUnequipFunction = Client.actionUnequip;
                 break;
             }
             case "S_DENY_INIT_SELF" : {

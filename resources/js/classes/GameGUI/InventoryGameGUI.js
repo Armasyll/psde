@@ -294,33 +294,33 @@ class InventoryGameGUI {
             switch (action) {
                 case ActionEnum.CONSUME : {
                     actionButton = GameGUI._generateButton("actionConsumeButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionConsumeFunction(response.id, actorController, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionConsume(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI._generateButton("actionDropButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionDropFunction(response.id, actorController, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionDrop(response.id, actorController, InventoryGameGUI.updateWith);});
                     break;
                 }
                 case ActionEnum.EQUIP : {
                     if (response.equipped) {
                         actionButton = GameGUI._generateButton("actionUnequipButton", ActionEnum.properties[ActionEnum.UNEQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequipFunction(response.id, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequip(response.id, actorController, InventoryGameGUI.setSelected);});
                     }
                     else {
                         actionButton = GameGUI._generateButton("actionEquipButton", ActionEnum.properties[ActionEnum.EQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionEquipFunction(response.id, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionEquip(response.id, actorController, InventoryGameGUI.setSelected);});
                     }
                     break;
                 }
                 case ActionEnum.HOLD : {
                     if (response.held) {
                         actionButton = GameGUI._generateButton("actionReleaseButton", ActionEnum.properties[ActionEnum.RELEASE].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionReleaseFunction(itemID, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionRelease(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     else {
                         actionButton = GameGUI._generateButton("actionHoldButton", ActionEnum.properties[ActionEnum.HOLD].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionHoldFunction(itemID, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {Game.actionHold(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     break;
                 }
@@ -330,7 +330,7 @@ class InventoryGameGUI {
                 }
                 case ActionEnum.READ : {
                     actionButton = GameGUI._generateButton("actionReadButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionReadFunction(itemID, actorController);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionRead(itemID, actorController);});
                     break;
                 }
                 case ActionEnum.PUT : {

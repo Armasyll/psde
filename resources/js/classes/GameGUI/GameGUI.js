@@ -805,7 +805,7 @@ class GameGUI {
                 button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
                 button.onPointerClickObservable.add(function() {
                     GameGUI.hideRadialMenu();
-                    Game.doEntityActionFunction(GameGUI.radialMenuOptions[i].target, Game.player, value);
+                    Game.doEntityAction(GameGUI.radialMenuOptions[i].target, Game.player, value);
                 });
                 GameGUI.radialMenu.addControl(button);
             }

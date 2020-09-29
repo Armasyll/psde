@@ -283,7 +283,7 @@ class CharacterControls extends AbstractControls {
         CharacterControls.useTriggered = true;
         clearTimeout(CharacterControls.useTimeoutFunction);
         if (Date.now() - CharacterControls.usePressTime <= 750 && Game.playerController.hasTarget()) {
-            Game.doEntityActionFunction(Game.playerController.getTarget(), Game.playerController);
+            Game.doEntityAction(Game.playerController.getTarget(), Game.playerController);
         }
         else if (Game.playerController.hasTarget()) {
             Game.gui.clearRadialMenu();
@@ -301,7 +301,7 @@ class CharacterControls extends AbstractControls {
         }
         CharacterControls.attackTriggered = true;
         if (Game.playerController.hasTarget()) {
-            Game.actionAttackFunction(Game.playerController.getTarget(), Game.playerController);
+            Game.actionAttack(Game.playerController.getTarget(), Game.playerController);
         }
         clearTimeout(CharacterControls.attackTimeoutFunction);
         let pressTime = Date.now() - CharacterControls.attackPressTime;
