@@ -464,10 +464,18 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "whitePanelGra
 apartmentCell.addCollidableMesh(undefined, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [12, 6, -28]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "whitePanelGrayStone", [14, 6, -28]);
 
-apartmentCell.addCollidableMesh(undefined, "stopSign", "stopSign", [4, 0, -29], [0, 180, 0]);
-apartmentCell.addCollidableMesh(undefined, "sawhorse", undefined, [3.3, 0, -29], [0, 33, 0]);
-apartmentCell.addCollidableMesh(undefined, "twoByFourByThree", undefined, [3, 0, -29.2], [30, 33, -5]);
-apartmentCell.addCollidableMesh(undefined, "twoByFourByThree", undefined, [2.9, 0, -29.15], [30, 33, -5]);
+apartmentCell.addCollidableMesh("stopSignInstance01", "stopSign", "stopSign", [4, 0, -29], [0, 180, 0]);
+apartmentCell.addCollidableMesh("sawhorseInstance01", "sawhorse", undefined, [3.3, 0, -29], [0, 33, 0]);
+apartmentCell.addCollidableMesh("twoByFourByThreeSr", "twoByFourByThree", undefined, [3, 0, -29.2], [30, 33, -5]);
+apartmentCell.addCollidableMesh("twoByFourByThreeJr", "twoByFourByThree", undefined, [2.9, 0, -29.15], [30, 33, -5]);
+apartmentCell.addMaterial("brickWall01", "brickWall01", "brickWall01-NORMAL");
+apartmentCell.addCollidableMesh("brickWallInstance00", "brickWall01", "brickWall01", [7, 0, -29], [0, 90, 0], [2, 1, 1]);
+apartmentCell.addCollidableMesh("brickWallInstance01", "brickWall01", "brickWall01", [6, 0, -30]);
+apartmentCell.addCollidableMesh("brickWallInstance02", "brickWall01", "brickWall01", [4, 0, -30]);
+apartmentCell.addCollidableMesh("brickWallInstance03", "brickWall01", "brickWall01", [2, 0, -30]);
+apartmentCell.addCollidableMesh("brickWallInstance04", "brickWall01", "brickWall01", [0, 0, -30]);
+apartmentCell.addCollidableMesh("brickWallInstance05", "brickWall01", "brickWall01", [-1, 0, -29], [0, 90, 0]);
+apartmentCell.addCollidableMesh("brickWallInstance06", "brickWall01", "brickWall01", [-1.075, 0, -27.075], [0, 85, 0]);
 
 // Misc
 apartmentCell.addCharacter("rinehart", CharacterEntity.get("rinehart"), [3, 0, -20], [0, 180, 0]);

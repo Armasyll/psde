@@ -334,7 +334,8 @@ class Game {
             "1980Computer": "resources/meshes/static/1980Computer.babylon",
             "1980Monitor": "resources/meshes/static/1980Computer.babylon",
             "1980Screen": "resources/meshes/static/1980Computer.babylon",
-            "1980Keyboard": "resources/meshes/static/1980Computer.babylon"
+            "1980Keyboard": "resources/meshes/static/1980Computer.babylon",
+            "brickWall01": "resources/meshes/static/brickWall.babylon"
         };
         /**
          * Map of Meshes per ID
@@ -452,7 +453,9 @@ class Game {
             "wheat_stage_5": "resources/images/textures/blocks/wheat_stage_5.png",
             "wheat_stage_6": "resources/images/textures/blocks/wheat_stage_6.png",
             "wheat_stage_7": "resources/images/textures/blocks/wheat_stage_7.png",
-            "grass01": "resources/images/textures/blocks/grass_by_smeggo.png"
+            "grass01": "resources/images/textures/blocks/grass_by_smeggo.png",
+            "brickWall01": "resources/images/textures/static/brickWall01-DIFFUSE.png",
+            "brickWall01-NORMAL": "resources/images/textures/static/brickWall01-NORMAL.png"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -4462,7 +4465,7 @@ class Game {
     }
     /**
      * 
-     * @param {boolean} includeCollision 
+     * @returns {(BABYLON.AbstractMesh|null)}
      */
     static pickMesh() {
         let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
@@ -4483,8 +4486,11 @@ class Game {
         if (pick.hit) {
             return pick.pickedMesh;
         }
-        return 1;
+        return null;
     }
+    /**
+     * @returns {(EntityController|null)}
+     */
     static pickController() {
         let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
             if (mesh.hasController()) {
@@ -4495,10 +4501,10 @@ class Game {
             }
             return false;
         });
-        if (pick.hit) {
+        if (pick.hit && pick.pickedMesh.controller instanceof EntityController) {
             return pick.pickedMesh.controller;
         }
-        return 1;
+        return null;
     }
     static pointerLock(event) {
         if (Game.engine.isPointerLock) {
