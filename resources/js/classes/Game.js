@@ -30,7 +30,6 @@ class Game {
             Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
             Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
             Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
-            Game.engine.isPointerLock = false;
         }
         Game.scene = new BABYLON.Scene(Game.engine);
         Game.scene.autoClear = false;
@@ -39,7 +38,6 @@ class Game {
         Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
         Game.renderWidth = Game.engine.getRenderWidth();
         Game.renderHeight = Game.engine.getRenderHeight();
-        Game.isPointerLock = Game.engine.isPointerLock;
         if (Game.physicsEnabled) {
             Game.initPhysics();
         }
@@ -771,7 +769,7 @@ class Game {
         Game.castRayTargetEnabled = true;
         Game.castRayTargetIntervalFunction = null;
         Game.castRayTargetInterval = 100;
-        Game.pointerLockTimeoutVar = null;
+        Game.pointerLockTimeoutFunction = null;
         Game.previousSelectedMesh = null;
         Game.currentSelectedMesh = null;
         Game.playerPortraitStatsUpdateIntervalFunction = null;
@@ -986,10 +984,6 @@ class Game {
     static _beforeRenderFunction() {
         if (!Game.initialized) {
             return 1;
-        }
-        if (Game.useNative) {}
-        else {
-            Game.isPointerLock = Game.engine.isPointerLock;
         }
         if (!(Game.hasPlayerEntity()) || !(Game.hasPlayerController())) {
             return 1;
@@ -4507,30 +4501,26 @@ class Game {
         return 1;
     }
     static pointerLock(event) {
-        if (Game.isPointerLock) {
+        if (Game.engine.isPointerLock) {
             return 0;
         }
-        if (Game.useNative) {
-            Game.isPointerLock = true;
-        }
+        if (Game.useNative) {}
         else {
             Game.canvas.requestPointerLock();
-            Game.engine.isPointerLock = true;
-            Game.isPointerLock = true;
         }
-        Game.pointerLockTimeoutVar = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);
+        /*Game.pointerLockTimeoutFunction = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);*/
         return 0;
     }
     static pointerRelease(event) {
-        clearTimeout(Game.pointerLockTimeoutVar);
-        document.removeEventListener("pointerlockchange", Game.pointerRelease);
-        document.exitPointerLock();
-        if (Game.useNative) {
-            Game.isPointerLock = false;
+        if (!Game.engine.isPointerLock) {
+            return 0;
         }
+        /*clearTimeout(Game.pointerLockTimeoutFunction);
+        document.removeEventListener("pointerlockchange", Game.pointerRelease);
+        document.exitPointerLock();*/
+        if (Game.useNative) {}
         else {
-            Game.engine.isPointerLock = false;
-            Game.isPointerLock = false;
+            document.exitPointerLock();
         }
         return 0;
     }

@@ -101,14 +101,14 @@ class CharacterControls extends AbstractControls {
                 Game.gui.inventoryMenu.set(Game.playerEntityID);
                 Game.gui.showMenu(true);
                 Game.gui.inventoryMenu.show();
-                Game.gui.pointerRelease();
+                Game.pointerRelease();
                 break;
             }
             case AbstractControls.showCharacterCode : {
                 Game.gui.characterStats.set(Game.playerEntityID);
                 Game.gui.showMenu(true);
                 Game.gui.characterStats.show();
-                Game.gui.pointerRelease();
+                Game.pointerRelease();
                 break;
             }
             case AbstractControls.showMainMenuCode : {

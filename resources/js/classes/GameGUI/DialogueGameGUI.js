@@ -139,14 +139,12 @@ class DialogueGameGUI {
     static show() {
         if (Game.debugMode) console.log("Running DialogueGameGUI.show()");
         Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
-        GameGUI.pointerRelease();
         DialogueGameGUI.controller.isVisible = true;
         DialogueGameGUI.isVisible = true;
     }
     static hide() {
         if (Game.debugMode) console.log("Running DialogueGameGUI.hideDialogueMenu()");
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        GameGUI.pointerLock();
         DialogueGameGUI.controller.isVisible = false;
         DialogueGameGUI.isVisible = false;
     }

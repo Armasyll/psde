@@ -17,7 +17,6 @@ class BookGameGUI {
         BookGameGUI.locked = false;
         BookGameGUI.isVisible = false;
         BookGameGUI.generateController();
-        BookGameGUI.pointerLockedBeforeShown = Game.isPointerLock;
     }
     static resize() {
         BookGameGUI.controller.height = String(Game.renderHeight - GameGUI.fontSizeInPixels * 8).concat("px");
@@ -157,19 +156,12 @@ class BookGameGUI {
     static show() {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
-        BookGameGUI.pointerLockedBeforeShown = Game.isPointerLock;
         GameGUI.showMenu();
-        if (Game.isPointerLock) {
-            GameGUI.pointerRelease();
-        }
         return 0;
     }
     static hide() {
         BookGameGUI.controller.isVisible = false;
         BookGameGUI.isVisible = false;
-        if (BookGameGUI.pointerLockedBeforeShown && BookGameGUI.pointerLockedBeforeShown != Game.isPointerLock) {
-            GameGUI.pointerLock();
-        }
         return 0;
     }
     static updateWith(abstractEntity, page = 1) {

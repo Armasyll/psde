@@ -103,7 +103,6 @@ class DebugGameGUI {
     }
     static show() {
         Game.setInterfaceMode(InterfaceModeEnum.DEBUG);
-        GameGUI.pointerRelease();
         DebugGameGUI.updateSkyboxUI();
         DebugGameGUI.skyboxController.isVisible = true;
         DebugGameGUI.isVisible = true;
@@ -111,7 +110,6 @@ class DebugGameGUI {
     }
     static hide() {
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        GameGUI.pointerLock();
         DebugGameGUI.skyboxController.isVisible = false;
         DebugGameGUI.isVisible = false;
         return 0;

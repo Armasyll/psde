@@ -57,7 +57,6 @@ class GameGUI {
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
-        GameGUI.pointerLockedBeforeShown = Game.isPointerLock;
         GameGUI.resize();
     }
     static _initHUD() {
@@ -131,12 +130,6 @@ class GameGUI {
             return String(GameGUI.fontSizeInPixels * multiplier).concat("px");
         }
     }
-    static pointerLock() {
-        Game.pointerLock();
-    }
-    static pointerRelease() {
-        Game.pointerRelease();
-    }
     static showHUD(_updateChild = true) {
         if (Game.debugMode) console.log("Running GameGUI::showHUD");
         if (GameGUI.locked) {
@@ -147,7 +140,6 @@ class GameGUI {
             GameGUI.hideMenu(false);
         }
         GameGUI.hud.rootContainer.isVisible = true;
-        GameGUI.pointerLock();
     }
     static hideHUD(_updateChild = false) {
         if (Game.debugMode) console.log("Running GameGUI::hideHUD");
@@ -436,7 +428,6 @@ class GameGUI {
         if (GameGUI.locked) {
             return;
         }
-        GameGUI.pointerLock();
         GameGUI.characterChoiceMenu.isVisible = false;
     }
     static createSimpleButton(...params) {
@@ -755,9 +746,6 @@ class GameGUI {
             GameGUI.lockActionTooltip();
         }
         GameGUI.radialMenu.isVisible = true;
-        if (pointerRelease) {
-            GameGUI.pointerRelease();
-        }
         return 0;
     }
     static hideRadialMenu(pointerLock = true, updateChild = true) {
@@ -768,9 +756,6 @@ class GameGUI {
         if (updateChild) {
             GameGUI.unlockActionTooltip();
             GameGUI.showActionTooltip();
-        }
-        if (pointerLock) {
-            GameGUI.pointerLock();
         }
         return 0;
     }
@@ -785,7 +770,6 @@ class GameGUI {
         button.height = "24px";
         button.onPointerClickObservable.add(function() {
             GameGUI.hideRadialMenu();
-            GameGUI.pointerLock();
         });
         button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
         GameGUI.radialMenu.addControl(button);
