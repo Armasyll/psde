@@ -1211,15 +1211,15 @@ class EntityLogic {
     }
 
     static calculateAttack(attacker, weapon = null, advantage = null) {
-        let attackRoll = EntityLogic.roll(1, 20);
+        let attackRoll = DND.roll(1, 20);
         if (advantage === true) {
-            let tempRoll = EntityLogic.roll(1, 20);
+            let tempRoll = DND.roll(1, 20);
             if (tempRoll > attackRoll) {
                 attackRoll = tempRoll;
             }
         }
         else if (advantage === false) {
-            let tempRoll = EntityLogic.roll(1, 20);
+            let tempRoll = DND.roll(1, 20);
             if (tempRoll < attackRoll) {
                 attackRoll = tempRoll;
             }
@@ -1267,10 +1267,10 @@ class EntityLogic {
     static calculateDamageWithWeapon(target, attacker, weapon, critical = false) {
         let damageRoll = 0;
         if (weapon.getHealth() == 0) { // It's basically an improvised weapon at this point
-            damageRoll = EntityLogic.roll(1, 4); // roll 1d4
+            damageRoll = DND.roll(1, 4); // roll 1d4
         }
         else {
-            damageRoll = EntityLogic.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
+            damageRoll = DND.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
                     damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
@@ -1308,7 +1308,7 @@ class EntityLogic {
     }
     static calculateDamageWithSpell(target, attacker, spell, critical = false) {
         let damageRoll = 0;
-        damageRoll = EntityLogic.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+        damageRoll = DND.roll(spell.getDamageRollCount(), spell.getDamageRoll());
         damageRoll += EntityLogic.calculateAbilityModifier(attacker.getIntelligence());
         return damageRoll;
     }
@@ -1317,12 +1317,12 @@ class EntityLogic {
         switch (attacker.getSize()) {
             case SizeEnum.FINE:
             case SizeEnum.DIMINUTIVE: { damageRoll = 0; }
-            case SizeEnum.SMALL: { damageRoll = EntityLogic.roll(1, 2) }
-            case SizeEnum.MEDIUM: { damageRoll = EntityLogic.roll(1, 3) }
-            case SizeEnum.LARGE: { damageRoll = EntityLogic.roll(1, 4) }
-            case SizeEnum.HUGE: { damageRoll = EntityLogic.roll(1, 6) }
-            case SizeEnum.GARGANTUAN: { damageRoll = EntityLogic.roll(1, 8) }
-            case SizeEnum.COLOSSAL: { damageRoll = EntityLogic.roll(2, 6) }
+            case SizeEnum.SMALL: { damageRoll = DND.roll(1, 2) }
+            case SizeEnum.MEDIUM: { damageRoll = DND.roll(1, 3) }
+            case SizeEnum.LARGE: { damageRoll = DND.roll(1, 4) }
+            case SizeEnum.HUGE: { damageRoll = DND.roll(1, 6) }
+            case SizeEnum.GARGANTUAN: { damageRoll = DND.roll(1, 8) }
+            case SizeEnum.COLOSSAL: { damageRoll = DND.roll(2, 6) }
         }
         return damageRoll;
     }
