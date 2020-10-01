@@ -153,6 +153,10 @@ class EntityController {
             this.setMaterial(this.mesh.material);
             this.setTexture(this.mesh.material.diffuseTexture);
         }
+        else {
+            this.setMaterial(Game.getLoadedMaterial("missingMaterial"));
+            this.setTexture(Game.getLoadedTexture("missingTexture"));
+        }
         if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
             this.setSkeleton(this.mesh.skeleton);
         }
@@ -162,12 +166,12 @@ class EntityController {
         this.propertiesChanged = true;
         if (this.meshStages.length == 0) {
             this.addMeshStage(mesh.name);
-            this.addMaterialStage(mesh.material.name);
-            if (mesh.material.diffuseTexture instanceof BABYLON.Texture) {
-                this.addTextureStage(mesh.material.diffuseTexture.name);
+            this.addMaterialStage(this.material.name);
+            if (this.material.diffuseTexture instanceof BABYLON.Texture) {
+                this.addTextureStage(this.material.diffuseTexture.name);
             }
             else {
-                this.addTextureStage(mesh.material.name);
+                this.addTextureStage(this.material.name);
             }
             this.currentMeshStage = 0;
         }

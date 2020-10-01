@@ -1021,11 +1021,6 @@ class Game {
             return 1;
         }
         Game.createBackloggedEntities();
-        if (Client.isOnline()) {
-            if (Client.hasPlayerToUpdate()) {
-                Client.updateBackloggedPlayers();
-            }
-        }
     }
 
     static importScene(file, parentCallbackID = null) {

@@ -12,27 +12,27 @@ class Client {
         Client.playersToCreateCounter = 0;
         Client.hasBackloggedPlayers = true;
         Client.lockBackloggedPlayerCreation = false;
-        Client.playersToInitialize = {};
-        Client.playersToInitializeCounter = 0;
-        Client.hasBackloggedPlayersToInitialize = true;
-        Client.lockBackloggedPlayerToInitialize = false;
         Client.networkID = "";
+        Client.debugMode = false;
+        Client.debugVerbosity = 0;
     }
     static connect() {
         if (!Client.initialized) {
             Client.initialize();
         }
         NetworkController.initialize();
+        return 0;
     }
-    static disconnect(_updateChild = true) {
+    static disconnect(updateChild = true) {
         var _timestamp = new Date().toLocaleTimeString({ hour12: false });
         Client.removeAllPlayers();
         Client.setOnline(false);
         GameGUI.chatOutputAppend(`${_timestamp} Server: Connection Closed.`);
-        if (_updateChild) {
+        if (updateChild) {
             NetworkController.initialized = false;
             NetworkController.socket = undefined;
         }
+        return 0;
     }
     static isOnline() {
         return Client.online;
@@ -42,21 +42,30 @@ class Client {
         return 0;
     }
     static setPlayerEntry(networkID) {
-        console.log(`Client::setPlayerEntry(${networkID})`);
+        console.group(`Running Client.setPlayerEntry(${networkID})`);
         Client.networkID = networkID;
-        return Client.setEntry(networkID, Game.player);
+        console.groupEnd();
+        return Client.setEntry(networkID, Game.playerController);
     }
-    static setEntry(networkID, abstractEntity) {
-        console.log(`Client::setEntry(${networkID}, ${abstractEntity.id})`);
-        Client.networkEntries.set(networkID, abstractEntity);
-        abstractEntity.getController().setNetworkID(networkID);
+    static setEntry(networkID, entityController) {
+        console.group(`Running Client.setEntry(${networkID}, ${entityController.id})`);
+        Client.networkEntries.set(networkID, entityController);
+        entityController.setNetworkID(networkID);
+        console.groupEnd();
         return 0;
     }
-    static getNetworkID(abstractEntity = Game.player) {
-        if (Client.networkEntries.hasValue(abstractEntity)) {
-            return Client.networkEntries.getKey(abstractEntity);
+    static getNetworkID(entityController = Game.playerController) {
+        if (entityController instanceof EntityController) {
+            if (Client.networkEntries.hasValue(entityController.id)) {
+                return Client.networkEntries.getKey(entityController.id);
+            }
         }
-        return 1;
+        else if (EntityController.has(entityController)) {
+            if (Client.networkEntries.hasValue(entityController)) {
+                return Client.networkEntries.getKey(entityController);
+            }
+        }
+        return null;
     }
     static getOwnNetworkID() {
         return this.networkID;
@@ -65,7 +74,7 @@ class Client {
         if (Client.networkEntries.hasKey(networkID)) {
             return Client.networkEntries.getValue(networkID);
         }
-        return 1;
+        return null;
     }
     static hasNetworkID(networkID) {
         return Client.networkEntries.hasKey(networkID);
@@ -90,174 +99,93 @@ class Client {
             case 2 : return "CLOSING";
             case 3 : return "CLOSED";
         }
-        return ;
-    }
-    static sendMessage(messageObject) {
-        if (!Client.online) {
-            return null;
-        }
-        if (!(messageObject instanceof Object)) {
-            return undefined;
-        }
-        messageObject.sendCount = Client.sendCount
-        NetworkController.socket.send(
-            JSON.stringify(messageObject)
-        );
-        if (Client.sendCount >= Number.MAX_SAFE_INTEGER) {
-            Client.sendCount = 1;
-        }
-        else {
-            Client.sendCount++;
-        }
+        return "NONE";
     }
     static requestJoinServer() {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        Client.sendMessage({
-            type: "P_REQUEST_JOIN_SERVER",
-            content: "lemme in :v"
-        });
+        NetworkController.postMessage("P_REQUEST_JOIN_SERVER", 0, ["lemme in :v"]);
+        return 0;
     }
     static sendChatMessage(stringMessage) {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        Client.sendMessage({
-            type: "P_CHAT_MESSAGE",
-            content: stringMessage
-        });
+        NetworkController.postMessage("P_CHAT_MESSAGE", 0, [stringMessage]);
+        return 0;
     }
     static requestUUID(stringUUID) {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        Client.sendMessage({
-            type: "P_REQUEST_UUID",
-            content: stringUUID
-        });
+        NetworkController.postMessage("P_REQUEST_UUID", 0, [stringUUID]);
+        return 0;
     }
     static initializeSelf(stringUUID, networkID) {
         if (!Client.online) {
             return 1;
         }
-        if (!(Game.player instanceof CharacterEntity)) {
+        console.group(`Running Client.initializeSelf(${stringUUID}, ${networkID})`);
+        if (!(Game.playerController instanceof CharacterController)) {
             Client.addPlayerToInitialize("00000000-0000-0000-0000-000000000000", stringUUID, networkID);
+            console.groupEnd();
             return 1;
         }
-        console.log(`Client::initializeSelf(${stringUUID}, ${networkID})`);
-        Client.sendMessage({
-            type: "P_INIT_SELF",
-            content: [
-                Game.player.getID(),
-                Game.player.getName(),
-                Game.player.getCreatureType(),
-                Game.player.getCreatureSubType(),
-                Game.player.getSex(),
-                Game.player.getAge(),
-                Game.player.getMeshID(),
-                Game.player.getMaterialID(),
-                Game.player.controller.mesh.position.asArray(),
-                Game.player.controller.mesh.rotation.asArray(),
-                Game.player.controller.mesh.scaling.asArray(),
-                Game.player.controller.key.toBinary()
-            ]
-        });
+        if (!Game.hasCachedEntity(Game.playerEntityID)) {
+            console.groupEnd();
+            return 1;
+        }
+        let entityObject = Game.getCachedEntity(Game.playerEntityID);
+        NetworkController.postMessage("P_INIT_SELF", 0, [
+            Game.playerController.id,
+            entityObject.name,
+            entityObject.creatureType,
+            entityObject.creatureSubType,
+            entityObject.sex,
+            entityObject.age,
+            Game.playerController.mesh.name,
+            Game.playerController.material.name,
+            Game.playerController.collisionMesh.position.asArray(),
+            Game.playerController.collisionMesh.rotation.asArray(),
+            Game.playerController.collisionMesh.scaling.asArray(),
+            Game.playerController.key.toBinary()
+        ]);
+        console.groupEnd();
         return 0;
     }
     static updateLocRotScaleSelf() {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        Client.sendMessage({
-            type: "P_UPDATE_LOCROTSCALE_SELF",
-            content: [
-                Game.player.controller.mesh.position.asArray(),
-                Game.player.controller.mesh.rotation.asArray(),
-                Game.player.controller.mesh.scaling.asArray(),
-                Game.player.controller.key.toBinary()
-            ]
-        });
+        NetworkController.postMessage("P_UPDATE_LOCROTSCALE_SELF", 0, [
+            Game.playerController.collisionMesh.position.asArray(),
+            Game.playerController.collisionMesh.rotation.asArray(),
+            Game.playerController.collisionMesh.scaling.asArray(),
+            Game.playerController.key.toBinary()
+        ]);
+        return 0;
     }
     static updateMovementKeysSelf() {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        Client.sendMessage({
-            type: "P_UPDATE_MOVEMENTKEYS_SELF",
-            content: [
-                Game.player.controller.key.toBinary()
-            ]
-        });
+        NetworkController.postMessage("P_UPDATE_MOVEMENTKEYS_SELF", 0, [Game.playerController.key.toBinary()]);
+        return 0;
     }
     static requestPlayerByNetworkID(networkID) {
         if (!Client.online) {
-            return null;
+            return 1;
         }
-        console.log(`Client::requestPlayerByNetworkID(${networkID})`);
-        Client.sendMessage({
-            type: "P_REQUEST_PLAYER",
-            content: networkID
-        });
+        console.group(`Running Client.requestPlayerByNetworkID(${networkID})`);
+        NetworkController.postMessage("P_REQUEST_PLAYER", 0, [networkID]);
+        console.groupEnd();
+        return 0;
     }
     static requestAllPlayers() {
-        console.log("Client::requestAllPlayers()");
-        Client.sendMessage({
-            type: "P_REQUEST_ALL_PLAYERS",
-            content: ""
-        });
-    }
-    static addPlayerToInitialize(characterID, newCharacterID, networkID) {
-        console.log(`Client::addPlayerToInitialize(${characterID}, ${newCharacterID}, ${networkID})`);
-        if (Client.hasPlayerToUpdate(characterID)) {
-            return 0;
-        }
-        Client.playersToInitialize[characterID] = {
-            0:characterID,
-            1:newCharacterID,
-            2:networkID
-        }
-        Client.playersToInitializeCounter += 1;
-        Client.hasBackloggedPlayersToInitialize = true;
-        return 0;
-    }
-    static removePlayerToUpdate(characterID) {
-        if (!Client.hasPlayerToUpdate(characterID)) {
-            return 0;
-        }
-        delete Client.playersToInitialize[characterID];
-        Client.playersToInitializeCounter -= 1;
-        return 0;
-    }
-    static hasPlayerToUpdate(characterID) {
-        return Client.playersToInitializeCounter > 0 || Client.playersToInitialize.hasOwnProperty(characterID);
-    }
-    static updateBackloggedPlayers() {
-        if (Client.playersToInitializeCounter == 0 || Client.lockBackloggedPlayerUpdate) {
-            return true;
-        }
-        console.log("Client::updateBackloggedPlayers()");
-        Client.lockBackloggedPlayerToInitialize = true;
-        for (let i in Client.playersToInitialize) {
-            if (CharacterEntity.has(Client.playersToInitialize[i][0]) && CharacterEntity.get(Client.playersToInitialize[i][0]).hasController()) {
-                let oldID = Client.playersToInitialize[i][0];
-                let newID = Client.playersToInitialize[i][1];
-                let networkID = Client.playersToInitialize[i][2];
-                let abstractEntity = CharacterEntity.get(oldID);
-                abstractEntity.updateID(newID);
-                abstractEntity.controller.updateID(newID);
-                if (abstractEntity == Game.player) {
-                    Client.setPlayerEntry(networkID);
-                }
-                else {
-                    Client.setEntry(networkID, abstractEntity);
-                }
-                Client.removePlayerToUpdate(i);
-                Client.initializeSelf(newID, networkID);
-            }
-        }
-        Client.hasBackloggedPlayersToInitialize = false;
-        Client.lockBackloggedPlayerToInitialize = false;
+        console.group("Running Client.requestAllPlayers()");
+        NetworkController.postMessage("P_REQUEST_ALL_PLAYERS");
+        console.groupEnd();
         return 0;
     }
     static addPlayerToCreate(characterID, networkID) {
@@ -285,7 +213,7 @@ class Client {
     }
     static createBackloggedPlayers() {
         if (Client.playersToCreateCounter == 0 || Client.lockBackloggedPlayerCreation) {
-            return true;
+            return 0;
         }
         Client.lockBackloggedPlayerCreation = true;
         for (let i in Client.playersToCreate) {
@@ -302,15 +230,16 @@ class Client {
         return 0;
     }
     static removeAllPlayers() {
-        Client.networkEntries.forEach(function(abstractEntity, networkID) {
+        Client.networkEntries.forEach((abstractEntity, networkID) => {
             if (abstractEntity instanceof CharacterEntity) {
                 Client.removeEntry(networkID);
                 Game.removeCharacter(abstractEntity.getController());
             }
         });
+        return 0;
     }
     static removeAllEntities() {
-        Client.networkEntries.forEach(function(abstractEntity, networkID) {
+        Client.networkEntries.forEach((abstractEntity, networkID) => {
             if (abstractEntity instanceof CharacterEntity) {
                 Client.removeEntry(networkID);
                 if (abstractEntity instanceof CharacterEntity) {
@@ -327,5 +256,6 @@ class Client {
                 }
             }
         });
+        return 0;
     }
 }
