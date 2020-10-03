@@ -2,7 +2,7 @@ importScripts("../Overrides.js", "../classes/Tools.js", "../classes/DND.js", "..
 
 importScripts("../classes/Enum.js");
 
-importScripts("../classes/ActionData.js", "../classes/Dialogue.js", "../classes/Cell.js", "../classes/Cosmetic.js", "../classes/Container.js", "../classes/CharacterClass/CharacterClass.js", "../classes/CharacterClass/ClasslessClass.js", "../classes/CharacterClass/SorcererClass.js");
+importScripts("../classes/ActionData.js", "../classes/Dialogue.js", "../classes/Cell.js", "../classes/TeleportMarker.js", "../classes/Cosmetic.js", "../classes/Container.js", "../classes/CharacterClass/CharacterClass.js", "../classes/CharacterClass/ClasslessClass.js", "../classes/CharacterClass/SorcererClass.js");
 
 importScripts("../classes/Effect.js", "../classes/Spell.js");
 
@@ -52,6 +52,7 @@ class EntityLogic {
         EntityLogic.importDialogues();
         EntityLogic.importCharacters();
         EntityLogic.importCells();
+        EntityLogic.importTeleportMarkers();
         addEventListener('message', EntityLogic.gameWorkerOnMessage, false);
     }
     static tickWorkerOnMessage(event) {
@@ -807,6 +808,9 @@ class EntityLogic {
     }
     static importCells() {
         return EntityLogic.importScript("../cells.js");
+    }
+    static importTeleportMarkers() {
+        return EntityLogic.importScript("../teleportMarkers.js");
     }
     static importItems() {
         return EntityLogic.importScript("../items.js");

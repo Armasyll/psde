@@ -103,6 +103,27 @@ class Tools {
     }
     /**
      * 
+     * @param {(number|string|object)} value 
+     * @param {object} theClass 
+     * @param {any} returnOnFail 
+     */
+    static filterClass(value, theClass, returnOnFail = null) {
+        if (typeof theClass != "function") {
+            return returnOnFail;
+        }
+        if (!theClass.hasOwnProperty("has") || !theClass.hasOwnProperty("get")) {
+            return returnOnFail;
+        }
+        if (value instanceof theClass) {
+            return value;
+        }
+        if (theClass.has(value)) {
+            return theClass.get(value);
+        }
+        return returnOnFail;
+    }
+    /**
+     * 
      * @param {(number|string)} value 
      * @param {Enum} theEnumerator 
      * @param {boolean} returnValue Return value, otherwise return key
@@ -145,8 +166,27 @@ class Tools {
         }
         return -1;
     }
+    static filterArray3(array) {
+        let nArray = [0,0,0];
+        if (array.hasOwnProperty("x")) {
+            nArray[0] = Number.parseFloat(array["x"]) || 0;
+            nArray[1] = Number.parseFloat(array["y"]) || 0;
+            nArray[2] = Number.parseFloat(array["z"]) || 0;
+        }
+        else if (array.hasOwnProperty("_x")) {
+            nArray[0] = Number.parseFloat(array["_x"]) || 0;
+            nArray[1] = Number.parseFloat(array["_y"]) || 0;
+            nArray[2] = Number.parseFloat(array["_z"]) || 0;
+        }
+        else {
+            nArray[0] = Number.parseFloat(array[0]) || 0;
+            nArray[1] = Number.parseFloat(array[1]) || 0;
+            nArray[2] = Number.parseFloat(array[2]) || 0;
+        }
+        return nArray;
+    }
     static filterVector3(...vector3) {
-        if (vector3 == undefined || vector3[0] == undefined) {
+        if (vector3 == undefined) {
             return BABYLON.Vector3.Zero();
         }
         else if (vector3[0] instanceof BABYLON.Vector3) {
