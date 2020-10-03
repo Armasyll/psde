@@ -245,10 +245,17 @@ class EntityLogic {
                 else {
                     canOpen = true;
                 }
-                if (canOpen) {
-                    target.setOpen();
+                if (target instanceof DoorEntity && target.hasTeleportMarker()) {
+                    EntityLogic.gameWorkerPostMessage("loadCellAndSetPlayerAt", 0, {
+                        "cellID":target.teleportMarker.getCellID(),
+                        "position":target.teleportMarker.getPosition(),
+                        "rotation":target.teleportMarker.getRotation()
+                    });
                 }
-                EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
+                else if (canOpen) {
+                    target.setOpen();
+                    EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
+                }
                 break;
             }
             case "actionTake": {
@@ -423,6 +430,7 @@ class EntityLogic {
                 let entity = new DoorEntity(message["id"], message["name"], message["description"], message["iconID"], message["locked"], message["key"], message["opensInward"], message["open"]);
                 entity.setMeshID(message["meshID"]);
                 entity.setMaterialID(message["materialID"]);
+                entity.setTeleportMarker(message["teleportMarker"]);
                 entity.assign(message["options"]);
                 EntityLogic.gameWorkerPostMessage("createDoorEntity", 0, entity, callbackID);
                 break;

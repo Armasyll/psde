@@ -17,6 +17,7 @@ class DoorEntity extends FurnitureEntity {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.DOOR;
         this.opensInward = false;
+        this.teleportMarker = null;
 
         this.addAvailableAction(ActionEnum.CLOSE);
         this.addAvailableAction(ActionEnum.OPEN);
@@ -44,11 +45,22 @@ class DoorEntity extends FurnitureEntity {
     getOpensInward() {
         return this.opensInward;
     }
+    hasTeleportMarker() {
+        return this.teleportMarker instanceof TeleportMarker;
+    }
+    setTeleportMarker(teleportMarker) {
+        this.teleportMarker = Tools.filterClass(teleportMarker, TeleportMarker, null);
+        return 0;
+    }
+    getTeleportMarker() {
+        return this.teleportMarker;
+    }
 
     objectifyMinimal() {
         let obj = super.objectifyMinimal();
         obj["key"] = this._objectifyProperty(this.key);
         obj["opensInward"] = this.opensInward;
+        obj["teleportMarker"] = this.teleportMarker;
         return obj;
     }
     /**
@@ -75,6 +87,7 @@ class DoorEntity extends FurnitureEntity {
         }
         super.assign(entity, verify);
         if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
+        if (entity.hasOwnProperty("teleportMarker")) this.setTeleportMarker(entity.teleportMarker);
         return 0;
     }
     updateID(newID) {

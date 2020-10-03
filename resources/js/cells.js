@@ -482,6 +482,8 @@ apartmentCell.addCharacter("charlie", CharacterEntity.get("charlie"), [2, 0, -5]
 let packstreetApt3BasementCell = new Cell("packstreetApt3BasementCell");
 packstreetApt3BasementCell.addDoor("packstreetApt3BasementToApartmentDoor", "Basement", new TeleportMarker("packstreetApt3", "apartmentCell", [0, 0, -18]), "craftsmanDoor", "plainDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
 packstreetApt3BasementCell.addCollidableMesh("basementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -20]);
+ packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20], undefined, [-1, 1, 1]);
+ packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22], undefined, [-1, 1, 1]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22]);
  packstreetApt3BasementCell.addMesh("basementStairsCrownTrimLeftBottom", "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", [0, 0, -22]);

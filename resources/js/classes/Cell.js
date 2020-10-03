@@ -246,7 +246,7 @@ class Cell {
      * Creates a DoorController, DoorEntity, and InstancedMesh
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} [name] Name
-     * @param  {object} [to] Future movement between cells
+     * @param  {object} [teleportMarker] Future movement between cells
      * @param  {string} [meshID] Mesh ID
      * @param  {string} [materialID] Texture ID
      * @param  {array} position Position
@@ -255,7 +255,7 @@ class Cell {
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addDoor(id = "", name = "", to, meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+    addDoor(id = "", name = "", teleportMarker = null, meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
         if (this.backloggedDoors.indexOf(id) != -1) {
             return 1;
         }
@@ -274,7 +274,7 @@ class Cell {
         options["open"] = options["open"] == true;
         options["checkCollisions"] = options["checkCollisions"] == true;
         this.meshIDs.add(meshID);
-        this.backloggedDoors.push([id, name, to, meshID, materialID, position, rotation, scaling, options]);
+        this.backloggedDoors.push([id, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]);
         this.hasBackloggedDoors = true;
         this.hasBackloggedAdditions = true;
         return 1;

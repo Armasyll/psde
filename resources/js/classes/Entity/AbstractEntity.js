@@ -912,6 +912,14 @@ class AbstractEntity {
                 "className":property.getClassName()
             };
         }
+        else if (property instanceof TeleportMarker) {
+            obj = {
+                "id":property.id,
+                "cellID":property.cellID,
+                "position":property.position,
+                "rotation":property.rotation
+            };
+        }
         else if (property instanceof Array) {
             obj = [];
             for (let i = 0; i < property.length; i++) {
