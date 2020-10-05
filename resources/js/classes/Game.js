@@ -329,6 +329,7 @@ class Game {
             "cheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
             "grilledCheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
             "muffin01": "resources/meshes/items/muffin01.babylon",
+            "toothbrush01": "resources/meshes/items/toothbrush01.babylon",
             "flatScreenMonitor01": "resources/meshes/static/flatScreenMonitor01.babylon",
             "flatScreenMonitor01Screen": "resources/meshes/static/flatScreenMonitor01.babylon",
             "flatScreenMonitor01Stand": "resources/meshes/static/flatScreenMonitor01.babylon",
@@ -457,7 +458,8 @@ class Game {
             "grass01": "resources/images/textures/blocks/grass_by_smeggo.png",
             "brickWall01": "resources/images/textures/static/brickWall01-DIFFUSE.png",
             "brickWall01-NORMAL": "resources/images/textures/static/brickWall01-NORMAL.png",
-            "muffinBlueberry01": "resources/images/textures/static/muffinBlueberry01_by_smeggo"
+            "muffinBlueberry01": "resources/images/textures/static/muffinBlueberry01_by_smeggo.png",
+            "toothbrushBlue01": "resources/images/textures/static/toothbrushBlue01_by_smeggo.png"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -592,6 +594,7 @@ class Game {
             "cheeseSandwich01Icon": "resources/images/icons/items/cheeseSandwich01Icon.png",
             "grilledCheeseSandwich01Icon": "resources/images/icons/items/grilledCheeseSandwich01Icon.png",
             "muffinBlueberry01Icon": "resources/images/icons/items/muffinBlueberry01Icon.png",
+            "toothbrushBlue01Icon": "resources/images/icons/items/toothbrushBlue01Icon.png",
             "genericSwordIcon": "resources/images/icons/genericSwordIcon.svg",
             "genericShirtIcon": "resources/images/icons/genericShirtIcon.svg",
             "genericBagIcon": "resources/images/icons/genericBagIcon.svg",

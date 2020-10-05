@@ -27,6 +27,7 @@ EntityLogic.createItemEntity("ring02GoldRuby", "Gold Ruby Ring", "A gold ring wi
 EntityLogic.createItemEntity("ring03SilverDRuby", "Damaged Silver Ruby Ring", "A silver ring with a damaged inset ruby.", "ring03SilverDRubyIcon", "ring03", "ring02SilverBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
 EntityLogic.createItemEntity("ring03GoldDRuby", "Damaged Gold Ruby Ring", "A gold ring with a damaged inset ruby.", "ring03GoldDRubyIcon", "ring03", "ring02GoldBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
 
+EntityLogic.createItemEntity("toothbrushBlue01", "Blue Toothbrush", "Brushie brushie brushie!", "toothbrushBlue01Icon", "toothbrush01", "toothbrushBlue01", ItemEnum.GENERAL);
 EntityLogic.createItemEntity("bottle01", "Bottle", "A simple bottle.", "bottle01Icon", "bottle01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("cup01", "Cup", "A simple cup.", "cup01Icon", "cup01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("glass01", "Glass", "A simple glass.", "glass01Icon", "glass01", undefined, ItemEnum.GENERAL);
