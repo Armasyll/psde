@@ -362,7 +362,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
                     return 2;
                 }
-                if (!AbstractEntity.hasOwnProperty(message["item"])) {
+                if (!AbstractEntity.hasOwnProperty(message["entityID"])) {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
                     return 2;
                 }
@@ -371,18 +371,18 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id}, callbackID);
                     return 1;
                 }
-                let item = AbstractEntity.get(message["item"]);
-                if (item instanceof ItemEntity) {
+                let entity = AbstractEntity.get(message["entityID"]);
+                if (entity instanceof ItemEntity) {
                     for (let i = 0; i < amount; i++) {
-                        target.addItem(item.createInstance());
+                        target.addItem(entity.createInstance());
                     }
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id, "itemID": item.id}, callbackID);
+                    EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id, "entityID": entity}, callbackID);
                     return 1;
                 }
                 let amount = Number.parseInt(message["amount"]) || 1;
-                EntityLogic.gameWorkerPostMessage("addItem", 0, {"targetName": target.getName(), "targetID": target.id, "amount": amount, "itemName": item.getName(), "itemID": item.id}, callbackID);
+                EntityLogic.gameWorkerPostMessage("addItem", 0, {"targetName": target.getName(), "targetID": target.id, "amount": amount, "itemName": entity.getName(), "itemID": entity.id}, callbackID);
                 if (target == EntityLogic.playerEntity) {
                     EntityLogic.sendPlayerEntityUpdates();
                 }

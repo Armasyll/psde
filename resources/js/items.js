@@ -9,6 +9,7 @@ EntityLogic.createItemEntity("theLesserKeyOfSolomon", "The Lesser Key of Solomon
 EntityLogic.createItemEntity("bottle03RedSarcophagusJuice", "Red Sarcophagus Juice", "A small sample of some red liquid from the bottom of an obsidian sarcophagus.", "bottle03RedSarcophagusJuiceIcon", "bottle03", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
 EntityLogic.createItemEntity("bottle04RedSarcophagusJuice", "Red Sarcophagus Juice", "A flask of some red liquid from the bottom of an obsidian sarcophagus.", "bottle04RedSarcophagusJuiceIcon", "bottle04", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
 EntityLogic.createItemEntity("bottle05RedSarcophagusJuice", "Red Sarcophagus Juice", "A bottle of some red liquid from the bottom of an obsidian sarcophagus.", "bottle05RedSarcophagusJuiceIcon", "bottle05", "bottle03RedSarcophagusJuice", ItemEnum.CONSUMABLE);
+EntityLogic.createItemEntity("muffinBlueberry01", "Blueberry Muffin", "A blueberry muffin; the best of muffins!", "muffinBlueberry01Icon", "muffin01", "muffinBlueberry01", ItemEnum.CONSUMABLE);
 
 EntityLogic.createItemEntity("barbute01", "Barbute", "", "barbute01Icon", "barbute01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);
 EntityLogic.createItemEntity("barbuteHorned01", "Horned Barbute", "", "barbuteHorned01Icon", "barbuteHorned01", undefined, ItemEnum.APPAREL, ApparelSlotEnum.HEAD);

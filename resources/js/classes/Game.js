@@ -328,6 +328,7 @@ class Game {
             "apple01": "resources/meshes/items/food01.babylon",
             "cheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
             "grilledCheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
+            "muffin01": "resources/meshes/items/muffin01.babylon",
             "flatScreenMonitor01": "resources/meshes/static/flatScreenMonitor01.babylon",
             "flatScreenMonitor01Screen": "resources/meshes/static/flatScreenMonitor01.babylon",
             "flatScreenMonitor01Stand": "resources/meshes/static/flatScreenMonitor01.babylon",
@@ -455,7 +456,8 @@ class Game {
             "wheat_stage_7": "resources/images/textures/blocks/wheat_stage_7.png",
             "grass01": "resources/images/textures/blocks/grass_by_smeggo.png",
             "brickWall01": "resources/images/textures/static/brickWall01-DIFFUSE.png",
-            "brickWall01-NORMAL": "resources/images/textures/static/brickWall01-NORMAL.png"
+            "brickWall01-NORMAL": "resources/images/textures/static/brickWall01-NORMAL.png",
+            "muffinBlueberry01": "resources/images/textures/static/muffinBlueberry01_by_smeggo"
         };
         Game.loadedSVGDocuments = {};
         Game.loadedImages = {};
@@ -589,10 +591,11 @@ class Game {
             "cudgel01Icon": "resources/images/icons/items/cudgel01.png",
             "cheeseSandwich01Icon": "resources/images/icons/items/cheeseSandwich01Icon.png",
             "grilledCheeseSandwich01Icon": "resources/images/icons/items/grilledCheeseSandwich01Icon.png",
+            "muffinBlueberry01Icon": "resources/images/icons/items/muffinBlueberry01Icon.png",
             "genericSwordIcon": "resources/images/icons/genericSwordIcon.svg",
             "genericShirtIcon": "resources/images/icons/genericShirtIcon.svg",
             "genericBagIcon": "resources/images/icons/genericBagIcon.svg",
-            "genericMoneyIcon": "resources/images/icons/genericMoneyIcon.svg"
+            "genericMoneyIcon": "resources/images/icons/genericMoneyIcon.svg",
         };
         /**
          * Map of Sound file locations per ID; one to one
@@ -4624,11 +4627,7 @@ class Game {
                 if (commandArray.hasOwnProperty(index) && typeof commandArray[index] == "string") {
                     target = commandArray[index];
                 }
-                for (let i = 1; i < commandArray.length; i++) {
-                    if (ItemEntity.has(commandArray[i])) {
-                        Game.entityLogicWorkerPostMessage("addItem", 0, {"item": item, "amount": amount, "target": target});
-                    }
-                }
+                Game.entityLogicWorkerPostMessage("addItem", 0, {"entityID": item, "amount": amount, "target": target});
                 break;
             }
             case "addmoney": {
