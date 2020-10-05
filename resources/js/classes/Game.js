@@ -4883,13 +4883,13 @@ class Game {
         }
         if (Game.debugMode) console.log(`Game.actionAttack(${targetController.id}, ${actorController.id})`);
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
+        Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionAttackResponse);
         Game.entityLogicWorkerPostMessage("actionAttack", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         actorController.doAttack();
         return 0;
     }
-    static actionAttackResponsePhase(targetController, actorController, response, parentCallbackID) {
-        if (Game.debugMode) console.log(`Game.actionAttackResponsePhase(${targetController.id}, ${actorController.id})`);
+    static actionAttackResponse(targetController, actorController, response, parentCallbackID) {
+        if (Game.debugMode) console.log(`Game.actionAttackResponse(${targetController.id}, ${actorController.id})`);
         if (response.blocked) {
             targetController.doBlockAttack();
             actorController.doAttackBlocked();
@@ -5809,6 +5809,7 @@ class Game {
         let message = event.data["msg"];
         if (Game.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
+            case "actionAttack":
             case "actionClose":
             case "actionEquip":
             case "actionOpen":
@@ -6200,11 +6201,15 @@ class Game {
             return Game.getEntity(id);
         }
         Object.assign(Game.cachedEntities[id], object);
-        let controller = EntityController.get(object.controller);
-        if (controller == 1) {
+        if (!Game.hasPlayerController()) {
             return 0;
         }
-        controller.assign(object, false);
+        if (Game.playerController.hasTarget() && Game.playerController.target.id == id) {
+            Game.gui.targetPortrait.update();
+        }
+        else if (Game.gui.inventoryMenu.hasSelected() && Game.gui.inventoryMenu.selectedEntity.id == id) {
+            Game.gui.inventoryMenu.updateSelected();
+        }
         return 0;
     }
     static setCachedEntity(id, object) {
@@ -6212,6 +6217,11 @@ class Game {
             return Game.updateCachedEntity(id, object);
         }
         Game.cachedEntities[id] = object;
+        let controller = EntityController.get(object.controller);
+        if (controller == 1) {
+            return 0;
+        }
+        controller.assign(object, false);
         return 0;
     }
 

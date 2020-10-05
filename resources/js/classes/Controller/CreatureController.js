@@ -1783,7 +1783,7 @@ class CreatureController extends EntityController {
 
     setAttacking(bool = true) {
         this.attacking = bool == true;
-        console.log(`Running {CreatureController} ${this.id}.setAttacking(${this.attacking ? "true" : "false"})`);
+        if (EntityController.debugMode) console.log(`Running {CreatureController} ${this.id}.setAttacking(${this.attacking ? "true" : "false"})`);
         return 0;
     }
 

@@ -415,6 +415,10 @@ class EntityController {
         return 0;
     }
 
+    doAttacked() {
+        return 0;
+    }
+
     /**
      * Returns the primary mesh associated with this controller.
      * @returns {BABYLON.AbstractMesh}

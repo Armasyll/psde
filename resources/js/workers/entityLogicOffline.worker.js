@@ -201,6 +201,10 @@ class EntityLogic {
             case "actionAttack": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
+                if (actor == -1) {
+                    EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
+                    break;
+                }
                 EntityLogic.actionAttack(target, actor, callbackID);
                 break;
             }
@@ -747,17 +751,15 @@ class EntityLogic {
         EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
-    static actionAttackResponse(target, actor, response, callbackID) {
+    static actionAttackResponse(target, actor, response, parentCallbackID) {
         let attackRoll = EntityLogic.calculateAttack(actor, actor.getHeld());
-
-
         let targetObject = {
             "id":target.id,
             "health":target.getHealth()
         };
         let entityJSON = JSON.stringify(targetObject);
         EntityLogic.gameWorkerPostMessage("updateEntity", 0, entityJSON);
-        EntityLogic.gameWorkerPostMessage("actionAttack", 0, {"blocked":false, "finished":true, "channeling":false}, EntityLogic.getCallback(callbackID).parentCallbackID);
+        EntityLogic.gameWorkerPostMessage("actionAttack", 0, {"blocked":false, "finished":true, "channeling":false}, EntityLogic.getCallback(parentCallbackID).parent);
         return 0;
     }
     static actionTake(target, actor, parentCallbackID) {

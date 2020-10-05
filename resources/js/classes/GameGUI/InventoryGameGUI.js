@@ -19,7 +19,9 @@ class InventoryGameGUI {
         InventoryGameGUI.isVisible = false;
         InventoryGameGUI.generateController();
         InventoryGameGUI.containerAlpha = 1.0;
-        InventoryGameGUI.selectedObject = null;
+        InventoryGameGUI.selectedEntity = null;
+        InventoryGameGUI.selectedTarget = null;
+        InventoryGameGUI.selectedActor = null;
     }
     static resize() {
         if (InventoryGameGUI.initialized != true) {
@@ -270,8 +272,21 @@ class InventoryGameGUI {
         Game.entityLogicWorkerPostMessage("getEntity", 0, [itemID], callbackID);
         return 0;
     }
+    static hasSelected() {
+        return InventoryGameGUI.selectedEntity instanceof Object && InventoryGameGUI.selectedEntity.hasOwnProperty("id");
+    }
+    static updateSelected(useCachedEntity = false) {
+        if (InventoryGameGUI.hasSelected()) {
+            let itemID = InventoryGameGUI.selectedEntity.id;
+            let targetController = InventoryGameGUI.targetController;
+            let actorController = InventoryGameGUI.actorController;
+            InventoryGameGUI.clearSelected();
+            InventoryGameGUI.setSelected(itemID, targetController, actorController);
+        }
+        return 0;
+    }
     static setSelectedResponse(itemID, targetController, actorController, response, parentCallbackID) {
-        InventoryGameGUI.selectedObject = response;
+        InventoryGameGUI.selectedEntity = response;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
         InventoryGameGUI.selectedDescription.text = response.description;
@@ -351,6 +366,7 @@ class InventoryGameGUI {
                 }
             }
             if (actionButton != null) {
+                actionButton.onPointerUpObservable.add(InventoryGameGUI.updateSelected);
                 InventoryGameGUI.selectedActions.addControl(actionButton);
                 actionButton.top = ((InventoryGameGUI.selectedActions.children.length * 10) - 55) + "%";
             }
@@ -360,7 +376,9 @@ class InventoryGameGUI {
      * Clears the inventory menu's selected item section.
      */
     static clearSelected() {
-        InventoryGameGUI.selectedObject = null;
+        InventoryGameGUI.selectedTarget = null;
+        InventoryGameGUI.selectedActor = null;
+        InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedName.text = "";
         InventoryGameGUI.selectedImage.source = "";
         InventoryGameGUI.selectedDescription.text = "";
