@@ -2072,6 +2072,9 @@ class Game {
         if (Game.debugMode && Game.debugVerbosity > 3) console.groupEnd();
         return mesh;
     }
+    static createTiledGround(...params) {
+        return Game.createTiledMesh(...params);
+    }
     /**
      * 
      * @param {string} id 
@@ -2085,7 +2088,7 @@ class Game {
     static createTiledCeiling(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
         scaling = Tools.filterVector3(scaling);
         scaling.y *= -1;
-        return Game.createTiledGround(id, meshOptions, materialID, position, rotation, scaling, options);
+        return Game.createTiledMesh(id, meshOptions, materialID, position, rotation, scaling, options);
     }
     /**
      * Creates a primitive wall for collision

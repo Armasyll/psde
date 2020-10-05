@@ -1,10 +1,6 @@
 console.log("Loading Scenes");
 let apartmentCell = new Cell("apartmentCell");
-apartmentCell.addCollisionPlane([-512, -512], [512, 512], -64);
-apartmentCell.addCollisionWall([-512, -512, 512], [512, 512, 512]);
-apartmentCell.addCollisionWall([512, -512, 512], [512, 512, -512]);
-apartmentCell.addCollisionWall([-512, -512, -512], [512, 512, -512]);
-apartmentCell.addCollisionWall([-512, -512, -512], [-512, 512, 512]);
+apartmentCell.createBarrier(64);
 
 apartmentCell.addMaterial("greenWallpaperPlainWood", "greenWallpaperPlainWood", undefined, {"hasAlpha":true});
 apartmentCell.addMaterial("yellowWallpaperPlainWood", "yellowWallpaperPlainWood", undefined, {"hasAlpha":true});
@@ -430,9 +426,7 @@ apartmentCell.addCollisionWall([15, 0, -27], [15, 3, -31]);
 apartmentCell.addCollisionWall([-1, 0, -27], [-1, 3, -31]);
 apartmentCell.addCollisionWall([-1, 0, -31], [15, 3, -31]);
 
-apartmentCell.addMaterial("stoneMaterial01", "stoneMaterial01");
-apartmentCell.addTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 16, zmax: 4, subdivisions: {w:16, h:4}}, "stoneMaterial", [-1, -0.0625, -31]);
-apartmentCell.addCollisionPlaneByMesh("outsideFloorStone");
+apartmentCell.addTiledGround("outsideFloorStone", {xmin:0, zmin:0, xmax: 16, zmax: 4, subdivisions: {w:16, h:4}}, "stoneMaterial01", [-1, -0.0625, -31]);
 
 apartmentCell.addCollidableMesh(undefined, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [0, 0, -28]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "whitePanelGrayStone", [2, 0, -28]);
@@ -480,35 +474,55 @@ apartmentCell.addCharacter("rosie", CharacterEntity.get("rosie"), [2, 0, -4.5]);
 apartmentCell.addCharacter("charlie", CharacterEntity.get("charlie"), [2, 0, -5], [0, 180, 0], [0.9, 0.9, 0.9]);
 
 let packstreetApt3BasementCell = new Cell("packstreetApt3BasementCell");
+packstreetApt3BasementCell.createBarrier(32);
+
+packstreetApt3BasementCell.addCollidableMesh("unusableBasementStairsBottom", "craftsmanStairs", "greenWallpaperPlainWood", [0, 0.05, -22]);
+packstreetApt3BasementCell.addCollidableMesh("unusableBasementStairsTop", "craftsmanStairs", "greenWallpaperPlainWood", [0, 1.55, -20]);
 packstreetApt3BasementCell.addDoor("packstreetApt3BasementToApartmentDoor", "Basement", new TeleportMarker("packstreetApt3", "apartmentCell", [0, 0, -18]), "craftsmanDoor", "plainDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
 packstreetApt3BasementCell.addCollidableMesh("basementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -20]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20], undefined, [-1, 1, 1]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22], undefined, [-1, 1, 1]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22]);
- packstreetApt3BasementCell.addMesh("basementStairsCrownTrimLeftBottom", "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", [0, 0, -22]);
- packstreetApt3BasementCell.addMesh("basementStairsCrownTrimLeftTop", "craftsmanStairCrownTrimLeftTop", "greenWallpaperPlainWood", [0, 0, -20]);
- packstreetApt3BasementCell.addMesh("basementStairsBaseTrimLeftBottom", "craftsmanStairBaseTrimLeftBottom", "greenWallpaperPlainWood", [0, -3, -22]);
- packstreetApt3BasementCell.addMesh("basementStairsBaseTrimLeftTop", "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", [0, -1.5, -20]);
- packstreetApt3BasementCell.addMesh("basementStairsCrownTrimRightBottom", "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", [0, 0, -22], [0,0,0], [-1, 1, 1]);
- packstreetApt3BasementCell.addMesh("basementStairsCrownTrimRightTop", "craftsmanStairCrownTrimLeftTop", "greenWallpaperPlainWood", [0, 0, -20], [0,0,0], [-1, 1, 1]);
- packstreetApt3BasementCell.addMesh("basementStairsBaseTrimRightBottom", "craftsmanStairBaseTrimLeftBottom", "greenWallpaperPlainWood", [0, -3, -22], [0,0,0], [-1, 1, 1]);
- packstreetApt3BasementCell.addMesh("basementStairsBaseTrimRightTop", "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", [0, -1.5, -20], [0,0,0], [-1, 1, 1]);
+ packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0.0525, 0, -20.0125]);
+ packstreetApt3BasementCell.addCollidableMesh("basementStairwellRightSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0.0525, 0, -22.0125]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairsTop", "craftsmanStairs", "greenWallpaperPlainWood", [0, -3, -22]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairsBottom", "craftsmanStairs", "greenWallpaperPlainWood", [0, -1.5, -20]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWallLeft02", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, -3, -22], [0, 270, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWallLeft01", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, -3, -20], [0, 270, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWallRight02", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, -3, -22], [0, 90, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWallRight01", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, -3, -20], [0, 90, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWallLeft03", "craftsmanWall", "greenWallpaperPlainWood", [0, -3, -24], [0, 270, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementStairwellWall04", "craftsmanWall", "greenWallpaperPlainWood", [0, -3, -24], [0, 180, 0]);
- packstreetApt3BasementCell.addCollidableMesh("basementDoorwayBottom", "craftsmanDoorway", "greenWallpaperPlainWood", [0, -3, -24], [0, 90, 0]);
- packstreetApt3BasementCell.addTiledGround("basementStairwellFloor", {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, "woodenFloorDark26", [-1, -3, -25]);
- packstreetApt3BasementCell.addTiledCeiling("basementStairwellCeiling", {xmin:0, zmin:0, xmax: 2, zmax: 2, subdivisions: {w:2, h:2}}, "greenWallpaper", [-1, -0.1, -25]);
- packstreetApt3BasementCell.addDoor("basementDoorBottom", "Door", undefined, "craftsmanDoor", "plainDoor", [1, -3, -24], [0, 90, 0], undefined, {"opensInward":false});
+  // Basement Area
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -14], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -16], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -18], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -20], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -22], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -24], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -26], [0, 270, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [2, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [4, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [6, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [8, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [10, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -26], [0, 180, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -26], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -24], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -22], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -20], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -18], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -16], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -14], [0, 90, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [10, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [8, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [6, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [4, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [2, -3, -14], [0, 0, 0]);
+ packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -14], [0, 0, 0]);
+
+ packstreetApt3BasementCell.addTiledGround("basementStoneFloor", {xmin:0, zmin:0, xmax: 14, zmax: 14, subdivisions: {w:14, h:14}}, "stoneMaterial01", [-1, -3, -27]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling01", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "stoneMaterial01", [-1, -.05, -19]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling02", {xmin:0, zmin:0, xmax: 12, zmax: 14, subdivisions: {w:12, h:14}}, "stoneMaterial01", [1, -.05, -27]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling03", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "stoneMaterial01", [-1, -.05, -27]);
 
 let networkTestCell = new Cell("networkTestCell");
-networkTestCell.addCollisionPlane([-5, -25], [11, -9], 0);
+networkTestCell.createBarrier(32);
 networkTestCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", [-5, 0, -25]);
 networkTestCell.addCollidableMesh("greenWall", "craftsmanWall", "greenWallpaperPlainWood", [1, 0, -22], [0, 180, 0]);
 networkTestCell.addCollidableMesh("yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", [3, 0, -22], [0, 180, 0]);
@@ -531,7 +545,7 @@ networkTestCell.addItem("cheeseWedgeInstance01", "cheeseWedge", [3, 0, -17]);
 networkTestCell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", [3, 0, -17]);
 
 let debugMovementCell = new Cell("debugMovementCell");
-debugMovementCell.addCollisionPlane([-5, -25], [11, -9], 0);
+debugMovementCell.createBarrier(32);
 debugMovementCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", [-5, 0, -25]);
 debugMovementCell.addCollidableMesh("debugMovementStairs", "craftsmanStairs", "missingMaterial", [2, 0, -20], [0, 180, 0]);
 debugMovementCell.addItem("cheeseWedgeInstance01", "cheeseWedge", [3, 0, -17]);

@@ -458,6 +458,14 @@ class Cell {
     meshIDIntersection(cell) {
         return new Set([cell.getMeshIDs()].filter(meshID => this.meshIDs.has(meshID)));
     }
+    createBarrier(limit = 512) {
+        this.addCollisionPlane(String(this.id).concat("CeilingBarrier"), [-limit, -limit], [limit, limit], limit);
+        this.addCollisionPlane(String(this.id).concat("FloorBarrier"), [-limit, -limit], [limit, limit], -limit);
+        this.addCollisionWall(String(this.id).concat("NorthBarrier"), [-limit, -limit, limit], [limit, limit, limit]);
+        this.addCollisionWall(String(this.id).concat("EastBarrier"), [limit, -limit, limit], [limit, limit, -limit]);
+        this.addCollisionWall(String(this.id).concat("SouthBarrier"), [-limit, -limit, -limit], [limit, limit, -limit]);
+        this.addCollisionWall(String(this.id).concat("WestBarrier"), [-limit, -limit, -limit], [-limit, limit, limit]);
+    }
 
     stringify() {
         return JSON.stringify(this.objectify());
