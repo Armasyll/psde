@@ -362,7 +362,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
                     return 2;
                 }
-                if (!AbstractEntity.hasOwnProperty(message["entityID"])) {
+                if (!AbstractEntity.has(message["entityID"])) {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
                     return 2;
                 }
@@ -372,6 +372,7 @@ class EntityLogic {
                     return 1;
                 }
                 let entity = AbstractEntity.get(message["entityID"]);
+                let amount = Number.parseInt(message["amount"]) || 1;
                 if (entity instanceof ItemEntity) {
                     for (let i = 0; i < amount; i++) {
                         target.addItem(entity.createInstance());
@@ -381,7 +382,6 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id, "entityID": entity}, callbackID);
                     return 1;
                 }
-                let amount = Number.parseInt(message["amount"]) || 1;
                 EntityLogic.gameWorkerPostMessage("addItem", 0, {"targetName": target.getName(), "targetID": target.id, "amount": amount, "itemName": entity.getName(), "itemID": entity.id}, callbackID);
                 if (target == EntityLogic.playerEntity) {
                     EntityLogic.sendPlayerEntityUpdates();
