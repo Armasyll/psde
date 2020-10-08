@@ -21,6 +21,9 @@ class CreatureController extends EntityController {
         this.targetRayLengthOverride = -1;
         this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
         this.targetRayHelper = null;
+        this.targetRayVector3 = BABYLON.Vector3.Zero();
+        this.lookController = null;
+        this.lookControllerTargetVector3 = this.targetRayVector3;
         this.grounded = false;
         this.jumping = false;
         this.falling = false;
@@ -1533,13 +1536,13 @@ class CreatureController extends EntityController {
         let lookController = new BABYLON.BoneLookController(
             this.mesh,
             this.getBoneByName(bone),
-            this.targetRay.direction.add(this.targetRay.origin),
+            this.lookControllerTargetVector3,
             {
                 slerpAmount:0.05,
                 minPitch:BABYLON.Tools.ToRadians(-45),
                 maxPitch:BABYLON.Tools.ToRadians(45),
                 minYaw:BABYLON.Tools.ToRadians(-45),
-                maxYaw:BABYLON.Tools.ToRadians(45),
+                maxYaw:BABYLON.Tools.ToRadians(45)
             }
         );
         this.lookController = lookController;
@@ -1858,6 +1861,7 @@ class CreatureController extends EntityController {
         else {
             this.targetRay.length = this.targetRayLength;
         }
+        this.targetRay.origin.addToRef(this.targetRay.direction, this.targetRayVector3);
         return 0;
     }
 

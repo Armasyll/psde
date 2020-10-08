@@ -62,7 +62,6 @@ class CharacterControllerRigidBody extends CharacterController {
             this.targetRay.direction.z = -this.collisionMesh.forward.z;
         }
         if (this.hasLookController()) {
-            this.lookController.target = this.targetRay.origin.add(this.targetRay.direction);
             this.lookController.update();
         }
         this.updateAnimation();
