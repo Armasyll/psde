@@ -4279,15 +4279,15 @@ class Game {
     static unassignPlayer(updateChild = true) {
         if (Game.debug) console.group("Running Game.unassignPlayer()")
         Game.transformsWorkerPostMessage("clearPlayer", 0);
-        Game.clearPlayerPortraitStatsUpdateInterval();
-        Game.clearCastRayInterval();
-        Game.clearPlayerTarget();
         Game.initFreeCamera(false, !updateChild);
         Game.gui.playerPortrait.hide();
         Game.playerController.getMesh().isPickable = true;
         Game.playerController.detachFromFOCUS();
         Game.playerEntityID = null;
         Game.playerController = null;
+        Game.clearPlayerPortraitStatsUpdateInterval();
+        Game.clearCastRayInterval();
+        Game.clearPlayerTarget();
         if (Game.debug) console.groupEnd();
         return 0;
     }
@@ -4358,9 +4358,6 @@ class Game {
     static clearPlayerTarget() {
         if (!(Game.playerController instanceof CreatureController)) {
             return 1;
-        }
-        if (!Game.playerController.hasTarget()) {
-            return 0;
         }
         if (Game.highlightEnabled) {
             Game.clearHighlightedController();
