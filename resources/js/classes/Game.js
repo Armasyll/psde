@@ -4281,6 +4281,7 @@ class Game {
         Game.transformsWorkerPostMessage("clearPlayer", 0);
         Game.clearPlayerPortraitStatsUpdateInterval();
         Game.clearCastRayInterval();
+        Game.clearPlayerTarget();
         Game.initFreeCamera(false, !updateChild);
         Game.gui.playerPortrait.hide();
         Game.playerController.getMesh().isPickable = true;
