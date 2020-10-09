@@ -113,14 +113,14 @@ class Container {
      */
     addItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, container is locked.");
+            return 1;
         }
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             if (AbstractEntity.has(instancedItemEntity)) {
                 instancedItemEntity = AbstractEntity.get(instancedItemEntity);
             }
             else {
-                return Tools.fresponse(404, "Error, item doesn't exist.");
+                return 2;
             }
         }
         if (instancedItemEntity instanceof InstancedEntity) {
@@ -130,55 +130,55 @@ class Container {
             return this.addItemToSlot(instancedItemEntity.createInstance(), this.getAvailableSlot());
         }
         if (Container.debugMode) console.log(`Failed to add item ${instancedItemEntity} to ${this.id}`);
-        return Tools.fresponse(400, "Error");
+        return 0;
     }
     addItemToSlot(instancedItemEntity, slot) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, container is locked.");
+            return 1;
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             if (InstancedItemEntity.has(instancedItemEntity)) {
                 instancedItemEntity = InstancedItemEntity.get(instancedItemEntity);
             }
             else {
-                return Tools.fresponse(404, "Error, item doesn't exist.");
+                return 2;
             }
         }
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
         if (isNaN(slot) || slot == -1) {
-            return Tools.fresponse(300, "Warning, item slot is invalid.", instancedItemEntity);
+            return 2;
         }
         else if (this.items[slot] instanceof InstancedEntity) {
-            return Tools.fresponse(300, "Warning, item slot is already occupied.", instancedItemEntity);
+            return 1;
         }
         this.items[slot] = instancedItemEntity;
         this.weight += instancedItemEntity.getWeight();
         instancedItemEntity.setContainer(this);
-        return Tools.fresponse(200, "OK", instancedItemEntity);
+        return 0;
     }
     swapSlots(slotA, slotB) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, container is locked.");
+            return 1;
         }
         slotA = Number.parseInt(slotA) || Number.MAX_SAFE_INTEGER;
         slotB = Number.parseInt(slotB) || Number.MAX_SAFE_INTEGER;
         /** Can't swap empty slots */
         if (!this.items.hasOwnProperty(slotA) && !this.items.hasOwnProperty(slotB)) {
-            return Tools.fresponse(404, "Error, item slot is invalid.");
+            return 2;
         }
         else if (slotA > this.maxSize || slotB > this.maxSize) {
-            return Tools.fresponse(403, "Error, item slot is greater than max.");
+            return 2;
         }
         else if (slotA < 0 || slotB < 0) {
-            return Tools.fresponse(403, "Error, item slot is less than minimum.");
+            return 2;
         }
         this.locked = true;
         let tempItem = this.items[slotA];
         this.items[slotA] = this.items[slotB];
         this.items[slotB] = tempItem;
         this.locked = false;
-        return Tools.fresponse(200, "OK");
+        return 0;
     }
     /**
      * Removes an AbstractEntity from this entity's Item array
@@ -187,31 +187,31 @@ class Container {
      */
     removeItem(instancedItemEntity) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, container is locked.");
+            return 1;
         }
         if (!(instancedItemEntity instanceof AbstractEntity)) {
             if (AbstractEntity.has(instancedItemEntity)) {
                 instancedItemEntity = AbstractEntity.get(instancedItemEntity);
             }
             else {
-                return Tools.fresponse(404, "Error, item doesn't exist.");
+                return 2;
             }
         }
         if (Container.debugMode) console.log(`Running <Container> ${this.id}.removeItem(${instancedItemEntity.getID()})`);
         let slot = this.getSlotByItem(instancedItemEntity);
         if (slot < 0) {
-            return Tools.fresponse(410, "Error, container doesn't have item.");
+            return 1;
         }
         return this.removeItemFromSlot(slot);
     }
     removeItemFromSlot(slot) {
         if (this.locked || !this.enabled) {
-            return Tools.fresponse(423, "Error, container is locked.");
+            return 1;
         }
         if (typeof slot != "number") {slot = Number.parseInt(slot) || -1;}
         else {slot = slot|0}
         if (isNaN(slot) || slot == -1) {
-            return Tools.fresponse(300, "Warning, item slot is invalid.");
+            return 2;
         }
         if (this.items.hasOwnProperty(slot)) {
             if (InstancedItemEntity.has(this.items[slot])) {
@@ -221,7 +221,7 @@ class Container {
             }
             delete this.items[slot];
         }
-        return Tools.fresponse(200, "OK");
+        return 0;
     }
     getItemBySlot(number) {
         if (this.items[number] && this.items[number] instanceof InstancedEntity) {
@@ -272,7 +272,7 @@ class Container {
                 abstractEntity = AbstractEntity.get(abstractEntity);
             }
             else {
-                return 2;
+                return null;
             }
         }
         if (abstractEntity instanceof InstancedEntity) {
@@ -287,7 +287,7 @@ class Container {
                 }
             }
         }
-        return 1;
+        return null;
     }
     hasItem(abstractEntity) {
         return this.getItem(abstractEntity) instanceof AbstractEntity;
@@ -347,6 +347,7 @@ class Container {
         for (let entity in this.entities) {
             this.removeEntity(entity, true);
         }
+        return 0;
     }
 
     isEnabled() {
@@ -442,7 +443,7 @@ class Container {
         this.clear();
         delete this.items;
         delete this.entities;
-        return undefined;
+        return null;
     }
     getClassName() {
         return "Container";

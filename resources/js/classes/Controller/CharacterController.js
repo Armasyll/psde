@@ -111,6 +111,25 @@ class CharacterController extends CreatureController {
         if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
+    updateFromEntity(thatEntity) {
+        super.updateFromEntity(thatEntity);
+        let thisEntity = Game.getCachedEntity(this.entityID);
+        if (thisEntity.hasOwnProperty("equipment") && thatEntity.hasOwnProperty("equipment")) {
+            for (let equipmentSlot in thisEntity.equipment) {
+                if (thatEntity["equipment"][equipmentSlot] == null) {
+                    this.detachEquipmentFromBone(equipmentSlot);
+                }
+                else if (thisEntity["equipment"][equipmentSlot] == null) {
+                    this.attachEquipmentToBone(thatEntity["equipment"][equipmentSlot]["meshID"], thatEntity["equipment"][equipmentSlot]["materialID"], equipmentSlot);
+                }
+                else if (thisEntity["equipment"][equipmentSlot]["id"] != thatEntity["equipment"][equipmentSlot]["id"]) {
+                    this.detachEquipmentFromBone(equipmentSlot);
+                    this.attachEquipmentToBone(thatEntity["equipment"][equipmentSlot]["meshID"], thatEntity["equipment"][equipmentSlot]["materialID"], equipmentSlot);
+                }
+            }
+        }
+        return 0;
+    }
     doPunchRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;

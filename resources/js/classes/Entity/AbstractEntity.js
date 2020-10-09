@@ -548,16 +548,7 @@ class AbstractEntity {
                 return 2;
             }
         }
-        let result = this.container.addItem(instancedItemEntity, count);
-        if (result.meta.status >= 400) {
-            return 2;
-        }
-        else if (result.meta.status >= 300) { /** Can't add the item because the container is full, locked, or disabled */
-            return 1;
-        }
-        else {
-            return 0;
-        }
+        return this.container.addItem(instancedItemEntity, count);
     }
     /**
      * 
@@ -568,16 +559,7 @@ class AbstractEntity {
         if (!this.hasContainer()) {
             return 1;
         }
-        let result = this.container.removeItem(abstractEntity, count);
-        if (result.meta.status >= 400) {
-            return 2;
-        }
-        else if (result.meta.status >= 300) {
-            return 1;
-        }
-        else {
-            return 0;
-        }
+        return this.container.removeItem(abstractEntity, count, tellGameWorker);
     }
     /**
      * 

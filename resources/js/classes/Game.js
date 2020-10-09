@@ -6203,6 +6203,9 @@ class Game {
         if (!Game.cachedEntities.hasOwnProperty(id)) {
             return Game.getEntity(id);
         }
+        if (EntityController.has(id)) {
+            EntityController.get(id).updateFromEntity(object);
+        }
         Object.assign(Game.cachedEntities[id], object);
         if (!Game.hasPlayerController()) {
             return 0;

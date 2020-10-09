@@ -1436,6 +1436,31 @@ class EntityLogic {
     }
     static sendPlayerEntityUpdates() {
         EntityLogic.gameWorkerPostMessage("updateEntity", 0, EntityLogic.playerEntity.stringify(true));
+        return 0;
+    }
+    static sendEntityUpdate(entityID, property = null) {
+        let entity = null;
+        if (entityID instanceof AbstractEntity) {
+            entity = entityID;
+        }
+        else if (AbstractEntity.has(entityID)) {
+            entity = AbstractEntity.get(entityID);
+        }
+        else {
+            return 1;
+        }
+        //if (property == null || !entity.hasOwnProperty(property)) {
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.stringify(true));
+            return 0;
+        //}
+        /*else if (entity.hasOwnProperty(property)) {
+            let obj = {"id":entity.id};
+            obj[property] = entity._objectifyProperty(entity["property"]);
+            console.log(obj);
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, JSON.stringify(obj));
+            return 0;
+        }
+        return 1;*/
     }
 }
 EntityLogic.initialize();

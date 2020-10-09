@@ -21,6 +21,26 @@ class CreatureEntity extends Entity {
         this.gender = SexEnum.MALE;
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
         /**
+         * Attached cosmetics
+         * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
+         */
+        this.cosmetics = {};
+        this.cosmetics["HEAD"] = [];
+        this.cosmetics["EAR_L"] = [];
+        this.cosmetics["EAR_R"] = [];
+        this.cosmetics["NECK"] = [];
+        this.cosmetics["SHOULDER_L"] = [];
+        this.cosmetics["SHOULDER_R"] = [];
+        this.cosmetics["FOREARM_L"] = [];
+        this.cosmetics["FOREARM_R"] = [];
+        this.cosmetics["HAND_L"] = [];
+        this.cosmetics["HAND_R"] = [];
+        this.cosmetics["CHEST"] = [];
+        this.cosmetics["PELVIS"] = [];
+        this.cosmetics["LEGS"] = [];
+        this.cosmetics["FOOT_L"] = [];
+        this.cosmetics["FOOT_R"] = [];
+        /**
          * @type {string|null}
          */
         this.dialogue = null;
@@ -364,22 +384,10 @@ class CreatureEntity extends Entity {
          * @type {boolean}
          */
         this._nearDeathThisWindow = false;
-        /**
-         * Equipment
-         * @type {<number, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
-         */
+        this.organs = {};
         this.equipment = {};
-        this.equipment["HEAD"] = null;
-        this.equipment["EAR_L"] = null;
-        this.equipment["EAR_R"] = null;
-        this.equipment["NECK"] = null;
-        this.equipment["FOREARM_L"] = null;
-        this.equipment["FOREARM_R"] = null;
         this.equipment["HAND_L"] = null;
         this.equipment["HAND_R"] = null;
-        this.equipment["CHEST"] = null;
-        this.equipment["FOOT_L"] = null;
-        this.equipment["FOOT_R"] = null;
         this.previousEquipment = Object.assign({}, this.equipment);
         /**
          * @type {boolean}
@@ -637,6 +645,50 @@ class CreatureEntity extends Entity {
     }
     getSexualOrientation() {
         return this.sexualOrientation;
+    }
+
+    getAttachedCosmetic(cosmeticSlot = "") {
+        if (this.cosmetics.hasOwnProperty(cosmeticSlot)) {
+            return this.cosmetics[cosmeticSlot];
+        }
+        return null;
+    }
+    getAttachedCosmetics() {
+        return this.cosmetics;
+    }
+    attachCosmetic(cosmetic, cosmeticSlot = "") {
+        if (!(cosmetic instanceof Cosmetic)) {
+            cosmetic = Cosmetic.get(cosmetic);
+            if (!(cosmetic instanceof Cosmetic)) {
+                return 2;
+            }
+        }
+        if (this.cosmetics.hasOwnProperty(cosmeticSlot)) {}
+        else if (ApparelSlotEnum.properties.hasOwnProperty(cosmeticSlot)) {
+            cosmeticSlot = ApparelSlotEnum.properties[cosmeticSlot].key;
+        }
+        else {
+            return 2;
+        }
+        this.cosmetics[cosmeticSlot][cosmetic.id] = cosmetic;
+        return 0;
+    }
+    detachCosmetic(cosmetic, cosmeticSlot = "") {
+        if (!(cosmetic instanceof Cosmetic)) {
+            cosmetic = Cosmetic.get(cosmetic);
+            if (!(cosmetic instanceof Cosmetic)) {
+                return 2;
+            }
+        }
+        if (this.cosmetics.hasOwnProperty(cosmeticSlot)) {}
+        else if (ApparelSlotEnum.properties.hasOwnProperty(cosmeticSlot)) {
+            cosmeticSlot = ApparelSlotEnum.properties[cosmeticSlot].key;
+        }
+        else {
+            return 2;
+        }
+        delete this.cosmetics[cosmeticSlot][cosmetic.id];
+        return 0;
     }
 
     setCharacterPassion(...parameters) {
@@ -2119,9 +2171,9 @@ class CreatureEntity extends Entity {
                 this._canHearConditionOverride--;
                 this._canSeeConditionOverride--;
                 this._canHoldConditionOverride--;
-                if (this instanceof CharacterEntity) {
-                    this.unequipBySlot(ApparelSlotEnum.HAND_L);
-                    this.unequipBySlot(ApparelSlotEnum.HAND_R);
+                if (this instanceof CreatureEntity) {
+                    this.unequipBySlot("HAND_L");
+                    this.unequipBySlot("HAND_R");
                 }
                 this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
                 this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
@@ -2475,6 +2527,7 @@ class CreatureEntity extends Entity {
         obj["armourClass"] = this.getArmourClass();
         obj["charisma"] = this.getCharisma();
         obj["constitution"] = this.getConstitution();
+        obj["cosmetics"] = this._objectifyProperty(this.cosmetics);
         obj["dexterity"] = this.getDexterity();
         obj["exhaustion"] = this.getExhaustion();
         obj["gender"] = this.getGender();
@@ -2569,6 +2622,15 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("movementActionsOverride")) this.movementActionsOverride = entity.movementActionsOverride;
         if (entity.hasOwnProperty("bonusActionsOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;
         if (entity.hasOwnProperty("reactionOverride")) this.reactionsOverride = entity.reactionsOverride;
+        if (entity.hasOwnProperty("cosmetics")) {
+            for (let cosmeticSlot in entity.cosmetics) {
+                if (Object.keys(entity.cosmetics[cosmeticSlot]).length > 0) {
+                    for (let cosmetic in entity.cosmetics[cosmeticSlot]) {
+                        this.attachCosmetic(cosmetic);
+                    }
+                }
+            }
+        }
         if (entity.hasOwnProperty("_canMove")) this._canMove = entity._canMove;
         if (entity.hasOwnProperty("_canHold")) this._canHold = entity._canHold;
         if (entity.hasOwnProperty("_canSpeak")) this._canSpeak = entity._canSpeak;

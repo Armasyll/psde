@@ -414,6 +414,9 @@ class EntityController {
         if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
+    updateFromEntity(thatEntity) {
+        return 0;
+    }
 
     doAttacked() {
         return 0;

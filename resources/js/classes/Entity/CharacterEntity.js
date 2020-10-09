@@ -20,26 +20,6 @@ class CharacterEntity extends CreatureEntity {
         this.surname = "";
         this.nickname = "";
         /**
-         * Attached cosmetics
-         * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
-         */
-        this.attachedCosmetics = {};
-        this.attachedCosmetics["HEAD"] = [];
-        this.attachedCosmetics["EAR_L"] = [];
-        this.attachedCosmetics["EAR_R"] = [];
-        this.attachedCosmetics["NECK"] = [];
-        this.attachedCosmetics["SHOULDER_L"] = [];
-        this.attachedCosmetics["SHOULDER_R"] = [];
-        this.attachedCosmetics["FOREARM_L"] = [];
-        this.attachedCosmetics["FOREARM_R"] = [];
-        this.attachedCosmetics["HAND_L"] = [];
-        this.attachedCosmetics["HAND_R"] = [];
-        this.attachedCosmetics["CHEST"] = [];
-        this.attachedCosmetics["PELVIS"] = [];
-        this.attachedCosmetics["LEGS"] = [];
-        this.attachedCosmetics["FOOT_L"] = [];
-        this.attachedCosmetics["FOOT_R"] = [];
-        /**
          * Equipment
          * @type {<number, AbstractEntity>} Bone ID and AbstractEntity; suppose to be an InstancedItemEntity, but it could be any AbstractEntity :v
          */
@@ -230,7 +210,9 @@ class CharacterEntity extends CreatureEntity {
     getHeld() {
         return {"HAND_R":this.equipment["HAND_R"], "HAND_L":this.equipment["HAND_L"]};
     }
-    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false) {
+    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false, tellGameWorker = true) {
+        hold = hold == true;
+        tellGameWorker = tellGameWorker == true;
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
         */
@@ -287,54 +269,59 @@ class CharacterEntity extends CreatureEntity {
             this.calculateIsArmed();
         }
         instancedItemEntity.equipped = true;
+        if (tellGameWorker) {
+            EntityLogic.sendEntityUpdate(this, "equipment");
+        }
         return 0;
     }
-    unequip(any) {
+    unequip(any, tellGameWorker = true) {
+        tellGameWorker = tellGameWorker == true;
         if (any instanceof InstancedEntity) {
-            return this.unequipByInstancedEntity(any)
+            return this.unequipByInstancedEntity(any, tellGameWorker);
         }
         else if (any instanceof Entity) {
-            return this.unequipByEntity(any);
+            return this.unequipByEntity(any, tellGameWorker);
         }
         else if (typeof any == "string") {
             if (InstancedEntity.has(any)) {
-                return this.unequipByInstancedEntity(InstancedEntity.get(any));
+                return this.unequipByInstancedEntity(InstancedEntity.get(any), tellGameWorker);
             }
             else if (Entity.has(any)) {
-                return this.unequipByEntity(Entity.get(any));
+                return this.unequipByEntity(Entity.get(any), tellGameWorker);
             }
             else if (ApparelSlotEnum.hasOwnProperty(any)) {
-                return this.unequipBySlot(any);
+                return this.unequipBySlot(any, tellGameWorker);
             }
         }
         else if (ApparelSlotEnum.properties.hasOwnProperty(any)) {
-            return this.unequipBySlot(ApparelSlotEnum.properties[any].key);
+            return this.unequipBySlot(ApparelSlotEnum.properties[any].key, tellGameWorker);
         }
         return 2;
     }
-    unequipByInstancedEntity(instancedEntity) {
+    unequipByInstancedEntity(instancedEntity, tellGameWorker = true) {
         for (let equipmentSlot in this.equipment) {
             if (this.equipment[equipmentSlot] instanceof AbstractEntity) {
                 if (this.equipment[equipmentSlot] == instancedEntity) {
-                    return this.unequipBySlot(equipmentSlot);
+                    return this.unequipBySlot(equipmentSlot, tellGameWorker);
                 }
             }
         }
         if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not equipped.`);
         return 1;
     }
-    unequipByEntity(entity) {
+    unequipByEntity(entity, tellGameWorker = true) {
         for (let equipmentSlot in this.equipment) {
             if (this.equipment[equipmentSlot] instanceof AbstractEntity) {
                 if (this.equipment[equipmentSlot].entity == entity) {
-                    return this.unequipBySlot(equipmentSlot);
+                    return this.unequipBySlot(equipmentSlot, tellGameWorker);
                 }
             }
         }
         if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not equipped.`);
         return 1;
     }
-    unequipBySlot(equipmentSlot) {
+    unequipBySlot(equipmentSlot, tellGameWorker = true) {
+        tellGameWorker = tellGameWorker == true;
         if (this.equipment.hasOwnProperty(equipmentSlot)) {}
         else if (ApparelSlotEnum.hasOwnProperty(equipmentSlot)) {
             switch(equipmentSlot) {
@@ -383,6 +370,9 @@ class CharacterEntity extends CreatureEntity {
                 this.equipment[equipmentSlot] = InstancedWeaponEntity.get("weaponHandInstance");
             }
             this.calculateIsArmed();
+        }
+        if (tellGameWorker) {
+            EntityLogic.sendEntityUpdate(this, "equipment");
         }
         return 0;
     }
@@ -445,69 +435,33 @@ class CharacterEntity extends CreatureEntity {
         }
         return false;
     }
-    getAttachedCosmetic(cosmeticSlot = "") {
-        if (this.attachedCosmetics.hasOwnProperty(cosmeticSlot)) {
-            return this.attachedCosmetics[cosmeticSlot];
-        }
-        return null;
-    }
-    getAttachedCosmetics() {
-        return this.attachedCosmetics;
-    }
-    attachCosmetic(cosmetic, cosmeticSlot = "") {
-        if (!(cosmetic instanceof Cosmetic)) {
-            cosmetic = Cosmetic.get(cosmetic);
-            if (!(cosmetic instanceof Cosmetic)) {
-                return 2;
-            }
-        }
-        if (this.attachedCosmetics.hasOwnProperty(cosmeticSlot)) {}
-        else if (ApparelSlotEnum.properties.hasOwnProperty(cosmeticSlot)) {
-            cosmeticSlot = ApparelSlotEnum.properties[cosmeticSlot].key;
-        }
-        else {
-            return 2;
-        }
-        this.attachedCosmetics[cosmeticSlot][cosmetic.id] = cosmetic;
-        return 0;
-    }
-    detachCosmetic(cosmetic, cosmeticSlot = "") {
-        if (!(cosmetic instanceof Cosmetic)) {
-            cosmetic = Cosmetic.get(cosmetic);
-            if (!(cosmetic instanceof Cosmetic)) {
-                return 2;
-            }
-        }
-        if (this.attachedCosmetics.hasOwnProperty(cosmeticSlot)) {}
-        else if (ApparelSlotEnum.properties.hasOwnProperty(cosmeticSlot)) {
-            cosmeticSlot = ApparelSlotEnum.properties[cosmeticSlot].key;
-        }
-        else {
-            return 2;
-        }
-        delete this.attachedCosmetics[cosmeticSlot][cosmetic.id];
-        return 0;
-    }
 
     /**
      * Removes an InstancedItemEntity from this entity's Item array
      * @override
      * @param  {InstancedItemEntity} instancedItemEntity InstancedItemEntity, or ItemEntity, to be removed
+     * @param  {number} [count] 
+     * @param  {boolean} [tellGameWorker] 
      * @returns {this}
      */
-    removeItem(instancedItemEntity) {
+    removeItem(instancedItemEntity, count = 1, tellGameWorker = true) {
         if (!this.hasContainer()) {
             return 1;
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            this.container.getItem(instancedItemEntity);
+            instancedItemEntity = this.container.getItem(instancedItemEntity);
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             return 1;
         }
-        this.unequip(instancedItemEntity);
-        super.removeItem(instancedItemEntity);
-        return 0;
+        tellGameWorker = tellGameWorker == true;
+        let result = 0;
+        result = this.unequip(instancedItemEntity, tellGameWorker);
+        if (result != 0) {
+            return result;
+        }
+        result = this.container.removeItem(instancedItemEntity, count);
+        return result;
     }
 
     getMainWeapon() {
@@ -1134,7 +1088,6 @@ class CharacterEntity extends CreatureEntity {
         obj["weight"] = this.weight || 0;
         obj["height"] = this.height || 0;
         obj["width"] = this.width || 0;
-        obj["attachedCosmetics"] = this._objectifyProperty(this.attachedCosmetics);
         obj["equipment"] = this._objectifyProperty(this.equipment);
         obj["furColourA"] = this.furColourA;
         obj["_furColourAHex"] = this._furColourAHex;
@@ -1179,15 +1132,6 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         super.assign(entity, verify);
-        if (entity.hasOwnProperty("attachedCosmetics")) {
-            for (let cosmeticSlot in entity.attachedCosmetics) {
-                if (Object.keys(entity.attachedCosmetics[cosmeticSlot]).length > 0) {
-                    for (let cosmetic in entity.attachedCosmetics[cosmeticSlot]) {
-                        this.attachCosmetic(cosmetic);
-                    }
-                }
-            }
-        }
         if (entity.hasOwnProperty("equipment")) {
             for (let equipmentSlot in entity.equipment) {
                 if (Object.keys(entity.equipment[equipmentSlot]).length > 0) {

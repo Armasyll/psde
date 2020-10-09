@@ -1501,7 +1501,7 @@ class CreatureController extends EntityController {
                     }
                 }
                 else {
-                    cosmeticsObject = entityObject["cosmetics"][boneID];
+                    let cosmeticsObject = entityObject["cosmetics"][boneID];
                     if (cosmeticsObject.hasOwnProperty("meshID")) {
                         meshID = entityObject.cosmetics[boneID]["meshID"];
                         if (cosmeticsObject.hasOwnProperty("materialID")) {
@@ -1521,6 +1521,21 @@ class CreatureController extends EntityController {
         this.offensiveStance = entityObject.offensiveStance;
         if (EntityController.debugMode) console.info(`Finished running {CreatureController} ${this.id}.populateFromEntity(entityObject)`);
         if (EntityController.debugMode) console.groupEnd();
+        return 0;
+    }
+    updateFromEntity(thatEntity) {
+        super.updateFromEntity(thatEntity);
+        let thisEntity = Game.getCachedEntity(this.entityID);
+        if (thisEntity.hasOwnProperty("organs") && thatEntity.hasOwnProperty("organs")) {
+            for (let cosmeticSlot in thisEntity["organs"]) {
+                // TODO: this
+            }
+        }
+        if (thisEntity.hasOwnProperty("cosmetics") && thatEntity.hasOwnProperty("cosmetics")) {
+            for (let cosmeticSlot in thisEntity["cosmetics"]) {
+                // TODO: this
+            }
+        }
         return 0;
     }
     hasLookController() {
