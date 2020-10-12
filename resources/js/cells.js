@@ -517,9 +517,9 @@ packstreetApt3BasementCell.addCollidableMesh("basementDoorway", "craftsmanDoorwa
  packstreetApt3BasementCell.addCollidableMesh(undefined, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -14], [0, 0, 0]);
 
  packstreetApt3BasementCell.addTiledGround("basementStoneFloor", {xmin:0, zmin:0, xmax: 14, zmax: 14, subdivisions: {w:14, h:14}}, "stoneMaterial01", [-1, -3, -27]);
- packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling01", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "stoneMaterial01", [-1, -.05, -19]);
- packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling02", {xmin:0, zmin:0, xmax: 12, zmax: 14, subdivisions: {w:12, h:14}}, "stoneMaterial01", [1, -.05, -27]);
- packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling03", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "stoneMaterial01", [-1, -.05, -27]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling01", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "woodenFloorDark26", [-1, -.05, -19]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling02", {xmin:0, zmin:0, xmax: 12, zmax: 14, subdivisions: {w:12, h:14}}, "woodenFloorDark26", [1, -.05, -27]);
+ packstreetApt3BasementCell.addTiledCeiling("basementStoneCeiling03", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "woodenFloorDark26", [-1, -.05, -27]);
 
 let networkTestCell = new Cell("networkTestCell");
 networkTestCell.createBarrier(32);
