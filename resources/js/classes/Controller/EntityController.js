@@ -72,6 +72,9 @@ class EntityController {
         this.animated = false;
         this.groundRay = null;
         this.currentCell = null;
+        this.dead = false;
+        this.lastAnimation = null;
+        this.lastSubAnimation = null;
         this.assign(entityObject, false);
         this.setMesh(mesh);
         Game.transformsWorkerPostMessage(

@@ -59,7 +59,7 @@ class CharacterController extends CreatureController {
             this.createAnimationGroupFromAnimatables("running01", "running01", 0.0, true, (2 * this.getScaling().y));
             this.createAnimationGroupFromAnimatables("idleSitting01", "idleSitting01");
             this.createAnimationGroupFromAnimatables("idleLying01", "idleLying01");
-            this.createAnimationGroupFromAnimatables("idleDeath01", "idleDeath01");
+            this.createAnimationGroupFromAnimatables("idleLyingDeath01", "idleDeath01");
             /*this.createAnimationGroupFromAnimatables("punchRight", "punchRight");
             this.createAnimationGroupFromAnimatables("stabRight", "stabRight");*/
 
@@ -134,24 +134,12 @@ class CharacterController extends CreatureController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
         }
-        if (this.attacking) {
-            return 1;
-        }
-        this.attacking = true;
-        setTimeout(() => {this.attacking = false;}, 800);
-        //
         return 0;
     }
     doThrustRH() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 2;
-        }
-        if (this.attacking) {
             return 1;
         }
-        this.attacking = true;
-        setTimeout(() => {this.attacking = false;}, 800);
-        //
         return 0;
     }
 

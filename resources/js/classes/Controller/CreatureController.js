@@ -1704,14 +1704,28 @@ class CreatureController extends EntityController {
 
     updateAnimation() {
         let anim = this.animationGroups.idleStanding01;
+        if (this.dead) {
+            this.setLocked(true);
+        }
+        else if (this.locked) {
+            this.setLocked(false);
+        }
         if (this.moving) {
             if (this.falling) {}
             else if (this.crouching) {}
             else if (this.walking) {
-                anim = this.animationGroups.walking01;
+                if (this.dead) {
+                }
+                else {
+                    anim = this.animationGroups.walking01;
+                }
             }
             else if (this.running) {
-                anim = this.animationGroups.running01;
+                if (this.dead) {
+                }
+                else {
+                    anim = this.animationGroups.running01;
+                }
             }
             else if (this.sprinting) {}
             else if (this.climbing) {}
@@ -1723,10 +1737,19 @@ class CreatureController extends EntityController {
             }
             else if (this.crouching) {}
             else if (this.sitting) {
-                anim = this.animationGroups.idleSitting01;
+                if (this.dead) {
+                }
+                else {
+                    anim = this.animationGroups.idleSitting01;
+                }
             }
             else if (this.lying) {
-                anim = this.animationGroups.idleLying01;
+                if (this.dead) {
+                    anim = this.animationGroups.idleLyingDeath01;
+                }
+                else {
+                    anim = this.animationGroups.idleLying01;
+                }
             }
         }
         this.beginAnimation(anim);
@@ -1760,8 +1783,7 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
-        this.setLocked(true);
-        this.beginAnimation(this.death);
+        this.dead = true;
         return 0;
     }
     doLay() {
@@ -1772,7 +1794,6 @@ class CreatureController extends EntityController {
         this.crouching = false;
         this.sitting = false;
         this.lying = true;
-        this.beginAnimation(this.lieDown);
         return 0;
     }
     doSit() {
@@ -1783,7 +1804,6 @@ class CreatureController extends EntityController {
         this.crouching = false;
         this.sitting = true;
         this.lying = false;
-        this.beginAnimation(this.sitDown);
         return 0;
     }
     doStand() {
@@ -1794,8 +1814,8 @@ class CreatureController extends EntityController {
         this.crouching = false;
         this.sitting = false;
         this.lying = false;
-        this.setLocked(true);
-        this.beginAnimation(this.stand, () => {this.setLocked(false)});
+        //this.setLocked(true);
+        //this.beginAnimation(this.stand, () => {this.setLocked(false)});
         return 0;
     }
 

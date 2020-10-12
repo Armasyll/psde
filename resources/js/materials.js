@@ -1,6 +1,6 @@
 Game.loadMaterial("stoneMaterial01", "stoneTexture01", "stoneTexture01-NORMAL", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
 Game.loadMaterial("woodenFloorDark01", "woodenFloorDark01-DIFFUSE", "woodenFloorDark01-NORMAL", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
-Game.loadMaterial("woodenFloorDark26", "woodenFloorDark26-DIFFUSE", "woodenFloorDark26-NORMAL", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
+Game.loadMaterial("woodenFloorDark26", "woodenFloorDark05BySmeggo");
 Game.loadMaterial("grass01", "grass01", undefined, {"hasAlpha":true, "backFaceCulling":false});
 Game.loadMaterial("wheat_stage_0", "wheat_stage_0", undefined, {"hasAlpha":true, "backFaceCulling":false});
 Game.loadMaterial("wheat_stage_1", "wheat_stage_1", undefined, {"hasAlpha":true, "backFaceCulling":false});
