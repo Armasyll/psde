@@ -1,0 +1,5 @@
+class InventoryEquipmentGameGUI {
+    static initialize() {
+
+    }
+}

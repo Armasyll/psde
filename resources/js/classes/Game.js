@@ -604,6 +604,7 @@ class Game {
             "genericShirtIcon": "resources/images/icons/genericShirtIcon.svg",
             "genericBagIcon": "resources/images/icons/genericBagIcon.svg",
             "genericMoneyIcon": "resources/images/icons/genericMoneyIcon.svg",
+            "genericShieldIcon": "resources/images/icons/genericShieldIcon.svg",
         };
         /**
          * Map of Sound file locations per ID; one to one
@@ -1946,7 +1947,7 @@ class Game {
         return 0;
     }
     static getIcon(iconID) {
-        if (Game.hasIcon(iconID)) {
+        if (Game.iconLocations.hasOwnProperty(iconID)) {
             return Game.iconLocations[iconID];
         }
         else {
