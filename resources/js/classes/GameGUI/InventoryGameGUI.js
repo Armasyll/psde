@@ -29,8 +29,8 @@ class InventoryGameGUI {
         InventoryGameGUI.containerAlpha = 1.0;
         InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedTarget = null;
-        InventoryGameGUI.selectedActor = null;
-        InventoryGameGUI.selectedTab = null;
+        InventoryGameGUI.selectedActor = Game.playerController;
+        InventoryGameGUI.selectedTab = ItemEnum.GENERAL;
     }
     static resize() {
         if (InventoryGameGUI.initialized != true) {
@@ -96,21 +96,21 @@ class InventoryGameGUI {
                     InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
                     InventoryGameGUI.tabs.width = InventoryGameGUI.tabsAndItems.width;
                     InventoryGameGUI.tabs.isVertical = false;
-                        InventoryGameGUI.tabsAll = InventoryGameGUI._generateTabButton("tabsAll", "All", Game.getIcon("genericBagIcon"));
+                        InventoryGameGUI.tabsAll = InventoryGameGUI._generateTabButton("tabsAll", "All", Game.getIcon("genericBagIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.GENERAL; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsAll);
-                        InventoryGameGUI.tabsClothing = InventoryGameGUI._generateTabButton("tabsClothing", "Clothing", Game.getIcon("genericShirtIcon"));
+                        InventoryGameGUI.tabsClothing = InventoryGameGUI._generateTabButton("tabsClothing", "Clothing", Game.getIcon("genericShirtIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.APPAREL; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsClothing);
-                        InventoryGameGUI.tabsWeapons = InventoryGameGUI._generateTabButton("tabsWeapons", "Weapons", Game.getIcon("genericSwordIcon"));
+                        InventoryGameGUI.tabsWeapons = InventoryGameGUI._generateTabButton("tabsWeapons", "Weapons", Game.getIcon("genericSwordIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.WEAPON; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsWeapons);
-                        InventoryGameGUI.tabsShields = InventoryGameGUI._generateTabButton("tabsShields", "Shields", Game.getIcon("genericShieldIcon"));
+                        InventoryGameGUI.tabsShields = InventoryGameGUI._generateTabButton("tabsShields", "Shields", Game.getIcon("genericShieldIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.SHIELDS; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsShields);
-                        InventoryGameGUI.tabsConsumables = InventoryGameGUI._generateTabButton("tabsConsumables", "Consumables", Game.getIcon("genericBagIcon"));
+                        InventoryGameGUI.tabsConsumables = InventoryGameGUI._generateTabButton("tabsConsumables", "Consumables", Game.getIcon("genericBagIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.CONSUMABLE; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsConsumables);
-                        InventoryGameGUI.tabsBooks = InventoryGameGUI._generateTabButton("tabsBooks", "Books", Game.getIcon("genericBagIcon"));
+                        InventoryGameGUI.tabsBooks = InventoryGameGUI._generateTabButton("tabsBooks", "Books", Game.getIcon("genericBagIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.BOOK; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsBooks);
-                        InventoryGameGUI.tabsKeys = InventoryGameGUI._generateTabButton("tabsKeys", "Keys", Game.getIcon("genericBagIcon"));
+                        InventoryGameGUI.tabsKeys = InventoryGameGUI._generateTabButton("tabsKeys", "Keys", Game.getIcon("genericBagIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.KEY; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsKeys);
-                        InventoryGameGUI.tabsMisc = InventoryGameGUI._generateTabButton("tabsMisc", "Misc", Game.getIcon("genericBagIcon"));
+                        InventoryGameGUI.tabsMisc = InventoryGameGUI._generateTabButton("tabsMisc", "Misc", Game.getIcon("genericBagIcon"), function() {InventoryGameGUI.selectedTab = ItemEnum.TRASH; InventoryGameGUI.update();});
                         InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsMisc);
                     InventoryGameGUI.tabsAndItems.addControl(InventoryGameGUI.tabs);
                 InventoryGameGUI.itemsContainer = new BABYLON.GUI.ScrollViewer("itemsContainer");
@@ -209,6 +209,9 @@ class InventoryGameGUI {
         InventoryGameGUI.controller.isVisible = false;
         InventoryGameGUI.isVisible = false;
     }
+    static update() {
+        return InventoryGameGUI.set(InventoryGameGUI.selectedTarget);
+    }
     /**
      * Sets the inventory menu's content using an entity's inventory.
      * @param {AbstractEntity} entityController The Entity with the inventory.
@@ -224,10 +227,11 @@ class InventoryGameGUI {
         }
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setResponse);
-        Game.entityLogicWorkerPostMessage("getInventory", 0, [entityController.entityID], callbackID);
+        Game.entityLogicWorkerPostMessage("getInventory", 0, {"entityID":entityController.entityID, "filter":InventoryGameGUI.selectedTab}, callbackID);
         return 0;
     }
     static setResponse(entityController, response, parentCallbackID) {
+        InventoryGameGUI.selectedTarget = entityController;
         InventoryGameGUI.resize();
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             let entry = InventoryGameGUI.items.children[i];
@@ -391,8 +395,6 @@ class InventoryGameGUI {
      * Clears the inventory menu's selected item section.
      */
     static clearSelected() {
-        InventoryGameGUI.selectedTarget = null;
-        InventoryGameGUI.selectedActor = null;
         InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedName.text = "";
         InventoryGameGUI.selectedImage.source = "";

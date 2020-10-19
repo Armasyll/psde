@@ -587,17 +587,15 @@ class EntityLogic {
             }
             case "getInventory": {
                 let obj = {};
-                message.forEach((entityID) => {
-                    let entity = AbstractEntity.get(entityID);
-                    if (entity != 1 && entity.hasContainer()) {
-                        let entityObj = {};
-                        entityObj["id"] = entity.id;
-                        entityObj["controller"] = entity.controller;
-                        entityObj["container"] = entity.container.objectifyMinimal();
-                        entityObj["money"] = entity.money;
-                        obj[entityID] = JSON.stringify(entityObj);
-                    }
-                });
+                let entity = AbstractEntity.get(message["entityID"]);
+                if (entity != 1 && entity.hasContainer()) {
+                    let entityObj = {};
+                    entityObj["id"] = entity.id;
+                    entityObj["controller"] = entity.controller;
+                    entityObj["container"] = entity.container.objectifyMinimal(message["filter"]);
+                    entityObj["money"] = entity.money;
+                    obj[entity.id] = JSON.stringify(entityObj);
+                }
                 EntityLogic.gameWorkerPostMessage("getInventory", 0, obj, callbackID);
                 break;
             }
