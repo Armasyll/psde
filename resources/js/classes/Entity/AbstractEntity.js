@@ -542,24 +542,34 @@ class AbstractEntity {
      * @param {number} [count]
      * @returns {number} 
      */
-    addItem(instancedItemEntity, count = 1) {
+    addItem(instancedItemEntity, count = 1, tellGameWorker = true) {
         if (!this.hasContainer()) {
             if (this.createContainer() != 0) {
                 return 2;
             }
         }
-        return this.container.addItem(instancedItemEntity, count);
+        tellGameWorker = tellGameWorker == true;
+        let result = this.container.addItem(instancedItemEntity, count);
+        if (result == 0 && tellGameWorker) {
+            EntityLogic.sendEntityUpdate(this, "container");
+        }
+        return result;
     }
     /**
      * 
      * @param {abstractEntity} abstractEntity 
      * @param {number} [count] 
      */
-    removeItem(abstractEntity, count = 1) {
+    removeItem(abstractEntity, count = 1, tellGameWorker = true) {
         if (!this.hasContainer()) {
             return 1;
         }
-        return this.container.removeItem(abstractEntity, count, tellGameWorker);
+        tellGameWorker = tellGameWorker == true;
+        let result = this.container.removeItem(abstractEntity, count, tellGameWorker);
+        if (result == 0 && tellGameWorker) {
+            EntityLogic.sendEntityUpdate(this, "container");
+        }
+        return result;
     }
     /**
      * 

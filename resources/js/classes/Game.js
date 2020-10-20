@@ -3845,6 +3845,18 @@ class Game {
             }
         }
     }
+    static createItemInstanceAtController(id = "", entityID, atController, rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
+        atController = Game.filterController(atController);
+        if (atController == 1) {
+            return 1;
+        }
+        let position = atController.getPosition();
+        if (rotation.equals(BABYLON.Vector3.Zero())) {
+            rotation = atController.getRotation();
+        }
+        Game.createItemInstance(id, entityID, position, rotation, scaling, options, parentCallbackID);
+        return 0;
+    }
     /**
      * Places, or creates from an ItemEntity, an InstancedItemEntity in the world at the given position.
      * @memberof module:items
@@ -4959,11 +4971,6 @@ class Game {
     }
     static actionDropResponse(targetController, actorController, response, parentCallbackID) {
         if (response) {
-            /*
-            TODO: if the inventory is open, update it;
-                if the inventory selection was the target, clear it
-            */
-            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID]);
         }
         return 0;
     }
@@ -4997,7 +5004,6 @@ class Game {
         if (response) {
             let callbackID = Tools.genUUIDv4();
             Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionEquipResponsePhaseTwo);
-            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID], callbackID);
         }
         return 0;
     }
@@ -5131,7 +5137,6 @@ class Game {
         if (response) {
             let callbackID = Tools.genUUIDv4();
             Game.createCallback(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
-            Game.entityLogicWorkerPostMessage("getEquipment", 0, [actorController.entityID], callbackID);
         }
         return 0;
     }
@@ -5820,6 +5825,7 @@ class Game {
         switch (event.data["cmd"]) {
             case "actionAttack":
             case "actionClose":
+            case "actionDrop":
             case "actionEquip":
             case "actionOpen":
             case "actionUnequip": {
@@ -5860,6 +5866,10 @@ class Game {
                     Game.callbacks[callbackID]["hasRun"] = true;
                     Game.callbacks[callbackID]["status"] = 1;
                 }
+                break;
+            }
+            case "createItemInstanceAtController": {
+                Game.createItemInstanceAtController(message["entityID"], message["entityID"], message["controllerID"]);
                 break;
             }
             case "getCell": {
@@ -6212,6 +6222,12 @@ class Game {
         if (EntityController.has(id)) {
             EntityController.get(id).updateFromEntity(object);
         }
+        let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
+        if (Game.cachedEntities.hasOwnProperty(id)) {
+            if (Game.cachedEntities[id].hasContainer) {
+                containerLength = Game.cachedEntities[id]["container"]["size"];
+            }
+        }
         Object.assign(Game.cachedEntities[id], object);
         if (!Game.hasPlayerController()) {
             return 0;
@@ -6221,6 +6237,13 @@ class Game {
         }
         else if (Game.gui.inventoryMenu.hasSelected() && Game.gui.inventoryMenu.selectedEntity.id == id) {
             Game.gui.inventoryMenu.updateSelected();
+        }
+        if (Game.gui.inventoryMenu.isVisible) {
+            if (Game.cachedEntities[id].hasContainer) {
+                if (containerLength != Game.cachedEntities[id]["container"]["size"]) {
+                    Game.gui.inventoryMenu.update();
+                }
+            }
         }
         return 0;
     }

@@ -220,6 +220,27 @@ class EntityLogic {
                 break;
             }
             case "actionDrop": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionDrop", 1, null, callbackID);
+                    break;
+                }
+                let result = false;
+                if (target.equipped) {
+                    result = actor.unequip(target) == 0;
+                    if (!result) {
+                        EntityLogic.gameWorkerPostMessage("actionDrop", 202, null, callbackID); // TODO: plan an integer response system; 202 isn't catastrophic failure in this instance :l
+                        break;
+                    }
+                }
+                result = actor.removeItem(target) == 0;
+                if (!result) {
+                    EntityLogic.gameWorkerPostMessage("actionDrop", 203, null, callbackID); // !!
+                    break;
+                }
+                EntityLogic.gameWorkerPostMessage("actionDrop", 0, result, callbackID);
+                EntityLogic.gameWorkerPostMessage("createItemInstanceAtController", 0, {"entityID":target.id, "controllerID":actor.getController()}, callbackID);
                 break;
             }
             case "actionEquip": {

@@ -450,17 +450,22 @@ class CharacterEntity extends CreatureEntity {
         }
         if (!(instancedItemEntity instanceof InstancedItemEntity)) {
             instancedItemEntity = this.container.getItem(instancedItemEntity);
-        }
-        if (!(instancedItemEntity instanceof InstancedItemEntity)) {
-            return 1;
+            if (!(instancedItemEntity instanceof InstancedItemEntity)) {
+                return 1;
+            }
         }
         tellGameWorker = tellGameWorker == true;
         let result = 0;
-        result = this.unequip(instancedItemEntity, tellGameWorker);
-        if (result != 0) {
-            return result;
+        if (instancedItemEntity.equipped) {
+            result = this.unequip(instancedItemEntity, tellGameWorker);
+            if (result != 0) {
+                return result;
+            }
         }
         result = this.container.removeItem(instancedItemEntity, count);
+        if (result == 0 && tellGameWorker) {
+            EntityLogic.sendEntityUpdate(this, "container");
+        }
         return result;
     }
 
