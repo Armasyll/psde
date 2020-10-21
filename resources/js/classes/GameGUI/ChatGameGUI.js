@@ -9,6 +9,10 @@ class ChatGameGUI {
         ChatGameGUI.isVisible = false;
         ChatGameGUI.controller = ChatGameGUI.generateController();
         ChatGameGUI.containerAlpha = 0.75;
+        ChatGameGUI.defaultWidthInPixels = GameGUI.getFontSize(24);
+        ChatGameGUI.defaultHeightInPixels = Game.renderHeight / 3;
+        ChatGameGUI.posX = 0;
+        ChatGameGUI.posY = 0;
     }
     static resize() {
         if (ChatGameGUI.initialized != true) {
@@ -20,8 +24,8 @@ class ChatGameGUI {
         let controller = GameGUI.createRectangle("chatBox");
         controller.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
         controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        controller.height = 0.3;
-        controller.width = GameGUI.getFontSize(24);
+        controller.height = String(ChatGameGUI.defaultHeightInPixels).concat("px");
+        controller.width = String(ChatGameGUI.defaultHeightInPixels).concat("px");
         controller.isVertical = true;
         controller.alpha = ChatGameGUI.containerAlpha;
             let chatOutputContainer = GameGUI.createRectangle("chatOutputContainer");

@@ -507,7 +507,7 @@ class GameGUI {
      * @param {string} [subTitle] 
      * @param {string} [iconPath] 
      */
-    static _generateButton(id = "", title = "", subTitle = "", iconPath = null) {
+    static createButton(id = "", title = "", subTitle = "", iconPath = null) {
         id = Game.filterID(id);
         let button = new BABYLON.GUI.Button(id);
         button.width = GameGUI.getFontSize(9);
@@ -806,5 +806,59 @@ class GameGUI {
             return GameGUI.lock();
         }
         return GameGUI.unlock();
+    }
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} [titleString] 
+     * @param {number} [widthInPixels] 
+     * @param {number} [heightInPixels] 
+     * @param {number} [bodyContainerType] 0 for ScrollViewer, 1 for Rectangle, 2 for StackPanel
+     * @returns {array} [controller, titleBar, title, closeButton, bodyContainer]
+     */
+    static createWindow(id = "", titleString = "Title :V", widthInPixels = Game.renderWidth, heightInPixels = Game.renderHeight, bodyContainerType = 0) {
+        titleString = Tools.filterID(titleString);
+        widthInPixels = Tools.filterInt(widthInPixels) || Game.renderWidth;
+        heightInPixels = Tools.filterInt(heightInPixels) || Game.renderHeight;
+        let controller = GameGUI.createStackPanel(id);
+            controller.width = String(widthInPixels).concat("px");
+            controller.height = String(heightInPixels).concat("px");
+            controller.isVertical = true;
+            controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            controller.isVisible = false;
+        let titleBar = GameGUI.createStackPanel(String(id).concat("TitleBar"));
+            titleBar.width = controller.width;
+            titleBar.height = GameGUI.getFontSize(2);
+            titleBar.isVertical = false;
+            titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        let title = GameGUI.createTextBlock(String(id).concat("Title"));
+            title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+            title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
+            title.text = titleString;
+            titleBar.addControl(title);
+        let closeButton = GameGUI.createSimpleButton(String(id).concat("CloseButton"), "X");
+            closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            closeButton.width = GameGUI.getFontSize(2);
+            closeButton.height = GameGUI.getFontSize(2);
+            titleBar.addControl(closeButton);
+        controller.addControl(titleBar);
+        let bodyContainer = null;
+        if (bodyContainerType == 0) {
+            bodyContainer = new BABYLON.GUI.ScrollViewer(String(id).concat("BodyContainer"));
+            bodyContainer._horizontalBarSpace.isVisible = false;
+            bodyContainer._horizontalBarSpace.isEnabled = false;
+        }
+        else if (bodyContainerType == 1) {
+            bodyContainer = new BABYLON.GUI.Rectangle(String(id).concat("BodyContainer"));
+        }
+        else {
+            bodyContainer = GameGUI.createStackPanel(String(id).concat("BodyContainer"));
+        }
+        bodyContainer.width = controller.width;
+        bodyContainer.height = String(controller.heightInPixels - GameGUI.getFontSizeInPixels(8)).concat("px");
+        bodyContainer.thickness = 0;
+        bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        controller.addControl(bodyContainer);
+        return [controller,titleBar,title,closeButton,bodyContainer];
     }
 }

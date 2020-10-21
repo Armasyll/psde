@@ -12,14 +12,18 @@ class DialogueGameGUI {
         DialogueGameGUI.optionsColC = null;
         DialogueGameGUI.dialogueOptions = new Array();
         DialogueGameGUI.isVisible = false;
-        DialogueGameGUI.controller = DialogueGameGUI.generateController();
+        DialogueGameGUI.defaultWidthInPixels = Game.renderWidth / 2;
+        DialogueGameGUI.defaultHeightInPixels = Game.renderHeight * 2 / 3;
+        DialogueGameGUI.posX = 0;
+        DialogueGameGUI.posY = 0;
+        DialogueGameGUI.generateController();
     }
     static resize() {
         if (DialogueGameGUI.initialized != true) {
             return 1;
         }
-        DialogueGameGUI.controller.width = String(Game.renderWidth / 2).concat("px");
-        DialogueGameGUI.controller.height = String(Game.renderHeight * 2 / 3).concat("px");
+        DialogueGameGUI.controller.width = String(DialogueGameGUI.defaultWidthInPixels).concat("px");
+        DialogueGameGUI.controller.height = String(DialogueGameGUI.defaultHeightInPixels).concat("px");
             DialogueGameGUI.titleBar.width = DialogueGameGUI.controller.width;
             DialogueGameGUI.titleBar.height = GameGUI.getFontSize(2);
                 DialogueGameGUI.title.width = String(DialogueGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
@@ -27,9 +31,9 @@ class DialogueGameGUI {
                 DialogueGameGUI.closeButton.height = GameGUI.getFontSize(2);
             DialogueGameGUI.bodyContainer.width = DialogueGameGUI.controller.width;
             DialogueGameGUI.bodyContainer.height = String(DialogueGameGUI.controller.heightInPixels - GameGUI.getFontSizeInPixels(8)).concat("px");
-                DialogueGameGUI.body.width = DialogueGameGUI.controller.width;
+                DialogueGameGUI.body.width = DialogueGameGUI.bodyContainer.width;
                 DialogueGameGUI.body.height = DialogueGameGUI.bodyContainer.height;
-            DialogueGameGUI.optionsContainer.width = DialogueGameGUI.controller.width;
+            DialogueGameGUI.optionsContainer.width = DialogueGameGUI.bodyContainer.width;
             DialogueGameGUI.optionsContainer.height = GameGUI.getFontSize(6);
                 DialogueGameGUI.optionsColA.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
                 DialogueGameGUI.optionsColA.height = GameGUI.getFontSize(6);
@@ -48,90 +52,55 @@ class DialogueGameGUI {
             [----------------------------]
             [Options                     ]
          */
-        var controller = GameGUI.createStackPanel("dialogueContainer");
-            controller.width = String(Game.renderWidth / 2).concat("px");
-            controller.height = String(Game.renderHeight * 2 / 3).concat("px");
-            controller.isVertical = true;
-            controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-            var titleBar = GameGUI.createStackPanel("dialogueTitleBar");
-                titleBar.width = controller.width;
-                titleBar.height = GameGUI.getFontSize(2);
-                titleBar.isVertical = false;
-                titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                var title = GameGUI.createTextBlock("dialogueTitle");
-                    title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-                    title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
-                    title.text = "Title :V";
-                titleBar.addControl(title);
-                var closeButton = GameGUI.createSimpleButton("close", "X");
-                    closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-                    closeButton.width = GameGUI.getFontSize(2);
-                    closeButton.height = GameGUI.getFontSize(2);
-                titleBar.addControl(closeButton);
-            controller.addControl(titleBar);
-            var bodyContainer = new BABYLON.GUI.Rectangle("dialogueBodyContainer"); // TODO: Replace with ScrollViewer when it becomes available
-                bodyContainer.width = controller.width;
-                bodyContainer.height = String(controller.heightInPixels - GameGUI.getFontSizeInPixels(8)).concat("px");
-                bodyContainer.thickness = 0;
-                bodyContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                var body = GameGUI.createTextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
-                    body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                    body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    body.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                    body.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                    body.textWrapping = BABYLON.GUI.TextWrapping.WordWrap;
-                    body.resizeToFit = true;
-                    body.width = controller.width;
-                    body.height = bodyContainer.height;
-                    body.paddingTop = "8px";
-                    body.paddingRight = "8px";
-                    body.paddingBottom = "8px";
-                    body.paddingLeft = "8px";
-                    body.text = "\"Who draw dis? :v\"";
-                bodyContainer.addControl(body);
-            controller.addControl(bodyContainer);
-            var optionsContainer = GameGUI.createStackPanel("dialogueOptionsContainer");
-                optionsContainer.isVertical = false;
-                optionsContainer.width = controller.width;
-                optionsContainer.height = GameGUI.getFontSize(6);
-                optionsContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-                var optionsColA = GameGUI.createStackPanel();
-                    optionsColA.isVertical = true;
-                    optionsColA.width = String(optionsContainer.widthInPixels / 3).concat("px");
-                    optionsColA.height = GameGUI.getFontSize(6);
-                optionsContainer.addControl(optionsColA);
-                var optionsColB = GameGUI.createStackPanel();
-                    optionsColB.isVertical = true;
-                    optionsColB.width = String(optionsContainer.widthInPixels / 3).concat("px");
-                    optionsColB.height = GameGUI.getFontSize(6);
-                optionsContainer.addControl(optionsColB);
-                var optionsColC = GameGUI.createStackPanel();
-                    optionsColC.isVertical = true;
-                    optionsColC.width = String(optionsContainer.widthInPixels / 3).concat("px");
-                    optionsColC.height = GameGUI.getFontSize(6);
-                optionsContainer.addControl(optionsColC);
-            controller.addControl(optionsContainer);
+        [DialogueGameGUI.controller, DialogueGameGUI.titleBar, DialogueGameGUI.title, DialogueGameGUI.closeButton, DialogueGameGUI.bodyContainer] = GameGUI.createWindow("dialogue", "Dialogue", DialogueGameGUI.defaultWidthInPixels, DialogueGameGUI.defaultHeightInPixels, 0);
+        DialogueGameGUI.body = GameGUI.createTextBlock("dialogueBody"); // TODO: Fix text clipping after resizing to larger innerWindow
+            DialogueGameGUI.body.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            DialogueGameGUI.body.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            DialogueGameGUI.body.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            DialogueGameGUI.body.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            DialogueGameGUI.body.textWrapping = BABYLON.GUI.TextWrapping.WordWrap;
+            DialogueGameGUI.body.resizeToFit = true;
+            DialogueGameGUI.body.width = DialogueGameGUI.bodyContainer.width;
+            DialogueGameGUI.body.height = DialogueGameGUI.bodyContainer.height;
+            DialogueGameGUI.body.paddingTop = "8px";
+            DialogueGameGUI.body.paddingRight = "8px";
+            DialogueGameGUI.body.paddingBottom = "8px";
+            DialogueGameGUI.body.paddingLeft = "8px";
+            DialogueGameGUI.body.text = "\"Who draw dis? :v\"";
+        DialogueGameGUI.bodyContainer.addControl(DialogueGameGUI.body);
+
+        DialogueGameGUI.optionsContainer = GameGUI.createStackPanel("dialogueOptionsContainer");
+            DialogueGameGUI.optionsContainer.isVertical = false;
+            DialogueGameGUI.optionsContainer.width = DialogueGameGUI.bodyContainer.width;
+            DialogueGameGUI.optionsContainer.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            DialogueGameGUI.optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            DialogueGameGUI.optionsColA = GameGUI.createStackPanel();
+                DialogueGameGUI.optionsColA.isVertical = true;
+                DialogueGameGUI.optionsColA.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColA.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColA);
+            DialogueGameGUI.optionsColB = GameGUI.createStackPanel();
+                DialogueGameGUI.optionsColB.isVertical = true;
+                DialogueGameGUI.optionsColB.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColB.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColB);
+            
+            DialogueGameGUI.optionsColC = GameGUI.createStackPanel();
+                DialogueGameGUI.optionsColC.isVertical = true;
+                DialogueGameGUI.optionsColC.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColC.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColC);
+        DialogueGameGUI.bodyContainer.addControl(DialogueGameGUI.optionsContainer);
         
-        closeButton.onPointerUpObservable.add(function() {
+        DialogueGameGUI.closeButton.onPointerUpObservable.add(function() {
             DialogueGameGUI.clearOptions();
             DialogueGameGUI.hide();
         });
         
-        controller.isVisible = false;
-        controller.zIndex = 15;
-        DialogueGameGUI.controller = controller;
-        DialogueGameGUI.titleBar = titleBar;
-        DialogueGameGUI.title = title;
-        DialogueGameGUI.closeButton = closeButton;
-        DialogueGameGUI.bodyContainer = bodyContainer;
-        DialogueGameGUI.body = body;
-        DialogueGameGUI.optionsContainer = optionsContainer;
-        DialogueGameGUI.optionsColA = optionsColA;
-        DialogueGameGUI.optionsColB = optionsColB;
-        DialogueGameGUI.optionsColC = optionsColC;
+        DialogueGameGUI.controller.zIndex = 15;
         DialogueGameGUI.initialized = true;
-        return controller;
+        return DialogueGameGUI.controller;
     }
     static getController() {
         return DialogueGameGUI.controller;
