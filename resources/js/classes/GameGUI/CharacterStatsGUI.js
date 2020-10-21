@@ -1682,24 +1682,24 @@ class CharacterStatsGUI {
         //CharacterStatsGUI.alignmentField.text = creatureEntity.get();
         CharacterStatsGUI.xpField.text = String(response.experiencePoints);
         let checkbox = false;
-        let number = DND5E.calculateAbilityModifier(response.abilityScore["STRENGTH"]);
+        let number = DND5E.calculateAbilityModifier(response.strength);
         CharacterStatsGUI.strengthAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.strengthAbilityField.text = String(response.abilityScore["STRENGTH"]);
-        number = DND5E.calculateAbilityModifier(response.abilityScore["DEXTERITY"]);
+        CharacterStatsGUI.strengthAbilityField.text = String(response.strength);
+        number = DND5E.calculateAbilityModifier(response.dexterity);
         CharacterStatsGUI.dexterityAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.dexterityAbilityField.text = String(response.abilityScore["DEXTERITY"])
-        number = DND5E.calculateAbilityModifier(response.abilityScore["CONSTITUTION"]);
+        CharacterStatsGUI.dexterityAbilityField.text = String(response.dexterity)
+        number = DND5E.calculateAbilityModifier(response.constitution);
         CharacterStatsGUI.constitutionAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.constitutionAbilityField.text = String(response.abilityScore["CONSTITUTION"]);
-        number = DND5E.calculateAbilityModifier(response.abilityScore["INTELLIGENCE"]);
+        CharacterStatsGUI.constitutionAbilityField.text = String(response.constitution);
+        number = DND5E.calculateAbilityModifier(response.intelligence);
         CharacterStatsGUI.intelligenceAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.intelligenceAbilityField.text = String(response.abilityScore["INTELLIGENCE"]);
-        number = DND5E.calculateAbilityModifier(response.abilityScore["WISDOM"]);
+        CharacterStatsGUI.intelligenceAbilityField.text = String(response.intelligence);
+        number = DND5E.calculateAbilityModifier(response.wisdom);
         CharacterStatsGUI.wisdomAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.wisdomAbilityField.text = String(response.abilityScore["WISDOM"]);
-        number = DND5E.calculateAbilityModifier(response.abilityScore["CHARISMA"]);
+        CharacterStatsGUI.wisdomAbilityField.text = String(response.wisdom);
+        number = DND5E.calculateAbilityModifier(response.charisma);
         CharacterStatsGUI.charismaAbilityModifier.text = String((number > 0 ? "+" : "") + number);
-        CharacterStatsGUI.charismaAbilityField.text = String(response.abilityScore["CHARISMA"]);
+        CharacterStatsGUI.charismaAbilityField.text = String(response.charisma);
         
         CharacterStatsGUI.passiveWisdomField.text = String(response.passivePerception);
         number = response.proficiencyBonus;
@@ -1736,7 +1736,7 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowConstitutionField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowConstitutionCheckbox.isChecked = checkbox;
-        number = DND5E.calculateAbilityModifier(creatureController.intelligence);
+        number = DND5E.calculateAbilityModifier(response.intelligence);
         if (response.proficiencies.hasOwnProperty("INTELLIGENCE")) {
             number += response.proficiencyBonus;
             checkbox = true;
@@ -1746,7 +1746,7 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowIntelligenceField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowIntelligenceCheckbox.isChecked = checkbox;
-        number = DND5E.calculateAbilityModifier(creatureController.wisdom);
+        number = DND5E.calculateAbilityModifier(response.wisdom);
         if (response.proficiencies.hasOwnProperty("WISDOM")) {
             number += response.proficiencyBonus;
             checkbox = true;
@@ -1756,7 +1756,7 @@ class CharacterStatsGUI {
         }
         CharacterStatsGUI.savingThrowWisdomField.text = String((number > 0 ? "+" : "") + number);
         CharacterStatsGUI.savingThrowWisdomCheckbox.isChecked = checkbox;
-        number = DND5E.calculateAbilityModifier(creatureController.charisma);
+        number = DND5E.calculateAbilityModifier(response.charisma);
         if (response.proficiencies.hasOwnProperty("CHARISMA")) {
             number += response.proficiencyBonus;
             checkbox = true;
