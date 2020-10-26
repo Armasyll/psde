@@ -1307,17 +1307,17 @@ class EntityLogic {
             }
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
-                    attackRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
+                    attackRoll += DND5E.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else {
-                    attackRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
+                    attackRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
                 }
             }
             else if (weapon.isRange()) {
-                attackRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
+                attackRoll += DND5E.calculateAbilityModifier(attacker.getDexterity());
             }
             else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
-                attackRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
+                attackRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
             }
         }
         else if (weapon instanceof Spell) {
@@ -1382,25 +1382,25 @@ class EntityLogic {
             damageRoll = DND.roll(weapon.getDamageRollCount() * (critical ? 2 : 1), weapon.getDamageRoll());
             if (weapon.isFinesse()) {
                 if (attacker.getDexterity() > attacker.getStrength()) {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
                 }
             }
             else {
                 let weaponCategory = weapon.getWeaponCategory();
                 if (weaponCategory == WeaponCategoryEnum.SIMPLE_RANGED) {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.MARTIAL_RANGED) {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getDexterity());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getDexterity());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.SIMPLE_MELEE) {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
                 }
                 else if (weaponCategory == WeaponCategoryEnum.MARTIAL_MELEE) {
-                    damageRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
+                    damageRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
                 }
             }
         }
