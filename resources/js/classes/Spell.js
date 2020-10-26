@@ -28,13 +28,14 @@ class Spell {
         this.castingTime = 0; // In actions; 0 is instant
         this.reaction = false;
         this.targetRange = 0;
-        this.spellComponents = {};
+        this.spellComponents = {}; // TODO: remember what this is :v
+        this.materialComponents = [];
         this.duration = 0; // In actions; 0 is instant
+        this.damageType = DamageEnum.NONE;
         this.damageRollCount = 0;
         this.damageRollCountModifier = 0;
         this.damageRollFaces = 0;
         this.damageRollFacesModifier = 0;
-        this.damageType = DamageEnum.NONE;
         this.bonusAction = false; // If this is true, ignore castingTime
         this.concentration = false;
         /* 
@@ -42,9 +43,24 @@ class Spell {
         */
         this.savingAbility = AbilityEnum.NONE;
         this.savingAbilityScore = 0;
-        this.savingAbilityMultiplier = 0.0;
 
-        this.additionalSlotRolls = {1:[0,0],2:[0,0],3:[0,0],4:[0,0],5:[0,0],6:[0,0],7:[0,0],8:[0,0],9:[0,0]};
+        this.additionalSlotRolls = {};
+        for (let i = 0; i < 13; i++) {
+            this.additionalSlotRolls[i] = [0,0];
+        }
+        this.additionalLevelRolls = {};
+        for (let i = 1; i < 21; i++) {
+            this.additionalLevelRolls[i] = [0,0];
+        }
+        this.additionalSlotTargets = {};
+        for (let i = 0; i < 13; i++) {
+            this.additionalSlotTargets[i] = [0,0];
+        }
+        /**
+         * @type {Object.<number:Array<Object.{effect:Effect, targetType:TargetEnum}>>>}
+         * @example {20:[{"effect":Fireball, "targetType":0}, {"effect":Fire Bolt, "targetType":0}]}
+         */
+        this.effectsPriority = {};
 
         this.targetType = TargetEnum.SELF;
         this.targetRadius = 0.0;
@@ -66,6 +82,12 @@ class Spell {
     generateProperties() {
     }
 
+    getSavingAbility() {
+        return this.savingAbility;
+    }
+    getSavingAbilityScore() {
+        return this.savingAbilityScore;
+    }
     setSpellType(spellType) {
         if (!SpellTypeEnum.properties.hasOwnProperty(spellType)) {
             spellType = SpellTypeEnum.NONE;
@@ -119,6 +141,14 @@ class Spell {
     getTargetRange() {
         return this.targetRange;
     }
+    setDamageType(damageType) {
+        damageType = Tools.filterEnum(damageType, DamageEnum);
+        if (damageType == DamageEnum.NONE) {
+            this.setDamageRoll(0, 0);
+        }
+        this.damageType = damageType;
+        return 0;
+    }
     getDamageType() {
         return this.damageType;
     }
@@ -157,31 +187,36 @@ class Spell {
      * @param {SpellComponentEnum} spellComponent 
      * @param {object} optionalComponents 
      */
-    addComponent(spellComponent = SpellComponentEnum.NONE, optionalComponents) {
+    addComponent(spellComponent = SpellComponentEnum.NONE, optionalComponents = null) {
         if (!SpellComponentEnum.properties.hasOwnProperty(spellComponent)) {
             spellComponent = SpellComponentEnum.NONE;
         }
         if (spellComponent == SpellComponentEnum.NONE) {
             return 0;
         }
-        else if (spellComponent == SpellComponentEnum.MATERIAL) {
-            this.spellComponents[spellComponent] = optionalComponents; // I'm lazy
-        }
-        else {
-            this.spellComponents[spellComponent] = 0;
+        this.spellComponents[spellComponent] = true;
+        if (spellComponent == SpellComponentEnum.MATERIAL) {
+            this.addMaterialComponent(optionalComponents);
         }
         return 0;
     }
     hasComponent(spellComponent) {
         return this.spellComponents.hasOwnProperty(spellComponent);
     }
-    getMaterials() {
-        if (this.hasComponent(SpellComponentEnum.MATERIAL)) {
-            return this.spellComponents[SpellComponentEnum.MATERIAL];
+    /**
+     * 
+     * @param {ItemEntity} entity 
+     */
+    addMaterialComponent(entity) {
+        entity = Tools.filterClass(entity, ItemEntity);
+        if (entity == null) {
+            return 1;
         }
-        else {
-            return {};
-        }
+        this.materialComponents.push(entity);
+        return 0;
+    }
+    getMaterialComponents() {
+        return this.materialComponents;
     }
     setTarget(targetType = TargetEnum.SELF, targetRadius = 0.0) {
         this.setTargetType(targetType);
@@ -253,6 +288,72 @@ class Spell {
         this.additionalSlotRolls[slot] = [die, faces];
         return 0;
     }
+    /**
+     * 
+     * @param {number} slot 
+     * @param {number|Array} die Can be a number or an array of two numbers
+     * @param {number} [faces] 
+     */
+    setAdditionalLevelRoll(slot, die = 1, faces = 20) {
+        slot = Number.parseInt(slot)||1;
+        if (slot < 1) {
+            slot = 1;
+        }
+        else if (slot > 9) {
+            slot = 9;
+        }
+        if (die instanceof Array) {
+            if (die.length != 2) {
+                return 1;
+            }
+            faces = die[1];
+            die = die[0];
+        }
+        die = Number.parseInt(die)||1;
+        if (die < 1) {
+            die = 1;
+        }
+        else if (die > 41) {
+            die = 41
+        }
+        faces = Number.parseInt(faces)||2;
+        if (faces < 2) {
+            faces = 2;
+        }
+        else if (faces > 41) {
+            faces = 41
+        }
+        this.additionalLevelRolls[slot] = [die, faces];
+        return 0;
+    }
+    setAdditionalSlotTarget(slot = 1, count = 1) {
+        slot = Number.parseInt(slot)||1;
+        count = Number.parseInt(count)||1;
+        if (slot < 0) {
+            slot = 0;
+        }
+        else if (slot > 12) {
+            slot = 12;
+        }
+        this.additionalSlotTargets[slot] = count;
+        return 0;
+    }
+    addEffect(effect, targetType = this.targetType, priority = 20) {
+        effect = Tools.filterClass(effect, Effect, null);
+        if (effect == null) {
+            return 1;
+        }
+        targetType = Tools.filterEnum(targetType, TargetEnum)||this.targetType;
+        priority = Number.parseInt(priority)||20;
+        if (!this.effectsPriority.hasOwnProperty(priority)) {
+            this.effectsPriority[priority] = [];
+        }
+        this.effectsPriority[priority].push({"effect":effect, "targetType":targetType});
+        return 0;
+    }
+    getEffects() {
+        return this.effectsPriority;
+    }
 
     setMeshID(meshID) {
         this.meshID = meshID;
@@ -291,6 +392,9 @@ class Spell {
             }
         }
         if (spell.hasOwnProperty("duration")) this.duration = spell.duration;
+        if (spell.hasOwnProperty("damageType")) {
+            this.setDamageType(spell.damageType);
+        }
         if (spell.hasOwnProperty("damageRollCount")) this.damageRollCount = spell.damageRollCount;
         if (spell.hasOwnProperty("damageRollCountModifier")) this.damageRollCountModifier = spell.damageRollCountModifier;
         if (spell.hasOwnProperty("damageRollFaces")) this.damageRollFaces = spell.damageRollFaces;
@@ -300,12 +404,10 @@ class Spell {
                 this.setDamageRoll(spell["damageRoll"]);
             }
         }
-        if (spell.hasOwnProperty("damageType")) this.damageType = spell.damageType;
         if (spell.hasOwnProperty("bonusAction")) this.bonusAction = spell.bonusAction;
         if (spell.hasOwnProperty("concentration")) this.concentration = spell.concentration;
         if (spell.hasOwnProperty("savingAbility")) this.savingAbility = spell.savingAbility;
         if (spell.hasOwnProperty("savingAbilityScore")) this.savingAbilityScore = spell.savingAbilityScore;
-        if (spell.hasOwnProperty("savingAbilityMultiplier")) this.savingAbilityMultiplier = spell.savingAbilityMultiplier;
         if (spell.hasOwnProperty("spellType")) this.setSpellType(spell.spellType);
         if (spell.hasOwnProperty("spellLevel")) this.setSpellLevel(spell.spellLevel);
         if (spell.hasOwnProperty("spellSlotsUsed")) this.setSpellSlotsUsed(spell.spellSlotsUsed);
@@ -317,10 +419,59 @@ class Spell {
                 this.setAdditionalSlotRoll(i, spell["additionalSlotRolls"][i]);
             }
         }
+        if (spell.hasOwnProperty("additionalLevelRolls")) {
+            for (let i in spell["additionalLevelRolls"]) {
+                this.setAdditionalLevelRoll(i, spell["additionalLevelRolls"][i]);
+            }
+        }
+        if (spell.hasOwnProperty("additionalSlotTargets")) {
+            for (let i in spell["additionalSlotTargets"]) {
+                this.setAdditionalSlotTarget(i, spell["additionalSlotTargets"][i]);
+            }
+        }
+        if (spell.hasOwnProperty("effectsPriority")) {
+            this.assignEffectsPriority(spell["effectsPriority"]);
+        }
         if (spell.hasOwnProperty("meshID")) this.setMeshID(spell.meshID);
         if (spell.hasOwnProperty("materialID")) this.setMaterialID(spell.materialID);
         if (spell.hasOwnProperty("textureID")) this.setTextureID(spell.textureID);
         return 0;
+    }
+    assignEffectsPriority(effectPriorityBlob = null) {
+        if (effectPriorityBlob instanceof Array) {
+            effectPriorityBlob.forEach((entry) => {
+                if (entry.hasOwnProperty("effect")) {
+                    if (entry.hasOwnProperty("targetType")) {
+                        this.addEffect(entry["effect"], entry["targetType"]);
+                    }
+                    else {
+                        this.addEffect(entry["effect"], this.targetType);
+                    }
+                }
+                else if (typeof entry == "string" || entry instanceof Effect) {
+                    this.addEffect(entry, this.targetType);
+                }
+            });
+        }
+        else if (effectPriorityBlob["effectsPriority"] instanceof Object) {
+            for (let priority in effectPriorityBlob) {
+                if (effectPriorityBlob[priority] instanceof Array) {
+                    effectPriorityBlob[priority].forEach((entry) => {
+                        if (entry.hasOwnProperty("effect")) {
+                            if (entry.hasOwnProperty("targetType")) {
+                                this.addEffect(entry["effect"], entry["targetType"]);
+                            }
+                            else {
+                                this.addEffect(entry["effect"], this.targetType);
+                            }
+                        }
+                    });
+                }
+                else if (typeof effectPriorityBlob[priority] == "string" || effectPriorityBlob[priority] instanceof Effect) {
+                    this.addEffect(effectPriorityBlob[priority], this.targetType);
+                }
+            }
+        }
     }
     dispose() {
         Spell.remove(this.id);

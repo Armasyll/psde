@@ -198,14 +198,38 @@ class EntityLogic {
         let message = event.data["msg"];
         if (EntityLogic.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
-            case "actionAttack": {
+            case "actionAttack":
+            case "actionAttackMain": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
                 if (actor == -1) {
                     EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
                     break;
                 }
-                EntityLogic.actionAttack(target, actor, callbackID);
+                let weapon = actor.getMainWeapon();
+                EntityLogic.actionAttack(target, actor, weapon, callbackID);
+                break;
+            }
+            case "actionAttackSub": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == -1) {
+                    EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
+                    break;
+                }
+                let weapon = actor.getSubWeapon();
+                EntityLogic.actionAttack(target, actor, weapon, callbackID);
+                break;
+            }
+            case "actionCast": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == -1) {
+                    EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
+                    break;
+                }
+                let spell = Spell.get(message["spellID"]);
+                EntityLogic.actionAttack(target, actor, spell, callbackID);
                 break;
             }
             case "actionClose": {
@@ -764,14 +788,20 @@ class EntityLogic {
         };
         console.groupEnd();
     }
-    static actionAttack(target, actor, parentCallbackID) {
+    static actionAttack(target, actor, weapon, parentCallbackID) {
         let callbackID = Tools.genUUIDv4();
-        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor], EntityLogic.actionAttackResponse);
+        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor, weapon], EntityLogic.actionAttackResponse);
         EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
-    static actionAttackResponse(target, actor, response, parentCallbackID) {
-        let attackRoll = EntityLogic.calculateAttack(actor, actor.getHeld());
+    static actionAttackResponse(target, actor, weapon, response, parentCallbackID) {
+        let attackRoll = EntityLogic.calculateAttack(actor, weapon);
+        if (attackRoll == 1) {
+            
+        }
+        else {
+            EntityLogic.calculateDamage(target, actor, weapon, attackRoll >= 20)
+        }
         let targetObject = {
             "id":target.id,
             "health":target.getHealth()
@@ -1121,6 +1151,19 @@ class EntityLogic {
     }
     /**
      * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} description 
+     * @param {string} iconID 
+     * @param {object} options 
+     */
+    static createEffect(id = "", name = "", description = "", iconID = "", options = {}) {
+        let effect = new Effect(id, name, description, iconID);
+        effect.assign(options);
+        return 0;
+    }
+    /**
+     * 
      * @memberof module:spells
      * @param {string} id 
      * @param {string} name 
@@ -1140,9 +1183,10 @@ class EntityLogic {
     /**
      * 
      * @param {Effect} effect 
-     * @param {AbstractEntity} abstractEntity 
+     * @param {AbstractEntity} target 
+     * @param {AbstractEntity} actor 
      */
-    static addScheduledEffect(effect, abstractEntity) {
+    static addScheduledEffect(effect, target, actor) {
         if (!(effect instanceof Effect)) {
             if (Effect.has(effect)) {
                 effect = Effect.get(effect);
@@ -1151,9 +1195,9 @@ class EntityLogic {
                 return 2;
             }
         }
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+        if (!(target instanceof AbstractEntity)) {
+            if (AbstractEntity.has(target)) {
+                target = AbstractEntity.get(target);
             }
             else {
                 return 2;
@@ -1164,7 +1208,7 @@ class EntityLogic {
             0,
             [
                 effect.getID(),
-                abstractEntity.getID(),
+                target.getID(),
                 effect.getDuration(),
                 effect.getDurationInterval(),
                 effect.getIntervalType(),
@@ -1176,9 +1220,9 @@ class EntityLogic {
     /**
      * 
      * @param {Effect} effect 
-     * @param {AbstractEntity} abstractEntity 
+     * @param {AbstractEntity} target 
      */
-    static removeScheduledEffect(effect, abstractEntity) {
+    static removeScheduledEffect(effect, target, actor) {
         if (!(effect instanceof Effect)) {
             if (Effect.has(effect)) {
                 effect = Effect.get(effect);
@@ -1187,9 +1231,9 @@ class EntityLogic {
                 return 2;
             }
         }
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(abstractEntity)) {
-                abstractEntity = AbstractEntity.get(abstractEntity);
+        if (!(target instanceof AbstractEntity)) {
+            if (AbstractEntity.has(target)) {
+                target = AbstractEntity.get(target);
             }
             else {
                 return 2;
@@ -1198,29 +1242,29 @@ class EntityLogic {
         EntityLogic.tickWorkerPostMessage(
             "removeScheduledEffect",
             0,
-            [effect.getID(), abstractEntity.getID()]
+            [effect.getID(), target.getID()]
         );
     }
-    static addScheduledCommand(addTick, abstractEntityID, commandString) {
+    static addScheduledCommand(addTick, target, commandString) {
         addTick = (Number.parseInt(addTick)|0) + EntityLogic.currentTick;
-        return EntityLogic.setScheduledCommand(addTick, abstractEntityID, commandString);
+        return EntityLogic.setScheduledCommand(addTick, target, commandString);
     }
-    static setScheduledCommand(scheduledTick = 0, abstractEntityID, commandString = "") {
+    static setScheduledCommand(scheduledTick = 0, target, commandString = "") {
         if (EntityLogic.debugMode) {console.group(`Running EntityLogic.setScheduledCommand(...)`)}
         scheduledTick = Number.parseInt(scheduledTick);
         if (scheduledTick <= EntityLogic.currentTick) {
             if (EntityLogic.debugMode) {console.error("Tick was below or at current tick; cannot use."); console.groupEnd();}
             return 1;
         }
-        if (abstractEntityID instanceof AbstractEntity) {
-            abstractEntityID = abstractEntityID.getID();
+        if (target instanceof AbstractEntity) {
+            target = target.getID();
         }
-        else if (!AbstractEntity.has(abstractEntityID)) {
-            if (EntityLogic.debugMode) {console.error(`Entity (${abstractEntityID}) doesn't exist.`); console.groupEnd();}
+        else if (!AbstractEntity.has(target)) {
+            if (EntityLogic.debugMode) {console.error(`Entity (${target}) doesn't exist.`); console.groupEnd();}
             return 1;
         }
-        if (AbstractEntity.get(abstractEntityID).isDisabled()) {
-            if (EntityLogic.debugMode) {console.warn(`Entity (${abstractEntityID}) is disabled and can't be used.`); console.groupEnd();}
+        if (AbstractEntity.get(target).isDisabled()) {
+            if (EntityLogic.debugMode) {console.warn(`Entity (${target}) is disabled and can't be used.`); console.groupEnd();}
             return 1;
         }
         commandString = String(commandString);
@@ -1231,14 +1275,14 @@ class EntityLogic {
         if (EntityLogic.debugMode) {
             console.log("Sending scheduled command with...");
             console.info(`tick: ${scheduledTick}`);
-            console.info(`entity: ${abstractEntityID}`);
+            console.info(`entity: ${target}`);
             console.info(`commandString: ${commandString}`);
             console.groupEnd();
         }
         EntityLogic.tickWorkerPostMessage(
             "setScheduledCommand",
             0,
-            [scheduledTick, abstractEntityID, commandString]
+            [scheduledTick, target, commandString]
         );
         return 0;
     }
@@ -1256,12 +1300,6 @@ class EntityLogic {
             if (tempRoll < attackRoll) {
                 attackRoll = tempRoll;
             }
-        }
-        if (attackRoll == 20) {
-            return 20;
-        }
-        else if (attackRoll == 1) {
-            return 1;
         }
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
             if (attacker.hasProficiency(weapon)) {
@@ -1281,6 +1319,44 @@ class EntityLogic {
             else if (weapon.getWeaponCategory() == WeaponCategoryEnum.SIMPLE_MELEE || weapon.getWeaponCategory() == WeaponCategoryEnum.MARTIAL_MELEE) {
                 attackRoll += EntityLogic.calculateAbilityModifier(attacker.getStrength());
             }
+        }
+        else if (weapon instanceof Spell) {
+            if (attacker.hasEquipmentInSlot("CHEST")) {
+                if (!attacker.hasProficiencyInEquipmentSlot("CHEST")) {
+                    attackRoll = 1;
+                }
+            }
+            if (spell.hasComponent(SpellComponentEnum.VERBAL) && attacker.hasCondition(ConditionEnum.SILENCED)) {
+                attackRoll = 1;
+            }
+            if (spell.hasComponent(SpellComponentEnum.SOMATIC)) {
+                if (!attacker.hasFreeHand()) {
+                    attackRoll = 1;
+                }
+                else if (!attacker.hasProficiencyInEquipmentSlot("FOREARM_L") && !attacker.hasProficiencyInEquipmentSlot("FOREARM_R")) {
+                    attackRoll = 1;
+                }
+            }
+            if (spell.hasComponent(SpellComponentEnum.MATERIAL)) {
+                let hasMaterialComponents = true;
+                spell.getMaterialComponents().forEach((itemEntity) => {
+                    if (!attacker.hasItem(itemEntity)) {
+                        hasMaterialComponents = false;
+                    }
+                });
+                if (!hasMaterialComponents) {
+                    attackRoll = 1;
+                }
+            }
+            if (attackRoll != 1) {
+                attackRoll += attacker.getSpellcastingAbilityModifier() + attacker.getProficiencyBonus();
+            }
+        }
+        if (attackRoll > 20) {
+            attackRoll = 20;
+        }
+        else if (attackRoll < 1) {
+            attackRoll = 1;
         }
         return attackRoll;
     }
@@ -1340,9 +1416,26 @@ class EntityLogic {
         return damageRoll;
     }
     static calculateDamageWithSpell(target, attacker, spell, critical = false) {
+        let attackerDC = 8 + attacker.getSpellcastingAbilityModifier() + attacker.getProficiencyBonus(); // + any special modifiers
+        let targetDC = target.getAbility(spell.savingAbility);
         let damageRoll = 0;
-        damageRoll = DND.roll(spell.getDamageRollCount(), spell.getDamageRoll());
-        damageRoll += EntityLogic.calculateAbilityModifier(attacker.getIntelligence());
+        if (attackerDC > targetDC) {
+            if (spell.getDamageType() != DamageEnum.NONE) { // TODO: increase spell damage based on various spell parameters
+                damageRoll = DND.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+            }
+            for (let priority in spell.getEffects()) {
+                spell.getEffects()[priority].forEach((effectsObjects) => {
+                    for (let effectObject in effectsObjects) {
+                        if (effectObject["targetType"] == TargetEnum.SELF) {
+                            attacker.addEffect(effectObject["effect"], attacker, spell);
+                        }
+                        else {
+                            target.addEffect(effectObject["effect"], attacker, spell);
+                        }
+                    }
+                });
+            }
+        }
         return damageRoll;
     }
     static calculateDamageWithUnarmed(target, attacker, critical = false) {

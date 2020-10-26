@@ -437,9 +437,6 @@ class Container {
         return 0;
     }
     dispose() {
-        if (this == Game.player.entity) {
-            return false;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         this.clearEntities();

@@ -333,7 +333,7 @@ class AbstractEntity {
         }
         return this.effects.hasOwnProperty(effect.id);
     }
-    addEffect(effect) {
+    addEffect(effect, fromEntity = null, fromSpell = null) { // TODO: fromEntity, fromSpell
         if (!(effect instanceof Effect)) {
             if (Effect.has(effect)) {
                 effect = Effect.get(effect);
@@ -359,7 +359,7 @@ class AbstractEntity {
         this.effectsPriority[priority].add(id);
         this.applyEffects();
         if (effect.getDuration() > 0) {
-            Game.addScheduledEffect(effect, this);
+            EntityLogic.addScheduledEffect(effect, this);
         }
         return 0;
     }

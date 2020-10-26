@@ -561,25 +561,9 @@ let ApparelSlotEnum = {
  */
 let HandednessEnum = {
     "NONE": 0,
-    "LEFT": 14,
-    "RIGHT": 15,
-    "properties": {
-        0: {
-            "name": "None",
-            "value": 0,
-            "key": "NONE"
-        },
-        14: {
-            "name": "Left",
-            "value": 14,
-            "key": "LEFT"
-        },
-        15: {
-            "name": "Right",
-            "value": 15,
-            "key": "RIGHT"
-        }
-    }
+    "HAND_L": 14,
+    "HAND_R": 15,
+    "properties": ApparelSlotEnum.properties
 };
 /**
  * Enum for Paws
@@ -1277,89 +1261,95 @@ let SpellTypeEnum = {
  * @enum {number}
  */
 let DamageEnum = {
-    "BLUDGEONING": 0,
-    "ACID": 1,
-    "COLD": 2,
-    "FIRE": 3,
-    "FORCE": 4,
-    "LIGHTNING": 5,
-    "NECROTIC": 6,
-    "PIERCING": 7,
-    "POISON": 8,
-    "PSYCHIC": 9,
-    "RADIANT": 10,
-    "SLASHING": 11,
-    "THUNDER": 12,
-    "DISEASE": 13, // special
+    "NONE": 0,
+    "BLUDGEONING": 1,
+    "ACID": 2,
+    "COLD": 3,
+    "FIRE": 4,
+    "FORCE": 5,
+    "LIGHTNING": 6,
+    "NECROTIC": 7,
+    "PIERCING": 8,
+    "POISON": 9,
+    "PSYCHIC": 10,
+    "RADIANT": 11,
+    "SLASHING": 12,
+    "THUNDER": 13,
+    "DISEASE": 14, // special
     "properties": {
         0: {
-            "name": "Bludgeoning",
+            "name": "None",
             "value": 0,
-            "key": "BLUDGEONING"
+            "key": "NONE"
         },
         1: {
-            "name": "Acid",
+            "name": "Bludgeoning",
             "value": 1,
-            "key": "ACID"
+            "key": "BLUDGEONING"
         },
         2: {
-            "name": "Cold",
+            "name": "Acid",
             "value": 2,
-            "key": "COLD"
+            "key": "ACID"
         },
         3: {
-            "name": "Fire",
+            "name": "Cold",
             "value": 3,
-            "key": "FIRE"
+            "key": "COLD"
         },
         4: {
-            "name": "Force",
+            "name": "Fire",
             "value": 4,
-            "key": "FORCE"
+            "key": "FIRE"
         },
         5: {
-            "name": "Lightning",
+            "name": "Force",
             "value": 5,
-            "key": "LIGHTNING"
+            "key": "FORCE"
         },
         6: {
-            "name": "Necrotic",
+            "name": "Lightning",
             "value": 6,
-            "key": "NECROTIC"
+            "key": "LIGHTNING"
         },
         7: {
-            "name": "Piercing",
+            "name": "Necrotic",
             "value": 7,
-            "key": "PIERCING"
+            "key": "NECROTIC"
         },
         8: {
-            "name": "Poison",
+            "name": "Piercing",
             "value": 8,
-            "key": "POISON"
+            "key": "PIERCING"
         },
         9: {
-            "name": "Psychic",
+            "name": "Poison",
             "value": 9,
-            "key": "PSYCHIC"
+            "key": "POISON"
         },
         10: {
-            "name": "Radiant",
+            "name": "Psychic",
             "value": 10,
-            "key": "RADIANT"
+            "key": "PSYCHIC"
         },
         11: {
-            "name": "Slashing",
+            "name": "Radiant",
             "value": 11,
-            "key": "SLASHING"
+            "key": "RADIANT"
         },
         12: {
-            "name": "Thunder",
+            "name": "Slashing",
             "value": 12,
-            "key": "THUNDER"
+            "key": "SLASHING"
         },
         13: {
-            "name": "Disease",
+            "name": "Thunder",
             "value": 13,
+            "key": "THUNDER"
+        },
+        14: {
+            "name": "Disease",
+            "value": 14,
             "key": "DISEASE"
         }
     }
@@ -1579,6 +1569,7 @@ let ConditionEnum = {
     "RESTRAINED": 12,
     "STUNNED": 13,
     "UNCONSCIOUS": 14,
+    "SILENCED": 15,
     "properties": {
         0: {
             "name": "Blinded",
@@ -1632,28 +1623,33 @@ let ConditionEnum = {
         },
         10: {
             "name": "Poisoned",
-            "value": 1,
+            "value": 10,
             "key": "POISONED"
         },
         11: {
             "name": "Prone",
-            "value": 1,
+            "value": 11,
             "key": "PRONE"
         },
         12: {
             "name": "Restrained",
-            "value": 1,
+            "value": 12,
             "key": "RESTRAINED"
         },
         13: {
             "name": "Stunned",
-            "value": 1,
+            "value": 13,
             "key": "STUNNED"
         },
         14: {
             "name": "Unconscious",
-            "value": 1,
+            "value": 14,
             "key": "UNCONSCIOUS"
+        },
+        15: {
+            "name": "Silenced",
+            "value": 15,
+            "key": "SILENCED"
         }
     }
 };

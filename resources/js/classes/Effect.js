@@ -88,12 +88,15 @@ class Effect {
         return Effect.allowedProperties.hasOwnProperty(property);
     }
 
-    addModifier(property, operation = OperationsEnum.ADD, modification = 1) {
+    /**
+     * 
+     * @param {(string|"conditions")} property 
+     * @param {OperationsEnum} operation 
+     * @param {(number|Function)} modification 
+     */
+    addModifier(property, operation = OperationsEnum.SET, modification = 1) {
         if (Effect.debugMode) console.log(`Running ${this.id}.addModifier(${property}, ${operation}, ${typeof modification == "function" ? "function()" : modification})`);
-        if (!OperationsEnum.properties.hasOwnProperty(operation)) {
-            if (Effect.debugMode) console.log("Incorrect operation");
-            return this;
-        }
+        operation = Tools.filterEnum(operation, OperationsEnum)||OperationsEnum.SET;
         if (property == "conditions") {
             this.modifiers["conditions"].push({"operation":operation, "modification":modification});
         }

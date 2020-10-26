@@ -47,3 +47,8 @@ new Effect("theobromineConsumption", "Consumed Theobromine", "You have consumed 
     }
     return 1;
 }).setDuration(7);
+new Effect("charm", "Charmed", undefined).addModifier("charmedBy", OperationsEnum.SET, (target, actor) => {
+    target.removeHostileTo(actor);
+    target.setCharmedBy(actor);
+    return 0;
+});

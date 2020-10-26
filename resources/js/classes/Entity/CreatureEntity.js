@@ -17,7 +17,7 @@ class CreatureEntity extends Entity {
         super(id, name, description, iconID);
         this.entityType = EntityEnum.CREATURE;
         this.soul = null;
-        this.handedness = HandednessEnum.RIGHT;
+        this.handedness = "HAND_R";
         this.gender = SexEnum.MALE;
         this.sexualOrientation = SexualOrientationEnum.STRAIGHT;
         /**
@@ -132,19 +132,20 @@ class CreatureEntity extends Entity {
         /**
          * @type {?string}
          */
-        this.charmTarget = null;
+        this.charmedBy = null;
         /**
          * @type {boolean}
          */
-        this.canHarmCharmTarget = false;
+        this.canHarmCharmer = false;
         /**
          * @type {?string}
          */
-        this.fearTarget = null;
+        this.fearedBy = null;
         /**
          * @type {boolean}
          */
-        this.canHarmFearTarget = false;
+        this.canHarmFearer = false;
+        this.hostileTo = {};
 
         /**
          * @type {number}
@@ -812,6 +813,7 @@ class CreatureEntity extends Entity {
         return {"HAND_R":this.equipment["HAND_R"], "HAND_L":this.equipment["HAND_L"]};
     }
     setHandedness(handedness, updateChild = true) {
+        handedness = Tools.filterEnum(handedness, HandednessEnum, false);
         if (HandednessEnum.properties.has(handedness)) {
             this.handedness = handedness;
             if (this.hasSoul() && updateChild) {
@@ -825,10 +827,10 @@ class CreatureEntity extends Entity {
         return this.handedness;
     }
     isRightHanded() {
-        return this.handedness == HandednessEnum.RIGHT;
+        return this.handedness == "HAND_R";
     }
     isLeftHanded() {
-        return this.handedness == HandednessEnum.LEFT;
+        return this.handedness == "HAND_L";
     }
 
     /**
@@ -1981,6 +1983,51 @@ class CreatureEntity extends Entity {
         }
         return false;
     }
+    addHostileTo(creatureEntity) {
+        creatureEntity = Tools.filterClass(creatureEntity, CreatureEntity);
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            return 1;
+        }
+        this.hostileTo[creatureEntity.id] = true;
+        return 0;
+    }
+    removeHostileTo(creatureEntity) {
+        creatureEntity = Tools.filterClass(creatureEntity, CreatureEntity);
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            return 1;
+        }
+        delete this.hostileTo[creatureEntity.id];
+        return 0;
+    }
+    isHostileTo(creatureEntity) {
+        creatureEntity = Tools.filterClass(creatureEntity, CreatureEntity);
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            return false;
+        }
+        return this.hostileTo.hasOwnProperty(creatureEntity.id);
+    }
+    setCharmedBy(creatureEntity) {
+        creatureEntity = Tools.filterClass(creatureEntity, CreatureEntity);
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            return 1;
+        }
+        this.charmedBy = creatureEntity;
+        return 0;
+    }
+    removeCharmedBy() {
+        this.charmedBy = null;
+    }
+    setFearedBy(creatureEntity) {
+        creatureEntity = Tools.filterClass(creatureEntity, CreatureEntity);
+        if (!(creatureEntity instanceof CreatureEntity)) {
+            return 1;
+        }
+        this.fearedBy = creatureEntity;
+        return 0;
+    }
+    removeFearedBy() {
+        this.fearedBy = null;
+    }
 
     /**
      * 
@@ -2433,14 +2480,7 @@ class CreatureEntity extends Entity {
         if (this.isGod()) {
             return Number.MAX_SAFE_INTEGER;
         }
-        if (!AbilityEnum.hasOwnProperty(ability)) {
-            if (AbilityEnum.properties.hasOwnProperty(ability)) {
-                ability = AbilityEnum.properties[ability].key;
-            }
-            else {
-                return 0;
-            }
-        }
+        ability = Tools.filterEnum(ability, AbilityEnum, false);
         switch (ability) {
             case "STRENGTH":
             case "DEXTERITY":
@@ -2460,6 +2500,7 @@ class CreatureEntity extends Entity {
                 break;
             }
         }
+        return 0;
     }
     /**
      * 
@@ -2518,6 +2559,68 @@ class CreatureEntity extends Entity {
 
     isAlerted() {
         return this.alerted;
+    }
+
+    getMainWeapon() {
+        if (this.isRightHanded()) {
+            return this.equipment["HAND_R"];
+        }
+        else {
+            return this.equipment["HAND_R"];
+        }
+    }
+    getSubWeapon() {
+        if (this.isRightHanded()) {
+            return this.equipment["HAND_L"];
+        }
+        else {
+            return this.equipment["HAND_R"];
+        }
+    }
+    hasEquipmentSlot(slot) {
+        return this.equipment.hasOwnProperty(slot);
+    }
+    hasEquipmentInSlot(slot) {
+        if (this.hasEquipmentSlot(slot)) {
+            return this.equipment[slot] instanceof InstancedItemEntity;
+        }
+        return false;
+    }
+    getEquipmentInSlot(slot) {
+        if (this.hasEquipmentInSlot(slot)) {
+            return this.equipment[slot];
+        }
+        return null;
+    }
+    getFreeHand() {
+        if (this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponClawInstance") || this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponHandInstance") || this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponHoofInstance")) {
+            return "HAND_R";
+        }
+        else if (this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponClawInstance") || this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponHandInstance") || this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponHoofInstance")) {
+            return "HAND_L";
+        }
+        return null;
+    }
+    hasFreeHand() {
+        if (this.hasCondition(ConditionEnum.RESTRAINED)) {
+            return false;
+        }
+        if (this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponClawInstance") || this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponHandInstance") || this.equipment["HAND_R"] == InstancedWeaponEntity.get("weaponHoofInstance")) {
+            return true;
+        }
+        else if (this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponClawInstance") || this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponHandInstance") || this.equipment["HAND_L"] == InstancedWeaponEntity.get("weaponHoofInstance")) {
+            return true;
+        }
+        return false;
+    }
+    hasProficiencyInItem(entity) { // TODO: this
+        return true;
+    }
+    hasProficiencyInEquipmentSlot(slot) {
+        if (!this.hasEquipmentInSlot(slot)) {
+            return true;
+        }
+        return this.hasProficiency(this.getEquipmentInSlot(slot).getArmourCategory());
     }
 
     objectifyMinimal() {
@@ -2614,10 +2717,15 @@ class CreatureEntity extends Entity {
         if (entity.hasOwnProperty("hunger")) this.hunger = entity.hunger;
         if (entity.hasOwnProperty("abilityScore")) this.abilityScore = Object.assign({}, entity.abilityScore);
         if (entity.hasOwnProperty("abilityScoreModifier")) this.abilityScoreModifier = Object.assign({}, entity.abilityScoreModifier);
-        if (entity.hasOwnProperty("charmTarget")) this.charmTarget = entity.charmTarget;
-        if (entity.hasOwnProperty("canHarmCharmTarget")) this.canHarmCharmTarget = entity.canHarmCharmTarget;
-        if (entity.hasOwnProperty("fearTarget")) this.fearTarget = entity.fearTarget;
-        if (entity.hasOwnProperty("canHarmFearTarget")) this.canHarmFearTarget = entity.canHarmFearTarget;
+        if (entity.hasOwnProperty("charmedBy")) this.setCharmedBy(entity.charmedBy);
+        if (entity.hasOwnProperty("canHarmCharmer")) this.canHarmCharmer = entity.canHarmCharmer;
+        if (entity.hasOwnProperty("fearedBy")) this.setFearedBy(entity.fearedBy);
+        if (entity.hasOwnProperty("canHarmFearer")) this.canHarmFearer = entity.canHarmFearer;
+        if (entity.hasOwnProperty("hostileTo")) {
+            for (let creatureID in entity.hostileTo) {
+                this.addHostileTo(creatureID);
+            }
+        }
         if (entity.hasOwnProperty("standardActionsOverride")) this.standardActionsOverride = entity.standardActionsOverride;
         if (entity.hasOwnProperty("movementActionsOverride")) this.movementActionsOverride = entity.movementActionsOverride;
         if (entity.hasOwnProperty("bonusActionsOverride")) this.bonusActionsOverride = entity.bonusActionsOverride;

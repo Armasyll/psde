@@ -469,23 +469,6 @@ class CharacterEntity extends CreatureEntity {
         return result;
     }
 
-    getMainWeapon() {
-        if (this.isRightHanded()) {
-            return this.equipment[ApparelSlotEnum.HAND_R];
-        }
-        else {
-            return this.equipment[ApparelSlotEnum.HAND_R];
-        }
-    }
-    getSubWeapon() {
-        if (this.isRightHanded()) {
-            return this.equipment[ApparelSlotEnum.HAND_L];
-        }
-        else {
-            return this.equipment[ApparelSlotEnum.HAND_R];
-        }
-    }
-
     /**
      * 
      * @param {InstancedEntity} instancedEntity 
@@ -684,6 +667,15 @@ class CharacterEntity extends CreatureEntity {
         delete this.characterClasses[this.primaryCharacterClass];
         this.addClass("classless");
         return 0;
+    }
+    getSpellcastingAbility() {
+        return this.primaryCharacterClass.spellcastingAbility; // TODO: consider multi-class builds
+    }
+    getSpellcastingAbilityScore() {
+        return this.getAbility(this.primaryCharacterClass.spellcastingAbility);
+    }
+    getSpellcastingAbilityModifier() {
+        return DND5E.calculateAbilityModifier(this.primaryCharacterClass.spellcastingAbility);
     }
 
     calculateIsArmed() {
