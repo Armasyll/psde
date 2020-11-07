@@ -4911,16 +4911,23 @@ class Game {
     }
     static actionAttackResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) console.log(`Game.actionAttackResponse(${targetController.id}, ${actorController.id})`);
-        if (response.blocked) {
-            targetController.doBlockAttack();
-            actorController.doAttackBlocked();
-        }
-        else if (response.finished) {
-            targetController.doAttacked();
-            actorController.doAttackFinished();
-        }
-        else if (response.channeling) {
-            // TODO: wip
+        switch (response) {
+            case AttackResponseEnum.FINISH: {
+                targetController.doAttacked();
+                actorController.doAttackFinished();
+                break;
+            }
+            case AttackResponseEnum.BLOCK: {
+                targetController.doBlockAttack();
+                actorController.doAttackBlocked();
+                break;
+            }
+            case AttackResponseEnum.PARRY: {
+                break;
+            }
+            case AttackResponseEnum.MISS: {
+                break;
+            }
         }
         return 0;
     }
@@ -5870,6 +5877,46 @@ class Game {
             }
             case "createItemInstanceAtController": {
                 Game.createItemInstanceAtController(message["entityID"], message["entityID"], message["controllerID"]);
+                break;
+            }
+            case "doDeath": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doDeath();
+                    }
+                }
+                break;
+            }
+            case "doLay": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doLay();
+                    }
+                }
+                break;
+            }
+            case "doProne": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doProne();
+                    }
+                }
+                break;
+            }
+            case "doSit": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doSit();
+                    }
+                }
+                break;
+            }
+            case "doStand": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doStand();
+                    }
+                }
                 break;
             }
             case "getCell": {

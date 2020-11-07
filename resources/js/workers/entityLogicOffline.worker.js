@@ -225,11 +225,11 @@ class EntityLogic {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
                 if (actor == -1) {
-                    EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
+                    EntityLogic.gameWorkerPostMessage("actionCast", 1, false, callbackID);
                     break;
                 }
                 let spell = Spell.get(message["spellID"]);
-                EntityLogic.actionAttack(target, actor, spell, callbackID);
+                EntityLogic.actionCast(target, actor, spell, callbackID);
                 break;
             }
             case "actionClose": {
@@ -797,18 +797,41 @@ class EntityLogic {
     static actionAttackResponse(target, actor, weapon, response, parentCallbackID) {
         let attackRoll = EntityLogic.calculateAttack(actor, weapon);
         if (attackRoll == 1) {
+            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.MISS, EntityLogic.getCallback(parentCallbackID).parent);
+        }
+        else {
+            let damageRoll = EntityLogic.calculateDamage(target, actor, weapon, attackRoll >= 20)*-1;
+            target.modifyHealth(damageRoll)
+            let entityJSON = JSON.stringify({"id":target.id, "health":target.getHealth()});
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, entityJSON);
+            if (target.getHealth() <= 0) {
+                EntityLogic.gameWorkerPostMessage("doDeath", 0, {"controllerID": target.controller});
+            }
+            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.FINISH, EntityLogic.getCallback(parentCallbackID).parent);
+        }
+        return 0;
+    }
+    static actionCast(target, actor, spell, parentCallbackID) {
+        let callbackID = Tools.genUUIDv4();
+        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor, spell], EntityLogic.actionCastResponse);
+        EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
+        return 0;
+    }
+    static actionCastResponse(target, actor, spell, response, parentCallbackID) {
+        let attackRoll = EntityLogic.calculateAttack(actor, spell);
+        if (attackRoll == 1) {
             
         }
         else {
-            EntityLogic.calculateDamage(target, actor, weapon, attackRoll >= 20)
+            let attackerDC = 8 + attacker.getSpellcastingAbilityModifier() + attacker.getProficiencyBonus(); // + any special modifiers
+            let targetDC = target.getAbility(spell.savingAbility);
+            if (attackerDC > targetDC) {
+                EntityLogic.calculateDamageWithSpell(target, actor, spell, attackRoll >= 20);
+            }
+            else {
+
+            }
         }
-        let targetObject = {
-            "id":target.id,
-            "health":target.getHealth()
-        };
-        let entityJSON = JSON.stringify(targetObject);
-        EntityLogic.gameWorkerPostMessage("updateEntity", 0, entityJSON);
-        EntityLogic.gameWorkerPostMessage("actionAttack", 0, {"blocked":false, "finished":true, "channeling":false}, EntityLogic.getCallback(parentCallbackID).parent);
         return 0;
     }
     static actionTake(target, actor, parentCallbackID) {
@@ -1416,25 +1439,20 @@ class EntityLogic {
         return damageRoll;
     }
     static calculateDamageWithSpell(target, attacker, spell, critical = false) {
-        let attackerDC = 8 + attacker.getSpellcastingAbilityModifier() + attacker.getProficiencyBonus(); // + any special modifiers
-        let targetDC = target.getAbility(spell.savingAbility);
-        let damageRoll = 0;
-        if (attackerDC > targetDC) {
-            if (spell.getDamageType() != DamageEnum.NONE) { // TODO: increase spell damage based on various spell parameters
-                damageRoll = DND.roll(spell.getDamageRollCount(), spell.getDamageRoll());
-            }
-            for (let priority in spell.getEffects()) {
-                spell.getEffects()[priority].forEach((effectsObjects) => {
-                    for (let effectObject in effectsObjects) {
-                        if (effectObject["targetType"] == TargetEnum.SELF) {
-                            attacker.addEffect(effectObject["effect"], attacker, spell);
-                        }
-                        else {
-                            target.addEffect(effectObject["effect"], attacker, spell);
-                        }
+        if (spell.getDamageType() != DamageEnum.NONE) { // TODO: increase spell damage based on various spell parameters
+            damageRoll = DND.roll(spell.getDamageRollCount(), spell.getDamageRoll());
+        }
+        for (let priority in spell.getEffects()) {
+            spell.getEffects()[priority].forEach((effectsObjects) => {
+                for (let effectObject in effectsObjects) {
+                    if (effectObject["targetType"] == TargetEnum.SELF) {
+                        attacker.addEffect(effectObject["effect"], attacker, spell);
                     }
-                });
-            }
+                    else {
+                        target.addEffect(effectObject["effect"], attacker, spell);
+                    }
+                }
+            });
         }
         return damageRoll;
     }

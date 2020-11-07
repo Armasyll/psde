@@ -3605,3 +3605,34 @@ let TargetEnum = {
         }
     }
 };
+/**
+ * Enum for Attack Response types
+ */
+let AttackResponseEnum = {
+    "FINISH": 0,
+    "BLOCK": 1,
+    "PARRY": 2,
+    "MISS": 3,
+    "properties": {
+        0: {
+            "name": "Finish",
+            "value": 0,
+            "key": "FINISH"
+        },
+        1: {
+            "name": "Block",
+            "value": 1,
+            "key": "BLOCK"
+        },
+        2: {
+            "name": "Parry",
+            "value": 2,
+            "key": "PARRY"
+        },
+        3: {
+            "name": "Miss",
+            "value": 3,
+            "key": "MISS"
+        }
+    }
+};
