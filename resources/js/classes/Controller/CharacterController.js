@@ -59,7 +59,7 @@ class CharacterController extends CreatureController {
             this.createAnimationGroupFromAnimatables("running01", "running01", 0.0, true, (2 * this.getScaling().y));
             this.createAnimationGroupFromAnimatables("idleSitting01", "idleSitting01");
             this.createAnimationGroupFromAnimatables("idleLying01", "idleLying01");
-            this.createAnimationGroupFromAnimatables("idleLyingDeath01", "idleDeath01");
+            this.createAnimationGroupFromAnimatables("idleLyingDeath01", "idleDeath01", 0, false);
             /*this.createAnimationGroupFromAnimatables("punchRight", "punchRight");
             this.createAnimationGroupFromAnimatables("stabRight", "stabRight");*/
 

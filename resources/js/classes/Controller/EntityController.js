@@ -630,6 +630,18 @@ class EntityController {
     updateAnimation() {
         return 0;
     }
+    stopAnimation(animation) {
+        if (!(animation instanceof BABYLON.AnimationGroup)) {
+            if (this.hasAnimationGroup(animation)) {
+                this.animation = this.animationGroups[animation];
+            }
+            else {
+                return 1;
+            }
+        }
+        this.animation.setWeightForAllAnimatables(0);
+        return 0;
+    }
     /**
      * 
      * @param {BABYLON.Animation} animation 
@@ -641,7 +653,7 @@ class EntityController {
         }
         if (!(animation instanceof BABYLON.AnimationGroup)) {
             if (this.hasAnimationGroup(animation)) {
-                this.animation = this.animationGroup[animation];
+                this.animation = this.animationGroups[animation];
             }
             else {
                 return 1;

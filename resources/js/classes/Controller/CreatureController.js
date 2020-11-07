@@ -1745,12 +1745,13 @@ class CreatureController extends EntityController {
             }
             else if (this.lying) {
                 if (this.dead) {
-                    anim = this.animationGroups.idleLyingDeath01;
+                    this.animationGroups.idleLyingDeath01.setWeightForAllAnimatables(1);
                 }
-                else {
-                    anim = this.animationGroups.idleLying01;
-                }
+                anim = this.animationGroups.idleLying01;
             }
+        }
+        if (this.dead) { // TODO: complain about my lack of foresight with multiple blended animations
+            this.stopAnimation("idleStanding01");
         }
         this.beginAnimation(anim);
         return 0;
@@ -1783,6 +1784,7 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
+        this.lying = true; // TODO: remove later when other death animations are actually implemented
         this.dead = true;
         return 0;
     }
