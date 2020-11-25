@@ -1,5 +1,47 @@
 /**
  * Abstract Entity
+ * @class
+ * @typedef {Object} AbstractEntity
+ * @property {string} id
+ * @property {EntityEnum} entityType
+ * @property {string} name
+ * @property {string} description
+ * @property {string} iconID
+ * @property {string} meshID
+ * @property {string} materialID
+ * @property {string} textureID
+ * @property {[EntityController | null]} controller
+ * @property {number} health
+ * @property {number} maxHealth
+ * @property {number} maxHealthModifier
+ * @property {number} maxHealthOverride
+ * @property {number} maxHealthConditionModifier
+ * @property {number} maxHealthConditionOverride
+ * @property {number} maxHealthEffectModifier
+ * @property {SizeEnum} size
+ * @property {Object} availableActions
+ * @property {Object} hiddenAvailableActions
+ * @property {Object} specialProperties
+ * @property {[ActionEnum | null]} defaultAction
+ * @property {boolean} godMode
+ * @property {number} godModeOverride
+ * @property {number} godModeConditionOverride
+ * @property {number} godModeEffectOverride
+ * @property {boolean} enabled
+ * @property {boolean} locked
+ * @property {boolean} disposing
+ * @property {boolean} essential
+ * @property {number} essentialOverride
+ * @property {number} essentialConditionOverride
+ * @property {number} essentialEffectOverride
+ * @property {[Container | null]} container
+ * @property {boolean} held
+ * @property {boolean} holdable
+ * @property {boolean} equipped
+ * @property {boolean} equipable
+ * @property {Object} effects
+ * @property {Object} effectsPriority
+ * @property {Object} actionEffects
  */
 class AbstractEntity {
     /**
@@ -10,82 +52,115 @@ class AbstractEntity {
      * @param  {string}  [iconID] Icon ID
      */
     constructor(id = "", name = "", description = "", iconID = "genericItem") {
-        id = Tools.filterID(id);
-        if (id.length == 0 || AbstractEntity.has(id)) {
-            id = Tools.genUUIDv4();
-        }
-        this.id = id;
+        /** @type {string} */
+        this.id = "";
+        this.setID(id);
+        /** @type {EntityEnum} */
         this.entityType = EntityEnum.ABSTRACT;
+        /** @type {string} */
         this.name = "";
         this.setName(name);
+        /** @type {string} */
         this.description = "";
         this.setDescription(description);
+        /** @type {string} */
         this.iconID = "genericItem";
         this.setIcon(iconID);
+        /** @type {string} */
         this.meshID = "missingMesh";
+        /** @type {string} */
         this.materialID = "missingMaterial";
+        /** @type {string} */
         this.textureID = "missingTexture";
+        /** @type {EntityController | null} */
         this.controller = null;
+        /** @type {boolean} */
+        this.enabled = true;
+        /** @type {boolean} */
+        this.locked = false;
+        /** @type {boolean} */
+        this.disposing = false;
 
+        /** @type {number} */
         this.health = 10;
-
+        /** @type {number} */
         this.maxHealth = 10;
+        /** @type {number} */
         this.maxHealthModifier = 0;
+        /** @type {number} */
         this.maxHealthOverride = -1;
+        /** @type {number} */
         this.maxHealthConditionModifier = 0;
+        /** @type {number} */
         this.maxHealthConditionOverride = -1;
+        /** @type {number} */
         this.maxHealthEffectModifier = 0;
+        /** @type {number} */
         this.maxHealthEffectOverride = -1;
+        /** @type {boolean} */
+        this.godMode = false;
+        /** @type {number} */
+        this.godModeOverride = -1;
+        /** @type {number} */
+        this.godModeConditionOverride = -1;
+        /** @type {number} */
+        this.godModeEffectOverride = -1;
+        /** @type {number} */
+        this.essential = false;
+        /** @type {number} */
+        this.essentialOverride = -1;
+        /** @type {number} */
+        this.essentialConditionOverride = -1;
+        /** @type {number} */
+        this.essentialEffectOverride = -1;
 
-        /**
-         * Size
-         * @type {SizeEnum}
-         */
+        /** @type {SizeEnum} */
         this.size = SizeEnum.SMALL;
 
+        /** @type {Object} */
         this.availableActions = {};
+        /** @type {Object} */
         this.hiddenAvailableActions = {};
+        /** @type {Object} */
         this.specialProperties = {};
+        /** @type {ActionEnum | null} */
         this.defaultAction = null;
-        this.godMode = false;
-        this.godModeOverride = -1;
-        this.godModeConditionOverride = -1;
-        this.godModeEffectOverride = -1;
-        this.enabled = true;
-        this.locked = false;
-        this.disposing = false;
-        this.essential = false;
-        this.essentialOverride = -1;
-        this.essentialConditionOverride = -1;
-        this.essentialEffectOverride = -1;
+        /** @type {Container | null} */
         this.container = null;
+        /** @type {boolean} */
         this.held = false;
+        /** @type {boolean} */
         this.holdable = false;
+        /** @type {boolean} */
         this.equipped = false;
+        /** @type {boolean} */
         this.equipable = false;
         /**
-         * @type {object}
-         * Object<EffectID: <"currentStack":StackNumber, "startTime":TimeStart, "endTime":TimeEnd>>
+         * Stacked effects
+         * @type {Object.<string, Object.<number, string>>}
+         * @example // Object<EffectID: <"currentStack":StackNumber, "startTime":TimeStart, "endTime":TimeEnd>>
          */
         this.effects = {};
-        /**
-         * @type {object}
-         * Object<number: Set<Effect>
-         */
+        /** @type {Object.<number, Set<Effect>>} */
         this.effectsPriority = {};
         /**
          * Effects triggered on action
-         * @type {object}
-         * {ActionEnum:{Effect:boolean}}
+         * @type {Object.<ActionEnum, Object.<Effect, boolean>>}
          */
         this.actionEffects = {};
         AbstractEntity.set(this.id, this);
     }
-
+    /**
+     * 
+     * @param {string} id 
+     */
     setID(id) {
         this.locked = true;
         AbstractEntity.remove(this.id);
         id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
         this.id = id;
         AbstractEntity.set(this.id, this);
         this.locked = false;
@@ -94,19 +169,13 @@ class AbstractEntity {
     getID() {
         return this.id;
     }
-    setID(id) {
-        if (this.locked) {
-            id = Tools.filterID(id);
-            if (id.length > 0) {
-                this.id = id;
-            }
-            return 0;
-        }
-        return 1;
-    }
     getType() {
         return this.entityType;
     }
+    /**
+     * 
+     * @param {string} name 
+     */
     setName(name) {
         this.name = Tools.filterName(name);
         return 0;
@@ -114,6 +183,10 @@ class AbstractEntity {
     getName() {
         return this.name;
     }
+    /**
+     * 
+     * @param {string} description 
+     */
     setDescription(description) {
         this.description = Tools.filterName(description);
         return 0;
@@ -121,6 +194,10 @@ class AbstractEntity {
     getDescription() {
         return this.description;
     }
+    /**
+     * 
+     * @param {string} iconID 
+     */
     setIcon(iconID) {
         this.iconID = iconID;
         return 0;
@@ -129,12 +206,16 @@ class AbstractEntity {
         return this.iconID;
     }
 
-    getSize() {
-        return this.size;
-    }
+    /**
+     * 
+     * @param {SizeEnum} size 
+     */
     setSize(size) {
         this.size = Tools.filterEnum(size) || SizeEnum.MEDIUM;
         return 0;
+    }
+    getSize() {
+        return this.size;
     }
     setHealth(number) {
         if (typeof number != "number") {number = Number.parseInt(number) || 0;}

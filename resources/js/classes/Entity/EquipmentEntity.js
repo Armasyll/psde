@@ -1,5 +1,12 @@
 /**
  * Equipment Entity
+ * @class
+ * @typedef {Object} EquipmentEntity
+ * @extends ItemEntity
+ * @property {ApparelSlotEnum} equipmentSlot
+ * @property {Object} abilityRequirements
+ * @property {Object} abilityRequirementsModifier
+ * @property {boolean} equipable
  */
 class EquipmentEntity extends ItemEntity {
     /**
@@ -12,11 +19,13 @@ class EquipmentEntity extends ItemEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "", equipmentSlot = ApparelSlotEnum.NONE) {
         super(id, name, description, iconID);
-
+        /** @type {ApparelSlotEnum} */
         this.equipmentSlot = ApparelSlotEnum.NONE;
-
+        /** @type {Object.<AbilityEnum, number>} */
         this.abilityRequirements = {};
+        /** @type {Object.<AbilityEnum, number>} */
         this.abilityRequirementsModifier = {};
+        /** @type {boolean} */
         this.equipable = true;
 
         this.addAvailableAction(ActionEnum.EQUIP);

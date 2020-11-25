@@ -1,5 +1,23 @@
 /**
  * Entity
+ * @class
+ * @typedef {Object} Entity
+ * @extends AbstractEntity
+ * @property {EntityEnum} entityType
+ * @property {number} weight
+ * @property {number} weightModifier
+ * @property {number} price
+ * @property {number} priceModifier
+ * @property {string} meshID
+ * @property {Array} meshStages
+ * @property {number} currentMeshStage
+ * @property {string} textureID
+ * @property {Array} textureStages
+ * @property {number} currentTextureStage
+ * @property {string} materialID
+ * @property {Array} materialStages
+ * @property {number} currentMaterialStage
+ * @property {Object} instances
  */
 class Entity extends AbstractEntity {
     /**
@@ -12,21 +30,35 @@ class Entity extends AbstractEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "genericItem", entityType = EntityEnum.ENTITY) {
         super(id, name, description, iconID);
-        this.entityType = entityType;;
+        /** @type {EntityEnum} */
+        this.entityType = entityType;
+        /** @type {number} */
         this.weight = 0;
+        /** @type {number} */
         this.weightModifier = 0;
+        /** @type {number} */
         this.price = 0;
+        /** @type {number} */
         this.priceModifier = 0;
+        /** @type {string} */
         this.meshID = "missingMesh";
+        /** @type {Array} */
         this.meshStages = [];
+        /** @type {number} */
         this.currentMeshStage = 0;
+        /** @type {string} */
         this.textureID = "missingTexture";
+        /** @type {Array} */
         this.textureStages = [];
+        /** @type {number} */
         this.currentTextureStage = 0;
+        /** @type {string} */
         this.materialID = "missingMaterial";
+        /** @type {Array} */
         this.materialStages = [];
+        /** @type {number} */
         this.currentMaterialStage = 0;
-
+        /** @type {Object} */
         this.instances = {};
 
         this.addAvailableAction(ActionEnum.TOUCH);

@@ -12,5 +12,6 @@ EntityLogic.createFurnitureEntity("chair02", "Chair", "A simple chair.", "chair0
 EntityLogic.createFurnitureEntity("chair03", "Chair", "A chair.", "chair03Icon", "chair03", undefined, FurnitureEnum.CHAIR, 10, 10);
 EntityLogic.createFurnitureEntity("flatScreenMonitor01", "TV", "A television.", undefined, "flatScreenMonitor01", undefined, FurnitureEnum.TELEVISION, 30, 180);
 EntityLogic.createFurnitureEntity("bathtub01", "Bathtub", "A simple bathtub.", undefined, "bathtub01", undefined, FurnitureEnum.TUB, 240, 400);
+EntityLogic.createFurnitureEntity("modelMKeyboard", "Model M Keyboard", "An IBN Model M Keyboard", undefined, "modelMKeyboard", undefined);
 
 EntityLogic.createLightingEntity("lamp01", "Lamp", "A simple lamp.", "lamp01", "lamp01", null, null, [0, 0, 1.2]);

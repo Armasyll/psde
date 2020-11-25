@@ -1,5 +1,14 @@
 /**
  * Item Entity
+ * @class
+ * @typedef {Object} ItemEntity
+ * @extends Entity
+ * @property {ItemEnum} itemType
+ * @property {number} maxStackCount
+ * @property {boolean} hidden
+ * @property {boolean} lootable
+ * @property {boolean} bound
+ * @property {BoundTypeEnum} boundType
  */
 class ItemEntity extends Entity {
     /**
@@ -13,8 +22,18 @@ class ItemEntity extends Entity {
     constructor(id = "", name = "", description = "", iconID = "genericItemIcon", itemType = ItemEnum.GENERAL) {
         super(id, name, description, iconID, EntityEnum.ITEM);
 
+        /** @type {ItemEnum} */
         this.itemType = ItemEnum.GENERAL;
+        /** @type {number} */
         this.maxStackCount = 1;
+        /** @type {boolean} */
+        this.hidden = false;
+        /** @type {boolean} */
+        this.lootable = true;
+        /** @type {boolean} */
+        this.bound = false;
+        /** @type {BoundTypeEnum} */
+        this.boundType = BoundTypeEnum.NONE;
 
         this.addAvailableAction(ActionEnum.DROP);
         this.addAvailableAction(ActionEnum.HOLD);

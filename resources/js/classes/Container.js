@@ -1,5 +1,15 @@
 /**
  * Container
+ * @typedef {Object} Container
+ * @property {string} id - ID
+ * @property {string} name
+ * @property {Object} items
+ * @property {numbebr} weight
+ * @property {number} maxSize
+ * @property {number} maxWeight
+ * @property {Object} entities
+ * @property {boolean} locked
+ * @property {boolean} enabled
  */
 class Container {
     /**
@@ -10,27 +20,33 @@ class Container {
      * @param {number} [maxWeight] 
      */
     constructor(id = "", name = "", maxSize = 9, maxWeight = 10) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
-        this.id = id;
+        /** @type {string} */
+        this.id = "";
+        this.setID(id);
         name = Tools.filterName(name);
         if (name.length == 0) {
             name = id;
         }
+        /** @type {string} */
         this.name = name;
-        /*
-        Map of integers, related to item slots, and InstancedItemEntities
+        /**
+         * Map of integers, related to item slots, and InstancedItemEntities
+         * @type {Object.<number, InstancedItemEntity>}
          */
         this.items = {};
+        /** @type {number} */
         this.weight = 0;
+        /** @type {number} */
         this.maxSize = 9;
         this.setMaxSize(maxSize);
+        /** @type {number} */
         this.maxWeight = 10;
         this.setMaxWeight(maxWeight);
+        /** @type {Object.<string, AbstractEntity>} */
         this.entities = {};
+        /** @type {boolean} */
         this.locked = false;
+        /** @type {boolean} */
         this.enabled = true;
 
         Container.set(this.id, this);
@@ -40,6 +56,9 @@ class Container {
         this.locked = true;
         Container.remove(this.id);
         id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
         this.id = id;
         Container.set(this.id, this);
         this.locked = false;

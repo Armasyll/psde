@@ -3607,6 +3607,8 @@ let TargetEnum = {
 };
 /**
  * Enum for Attack Response types
+ * @readonly
+ * @enum {number}
  */
 let AttackResponseEnum = {
     "FINISH": 0,
@@ -3635,4 +3637,16 @@ let AttackResponseEnum = {
             "key": "MISS"
         }
     }
+};
+/**
+ * Enum for Bound types
+ * @readonly
+ * @enum {number}
+ */
+let BoundTypeEnum = {
+    "NONE": ActionEnum.NONE,
+    "TAKE": ActionEnum.TAKE,
+    "EQUIP": ActionEnum.EQUIP,
+    "USE": ActionEnum.USE,
+    "properties": ActionEnum.properties
 };
