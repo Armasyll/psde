@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="vendors/babylonjs/babylon.js"></script>
+        <script src="vendors/babylonjs/materialsLibrary/babylon.fireMaterial.min.js"></script>
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = new BABYLON.Engine(canvas, false, null, false);
+        var scene = new BABYLON.Scene(engine);
+        var sceneCreated = false;
+        var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 1.25, 2, new BABYLON.Vector3(0, 0, 0), scene);
+        camera.attachControl(canvas, true);
+        var box = null;
+        var createScene = function () {
+            if (sceneCreated) {
+                return ;
+            }
+            // Set up environment
+            box = BABYLON.Mesh.CreatePlane("box", 1.0, scene);
+            box.rotation.y = BABYLON.Tools.ToRadians(90);
+            var fireMaterial = new BABYLON.FireMaterial("fireMaterial", scene);
+            fireMaterial.diffuseTexture = new BABYLON.Texture("/resources/images/textures/static/feaew_by_smeggo.png", scene);
+            fireMaterial.distortionTexture = new BABYLON.Texture("/resources/images/textures/effects/fireDistortion.png", scene);
+            fireMaterial.opacityTexture = new BABYLON.Texture("/resources/images/textures/effects/fireOpacity.png", scene);
+            fireMaterial.backFaceCulling = false;
+            box.material = fireMaterial;
+        
+            // Analytical Light
+            var directionalLight = new BABYLON.DirectionalLight("directional", new BABYLON.Vector3(0.5, -2.0, 0.0), scene);
+            
+            // Scene color
+            scene.clearColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            
+            sceneCreated = true;
+            return scene;
+        };
+        engine.runRenderLoop(function () {
+            if (scene && camera) {
+                createScene();
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
