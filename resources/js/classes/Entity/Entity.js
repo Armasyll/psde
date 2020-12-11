@@ -9,13 +9,13 @@
  * @property {number} price
  * @property {number} priceModifier
  * @property {string} meshID
- * @property {Array} meshStages
+ * @property {Array.<string>} meshStages
  * @property {number} currentMeshStage
  * @property {string} textureID
- * @property {Array} textureStages
+ * @property {Array.<string>} textureStages
  * @property {number} currentTextureStage
  * @property {string} materialID
- * @property {Array} materialStages
+ * @property {Array.<string>} materialStages
  * @property {number} currentMaterialStage
  * @property {Object} instances
  */

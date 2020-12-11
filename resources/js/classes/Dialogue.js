@@ -1,5 +1,7 @@
 /**
  * Dialogue
+ * @class
+ * @typedef {Object} Dialogue
  */
 class Dialogue {
     /**
@@ -206,6 +208,11 @@ class Dialogue {
     }
 }
 Dialogue.initialize();
+/**
+ * DialogueOption
+ * @class
+ * @typedef {Object} DialogueOption
+ */
 class DialogueOption {
     constructor(id = "", dialogue = null, title = null, condition = null) {
         id = Tools.filterID(id);

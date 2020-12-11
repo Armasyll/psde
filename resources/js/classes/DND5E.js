@@ -1,5 +1,8 @@
 /**
  * DND 5e methods
+ * @class
+ * @typedef {Object} DND5E
+ * @extends DND
  */
 class DND5E extends DND {
     static getSkillAbility(proficiencyEnum) {

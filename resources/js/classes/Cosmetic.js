@@ -1,5 +1,7 @@
 /**
  * Cosmetic
+ * @class
+ * @typedef {Object} Cosmetic
  */
 class Cosmetic {
     /**

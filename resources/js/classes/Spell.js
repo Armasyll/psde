@@ -1,5 +1,42 @@
 /**
  * Spell
+ * @class
+ * @typedef {Object} Spell
+ * @property {string} id
+ * @property {string} name
+ * @property {string} description
+ * @property {string} iconID
+ * @property {string} meshID
+ * @property {string} materialID
+ * @property {string} textureID
+ * @property {SpellTypeEnum} spellType
+ * @property {number} spellLevel
+ * @property {number} spellSlotsUsed
+ * @property {boolean} prepared
+ * @property {boolean} cantrip
+ * @property {boolean} ritual
+ * @property {number} castingTime
+ * @property {boolean} reaction
+ * @property {number} targetRange
+ * @property {Object.<SpellComponentEnum, boolean>} spellComponents
+ * @property {array} materialComponents
+ * @property {number} duration
+ * @property {DamageEnum} damageType
+ * @property {number} damageRollCount
+ * @property {number} damageRollCountModifier
+ * @property {number} damageRollFaces
+ * @property {number} damageRollFacesModifier
+ * @property {boolean} bonusAction
+ * @property {boolean} concentration
+ * @property {AbilityEnum} savingAbility
+ * @property {number} savingAbilityScore
+ * @property {Object.<number, Array.<number>>} additionalSlotRolls
+ * @property {Object.<number, Array.<number>>} additionalLevelRolls
+ * @property {Object.<number, Array.<number>>} additionalSlotTargets
+ * @property {Object.<number, Array.<{effect:Effect, targetType: TargetEnum}>>} effectsPriority
+ * @example {20:[{"effect":Fireball, "targetType":0}, {"effect":Fire Bolt, "targetType":0}]}
+ * @property {TargetEnum} targetType
+ * @property {number} targetRadius
  */
 class Spell {
     /**
@@ -56,10 +93,6 @@ class Spell {
         for (let i = 0; i < 13; i++) {
             this.additionalSlotTargets[i] = [0,0];
         }
-        /**
-         * @type {Object.<number:Array<Object.{effect:Effect, targetType:TargetEnum}>>>}
-         * @example {20:[{"effect":Fireball, "targetType":0}, {"effect":Fire Bolt, "targetType":0}]}
-         */
         this.effectsPriority = {};
 
         this.targetType = TargetEnum.SELF;

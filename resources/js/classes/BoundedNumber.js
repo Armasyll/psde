@@ -1,5 +1,7 @@
 /**
  * Bounded Number
+ * @class
+ * @typedef {Object} BoundedNumber
  */
 class BoundedNumber {
     /**

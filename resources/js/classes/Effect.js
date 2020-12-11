@@ -1,5 +1,30 @@
 /**
  * Effect
+ * @class
+ * @typedef {Object} Effect
+ * @property {string} id
+ * @property {string} name
+ * @property {string} [description]
+ * @property {string} [iconID]
+ * @property {Object.<string, Object.<OperationsEnum, (number|function)>>} modifiers
+ * @property {DamageEnum} statusType
+ * @property {TiggerEnum} trigger
+ * @property {number} duration
+ * @property {IntervalEnum} durationInterval
+ * @property {boolean} durationIncludesTaperIn
+ * @property {number} taperInDuration
+ * @property {number} taperInWeight
+ * @property {number} taperInCurve
+ * @property {boolean} durationIncludesTaperOut
+ * @property {number} taperOutDuration
+ * @property {number} taperOutWeight
+ * @property {number} taperOutCurve
+ * @property {IntervalEnum} intervalType
+ * @property {number} intervalNth
+ * @property {number} priority
+ * @property {boolean} hidden
+ * @property {number} stackCount
+ * @property {boolean} dispellable
  */
 class Effect {
     /**
@@ -24,7 +49,6 @@ class Effect {
          * @example {"health": {OperationsEnum.ADD: 1}}
          * @example {"health": {OperationsEnum.ADD: function() {return 1;}}}
          * @example {"health": {OperationsEnum.ADD: function(creatureEntity) {return creatureEntity.getHealth() + 1;}}}
-         * @type {Object.<string: Object.<OperationsEnum: number|function>}
          */
         this.modifiers = {"conditions":[]};
         this.statusType = DamageEnum.BLUDGEONING;

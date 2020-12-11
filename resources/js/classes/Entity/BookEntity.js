@@ -1,5 +1,8 @@
 /**
  * Book Entity
+ * @class
+ * @typedef {Object} BookEntity
+ * @extends ItemEntity
  */
 class BookEntity extends ItemEntity {
     /**

@@ -10,7 +10,7 @@
  * @property {string} meshID
  * @property {string} materialID
  * @property {string} textureID
- * @property {[EntityController | null]} controller
+ * @property {(EntityController|null)} controller
  * @property {number} health
  * @property {number} maxHealth
  * @property {number} maxHealthModifier
@@ -22,7 +22,7 @@
  * @property {Object} availableActions
  * @property {Object} hiddenAvailableActions
  * @property {Object} specialProperties
- * @property {[ActionEnum | null]} defaultAction
+ * @property {(ActionEnum|null)} defaultAction
  * @property {boolean} godMode
  * @property {number} godModeOverride
  * @property {number} godModeConditionOverride
@@ -34,7 +34,7 @@
  * @property {number} essentialOverride
  * @property {number} essentialConditionOverride
  * @property {number} essentialEffectOverride
- * @property {[Container | null]} container
+ * @property {(Container|null)} container
  * @property {boolean} held
  * @property {boolean} holdable
  * @property {boolean} equipped

@@ -1,5 +1,7 @@
 /**
  * DND methods
+ * @class
+ * @typedef {Object} DND
  */
 class DND {
     /**

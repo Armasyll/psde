@@ -1,5 +1,7 @@
 /**
  * Cell
+ * @class
+ * @typedef {Object} Cell
  */
 class Cell {
     /**

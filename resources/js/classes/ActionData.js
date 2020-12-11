@@ -1,5 +1,7 @@
 /**
  * Action Data
+ * @class
+ * @typedef {Object} ActionData
  */
 class ActionData {
     /**

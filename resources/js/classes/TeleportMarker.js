@@ -1,13 +1,19 @@
 /**
  * Teleport Marker
+ * @class
+ * @typedef {Object} TeleportMarker
+ * @property {string} id
+ * @property {string} cellID
+ * @property {Array.<number>} position
+ * @property {Array.<number>} rotation
  */
 class TeleportMarker {
     /**
      * 
      * @param {string} id Teleport Marker ID
      * @param {string} cellID Cell ID
-     * @param {array} position Position
-     * @param {array} [rotation] Rotation
+     * @param {Array.<number>} position Position
+     * @param {Array.<number>} [rotation] Rotation
      */
     constructor(id = "", cellID = "limbo", position = [0,0,0], rotation = [0,0,0]) {
         this.id = "";

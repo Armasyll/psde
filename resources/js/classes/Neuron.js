@@ -1,3 +1,8 @@
+/**
+ * Neuron
+ * @class
+ * @typedef {Object} Neuron
+ */
 class Neuron {
     constructor() {
         this.id = Tools.genUUIDv4();

@@ -3,11 +3,11 @@
  * @typedef {Object} Container
  * @property {string} id - ID
  * @property {string} name
- * @property {Object} items
- * @property {numbebr} weight
+ * @property {Object.<number, InstancedItemEntity>} items
+ * @property {number} weight
  * @property {number} maxSize
  * @property {number} maxWeight
- * @property {Object} entities
+ * @property {Object.<string, AbstractEntity>} entities
  * @property {boolean} locked
  * @property {boolean} enabled
  */

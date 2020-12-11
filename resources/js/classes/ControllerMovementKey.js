@@ -1,5 +1,7 @@
 /**
  * Movement keys for EntityControllers
+ * @class
+ * @typedef {Object} ControllerMovementKey
  */
 class ControllerMovementKey {
     /**

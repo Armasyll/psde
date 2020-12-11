@@ -1,5 +1,7 @@
 /**
  * Bidirectional Map
+ * @class
+ * @typedef {Object} BidirectionalMap
  */
 class BidirectionalMap extends Map {
     constructor(...iterables) {
