@@ -57,9 +57,11 @@ class CharacterControllerRigidBody extends CharacterController {
             this.startPosition.copyFrom(this.collisionMesh.position);
             this.doMove();
         }
-        if (Game.playerController != this && this.targetController == null) {
-            this.targetRay.direction.y = 0; // up-down
-            this.targetRay.direction.z = -this.collisionMesh.forward.z;
+        if (this.targetRay != null) {
+            if (Game.playerController != this && this.targetController == null) {
+                this.targetRay.direction.y = 0; // up-down
+                this.targetRay.direction.z = -this.collisionMesh.forward.z;
+            }
         }
         if (this.hasLookController()) {
             this.lookController.update();

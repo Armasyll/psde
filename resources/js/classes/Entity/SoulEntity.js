@@ -10,7 +10,7 @@ class SoulEntity extends AbstractEntity {
      */
     constructor(id = "", name = "", description = "") {
         super(id, name, description);
-        this.equiptable = true;
+        this.equipable = true;
         this.holdable = true;
         this.entityType = EntityEnum.SOUL;
         this.age = 18;
@@ -253,7 +253,7 @@ class SoulEntity extends AbstractEntity {
         if (dialogue instanceof Dialogue) {
             dialogue = dialogue.id;
         }
-        else if (Dialoghe.has(dialogue)) {}
+        else if (Dialogue.has(dialogue)) {}
         else {
             return 2;
         }

@@ -206,7 +206,10 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("actionAttack", 1, false, callbackID);
                     break;
                 }
-                let weapon = actor.getMainWeapon();
+                let weapon = null;
+                if (actor instanceof CreatureEntity) {
+                    weapon = actor.getMainWeapon();
+                }
                 EntityLogic.actionAttack(target, actor, weapon, callbackID);
                 break;
             }
@@ -1073,7 +1076,7 @@ class EntityLogic {
         }
         if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
-        let soul = new SoulEntity(id, name, description);
+        let soul = new SoulEntity(String(id).concat("Soul"), name, description);
         soul.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
         soul.setCharisma(10);
         soul.setIntelligence(10);

@@ -11,6 +11,8 @@ class DebugGameGUI {
         DebugGameGUI.skyboxMieDirectionalG = 0.8;
         DebugGameGUI.skyboxMieCoefficient = 0.005;
         DebugGameGUI.skyboxRayleigh = 2;
+        DebugGameGUI.selectionMenu = null;
+        DebugGameGUI.collisionListController = null;
         DebugGameGUI.isVisible = false;
         DebugGameGUI.generateController();
         DebugGameGUI.containerAlpha = 0.75;
@@ -21,6 +23,7 @@ class DebugGameGUI {
     static generateController() {
         DebugGameGUI.skyboxController = DebugGameGUI.generateSkyboxController();
         DebugGameGUI.selectionMenu = DebugGameGUI.generateSelectionMenu();
+        DebugGameGUI.collisionListController = DebugGameGUI.generateCollisionListController();
         DebugGameGUI.initialized = true;
     }
     static generateSelectionMenu() {
@@ -98,6 +101,36 @@ class DebugGameGUI {
         controller.isVisible = false;
         return controller;
     }
+    static generateCollisionListController() {
+        let controller = GameGUI.createStackPanel("collisionListController");
+        controller.background = GameGUI.background;
+        controller.isVertical = true;
+        controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        controller.alpha = DebugGameGUI.containerAlpha;
+        return controller;
+    }
+    static clearCollisionList() {
+        for (let i = DebugGameGUI.collisionListController.children.length - 1; i >= 0; i--) {
+            let child = DebugGameGUI.collisionListController.children[i];
+            for (let j = child.children.length - 1; j >= 0; j--) {
+                let textBlock = child.children[j];
+                child.removeControl(textBlock);
+                textBlock.dispose();
+            }
+            DebugGameGUI.collisionListController.removeControl(child);
+            child.dispose();
+        }
+        return 0;
+    }
+    static addToCollisionList(id = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero()) {
+        let controller = GameGUI.createStackPanel(id);
+        controller.isVertical = false;
+        controller.addControl(GameGUI.createTextBlock(String(id).concat("ID"), id));
+        controller.addControl(GameGUI.createTextBlock(String(id).concat("Position"), position.toString()));
+        controller.addControl(GameGUI.createTextBlock(String(id).concat("Rotation"), String(rotation.y)));
+        DebugGameGUI.collisionListController.addControl(controller);
+        return controller;
+    }
     static getSkyboxController() {
         return DebugGameGUI.skyboxController;
     }
@@ -105,12 +138,14 @@ class DebugGameGUI {
         Game.setInterfaceMode(InterfaceModeEnum.DEBUG);
         DebugGameGUI.updateSkyboxUI();
         DebugGameGUI.skyboxController.isVisible = true;
+        DebugGameGUI.collisionListController.isVisible = true;
         DebugGameGUI.isVisible = true;
         return 0;
     }
     static hide() {
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         DebugGameGUI.skyboxController.isVisible = false;
+        DebugGameGUI.collisionListController.isVisible = false;
         DebugGameGUI.isVisible = false;
         return 0;
     }

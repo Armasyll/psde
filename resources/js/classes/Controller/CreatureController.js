@@ -19,7 +19,7 @@ class CreatureController extends EntityController {
         this.root = null;
         this.targetRayLength = 2 * this.collisionMesh.scaling.y;
         this.targetRayLengthOverride = -1;
-        this.targetRay = new BABYLON.Ray(this.getBoneByName("FOCUS").getAbsolutePosition(), this.getBoneByName("FOCUS").getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
+        this.targetRay = null;
         this.targetRayHelper = null;
         this.targetRayVector3 = BABYLON.Vector3.Zero();
         this.lookController = null;
@@ -1884,14 +1884,17 @@ class CreatureController extends EntityController {
         if (this.locked || !this.enabled) {
             return 0;
         }
-        if (!(this.targetRay instanceof BABYLON.Ray)) {
-            return 2;
+        if (!(this.focus instanceof BABYLON.AbstractMesh)) {
+            return 1;
         }
-        if (!this.hasSkeleton() || !this.hasBone("FOCUS")) {
+        if (!(this.targetRay instanceof BABYLON.Ray)) {
+            this.targetRay = new BABYLON.Ray(this.focus.getAbsolutePosition(), this.focus.getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
+        }
+        if (!this.hasSkeleton()) {
             this.targetRay.origin = this.collisionMesh.position.add(this.collisionMesh.getBoundingInfo().boundingBox.center);
             return 1;
         }
-        this.targetRay.origin = this.collisionMesh.position.add(this.getBoneByName("FOCUS").getAbsolutePosition().multiply(this.collisionMesh.scaling));
+        this.targetRay.origin = this.collisionMesh.position.add(this.focus.getAbsolutePosition().multiply(this.collisionMesh.scaling));
         if (this.targetRayLengthOverride >= 0) {
             this.targetRay.length = this.targetRayLengthOverride;
         }

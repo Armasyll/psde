@@ -500,6 +500,17 @@ class GameGUI {
         stackPanel.background = GameGUI.background;
         return stackPanel;
     }
+    static removeControl(control) {
+        if (control.children instanceof Array && control.children.length > 0) {
+            for (let i = control.children.length - 1; i >= 0; i--) {
+                GameGUI.removeControl(control.children[i]);
+            }
+        }
+        if (control.dispose instanceof Function) {
+            control.dispose();
+        }
+        return 0;
+    }
     /**
      * 
      * @param {string} [id] 

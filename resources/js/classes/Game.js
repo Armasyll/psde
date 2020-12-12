@@ -1033,6 +1033,9 @@ class Game {
             return 1;
         }
         Game.createBackloggedEntities();
+        if (DebugGameGUI.isVisible) {
+            Game.updateDebugCollisionList();
+        }
     }
 
     static importScene(file, parentCallbackID = null) {
@@ -6164,14 +6167,14 @@ class Game {
                         for (let entry in message) {
                             if (typeof message[entry] == "string") {
                                 let json = JSON.parse(message[entry]);
-                                Game.updateCachedEntity(entry, json);
+                                Game.setCachedEntity(entry, json);
                             }
                         }
                     }
                     else {
                         if (typeof message == "string") {
                             let json = JSON.parse(message);
-                            Game.updateCachedEntity(json.id, json);
+                            Game.setCachedEntity(json.id, json);
                         }
                     }
                 }
@@ -6349,5 +6352,8 @@ class Game {
             Game.skybox.material.azimuth = (Game.currentTime - 21600) % 86400 / 86400;
             Game.skybox.material.luminance = (2 + Math.cos(4 * Math.PI * ((Game.currentTime - 21600) % 86400 / 86400))) / 5;
         }
+    }
+    static updateDebugCollisionList(target = Game.playerController) {
+        
     }
 }
