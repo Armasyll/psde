@@ -2867,8 +2867,8 @@ class Game {
         if (Game.hasBackloggedEntityStage(entityControllerID, stageIndex)) {
             return true;
         }
-        let meshID = "";
-        let materialID = "";
+        let meshID = "missingMesh";
+        let materialID = "missingMaterial";
         if (EntityController.hasOwnProperty(entityControllerID)) {
             let controller = EntityController.get(entityControllerID);
             meshID = controller.getMeshStage(stageIndex);

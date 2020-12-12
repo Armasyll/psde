@@ -15,7 +15,7 @@ class Cell {
             id = Tools.genUUIDv4();
         }
         this.id = id;
-        this.name = "";
+        this.name = "limbo";
         this.setName(name);
         this.cellType = CellTypeEnum.NONE;
         this.owner = null;

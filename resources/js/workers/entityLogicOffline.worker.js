@@ -1129,7 +1129,8 @@ class EntityLogic {
             characterEntity.setMeshID(meshID);
         }
         if (materialID == "missingMaterial" || materialID == "missingTexture" || materialID == undefined) {
-            let textureID = "";
+            /** @type {string} texture ID */
+            let textureID = "missingTexture";
             if (characterEntity.getCreatureType() == CreatureTypeEnum.HUMANOID) {
                 if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.FOX) {
                     textureID = "foxRed";

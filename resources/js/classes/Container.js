@@ -22,13 +22,8 @@ class Container {
     constructor(id = "", name = "", maxSize = 9, maxWeight = 10) {
         /** @type {string} */
         this.id = "";
-        this.setID(id);
-        name = Tools.filterName(name);
-        if (name.length == 0) {
-            name = id;
-        }
         /** @type {string} */
-        this.name = name;
+        this.name = "";
         /**
          * Map of integers, related to item slots, and InstancedItemEntities
          * @type {Object.<number, InstancedItemEntity>}
@@ -38,16 +33,18 @@ class Container {
         this.weight = 0;
         /** @type {number} */
         this.maxSize = 9;
-        this.setMaxSize(maxSize);
         /** @type {number} */
         this.maxWeight = 10;
-        this.setMaxWeight(maxWeight);
         /** @type {Object.<string, AbstractEntity>} */
         this.entities = {};
         /** @type {boolean} */
         this.locked = false;
         /** @type {boolean} */
         this.enabled = true;
+        this.setID(id);
+        this.setName(name);
+        this.setMaxSize(maxSize);
+        this.setMaxWeight(maxWeight);
 
         Container.set(this.id, this);
     }
@@ -66,6 +63,13 @@ class Container {
     }
     getID() {
         return this.id;
+    }
+    setName(name) {
+        name = Tools.filterName(name);
+        if (name.length == 0) {
+            name = this.id;
+        }
+        return 0;
     }
     getName() {
         return this.name;
