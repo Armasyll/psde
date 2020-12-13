@@ -4426,7 +4426,7 @@ class Game {
             return 1;
         }
         let ray = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.playerController.focus.getAbsolutePosition());
-        if (Game.playerController.targetRay == undefined) {
+        if (Game.playerController.targetRay == null) {
             Game.playerController.targetRay = ray;
         }
         else {
@@ -4434,7 +4434,7 @@ class Game {
             Game.playerController.targetRay.direction = ray.direction;
         }
         if (Game.debugMode) {
-            if (Game.playerController.targetRayHelper != undefined) {
+            if (Game.playerController.targetRayHelper != null) {
                 Game.playerController.targetRayHelper.dispose();
             }
             Game.playerController.targetRayHelper = new BABYLON.RayHelper(Game.playerController.targetRay);

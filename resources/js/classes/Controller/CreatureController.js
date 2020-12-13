@@ -23,7 +23,6 @@ class CreatureController extends EntityController {
         this.targetRayHelper = null;
         this.targetRayVector3 = BABYLON.Vector3.Zero();
         this.lookController = null;
-        this.lookControllerTargetVector3 = this.targetRayVector3;
         this.grounded = false;
         this.jumping = false;
         this.falling = false;
@@ -38,15 +37,6 @@ class CreatureController extends EntityController {
         this.attacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
         this.canTransition = true;
 
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            this.animated = true;
-            this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-            this.skeleton.animationPropertiesOverride.enableBlending = true;
-            this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
-        }
-        else {
-            this.animated = false;
-        }
         this.organs = {};
         this.organs["HEAD"] = [];
         this.organs["EAR_L"] = [];
@@ -83,6 +73,7 @@ class CreatureController extends EntityController {
         this.cosmetics["LEGS"] = [];
         this.cosmetics["FOOT_L"] = [];
         this.cosmetics["FOOT_R"] = [];
+        this.bones["head"] = null;
         /**
          * @type {EyeEnum}
          */
@@ -91,20 +82,15 @@ class CreatureController extends EntityController {
         this.eyeBackground = "#FFFFFF";
         this.eyeColour = "#C3C3C3";
 
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
+            this.skeleton.animationPropertiesOverride.enableBlending = true;
+            this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
+            this.bones["head"] = this.getBoneByName("head") || null;
+        }
+
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
-
-        /**
-         * Map of bone IDs and the mesh attached to them.
-         * @type {String, {String, BABYLON.Mesh}}
-         */
-        this._meshesAttachedToBones = {};
-        /**
-         * Map of mesh IDs and the bones they're attached to.
-         * @type {String, {String, BABYLON.Bone}}
-         */
-        this._bonesAttachedToMeshes = {};
-        this._attachedMeshes = new Set([this.mesh]);
 
         this.target = null;
 
@@ -112,296 +98,6 @@ class CreatureController extends EntityController {
         CreatureController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new CreatureController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
-    }
-
-    hasBone(bone) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return false;
-        }
-        if (bone instanceof BABYLON.Bone) {
-            return this.skeleton.bones[this.skeleton.getBoneIndexByName(bone.id)] >= 0;
-        }
-        else if (typeof bone == "string") {
-            return this.skeleton.getBoneIndexByName(bone) >= 0;
-        }
-        else if (typeof bone == "number") {
-            return this.skeleton.bones.hasOwnProperty(number);
-        }
-        return false;
-    }
-    getBone(bone) {
-        if (EntityController.debugMode) console.log("Running getBone");
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            if (bone instanceof BABYLON.Bone) {
-                return bone;
-            }
-            else if (typeof bone == "string") {
-                return this.getBoneByName(bone);
-            }
-            else if (typeof bone == "number") {
-                return this.getBoneByID(bone);
-            }
-        }
-        return null;
-    }
-    getBoneByName(string) {
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            return this.skeleton.bones[this.skeleton.getBoneIndexByName(string)];
-        }
-        return null;
-    }
-    getBoneByID(number) {
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            return this.skeleton.bones[number];
-        }
-        return null;
-    }
-
-    /**
-     * Attaches a mesh to a bone
-     * @param  {string} meshID Mesh ID
-     * @param  {string} materialID Texture ID
-     * @param  {string} boneID Bone name
-     * @param  {BABYLON.Vector3} [position] Mesh position
-     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
-     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
-     * @param  {object} [options] Options
-     * @returns {CharacterController} This character controller.
-     */
-    attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (EntityController.debugMode) console.log("Running attachMeshIDToBone");
-        if (!Game.hasMesh(meshID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
-            return 2;
-        }
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            if (EntityController.debugMode) console.log(`Couldn't find skeleton`);
-            return 1;
-        }
-        if (!this.hasBone(boneID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find bone:${boneID}`);
-            return 2;
-        }
-        let bone = this.getBone(boneID);
-        position = Tools.filterVector3(position);
-        rotation = Tools.filterVector3(rotation);
-        scaling = Tools.filterVector3(scaling);
-        if (!(Game.hasLoadedMesh(meshID))) {
-            Game.addBackloggedAttachment((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
-            if (EntityController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
-            return 1;
-        }
-        if (materialID != "collisionMaterial") {
-            options["createClone"] = true;
-        }
-        let loadedMesh = Game.createMesh(meshID.concat("Attachment").concat(this.id.capitalize()).concat(boneID), meshID, materialID, position, rotation, scaling, options);
-        /*
-        if the mesh is a billboard
-         */
-        if (loadedMesh.getBoundingInfo().boundingBox.maximum.z == 0) {
-            loadedMesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            if (bone.name == "hand.r") {
-                rotation.y -= BABYLON.Tools.ToRadians(90);
-                rotation.z += BABYLON.Tools.ToRadians(90);
-            }
-            else if (bone.name == "hand.l") {
-                rotation.y -= BABYLON.Tools.ToRadians(90);
-                rotation.z += BABYLON.Tools.ToRadians(270);
-            }
-            loadedMesh.material.backFaceCulling = false;
-        }
-        return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);
-    }
-    /**
-     * Attaches a collision mesh to a bone
-     * @param  {string} meshID Mesh ID
-     * @param  {string} materialID Texture ID
-     * @param  {string} boneID Bone name
-     * @param  {BABYLON.Vector3} [position] Mesh position
-     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
-     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
-     * @param  {object} [options] Options; used
-     * @returns {CharacterController} This character controller.
-     */
-    attachCollisionMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (typeof options != "object") {
-            options = {};
-        }
-        options["checkCollisions"] = true
-        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
-        return 0;
-    }
-    /**
-     * Attaches a collision mesh to a bone
-     * @param  {BABYLON.AbstractMesh} mesh Mesh
-     * @param  {BABYLON.Bone} bone Bone
-     * @param  {BABYLON.Vector3} [position] Mesh position
-     * @param  {BABYLON.Vector3} [rotation] Mesh rotation
-     * @param  {BABYLON.Vector3} [scaling] Mesh scaling
-     * @param  {object} [options] Options; not used
-     * @returns {CharacterController} This character controller.
-     */
-    attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            return 2;
-        }
-        if (!(bone instanceof BABYLON.Bone)) {
-            return 2;
-        }
-        mesh.attachToBone(bone, this.mesh);
-        mesh.controller = this;
-        mesh.position.copyFrom(position);
-        mesh.rotation.copyFrom(rotation);
-        if (!(scaling instanceof BABYLON.Vector3)) {
-            mesh.scaling.copyFrom(this.mesh.scaling);
-        }
-        if (this.prevAnim == undefined) {
-            /*
-            Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
-             */
-            mesh.scalingDeterminant = -1;
-        }
-        if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
-            this._meshesAttachedToBones[bone.id] = {};
-        }
-        this._meshesAttachedToBones[bone.id][mesh.id] = mesh;
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
-            this._bonesAttachedToMeshes[mesh.id] = {};
-        }
-        this._bonesAttachedToMeshes[mesh.id][bone.id] = bone;
-        if (bone.id == "FOCUS") {
-            this.focus = mesh;
-            mesh.isVisible = false;
-        }
-        else if (bone.id == "ROOT") {
-            this.root = mesh;
-            mesh.isVisible = false;
-        }
-        if (mesh.material.name != "collisionMaterial") {
-            this._attachedMeshes.add(mesh);
-        }
-        return 0;
-    }
-    attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
-        return this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
-    }
-    detachAllFromBone(bone, destroyMesh = true) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(bone)) {
-                bone = this.getBone(bone);
-            }
-            else {
-                return 2;
-            }
-        }
-        if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
-            return 1;
-        }
-        for (let meshID in this._meshesAttachedToBones[bone.id]) {
-            this.detachMeshFromBone(this._meshesAttachedToBones[bone.id][meshID], bone, destroyMesh);
-        }
-        return 0;
-    }
-    detachMeshID(meshID = "missingMesh", destroyMesh = true) {
-        if (EntityController.debugMode) console.log("Running detachMeshID");
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        if (!Game.hasMesh(meshID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find {AbstractMesh} ${meshID}`);
-            return 2;
-        }
-        let mesh = null;
-        this._attachedMeshes.forEach((attachedMesh) => {
-            if (attachedMesh.name == meshID || attachedMesh.id == meshID) {
-                mesh = attachedMesh;
-                return true;
-            }
-        });
-        if (mesh == null) {
-            return 1;
-        }
-        return this.detachMeshFromBone(mesh, null, destroyMesh);
-    }
-    detachMeshFromBone(mesh, bone = null, destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            return 2;
-        }
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
-            return 1;
-        }
-        if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(bone)) {
-                bone = this.getBone(bone);
-            }
-            else {
-                bone = null;
-            }
-        }
-        if (bone instanceof BABYLON.Bone) {
-            this._meshesAttachedToBones[bone.id][mesh.id].controller = null;
-            delete this._meshesAttachedToBones[bone.id][mesh.id];
-        }
-        else {
-            for (let boneWithAttachment in this._bonesAttachedToMeshes[mesh.id]) {
-                if (this._bonesAttachedToMeshes[mesh.id][boneWithAttachment] instanceof BABYLON.Bone) {
-                    this._meshesAttachedToBones[boneWithAttachment][mesh.id].controller = null;
-                    delete this._meshesAttachedToBones[boneWithAttachment][mesh.id];
-                }
-            }
-        }
-        mesh.controller = null;
-        mesh.detachFromBone();
-        delete this._bonesAttachedToMeshes[mesh.id];
-        this._attachedMeshes.delete(mesh);
-        if (destroyMesh) {
-            Game.removeMesh(mesh);
-        }
-        return 0;
-    }
-    detachFromAllBones(destroyMesh = true) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return this;
-        }
-        for (let boneID in this._meshesAttachedToBones) {
-            if (boneID == "FOCUS" || boneID == "ROOT") {}
-            else {
-                this.detachAllFromBone(boneID, destroyMesh);
-            }
-            if (this.organs.hasOwnProperty(boneID)) {
-                this.organs[boneID][0] = null;
-                this.organs[boneID][1] = null;
-            }
-            if (this.cosmetics.hasOwnProperty(boneID)) {
-                this.cosmetics[boneID][0] = null;
-                this.cosmetics[boneID][1] = null;
-            }
-        }
-        return 0;
-    }
-    attachToROOT(mesh) {
-        if (mesh instanceof BABYLON.AbstractMesh) {
-            return this.attachMeshToBone(mesh, this.getBone("ROOT"));
-        }
-        return this.attachMeshIDToBone(mesh, undefined, "ROOT");
-    }
-    detachFromROOT() {
-        return this.detachAllFromBone("ROOT", false)[0];
-    }
-    attachToFOCUS(mesh) {
-        if (mesh instanceof BABYLON.AbstractMesh) {
-            return this.attachMeshToBone(mesh, this.getBone("FOCUS"));
-        }
-        return this.attachMeshIDToBone(mesh, undefined, "FOCUS");
-    }
-    detachFromFOCUS() {
-        return this.detachAllFromBone("FOCUS", false)[0];
     }
 
     attachToHead(meshID, textureID, options) {
@@ -1551,7 +1247,7 @@ class CreatureController extends EntityController {
         let lookController = new BABYLON.BoneLookController(
             this.mesh,
             this.getBoneByName(bone),
-            this.lookControllerTargetVector3,
+            this.targetRayVector3,
             {
                 slerpAmount:0.05,
                 minPitch:BABYLON.Tools.ToRadians(-45),
@@ -1887,14 +1583,15 @@ class CreatureController extends EntityController {
         if (!(this.focus instanceof BABYLON.AbstractMesh)) {
             return 1;
         }
+        /* Use this.bones["FOCUS"] instead of this.focus; the position used needs to be relative to the mesh */
         if (!(this.targetRay instanceof BABYLON.Ray)) {
-            this.targetRay = new BABYLON.Ray(this.focus.getAbsolutePosition(), this.focus.getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
+            this.targetRay = new BABYLON.Ray(this.bones["FOCUS"].getAbsolutePosition(), this.bones["FOCUS"].getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
         }
         if (!this.hasSkeleton()) {
             this.targetRay.origin = this.collisionMesh.position.add(this.collisionMesh.getBoundingInfo().boundingBox.center);
             return 1;
         }
-        this.targetRay.origin = this.collisionMesh.position.add(this.focus.getAbsolutePosition().multiply(this.collisionMesh.scaling));
+        this.targetRay.origin = this.collisionMesh.position.add(this.bones["FOCUS"].getAbsolutePosition().multiply(this.collisionMesh.scaling));
         if (this.targetRayLengthOverride >= 0) {
             this.targetRay.length = this.targetRayLengthOverride;
         }
@@ -1904,7 +1601,12 @@ class CreatureController extends EntityController {
         this.targetRay.origin.addToRef(this.targetRay.direction, this.targetRayVector3);
         return 0;
     }
-
+    hasTargetRay() {
+        if (!this.enabled) {
+            return false;
+        }
+        return this.targetRay instanceof BABYLON.Ray;
+    }
     setTarget(entityController) {
         if (!(entityController instanceof EntityController)) {
             if (EntityController.has(entityController)) {
