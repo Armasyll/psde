@@ -15,17 +15,12 @@ class CreatureController extends EntityController {
             return null;
         }
 
-        this.focus = null;
-        this.root = null;
-        this.targetRayLength = 2 * this.collisionMesh.scaling.y;
-        this.targetRayLengthOverride = -1;
         this.targetRay = null;
         this.targetRayHelper = null;
         this.targetRayVector3 = BABYLON.Vector3.Zero();
         this.lookController = null;
-        this.grounded = false;
+        this.dead = false;
         this.jumping = false;
-        this.falling = false;
         this.standing = true;
         this.crouching = false;
         this.sitting = false;
@@ -1580,24 +1575,18 @@ class CreatureController extends EntityController {
         if (this.locked || !this.enabled) {
             return 0;
         }
-        if (!(this.focus instanceof BABYLON.AbstractMesh)) {
+        if (!(this.focusMesh instanceof BABYLON.AbstractMesh)) {
             return 1;
         }
-        /* Use this.bones["FOCUS"] instead of this.focus; the position used needs to be relative to the mesh */
+        /* Use this.bones["FOCUS"] instead of this.focusMesh; the position used needs to be relative to the mesh */
         if (!(this.targetRay instanceof BABYLON.Ray)) {
-            this.targetRay = new BABYLON.Ray(this.bones["FOCUS"].getAbsolutePosition(), this.bones["FOCUS"].getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), this.targetRayLength);
+            this.targetRay = new BABYLON.Ray(this.bones["FOCUS"].getAbsolutePosition(), this.bones["FOCUS"].getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), 2 * this.collisionMesh.scaling.y);
         }
         if (!this.hasSkeleton()) {
             this.targetRay.origin = this.collisionMesh.position.add(this.collisionMesh.getBoundingInfo().boundingBox.center);
             return 1;
         }
         this.targetRay.origin = this.collisionMesh.position.add(this.bones["FOCUS"].getAbsolutePosition().multiply(this.collisionMesh.scaling));
-        if (this.targetRayLengthOverride >= 0) {
-            this.targetRay.length = this.targetRayLengthOverride;
-        }
-        else {
-            this.targetRay.length = this.targetRayLength;
-        }
         this.targetRay.origin.addToRef(this.targetRay.direction, this.targetRayVector3);
         return 0;
     }
@@ -1606,6 +1595,18 @@ class CreatureController extends EntityController {
             return false;
         }
         return this.targetRay instanceof BABYLON.Ray;
+    }
+    setTargetRayLength(length = 1.524) {
+        if (this.hasTargetRay()) {
+            this.targetRay.length = length;
+        }
+        return 0;
+    }
+    getTargetRayLength() {
+        if (this.hasTargetRay()) {
+            return this.targetRay.length;
+        }
+        return 0;
     }
     setTarget(entityController) {
         if (!(entityController instanceof EntityController)) {

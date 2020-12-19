@@ -780,7 +780,6 @@ class Game {
         Game.playerEntityID = null;
         Game.playerController = null;
         Game.playerCellID = null;
-        Game.playerTargetRayLengthOverride = -1;
         Game.castRayTargetEnabled = true;
         Game.castRayTargetIntervalFunction = null;
         Game.castRayTargetInterval = 100;
@@ -5329,10 +5328,6 @@ class Game {
         }
         Game.previousInterfaceMode = Game.interfaceMode;
         Game.interfaceMode = interfaceMode;
-        Game.playerTargetRayLengthOverride = -1;
-        if (Game.hasPlayerController()) {
-            Game.playerController.targetRayLengthOverridee = -1;
-        }
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 GameGUI._hideMenuChildren();
@@ -5354,10 +5349,6 @@ class Game {
                 EditControls.clearPickedMesh();
                 EditControls.clearPickedController();
                 Game.controls = EditControls;
-                Game.playerTargetRayLengthOverride = 10;
-                if (Game.hasPlayerController()) {
-                    Game.playerController.targetRayLengthOverridee = Game.playerTargetRayLengthOverride;
-                }
                 break;
             }
         }
