@@ -550,12 +550,12 @@ class EntityController {
                 this.detachAllFromBone(boneID, destroyMesh);
             }
             if (this.organs.hasOwnProperty(boneID)) {
-                this.organs[boneID][0] = null;
-                this.organs[boneID][1] = null;
+                this.organs[boneID]["meshID"] = null;
+                this.organs[boneID]["materialID"] = null;
             }
             if (this.cosmetics.hasOwnProperty(boneID)) {
-                this.cosmetics[boneID][0] = null;
-                this.cosmetics[boneID][1] = null;
+                this.cosmetics[boneID]["meshID"] = null;
+                this.cosmetics[boneID]["materialID"] = null;
             }
         }
         return 0;

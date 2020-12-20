@@ -18,25 +18,25 @@ class CharacterController extends CreatureController {
         this.helmetVisible = true;
         /**
          * ApparelSlotEnum key, mesh ID, material ID
-         * @type {object<string:object<string:string>>}
+         * @type {Object.<string, Object.<meshID: string, materialID:string>>}
          * @example {"HEAD":[meshID, materialID]}
          */
-        this.equipment = {};
-        this.equipment["HEAD"] = [];
-        this.equipment["EAR_L"] = [];
-        this.equipment["EAR_R"] = [];
-        this.equipment["NECK"] = [];
-        this.equipment["SHOULDER_L"] = [];
-        this.equipment["SHOULDER_R"] = [];
-        this.equipment["FOREARM_L"] = [];
-        this.equipment["FOREARM_R"] = [];
-        this.equipment["HAND_L"] = [];
-        this.equipment["HAND_R"] = [];
-        this.equipment["CHEST"] = [];
-        this.equipment["PELVIS"] = [];
-        this.equipment["LEGS"] = [];
-        this.equipment["FOOT_L"] = [];
-        this.equipment["FOOT_R"] = [];
+        this.attachedEquipment = {};
+        this.attachedEquipment["HEAD"] = {};
+        this.attachedEquipment["EAR_L"] = {};
+        this.attachedEquipment["EAR_R"] = {};
+        this.attachedEquipment["NECK"] = {};
+        this.attachedEquipment["SHOULDER_L"] = {};
+        this.attachedEquipment["SHOULDER_R"] = {};
+        this.attachedEquipment["FOREARM_L"] = {};
+        this.attachedEquipment["FOREARM_R"] = {};
+        this.attachedEquipment["HAND_L"] = {};
+        this.attachedEquipment["HAND_R"] = {};
+        this.attachedEquipment["CHEST"] = {};
+        this.attachedEquipment["PELVIS"] = {};
+        this.attachedEquipment["LEGS"] = {};
+        this.attachedEquipment["FOOT_L"] = {};
+        this.attachedEquipment["FOOT_R"] = {};
 
         /*
         Standing Idle, Standing Walk, Standing Run
@@ -177,9 +177,9 @@ class CharacterController extends CreatureController {
             return 2;
         }
         for (let boneID in this._meshesAttachedToBones) {
-            if (this.equipment.hasOwnProperty(boneID)) {
-                this.equipment[boneID][0] = null;
-                this.equipment[boneID][1] = null;
+            if (this.attachedEquipment.hasOwnProperty(boneID)) {
+                this.attachedEquipment[boneID]["meshID"] = null;
+                this.attachedEquipment[boneID]["materialID"] = null;
             }
         }
         super.detachFromAllBones(destroyMesh);
@@ -311,20 +311,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["HEAD"][0] == "string") {
-            if (this.equipment["HEAD"][0] == meshID && this.equipment["HEAD"][1] == materialID) {
+        if (typeof this.attachedEquipment["HEAD"]["meshID"] == "string") {
+            if (this.attachedEquipment["HEAD"]["meshID"] == meshID && this.attachedEquipment["HEAD"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromHead();
         }
-        this.equipment["HEAD"][0] = meshID;
-        this.equipment["HEAD"][1] = materialID;
+        this.attachedEquipment["HEAD"]["meshID"] = meshID;
+        this.attachedEquipment["HEAD"]["materialID"] = materialID;
         return this.attachToHead(meshID, materialID, options);
     }
     detachEquipmentFromHead(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["HEAD"][0], this.equipment["HEAD"][1], destroyMesh);
-        this.equipment["HEAD"][0] = null;
-        this.equipment["HEAD"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["HEAD"]["meshID"], destroyMesh);
+        this.attachedEquipment["HEAD"]["meshID"] = null;
+        this.attachedEquipment["HEAD"]["materialID"] = null;
         return result;
     }
     attachEquipmentToLeftEye(meshID, materialID, options) {
@@ -334,20 +334,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["EYE_L"][0] == "string") {
-            if (this.equipment["EYE_L"][0] == meshID && this.equipment["EYE_L"][1] == materialID) {
+        if (typeof this.attachedEquipment["EYE_L"]["meshID"] == "string") {
+            if (this.attachedEquipment["EYE_L"]["meshID"] == meshID && this.attachedEquipment["EYE_L"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromLeftEye();
         }
-        this.equipment["EYE_L"][0] = meshID;
-        this.equipment["EYE_L"][1] = materialID;
+        this.attachedEquipment["EYE_L"]["meshID"] = meshID;
+        this.attachedEquipment["EYE_L"]["materialID"] = materialID;
         return this.attachToLeftEye(meshID, materialID, options);
     }
     detachEquipmentFromLeftEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["EYE_L"][0], this.equipment["EYE_L"][1], destroyMesh);
-        this.equipment["EYE_L"][0] = null;
-        this.equipment["EYE_L"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["EYE_L"]["meshID"], destroyMesh);
+        this.attachedEquipment["EYE_L"]["meshID"] = null;
+        this.attachedEquipment["EYE_L"]["materialID"] = null;
         return result;
     }
     attachEquipmentToRightEye(meshID, materialID, options) {
@@ -357,20 +357,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["EYE_R"][0] == "string") {
-            if (this.equipment["EYE_R"][0] == meshID && this.equipment["EYE_R"][1] == materialID) {
+        if (typeof this.attachedEquipment["EYE_R"]["meshID"] == "string") {
+            if (this.attachedEquipment["EYE_R"]["meshID"] == meshID && this.attachedEquipment["EYE_R"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromRightEye();
         }
-        this.equipment["EYE_R"][0] = meshID;
-        this.equipment["EYE_R"][1] = materialID;
+        this.attachedEquipment["EYE_R"]["meshID"] = meshID;
+        this.attachedEquipment["EYE_R"]["materialID"] = materialID;
         return this.attachToRightEye(meshID, materialID, options);
     }
     detachEquipmentFromRightEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["EYE_R"][0], this.equipment["EYE_R"][1], destroyMesh);
-        this.equipment["EYE_R"][0] = null;
-        this.equipment["EYE_R"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["EYE_R"]["meshID"], destroyMesh);
+        this.attachedEquipment["EYE_R"]["meshID"] = null;
+        this.attachedEquipment["EYE_R"]["materialID"] = null;
         return result;
     }
     attachEquipmentToLeftEar(meshID, materialID, options) {
@@ -380,20 +380,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["EAR_L"][0] == "string") {
-            if (this.equipment["EAR_L"][0] == meshID && this.equipment["EAR_L"][1] == materialID) {
+        if (typeof this.attachedEquipment["EAR_L"]["meshID"] == "string") {
+            if (this.attachedEquipment["EAR_L"]["meshID"] == meshID && this.attachedEquipment["EAR_L"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromLeftEar();
         }
-        this.equipment["EAR_L"][0] = meshID;
-        this.equipment["EAR_L"][1] = materialID;
+        this.attachedEquipment["EAR_L"]["meshID"] = meshID;
+        this.attachedEquipment["EAR_L"]["materialID"] = materialID;
         return this.attachToLeftEar(meshID, materialID, options);
     }
     detachEquipmentFromLeftEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["EAR_L"][0], this.equipment["EAR_L"][1], destroyMesh);
-        this.equipment["EAR_L"][0] = null;
-        this.equipment["EAR_L"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["EAR_L"]["meshID"], destroyMesh);
+        this.attachedEquipment["EAR_L"]["meshID"] = null;
+        this.attachedEquipment["EAR_L"]["materialID"] = null;
         return result;
     }
     attachEquipmentToRightEar(meshID, materialID, options) {
@@ -403,20 +403,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["EAR_R"][0] == "string") {
-            if (this.equipment["EAR_R"][0] == meshID && this.equipment["EAR_R"][1] == materialID) {
+        if (typeof this.attachedEquipment["EAR_R"]["meshID"] == "string") {
+            if (this.attachedEquipment["EAR_R"]["meshID"] == meshID && this.attachedEquipment["EAR_R"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromRightEar();
         }
-        this.equipment["EAR_R"][0] = meshID;
-        this.equipment["EAR_R"][1] = materialID;
+        this.attachedEquipment["EAR_R"]["meshID"] = meshID;
+        this.attachedEquipment["EAR_R"]["materialID"] = materialID;
         return this.attachToRightEar(meshID, materialID, options);
     }
     detachEquipmentFromRightEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["EAR_R"][0], this.equipment["EAR_R"][1], destroyMesh);
-        this.equipment["EAR_R"][0] = null;
-        this.equipment["EAR_R"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["EAR_R"]["meshID"], destroyMesh);
+        this.attachedEquipment["EAR_R"]["meshID"] = null;
+        this.attachedEquipment["EAR_R"]["materialID"] = null;
         return result;
     }
     attachEquipmentToNeck(meshID, materialID, options) {
@@ -426,20 +426,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["NECK"][0] == "string") {
-            if (this.equipment["NECK"][0] == meshID && this.equipment["NECK"][1] == materialID) {
+        if (typeof this.attachedEquipment["NECK"]["meshID"] == "string") {
+            if (this.attachedEquipment["NECK"]["meshID"] == meshID && this.attachedEquipment["NECK"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromNeck();
         }
-        this.equipment["NECK"][0] = meshID;
-        this.equipment["NECK"][1] = materialID;
+        this.attachedEquipment["NECK"]["meshID"] = meshID;
+        this.attachedEquipment["NECK"]["materialID"] = materialID;
         return this.attachToNeck(meshID, materialID, options);
     }
     detachEquipmentFromNeck(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["NECK"][0], this.equipment["NECK"][1], destroyMesh);
-        this.equipment["NECK"][0] = null;
-        this.equipment["NECK"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["NECK"]["meshID"], destroyMesh);
+        this.attachedEquipment["NECK"]["meshID"] = null;
+        this.attachedEquipment["NECK"]["materialID"] = null;
         return result;
     }
     attachEquipmentToLeftShoulder(meshID, materialID, options) {
@@ -449,20 +449,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["SHOULDER_L"][0] == "string") {
-            if (this.equipment["SHOULDER_L"][0] == meshID && this.equipment["SHOULDER_L"][1] == materialID) {
+        if (typeof this.attachedEquipment["SHOULDER_L"]["meshID"] == "string") {
+            if (this.attachedEquipment["SHOULDER_L"]["meshID"] == meshID && this.attachedEquipment["SHOULDER_L"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromLeftShoulder();
         }
-        this.equipment["SHOULDER_L"][0] = meshID;
-        this.equipment["SHOULDER_L"][1] = materialID;
+        this.attachedEquipment["SHOULDER_L"]["meshID"] = meshID;
+        this.attachedEquipment["SHOULDER_L"]["materialID"] = materialID;
         return this.attachToLeftShoulder(meshID, materialID, options);
     }
     detachEquipmentFromLeftShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["SHOULDER_L"][0], this.equipment["SHOULDER_L"][1], destroyMesh);
-        this.equipment["SHOULDER_L"][0] = null;
-        this.equipment["SHOULDER_L"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["SHOULDER_L"]["meshID"], destroyMesh);
+        this.attachedEquipment["SHOULDER_L"]["meshID"] = null;
+        this.attachedEquipment["SHOULDER_L"]["materialID"] = null;
         return result;
     }
     attachEquipmentToRightShoulder(meshID, materialID, options) {
@@ -472,20 +472,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["SHOULDER_R"][0] == "string") {
-            if (this.equipment["SHOULDER_R"][0] == meshID && this.equipment["SHOULDER_R"][1] == materialID) {
+        if (typeof this.attachedEquipment["SHOULDER_R"]["meshID"] == "string") {
+            if (this.attachedEquipment["SHOULDER_R"]["meshID"] == meshID && this.attachedEquipment["SHOULDER_R"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromRightShoulder();
         }
-        this.equipment["SHOULDER_R"][0] = meshID;
-        this.equipment["SHOULDER_R"][1] = materialID;
+        this.attachedEquipment["SHOULDER_R"]["meshID"] = meshID;
+        this.attachedEquipment["SHOULDER_R"]["materialID"] = materialID;
         return this.attachToRightShoulder(meshID, materialID, options);
     }
     detachEquipmentFromRightShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["SHOULDER_R"][0], this.equipment["SHOULDER_R"][1], destroyMesh);
-        this.equipment["SHOULDER_R"][0] = null;
-        this.equipment["SHOULDER_R"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["SHOULDER_R"]["meshID"], destroyMesh);
+        this.attachedEquipment["SHOULDER_R"]["meshID"] = null;
+        this.attachedEquipment["SHOULDER_R"]["materialID"] = null;
         return result;
     }
     attachEquipmentToLeftForearm(meshID, materialID, options) {
@@ -495,20 +495,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["FOREARM_L"][0] == "string") {
-            if (this.equipment["FOREARM_L"][0] == meshID && this.equipment["FOREARM_L"][1] == materialID) {
+        if (typeof this.attachedEquipment["FOREARM_L"]["meshID"] == "string") {
+            if (this.attachedEquipment["FOREARM_L"]["meshID"] == meshID && this.attachedEquipment["FOREARM_L"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromLeftForearm();
         }
-        this.equipment["FOREARM_L"][0] = meshID;
-        this.equipment["FOREARM_L"][1] = materialID;
+        this.attachedEquipment["FOREARM_L"]["meshID"] = meshID;
+        this.attachedEquipment["FOREARM_L"]["materialID"] = materialID;
         return this.attachToLeftForearm(meshID, materialID, options);
     }
     detachEquipmentFromLeftForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["FOREARM_L"][0], this.equipment["FOREARM_L"][1], destroyMesh);
-        this.equipment["FOREARM_L"][0] = null;
-        this.equipment["FOREARM_L"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["FOREARM_L"]["meshID"], destroyMesh);
+        this.attachedEquipment["FOREARM_L"]["meshID"] = null;
+        this.attachedEquipment["FOREARM_L"]["materialID"] = null;
         return result;
     }
     attachEquipmentToRightForearm(meshID, materialID, options) {
@@ -518,20 +518,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["FOREARM_R"][0] == "string") {
-            if (this.equipment["FOREARM_R"][0] == meshID && this.equipment["FOREARM_R"][1] == materialID) {
+        if (typeof this.attachedEquipment["FOREARM_R"]["meshID"] == "string") {
+            if (this.attachedEquipment["FOREARM_R"]["meshID"] == meshID && this.attachedEquipment["FOREARM_R"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromRightForearm();
         }
-        this.equipment["FOREARM_R"][0] = meshID;
-        this.equipment["FOREARM_R"][1] = materialID;
+        this.attachedEquipment["FOREARM_R"]["meshID"] = meshID;
+        this.attachedEquipment["FOREARM_R"]["materialID"] = materialID;
         return this.attachToRightForearm(meshID, materialID, options);
     }
     detachEquipmentFromRightForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["FOREARM_R"][0], this.equipment["FOREARM_R"][1], destroyMesh);
-        this.equipment["FOREARM_R"][0] = null;
-        this.equipment["FOREARM_R"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["FOREARM_R"]["meshID"], destroyMesh);
+        this.attachedEquipment["FOREARM_R"]["meshID"] = null;
+        this.attachedEquipment["FOREARM_R"]["materialID"] = null;
         return result;
     }
     attachEquipmentToLeftHand(meshID, materialID, options) {
@@ -541,20 +541,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["HAND_L"][0] == "string") {
-            if (this.equipment["HAND_L"][0] == meshID && this.equipment["HAND_L"][1] == materialID) {
+        if (typeof this.attachedEquipment["HAND_L"]["meshID"] == "string") {
+            if (this.attachedEquipment["HAND_L"]["meshID"] == meshID && this.attachedEquipment["HAND_L"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromLeftHand();
         }
-        this.equipment["HAND_L"][0] = meshID;
-        this.equipment["HAND_L"][1] = materialID;
+        this.attachedEquipment["HAND_L"]["meshID"] = meshID;
+        this.attachedEquipment["HAND_L"]["materialID"] = materialID;
         return this.attachToLeftHand(meshID, materialID, options);
     }
     detachEquipmentFromLeftHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["HAND_L"][0], this.equipment["HAND_L"][1], destroyMesh);
-        this.equipment["HAND_L"][0] = null;
-        this.equipment["HAND_L"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["HAND_L"]["meshID"], destroyMesh);
+        this.attachedEquipment["HAND_L"]["meshID"] = null;
+        this.attachedEquipment["HAND_L"]["materialID"] = null;
         return result;
     }
     attachEquipmentToRightHand(meshID, materialID, options) {
@@ -564,20 +564,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["HAND_R"][0] == "string") {
-            if (this.equipment["HAND_R"][0] == meshID && this.equipment["HAND_R"][1] == materialID) {
+        if (typeof this.attachedEquipment["HAND_R"]["meshID"] == "string") {
+            if (this.attachedEquipment["HAND_R"]["meshID"] == meshID && this.attachedEquipment["HAND_R"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromRightHand();
         }
-        this.equipment["HAND_R"][0] = meshID;
-        this.equipment["HAND_R"][1] = materialID;
+        this.attachedEquipment["HAND_R"]["meshID"] = meshID;
+        this.attachedEquipment["HAND_R"]["materialID"] = materialID;
         return this.attachToRightHand(meshID, materialID, options);
     }
     detachEquipmentFromRightHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["HAND_R"][0], this.equipment["HAND_R"][1], destroyMesh);
-        this.equipment["HAND_R"][0] = null;
-        this.equipment["HAND_R"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["HAND_R"]["meshID"], destroyMesh);
+        this.attachedEquipment["HAND_R"]["meshID"] = null;
+        this.attachedEquipment["HAND_R"]["materialID"] = null;
         return result;
     }
     attachEquipmentToChest(meshID, materialID, options) {
@@ -587,20 +587,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["CHEST"][0] == "string") {
-            if (this.equipment["CHEST"][0] == meshID && this.equipment["CHEST"][1] == materialID) {
+        if (typeof this.attachedEquipment["CHEST"]["meshID"] == "string") {
+            if (this.attachedEquipment["CHEST"]["meshID"] == meshID && this.attachedEquipment["CHEST"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromChest();
         }
-        this.equipment["CHEST"][0] = meshID;
-        this.equipment["CHEST"][1] = materialID;
+        this.attachedEquipment["CHEST"]["meshID"] = meshID;
+        this.attachedEquipment["CHEST"]["materialID"] = materialID;
         return this.attachToChest(meshID, materialID, options);
     }
     detachEquipmentFromChest(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["CHEST"][0], this.equipment["CHEST"][1], destroyMesh);
-        this.equipment["CHEST"][0] = null;
-        this.equipment["CHEST"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["CHEST"]["meshID"], destroyMesh);
+        this.attachedEquipment["CHEST"]["meshID"] = null;
+        this.attachedEquipment["CHEST"]["materialID"] = null;
         return result;
     }
     attachEquipmentToSpine(meshID, materialID, options) {
@@ -610,20 +610,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["SPINE"][0] == "string") {
-            if (this.equipment["SPINE"][0] == meshID && this.equipment["SPINE"][1] == materialID) {
+        if (typeof this.attachedEquipment["SPINE"]["meshID"] == "string") {
+            if (this.attachedEquipment["SPINE"]["meshID"] == meshID && this.attachedEquipment["SPINE"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromSpine();
         }
-        this.equipment["SPINE"][0] = meshID;
-        this.equipment["SPINE"][1] = materialID;
+        this.attachedEquipment["SPINE"]["meshID"] = meshID;
+        this.attachedEquipment["SPINE"]["materialID"] = materialID;
         return this.attachToSpine(meshID, materialID, options);
     }
     detachEquipmentFromSpine(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["SPINE"][0], this.equipment["SPINE"][1], destroyMesh);
-        this.equipment["SPINE"][0] = null;
-        this.equipment["SPINE"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["SPINE"]["meshID"], destroyMesh);
+        this.attachedEquipment["SPINE"]["meshID"] = null;
+        this.attachedEquipment["SPINE"]["materialID"] = null;
         return result;
     }
     attachEquipmentToPelvis(meshID, materialID, options) {
@@ -633,20 +633,20 @@ class CharacterController extends CreatureController {
             }
             meshID = meshID.name;
         }
-        if (typeof this.equipment["PELVIS"][0] == "string") {
-            if (this.equipment["PELVIS"][0] == meshID && this.equipment["PELVIS"][1] == materialID) {
+        if (typeof this.attachedEquipment["PELVIS"]["meshID"] == "string") {
+            if (this.attachedEquipment["PELVIS"]["meshID"] == meshID && this.attachedEquipment["PELVIS"]["materialID"] == materialID) {
                 return 0;
             }
             this.detachEquipmentFromPelvis();
         }
-        this.equipment["PELVIS"][0] = meshID;
-        this.equipment["PELVIS"][1] = materialID;
+        this.attachedEquipment["PELVIS"]["meshID"] = meshID;
+        this.attachedEquipment["PELVIS"]["materialID"] = materialID;
         return this.attachToPelvis(meshID, materialID, options);
     }
     detachEquipmentFromPelvis(destroyMesh = true) {
-        let result = this.detachMeshID(this.equipment["PELVIS"][0], this.equipment["PELVIS"][1], destroyMesh);
-        this.equipment["PELVIS"][0] = null;
-        this.equipment["PELVIS"][1] = null;
+        let result = this.detachMeshID(this.attachedEquipment["PELVIS"]["meshID"], destroyMesh);
+        this.attachedEquipment["PELVIS"]["meshID"] = null;
+        this.attachedEquipment["PELVIS"]["materialID"] = null;
         return result;
     }
 
