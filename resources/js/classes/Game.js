@@ -1131,7 +1131,7 @@ class Game {
         Game.camera.upperHeightOffsetLimit = 2;
         Game.camera.cameraAcceleration = 0.0035;
         Game.camera.maxSpeed = 1;
-        Game.camera.lockedTarget = Game.playerController.focus;
+        Game.camera.lockedTarget = Game.playerController.focusMesh;
         Game.initPostProcessing();
     }
     static initArcRotateCamera(offset = BABYLON.Vector3.Zero()) {
@@ -1165,7 +1165,7 @@ class Game {
         }
 
         Game.camera.minZ = 0.001;
-        Game.camera.lockedTarget = Game.playerController.focus;
+        Game.camera.lockedTarget = Game.playerController.focusMesh;
         if (Game.useCameraRay) {
             Game.cameraRay = new BABYLON.Ray(Game.cameraFocus.absolutePosition, BABYLON.Vector3.Forward());
         }
