@@ -5393,10 +5393,10 @@ class Game {
      * @param {EntityController} entityControllerA The entity, with an EntityController
      * @param {EntityController} entityControllerB Its target, with an EntityController
      * @param {number} distance Distance
-     * @param {string} callbackID 
+     * @param {string} parentCallbackID 
      * @param {function} callback 
      */
-    static withinRange(entityControllerA, entityControllerB, distance = 0.6, callbackID = null, callback = null) {
+    static withinRange(entityControllerA, entityControllerB, distance = 0.6, parentCallbackID = null, callback = null) {
         if (!(entityControllerA instanceof EntityController)) {
             entityControllerA = EntityController.get(entityControllerA) || EntityController.get(entityControllerA);
             if (!(entityControllerA instanceof EntityController)) {
@@ -5416,16 +5416,13 @@ class Game {
             }
             distance = distance * 0.5; // assuming arm length is half of the standard body height, idk
         }
-        if (callbackID == null) {
+        if (parentCallbackID == null) {
             return entityControllerA.collisionMesh.position.equalsWithEpsilon(entityControllerB.collisionMesh.position, distance);
         }
         else {
-            callbackID = Tools.filterID(callbackID);
-            if (callbackID.length == 0) {
-                callbackID = Tools.genUUIDv4();
-            }
-            Game.createCallback(callbackID, null, [entityControllerA, entityControllerB, distance], callback);
-            Game.transformsWorkerPostMessage("withinRange", 0, [entityControllerA, entityControllerB, distance, callbackID])
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [entityControllerA, entityControllerB, distance], callback);
+            Game.transformsWorkerPostMessage("withinRange", 0, {"entityControllerA":entityControllerA, "entityControllerB":entityControllerB, "distance":distance})
             return callbackID;
         }
     }
@@ -5434,10 +5431,10 @@ class Game {
      * @param {EntityController} entityControllerA The entity that's looking, with an EntityController
      * @param {EntityController} entityControllerB Its target, with an EntityController
      * @param {number} epsilon Episode in radians
-     * @param {string} callbackID 
+     * @param {string} parentCallbackID 
      * @param {function} callback 
      */
-    static inFrontOf(entityControllerA, entityControllerB, epsilon = 0.3926991, callbackID = null, callback = null) {
+    static inFrontOf(entityControllerA, entityControllerB, epsilon = 0.3926991, parentCallbackID = null, callback = null) {
         if (!(entityControllerA instanceof EntityController)) {
             entityControllerA = EntityController.get(entityControllerA) || EntityController.get(entityControllerA);
             if (!(entityControllerA instanceof EntityController)) {
@@ -5450,7 +5447,7 @@ class Game {
                 return false;
             }
         }
-        if (callbackID == null) {
+        if (parentCallbackID == null) {
             let aPos = new BABYLON.Vector2(entityControllerA.collisionMesh.position.x, entityControllerA.collisionMesh.position.z);
             let bPos = entityControllerA.collisionMesh.calcMovePOV(0, 0, 1);
             bPos = aPos.add(new BABYLON.Vector2(bPos.x, bPos.z));
@@ -5460,12 +5457,9 @@ class Game {
             return aAng.radians() - bAng.radians() <= epsilon;
         }
         else {
-            callbackID = Tools.filterID(callbackID);
-            if (callbackID.length == 0) {
-                callbackID = Tools.genUUIDv4();
-            }
-            Game.createCallback(callbackID, null, [entityControllerA, entityControllerB, epsilon], callback);
-            Game.transformsWorkerPostMessage("inFrontOf", 0, [entityControllerA, entityControllerB, epsilon, callbackID]);
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [entityControllerA, entityControllerB, epsilon], callback);
+            Game.transformsWorkerPostMessage("inFrontOf", 0, {"entityControllerA":entityControllerA, "entityControllerB":entityControllerB, "epsilon":epsilon});
             return callbackID;
         }
     }
@@ -5477,11 +5471,11 @@ class Game {
      * @param {number} depth 
      * @param {BABYLON.Vector3} position 
      * @param {BABYLON.Vector3} rotation 
-     * @param {string} callbackID 
-     * @param {function} callback 
+     * @param {string} parentCallbackID 
+     * @param {(function|null)} callback 
      */
-    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), callbackID = "", parentCallbackID = null) {
-        if (callbackID == null) {
+    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), parentCallbackID = null, callback = null) {
+        if (parentCallbackID == null) {
             let areaMesh = Game.createAreaMesh(Tools.genUUIDv4(), shape, diameter, height, depth, position, rotation);
             let controllerIDs = [];
             for (let controllerID in EntityController.list()) {
@@ -5496,14 +5490,14 @@ class Game {
             return controllerIDs;
         }
         else {
-            callbackID = Tools.filterID(callbackID);
-            if (callbackID.length == 0) {
-                callbackID = Tools.genUUIDv4();
-            }
-            Game.createCallback(callbackID, null, [shape, diameter, height, depth, position, rotation], callback);
-            Game.transformsWorkerPostMessage("inArea", 0, [shape, diameter, height, depth, position, rotation, callbackID]);
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, parentCallbackID, [shape, diameter, height, depth, position, rotation], callback);
+            Game.transformsWorkerPostMessage("inArea", 0, {"shape":shape, "diameter":diameter, "height":height, "depth":depth, "position":position, "rotation":rotation}, callbackID);
             return callbackID;
         }
+    }
+    static inAreaResponse(shape, diameter, height, depth, position, rotation, response, parentCallbackID) {
+        
     }
 
     static createGroupedCallback(parentID, callbackID) {
