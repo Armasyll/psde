@@ -1106,7 +1106,7 @@ class Game {
         }
         Game.camera = new BABYLON.FollowCamera(
             "camera",
-            Game.playerController.focus.getAbsolutePosition(),
+            Game.playerController.focusMesh.getAbsolutePosition(),
             Game.scene
         );
         //Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
@@ -4424,7 +4424,7 @@ class Game {
         if (!Game.hasPlayerController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
-        let ray = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.playerController.focus.getAbsolutePosition());
+        let ray = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.playerController.focusMesh.getAbsolutePosition());
         if (Game.playerController.targetRay == null) {
             Game.playerController.targetRay = ray;
         }
