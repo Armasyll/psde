@@ -130,13 +130,9 @@ class EntityController {
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set([this.mesh]);
 
-        Game.transformsWorkerPostMessage(
-            "createEntity",
-            0,
-            [this.id, this.width, this.height, this.depth, this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
-        );
         Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
         EntityController.set(this.id, this);
+        this.sendTransforms();
         if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
     }
@@ -287,6 +283,40 @@ class EntityController {
             id = Tools.genUUIDv4();
         }
         return Game.createMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+    }
+    sendTransforms() {
+        if (this.hasCollisionMesh()) {
+            Game.transformsWorkerPostMessage(
+                "createEntity",
+                0,
+                [this.id, this.width, this.height, this.depth, this.collisionMesh.position.toOtherArray(), this.collisionMesh.rotation.toOtherArray()]
+            );
+        }
+        else if (this.hasMesh()) {
+            Game.transformsWorkerPostMessage(
+                "createEntity",
+                0,
+                [this.id, this.width, this.height, this.depth, this.mesh.position.toOtherArray(), this.mesh.rotation.toOtherArray()]
+            );
+        }
+        return 0;
+    }
+    updateTransforms() {
+        if (this.hasCollisionMesh()) {
+            Game.transformsWorkerPostMessage(
+                "updateEntity",
+                0,
+                [this.id, Game.currentTime, this.collisionMesh.position.toOtherArray(), this.collisionMesh.rotation.toOtherArray()]
+            );
+        }
+        else if (this.hasMesh()) {
+            Game.transformsWorkerPostMessage(
+                "updateEntity",
+                0,
+                [this.id, Game.currentTime, this.mesh.position.toOtherArray(), this.mesh.rotation.toOtherArray()]
+            );
+        }
+        return 0;
     }
 
     hasBone(bone) {

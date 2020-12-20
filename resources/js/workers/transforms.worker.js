@@ -243,6 +243,7 @@ function inFrontOf(entityControllerA, entityControllerB, epsilon = 0.3926991) {
 function inArea(shape, diameter, height, depth, position, rotation) {
     let areaMesh = createAreaMesh(Tools.genUUIDv4() + "-AreaMesh", shape, diameter, height, depth, position, rotation);
     let controllerIDs = [];
+    scene.render();
     for (let controllerID in SimpleEntityController.list()) {
         let controller = SimpleEntityController.get(controllerID);
         if (controller.enabled) {

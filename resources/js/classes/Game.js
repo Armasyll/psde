@@ -3078,7 +3078,8 @@ class Game {
         }
         let loadedMesh = Game.createMesh(instanceID, entity.meshID, entity.textureID, position, rotation, scaling, options);
         loadedMesh.checkCollisions = true;
-        new FurnitureController(instanceID, loadedMesh, Object.assign(entity, response));
+        let controller = new FurnitureController(instanceID, loadedMesh, Object.assign(entity, response));
+        controller.updateTransforms();
         return 0;
     }
     /**
@@ -3208,7 +3209,9 @@ class Game {
             "key": options["key"],
             "opensInward": options["opensInward"] == true,
             "open": options["open"] == true,
-            "teleportMarker": teleportMarker
+            "teleportMarker": teleportMarker,
+            "position": position,
+            "rotation": rotation
         }, callbackID);
         return 0;
     }
@@ -3217,7 +3220,8 @@ class Game {
         let xPosition = radius * (Math.cos(rotation.y * Math.PI / 180) | 0);
         let yPosition = radius * (Math.sin(rotation.y * Math.PI / 180) | 0);
         let loadedMesh = Game.createMesh(id, meshID, materialID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, options);
-        new DoorController(id, loadedMesh, response);
+        let controller = new DoorController(id, loadedMesh, response);
+        controller.updateTransforms();
         return 0;
     }
     /**
@@ -3322,9 +3326,10 @@ class Game {
             return [id, name, meshID, materialID, videoID, position, rotation, scaling, options];
         }
         let loadedMesh = Game.createMesh(id, meshID, materialID, position, rotation, scaling, options);
-        let displayEntity = new DisplayEntity(id, name, undefined, undefined);
-        let displayController = new DisplayController(id, loadedMesh, displayEntity, videoID, options["videoMeshWidth"], options["videoMeshHeight"], options["videoMeshPosition"]);
-        return displayController;
+        let entity = new DisplayEntity(id, name, undefined, undefined);
+        let controller = new DisplayController(id, loadedMesh, entity, videoID, options["videoMeshWidth"], options["videoMeshHeight"], options["videoMeshPosition"]);
+        controller.updateTransforms();
+        return controller;
     }
     /**
      * 
@@ -3519,7 +3524,8 @@ class Game {
         }
         let loadedMesh = Game.createFurnitureMesh(instanceID, entity.meshID, entity.textureID, position, rotation, scaling, options);
         loadedMesh.checkCollisions = true;
-        new LightingController(instanceID, loadedMesh, Object.assign(entity, response));
+        let controller = new LightingController(instanceID, loadedMesh, Object.assign(entity, response));
+        controller.updateTransforms();
         return 0;
     }
     /**
@@ -3682,9 +3688,10 @@ class Game {
             return [id, plantEntityID, stage, position, rotation, scaling, options];
         }
         let loadedMesh = Game.createPlantMesh(response.id, response.meshID, response.materialID, position, rotation, scaling, options);
-        let plantController = new PlantController(response.id, loadedMesh, response);
+        let controller = new PlantController(response.id, loadedMesh, response);
+        controller.updateTransforms();
         if (Game.debugMode) console.groupEnd();
-        return plantController;
+        return controller;
     }
 
     /**
