@@ -1611,6 +1611,8 @@ class Game {
         }
         return 0;
     }
+    static changeMeshMaterial() {} // TODO: this
+    static changeMeshInstanceMaterial() {} // TODO: this, too
     /**
      * 
      * @param {string} materialID Material ID
