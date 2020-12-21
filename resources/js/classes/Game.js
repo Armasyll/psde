@@ -1014,11 +1014,11 @@ class Game {
                 Game.camera.beta = 3.054;
             }
         }
-        for (let characterController in CharacterController.characterControllerList) {
-            if (CharacterController.characterControllerList[characterController].animated) {
-                CharacterController.characterControllerList[characterController].moveAV();
-                if (CharacterController.characterControllerList[characterController].propertiesChanged) {
-                    CharacterController.characterControllerList[characterController].updateProperties();
+        for (let characterController in CharacterController.list()) {
+            if (CharacterController.get(characterController).animated) {
+                CharacterController.get(characterController).moveAV();
+                if (CharacterController.get(characterController).propertiesChanged) {
+                    CharacterController.get(characterController).updateProperties();
                 }
             }
         }
