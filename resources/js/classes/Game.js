@@ -47,6 +47,9 @@ class Game {
         }
         Game.camera = null;
         Game.cameraFocus = null;
+        Game.cameraRadius = 2.0;
+        Game.cameraAlpha = Tools.RAD_90;
+        Game.cameraBeta = Tools.RAD_90;
         Game.useCameraRay = false;
         Game.cameraRay = null;
 
@@ -1120,6 +1123,7 @@ class Game {
         //Game.camera.keysRight = [];
         //Game.camera.keysUp = [];
         //Game.camera.keysDown = [];
+        Game.overwriteCameraTransforms();
         if (Game.useNative) {}
         else {
             Game.camera.attachControl(Game.canvas, false);
@@ -1159,6 +1163,7 @@ class Game {
         Game.camera.keysRight = [];
         Game.camera.keysUp = [];
         Game.camera.keysDown = [];
+        Game.overwriteCameraTransforms();
         if (Game.useNative) {}
         else {
             Game.camera.attachControl(Game.canvas, false);
@@ -1177,6 +1182,7 @@ class Game {
             Game.unassignPlayer(!updateChild);
         }
         if (Game.camera instanceof BABYLON.Camera) {
+            Game.backupCameraTransforms();
             Game.camera.dispose();
         }
         Game.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), Game.scene);
@@ -1196,6 +1202,18 @@ class Game {
             Game.camera.checkCollisions = false;
         }
         Game.initPostProcessing();
+    }
+    static overwriteCameraTransforms() {
+        Game.camera.radius = Game.cameraRadius;
+        Game.camera.alpha = Game.cameraAlpha;
+        Game.camera.beta = Game.cameraBeta;
+        return 0;
+    }
+    static backupCameraTransforms() {
+        Game.cameraRadius = Game.camera.radius;
+        Game.cameraAlpha = Game.camera.alpha;
+        Game.cameraBeta = Game.camera.beta;
+        return 0;
     }
     static updateMenuKeyboardDisplayKeys() {
         if (Game.debugMode) console.log("Running Game.updateMenuKeyboardDisplayKeys()");
@@ -4304,7 +4322,8 @@ class Game {
      * @memberof module:player
      */
     static unassignPlayer(updateChild = true) {
-        if (Game.debug) console.group("Running Game.unassignPlayer()")
+        if (Game.debug) console.group("Running Game.unassignPlayer()");
+        Game.overwriteCameraTransforms();
         Game.transformsWorkerPostMessage("clearPlayer", 0);
         Game.initFreeCamera(false, !updateChild);
         Game.gui.playerPortrait.hide();
