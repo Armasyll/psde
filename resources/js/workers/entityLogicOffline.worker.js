@@ -148,6 +148,7 @@ class EntityLogic {
         let message = event.data["msg"];
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3 && message) console.info(`and message`);
         switch (event.data["cmd"]) {
+            case "fireProjectile":
             case "inArea":
             case "inFrontOf":
             case "withinRange": {

@@ -19,7 +19,10 @@ class Game {
         Game.useNative = false;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
-        Game.physicsEnabled = false;
+        Game.physicsForProjectilesOnly = true;
+        Game.physicsEnabled = true;
+        Game.physicsPlugin = null;
+        Game.physicsProjectiles = {};
 
         if (Game.useNative) {
             Game.engine = new BABYLON.NativeEngine();
@@ -41,10 +44,8 @@ class Game {
         if (Game.physicsEnabled) {
             Game.initPhysics();
         }
-        else {
-            Game.scene.collisionsEnabled = true;
-            Game.scene.workerCollisions = false;
-        }
+        Game.scene.collisionsEnabled = true;
+        Game.scene.workerCollisions = false;
         Game.camera = null;
         Game.cameraFocus = null;
         Game.cameraRadius = 2.0;
@@ -250,6 +251,8 @@ class Game {
             "sink01": "resources/meshes/static/sink01.babylon",
             "sinkFaucet01": "resources/meshes/static/sink01.babylon",
             "sink01StandCeramic": "resources/meshes/static/sink01.babylon",
+            "sinkFaucetLong01": "resources/meshes/static/sink01.babylon",
+            "counterSinkBasin": "resources/meshes/static/sink01.babylon",
             "bathtub01": "resources/meshes/static/bathtub01.babylon",
             "showerPipes01": "resources/meshes/static/bathtub01.babylon",
             "animatedDoor01": "resources/meshes/animatedDoor01.babylon",
@@ -327,6 +330,7 @@ class Game {
             "wand01": "resources/meshes/items/weapons.babylon",
             "wand02": "resources/meshes/items/weapons.babylon",
             "wand03": "resources/meshes/items/weapons.babylon",
+            "arrow01": "resources/meshes/items/weapons.babylon",
             "animatedChest01": "resources/meshes/animatedChest01.babylon",
             "apple01": "resources/meshes/items/food01.babylon",
             "cheeseSandwich": "resources/meshes/items/grilledCheeseSandwich.babylon",
@@ -340,7 +344,17 @@ class Game {
             "1980Monitor": "resources/meshes/static/1980Computer.babylon",
             "1980Screen": "resources/meshes/static/1980Computer.babylon",
             "1980Keyboard": "resources/meshes/static/1980Computer.babylon",
-            "brickWall01": "resources/meshes/static/brickWall.babylon"
+            "brickWall01": "resources/meshes/static/brickWall.babylon",
+            "counterBottom": "resources/meshes/static/cabinets.babylon",
+            "counterBottomHalf": "resources/meshes/static/cabinets.babylon",
+            "counterCabinetTwoDoors": "resources/meshes/static/cabinets.babylon",
+            "counterCabinetTwoDoorsHalf": "resources/meshes/static/cabinets.babylon",
+            "counterSinkBasin": "resources/meshes/static/cabinets.babylon",
+            "counterTop": "resources/meshes/static/cabinets.babylon",
+            "counterTopEdgeLeft": "resources/meshes/static/cabinets.babylon",
+            "counterTopEdgeRight": "resources/meshes/static/cabinets.babylon",
+            "counterTopForBasin": "resources/meshes/static/cabinets.babylon",
+            "counterTopHalf": "resources/meshes/static/cabinets.babylon",
         };
         /**
          * Map of Meshes per ID
@@ -815,6 +829,7 @@ class Game {
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
         Game.loadDefaultVideos();
+        Game.loadDefaultProjectiles();
 
         /*
             Which function handles the function of the key presses;
@@ -1053,21 +1068,23 @@ class Game {
             }
         );
     }
-    static importMeshes(file, meshIDs = undefined, callbackID = null) {
-        if (file == undefined) {
+    static importMeshes(file = null, meshIDs = null, callbackID = null) {
+        if (file == null) {
             return 1;
         }
-        Game.createGroupedCallback(file, callbackID);
-        if (Game.loadedFiles.has(file)) {
-            return 0;
-        }
-        else {
-            Game.loadedFiles.add(file);
+        if (!meshIDs) {
+            Game.createGroupedCallback(file, callbackID);
+            if (Game.loadedFiles.has(file)) {
+                return 0;
+            }
+            else {
+                Game.loadedFiles.add(file);
+            }
         }
         if (Game.debugMode && Game.debugVerbosity > 3) console.log(`Running importMeshes(${file})`);
         let importedMeshes = {};
         BABYLON.SceneLoader.ImportMesh(
-            undefined, // meshNames
+            meshIDs, // meshNames
             file.substr(0, file.lastIndexOf("/") + 1), // rootUrl
             file.substr(file.lastIndexOf("/") + 1), // sceneFilename
             Game.scene, // scene
@@ -1082,8 +1099,13 @@ class Game {
                     }
                     Game.loadedMeshes[meshes[i].id] = meshes[i];
                     if (Game.debugMode && Game.debugVerbosity > 3) console.log("Importing mesh " + meshes[i].id + " from " + file + ".");
+                    if (meshIDs && callbackID) {
+                        Game.runCallback(callbackID, meshes[i]);
+                    }
                 }
-                Game.runGroupedCallback(file);
+                if (!meshIDs) {
+                    Game.runGroupedCallback(file);
+                }
             },
             function () { // onProgress
                 if (Game.debugMode && Game.debugVerbosity > 3) console.log("Importing meshes from " + file + "...");
@@ -1096,9 +1118,8 @@ class Game {
     }
 
     static initPhysics() {
-        Game.physicsPlugin = new BABYLON.CannonJSPlugin();
+        Game.physicsPlugin = new BABYLON.OimoJSPlugin();
         Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
-        Game.physicsEnabled = true;
     }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
         if (Game.camera instanceof BABYLON.Camera) {
@@ -1195,7 +1216,7 @@ class Game {
         else {
             Game.camera.attachControl(Game.canvas, true);
         }
-        if (Game.physicsEnabled) { }
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) { }
         else {
             Game.camera.applyGravity = applyGravity;
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
@@ -1277,6 +1298,22 @@ class Game {
     }
     static loadDefaultVideos() {
         Game.setLoadedVideo("missingVideo", new BABYLON.VideoTexture("missingVideo", ["resources/videos/missingVideo.webm", "resources/videos/missingVideo.mp4"], Game.scene, true, true, BABYLON.VideoTexture.TRILINEAR_SAMPLINGMODE, {}));
+        return 0;
+    }
+    static loadDefaultProjectiles() {
+        if (Game.physicsEnabled) {
+            let callbackID = Tools.genUUIDv4();
+            Game.createCallback(callbackID, "loadDefaultProjectiles_arrow01", ["arrow01"], Game.loadDefaultProjectilesPhaseOnePerMesh);
+            Game.loadMesh("arrow01", callbackID, true);
+        }
+        else {
+            Game.loadMesh("arrow01");
+        }
+        return 0;
+    }
+    static loadDefaultProjectilesPhaseOnePerMesh(meshID, response, parentCallbackID) {
+        response.physicsImpostor = new BABYLON.PhysicsImpostor(response, BABYLON.PhysicsImpostor.SphereImpostor, { "mass": 0.25, "restitution": 0 }, Game.scene);
+        Game.physicsProjectiles[meshID] = response;
         return 0;
     }
     /**
@@ -1634,12 +1671,15 @@ class Game {
      * @param {string} meshID Mesh ID
      * @returns {number} Integer status code
      */
-    static loadMesh(meshID, callbackID = null) {
+    static loadMesh(meshID, callbackID = null, loadOnlyMesh = false) {
         meshID = Tools.filterID(meshID);
         if (meshID.length == 0) {
             return 2;
         }
         if (Game.hasLoadedMesh(meshID)) {
+            if (callbackID) {
+                Game.runCallback(callbackID, Game.getLoadedMesh(meshID));
+            }
             return 0;
         }
         else if (Game.hasAvailableMesh(meshID)) {
@@ -1660,7 +1700,12 @@ class Game {
                     break;
                 }
             }
-            Game.importMeshes(Game.meshLocations[meshID], null, callbackID);
+            if (loadOnlyMesh) {
+                Game.importMeshes(Game.meshLocations[meshID], [meshID], callbackID);
+            }
+            else {
+                Game.importMeshes(Game.meshLocations[meshID], null, callbackID);
+            }
             return 1;
         }
         return 2;
@@ -2160,9 +2205,7 @@ class Game {
         if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(wall, { "mass": 0 });
         }
-        else {
-            wall.checkCollisions = true;
-        }
+        wall.checkCollisions = true;
         return wall;
     }
     static createCollisionWallByMesh(mesh) {
@@ -2206,9 +2249,7 @@ class Game {
         if (Game.physicsEnabled) {
             Game.assignBoxPhysicsToMesh(floor, { "mass": 0 });
         }
-        else {
-            floor.checkCollisions = true;
-        }
+        floor.checkCollisions = true;
         return floor;
     }
     /**
@@ -2267,12 +2308,10 @@ class Game {
         ramp.position.set((end.x + start.x) / 2 - 1, (end.y + start.y) / 2 - 0.125 / 2, (end.z + start.z) / 2 - 1);
         ramp.rotation.set(hypotenuseAngle, BABYLON.Tools.ToRadians(yRotation), 0);
         ramp.material = Game.loadedMaterials["collisionMaterial"];
-        if (Game.physicsEnabled) {
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
             Game.assignBoxPhysicsToMesh(ramp, { "mass": 0 });
         }
-        else {
-            ramp.checkCollisions = true;
-        }
+        ramp.checkCollisions = true;
         return ramp;
     }
     static assignPlanePhysicsToMesh(mesh) {
@@ -2280,7 +2319,7 @@ class Game {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
-        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { "mass": 0 }, Game.scene);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { "mass": 0 }, Game.scene);
         return 0;
     }
     static assignCylinderPhysicsToMesh(mesh, options) {
@@ -2289,9 +2328,9 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = { "mass": 0.8, "restitution": 0.1 };
+            options = { "mass": 0 };
         }
-        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.CylinderImpostor, options, Game.scene);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.CylinderImpostor, options, Game.scene);
         return 0;
     }
     static assignBoxPhysicsToMesh(mesh, options) {
@@ -2300,9 +2339,9 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = { "mass": 0.8, "restitution": 0.1 };
+            options = { "mass": 0 };
         }
-        mesh.physicsImposter = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, options, Game.scene);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, options, Game.scene);
         return 0;
     }
     static assignBoxPhysicsToBone(bone, options) {
@@ -2311,7 +2350,7 @@ class Game {
             return 2;
         }
         if (typeof options != "object") {
-            options = { "mass": 0.8, "restitution": 0.1 };
+            options = { "mass": 0 };
         }
         // bone boxes :v idk yet
         return 2;
@@ -2724,7 +2763,7 @@ class Game {
         mesh.scaling.copyFrom(scaling);
         mesh.setEnabled(true);
         if (options["checkCollisions"]) {
-            if (Game.physicsEnabled) {
+            if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
                 Game.assignBoxPhysicsToMesh(mesh);
             }
             else {
@@ -3806,7 +3845,7 @@ class Game {
             }
             return 2;
         }
-        if (Game.physicsEnabled) {
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
             Game.assignBoxPhysicsToMesh(instancedMesh, options);
         }
         if (Game.debugMode) console.groupEnd();
@@ -3973,14 +4012,14 @@ class Game {
         rotation = Tools.filterVector3(rotation);
         scaling = Tools.filterVector3(scaling);
         if (typeof options != "object") {
-            options = { "mass": 0.8, "restitution": 0.1 };
+            options = { "mass": 0 };
         }
         let instancedMesh = Game.createMesh(characterID, meshID, materialID, position, rotation, scaling, options);
         if (!(instancedMesh instanceof BABYLON.AbstractMesh)) {
             if (Game.debugMode) console.groupEnd();
             return 2;
         }
-        if (Game.physicsEnabled) {
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
             Game.assignBoxPhysicsToMesh(instancedMesh, options);
         }
         else {
@@ -5499,33 +5538,41 @@ class Game {
      * @param {number} depth 
      * @param {BABYLON.Vector3} position 
      * @param {BABYLON.Vector3} rotation 
-     * @param {string} parentCallbackID 
+     * @param {(string|null)} parentCallbackID 
      * @param {(function|null)} callback 
      */
-    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), parentCallbackID = null, callback = null) {
-        if (parentCallbackID == null) {
-            let areaMesh = Game.createAreaMesh(Tools.genUUIDv4(), shape, diameter, height, depth, position, rotation);
-            let controllerIDs = [];
-            for (let controllerID in EntityController.list()) {
-                let controller = EntityController.get(controllerID);
-                if (controller.enabled) {
-                    if (areaMesh.intersectsMesh(controller.collisionMesh, true)) {
-                        controllerIDs.push(controllerID);
-                    }
-                }
-            }
-            Game.removeMesh(areaMesh);
-            return controllerIDs;
-        }
-        else {
-            let callbackID = Tools.genUUIDv4();
-            Game.createCallback(callbackID, parentCallbackID, [shape, diameter, height, depth, position, rotation], callback);
-            Game.transformsWorkerPostMessage("inArea", 0, {"shape":shape, "diameter":diameter, "height":height, "depth":depth, "position":position, "rotation":rotation}, callbackID);
-            return callbackID;
-        }
+    static inArea(shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), parentCallbackID = null, callback = Game.inAreaResponse) {
+        let callbackID = Tools.genUUIDv4();
+        position = Tools.filterVector3(position);
+        rotation = Tools.filterVector3(rotation);
+        Game.createCallback(callbackID, parentCallbackID, [shape, diameter, height, depth, position, rotation], callback);
+        Game.transformsWorkerPostMessage("inArea", 0, {"shape":shape, "diameter":diameter, "height":height, "depth":depth, "position":position.toOtherArray(), "rotation":rotation.toOtherArray()}, callbackID);
+        return callbackID;
     }
     static inAreaResponse(shape, diameter, height, depth, position, rotation, response, parentCallbackID) {
-        
+        console.log(response);
+    }
+    /**
+     * 
+     * @param {number} diameter 
+     * @param {number} force in metres per second
+     * @param {BABYLON.Vector3} position 
+     * @param {BABYLON.Vector3} rotation 
+     * @param {number} distanceLimit 
+     * @param {number} hitLimit 
+     * @param {string} meshID 
+     * @param {string} materialID 
+     * @param {(string|null)} parentCallbackID 
+     * @param {(function|null)} callback 
+     */
+    static fireProjectile(diameter, force, position, rotation, distanceLimit = 127.0, hitLimit = 1, meshID, materialID, parentCallbackID, callback = Game.fireProjectileResponse) {
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [diameter, force, position, rotation, distanceLimit, hitLimit, meshID, materialID], callback);
+        Game.transformsWorkerPostMessage("inProjectPath", 0, {"diameter":diameter, "force":force, "position":position, "rotation":rotation, "distanceLimit":distanceLimit, "hitLimit":hitLimit}, callbackID);
+        return callbackID;
+    }
+    static fireProjectileResponse(diamter, force, position, rotation, distanceLimit, hitLimit, meshID, materialID, response, parentCallbackID) {
+
     }
 
     static createGroupedCallback(parentID, callbackID) {
@@ -5680,6 +5727,13 @@ class Game {
         }
         return 0;
     }
+    static purgeCallbacks() { // TODO: this, occasionally
+        for (let callbackID in Game.callbacks) {
+            if (Game.callbacks[callbackID].hasRun) {
+                Game.removeCallback(callbackID);
+            }
+        }
+    }
 
     static tickWorkerOnMessage(event) {
         if (!event.data.hasOwnProperty("cmd")) {
@@ -5750,59 +5804,60 @@ class Game {
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
             return 2;
         }
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
         switch (event.data["cmd"]) {
             case "enable": {
-                if (event.data["msg"][0].length > 0) {
-                    for (let i in event.data["msg"][0]) {
-                        if (EntityController.has(event.data["msg"][0][i])) {
-                            EntityController.get(event.data["msg"][0][i]).setEnabled(true);
+                if (message.length > 0) {
+                    for (let i in message) {
+                        if (EntityController.has(message[i])) {
+                            EntityController.get(message[i]).setEnabled(true);
                         }
                     }
                 }
                 break;
             }
             case "disable": {
-                if (event.data["msg"][0].length > 0) {
-                    for (let i in event.data["msg"][0]) {
-                        if (EntityController.has(event.data["msg"][0][i])) {
-                            EntityController.get(event.data["msg"][0][i]).setEnabled(false);
+                if (message.length > 0) {
+                    for (let i in message) {
+                        if (EntityController.has(message[i])) {
+                            EntityController.get(message[i]).setEnabled(false);
                         }
                     }
                 }
                 break;
             }
             case "createEntity": {
-                let controller = EntityController.get(event.data["msg"][0]);
+                let controller = EntityController.get(message["id"]);
                 if (controller instanceof EntityController) {
                     Game.transformsWorkerPostMessage(
                         "createEntity",
                         0,
-                        [
-                            controller.id,
-                            controller.width,
-                            controller.height,
-                            controller.depth,
-                            controller.getPosition().toOtherArray(),
-                            controller.getRotation().toOtherArray()
-                        ]
+                        {
+                            "id": controller.id,
+                            "width": controller.width,
+                            "height": controller.height,
+                            "depth": controller.depth,
+                            "position": controller.getPosition().toOtherArray(),
+                            "rotation": controller.getRotation().toOtherArray()
+                        }
                     );
                 }
                 break;
             }
-            case "withinRange": {
-                break;
-            }
-            case "inFrontOf": {
-                break;
-            }
+            case "inProjectPath":
+            case "withinRange":
+            case "inFrontOf":
             case "inArea": {
-                if (Game.callbacks.hasOwnProperty([event.data["msg"][0]])) {
+                if (Game.callbacks.hasOwnProperty(callbackID)) {
                     let controllers = [];
-                    for (let i in event.data["msg"][1]) {
-                        if (EntityController.has(event.data["msg"][1][i])) {
-                            controllers.push(EntityController.get(event.data["msg"][1][i]));
+                    for (let i in message) {
+                        if (EntityController.has(message[i])) {
+                            controllers.push(EntityController.get(message[i]));
                         }
                     }
+                    Game.runCallback(callbackID, controllers);
                 }
                 break;
             }
@@ -6368,5 +6423,12 @@ class Game {
     }
     static updateDebugCollisionList(target = Game.playerController) {
         
+    }
+    static translatePhysics(mesh, direction, power) {
+        mesh.physicsImpostor.setLinearVelocity(
+            mesh.physicsImpostor.getLinearVelocity().add(direction.scale(power)
+            )
+        );
+        return 0;
     }
 }

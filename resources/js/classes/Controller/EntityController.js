@@ -289,14 +289,28 @@ class EntityController {
             Game.transformsWorkerPostMessage(
                 "createEntity",
                 0,
-                [this.id, this.width, this.height, this.depth, this.collisionMesh.position.toOtherArray(), this.collisionMesh.rotation.toOtherArray()]
+                {
+                    "id": this.id,
+                    "width": this.width,
+                    "height": this.height,
+                    "depth": this.depth,
+                    "position": this.collisionMesh.position.toOtherArray(),
+                    "rotation": this.collisionMesh.rotation.toOtherArray()
+                }
             );
         }
         else if (this.hasMesh()) {
             Game.transformsWorkerPostMessage(
                 "createEntity",
                 0,
-                [this.id, this.width, this.height, this.depth, this.mesh.position.toOtherArray(), this.mesh.rotation.toOtherArray()]
+                {
+                    "id": this.id,
+                    "width": this.width,
+                    "height": this.height,
+                    "depth": this.depth,
+                    "position": this.mesh.position.toOtherArray(),
+                    "rotation": this.mesh.rotation.toOtherArray()
+                }
             );
         }
         return 0;
@@ -306,14 +320,24 @@ class EntityController {
             Game.transformsWorkerPostMessage(
                 "updateEntity",
                 0,
-                [this.id, Game.currentTime, this.collisionMesh.position.toOtherArray(), this.collisionMesh.rotation.toOtherArray()]
+                {
+                    "id": this.id,
+                    "timestamp": Game.currentTime,
+                    "position": this.collisionMesh.position.toOtherArray(),
+                    "rotation": this.collisionMesh.rotation.toOtherArray()
+                }
             );
         }
         else if (this.hasMesh()) {
             Game.transformsWorkerPostMessage(
                 "updateEntity",
                 0,
-                [this.id, Game.currentTime, this.mesh.position.toOtherArray(), this.mesh.rotation.toOtherArray()]
+                {
+                    "id": this.id,
+                    "timestamp": Game.currentTime,
+                    "position": this.mesh.position.toOtherArray(),
+                    "rotation": this.mesh.rotation.toOtherArray()
+                }
             );
         }
         return 0;
