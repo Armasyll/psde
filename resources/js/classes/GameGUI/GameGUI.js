@@ -500,6 +500,15 @@ class GameGUI {
         stackPanel.background = GameGUI.background;
         return stackPanel;
     }
+    static createContainedTextBlock(id, text) {
+        let stackPanel = GameGUI.createStackPanel(String(id).concat("StackPanel"));
+        stackPanel.isVertical = true;
+        let textBlock = GameGUI.createTextBlock(String(id).concat("TextBlock"));
+        textBlock.text = text;
+        textBlock.heightInPixels = GameGUI.fontSizeInPixels;
+        stackPanel.addControl(textBlock);
+        return [stackPanel, textBlock];
+    }
     static removeControl(control) {
         if (control.children instanceof Array && control.children.length > 0) {
             for (let i = control.children.length - 1; i >= 0; i--) {

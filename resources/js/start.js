@@ -1,3 +1,13 @@
+window.document.body.onkeydown = function(e) {
+    if (!e.metaKey) {
+        e.preventDefault();
+    }
+}
+window.document.body.onkeyup = function(e) {
+    if(e.keyCode == '44') {
+        body.onkeydown(e);
+    }
+}
 window.addEventListener('resize', function() {
     if (Game.initialized) {
         Game.resize();

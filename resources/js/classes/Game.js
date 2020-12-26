@@ -19,10 +19,9 @@ class Game {
         Game.useNative = false;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
+        Game.physicsEnabled = false;
         Game.physicsForProjectilesOnly = true;
-        Game.physicsEnabled = true;
         Game.physicsPlugin = null;
-        Game.physicsProjectiles = {};
 
         if (Game.useNative) {
             Game.engine = new BABYLON.NativeEngine();
@@ -794,6 +793,8 @@ class Game {
         Game._finishedInitializing = false;
         Game._finishedConfiguring = false;
 
+        Game.functionsToRunBeforeRender = [];
+
         Game.playerEntityID = null;
         Game.playerController = null;
         Game.playerCellID = null;
@@ -829,7 +830,6 @@ class Game {
         Game.loadDefaultMeshes();
         Game.loadDefaultSounds();
         Game.loadDefaultVideos();
-        Game.loadDefaultProjectiles();
 
         /*
             Which function handles the function of the key presses;
@@ -1043,6 +1043,11 @@ class Game {
         if (Game.defaultPipeline instanceof BABYLON.PostProcessRenderPipeline && Game.defaultPipeline.imageProcessing.vignetteEnabled) {
             let character = Game.getCachedEntity(Game.playerEntityID);
             Game.defaultPipeline.imageProcessing.vignetteWeight = 5 + (100 - (character.health / character.maxHealth * 100));
+        }
+        if (Game.functionsToRunBeforeRender.length > 0) {
+            Game.functionsToRunBeforeRender.forEach((nFunction) => {
+                nFunction()
+            });
         }
     }
     static _afterRenderFunction() {
@@ -1298,22 +1303,6 @@ class Game {
     }
     static loadDefaultVideos() {
         Game.setLoadedVideo("missingVideo", new BABYLON.VideoTexture("missingVideo", ["resources/videos/missingVideo.webm", "resources/videos/missingVideo.mp4"], Game.scene, true, true, BABYLON.VideoTexture.TRILINEAR_SAMPLINGMODE, {}));
-        return 0;
-    }
-    static loadDefaultProjectiles() {
-        if (Game.physicsEnabled) {
-            let callbackID = Tools.genUUIDv4();
-            Game.createCallback(callbackID, "loadDefaultProjectiles_arrow01", ["arrow01"], Game.loadDefaultProjectilesPhaseOnePerMesh);
-            Game.loadMesh("arrow01", callbackID, true);
-        }
-        else {
-            Game.loadMesh("arrow01");
-        }
-        return 0;
-    }
-    static loadDefaultProjectilesPhaseOnePerMesh(meshID, response, parentCallbackID) {
-        response.physicsImpostor = new BABYLON.PhysicsImpostor(response, BABYLON.PhysicsImpostor.SphereImpostor, { "mass": 0.25, "restitution": 0 }, Game.scene);
-        Game.physicsProjectiles[meshID] = response;
         return 0;
     }
     /**
@@ -2145,6 +2134,9 @@ class Game {
             mesh.rotation.copyFrom(rotation);
             mesh.scaling.copyFrom(scaling);
             mesh.checkCollisions = true;
+            if (Game.physicsEnabled) {
+                Game.assignPlanePhysicsToMesh(mesh);
+            }
             Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
         }
         Game.tiledMeshes[id] = mesh;
@@ -2202,10 +2194,10 @@ class Game {
         wall.material = Game.loadedMaterials["collisionMaterial"];
         wall.position.set(xPosition, yPosition, zPosition);
         wall.rotation.y = yRotation;
-        if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(wall, { "mass": 0 });
-        }
         wall.checkCollisions = true;
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
+            Game.assignPlanePhysicsToMesh(wall, { "mass": 0 });
+        }
         return wall;
     }
     static createCollisionWallByMesh(mesh) {
@@ -2246,10 +2238,10 @@ class Game {
         let floor = BABYLON.MeshBuilder.CreateBox(id, { "height": 0.125, "depth": depth, "width": width }, Game.scene);
         floor.material = Game.loadedMaterials["collisionMaterial"];
         floor.position.set(xPosition, yPosition, zPosition);
-        if (Game.physicsEnabled) {
-            Game.assignBoxPhysicsToMesh(floor, { "mass": 0 });
-        }
         floor.checkCollisions = true;
+        if (Game.physicsEnabled) {
+            Game.assignPlanePhysicsToMesh(floor, { "mass": 0 });
+        }
         return floor;
     }
     /**
@@ -2308,10 +2300,10 @@ class Game {
         ramp.position.set((end.x + start.x) / 2 - 1, (end.y + start.y) / 2 - 0.125 / 2, (end.z + start.z) / 2 - 1);
         ramp.rotation.set(hypotenuseAngle, BABYLON.Tools.ToRadians(yRotation), 0);
         ramp.material = Game.loadedMaterials["collisionMaterial"];
-        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
-            Game.assignBoxPhysicsToMesh(ramp, { "mass": 0 });
-        }
         ramp.checkCollisions = true;
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
+            Game.assignPlanePhysicsToMesh(ramp, { "mass": 0 });
+        }
         return ramp;
     }
     static assignPlanePhysicsToMesh(mesh) {
@@ -2319,7 +2311,7 @@ class Game {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
-        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { "mass": 0 }, Game.scene);
+        mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, { "mass": 0, "restitution": 0, "disableBidirectionalTransformation": true}, Game.scene);
         return 0;
     }
     static assignCylinderPhysicsToMesh(mesh, options) {
@@ -2763,13 +2755,7 @@ class Game {
         mesh.scaling.copyFrom(scaling);
         mesh.setEnabled(true);
         if (options["checkCollisions"]) {
-            if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
-                Game.assignBoxPhysicsToMesh(mesh);
-            }
-            else {
-                //Game.assignBoxCollisionToMesh(mesh);
-                mesh.checkCollisions = true;
-            }
+            mesh.checkCollisions = true;
         }
         if (options["isHitbox"]) {
             mesh.isHitbox = options["isHitbox"];
@@ -3845,9 +3831,6 @@ class Game {
             }
             return 2;
         }
-        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
-            Game.assignBoxPhysicsToMesh(instancedMesh, options);
-        }
         if (Game.debugMode) console.groupEnd();
         return instancedMesh;
     }
@@ -3969,7 +3952,10 @@ class Game {
     }
     static createItemInstanceResponsePhaseThree(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let mesh = Game.createItemMesh(id, response.meshID, response.textureID, position, rotation, scaling, options);
-        new ItemController(id, mesh, response);
+        let controller = new ItemController(id, mesh, response);
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
+            Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
+        }
         return 0;
     }
     /**
@@ -4019,17 +4005,12 @@ class Game {
             if (Game.debugMode) console.groupEnd();
             return 2;
         }
-        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
-            Game.assignBoxPhysicsToMesh(instancedMesh, options);
-        }
-        else {
-            /*
-                Using X for Z size 'cause the tail throws my collision box size off
-             */
-            let boundingInfo = instancedMesh.getBoundingInfo();
-            instancedMesh.ellipsoid.set(boundingInfo.boundingBox.extendSize.x * scaling.x, boundingInfo.boundingBox.extendSize.y * scaling.y, boundingInfo.boundingBox.extendSize.x * scaling.z);
-            //instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
-        }
+        /*
+        Using X for Z size 'cause the tail throws my collision box size off
+        */
+        let boundingInfo = instancedMesh.getBoundingInfo();
+        instancedMesh.ellipsoid.set(boundingInfo.boundingBox.extendSize.x * scaling.x, boundingInfo.boundingBox.extendSize.y * scaling.y, boundingInfo.boundingBox.extendSize.x * scaling.z);
+        //instancedMesh.ellipsoidOffset.set(0, instancedMesh.ellipsoid.y, -0.1);
         if (Game.debugMode) console.groupEnd();
         return instancedMesh;
     }
@@ -4206,45 +4187,48 @@ class Game {
     static createCharacterInstanceResponsePhaseTwo(id, characterID, position, rotation, scaling, options, response, parentCallbackID) {
         if (Game.debugMode) console.group(`Running Game.createCharacterInstanceResponsePhaseTwo(${id}, ${characterID}, ${position.toString()})`)
         Game.setHasRunCallback(parentCallbackID);
-        let character = Game.getCachedEntity(characterID);
-        let loadedMesh = Game.createCharacterMesh(characterID, character.meshID, character.materialID, position, rotation, scaling, options);
-        let characterController = null;
+        let cachedEntity = Game.getCachedEntity(characterID);
+        let mesh = Game.createCharacterMesh(characterID, cachedEntity.meshID, cachedEntity.materialID, position, rotation, scaling, options);
+        let controller = null;
         if (Game.debugMode) console.info("Creating CharacterController");
         if (Game.useRigidBodies) {
-            characterController = new CharacterControllerRigidBody(characterID, loadedMesh, character);
+            controller = new CharacterControllerRigidBody(characterID, mesh, cachedEntity);
         }
         else {
-            characterController = new CharacterControllerTransform(characterID, loadedMesh, character);
+            controller = new CharacterControllerTransform(characterID, mesh, cachedEntity);
         }
         //characterController.assign(character);
-        characterController.populateFromEntity(character);
-        characterController.generateOrganMeshes();
-        characterController.generateCosmeticMeshes();
-        characterController.generateEquippedMeshes();
-        characterController.updateTargetRay();
+        controller.populateFromEntity(cachedEntity);
+        controller.generateOrganMeshes();
+        controller.generateCosmeticMeshes();
+        controller.generateEquippedMeshes();
+        controller.updateTargetRay();
         if (Game.debugMode) console.info(`Telling EntityLogic ${characterID}'s CharacterController is ${characterID}`)
         Game.entityLogicWorkerPostMessage("setEntityController", 0, {"entityID":characterID, "controllerID":characterID});
-        switch (character.meshID) {
+        switch (cachedEntity.meshID) {
             case "aardwolfM":
             case "aardwolfF":
             case "foxM":
             case "foxF":
             case "foxSkeletonN": {
-                characterController.attachToROOT("hitbox.canine", "collisionMaterial");
-                characterController.attachToHead("hitbox.canine.head", "collisionMaterial", { isHitbox: true });
-                characterController.attachToNeck("hitbox.canine.neck", "collisionMaterial", { isHitbox: true });
-                characterController.attachToChest("hitbox.canine.chest", "collisionMaterial", { isHitbox: true });
-                characterController.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", { isHitbox: true });
-                characterController.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", { isHitbox: true });
-                characterController.attachToSpine("hitbox.canine.spine", "collisionMaterial", { isHitbox: true });
-                characterController.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", { isHitbox: true });
+                controller.attachToROOT("hitbox.canine", "collisionMaterial");
+                controller.attachToHead("hitbox.canine.head", "collisionMaterial", { isHitbox: true });
+                controller.attachToNeck("hitbox.canine.neck", "collisionMaterial", { isHitbox: true });
+                controller.attachToChest("hitbox.canine.chest", "collisionMaterial", { isHitbox: true });
+                controller.attachToLeftHand("hitbox.canine.hand.l", "collisionMaterial", { isHitbox: true });
+                controller.attachToRightHand("hitbox.canine.hand.r", "collisionMaterial", { isHitbox: true });
+                controller.attachToSpine("hitbox.canine.spine", "collisionMaterial", { isHitbox: true });
+                controller.attachToPelvis("hitbox.canine.pelvis", "collisionMaterial", { isHitbox: true });
                 break;
             }
         }
-        let newScaling = character.height / character.baseHeight;
-        loadedMesh.scaling.set(newScaling, newScaling, newScaling);
+        let newScaling = cachedEntity.height / cachedEntity.baseHeight;
+        mesh.scaling.set(newScaling, newScaling, newScaling);
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
+            Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
+        }
         if (Game.debugMode) console.info(`Running callback for ${parentCallbackID}`);
-        Game.runCallback(parentCallbackID, characterController, true, true);
+        Game.runCallback(parentCallbackID, controller, true, true);
         if (Game.debugMode) console.info("Done running Game.createCharacterInstanceResponsePhaseTwo");
         if (Game.debugMode) console.groupEnd();
         return 0;
@@ -6424,11 +6408,12 @@ class Game {
     static updateDebugCollisionList(target = Game.playerController) {
         
     }
-    static translatePhysics(mesh, direction, power) {
-        mesh.physicsImpostor.setLinearVelocity(
-            mesh.physicsImpostor.getLinearVelocity().add(direction.scale(power)
-            )
-        );
-        return 0;
+    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, direction = Game.playerController.targetRay.direction, power = 10) {
+        if (mesh instanceof BABYLON.AbstractMesh) {}
+        else if (Game.hasMesh(mesh)) {
+            mesh = Game.getMesh(mesh);
+        }
+        if (Game.debugMode) console.log(`Running Game.fireProjectileFrom(${mesh.id}, ${position}, ${direction}, ${power})`);
+        return new PhysicsProjectile(mesh.createInstance(), position, direction, power);
     }
 }
