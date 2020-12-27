@@ -6421,6 +6421,9 @@ class Game {
         else if (direction.x > 0 && direction.z < 0) {
             degree >= 270
         }*/
+         /*
+        Uristqerty
+        */
         return new BABYLON.Vector2(Math.atan2(Game.camera.getForwardRay().direction.x, Game.camera.getForwardRay().direction.z) + BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(((direction.y + 1) / 2) * 360));
     }
     static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, direction = Game.playerController.targetRay.direction, power = 10) {
