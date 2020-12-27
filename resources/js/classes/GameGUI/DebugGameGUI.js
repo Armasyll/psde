@@ -154,7 +154,8 @@ class DebugGameGUI {
         }
         DebugGameGUI.infoCoordinates.text = String(`Pos X: ${Number(Game.playerController.collisionMesh.position.x).toFixed(8)}, Pos Y: ${Number(Game.playerController.collisionMesh.position.y).toFixed(8)}, Pos Z: ${Number(Game.playerController.collisionMesh.position.z).toFixed(8)}`);
         DebugGameGUI.infoRotation.text = String(`Rot: ${Number(BABYLON.Tools.ToDegrees(Game.playerController.collisionMesh.rotation.y)).toFixed(2)}`);
-        DebugGameGUI.infoTargetRay.text = String(`Dir X: ${Number(Game.playerController.targetRay.direction.x).toFixed(8)}, Dir Y: ${Number(Game.playerController.targetRay.direction.y).toFixed(8)}, Dir Z: ${Number(Game.playerController.targetRay.direction.z).toFixed(8)}`);
+        let n = Game.rayDirectionToRadians(Game.playerController.targetRay.direction);
+        DebugGameGUI.infoTargetRay.text = String(`Dir X: ${BABYLON.Tools.ToDegrees(n.x)}, Dir Y: ${BABYLON.Tools.ToDegrees(n.y)}`);
         return 0;
     }
     static showInfo() {

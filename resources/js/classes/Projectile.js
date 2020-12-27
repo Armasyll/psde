@@ -8,23 +8,25 @@
  * @property {number} force
  * @property {number} mass
  */
-class PhysicsProjectile {
+class Projectile {
     constructor(mesh, position, direction, force = 80.0, mass = 0.25) {
         this.id = Tools.genUUIDv4();
         this.mesh = mesh;
-        this.position = position;
+        this.startingPosition = position;
         this.direction = direction;
-        this.force = force;
+        this.startingForce = force;
         this.mass = mass;
-        this.currentTick = 0;
+        this.currentStep = 0;
         this.collisionCount = 0;
         this.haltAfterNthCollision = 1;
+        this.velocity = new BABYLON.Vector3(-Math.sin(direction.y), 0, Math.cos(direction.y));
 
-        PhysicsProjectile.set(this.id, this);
+        Projectile.set(this.id, this);
     }
 
-    tick(dt) {
-        
+    stepForward(dt) {
+        this.mesh.position.addInPlace(this.velocity);
+        this.currentStep++;
     }
 
     dispose() {
@@ -33,34 +35,34 @@ class PhysicsProjectile {
     }
 
     static initialize() {
-        PhysicsProjectile.physicsProjectileList = {};
+        Projectile.projectileList = {};
     }
     static get(id) {
-        if (PhysicsProjectile.has(id)) {
-            return PhysicsProjectile.physicsProjectileList[id];
+        if (Projectile.has(id)) {
+            return Projectile.projectileList[id];
         }
         return 1;
     }
     static has(id) {
-        return PhysicsProjectile.physicsProjectileList.hasOwnProperty(id);
+        return Projectile.projectileList.hasOwnProperty(id);
     }
     static set(id, physicsProjectile) {
-        PhysicsProjectile.physicsProjectileList[id] = physicsProjectile;
+        Projectile.projectileList[id] = physicsProjectile;
         return 0;
     }
     static remove(id) {
-        delete PhysicsProjectile.physicsProjectileList[id];
+        delete Projectile.projectileList[id];
         return 0;
     }
     static list() {
-        return PhysicsProjectile.physicsProjectileList;
+        return Projectile.projectileList;
     }
     static clear() {
-        for (let i in PhysicsProjectile.physicsProjectileList) {
-            PhysicsProjectile.physicsProjectileList[i].dispose();
+        for (let i in Projectile.projectileList) {
+            Projectile.projectileList[i].dispose();
         }
-        PhysicsProjectile.physicsProjectileList = {};
+        Projectile.projectileList = {};
         return 0;
     }
 }
-PhysicsProjectile.initialize();
+Projectile.initialize();
