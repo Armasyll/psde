@@ -1,5 +1,4 @@
 importScripts("../../../vendors/babylonjs/babylon.js", "../BabylonOverrides.js", "../Overrides.js", "../classes/Tools.js");
-importScripts("../../../vendors/babylonjs/Oimo.js");
 class EntityController {
     constructor(id, width = 0.0, height = 0.0, depth = 0.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), timestamp = 0) {
         this.id = id;
@@ -85,24 +84,24 @@ class EntityController {
         return undefined;
     }
     static initialize() {
-        EntityController.simpleEntityControllerList = {};
+        EntityController.entityController = {};
     }
-    static set(id, simpleEntityController) {
+    static set(id, entityController) {
         delete Transforms.requestedEntities[id];
-        EntityController.simpleEntityControllerList[id] = simpleEntityController;
+        EntityController.entityController[id] = entityController;
         return 0;
     }
     static get(id) {
-        return EntityController.simpleEntityControllerList[id];
+        return EntityController.entityController[id];
     }
     static has(id) {
-        return EntityController.simpleEntityControllerList.hasOwnProperty(id);
+        return EntityController.entityController.hasOwnProperty(id);
     }
     static list() {
-        return EntityController.simpleEntityControllerList;
+        return EntityController.entityController;
     }
     static remove(id) {
-        delete EntityController.simpleEntityControllerList[id];
+        delete EntityController.entityController[id];
     }
 }
 EntityController.initialize();
@@ -110,8 +109,7 @@ class Transforms {
     static initialize() {
         Transforms.debugMode = false;
         Transforms.debugVerbosity = 0;
-        Transforms.tickPort = null;
-        Transforms.TransformsPort = null;
+        Transforms.entityLogicPort = null;
         Transforms.callbacks = {};
 
         Transforms.player = null;
@@ -127,6 +125,7 @@ class Transforms {
             Transforms.camera.position.y = 255;
         Transforms.sceneChangedSinceLastRender = true;
         Transforms.requestedEntities = {};
+        Transforms.initialized = true;
         addEventListener('message', Transforms.gameWorkerOnMessage, false);
     }
 
@@ -142,12 +141,7 @@ class Transforms {
         let callbackID = event.data["callbackID"];
         let message = event.data["msg"];
         switch (event.data["cmd"]) {
-            case "connectTick": {
-                Transforms.tickPort = event.ports[0];
-                Transforms.tickPort.onmessage = Transforms.tickWorkerOnMessage;
-                break;
-            }
-            case "connectTransforms": {
+            case "connectEntityLogic": {
                 Transforms.entityLogicPort = event.ports[0];
                 Transforms.entityLogicPort.onmessage = Transforms.entityLogicWorkerOnMessage;
                 break;
@@ -409,13 +403,10 @@ class Transforms {
         return controllerIDs;
     }
 
-    static tickWorkerOnMessage(event) {
-        return 0;
-    }
-    static tickWorkerPostMessage(event) {
-        return 0;
-    }
     static entityLogicWorkerOnMessage(event) {
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
         switch (event.data["cmd"]) {
             case "inProjectilePath": {
                 let result = Transforms.inProjectilePath(...message);
@@ -423,12 +414,12 @@ class Transforms {
                 break;
             }
             case "inArea": {
-                let result = Transforms.withinRange(...message);
+                let result = Transforms.inArea(...message);
                 Transforms.entityLogicWorkerPostMessage("inArea", 0, result, event.data["callbackID"]);
                 break;
             }
             case "inFrontOf": {
-                let result = Transforms.withinRange(...message);
+                let result = Transforms.inFrontOf(...message);
                 Transforms.entityLogicWorkerPostMessage("inFrontOf", 0, result, event.data["callbackID"]);
                 break;
             }
@@ -441,7 +432,7 @@ class Transforms {
         return 0;
     }
 
-    static entityLogicWorkerPostMessage(command, status = 0, message, callbackID = null, options = null) {
+    static entityLogicWorkerPostMessage(command, status = 0, message = [], callbackID = null, options = null) {
         let obj = {"cmd": command, "sta": status, "msg": message};
         if (callbackID) {
             obj["callbackID"] = callbackID;

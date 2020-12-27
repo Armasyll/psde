@@ -4368,6 +4368,9 @@ class Game {
      * @param {EntityController} entityController 
      */
     static setPlayerTarget(entityController) {
+        if (entityController == Game.playerController) {
+            return;
+        }
         if (Game.debugMode) console.group("Running Game.setPlayerTarget()");
         if (!(Game.hasPlayerController())) {
             if (Game.debugMode) {
@@ -4401,7 +4404,6 @@ class Game {
         }
         if (entityController == Game.playerController.target) {
             if (Game.debugMode) {
-                console.info("Somehow the player was trying to target itself.");
                 console.groupEnd();
             }
             Game.gui.targetPortrait.update();
@@ -4823,8 +4825,8 @@ class Game {
             return 1;
         }
         if (Game.enableFirstPerson && Game.camera.radius <= 0.5) {
-            if (Game.debugMode) console.log("Running Game.updateArcRotateCameraTarget()");
             if (Game.playerController.getMesh().isVisible) {
+                if (Game.debugMode) console.log("Running Game.updateArcRotateCameraTarget()");
                 Game.playerController.hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
