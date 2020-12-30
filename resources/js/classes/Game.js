@@ -1037,6 +1037,11 @@ class Game {
                 }
             }
         }
+        for (let projectile in Projectile.list()) {
+            if (Projectile.get(projectile).falling) {
+                Projectile.get(projectile).moveAV();
+            }
+        }
         if (Game.hasPlayerController()) {
             Game.updateCameraTarget();
         }

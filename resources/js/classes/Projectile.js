@@ -9,7 +9,7 @@
  * @property {number} mass
  */
 class Projectile {
-    constructor(mesh, position, rotation, force = 80.0, mass = 0.25) {
+    constructor(mesh, position, rotation, force = 1.0, mass = 0.25) {
         this.id = Tools.genUUIDv4();
         this.mesh = mesh;
         this.mesh.position.copyFrom(position);
@@ -24,14 +24,43 @@ class Projectile {
         this.grounded = false;
         this.falling = true;
         this.intendedMovement = BABYLON.Vector3.Zero();
+        this.ray = new BABYLON.Ray(this.mesh.position, this.mesh.forward.negate(), 0.25);
+        this.rayHelper = new BABYLON.RayHelper(this.ray);
+        this.rayHelper.show(Game.scene);
+        this.hit = null;
 
         Projectile.set(this.id, this);
     }
 
+    moveAV() {
+        this.doMove();
+    }
     doMove() {
+        if (this.currentStep > 1023) {
+            this.falling = false;
+        }
+        if (!this.falling) {
+            return 0;
+        }
         let dt = Game.engine.getDeltaTime() / 1000;
-        this.mesh.movePOV(0, 0, this.startingForce * dt);
+        this.intendedMovement = this.mesh.calcMovePOV(0, 0, this.startingForce * dt);
+        this.mesh.position.addInPlace(this.intendedMovement);
+        this.ray.origin = this.mesh.position;
+        this.ray.direction = this.mesh.forward;
+        if (this.currentStep > 30) {
+            let hit = Game.scene.pickWithRay(this.ray, (pickedMesh) => {
+                if (pickedMesh.hasController()) {
+                    return true;
+                }
+            });
+            if (hit.hit) {
+                this.falling = false;
+                this.hit = hit;
+                return 0;
+            }
+        }
         this.currentStep++;
+        return 0;
     }
 
     dispose() {
