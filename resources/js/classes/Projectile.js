@@ -4,28 +4,33 @@
  * @typedef {Object} PhysicsProjectile
  * @property {BABYLON.AbstractMesh} mesh
  * @property {BABYLON.Vector3} position
- * @property {BABYLON.Vector3} direction
+ * @property {BABYLON.Vector3} rotation
  * @property {number} force
  * @property {number} mass
  */
 class Projectile {
-    constructor(mesh, position, direction, force = 80.0, mass = 0.25) {
+    constructor(mesh, position, rotation, force = 80.0, mass = 0.25) {
         this.id = Tools.genUUIDv4();
         this.mesh = mesh;
+        this.mesh.position.copyFrom(position);
+        this.mesh.rotation.copyFrom(rotation);
         this.startingPosition = position;
-        this.direction = direction;
+        this.startingRotation = rotation;
         this.startingForce = force;
         this.mass = mass;
         this.currentStep = 0;
         this.collisionCount = 0;
         this.haltAfterNthCollision = 1;
-        this.velocity = new BABYLON.Vector3(-Math.sin(direction.y), 0, Math.cos(direction.y));
+        this.grounded = false;
+        this.falling = true;
+        this.intendedMovement = BABYLON.Vector3.Zero();
 
         Projectile.set(this.id, this);
     }
 
-    stepForward(dt) {
-        this.mesh.position.addInPlace(this.velocity);
+    doMove() {
+        let dt = Game.engine.getDeltaTime() / 1000;
+        this.mesh.movePOV(0, 0, this.startingForce * dt);
         this.currentStep++;
     }
 

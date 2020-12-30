@@ -6410,7 +6410,7 @@ class Game {
     static updateDebugCollisionList(target = Game.playerController) {
         
     }
-    static rayDirectionToRadians(direction) {
+    static rayDirectionToRadians(direction = Game.camera.getForwardRay().direction) {
         /*if (direction.x < 0 && direction.z < 0) {
             degree >= 0;
         }
@@ -6426,17 +6426,15 @@ class Game {
          /*
         Uristqerty
         */
-        return new BABYLON.Vector2(Math.atan2(Game.camera.getForwardRay().direction.x, Game.camera.getForwardRay().direction.z) + BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(((direction.y + 1) / 2) * 360));
+        return new BABYLON.Vector3(Math.acos(direction.y) + BABYLON.Tools.ToRadians(90), Math.atan2(direction.x, direction.z) + BABYLON.Tools.ToRadians(180), 0);
     }
-    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, direction = Game.playerController.targetRay.direction, power = 10) {
+    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, rotation = Game.rayDirectionToRadians().add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(180), 0)), power = 10) {
         if (mesh instanceof BABYLON.AbstractMesh) {}
         else if (Game.hasMesh(mesh)) {
             mesh = Game.getMesh(mesh);
         }
-        if (Game.debugMode) console.log(`Running Game.fireProjectileFrom(${mesh.id}, ${position}, ${direction}, ${power})`);
+        if (Game.debugMode) console.log(`Running Game.fireProjectileFrom(${mesh.id}, ${position}, ${rotation}, ${power})`);
         let projectile = mesh.createInstance();
-        projectile.position.copyFrom(position);
-        projectile.rotation.copyFrom(direction);
-        return new Projectile(projectile, position, direction, power);
+        return new Projectile(projectile, position, rotation, power);
     }
 }

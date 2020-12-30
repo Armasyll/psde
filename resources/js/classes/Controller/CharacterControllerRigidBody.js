@@ -174,13 +174,13 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
             if (this.walking) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * dt));
             }
             else if (this.running) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * dt));
             }
             else if (this.crawling) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * Game.scene.getEngine().getDeltaTime() / 1000));
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * dt));
             }
             // Start Mitigate jittering in Y direction
             if (Game.useControllerGroundRay) {
