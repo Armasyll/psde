@@ -24,9 +24,9 @@ class Projectile {
         this.grounded = false;
         this.falling = true;
         this.intendedMovement = BABYLON.Vector3.Zero();
-        this.ray = new BABYLON.Ray(this.mesh.position, this.mesh.forward.negate(), 0.25);
-        this.rayHelper = new BABYLON.RayHelper(this.ray);
-        this.rayHelper.show(Game.scene);
+        this.ray = new BABYLON.Ray(this.mesh.position, BABYLON.Vector3.Forward(), 0.25);
+        /*this.rayHelper = new BABYLON.RayHelper(this.ray);
+        this.rayHelper.show(Game.scene);*/
         this.hit = null;
 
         Projectile.set(this.id, this);
