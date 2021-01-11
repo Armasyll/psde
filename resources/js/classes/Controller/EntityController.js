@@ -112,11 +112,7 @@ class EntityController {
         this.bones = {};
         this.bones["ROOT"] = null;
         this.bones["FOCUS"] = null;
-
-        this.setID(id);
-        this.setEntityID(entityObject.id);
-        this.assign(entityObject, false);
-        this.setMesh(mesh);
+        this.compoundController = null;
 
         /**
          * Map of bone IDs and the mesh attached to them.
@@ -128,10 +124,13 @@ class EntityController {
          * @type {String, {String, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
-        this._attachedMeshes = new Set([this.mesh]);
+        this._attachedMeshes = new Set();
 
-        Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
+        this.setID(id);
         EntityController.set(this.id, this);
+        this.assign(entityObject, false);
+        this.setMesh(mesh);
+        this.setEntityID(entityObject.id, true);
         this.sendTransforms();
         if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
@@ -147,12 +146,25 @@ class EntityController {
     getID() {
         return this.id;
     }
-    setEntityID(id) {
+    setEntityID(id, updateChild = true) {
         this.entityID = id;
+        if (updateChild) {
+            Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
+        }
+        return 0;
+    }
+    removeEntityID(updateChild = true) {
+        if (updateChild) {
+            Game.entityLogicWorkerPostMessage("removeEntityController", 0, [this.id]);
+        }
+        this.entityID = null;
         return 0;
     }
     getEntityID() {
         return this.entityID;
+    }
+    hasEntityID() {
+        return this.entityID != null;
     }
     getPosition() {
         if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
@@ -238,11 +250,13 @@ class EntityController {
             }
             this.currentMeshStage = 0;
         }
+        this._attachedMeshes.add(this.mesh);
         let position = this.mesh.position.clone();
         this.createCollisionMesh();
         if (this.hasCollisionMesh()) {
             this.collisionMesh.position.copyFrom(position);
             this.mesh.setParent(this.collisionMesh);
+            this._attachedMeshes.add(this.collisionMesh);
         }
         this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
@@ -255,10 +269,12 @@ class EntityController {
             return 0;
         }
         if (this.hasMesh()) {
+            this._attachedMeshes.remove(mesh);
             mesh.controller = null;
             mesh.setParent(null);
         }
         if (this.hasCollisionMesh()) {
+            this._attachedMeshes.remove(this.collisionMesh);
             Game.removeMesh(this.collisionMesh);
             this.collisionMesh = null;
         }
@@ -545,9 +561,14 @@ class EntityController {
         }
         let mesh = null;
         this._attachedMeshes.forEach((attachedMesh) => {
-            if (attachedMesh.name == meshID || attachedMesh.id == meshID) {
-                mesh = attachedMesh;
-                return true;
+            if (attachedMesh instanceof BABYLON.AbstractMesh) {
+                if (attachedMesh.name == meshID || attachedMesh.id == meshID) {
+                    mesh = attachedMesh;
+                    return true;
+                }
+            }
+            else {
+                this._attachedMeshes.remove(attachedMesh);
             }
         });
         if (mesh == null) {
@@ -830,6 +851,38 @@ class EntityController {
         return 0;
     }
 
+    setCompoundController(instancedCompoundController) {
+        instancedCompoundController = Tools.filterClass(instancedCompoundController, InstancedCompoundController, null);
+        if (instancedCompoundController == null) {
+            return 1;
+        }
+        this.compoundController = instancedCompoundController;
+        return 0;
+    }
+    getCompoundController() {
+        return this.compoundController;
+    }
+    hasCompoundController() {
+        return this.compoundController instanceof InstancedCompoundController;
+    }
+    removeCompoundController(updateChild = true) {
+        if (this.compoundController == null) {
+            return 0;
+        }
+        if (typeof controller == "string" && this.controllers.hasOwnProperty(controller)) {
+            if (this.controllers[controller] instanceof EntityController) {
+                this.controllers[controller].removeCompoundController(this, false);
+            }
+            delete this.controllers[controller];
+            return 0;
+        }
+        if (updateChild) {
+            this.compoundController.removeController(this, false);
+        }
+        this.compoundController = null;
+        return 0;
+    }
+
     doAttacked() {
         return 0;
     }
@@ -864,16 +917,6 @@ class EntityController {
     }
     hasSkeleton() {
         return this.skeleton instanceof BABYLON.Skeleton;
-    }
-    setEntity(id) {
-        this.entityID = id;
-        return 0;
-    }
-    getEntity() {
-        return this.entityID;
-    }
-    hasEntity() {
-        return this.entityID != null;
     }
     setMeshSkeleton(skeleton) {
         if (skeleton instanceof BABYLON.Skeleton) {
@@ -1251,9 +1294,11 @@ class EntityController {
             Game.playerController = null;
         }
         this.propertiesChanged = false;
-        if (this.hasEntity()) {
-            Game.entityLogicWorkerPostMessage("removeController", 0, [this.id]);
-            this.entityID = null;
+        if (this.hasEntityID()) {
+            this.removeEntityID();
+        }
+        if (this.hasCompoundController()) {
+            this.removeCompoundController(true);
         }
         Game.removeMesh(this.mesh);
         Game.removeMesh(this.collisionMesh);

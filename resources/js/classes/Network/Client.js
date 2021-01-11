@@ -128,7 +128,7 @@ class Client {
         }
         console.group(`Running Client.initializeSelf(${stringUUID}, ${networkID})`);
         if (!(Game.playerController instanceof CharacterController)) {
-            Client.addPlayerToInitialize("00000000-0000-0000-0000-000000000000", stringUUID, networkID);
+            Client.addPlayerToInitialize("player", stringUUID, networkID);
             console.groupEnd();
             return 1;
         }

@@ -65,11 +65,21 @@ class Tools {
     static verticalSlope(v) {
         return Math.atan(Math.abs(v.y / Math.sqrt(v.x * v.x + v.z * v.z)));
     }
-    static filterID(_id) {
-        if (typeof _id == "string") {
-            return _id.replace(/[^a-zA-Z0-9_\-\.]/g,"");
+    /**
+     * 
+     * @param {string} value 
+     * @param {(string|null)} returnOnFail 
+     * @returns {string}
+     */
+    static filterID(value, returnOnFail = null) {
+        value = String(value);
+        if (typeof value == "string") {
+            value = value.replace(/[^a-zA-Z0-9_\-\.]/g,"");
         }
-        return "";
+        if (value.length == 0 && returnOnFail != null) {
+            return returnOnFail;
+        }
+        return value;
     }
     static filterName(_string) {
         if (typeof _string != "string") {

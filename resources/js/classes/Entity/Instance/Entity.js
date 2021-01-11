@@ -36,9 +36,8 @@ class InstancedEntity extends AbstractEntity {
         this.currentTextureStage = 0;
         this.currentMaterialStage = 0;
 
-        this.entity.addInstance(this);
-
         InstancedEntity.set(this.id, this);
+        this.entity.addInstance(this);
     }
     getEntity() {
         return this.entity;

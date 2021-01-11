@@ -935,7 +935,7 @@ class Game {
                 case "cell": {
                     let cellID = "limbo";
                     Game.loadCell(cellID);
-                    Game.assignPlayer("00000000-0000-0000-0000-000000000000");
+                    Game.assignPlayer("player");
                     GameGUI.hideCharacterChoiceMenu(true);
                     GameGUI.hideMenu(true);
                 }
@@ -1413,10 +1413,7 @@ class Game {
         return 1;
     }
     static createVideo(id = "", videoID = "", width = 1.0, height = 1.0) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         videoID = Tools.filterID(videoID);
         if (!Game.hasAvailableVideo(videoID)) {
             return 1;
@@ -2026,11 +2023,7 @@ class Game {
         return null;
     }
     static filterID(string) {
-        string = Tools.filterID(string);
-        if (string.length == 0) {
-            string = Tools.genUUIDv4();
-        }
-        return string;
+        return Tools.filterID(string, Tools.genUUIDv4());
     }
     static filterMeshID(id) {
         id = Tools.filterID(id);
@@ -2123,10 +2116,7 @@ class Game {
      * @param {object} options 
      */
     static createTiledMesh(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions":true}) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         Game.filterMaterialID(materialID);
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
@@ -2601,10 +2591,7 @@ class Game {
      * @returns {array}
      */
     static filterCreateMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         if (Game.debugMode && Game.debugVerbosity > 3) console.log(`Running Game.filterCreateMesh(${id}, ${meshID}, ${materialID})`);
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
@@ -2648,10 +2635,7 @@ class Game {
      * @returns {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createBillboard(id = "", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         let mesh = BABYLON.Mesh.CreatePlane(id, 1, Game.scene);
         mesh.id = id;
         mesh.name = name;
@@ -3093,10 +3077,7 @@ class Game {
      * @returns {(FurnitureController|number)} A FurnitureController or an integer status code
      */
     static createFurnitureInstance(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID) {
-        instanceID = Tools.filterID(instanceID);
-        if (instanceID.length == 0) {
-            instanceID = Tools.genUUIDv4();
-        }
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
         scaling = Tools.filterVector3(scaling);
@@ -3130,6 +3111,9 @@ class Game {
         loadedMesh.checkCollisions = true;
         let controller = new FurnitureController(instanceID, loadedMesh, Object.assign(entity, response));
         controller.updateTransforms();
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
+        }
         return 0;
     }
     /**
@@ -3272,6 +3256,9 @@ class Game {
         let loadedMesh = Game.createMesh(id, meshID, materialID, position.add(new BABYLON.Vector3(xPosition, 0, -yPosition)), rotation, scaling, options);
         let controller = new DoorController(id, loadedMesh, response);
         controller.updateTransforms();
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
+        }
         return 0;
     }
     /**
@@ -3379,6 +3366,9 @@ class Game {
         let entity = new DisplayEntity(id, name, undefined, undefined);
         let controller = new DisplayController(id, loadedMesh, entity, videoID, options["videoMeshWidth"], options["videoMeshHeight"], options["videoMeshPosition"]);
         controller.updateTransforms();
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
+        }
         return controller;
     }
     /**
@@ -3415,10 +3405,7 @@ class Game {
      * @param {object} options 
      */
     static createMirror(id, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { width: 5, height: 5 }) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         //Creation of a glass plane
         let abstractMesh = BABYLON.MeshBuilder.CreatePlane(id, { width: options["width"], height: options["height"] }, Game.scene);
         abstractMesh.position.copyFrom(position);
@@ -3539,10 +3526,7 @@ class Game {
      * @returns {number} Integer status code
      */
     static createLightingInstance(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID) {
-        instanceID = Tools.filterID(instanceID);
-        if (instanceID.length == 0) {
-            instanceID = Tools.genUUIDv4();
-        }
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
         scaling = Tools.filterVector3(scaling);
@@ -3576,6 +3560,9 @@ class Game {
         loadedMesh.checkCollisions = true;
         let controller = new LightingController(instanceID, loadedMesh, Object.assign(entity, response));
         controller.updateTransforms();
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
+        }
         return 0;
     }
     /**
@@ -3740,6 +3727,9 @@ class Game {
         let loadedMesh = Game.createPlantMesh(response.id, response.meshID, response.materialID, position, rotation, scaling, options);
         let controller = new PlantController(response.id, loadedMesh, response);
         controller.updateTransforms();
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
+        }
         if (Game.debugMode) console.groupEnd();
         return controller;
     }
@@ -3958,8 +3948,12 @@ class Game {
     static createItemInstanceResponsePhaseThree(id, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let mesh = Game.createItemMesh(id, response.meshID, response.textureID, position, rotation, scaling, options);
         let controller = new ItemController(id, mesh, response);
+        controller.updateTransforms();
         if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
             Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
+        }
+        if (options.hasOwnProperty("compoundController")) {
+            controller.setCompoundController(options["compoundController"]);
         }
         return 0;
     }
@@ -4116,10 +4110,7 @@ class Game {
      * @param {(string|null)} [parentCallbackID] 
      */
     static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", options = {}, parentCallbackID = null) {
-        id = Tools.filterID(id);
-        if ((id.length == 0)) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         if (Game.debugMode) console.group(`Running Game.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [id, name, description, iconID, creatureType, creatureSubType, sex, age, meshID, materialID, options], Game.createCharacterEntityResponse);
@@ -4284,10 +4275,7 @@ class Game {
      */
     static createPlayer(id = "", name = "", description = "", iconID = "missingIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
         if (Game.debugMode) console.group(`Running Game.createPlayer(${id}, ${name}, ${description}, ${iconID})`);
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         position = Tools.filterVector3(position);
         rotation = Tools.filterVector3(rotation);
         scaling = Tools.filterVector3(scaling);
@@ -4724,11 +4712,11 @@ class Game {
             }
             case "createplayer": {
                 let position = new BABYLON.Vector3(commandArray[1] || 0, commandArray[2] || 0, commandArray[3] || 0);
-                if (EntityController.has("00000000-0000-0000-0000-000000000000")) {
+                if (EntityController.has("player")) {
                     Game.initFreeCamera(false, false);
-                    EntityController.get("00000000-0000-0000-0000-000000000000").dispose();
+                    EntityController.get("player").dispose();
                 }
-                Game.createPlayer("00000000-0000-0000-0000-000000000000", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", position, undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                Game.createPlayer("player", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", position, undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
                 Game.initArcRotateCamera();
                 break;
             }
@@ -5628,10 +5616,7 @@ class Game {
      * @param {object} params Params to pass
      */
     static createCallback(id = "", parentID = null, params = [], callback = null) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         if (!(params instanceof Array)) {
             params = [params];
         }
@@ -6172,7 +6157,7 @@ class Game {
             }
             case "loadCellAndSetPlayerAt": {
                 let newCallbackID = Tools.genUUIDv4();
-                Game.createCallback(newCallbackID, callbackID, ["00000000-0000-0000-0000-000000000000", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", message["position"], message["rotation"], undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"}], Game.createPlayer)
+                Game.createCallback(newCallbackID, callbackID, ["player", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", message["position"], message["rotation"], undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"}], Game.createPlayer);
                 Game.setPlayerCell(message["cellID"], newCallbackID);
                 break;
             }
@@ -6198,7 +6183,7 @@ class Game {
                 if (message instanceof Array) {
                     message.forEach((entry) => {
                         if (EntityController.has(entry["controllerID"])) {
-                            EntityController.get(entry["controllerID"]).setEntity(entry["entityID"].id);
+                            EntityController.get(entry["controllerID"]).setEntityID(entry["entityID"].id);
                         }
                     });
                 }
@@ -6373,7 +6358,7 @@ class Game {
         if (!(id instanceof Object)) {
             id = [id];
         }
-        callbackID = Game.filterID(callbackID);
+        callbackID = Tools.filterID(callbackID);
         Game.entityLogicWorkerPostMessage("getCell", 0, id, callbackID);
         return 0;
     }

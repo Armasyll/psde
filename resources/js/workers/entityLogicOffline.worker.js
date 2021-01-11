@@ -738,7 +738,7 @@ class EntityLogic {
             case "kill": {
                 break;
             }
-            case "removeController": {
+            case "removeEntityController": {
                 break;  
             }
             case "setEntityController": {
