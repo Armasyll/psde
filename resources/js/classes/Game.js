@@ -9,11 +9,14 @@ class Game {
     static preInitialize() {}
     static initialize(options = {}) {
         BABYLON.Tools.Log("Initializing, Phase One");
-        Game.initStart = new Date();
         Game.initialized = false;
         Game.initializedPhaseTwo = false;
         Game.initializedPhaseThree = false;
         Game.initializedPhaseFour = false;
+        Game.rootDirectory = "";
+        if (options.hasOwnProperty("rootDirectory")) {
+            Game.rootDirectory = String(options["rootDirectory"]);
+        }
         Game.debugMode = false;
         if (options.hasOwnProperty("debugMode")) {
             Game.debugMode = options["debugMode"] === true;
@@ -326,11 +329,11 @@ class Game {
          */
         Game.controls = AbstractControls;
         Game.updateMenuKeyboardDisplayKeys();
-        Game.importMeshLocations("/resources/js/meshLocations.json", Game.initializePhaseTwo);
-        Game.importTextureLocations("/resources/js/textureLocations.json", Game.initializePhaseTwo);
-        Game.importIconLocations("/resources/js/iconLocations.json", Game.initializePhaseTwo);
-        Game.importSoundLocations("/resources/js/soundLocations.json", Game.initializePhaseTwo);
-        Game.importVideoLocations("/resources/js/videoLocations.json", Game.initializePhaseTwo);
+        Game.importMeshLocations("resources/js/meshLocations.json", Game.initializePhaseTwo);
+        Game.importTextureLocations("resources/js/textureLocations.json", Game.initializePhaseTwo);
+        Game.importIconLocations("resources/js/iconLocations.json", Game.initializePhaseTwo);
+        Game.importSoundLocations("resources/js/soundLocations.json", Game.initializePhaseTwo);
+        Game.importVideoLocations("resources/js/videoLocations.json", Game.initializePhaseTwo);
         return 0;
     }
     static initializePhaseTwo() {
@@ -343,17 +346,17 @@ class Game {
         BABYLON.Tools.Log("Initializing, Phase Two");
         Game.initializedPhaseTwo = true;
         Game.loadDefaultTextures();
-        Game.loadDefaultImages();
+        if (!Game.useNative) Game.loadDefaultImages(); // Problem in BabylonNative
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
-        Game.loadDefaultSounds();
-        Game.loadDefaultVideos();
+        if (!Game.useNative) Game.loadDefaultSounds(); // Problem in BabylonNative
+        if (!Game.useNative) Game.loadDefaultVideos(); // Problem in BabylonNative
 
         /**
          * @type {GameGUI} GameGUI; alternative is HtmlGUI
          */
         Game.gui = GameGUI;
-        Game.gui.initialize();
+        Game.gui.initialize(); // Problem in BabylonNative
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
         window.addEventListener("contextmenu", Game.controls.onContext);
@@ -370,11 +373,11 @@ class Game {
         Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.previousInterfaceMode = null;
 
-        Game.tickWorker = new Worker("resources/js/workers/tick.worker.js");
+        Game.tickWorker = new Worker(Game.rootDirectory + "resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
-        Game.transformsWorker = new Worker("resources/js/workers/transforms.worker.js");
+        Game.transformsWorker = new Worker(Game.rootDirectory + "resources/js/workers/transforms.worker.js");
         Game.transformsWorker.onmessage = Game.transformsWorkerOnMessage;
-        Game.entityLogicWorker = new Worker("resources/js/workers/entityLogicOffline.worker.js");
+        Game.entityLogicWorker = new Worker(Game.rootDirectory + "resources/js/workers/entityLogicOffline.worker.js");
         Game.entityLogicWorker.onmessage = Game.entityLogicWorkerOnMessage;
         Game.entityLogicTickChannel = new MessageChannel();
         Game.tickWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTickChannel.port1]);
@@ -383,8 +386,6 @@ class Game {
         Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
 
-        Game.initEnd = new Date();
-        BABYLON.Tools.Log(`Time to initialize: ${Game.initEnd.getTime() - Game.initStart.getTime()}ms`);
         Game.initialized = true;
         Game.engine.runRenderLoop(Game._renderLoopFunction);
         Game.scene.registerBeforeRender(Game._beforeRenderFunction);
@@ -996,12 +997,37 @@ class Game {
         });
         return 0;
     }
+    static loadSVG(imageID) {
+        if (Game.useNative) {
+            return Game.loadSVGNative(imageID);
+        }
+        return Game.loadSVGBrowser(imageID);
+    }
+    static loadSVGNative(imageID) {
+        let xhr = new XMLHttpRequest();
+        let parser = new DOMParser();
+        xhr.overrideMimeType("image/svg+xml");
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+                try {
+                    xhr.onreadystatechange = null;
+                    Game.loadedSVGDocuments[imageID] = parser.parseFromString(xhr.response, "image/svg+xml");
+                }
+                catch (e) {
+                    Game.textureLocations[imageID] = Game.textureLocations["missingTexture"];
+                }
+            }
+        }, false);
+        xhr.open("GET", String("file://").concat(Game.rootDirectory).concat(Game.textureLocations[imageID]), true);
+        xhr.send();
+        return 0;
+    }
     /**
      * Loads and creates an XML(SVG)Document
      * @param {string} imageID Image ID to load, and set the new XML(SVG)Document to
      * @returns {number} Integer status code
      */
-    static loadSVG(imageID) {
+    static loadSVGBrowser(imageID) {
         let xhr = new XMLHttpRequest();
         let parser = new DOMParser();
         xhr.open("GET", Game.textureLocations[imageID], true);
@@ -1712,13 +1738,51 @@ class Game {
         }
         return id;
     }
-    static loadJSON(file, onload = null, onerror = null, final = null) {
+    /**
+     * 
+     * @param {string} file 
+     * @param {(function|null)} [onload] 
+     * @param {(function|null)} [onerror] 
+     * @param {(function|null)} [onfinal] 
+     */
+    static loadJSON(file, onload = null, onerror = null, onfinal = null) {
+        if (Game.useNative) {
+            return Game.loadJSONNative(file, onload, onerror, onfinal);
+        }
+        return Game.loadJSONBrowser(file, onload, onerror, onfinal);
+    }
+    static loadJSONNative(file, onload = null, onerror = null, onfinal = null) {
+        if (Game.debugMode) BABYLON.Tools.Log("Running loadJSONNative");
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", file, true);
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+                try {
+                    xhr.onreadystatechange = null;
+                    if (onload) {
+                        onload(JSON.parse(xhr.responseText), onfinal);
+                    }
+                }
+                catch (e) {
+                    if (onerror) {
+                        onerror();
+                    }
+                }
+            }
+        }, false);
+        if (onerror) {
+            xhr.onerror = onerror();
+        }
+        xhr.open("GET", String("file://").concat(Game.rootDirectory).concat(file), true);
+        xhr.send();
+        return 0;
+    }
+    static loadJSONBrowser(file, onload = null, onerror = null, onfinal = null) {
+        if (Game.debugMode) BABYLON.Tools.Log("Running loadJSONBrowser");
+        let xhr = new XMLHttpRequest();
         xhr.onload = (e) => {
             if (e.target.status == 200) {
                 if (onload) {
-                    onload(JSON.parse(xhr.responseText), final);
+                    onload(JSON.parse(xhr.responseText), onfinal);
                 }
             }
         };
@@ -1729,10 +1793,27 @@ class Game {
                 }
             }
         };
+        xhr.open("GET", file, true);
         xhr.send();
         return 0;
     }
-    static loadScript(file, onload = null, onerror = null) {
+    /**
+     * 
+     * @param {string} file 
+     * @param {(function|null)} [onload] 
+     * @param {(function|null)} [onerror] 
+     * @param {(function|null)} [onfinal] 
+     */
+    static loadScript(file, onload = null, onerror = null, onfinal = null) {
+        if (Game.useNative) {
+            return Game.loadScriptNative(file, onload, onerror, onfinal);
+        }
+        return Game.loadScriptBrowser(file, onload, onerror, onfinal);
+    }
+    static loadScriptNative(file, onload = null, onerror = null, onfinal = null) {
+        return 0;
+    }
+    static loadScriptBrowser(file, onload = null, onerror = null, onfinal = null) {
         let script = document.createElement("script");
         script.type = "text/javascript";
         script.src = file;
@@ -1743,6 +1824,9 @@ class Game {
             script.onerror = onerror;
         }
         document.body.appendChild(script);
+        if (typeof onfinal == "function") {
+            onfinal();
+        }
         return 0;
     }
     static importDefaultMaterials() {
@@ -5175,7 +5259,7 @@ class Game {
         return callbackID;
     }
     static inAreaResponse(shape, diameter, height, depth, position, rotation, response, parentCallbackID) {
-        BABYLON.Tools.Log(response);
+        if (Game.debugMode) BABYLON.Tools.Log(response);
     }
     /**
      * 
