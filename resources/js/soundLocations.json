@@ -1,0 +1,5 @@
+{
+    "openDoor": "resources/sounds/Open Door.mp3",
+    "hit": "resources/sounds/Hit.mp3",
+    "slice": "resources/sounds/Slice.mp3"
+}

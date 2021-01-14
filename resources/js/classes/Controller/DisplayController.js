@@ -22,7 +22,7 @@ class DisplayController extends FurnitureController {
         this.videoTexture = null;
         this.videoMesh = null;
         if (!(videoPosition instanceof BABYLON.Vector3)) {
-            videoPosition = Tools.filterVector3(videoPosition);
+            videoPosition = Game.filterVector3(videoPosition);
         }
         if (typeof videoID == "string" && Game.hasVideo(videoID)) {
             this.videoMesh = Game.createVideo(undefined, videoID, videoWidth, videoHeight);

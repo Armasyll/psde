@@ -30,8 +30,4 @@ window.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
-    if (Game.debugMode) {}
-    else {
-        Game.gui.showCharacterChoiceMenu();
-    }
 });

@@ -35,9 +35,9 @@ class CompoundController {
      * @param {object} options 
      */
     addEntity(entityID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        position = Tools.filterVector3(position);
-        rotation = Tools.filterVector3(rotation);
-        scaling = Tools.filterVector3(scaling);
+        position = Game.filterVector3(position);
+        rotation = Game.filterVector3(rotation);
+        scaling = Game.filterVector3(scaling);
         if (scaling.equals(BABYLON.Vector3.Zero())) {
             scaling = BABYLON.Vector3.One();
         }

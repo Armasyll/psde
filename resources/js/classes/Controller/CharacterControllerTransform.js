@@ -113,7 +113,7 @@ class CharacterControllerTransform extends CharacterController {
             }
             else if (this.collisionMesh.position.y < this.jumpStartPosY) {
                 let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
-                if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
+                if (!(BABYLON.Vector3.Distance(actDisp, disp) < 0.001)) {
                     if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endJump();
                     }
@@ -238,7 +238,7 @@ class CharacterControllerTransform extends CharacterController {
                 }
                 else if ((this.collisionMesh.position.y) < this.avStartPos.y) {
                     var actDisp = this.collisionMesh.position.subtract(this.avStartPos);
-                    if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                    if (!(BABYLON.Vector3.Distance(actDisp, this.moveVector) < 0.001)) {
                         if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                             this.endFreeFall();
                         }
@@ -308,7 +308,7 @@ class CharacterControllerTransform extends CharacterController {
             }
             else if ((this.collisionMesh.position.y) < this.avStartPos.y) {
                 let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
-                if (!(Tools.areVectorsEqual(actDisp, this.moveVector, 0.001))) {
+                if (!(BABYLON.Vector3.Distance(actDisp, this.moveVector) < 0.001)) {
                     if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                         this.endFreeFall();
                     }
@@ -362,7 +362,7 @@ class CharacterControllerTransform extends CharacterController {
         }
         else if (this.collisionMesh.position.y < this.avStartPos.y) {
             let actDisp = this.collisionMesh.position.subtract(this.avStartPos);
-            if (!(Tools.areVectorsEqual(actDisp, disp, 0.001))) {
+            if (!(BABYLON.Vector3.Distance(actDisp, disp) < 0.001)) {
                 if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
                     this.groundIt();
                     this.collisionMesh.position.copyFrom(this.avStartPos);

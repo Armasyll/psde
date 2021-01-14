@@ -428,9 +428,9 @@ class EntityController {
             return 2;
         }
         let bone = this.getBone(boneID);
-        position = Tools.filterVector3(position);
-        rotation = Tools.filterVector3(rotation);
-        scaling = Tools.filterVector3(scaling);
+        position = Game.filterVector3(position);
+        rotation = Game.filterVector3(rotation);
+        scaling = Game.filterVector3(scaling);
         if (!(Game.hasLoadedMesh(meshID))) {
             Game.addBackloggedAttachment((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
             if (EntityController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
