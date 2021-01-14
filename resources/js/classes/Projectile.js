@@ -47,7 +47,7 @@ class Projectile {
         this.mesh.position.addInPlace(this.intendedMovement);
         this.ray.origin = this.mesh.position;
         this.ray.direction = this.mesh.forward.negate();
-        if (this.currentStep > 30) {
+        if (this.currentStep > 6) {
             let hit = Game.scene.pickWithRay(this.ray, (pickedMesh) => {
                 if (pickedMesh.hasController()) {
                     return true;
@@ -56,6 +56,7 @@ class Projectile {
             if (hit.hit) {
                 this.falling = false;
                 this.hit = hit;
+                this.mesh.setParent(hit.pickedMesh);
                 return 0;
             }
         }
