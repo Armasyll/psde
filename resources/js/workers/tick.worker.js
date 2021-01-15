@@ -438,28 +438,28 @@ class Tick {
         Tick.paused = false;
     }
     static sendTick() {
-        return Tick.entityLogicWorkerPostMessage("tick", 0, [Tick.currentTick]);
+        return Tick.broadcastMessage("tick", 0, [Tick.currentTick]);
     }
     static sendTurn() {
-        return Tick.entityLogicWorkerPostMessage("turn", 0, [Tick.currentTurn]);
+        return Tick.broadcastMessage("turn", 0, [Tick.currentTurn]);
     }
     static sendRound() {
-        return Tick.entityLogicWorkerPostMessage("round", 0, [Tick.currentRound]);
+        return Tick.broadcastMessage("round", 0, [Tick.currentRound]);
     }
     static sendEntityTogglerRequest() {
-        return Tick.entityLogicWorkerPostMessage("entityToggler", 0);
+        return Tick.gameWorkerPostMessage("entityToggler", 0);
     }
     static sendInfo() {
-        return Tick.entityLogicWorkerPostMessage("sendInfo", 0, [Tick.currentTime, Tick.gameTimeMultiplier, Tick.ticksPerTurn, Tick.turnsPerRound, Tick.turnTime, Tick.roundTime]);
+        return Tick.broadcastMessage("sendInfo", 0, [Tick.currentTime, Tick.gameTimeMultiplier, Tick.ticksPerTurn, Tick.turnsPerRound, Tick.turnTime, Tick.roundTime]);
     }
     static sendDate() {
-        return Tick.entityLogicWorkerPostMessage("sendDate", 0, [new Date(Tick.currentTime * 1000)]);
+        return Tick.broadcastMessage("sendDate", 0, [new Date(Tick.currentTime * 1000)]);
     }
     static sendTimestamp() {
-        return Tick.entityLogicWorkerPostMessage("sendTimestamp", 0, [Tick.currentTime]);
+        return Tick.broadcastMessage("sendTimestamp", 0, [Tick.currentTime]);
     }
     static sendPaused() {
-        return Tick.entityLogicWorkerPostMessage("sendPaused", 0, [Tick.paused]);
+        return Tick.broadcastMessage("sendPaused", 0, [Tick.paused]);
     }
     /**
      * 
@@ -797,6 +797,11 @@ class Tick {
     }
     static sendScheduledCommand(abstractEntityID, commandString) {
         Tick.entityLogicWorkerPostMessage("triggerScheduledCommand", 0, [commandString, abstractEntityID]);
+        return 0;
+    }
+    static broadcastMessage(command, status = 0, message, callbackID = null, options = null) {
+        Tick.entityLogicWorkerPostMessage(command, status, message, null, options);
+        Tick.gameWorkerPostMessage(command, status, message, callbackID, options);
         return 0;
     }
     /**

@@ -229,63 +229,63 @@ class Game {
 
         Game.meshProperties = {
             "animatedCoffin01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
                 ]
             },
             "chair01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.44505, 0.375, -0.525), new BABYLON.Vector3(0.44505, 0.375, 0.1725)]
                 ]
             },
             "chair02": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
                 ]
             },
             "chair03": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
                 ]
             },
             "coffin01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
                 ]
             },
             "couch01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)], // Cushions
                     [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)], // Left arm
                     [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)] // Right arm
                 ]
             },
             "couch02": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)],
                     [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)],
                     [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)]
                 ]
             },
             "lovesea01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.82005, 0.375, -0.525), new BABYLON.Vector3(0.82005, 0.375, 0.1725)]
                 ]
             },
             "mattress01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.575258, 0.195, -1.10144), new BABYLON.Vector3(0.575258, 0.195, 0.195)]
                 ]
             },
             "bedMattressFrame01": {
-                usableArea: [
+                "usableArea": [
                     [new BABYLON.Vector3(-0.575258, 0.375, -1.10144), new BABYLON.Vector3(0.575258, 0.375, 0.195)]
                 ]
             },
             "flatScreenMonitor01": {
-                videoMeshPosition: new BABYLON.Vector3(0, 0.490128, -0.0715),
-                videoMeshWidth: 0.98,
-                videoMeshHeight: 0.6250
+                "videoMeshPosition": new BABYLON.Vector3(0, 0.490128, -0.0715),
+                "videoMeshWidth": 0.98,
+                "videoMeshHeight": 0.6250
             }
         };
 
@@ -322,6 +322,26 @@ class Game {
          * @type {object<string:object<>>}
          */
         Game.cachedEntities = {};
+
+        Game.currentTime = 0;
+        Game.currentTick = 0;
+        Game.currentRound = 0;
+        Game.currentTurn = 0;
+        Game.gameTimeMultiplier = 0;
+        Game.ticksPerTurn = 0;
+        Game.turnsPerRound = 0;
+        Game.turnTime = 0;
+        Game.roundTime = 0;
+
+        Game.interfaceMode = InterfaceModeEnum.NONE;
+        Game.previousInterfaceMode = null;
+
+        Game.gui = null;
+        Game.tickWorker = null;
+        Game.transformsWorker = null;
+        Game.entityLogicWorker = null;
+        Game.entityLogicTickChannel = null;
+        Game.entityLogicTransformsChannel = null;
 
         /*
             Which function handles the function of the key presses;
@@ -360,18 +380,6 @@ class Game {
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
         window.addEventListener("contextmenu", Game.controls.onContext);
-
-        Game.currentTime = 0;
-        Game.currentTick = 0;
-        Game.currentRound = 0;
-        Game.currentTurn = 0;
-        Game.gameTimeMultiplier = 10;
-        Game.ticksPerTurn = 10;
-        Game.turnsPerRound = 6;
-        Game.turnTime = Game.ticksPerTurn * Game.gameTimeMultiplier;
-        Game.roundTime = Game.turnTime * Game.turnsPerRound;
-        Game.interfaceMode = InterfaceModeEnum.NONE;
-        Game.previousInterfaceMode = null;
 
         Game.tickWorker = new Worker(Game.rootDirectory + "resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
@@ -5448,6 +5456,7 @@ class Game {
         switch (event.data.cmd) {
             case "sendInfo": {
                 // TODO: recalculate all scheduled events, or find a way so I don't have to (by using ticks, rounds, and turns) :v
+                Game.currentTick = event.data["msg"][0];
                 Game.gameTimeMultiplier = event.data["msg"][1];
                 Game.ticksPerTurn = event.data["msg"][2];
                 Game.turnsPerRound = event.data["msg"][3];
@@ -5458,7 +5467,7 @@ class Game {
             case "sendTimestamp": {
                 Game.currentTime = event.data["msg"];
                 if (Game.playerCellID != null) {
-                    Game.playerCellID.updateSkybox();
+                    Game.updateSkybox();
                 }
                 break;
             }
@@ -5471,15 +5480,15 @@ class Game {
                 break;
             }
             case "tick": {
-                Game.currentTick = event.data["msg"];
+                Game.currentTick = event.data["msg"][0];
                 break;
             }
             case "turn": {
-                Game.currentTurn = event.data["msg"];
+                Game.currentTurn = event.data["msg"][0];
                 break;
             }
             case "round": {
-                Game.currentRound = event.data["msg"];
+                Game.currentRound = event.data["msg"][0];
                 break;
             }
         }
