@@ -111,5 +111,6 @@
     "brickWall01": "resources/images/textures/static/brickWall01-DIFFUSE.png",
     "brickWall01-NORMAL": "resources/images/textures/static/brickWall01-NORMAL.png",
     "muffinBlueberry01": "resources/images/textures/static/muffinBlueberry01_by_smeggo.png",
-    "toothbrushBlue01": "resources/images/textures/static/toothbrushBlue01_by_smeggo.png"
+    "toothbrushBlue01": "resources/images/textures/static/toothbrushBlue01_by_smeggo.png",
+    "nicholasCageHead": "resources/images/textures/static/nicholasCageHead.png"
 }

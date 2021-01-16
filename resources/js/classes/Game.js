@@ -286,6 +286,11 @@ class Game {
                 "videoMeshPosition": new BABYLON.Vector3(0, 0.490128, -0.0715),
                 "videoMeshWidth": 0.98,
                 "videoMeshHeight": 0.6250
+            },
+            "pcModel30Monitor": {
+                "videoMeshPosition": new BABYLON.Vector3(0, 0.136567, -0.217),
+                "videoMeshWidth": 0.98,
+                "videoMeshHeight": 0.6250
             }
         };
 
