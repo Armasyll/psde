@@ -1,4 +1,3 @@
-console.log("Loading Scenes");
 let apartmentCell = new Cell("apartmentCell");
 apartmentCell.createBarrier(64);
 

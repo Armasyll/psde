@@ -1,5 +1,3 @@
-console.log("Initializing items...");
-
 EntityLogic.createItemEntity("alBuildingLocationKey", "Pack Street Bldg 3 Key", "A simple key to Pack Street Bldg 3", "keyIcon", "key01", "key", ItemEnum.KEY);
 EntityLogic.createItemEntity("pandorasBoxLocationKey", "Key to Pandora's Box", "A complex brass key meant for digitigrade mammals to Pandora's Box.", "pandorasBoxLocationKeyIcon", "key01", undefined, ItemEnum.KEY);
 

@@ -6,67 +6,32 @@ class Game {
         this.initialized = false;
         Game.debugMode = false;
     }
-    static preInitialize() {}
     static initialize(options = {}) {
-        BABYLON.Tools.Log("Initializing, Phase One");
+        BABYLON.Tools.Log("Initializing, Phase One; creating variables");
         Game.initialized = false;
+        Game.options = Object.assign({}, options);
+        Game.assumeInitialized = false;
+        Game.assumePlayerCellID = null;
         Game.initializedPhaseTwo = false;
         Game.initializedPhaseThree = false;
         Game.initializedPhaseFour = false;
+        Game.initializedPhaseFive = false;
         Game.rootDirectory = "";
-        if (options.hasOwnProperty("rootDirectory")) {
-            Game.rootDirectory = String(options["rootDirectory"]);
-        }
         Game.debugMode = false;
-        if (options.hasOwnProperty("debugMode")) {
-            Game.debugMode = options["debugMode"] === true;
-        }
         Game.debugVerbosity = 2;
-        if (options.hasOwnProperty("debugVerbosity")) {
-            Game.debugVerbosity = Number.parseInt(options["debugVerbosity"]) || 2;
-        }
-        if (Game.debugMode) BABYLON.Tools.Log("Running initialize");
-
         Game.useNative = false;
-        if (options.hasOwnProperty("useNative")) {
-            Game.useNative = options["useNative"] === true;
-        }
-        BABYLON.Tools.Log(Game.useNative ? "Using Native" : "Using Browser");
         Game.useRigidBodies = true;
-        if (options.hasOwnProperty("useRigidBodies")) {
-            Game.useRigidBodies = options["useRigidBodies"] === true;
-        }
         Game.useControllerGroundRay = true;
         Game.physicsEnabled = false;
         Game.physicsForProjectilesOnly = true;
         Game.physicsPlugin = null;
+        Game.showCollisionBoxes = false;
 
-        if (Game.useNative) {
-            if (Game.debugMode) BABYLON.Tools.Log("Creating NativeEngine");
-            Game.engine = new BABYLON.NativeEngine();
-        }
-        else {
-            Game.canvas = document.getElementById("canvas");
-            Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-            Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
-            if (Game.debugMode) BABYLON.Tools.Log("Creating Engine");
-            Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
-            Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
-        }
-        if (Game.debugMode) BABYLON.Tools.Log("Creating Scene");
-        Game.scene = new BABYLON.Scene(Game.engine);
-        Game.scene.autoClear = false;
-        Game.scene.autoClearDepthAndStencil = false;
-        Game.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
-        Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
-        Game.renderWidth = Game.engine.getRenderWidth();
-        Game.renderHeight = Game.engine.getRenderHeight();
-        if (Game.physicsEnabled) {
-            if (Game.debugMode) BABYLON.Tools.Log("Initializing Physics");
-            Game.initPhysics();
-        }
-        Game.scene.collisionsEnabled = true;
-        Game.scene.workerCollisions = false;
+        Game.canvas = null;
+        Game.engine = null;
+        Game.scene = null;
+        Game.renderWidth = 80;
+        Game.renderHeight = 24;
         Game.camera = null;
         Game.cameraFocus = null;
         Game.cameraRadius = 2.0;
@@ -74,11 +39,6 @@ class Game {
         Game.cameraBeta = Tools.RAD_90;
         Game.useCameraRay = false;
         Game.cameraRay = null;
-
-        Game.ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
-        Game.ambientLightCeiling = new BABYLON.HemisphericLight("ambientLightCeiling", new BABYLON.Vector3(0, -1, 0), Game.scene);
-        Game.ambientLightCeiling.intensity = 0.5;
-        Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {size:1024.0}, Game.scene);
 
         Game.assignBoundingBoxCollisionQueue = new Set();
 
@@ -227,75 +187,8 @@ class Game {
         Game.groupedCallbacks = [];
         Game.callbacks = {};
 
-        Game.meshProperties = {
-            "animatedCoffin01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
-                ]
-            },
-            "chair01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.44505, 0.375, -0.525), new BABYLON.Vector3(0.44505, 0.375, 0.1725)]
-                ]
-            },
-            "chair02": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
-                ]
-            },
-            "chair03": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.312497, 0.375, -0.385357), new BABYLON.Vector3(0.312497, 0.375, 0.122455)]
-                ]
-            },
-            "coffin01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.1995, 0.011719, -1.101), new BABYLON.Vector3(1.1995, 0.011719, 1.101)]
-                ]
-            },
-            "couch01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)], // Cushions
-                    [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)], // Left arm
-                    [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)] // Right arm
-                ]
-            },
-            "couch02": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-1.2888, 0.375, -0.525), new BABYLON.Vector3(1.2888, 0.375, 0.1725)],
-                    [new BABYLON.Vector3(-1.4808, 0.675, -0.54), new BABYLON.Vector3(-1.2888, 0.675, 0.1875)],
-                    [new BABYLON.Vector3(1.2888, 0.675, -0.54), new BABYLON.Vector3(1.4808, 0.675, 0.1875)]
-                ]
-            },
-            "lovesea01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.82005, 0.375, -0.525), new BABYLON.Vector3(0.82005, 0.375, 0.1725)]
-                ]
-            },
-            "mattress01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.575258, 0.195, -1.10144), new BABYLON.Vector3(0.575258, 0.195, 0.195)]
-                ]
-            },
-            "bedMattressFrame01": {
-                "usableArea": [
-                    [new BABYLON.Vector3(-0.575258, 0.375, -1.10144), new BABYLON.Vector3(0.575258, 0.375, 0.195)]
-                ]
-            },
-            "flatScreenMonitor01": {
-                "videoMeshPosition": new BABYLON.Vector3(0, 0.490128, -0.0715),
-                "videoMeshWidth": 0.98,
-                "videoMeshHeight": 0.6250
-            },
-            "pcModel30Monitor": {
-                "videoMeshPosition": new BABYLON.Vector3(0, 0.136567, -0.217),
-                "videoMeshWidth": 0.98,
-                "videoMeshHeight": 0.6250
-            }
-        };
-
-        Game._finishedInitializing = false;
-        Game._finishedConfiguring = false;
+        Game.importingMeshProperties = true;
+        Game.meshProperties = {};
 
         Game.functionsToRunBeforeRender = [];
 
@@ -341,6 +234,12 @@ class Game {
         Game.interfaceMode = InterfaceModeEnum.NONE;
         Game.previousInterfaceMode = null;
 
+        /*
+            Which function handles the function of the key presses;
+            controlerCharacter, controlMenu
+         */
+        Game.controls = AbstractControls;
+
         Game.gui = null;
         Game.tickWorker = null;
         Game.transformsWorker = null;
@@ -348,35 +247,96 @@ class Game {
         Game.entityLogicTickChannel = null;
         Game.entityLogicTransformsChannel = null;
 
-        /*
-            Which function handles the function of the key presses;
-            controlerCharacter, controlMenu
-         */
-        Game.controls = AbstractControls;
-        Game.updateMenuKeyboardDisplayKeys();
-        Game.importMeshLocations("resources/js/meshLocations.json", Game.initializePhaseTwo);
-        Game.importTextureLocations("resources/js/textureLocations.json", Game.initializePhaseTwo);
-        Game.importIconLocations("resources/js/iconLocations.json", Game.initializePhaseTwo);
-        Game.importSoundLocations("resources/js/soundLocations.json", Game.initializePhaseTwo);
-        Game.importVideoLocations("resources/js/videoLocations.json", Game.initializePhaseTwo);
-        return 0;
+        if (options.hasOwnProperty("assumeInitialized")) {
+            Game.assumeInitialized = options["assumeInitialized"] === true;
+        }
+        if (options.hasOwnProperty("assumePlayerCellID")) {
+            Game.assumePlayerCellID = String(options["assumePlayerCellID"]);
+        }
+        if (options.hasOwnProperty("rootDirectory")) {
+            Game.rootDirectory = String(options["rootDirectory"]);
+        }
+        if (options.hasOwnProperty("debugMode")) {
+            Game.debugMode = options["debugMode"] === true;
+        }
+        if (options.hasOwnProperty("debugVerbosity")) {
+            Game.debugVerbosity = Number.parseInt(options["debugVerbosity"]) || 2;
+        }
+        if (options.hasOwnProperty("useNative")) {
+            Game.useNative = options["useNative"] === true;
+        }
+        if (options.hasOwnProperty("useRigidBodies")) {
+            Game.useRigidBodies = options["useRigidBodies"] === true;
+        }
+        if (options.hasOwnProperty("showCollisionBoxes")) {
+            Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
+        }
+        Game.initializePhaseTwo();
     }
     static initializePhaseTwo() {
         if (Game.initializedPhaseTwo) {
             return 0;
         }
-        if (Game.importingMeshLocations || Game.importingTextureLocations || Game.importingIconLocations || Game.importingSoundLocations || Game.importingVideoLocations) {
+        BABYLON.Tools.Log("Initializing, Phase Two; loading lists of assets");
+        Game.initializedPhaseTwo = true;
+        Game.importMeshLocations("resources/js/meshLocations.json", Game.initializePhaseThree);
+        Game.importMeshProperties("resources/js/meshProperties.json", Game.initializePhaseThree);
+        Game.importTextureLocations("resources/js/textureLocations.json", Game.initializePhaseThree);
+        Game.importIconLocations("resources/js/iconLocations.json", Game.initializePhaseThree);
+        Game.importSoundLocations("resources/js/soundLocations.json", Game.initializePhaseThree);
+        Game.importVideoLocations("resources/js/videoLocations.json", Game.initializePhaseThree);
+        return 0;
+    }
+    static initializePhaseThree() {
+        if (Game.initializedPhaseThree) {
+            return 0;
+        }
+        if (Game.importingMeshLocations || Game.importingMeshProperties || Game.importingTextureLocations || Game.importingIconLocations || Game.importingSoundLocations || Game.importingVideoLocations) {
             return 1;
         }
-        BABYLON.Tools.Log("Initializing, Phase Two");
-        Game.initializedPhaseTwo = true;
+        BABYLON.Tools.Log("Initializing, Phase Three; setting up 3D engine");
+        Game.initializedPhaseThree = true;
+
+        if (Game.useNative) {
+            if (Game.debugMode) BABYLON.Tools.Log("Creating NativeEngine");
+            Game.engine = new BABYLON.NativeEngine();
+        }
+        else {
+            Game.canvas = document.getElementById("canvas");
+            Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
+            if (Game.debugMode) BABYLON.Tools.Log("Creating Engine");
+            Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
+            Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
+        }
+        if (Game.debugMode) BABYLON.Tools.Log("Creating Scene");
+        Game.scene = new BABYLON.Scene(Game.engine);
+        Game.scene.autoClear = false;
+        Game.scene.autoClearDepthAndStencil = false;
+        Game.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+        Game.scene.actionManager = new BABYLON.ActionManager(Game.scene);
+        Game.renderWidth = Game.engine.getRenderWidth();
+        Game.renderHeight = Game.engine.getRenderHeight();
+        if (Game.physicsEnabled) {
+            Game.initPhysics();
+        }
+        Game.scene.collisionsEnabled = true;
+        Game.scene.workerCollisions = false;
+        Game.ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
+        Game.ambientLightCeiling = new BABYLON.HemisphericLight("ambientLightCeiling", new BABYLON.Vector3(0, -1, 0), Game.scene);
+        Game.ambientLightCeiling.intensity = 0.5;
+        Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {size:1024.0}, Game.scene);
+
         Game.loadDefaultTextures();
         if (!Game.useNative) Game.loadDefaultImages(); // Problem in BabylonNative
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
         if (!Game.useNative) Game.loadDefaultSounds(); // Problem in BabylonNative
         if (!Game.useNative) Game.loadDefaultVideos(); // Problem in BabylonNative
+        Game.importDefaultMaterials();
+        Game.importDefaultMeshes();
 
+        Game.updateMenuKeyboardDisplayKeys();
         /**
          * @type {GameGUI} GameGUI; alternative is HtmlGUI
          */
@@ -384,8 +344,20 @@ class Game {
         Game.gui.initialize(); // Problem in BabylonNative
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
-        window.addEventListener("contextmenu", Game.controls.onContext);
 
+        Game.initialized = true;
+        Game.engine.runRenderLoop(Game._renderLoopFunction);
+        Game.scene.registerBeforeRender(Game._beforeRenderFunction);
+        Game.scene.registerAfterRender(Game._afterRenderFunction);
+        Game.initializePhaseFour();
+        return 0;
+    }
+    static initializePhaseFour() {
+        if (Game.initializedPhaseFour) {
+            return 0;
+        }
+        BABYLON.Tools.Log("Initializing, Phase Four; creating workers");
+        Game.initializedPhaseFour = true;
         Game.tickWorker = new Worker(Game.rootDirectory + "resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
         Game.transformsWorker = new Worker(Game.rootDirectory + "resources/js/workers/transforms.worker.js");
@@ -398,69 +370,71 @@ class Game {
         Game.entityLogicTransformsChannel = new MessageChannel();
         Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
-
-        Game.initialized = true;
-        Game.engine.runRenderLoop(Game._renderLoopFunction);
-        Game.scene.registerBeforeRender(Game._beforeRenderFunction);
-        Game.scene.registerAfterRender(Game._afterRenderFunction);
-        Game.initializePhaseThree();
-        return 0;
+        Game.initializePhaseFive();
     }
-    static initializePhaseThree() {
-        if (Game.initializedPhaseThree) {
+    static initializePhaseFive() {
+        if (Game.initializedPhaseFive) {
             return 0;
         }
-        BABYLON.Tools.Log("Initializing, Phase Three");
-        Game.initializedPhaseThree = true;
-        let url = new URL(window.location.href);
-        let urlMap = new Map(url.searchParams);
-        urlMap.forEach(function(val, key) {
-            switch(key) {
-                case "tgm": {
-                    Game.toggleGodMode();
+        BABYLON.Tools.Log("Initializing, Phase Five; assuming direct control");
+        Game.initializedPhaseFive = true;
+        window.addEventListener("contextmenu", Game.controls.onContext);
+        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+            Game.controls.onKeyDown(evt.sourceEvent);
+        }));
+        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+            Game.controls.onKeyUp(evt.sourceEvent);
+        }));
+        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLongPressTrigger, function (evt) {
+            Game.controls.onLongPress(evt.sourceEvent);
+        }));
+        Game.scene.onPointerObservable.add((e) => {
+            switch (e.type) {
+                case BABYLON.PointerEventTypes.POINTERDOWN:
+                    if (e.event.button == 0) {
+                        Game.controls.onMouseDown(e.event);
+                    }
+                    else if (e.event.button == 1) { }
+                    else if (e.event.button == 2) { }
                     break;
-                }
-                case "useRigidBodies": {
-                    Game.useRigidBodies = (val == "false" ? false : true);
+                case BABYLON.PointerEventTypes.POINTERUP:
+                    if (e.event.button == 0) {
+                        Game.controls.onMouseUp(e.event);
+                    }
+                    else if (e.event.button == 1) { }
+                    else if (e.event.button == 2) { }
                     break;
-                }
-                case "useTransform": {
-                    Game.useRigidBodies = false;
+                case BABYLON.PointerEventTypes.POINTERMOVE:
+                    Game.controls.onMove(e.event);
                     break;
-                }
+                case BABYLON.PointerEventTypes.POINTERWHEEL:
+                    Game.controls.onScroll(e.event);
+                    break;
+                case BABYLON.PointerEventTypes.POINTERPICK:
+                    break;
+                case BABYLON.PointerEventTypes.POINTERTAP:
+                    if (e.event.button == 0) {
+                        Game.controls.onClick(e.event);
+                    }
+                    else if (e.event.button == 1) { }
+                    else if (e.event.button == 2) {
+                        Game.controls.onContext(e.event);
+                    }
+                    break;
+                case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
+                    break;
             }
         });
-        Game.gui.showCharacterChoiceMenu();
-        Game.initializePhaseFour();
-        return 0;
-    }
-    static initializePhaseFour() {
-        if (Game.initializedPhaseFour) {
-            return 0;
+        if (Game.assumeInitialized) {
+            Game.setPlayerCell(Game.assumePlayerCellID);
+            Game.createPlayer("player", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+            Game.gui.hideCharacterChoiceMenu(true);
+            Game.gui.hideMenu(true);
         }
-        BABYLON.Tools.Log("Initializing, Phase Four");
-        Game.initializedPhaseFour = true;
-        let url = new URL(window.location.href);
-        let urlMap = new Map(url.searchParams);
-        urlMap.forEach(function(val, key) {
-            switch(key) {
-                case "debugBook": {
-                    GameGUI.hideCharacterChoiceMenu();
-                    BookGameGUI.show();
-                    setTimeout(function() {
-                        BookGameGUI.updateWith(BookEntity.get("linedUp"), 1);
-                    }, 1000);
-                    break;
-                }
-                case "cell": {
-                    let cellID = "limbo";
-                    Game.loadCell(cellID);
-                    Game.assignPlayer("player");
-                    GameGUI.hideCharacterChoiceMenu(true);
-                    GameGUI.hideMenu(true);
-                }
-            }
-        });
+        else {
+            Game.gui.showCharacterChoiceMenu();
+        }
+        Game.gui.resize();
         return 0;
     }
     static resize() {
@@ -478,66 +452,6 @@ class Game {
             return 1;
         }
         Game.scene.render();
-        if (!Game._finishedConfiguring) {
-            if (!Game._finishedInitializing) {
-                if (Game.debugMode) BABYLON.Tools.Log("Finished loading assets.");
-                Game.importDefaultMaterials();
-                Game.importDefaultMeshes();
-                Game._finishedInitializing = true;
-
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-                    Game.controls.onKeyDown(evt.sourceEvent);
-                }));
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-                    Game.controls.onKeyUp(evt.sourceEvent);
-                }));
-                Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLongPressTrigger, function (evt) {
-                    Game.controls.onLongPress(evt.sourceEvent);
-                }));
-                Game.scene.onPointerObservable.add((e) => {
-                    switch (e.type) {
-                        case BABYLON.PointerEventTypes.POINTERDOWN:
-                            if (e.event.button == 0) {
-                                Game.controls.onMouseDown(e.event);
-                            }
-                            else if (e.event.button == 1) { }
-                            else if (e.event.button == 2) { }
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERUP:
-                            if (e.event.button == 0) {
-                                Game.controls.onMouseUp(e.event);
-                            }
-                            else if (e.event.button == 1) { }
-                            else if (e.event.button == 2) { }
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERMOVE:
-                            Game.controls.onMove(e.event);
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERWHEEL:
-                            Game.controls.onScroll(e.event);
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERPICK:
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERTAP:
-                            if (e.event.button == 0) {
-                                Game.controls.onClick(e.event);
-                            }
-                            else if (e.event.button == 1) { }
-                            else if (e.event.button == 2) {
-                                Game.controls.onContext(e.event);
-                            }
-                            break;
-                        case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
-                            break;
-                    }
-                });
-            }
-            else {
-                Client.initialize();
-                Game.gui.resize();
-                Game._finishedConfiguring = true;
-            }
-        }
     }
     static _beforeRenderFunction() {
         if (!Game.initialized) {
@@ -808,7 +722,12 @@ class Game {
     }
     static loadDefaultMaterials() {
         Game.setLoadedMaterial("default", new BABYLON.StandardMaterial("default", Game.scene));
-        Game.setLoadedMaterial("collisionMaterial", new BABYLON.Material("collisionMaterial", Game.scene));
+        if (Game.showCollisionBoxes) {
+            Game.setLoadedMaterial("collisionMaterial", new BABYLON.StandardMaterial("collisionMaterial", Game.scene));
+        }
+        else {
+            Game.setLoadedMaterial("collisionMaterial", new BABYLON.Material("collisionMaterial", Game.scene));
+        }
         Game.setLoadedMaterial("missingMaterial", new BABYLON.StandardMaterial("missingMaterial", Game.scene));
         Game.setLoadedMaterial("loadingMaterial", new BABYLON.StandardMaterial("loadingMaterial", Game.scene));
         Game.setLoadedMaterial("missingMaterial", "missingTexture");
@@ -875,7 +794,7 @@ class Game {
         }
         return 0;
     }
-    static importVideoLocations(jsonFile = "/resources/js/videoLocations.json", callback = null) {
+    static importVideoLocations(jsonFile = "resources/js/videoLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setVideoLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1230,6 +1149,20 @@ class Game {
         material.dispose();
         return 0;
     }
+    static setMeshPropertiesFromJSON(jsonBlob, callback = null) {
+        for (let id in jsonBlob) {
+            Game.meshProperties[id] = Object.assign({}, jsonBlob[id]);
+        }
+        Game.importingMeshProperties = false;
+        if (typeof callback == "function") {
+            callback();
+        }
+        return 0;
+    }
+    static importMeshProperties(jsonFile = "resources/js/meshProperties.json", callback = null) {
+        Game.loadJSON(jsonFile, Game.setMeshPropertiesFromJSON, null, callback);
+        return 0;
+    }
     static setMeshLocation(id, location) {
         Game.meshLocations[id] = location;
         return 0;
@@ -1244,7 +1177,7 @@ class Game {
         }
         return 0;
     }
-    static importMeshLocations(jsonFile = "/resources/js/meshLocations.json", callback = null) {
+    static importMeshLocations(jsonFile = "resources/js/meshLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setMeshLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1359,7 +1292,7 @@ class Game {
         }
         return 0;
     }
-    static importSoundLocations(jsonFile = "/resources/js/soundLocations.json", callback = null) {
+    static importSoundLocations(jsonFile = "resources/js/soundLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setSoundLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1397,7 +1330,7 @@ class Game {
         }
         return 0;
     }
-    static importTextureLocations(jsonFile = "/resources/js/textureLocations.json", callback = null) {
+    static importTextureLocations(jsonFile = "resources/js/textureLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setTextureLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1632,7 +1565,7 @@ class Game {
         }
         return 0;
     }
-    static importIconLocations(jsonFile = "/resources/js/iconLocations.json", callback = null) {
+    static importIconLocations(jsonFile = "resources/js/iconLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setIconLocationsFromJSON, null, callback);
         return 0;
     }
@@ -4956,6 +4889,9 @@ class Game {
         if (Game.playerCellID == null) {
             return 1;
         }
+        if (!Game.cachedCells.hasOwnProperty(Game.playerCellID)) {
+            return 1;
+        }
         Game.initFreeCamera(false, false);
         AbstractNode.clear();
         let cellID = Game.playerCellID;
@@ -5119,9 +5055,9 @@ class Game {
         Game.interfaceMode = interfaceMode;
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
-                GameGUI._hideMenuChildren();
-                GameGUI.hideMenu();
-                GameGUI.showHUD();
+                Game.gui._hideMenuChildren();
+                Game.gui.hideMenu();
+                Game.gui.showHUD();
                 Game.controls = CharacterControls;
                 break;
             }
@@ -5134,7 +5070,7 @@ class Game {
                 break;
             }
             case InterfaceModeEnum.EDIT: {
-                GameGUI._hideHUDChildren();
+                Game.gui._hideHUDChildren();
                 EditControls.clearPickedMesh();
                 EditControls.clearPickedController();
                 Game.controls = EditControls;
@@ -5901,7 +5837,7 @@ class Game {
             }
             case "loadCellAndSetPlayerAt": {
                 let newCallbackID = Tools.genUUIDv4();
-                Game.createCallback(newCallbackID, callbackID, ["player", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", message["position"], message["rotation"], undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"}], Game.createPlayer);
+                Game.createCallback(newCallbackID, callbackID, ["player", Game.gui._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, Game.gui._ageInput.text, "foxM", "foxRed", message["position"], message["rotation"], undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"}], Game.createPlayer);
                 Game.setPlayerCell(message["cellID"], newCallbackID);
                 break;
             }

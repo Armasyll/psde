@@ -14,20 +14,39 @@ window.addEventListener('resize', function() {
     }
 });
 window.addEventListener("DOMContentLoaded", function() {
-    console.log("Initializing game.");
-    Game.initialize();
+    let gameOptions = {};
     let url = new URL(window.location.href);
     let urlMap = new Map(url.searchParams);
     urlMap.forEach(function(val, key) {
         switch(key) {
+            case "debugMode":
             case "debug": {
-                Game.debugMode = true;
+                gameOptions["debugMode"] = (val == "false" ? false : true);
+                break;
+            }
+            case "debugVerbosity":
+            case "debugVerbosityLevel":
+            case "debugLevel": {
+                gameOptions["debugVerbosity"] = Number.parseInt(val) || 2;
+                break;
+            }
+            case "useRigidBodies": {
+                gameOptions["useRigidBodies"] = (val == "false" ? false : true);
+                break;
+            }
+            case "useTransformBodies": {
+                gameOptions["useRigidBodies"] = (val == "false" ? false : true);
                 break;
             }
             case "showCollisionBoxes": {
-                Game.getLoadedMaterial("collisionMaterial").dispose();
-                Game.setLoadedMaterial("collisionMaterial", new BABYLON.StandardMaterial("collisionMaterial", Game.scene));
+                gameOptions["showCollisionBoxes"] = (val == "true" ? true : false);
+            }
+            case "cell": {
+                gameOptions["assumeInitialized"] = true;
+                gameOptions["assumePlayerCellID"] = String(val);
+                break;
             }
         }
     });
+    Game.initialize(gameOptions);
 });
