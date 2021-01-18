@@ -338,10 +338,11 @@ class Game {
 
         Game.updateMenuKeyboardDisplayKeys();
         /**
-         * @type {GameGUI} GameGUI; alternative is HtmlGUI
+         * @type {(GameGUI,NullGUI)} GameGUI; alternative is NullGUI
          */
         Game.gui = GameGUI;
-        Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI
+        BABYLON.Tools.Log("Initing camera")
+        Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI; can't use AdvancedDynamicTexture
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
 
@@ -358,6 +359,9 @@ class Game {
         }
         BABYLON.Tools.Log("Initializing, Phase Four; creating workers");
         Game.initializedPhaseFour = true;
+        if (Game.useNative) { // Problem in BabylonNative; no support for workers
+            return Game.initializePhaseFive();
+        }
         Game.tickWorker = new Worker(Game.rootDirectory + "resources/js/workers/tick.worker.js");
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
         Game.transformsWorker = new Worker(Game.rootDirectory + "resources/js/workers/transforms.worker.js");
@@ -371,6 +375,7 @@ class Game {
         Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
         Game.initializePhaseFive();
+        return 0;
     }
     static initializePhaseFive() {
         if (Game.initializedPhaseFive) {

@@ -13,7 +13,6 @@ class NullGUI {
     }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing NullGUI");
-        NullGUI.initialized = true;
         NullGUI.chat = ChatNullGUI;
         NullGUI._nameInput = "Player";
         NullGUI._ageInput = "18";
@@ -32,6 +31,8 @@ class NullGUI {
         NullGUI.radialMenu = null;
         NullGUI.playerPortrait = PlayerPortraitNullGUI;
         NullGUI.targetPortrait = TargetPortraitNullGUI;
+        NullGUI.initialized = true;
+        return 0;
     }
     static _initHUD(...params) {return 0;}
     static _initMenu(...params) {return 0;}
