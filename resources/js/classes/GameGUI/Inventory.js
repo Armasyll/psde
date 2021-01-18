@@ -1,5 +1,6 @@
 class InventoryGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing InventoryGameGUI");
         InventoryGameGUI.initialized = false;
         InventoryGameGUI.controller = null;
         InventoryGameGUI.titleBar = null;

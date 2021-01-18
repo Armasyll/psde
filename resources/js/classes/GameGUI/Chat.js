@@ -1,5 +1,6 @@
 class ChatGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing ChatGameGUI");
         ChatGameGUI.initialized = false;
         ChatGameGUI.controller = null;
         ChatGameGUI.outputContainer = null;

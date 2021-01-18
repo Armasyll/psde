@@ -1,5 +1,6 @@
 class CharacterStatsGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing CharacterStatsGameGUI");
         CharacterStatsGUI.initialized = false;
         CharacterStatsGUI.controller = null;
         CharacterStatsGUI.titleBar = null;

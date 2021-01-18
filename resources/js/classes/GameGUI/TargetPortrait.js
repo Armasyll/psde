@@ -1,5 +1,6 @@
 class TargetPortraitGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing TargetPortraitGameGUI");
         TargetPortraitGameGUI.targetName = null;
         TargetPortraitGameGUI.targetIcon = null;
         TargetPortraitGameGUI.targetHealthBar = null;

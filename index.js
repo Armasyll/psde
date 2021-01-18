@@ -6,6 +6,11 @@ let gameOptions = {
 };
 
 _native.whenGraphicsReady().then(function () {
-    console.log(typeof Worker == "function");
-    //Game.initialize(gameOptions);
+    if (typeof Worker == "function") {
+        BABYLON.Tools.Log("WebWorkers implemented.")
+    }
+    else {
+        BABYLON.Tools.Warn("WebWorkers not implemented.")
+    }
+    Game.initialize(gameOptions);
 });

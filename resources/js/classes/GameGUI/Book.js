@@ -1,5 +1,6 @@
 class BookGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing BookGameGUI");
         BookGameGUI.initialized = true;
         BookGameGUI.controller = null;
         BookGameGUI.titleBar = null;

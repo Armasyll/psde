@@ -12,6 +12,7 @@ class GameGUI {
         return "GameGUI";
     }
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing GameGUI");
         GameGUI.fontSizeInPixels = 24;
         GameGUI.fontSizeSpacing = 8;
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
@@ -35,7 +36,10 @@ class GameGUI {
 
         GameGUI._nameInput = "";
         GameGUI._ageInput = "";
+        if (Game.debugMode) BABYLON.Tools.Log("Attempting to create an advanced dynamic texture");
+        //GameGUI.menu = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
         GameGUI.menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
+        if (Game.debugMode) BABYLON.Tools.Log("Yes! :V");
         GameGUI.menu.rootContainer.isVisible = false;
         GameGUI.menu.rootContainer.zIndex = 5;
         GameGUI.hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
@@ -60,6 +64,7 @@ class GameGUI {
         GameGUI.resize();
     }
     static _initHUD() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._initHUD");
         GameGUI.crosshair = GameGUI._generateCrosshair();
         GameGUI.actionTooltip = GameGUI._generateTargetActionTooltip();
         GameGUI.radialMenu = GameGUI._generateActionsRadialMenu();
@@ -131,7 +136,7 @@ class GameGUI {
         }
     }
     static showHUD(_updateChild = true) {
-        if (Game.debugMode) console.log("Running GameGUI::showHUD");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showHUD");
         if (GameGUI.locked) {
             return;
         }
@@ -142,7 +147,7 @@ class GameGUI {
         GameGUI.hud.rootContainer.isVisible = true;
     }
     static hideHUD(_updateChild = false) {
-        if (Game.debugMode) console.log("Running GameGUI::hideHUD");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.hideHUD");
         if (GameGUI.locked) {
             return;
         }
@@ -171,7 +176,7 @@ class GameGUI {
         }
     }
     static showMenu(_updateChild = true) {
-        if (Game.debugMode) console.log("Running GameGUI::showMenu");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showMenu");
         if (GameGUI.locked) {
             return;
         }
@@ -182,7 +187,7 @@ class GameGUI {
         GameGUI.menu.rootContainer.isVisible = true;
     }
     static hideMenu(_updateChild = false) {
-        if (Game.debugMode) console.log("Running GameGUI::hideMenu");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.hideMenu");
         if (GameGUI.locked) {
             return;
         }
@@ -212,7 +217,7 @@ class GameGUI {
         }
     }
     static _generateCrosshair() {
-        if (Game.debugMode) console.log("Running GameGUI::_generateCrosshair");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateCrosshair");
         let crosshair = new BABYLON.GUI.Ellipse("crosshair");
         crosshair.width = "15px";
         crosshair.background = "white";
@@ -236,7 +241,7 @@ class GameGUI {
         GameGUI.crosshair.isVisible = false;
     }
     static _generateCharacterChoiceMenu() {
-        if (Game.debugMode) console.log("Running GameGUI::_generateCharacterChoiceMenu");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateCharacterChoiceMenu");
         let characterChoiceMenuContainer = new BABYLON.GUI.Grid("characterChoiceMenu");
         let nameLabel = GameGUI.createTextBlock("nameLabel");
         GameGUI._nameInput = GameGUI.createInputText("nameInput");
@@ -415,7 +420,7 @@ class GameGUI {
         return characterChoiceMenuContainer;
     }
     static showCharacterChoiceMenu() {
-        if (Game.debugMode) console.log("Running GameGUI::showCharacterChoiceMenu");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showCharacterChoiceMenu");
         if (GameGUI.locked) {
             return;
         }
@@ -551,7 +556,7 @@ class GameGUI {
         return button;
     }
     static _generateTargetActionTooltip() {
-        if (Game.debugMode) console.log("Running GameGUI::_generateTargetActionTooltip");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateTargetActionTooltip");
         let tooltip = GameGUI.createRectangle("targetActionTooltip");
             tooltip.width = 0.125;
             tooltip.height = 0.075;
@@ -593,7 +598,7 @@ class GameGUI {
      * @param {String} _string Top right text.
      */
     static setActionTooltipString(_string = "Use") {
-        if (Game.debugMode) console.log("Running GameGUI::setActionTooltipString");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.setActionTooltipString");
         if (typeof _string != "string") {
             _string = "Use";
         }
@@ -610,7 +615,7 @@ class GameGUI {
         if (typeof _string != "string") {
             _string = "";
         }
-        if (Game.debugMode) console.log("Running GameGUI::setActionTooltipTarget");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.setActionTooltipTarget");
         GameGUI.actionTooltip.children[2].text = _string;
     }
     /**
@@ -655,7 +660,7 @@ class GameGUI {
      * @return {BABYLON.GUI.Container} Circular container of buttons.
      */
     static _generateActionsRadialMenu() {
-        if (Game.debugMode) console.log("Running GameGUI::_generateActionsRadialMenu");
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateActionsRadialMenu");
         let actionsRadialMenu = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
         actionsRadialMenu.width = String(Game.renderWidth / 4) + "px";
         actionsRadialMenu.height = actionsRadialMenu.width;

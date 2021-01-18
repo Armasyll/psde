@@ -341,7 +341,7 @@ class Game {
          * @type {GameGUI} GameGUI; alternative is HtmlGUI
          */
         Game.gui = GameGUI;
-        Game.gui.initialize(); // Problem in BabylonNative
+        Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
 
@@ -427,7 +427,7 @@ class Game {
         });
         if (Game.assumeInitialized) {
             Game.setPlayerCell(Game.assumePlayerCellID);
-            Game.createPlayer("player", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+            Game.createPlayer("player", "Player", "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, 18, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
             Game.gui.hideCharacterChoiceMenu(true);
             Game.gui.hideMenu(true);
         }
@@ -500,7 +500,7 @@ class Game {
             return 1;
         }
         Game.createBackloggedEntities();
-        if (DebugGameGUI.isVisible) {
+        if (Game.gui != null && DebugGameGUI.isVisible) {
             Game.updateDebugCollisionList();
         }
     }

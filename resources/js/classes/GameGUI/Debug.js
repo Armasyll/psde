@@ -1,5 +1,6 @@
 class DebugGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing DebugGameGUI");
         DebugGameGUI.initialized = false;
         DebugGameGUI.locked = false;
         DebugGameGUI.width = Game.renderWidth / 2;

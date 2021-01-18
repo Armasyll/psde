@@ -1,5 +1,6 @@
 class DialogueGameGUI {
     static initialize() {
+        if (Game.debugMode) BABYLON.Tools.Log("Initializing DialogueGameGUI");
         DialogueGameGUI.initialized = false;
         DialogueGameGUI.controller = null;
         DialogueGameGUI.titleBar = null;
