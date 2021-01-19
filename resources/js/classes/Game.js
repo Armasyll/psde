@@ -341,7 +341,6 @@ class Game {
          * @type {(GameGUI,NullGUI)} GameGUI; alternative is NullGUI
          */
         Game.gui = GameGUI;
-        BABYLON.Tools.Log("Initing camera")
         Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI; can't use AdvancedDynamicTexture
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
