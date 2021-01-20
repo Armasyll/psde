@@ -22,6 +22,7 @@ class Game {
         Game.useNative = false;
         Game.useRigidBodies = true;
         Game.useControllerGroundRay = true;
+        Game.useShadows = false;
         Game.physicsEnabled = false;
         Game.physicsForProjectilesOnly = true;
         Game.physicsPlugin = null;
@@ -39,6 +40,10 @@ class Game {
         Game.cameraBeta = Tools.RAD_90;
         Game.useCameraRay = false;
         Game.cameraRay = null;
+        Game.ambientLight = null;
+        Game.sunLight = null;
+        Game.skybox = null;
+        Game.shadowGenerator = null;
 
         Game.assignBoundingBoxCollisionQueue = new Set();
 
@@ -325,7 +330,18 @@ class Game {
         Game.ambientLight = new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), Game.scene);
         Game.ambientLightCeiling = new BABYLON.HemisphericLight("ambientLightCeiling", new BABYLON.Vector3(0, -1, 0), Game.scene);
         Game.ambientLightCeiling.intensity = 0.5;
-        Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {size:1024.0}, Game.scene);
+        if (Game.useShadows) {
+            Game.sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-1, -1, -1), Game.scene);
+            Game.sunLight.intensity = 1;
+            Game.sunLight.shadowMinZ = -90 * 2;
+            Game.sunLight.shadowMaxZ = 130 * 2;
+            Game.shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, Game.sunLight);
+            Game.shadowGenerator.usePercentageCloserFiltering = true;
+            Game.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
+            Game.shadowGenerator.bias = 0.003;
+            Game.shadowGenerator.autoCalcDepthBounds = false;
+        }
+        Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {"size":1024.0}, Game.scene);
 
         Game.loadDefaultTextures();
         if (!Game.useNative) Game.loadDefaultImages(); // Problem in BabylonNative
@@ -2395,6 +2411,10 @@ class Game {
                 mesh.id = id;
                 mesh.material = material;
                 mesh.name = meshID;
+                if (Game.useShadows) {
+                    mesh.receiveShadows = true;
+                    Game.shadowGenerator.addShadowCaster(mesh);
+                }
                 if (Game.debugMode && Game.debugVerbosity > 3) console.log("Creating master clone of " + meshID + " with " + materialID);
                 mesh.setEnabled(false);
                 mesh.position.set(0, -4095, 0);
@@ -2406,6 +2426,10 @@ class Game {
                 mesh.id = id;
                 mesh.material = material;
                 mesh.name = meshID;
+                if (Game.useShadows) {
+                    mesh.receiveShadows = true;
+                    Game.shadowGenerator.addShadowCaster(mesh);
+                }
                 Game.addClonedMesh(mesh, id);
                 Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
