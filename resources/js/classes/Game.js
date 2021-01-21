@@ -273,6 +273,9 @@ class Game {
         if (options.hasOwnProperty("useRigidBodies")) {
             Game.useRigidBodies = options["useRigidBodies"] === true;
         }
+        if (options.hasOwnProperty("useShadows")) {
+            Game.useShadows = options["useShadows"] === true;
+        }
         if (options.hasOwnProperty("showCollisionBoxes")) {
             Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
         }
