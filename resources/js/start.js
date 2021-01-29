@@ -38,6 +38,10 @@ window.addEventListener("DOMContentLoaded", function() {
                 gameOptions["useRigidBodies"] = (val == "false" ? false : true);
                 break;
             }
+            case "useShadows": {
+                gameOptions["useShadows"] = (val == "false" ? false : true);
+                break;
+            }
             case "showCollisionBoxes": {
                 gameOptions["showCollisionBoxes"] = (val == "true" ? true : false);
             }
