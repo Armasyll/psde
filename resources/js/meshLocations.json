@@ -178,9 +178,11 @@
     "animatedBarrel01": "resources/meshes/animatedBarrel01.babylon",
     "animatedToilet01": "resources/meshes/animatedToilet01.babylon",
     "animatedFaucet01": "resources/meshes/animatedFaucet01.babylon",
+    "counterSinkBasin": "resources/meshes/static/sink01.babylon",
+    "counterSinkBasinHalf": "resources/meshes/static/sink01.babylon",
     "sink01": "resources/meshes/static/sink01.babylon",
-    "sinkFaucet01": "resources/meshes/static/sink01.babylon",
     "sink01StandCeramic": "resources/meshes/static/sink01.babylon",
+    "sinkFaucet01": "resources/meshes/static/sink01.babylon",
     "sinkFaucetLong01": "resources/meshes/static/sink01.babylon",
     "bathtub01": "resources/meshes/static/bathtub01.babylon",
     "showerPipes01": "resources/meshes/static/bathtub01.babylon",
@@ -276,10 +278,10 @@
     "counterBottomHalf": "resources/meshes/static/cabinets.babylon",
     "counterCabinetTwoDoors": "resources/meshes/static/cabinets.babylon",
     "counterCabinetTwoDoorsHalf": "resources/meshes/static/cabinets.babylon",
-    "counterSinkBasin": "resources/meshes/static/cabinets.babylon",
     "counterTop": "resources/meshes/static/cabinets.babylon",
     "counterTopEdgeLeft": "resources/meshes/static/cabinets.babylon",
     "counterTopEdgeRight": "resources/meshes/static/cabinets.babylon",
     "counterTopForBasin": "resources/meshes/static/cabinets.babylon",
-    "counterTopHalf": "resources/meshes/static/cabinets.babylon"
+    "counterTopHalf": "resources/meshes/static/cabinets.babylon",
+    "counterTopHalfForBasin": "resources/meshes/static/cabinets.babylon"
 }
