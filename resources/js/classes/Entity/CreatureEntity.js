@@ -1900,86 +1900,86 @@ class CreatureEntity extends Entity {
 
     /**
      * 
-     * @param {string|number} damage DamageEnum
+     * @param {string|number} damageEnum DamageEnum
      * @returns {boolean}
      */
-    isResistantTo(damage) {
+    isResistantTo(damageEnum) {
         if (this.isGod()) {
             return true;
         }
-        if (!DamageEnum.hasOwnProperty(damage)) {
-            if (DamageEnum.properties.hasOwnProperty(damage)) {
-                damage = DamageEnum.properties[damage].key;
+        if (!DamageEnum.hasOwnProperty(damageEnum)) {
+            if (DamageEnum.properties.hasOwnProperty(damageEnum)) {
+                damageEnum = DamageEnum.properties[damageEnum].key;
             }
             else {
                 return false;
             }
         }
-        if (this.resistanceToEffectOverride[damage] != 0) {
-            return this.resistanceToEffectOverride[damage] > 0;
+        if (this.resistanceToEffectOverride[damageEnum] != 0) {
+            return this.resistanceToEffectOverride[damageEnum] > 0;
         }
-        else if (this.resistanceToConditionOverride[damage] != 0) {
-            return this.resistanceToConditionOverride[damage] > 0;
+        else if (this.resistanceToConditionOverride[damageEnum] != 0) {
+            return this.resistanceToConditionOverride[damageEnum] > 0;
         }
-        else if (this.resistanceTo[damage] != 0) {
-            return this.resistanceTo[damage] > 0;
+        else if (this.resistanceTo[damageEnum] != 0) {
+            return this.resistanceTo[damageEnum] > 0;
         }
         return false;
     }
     /**
      * 
-     * @param {string|number} damage DamageEnum
+     * @param {string|number} damageEnum DamageEnum
      * @returns {boolean}
      */
-    isVulnerableTo(damage) {
+    isVulnerableTo(damageEnum) {
         if (this.isGod()) {
             return false;
         }
-        if (!DamageEnum.hasOwnProperty(damage)) {
-            if (DamageEnum.properties.hasOwnProperty(damage)) {
-                damage = DamageEnum.properties[damage].key;
+        if (!DamageEnum.hasOwnProperty(damageEnum)) {
+            if (DamageEnum.properties.hasOwnProperty(damageEnum)) {
+                damageEnum = DamageEnum.properties[damageEnum].key;
             }
             else {
                 return false;
             }
         }
-        if (this.resistanceToEffectOverride[damage] != 0) {
-            return this.resistanceToEffectOverride[damage] < 0;
+        if (this.resistanceToEffectOverride[damageEnum] != 0) {
+            return this.resistanceToEffectOverride[damageEnum] < 0;
         }
-        else if (this.resistanceToConditionOverride[damage] != 0) {
-            return this.resistanceToConditionOverride[damage] < 0;
+        else if (this.resistanceToConditionOverride[damageEnum] != 0) {
+            return this.resistanceToConditionOverride[damageEnum] < 0;
         }
-        else if (this.resistanceTo[damage] != 0) {
-            return this.resistanceTo[damage] < 0;
+        else if (this.resistanceTo[damageEnum] != 0) {
+            return this.resistanceTo[damageEnum] < 0;
         }
         return false;
     }
 
     /**
      * 
-     * @param {string|number} damage DamageEnum
+     * @param {string|number} damageEnum DamageEnum
      * @returns {boolean}
      */
-    isImmuneTo(damage) {
+    isImmuneTo(damageEnum) {
         if (this.isGod()) {
             return true;
         }
-        if (!DamageEnum.hasOwnProperty(damage)) {
-            if (DamageEnum.properties.hasOwnProperty(damage)) {
-                damage = DamageEnum.properties[damage].key;
+        if (!DamageEnum.hasOwnProperty(damageEnum)) {
+            if (DamageEnum.properties.hasOwnProperty(damageEnum)) {
+                damageEnum = DamageEnum.properties[damageEnum].key;
             }
             else {
                 return false;
             }
         }
-        if (this.immuneToEffectOverride[damage] != 0) {
-            return this.immuneToEffectOverride[damage] > 0;
+        if (this.immuneToEffectOverride[damageEnum] != 0) {
+            return this.immuneToEffectOverride[damageEnum] > 0;
         }
-        else if (this.immuneToConditionOverride[damage] != 0) {
-            return this.immuneToConditionOverride[damage] > 0;
+        else if (this.immuneToConditionOverride[damageEnum] != 0) {
+            return this.immuneToConditionOverride[damageEnum] > 0;
         }
-        else if (this.immuneTo[damage] != 0) {
-            return this.immuneTo[damage] > 0;
+        else if (this.immuneTo[damageEnum] != 0) {
+            return this.immuneTo[damageEnum] > 0;
         }
         return false;
     }

@@ -385,12 +385,24 @@ class AbstractEntity {
         this.setHealth(0);
         return 0;
     }
-    resurrect(number = 1) {
+    resurrect(number = -1) {
         if (typeof number != "number") { number = Number.parseInt(number) | 1; }
-        else { number = Math.abs(number | 0) || 1 }
+        if (number <= 0) {
+            number = this.getMaxHealth();
+        }
         this.setHealth(number);
         this.living = true;
         return 0;
+    }
+
+    isImmuneTo(damageEnum) {
+        return false;
+    }
+    isResistantTo(damageEnum) {
+        return false;
+    }
+    isVulnerableTo(damageEnum) {
+        return false;
     }
 
     hasCondition(conditionEnum) {
