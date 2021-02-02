@@ -1,4 +1,5 @@
-Game.loadMaterial("stoneMaterial01", "stoneTexture01", "stoneTexture01-NORMAL", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
+Game.loadMaterial("stoneMaterial01", "stoneSeamless01", "stoneSeamless01Normal", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
+Game.loadMaterial("marbleMaterial01", "marble01", undefined, {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
 Game.loadMaterial("woodenFloorDark01", "woodenFloorDark01-DIFFUSE", "woodenFloorDark01-NORMAL", {specularColor:new BABYLON.Color3(0.1,0.1,0.1)});
 Game.loadMaterial("woodenFloorDark26", "woodenFloorDark05BySmeggo");
 Game.loadMaterial("grass01", "grass01", undefined, {"hasAlpha":true, "backFaceCulling":false});
