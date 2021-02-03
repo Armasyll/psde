@@ -113,6 +113,7 @@ class Spell {
     }
 
     generateProperties() {
+        return 0;
     }
 
     getSavingAbility() {

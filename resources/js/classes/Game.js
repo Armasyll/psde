@@ -1147,8 +1147,12 @@ class Game {
         }
         return 0;
     }
-    static changeMeshMaterial() {} // TODO: this
-    static changeMeshInstanceMaterial() {} // TODO: this, too
+    static changeMeshMaterial() { // TODO: this
+        return 0;
+    }
+    static changeMeshInstanceMaterial() { // TODO: this, too
+        return 0;
+    }
     /**
      * 
      * @param {string} materialID Material ID
@@ -5247,7 +5251,7 @@ class Game {
         return callbackID;
     }
     static fireProjectileResponse(diamter, force, position, rotation, distanceLimit, hitLimit, meshID, materialID, response, parentCallbackID) {
-
+        return 0;
     }
 
     static createGroupedCallback(parentID, callbackID) {
