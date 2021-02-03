@@ -1,12 +1,20 @@
 window.document.body.onkeydown = function(e) {
-    if (!e.metaKey) {
-        e.preventDefault();
+    if (e.metaKey) {}
+    else {
+        switch (e.keyCode) {
+            case 19: // Break
+            case 42: // Print
+            case 44: // Print Screen
+            case 116: // Reload
+            case 122: // Full Screen
+            case 123: // Inspector
+            case 999: {}
+            default: {
+                e.preventDefault();
+            }
+        }
     }
-}
-window.document.body.onkeyup = function(e) {
-    if(e.keyCode == '44') {
-        body.onkeydown(e);
-    }
+    return 0;
 }
 window.addEventListener('resize', function() {
     if (Game.initialized) {
