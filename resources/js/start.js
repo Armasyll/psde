@@ -44,6 +44,7 @@ window.addEventListener("DOMContentLoaded", function() {
             }
             case "showCollisionBoxes": {
                 gameOptions["showCollisionBoxes"] = (val == "true" ? true : false);
+                break;
             }
             case "cell": {
                 gameOptions["assumeInitialized"] = true;
