@@ -866,13 +866,6 @@ class Game {
         }
         return false;
     }
-    static addVideo(videoID, location) {
-        if (!Game.hasVideo(videoID)) {
-            return 2;
-        }
-        Game.videoLocations[videoID] = location;
-        return 0;
-    }
     static getVideo(videoID) {
         if (Game.hasLoadedVideo(videoID)) {
             return Game.loadedVideos[videoID];
@@ -1598,13 +1591,6 @@ class Game {
         }
         return Game.iconLocations.hasOwnProperty(iconID);
     }
-    static addIcon(iconID, location) {
-        if (Game.hasIcon(iconID)) {
-            return 2;
-        }
-        Game.iconLocations[iconID] = location;
-        return 0;
-    }
     static getIcon(iconID) {
         if (Game.iconLocations.hasOwnProperty(iconID)) {
             return Game.iconLocations[iconID];
@@ -2205,7 +2191,7 @@ class Game {
         }
         return false;
     }
-    static addSound(soundID, location) {
+    static setSoundLocation(soundID, location) {
         if (!Game.hasSound(soundID)) {
             return 2;
         }
@@ -5268,9 +5254,9 @@ class Game {
         if (!Game.hasGroupedCallback(parentID)) {
             Game.groupedCallbacks[parentID] = {"callbackIDs":[], "hasRun": false,};
         }
-        return Game.addGroupedCallback(parentID, callbackID);
+        return Game.setGroupedCallback(parentID, callbackID);
     }
-    static addGroupedCallback(parentID, callbackID) {
+    static setGroupedCallback(parentID, callbackID) {
         if (Game.hasGroupedCallback(parentID)) {
             Game.getGroupedCallback(parentID)["callbackIDs"].push(callbackID);
         }
