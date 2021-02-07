@@ -118,5 +118,14 @@
     "nicholasCageHead": "resources/images/textures/static/nicholasCageHead.png",
     "wood01": "resources/images/textures/static/wood01_by_smeggo.png",
     "wood02": "resources/images/textures/static/wood02_by_smeggo.png",
-    "marble01": "resources/images/textures/static/marble01_by_smeggo.png"
+    "marble01": "resources/images/textures/static/marble01_by_smeggo.png",
+    "cobblessGround01": "resources/images/textures/static/cobblessGround01_by_smeggo.png",
+    "cobblessGround02": "resources/images/textures/static/cobblessGround02_by_smeggo.png",
+    "cobbledGround01": "resources/images/textures/static/cobbledGround01_by_smeggo.png",
+    "cobbledGround02": "resources/images/textures/static/cobbledGround02_by_smeggo.png",
+    "dirtGround02": "resources/images/textures/static/dirtGround02_by_smeggo.png",
+    "dirtGround01": "resources/images/textures/static/dirtGround01_by_smeggo.png",
+    "cobbledConcrete01": "resources/images/textures/static/cobbledConcrete01_by_smeggo.png",
+    "cobblessConcrete01": "resources/images/textures/static/cobblessConcrete01_by_smeggo.png",
+    "cobblessConcrete02": "resources/images/textures/static/cobblessConcrete02_by_smeggo.png"
 }
