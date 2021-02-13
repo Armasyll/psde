@@ -90,7 +90,7 @@ class CharacterControls extends AbstractControls {
                         if the key isn't released before then, run the function, which deletes the timeout function, and opens the radial for additional interface
                         
                         _radialBeginInterval() {
-                            Game.setInterval(Game.castRayTarget, Game._radianIntervalFunction);
+                            Game.setInterval(Game.castTargetRay, Game._radianIntervalFunction);
                         }
                         _radialEndInterval() {}
                         _radianIntervalFunction() {}

@@ -200,9 +200,9 @@ class Game {
         Game.playerEntityID = null;
         Game.playerController = null;
         Game.playerCellID = null;
-        Game.castRayTargetEnabled = true;
-        Game.castRayTargetIntervalFunction = null;
-        Game.castRayTargetInterval = 100;
+        Game.targetRayEnabled = true;
+        Game.targetRayUpdateIntervalFunction = null;
+        Game.targetRayUpdateInterval = 100;
         Game.pointerLockTimeoutFunction = null;
         Game.previousSelectedMesh = null;
         Game.currentSelectedMesh = null;
@@ -4025,7 +4025,7 @@ class Game {
         Game.playerController.getMesh().isPickable = false;
         Game.gui.playerPortrait.set(Game.playerController);
         Game.initArcRotateCamera();
-        Game.initCastRayInterval();
+        Game.initCastTargetRayInterval();
         Game.initPlayerPortraitStatsUpdateInterval();
         Game.entityLogicWorkerPostMessage("setPlayer", 0, {"entityID": characterController.entityID});
         Game.transformsWorkerPostMessage("setPlayer", 0, [characterController.id]);
@@ -4047,7 +4047,7 @@ class Game {
         Game.playerEntityID = null;
         Game.playerController = null;
         Game.clearPlayerPortraitStatsUpdateInterval();
-        Game.clearCastRayInterval();
+        Game.clearTargetRayInterval();
         Game.clearPlayerTarget();
         if (Game.debug) console.groupEnd();
         return 0;
@@ -4160,20 +4160,19 @@ class Game {
     static hasPlayerCell() {
         return Game.playerCellID != null;
     }
-    static castRayTarget() {
-        if (!Game.castRayTargetEnabled) {
+    static castTargetRay() {
+        if (!Game.targetRayEnabled) {
             return 0;
         }
         if (!Game.hasPlayerController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
-        let ray = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.playerController.focusMesh.getAbsolutePosition());
         if (Game.playerController.targetRay == null) {
-            Game.playerController.targetRay = ray;
+            Game.playerController.targetRay = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getDirection(Game.playerController.focusMesh.absolutePosition).normalize().negate(), Game.playerController.focusMesh.getAbsolutePosition());;
         }
         else {
-            Game.playerController.targetRay.origin = ray.origin;
-            Game.playerController.targetRay.direction = ray.direction;
+            Game.playerController.targetRay.origin = Game.playerController.focusMesh.getAbsolutePosition();
+            Game.playerController.targetRay.direction = Game.camera.getDirection(Game.playerController.focusMesh.absolutePosition).normalize().negate();
         }
         if (Game.debugMode) {
             if (Game.playerController.targetRayHelper != null) {
@@ -4196,30 +4195,30 @@ class Game {
         }
         return 0;
     }
-    static enableRayTarget() {
-        Game.castRayTargetEnabled = true;
-        Game.initCastRayInterval();
+    static enableTargetRay() {
+        Game.targetRayEnabled = true;
+        Game.initCastTargetRayInterval();
     }
-    static disableRayTarget() {
-        Game.castRayTargetEnabled = false;
+    static disableTargetRay() {
+        Game.targetRayEnabled = false;
     }
-    static initCastRayInterval() {
-        if (!Game.castRayTargetEnabled) {
+    static initCastTargetRayInterval() {
+        if (!Game.targetRayEnabled) {
             return 0;
         }
-        clearInterval(Game.castRayTargetIntervalFunction);
-        Game.castRayTargetIntervalFunction = setInterval(Game.castRayTarget, Game.castRayTargetInterval);
+        clearInterval(Game.targetRayUpdateIntervalFunction);
+        Game.targetRayUpdateIntervalFunction = setInterval(Game.castTargetRay, Game.targetRayUpdateInterval);
         return 0;
     }
-    static setCastRayInterval(interval = 250) {
+    static setTargetRayInterval(interval = 250) {
         if (interval > 0) {
-            Game.castRayTargetInterval = interval;
+            Game.targetRayUpdateInterval = interval;
         }
-        Game.initCastRayInterval();
+        Game.initCastTargetRayInterval();
         return 0;
     }
-    static clearCastRayInterval() {
-        clearInterval(Game.castRayTargetIntervalFunction);
+    static clearTargetRayInterval() {
+        clearInterval(Game.targetRayUpdateIntervalFunction);
         return 0;
     }
     static initPlayerPortraitStatsUpdateInterval() {
