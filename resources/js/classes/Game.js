@@ -4167,13 +4167,7 @@ class Game {
         if (!Game.hasPlayerController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
-        if (Game.playerController.targetRay == null) {
-            Game.playerController.targetRay = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getDirection(Game.playerController.focusMesh.absolutePosition).normalize().negate(), Game.playerController.focusMesh.getAbsolutePosition());;
-        }
-        else {
-            Game.playerController.targetRay.origin = Game.playerController.focusMesh.getAbsolutePosition();
-            Game.playerController.targetRay.direction = Game.camera.getDirection(Game.playerController.focusMesh.absolutePosition).normalize().negate();
-        }
+        Game.playerController.targetRay = Game.camera.getForwardRay(2 * Game.playerController.mesh.scaling.y, Game.camera.getWorldMatrix(), Game.camera.getTarget());
         if (Game.debugMode) {
             if (Game.playerController.targetRayHelper != null) {
                 Game.playerController.targetRayHelper.dispose();
