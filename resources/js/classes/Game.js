@@ -6110,9 +6110,9 @@ class Game {
          /*
         Uristqerty
         */
-        return new BABYLON.Vector3(Math.acos(direction.y) + BABYLON.Tools.ToRadians(90), Math.atan2(direction.x, direction.z) + BABYLON.Tools.ToRadians(180), 0);
+        return new BABYLON.Vector3(Math.acos(direction.y) + BABYLON.Tools.ToRadians(90), Math.atan2(direction.x, direction.z), 0);
     }
-    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, rotation = Game.rayDirectionToRadians().add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(180), 0)), power = 10) {
+    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, rotation = Game.rayDirectionToRadians(), power = 10) {
         if (mesh instanceof BABYLON.AbstractMesh) {}
         else if (Game.hasMesh(mesh)) {
             mesh = Game.getMesh(mesh);
@@ -6120,5 +6120,12 @@ class Game {
         if (Game.debugMode) BABYLON.Tools.Log(`Running Game.fireProjectileFrom(${mesh.id}, ${position}, ${rotation}, ${power})`);
         let projectile = mesh.createInstance();
         return new Projectile(projectile, position, rotation, power);
+    }
+    static fireProjectileFromController(mesh = "arrow01", controller = Game.playerController, force = 10) {
+        controller = Tools.filterClass(controller, EntityController, null);
+        if (controller == null) {
+            return 1;
+        }
+        return Game.fireProjectileFrom(mesh, controller.targetRay.origin, Game.rayDirectionToRadians(controller.targetRay.direction), force);
     }
 }
