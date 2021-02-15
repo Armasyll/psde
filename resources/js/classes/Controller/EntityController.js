@@ -48,7 +48,7 @@
  * @property {Object.<>} _bonesAttachedToMeshes 
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
  */
-class EntityController {
+class EntityController extends AbstractController {
     /**
      * Creates an Entity Controller
      * @param {string} id 
@@ -56,33 +56,14 @@ class EntityController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
-        if (EntityController.debugMode) console.group(`Creating new EntityController(${id}, meshObject, entityObject)`);
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (EntityController.debugMode) console.error(`Failed to create EntityController ${id} due to invalid mesh`);
-            if (EntityController.debugMode) console.groupEnd();
-            return null;
-        }
-        if (!(entityObject.hasOwnProperty("id"))) {
-            if (EntityController.debugMode) console.error(`Failed to create EntityController ${id} due to invalid entityObject`);
-            if (EntityController.debugMode) console.groupEnd();
-            return null;
-        }
-
-        this.id = "";
-        this.entityID = "";
-        this.texture = null;
+        super(id, mesh, entityObject);
         this.textureStages = [];
         this.currentTextureStage = 0;
-        this.material = null;
         this.materialStages = [];
         this.currentMaterialStage = 0;
-        this.mesh = null;
         this.defaultAction = 0;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
-        this.height = 0.0;
-        this.width = 0.0;
-        this.depth = 0.0;
         this.collisionMesh = null;
         this.meshStages = [];
         this.currentMeshStage = 0;
@@ -99,14 +80,9 @@ class EntityController {
         this.animationTransitionCount = 0.0;
         this.animationTransitionSpeed = 0.1;
         this.skeleton = null;
-        this.enabled = true;
-        this.locked = false;
         this.disposing = false;
         this.animated = false;
-        this.grounded = false;
-        this.falling = false;
         this.groundRay = null;
-        this.currentCell = null;
         this.focusMesh = null;
         this.rootMesh = null;
         this.bones = {};
@@ -126,45 +102,11 @@ class EntityController {
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set();
 
-        this.setID(id);
         EntityController.set(this.id, this);
         this.assign(entityObject, false);
-        this.setMesh(mesh);
-        this.setEntityID(entityObject.id, true);
         this.sendTransforms();
         if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
-    }
-    setID(id) {
-        id = Tools.filterID(id);
-        if (typeof id != "string" || EntityController.has(id)) {
-            id = Tools.genUUIDv4();
-        }
-        this.id = id;
-        return 0;
-    }
-    getID() {
-        return this.id;
-    }
-    setEntityID(id, updateChild = true) {
-        this.entityID = id;
-        if (updateChild) {
-            Game.entityLogicWorkerPostMessage("setEntityController", 0, {"controllerID": this.id, "entityID": this.entityID});
-        }
-        return 0;
-    }
-    removeEntityID(updateChild = true) {
-        if (updateChild) {
-            Game.entityLogicWorkerPostMessage("removeEntityController", 0, [this.id]);
-        }
-        this.entityID = null;
-        return 0;
-    }
-    getEntityID() {
-        return this.entityID;
-    }
-    hasEntityID() {
-        return this.entityID != null;
     }
     getPosition() {
         if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
@@ -191,24 +133,6 @@ class EntityController {
     getNetworkID() {
         return this.networkID;
     }
-    setTexture(texture) {
-        if (texture instanceof BABYLON.Texture) {
-            this.texture = texture;
-        }
-        return 0;
-    }
-    getTexture() {
-        return this.texture;
-    }
-    setMaterial(material) {
-        if (material instanceof BABYLON.Material) {
-            this.material = material;
-        }
-        return 0;
-    }
-    getMaterial() {
-        return this.material;
-    }
     setCollisionMesh(mesh) {
         this.collisionMesh = mesh;
         this.mesh.setParent(this.collisionMesh);
@@ -224,14 +148,6 @@ class EntityController {
             this.unsetMesh(this.mesh);
         }
         this.mesh = mesh;
-        if (this.mesh.material instanceof BABYLON.Material) {
-            this.setMaterial(this.mesh.material);
-            this.setTexture(this.mesh.material.diffuseTexture);
-        }
-        else {
-            this.setMaterial(Game.getLoadedMaterial("missingMaterial"));
-            this.setTexture(Game.getLoadedTexture("missingTexture"));
-        }
         if (this.mesh.skeleton instanceof BABYLON.Skeleton) {
             this.setSkeleton(this.mesh.skeleton);
         }
@@ -241,12 +157,18 @@ class EntityController {
         this.propertiesChanged = true;
         if (this.meshStages.length == 0) {
             this.addMeshStage(mesh.name);
-            this.addMaterialStage(this.material.name);
-            if (this.material.diffuseTexture instanceof BABYLON.Texture) {
-                this.addTextureStage(this.material.diffuseTexture.name);
+            if (mesh.hasOwnProperty("material") && mesh.material instanceof BABYLON.Material) {
+                this.addMaterialStage(mesh.material.name);
+                if (mesh.material.hasOwnProperty("diffuseTexture") && mesh.material.diffuseTexture instanceof BABYLON.Texture) {
+                    this.addTextureStage(mesh.material.diffuseTexture.name);
+                }
+                else {
+                    this.addTextureStage(mesh.material.name);
+                }
             }
             else {
-                this.addTextureStage(this.material.name);
+                this.addMaterialStage("missingMaterial");
+                this.addTextureStage("missingTexture");
             }
             this.currentMeshStage = 0;
         }
@@ -1217,25 +1139,11 @@ class EntityController {
         return this.defaultAction;
     }
 
-    isEnabled() {
-        return this.enabled;
-    }
-    setEnabled(enabled = true) {
-        this.enabled = enabled == true;
-        return 0;
-    }
     isAnimated() {
         return this.animated;
     }
     setAnimated(animated = true) {
         this.animated = animated == true;
-        return 0;
-    }
-    isLocked() {
-        return this.locked;
-    }
-    setLocked(locked = true) {
-        this.locked = locked == true;
         return 0;
     }
     /**
@@ -1247,6 +1155,7 @@ class EntityController {
         if (verify && !(controller instanceof EntityController)) {
             return 2;
         }
+        super.assign(controller, verify);
         if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject, ${verify})`);
         if (controller.hasOwnProperty("height")) this.height = controller.height;
         if (controller.hasOwnProperty("width")) this.width = controller.width;
@@ -1273,12 +1182,6 @@ class EntityController {
         return 0;
     }
     dispose() {
-        if (this.disposing) {
-            return null;
-        }
-        else {
-            this.disposting = true;
-        }
         this.setLocked(true);
         this.setEnabled(false);
         for (let boneName in this.bones) {
@@ -1290,19 +1193,13 @@ class EntityController {
         else if (EditControls.previousPickedController == this) {
             EditControls.previousPickedController = null;
         }
-        if (Game.playerController == this) {
-            Game.playerController = null;
-        }
         this.propertiesChanged = false;
-        if (this.hasEntityID()) {
-            this.removeEntityID();
-        }
         if (this.hasCompoundController()) {
             this.removeCompoundController(true);
         }
-        Game.removeMesh(this.mesh);
-        Game.removeMesh(this.collisionMesh);
         EntityController.remove(this.id);
+        super.dispose();
+        Game.removeMesh(this.collisionMesh);
         return null;
     }
     getClassName() {

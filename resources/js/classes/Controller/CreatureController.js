@@ -15,8 +15,6 @@ class CreatureController extends EntityController {
             return null;
         }
 
-        this.targetRay = null;
-        this.targetRayHelper = null;
         this.targetRayVector3 = BABYLON.Vector3.Zero();
         this.lookController = null;
         this.dead = false;
@@ -1588,24 +1586,6 @@ class CreatureController extends EntityController {
         }
         this.targetRay.origin = this.collisionMesh.position.add(this.bones["FOCUS"].getAbsolutePosition().multiply(this.collisionMesh.scaling));
         this.targetRay.origin.addToRef(this.targetRay.direction, this.targetRayVector3);
-        return 0;
-    }
-    hasTargetRay() {
-        if (!this.enabled) {
-            return false;
-        }
-        return this.targetRay instanceof BABYLON.Ray;
-    }
-    setTargetRayLength(length = 1.524) {
-        if (this.hasTargetRay()) {
-            this.targetRay.length = length;
-        }
-        return 0;
-    }
-    getTargetRayLength() {
-        if (this.hasTargetRay()) {
-            return this.targetRay.length;
-        }
         return 0;
     }
     setTarget(entityController) {

@@ -738,10 +738,10 @@ class EntityLogic {
             case "kill": {
                 break;
             }
-            case "removeEntityController": {
+            case "removeController": {
                 break;  
             }
-            case "setEntityController": {
+            case "setController": {
                 if (AbstractEntity.has(message["entityID"])) {
                     AbstractEntity.get(message["entityID"]).setController(message["controllerID"]);
                 }

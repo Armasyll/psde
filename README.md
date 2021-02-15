@@ -47,6 +47,7 @@ It works :V
 ## Object Hierarchy
 ```
 ->CharacterClass
+|-->ClasslessClass
 |-->SorcererClass
 
 ->AbstractEntity
@@ -83,21 +84,28 @@ It works :V
 ->ActionData
 ->AnimData
 ->Cell
+->Container
 ->Cosmetic
 ->Dialogue
 ->Effect
-->Inventory
+->Projectile (for now)
+->Spell
+->TeleportMarker
 
-->EntityController
-|-->CreatureController
-|  |--->CharacterController
-|      |---->CharacterControllerTransform
-|      |---->CharacterControllerRigidBody
-|-->FurnitureController
-|  |--->DisplayController
-|  |--->DoorController
-|  |--->LightingController
-|-->ItemController
+->AbstractController
+|-->EntityController
+  |--->CreatureController
+  |  |---->CharacterController
+  |      |----->CharacterControllerTransform
+  |      |----->CharacterControllerRigidBody
+  |--->FurnitureController
+  |  |---->DisplayController
+  |  |---->DoorController
+  |  |---->LightingController
+  |--->ItemController
+
+->CompoundController
+->InstancedCompoundController
 
 ->AbstractControls
 |-->CharacterControls

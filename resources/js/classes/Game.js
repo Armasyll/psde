@@ -595,7 +595,7 @@ class Game {
     }
 
     static initPhysics() {
-        Game.physicsPlugin = new BABYLON.OimoJSPlugin();
+        Game.physicsPlugin = new BABYLON.CannonJSPlugin();
         Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
     }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
@@ -1818,7 +1818,7 @@ class Game {
             mesh.rotation.copyFrom(rotation);
             mesh.scaling.copyFrom(scaling);
             mesh.checkCollisions = true;
-            if (Game.physicsEnabled) {
+            if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
                 Game.assignPlanePhysicsToMesh(mesh);
             }
             Game.addMeshMaterialMeshes("tiledMesh", materialID, id);
@@ -1923,7 +1923,7 @@ class Game {
         floor.material = Game.loadedMaterials["collisionMaterial"];
         floor.position.set(xPosition, yPosition, zPosition);
         floor.checkCollisions = true;
-        if (Game.physicsEnabled) {
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly) {
             Game.assignPlanePhysicsToMesh(floor, { "mass": 0 });
         }
         return floor;
@@ -3897,7 +3897,7 @@ class Game {
         controller.generateEquippedMeshes();
         controller.updateTargetRay();
         if (Game.debugMode) console.info(`Telling EntityLogic ${characterID}'s CharacterController is ${characterID}`)
-        Game.entityLogicWorkerPostMessage("setEntityController", 0, {"entityID":characterID, "controllerID":characterID});
+        Game.entityLogicWorkerPostMessage("setController", 0, {"entityID":characterID, "controllerID":characterID});
         switch (cachedEntity.meshID) {
             case "aardwolfM":
             case "aardwolfF":
