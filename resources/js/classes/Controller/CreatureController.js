@@ -12,7 +12,7 @@ class CreatureController extends EntityController {
         if (EntityController.debugMode) console.group(`Creating new CreatureController(${id}, meshObject, entityObject)`);
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         this.targetRayVector3 = BABYLON.Vector3.Zero();

@@ -11,7 +11,7 @@ class PlantController extends EntityController {
     constructor(id = "", mesh = null, entityObject = {}) {
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         PlantController.set(this.id, this);

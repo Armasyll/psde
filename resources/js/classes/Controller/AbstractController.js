@@ -30,7 +30,6 @@ class AbstractController {
         this.groundRayHelper = null;
 
         this.setID(id);
-        this.setMesh(mesh);
         this.setEntityID(entityObject.id, true);
     }
     setID(id) {

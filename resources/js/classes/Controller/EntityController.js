@@ -103,6 +103,7 @@ class EntityController extends AbstractController {
         this._attachedMeshes = new Set();
 
         EntityController.set(this.id, this);
+        this.setMesh(mesh);
         this.assign(entityObject, false);
         this.sendTransforms();
         if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);

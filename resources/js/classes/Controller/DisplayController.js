@@ -15,7 +15,7 @@ class DisplayController extends FurnitureController {
     constructor(id, mesh, entityObject, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         this.videoMaterial = null;

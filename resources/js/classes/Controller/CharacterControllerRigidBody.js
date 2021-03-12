@@ -11,7 +11,7 @@ class CharacterControllerRigidBody extends CharacterController {
     constructor(id = "", mesh = null, entityObject = {}) {
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         this.turnSpeed = Tools.RAD_90; // degrees per second

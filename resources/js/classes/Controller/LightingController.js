@@ -14,7 +14,7 @@ class LightingController extends FurnitureController {
     constructor(id, mesh, entityObject, light = null, lightPositionOffset = BABYLON.Vector3.Zero(), lightRange = 16) {
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         if (!(lightPositionOffset instanceof BABYLON.Vector3)) {

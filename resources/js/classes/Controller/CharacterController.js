@@ -12,7 +12,7 @@ class CharacterController extends CreatureController {
         if (EntityController.debugMode) console.group(`Creating new CharacterController(${id}, meshObject, entityObject)`);
         super(id, mesh, entityObject);
         if (!this.hasMesh()) {
-            return null;
+            return undefined;
         }
 
         this.helmetVisible = true;
