@@ -6,8 +6,8 @@ apartmentCell.addMaterial("yellowWallpaperPlainWood", "yellowWallpaperPlainWood"
 apartmentCell.addMaterial("pinkWallpaperPlainWood", "pinkWallpaperPlainWood", undefined, {"hasAlpha":true});
 apartmentCell.addMaterial("greenWallpaper", "greenWallpaper");
 apartmentCell.addMaterial("whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL");
-apartmentCell.addMaterial("pinkCarpetMaterial", "carpet02-pink", "carpet02-NORMAL", {specularColor:[0, 0, 0]});
-apartmentCell.addMaterial("blackCarpetMaterial", "carpet02-black", "carpet02-NORMAL", {specularColor:[0, 0, 0]});
+apartmentCell.addMaterial("carpet02-pink", "carpet02-pink", "carpet02-NORMAL", {specularColor:[0, 0, 0]});
+apartmentCell.addMaterial("carpet02-black", "carpet02-black", "carpet02-NORMAL", {specularColor:[0, 0, 0]});
 //apartmentCell.addMaterial("woodenFloorDark01", "woodenFloorDark01-DIFFUSE", "woodenFloorDark01-NORMAL", {specularColor:[0.1,0.1,0.1]});
 apartmentCell.addMaterial("linoleumMaterial", "checkerLinoleumFloor01", "checkerLinoleumFloor01-NORMAL", {specularColor:[0, 0, 0]});
 
@@ -223,9 +223,9 @@ apartmentCell.addCollisionRamp([0, 3, -22.5], [2, 6, -17.5]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", [0, 3, -22]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", [0, 4.5, -20]);
 
-apartmentCell.addTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, "pinkCarpetMaterial", [1, 3, -27]);
-apartmentCell.addTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "pinkCarpetMaterial", [-1, 3, -27]);
-apartmentCell.addTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "pinkCarpetMaterial", [-1, 3, -19]);
+apartmentCell.addTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, "carpet02-pink", [1, 3, -27]);
+apartmentCell.addTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "carpet02-pink", [-1, 3, -27]);
+apartmentCell.addTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "carpet02-pink", [-1, 3, -19]);
 
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -14]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [2, 3, -14]);
@@ -254,7 +254,7 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlain
 
 // Charty Apartment
 // Charty Livingroom
-apartmentCell.addTiledGround("chartyLivingroomFloor", {xmin:0, zmin:0, xmax: 16, zmax: 6, subdivisions: {w:16, h:6}}, "pinkCarpetMaterial", [-1, 3, -13]);
+apartmentCell.addTiledGround("chartyLivingroomFloor", {xmin:0, zmin:0, xmax: 16, zmax: 6, subdivisions: {w:16, h:6}}, "carpet02-pink", [-1, 3, -13]);
 apartmentCell.addCollisionPlaneByMesh("chartyLivingroomFloor");
 
 apartmentCell.addCollisionWall([-1, 3, -7], [7, 6, -7]); // Front wall between livingroom and Charlie's bedroom
@@ -285,7 +285,7 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlain
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -8], [0, 270, 0]);
 
 // Charty Hallway
-apartmentCell.addTiledGround("chartyHallwayFloor", {xmin:0, zmin:0, xmax: 4, zmax: 2, subdivisions: {w:4, h:2}}, "pinkCarpetMaterial", [5, 3, -7]);
+apartmentCell.addTiledGround("chartyHallwayFloor", {xmin:0, zmin:0, xmax: 4, zmax: 2, subdivisions: {w:4, h:2}}, "carpet02-pink", [5, 3, -7]);
 apartmentCell.addCollisionPlaneByMesh("chartyHallwayFloor");
 
 apartmentCell.addCollisionWall([7, 3, -5], [9, 6, -5]); // Front wall between hallway and bathroom
@@ -301,7 +301,7 @@ apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPl
 apartmentCell.addDoor("charlieBedroomDoor", "Charlie's Room", undefined, "craftsmanDoor", "plainDoor",[5, 3, -6], [0, 90, 0], {opensInward:true});
 
 // Charlie bedroom
-apartmentCell.addTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, "blackCarpetMaterial", [-1, 3, -7]);
+apartmentCell.addTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, "carpet02-black", [-1, 3, -7]);
 apartmentCell.addCollisionPlaneByMesh("charlieBedroomFloor");
 
 apartmentCell.addCollisionWall([1, 3, -1], [5, 6, -1]); // Front wall between Charlie's closet and bedroom
@@ -388,11 +388,11 @@ apartmentCell.addCollisionRamp([0, 6, -22.5], [2, 9, -17.5]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", [0, 6, -22]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanStairs", "greenWallpaperPlainWood", [0, 7.5, -20]);
 
-apartmentCell.addTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, "pinkCarpetMaterial", [1, 6, -27]);
+apartmentCell.addTiledGround("commonsFloor02a", {xmin:0, zmin:0, xmax: 4, zmax: 14, subdivisions: {w:4, h:14}}, "carpet02-pink", [1, 6, -27]);
 apartmentCell.addCollisionPlaneByMesh("commonsFloor02a");
-apartmentCell.addTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "pinkCarpetMaterial", [-1, 6, -27]);
+apartmentCell.addTiledGround("commonsFloor02b", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "carpet02-pink", [-1, 6, -27]);
 apartmentCell.addCollisionPlaneByMesh("commonsFloor02b");
-apartmentCell.addTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "pinkCarpetMaterial", [-1, 6, -19]);
+apartmentCell.addTiledGround("commonsFloor02c", {xmin:0, zmin:0, xmax: 2, zmax: 6, subdivisions: {w:2, h:6}}, "carpet02-pink", [-1, 6, -19]);
 apartmentCell.addCollisionPlaneByMesh("commonsFloor02c");
 
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -14]);

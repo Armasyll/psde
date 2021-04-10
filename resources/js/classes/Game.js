@@ -754,10 +754,10 @@ class Game {
         Game.setLoadedMaterial("missingMaterial", new BABYLON.StandardMaterial("missingMaterial", Game.scene));
         Game.setLoadedMaterial("loadingMaterial", new BABYLON.StandardMaterial("loadingMaterial", Game.scene));
         Game.setLoadedMaterial("missingMaterial", "missingTexture");
-        Game.loadedMaterials["default"].specularColor.set(0, 0, 0);
-        Game.loadedMaterials["missingMaterial"].specularColor.set(0, 0, 0);
-        Game.loadedMaterials["loadingMaterial"].specularColor.set(0, 0, 0);
-        Game.loadedMaterials["loadingMaterial"].diffuseColor.set(1, 0.85, 1);
+        Game.loadedMaterials["default"].specularColor.copyFrom(BABYLON.Color3.Black());
+        Game.loadedMaterials["missingMaterial"].specularColor.copyFrom(BABYLON.Color3.Black());
+        Game.loadedMaterials["loadingMaterial"].specularColor.copyFrom(BABYLON.Color3.Black());
+        Game.loadedMaterials["loadingMaterial"].diffuseColor.copyFrom(new BABYLON.Color3(1, 0.85, 1));
         return 0;
     }
     static loadDefaultMeshes() {
@@ -908,7 +908,7 @@ class Game {
         let videoMaterial = new BABYLON.StandardMaterial(id.concat("Material"), Game.scene);
         videoMaterial.name = id.concat("Material");
         videoMaterial.diffuseTexture = videoTexture;
-        videoMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
+        videoMaterial.emissiveColor = BABYLON.Color3.White();
         let videoMesh = BABYLON.MeshBuilder.CreatePlane(id.concat("Mesh"), { "width": width, "height": height }, Game.scene);
         videoMesh.name = id.concat("Mesh");
         videoMesh.material = videoMaterial;
@@ -1081,7 +1081,7 @@ class Game {
         if (Game.hasLoadedTexture(bumpTextureID)) {
             loadedMaterial.bumpTexture = Game.getLoadedTexture(bumpTextureID);
         }
-        loadedMaterial.specularColor.set(0, 0, 0);
+        loadedMaterial.specularColor.copyFrom(BABYLON.Color3.Black());
         if (typeof options == "object") {
             if (options.hasOwnProperty("backFaceCulling")) {
                 loadedMaterial.backFaceCulling = options["backFaceCulling"] == true;
@@ -1096,7 +1096,12 @@ class Game {
                 loadedMaterial.distortionTexture = Game.getLoadedTexture(options["distortionTexture"]);
             }
             if (options.hasOwnProperty("specularColor")) {
-                loadedMaterial.specularColor.copyFrom(options["specularColor"]);
+                if (options["specularColor"] instanceof BABYLON.Color3) {
+                    loadedMaterial.specularColor.copyFrom(options["specularColor"]);
+                }
+                else {
+                    loadedMaterial.specularColor.copyFrom(BABYLON.Color3.Black());
+                }
             }
         }
         Game.setLoadedMaterial(materialID, loadedMaterial);
@@ -1417,7 +1422,12 @@ class Game {
                 loadedMaterial.speed = options["speed"];
             }
             if (options.hasOwnProperty("specularColor")) {
-                loadedMaterial.specularColor.copyFrom(options["specularColor"]);
+                if (options["specularColor"] instanceof BABYLON.Color3) {
+                    loadedMaterial.specularColor.copyFrom(options["specularColor"]);
+                }
+                else {
+                    loadedMaterial.specularColor.copyFrom(BABYLON.Color3.Black());
+                }
             }
         }
         return 0;
@@ -1810,10 +1820,20 @@ class Game {
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling);
-        if (Game.debugMode && Game.debugVerbosity > 3) console.group(`Running Game.createTiledMesh(${id}, {...}, ${materialID})`)
+        if (Game.debugMode && Game.debugVerbosity > 3) console.group(`Running Game.createTiledMesh(${id}, {...}, ${materialID})`);
+        let material = null;
+        if (Game.hasLoadedMaterial(materialID)) {
+            material = Game.getLoadedMaterial(materialID);
+        }
+        else if (Game.loadMaterial(materialID) == 0) {
+            material = Game.getLoadedMaterial(materialID);
+        }
+        else {
+            material = Game.getLoadedMaterial("missingMaterial");
+        }
         let mesh = new BABYLON.MeshBuilder.CreateTiledGround(id, meshOptions, Game.scene);
         if (mesh instanceof BABYLON.AbstractMesh) {
-            mesh.material = Game.getLoadedMaterial(materialID);
+            mesh.material = material;
             mesh.position.copyFrom(position);
             mesh.rotation.copyFrom(rotation);
             mesh.scaling.copyFrom(scaling);
