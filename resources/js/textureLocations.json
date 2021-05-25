@@ -18,7 +18,7 @@
     "ring02SilverBrokenRuby": "resources/images/textures/items/ring02SilverBrokenRuby_512.png",
     "fireSplatter": "resources/images/textures/effects/fireSplatter_512.png",
     "fireOpacity": "resources/images/textures/effects/fireOpacity_512.png",
-    "fireDistortion": "resources/images/textures/effects/fireDistortion_512.png",
+    "fireDistortion": "resources/images/textures/effects/fireDistortion_256.png",
     "fireEffect01": "resources/images/textures/effects/fire_512.png",
     "bottle03RedSarcophagusJuice": "resources/images/textures/items/bottle03RedSarcophagusJuice_512.png",
     "bottle03Red": "resources/images/textures/items/bottle03Red_512.png",
