@@ -3650,3 +3650,45 @@ let BoundTypeEnum = {
     "USE": ActionEnum.USE,
     "properties": ActionEnum.properties
 };
+/**
+ * Enum for Sound Channels
+ * @readonly
+ * @enum {number}
+ */
+let SoundChannelEnum = {
+    "NONE": 0,
+    "MUSIC": 1,
+    "AMBIENT": 2,
+    "AMBIENCE": 2,
+    "ENVIRONMENT": 3,
+    "ENV": 3,
+    "CHARACTER": 4,
+    "CHAR": 4,
+    "properties": {
+        0: {
+            "name": "None",
+            "value": 0,
+            "key": "NONE"
+        },
+        1: {
+            "name": "Music",
+            "value": 1,
+            "key": "MUSIC"
+        },
+        2: {
+            "name": "Ambient",
+            "value": 2,
+            "key": "AMBIENT"
+        },
+        3: {
+            "name": "Environment",
+            "value": 3,
+            "key": "ENVIRONMENT"
+        },
+        4: {
+            "name": "Character",
+            "value": 4,
+            "key": "CHARACTER"
+        }
+    }
+};

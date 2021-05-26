@@ -102,6 +102,11 @@ class Game {
          * @type {<string, BABYLON.Sound>}
          */
         Game.loadedSounds = {};
+        /**
+         * Map of Video IDs to BABYLON.Sound; one to one
+         * @type {<string, [BABYLON.Sound]>}
+         */
+        Game.soundCloneHeap = {};
         Game.importingVideoLocations = true;
         /**
          * Map of Video file locations per ID
@@ -186,6 +191,16 @@ class Game {
         Game.backloggedCharacters = {};
         Game.backloggedItems = {};
         Game.backloggedAttachments = {};
+
+        Game.soundDumb = null;
+        Game.soundMusic = null;
+        Game.soundAmbience = null;
+        Game.soundFXEnvironment = {};
+        Game.soundFXCharacters = {};
+        Game.soundMusicOptions = {"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        Game.soundAmbienceOptions = {"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        Game.soundFXEnvironmentOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        Game.soundFXCharactersOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
 
         Game.meshToEntityController = {};
 
@@ -2215,13 +2230,6 @@ class Game {
         }
         return false;
     }
-    static setSoundLocation(soundID, location) {
-        if (!Game.hasSound(soundID)) {
-            return 2;
-        }
-        Game.soundLocations[soundID] = location;
-        return 0;
-    }
     static getSound(soundID) {
         if (Game.hasLoadedSound(soundID)) {
             return Game.loadedSounds[soundID];
@@ -2234,14 +2242,85 @@ class Game {
             return Game.loadedSounds["missingSound"];
         }
     }
-    static playSound(soundID) {
+    /**
+     * 
+     * TODO: What if multiple of the same sound needs to be played :v create a separate method for playing effects
+     * @param {string} soundID 
+     * @param {object} options 
+     * @param {string} [soundUUID] If set, the sound is cloned and assigned this ID in the Game.clonedSounds 'map'
+     */
+    static playSound(soundID, options = {}, soundUUID = "") {
         if (!Game.hasSound(soundID)) {
             Game.loadedSounds["missingSound"].play()
+            return 1;
+        }
+        if (!(Game.loadedSounds[soundID] instanceof BABYLON.Sound)) {
             return 2;
         }
-        soundID = Game.getSound(soundID);
-        if (soundID instanceof BABYLON.Sound && soundID.name != "missingSound") {
-            soundID.play();
+        let sound = Game.loadedSounds[soundID];
+        if (soundUUID.length > 0) {
+            sound = sound.clone();
+            Game.soundCloneHeap[soundUUID] = sound;
+        }
+        if (options.hasOwnProperty("loop")) {
+            sound.loop = options["loop"] == true;
+        }
+        if (options.hasOwnProperty("volume")) {
+            sound.setVolume(options["volume"]);
+        }
+        if (options.hasOwnProperty("playbackRate")) {
+            sound.setPlaybackRate(options["playbackRate"]);
+        }
+        sound.play();
+        return 0;
+    }
+    static playMusic(soundID, options = Game.soundMusicOptions) {
+        if (Game.soundMusic instanceof BABYLON.Sound) {
+            Game.stopSound(Game.soundMusic, SoundChannelEnum.MUSIC);
+        }
+        Game.soundMusic = Game.loadedSounds[soundID];
+        return Game.playSound(soundID, options);
+    }
+    static playAmbience(soundID, options = Game.soundAmbienceOptions) {
+        if (Game.soundAmbience instanceof BABYLON.Sound) {
+            Game.stopSound(Game.soundAmbience, SoundChannelEnum.MUSIC);
+        }
+        Game.soundAmbience = Game.loadedSounds[soundID];
+        return Game.playSound(soundID, options);
+    }
+    static playEnvironmentSoundFX(soundID, options = Game.soundFXEnvironmentOptions, soundUUID = "") {
+        //{"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        if (soundUUID.size == 0) {
+            soundUUID = Tools.genUUIDv4();
+        }
+        return Game.playSound(soundID, options, soundUUID);
+    }
+    static playCharacterSoundFX(soundID, options = Game.soundFXCharactersOptions, soundUUID = "") {
+        if (soundUUID.size == 0) {
+            soundUUID = Tools.genUUIDv4();
+        }
+        return Game.playSound(soundID, options);
+    }
+    static stopSound(soundID, soundChannel = SoundChannelEnum.NONE, soundUUID = "") {
+        if (!Game.hasSound(soundID)) {
+            return 2;
+        }
+        if (Game.loadedSounds[soundID] instanceof BABYLON.Sound) {
+            if (Game.loadedSounds[soundID].isPlaying) {
+                Game.loadedSounds[soundID].stop();
+                Game.loadedSounds[soundID].isPlaying = false;
+            }
+        }
+        return 0;
+    }
+    static pauseSound(soundID) {
+        if (!Game.hasSound(soundID)) {
+            return 2;
+        }
+        if (Game.loadedSounds[soundID] instanceof BABYLON.Sound) {
+            if (Game.loadedSounds[soundID].isPlaying) {
+                Game.loadedSounds[soundID].pause();
+            }
         }
         return 0;
     }
