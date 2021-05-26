@@ -38,6 +38,9 @@ class Game {
         Game.cameraRadius = 2.0;
         Game.cameraAlpha = Tools.RAD_90;
         Game.cameraBeta = Tools.RAD_90;
+        Game.cameraMinDistance = 0.001;
+        Game.cameraFPDistance = 0.087;
+        Game.cameraMaxDistance = 3.054;
         Game.useCameraRay = false;
         Game.cameraRay = null;
         Game.ambientLight = null;
@@ -506,11 +509,11 @@ class Game {
         }
         if (Game.camera instanceof BABYLON.ArcRotateCamera) {
             Game.camera.alpha = Tools.moduloRadians(Game.camera.alpha);
-            if (Game.camera.beta < 0.087) {
-                Game.camera.beta = 0.087;
+            if (Game.camera.beta < Game.cameraFPDistance) {
+                Game.camera.beta = Game.cameraFPDistance;
             }
-            else if (Game.camera.beta > 3.054) {
-                Game.camera.beta = 3.054;
+            else if (Game.camera.beta > Game.cameraMaxDistance) {
+                Game.camera.beta = Game.cameraMaxDistance;
             }
         }
         for (let characterController in CharacterController.list()) {
@@ -634,8 +637,8 @@ class Game {
         //Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
         //Game.camera.checkCollisions = true;
         //Game.camera.wheelPrecision = 100;
-        Game.camera.upperRadiusLimit = 2;
-        Game.camera.lowerRadiusLimit = 0.1;
+        Game.camera.upperRadiusLimit = Game.cameraMaxDistance;
+        Game.camera.lowerRadiusLimit = Game.cameraFPDistance;
         //Game.camera.angularSensibilityX = 3500;
         //Game.camera.angularSensibilityY = 3500;
         //Game.camera.keysLeft = [];
@@ -648,8 +651,8 @@ class Game {
             Game.camera.attachControl(Game.canvas, false);
         }
 
-        Game.camera.minZ = 0.001;
-        Game.camera.maxZ = 3;
+        Game.camera.minZ = Game.cameraMinDistance;
+        Game.camera.maxZ = Game.cameraMaxDistance;
         Game.camera.lowerHeightOffsetLimit = -2;
         Game.camera.upperHeightOffsetLimit = 2;
         Game.camera.cameraAcceleration = 0.0035;
@@ -674,8 +677,8 @@ class Game {
         Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
         Game.camera.checkCollisions = false;
         Game.camera.wheelPrecision = 100;
-        Game.camera.upperRadiusLimit = 2;
-        Game.camera.lowerRadiusLimit = 0.1;
+        Game.camera.upperRadiusLimit = Game.cameraMaxDistance;
+        Game.camera.lowerRadiusLimit = Game.cameraFPDistance;
         Game.camera.angularSensibilityX = 3500;
         Game.camera.angularSensibilityY = 3500;
         Game.camera.keysLeft = [];
@@ -688,7 +691,7 @@ class Game {
             Game.camera.attachControl(Game.canvas, false);
         }
 
-        Game.camera.minZ = 0.001;
+        Game.camera.minZ = Game.cameraMinDistance;
         Game.camera.lockedTarget = Game.playerController.focusMesh;
         if (Game.useCameraRay) {
             Game.cameraRay = new BABYLON.Ray(Game.cameraFocus.absolutePosition, BABYLON.Vector3.Forward());
@@ -705,8 +708,8 @@ class Game {
             Game.camera.dispose();
         }
         Game.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), Game.scene);
-        Game.camera.radius = 2;
-        Game.camera.minZ = 0.001;
+        Game.camera.radius = Game.cameraMaxDistance;
+        Game.camera.minZ = Game.cameraMinDistance;
         Game.camera.heightOffset = 1;
         Game.camera.rotationOffset = 0;
         Game.camera.speed = 0.25;
