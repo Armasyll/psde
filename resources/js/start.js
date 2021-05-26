@@ -59,6 +59,9 @@ window.addEventListener("DOMContentLoaded", function() {
                 gameOptions["assumePlayerCellID"] = String(val);
                 break;
             }
+            case "meatyThwack": {
+                gameOptions["meatyThwack"] = true;
+            }
         }
     });
     Game.initialize(gameOptions);

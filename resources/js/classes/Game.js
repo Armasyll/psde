@@ -294,6 +294,9 @@ class Game {
         if (options.hasOwnProperty("showCollisionBoxes")) {
             Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
         }
+        if (options.hasOwnProperty("meatyThwack")) {
+            Game._playSoundTest = true
+        }
         Game.initializePhaseTwo();
     }
     static initializePhaseTwo() {
@@ -473,6 +476,9 @@ class Game {
             Game.gui.showCharacterChoiceMenu();
         }
         Game.gui.resize();
+        if (Game._playSoundTest) {
+            Game.playAnnoyingMeatyThwack();
+        }
         return 0;
     }
     static resize() {
@@ -2264,6 +2270,9 @@ class Game {
         }
         if (options.hasOwnProperty("loop")) {
             sound.loop = options["loop"] == true;
+        }
+        if (options.hasOwnProperty("autoplay")) {
+            sound.autoplay = options["autoplay"] == true;
         }
         if (options.hasOwnProperty("volume")) {
             sound.setVolume(options["volume"]);
@@ -6226,5 +6235,12 @@ class Game {
             return 1;
         }
         return Game.fireProjectileFrom(mesh, controller.targetRay.origin, Game.rayDirectionToRadians(controller.targetRay.direction), force);
+    }
+
+    static playAnnoyingMeatyThwack() {
+        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 1169);
+        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 2420);
+        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 3666);
+        return 0;
     }
 }
