@@ -44,6 +44,9 @@
  * @property {Object.<>} bones 
  * @property {BABYLON.Mesh} focusMesh 
  * @property {BABYLON.Mesh} rootMesh 
+ * @property {CompoundController} compoundController 
+ * @property {number} animationPriority 
+ * @property {boolean} animationPriorityUpdated 
  * @property {Object.<>} _meshesAttachedToBones 
  * @property {Object.<>} _bonesAttachedToMeshes 
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
@@ -89,15 +92,24 @@ class EntityController extends AbstractController {
         this.bones["ROOT"] = null;
         this.bones["FOCUS"] = null;
         this.compoundController = null;
+        /**
+         * Priority for animations to be played; lower is higher priority.
+         * 0 is showing all frames of the animations
+         * 1 is throttled animations
+         * 2 is not playing the animations
+         * @type {number}
+         */
+        this.animationPriority = 0;
+        this.animationPriorityUpdated = false;
 
         /**
          * Map of bone IDs and the mesh attached to them.
-         * @type {String, {String, BABYLON.Mesh}}
+         * @type {string, {string, BABYLON.Mesh}}
          */
         this._meshesAttachedToBones = {};
         /**
          * Map of mesh IDs and the bones they're attached to.
-         * @type {String, {String, BABYLON.Bone}}
+         * @type {string, {string, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set();
@@ -416,6 +428,7 @@ class EntityController extends AbstractController {
         if (!(bone instanceof BABYLON.Bone)) {
             return 2;
         }
+        mesh.setParent(this.mesh);
         mesh.attachToBone(bone, this.mesh);
         mesh.controller = this;
         mesh.position.copyFrom(position);
@@ -806,6 +819,15 @@ class EntityController extends AbstractController {
         return 0;
     }
 
+    setAnimationPriority(number = 0) {
+        this.animationPriority = number;
+        this.animationPriorityUpdated = true;
+        return 0;
+    }
+    getAnimationPriority() {
+        return this.animationPriority;
+    }
+
     doAttacked() {
         return 0;
     }
@@ -1025,13 +1047,25 @@ class EntityController extends AbstractController {
         this.animation.setWeightForAllAnimatables(0);
         return 0;
     }
+    pauseAllAnimations() {
+        for (let id in this.animationGroups) {
+            this.animationGroups[id].pause();
+        }
+        return 0;
+    }
+    unpauseAllAnimations() {
+        for (let id in this.animationGroups) {
+            this.animationGroups[id].play();
+        }
+        return 0;
+    }
     /**
      * 
      * @param {BABYLON.Animation} animation 
      * @param {function} [callback] 
      */
     beginAnimation(animation, callback = null) {
-        if (this.stopAnim) {
+        if (this.stopAnim || this.animationPriority >= 2) {
             return 1;
         }
         if (!(animation instanceof BABYLON.AnimationGroup)) {

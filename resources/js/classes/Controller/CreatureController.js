@@ -17,6 +17,10 @@ class CreatureController extends EntityController {
 
         this.targetRayVector3 = BABYLON.Vector3.Zero();
         this.lookController = null;
+        /**
+         * this.lookController.slerpAmount
+         */
+        this.headTurnSpeed = 0.05;
         this.dead = false;
         this.jumping = false;
         this.standing = true;
@@ -1242,7 +1246,7 @@ class CreatureController extends EntityController {
             this.getBoneByName(bone),
             this.targetRayVector3,
             {
-                slerpAmount:0.05,
+                slerpAmount: this.headTurnSpeed,
                 minPitch:BABYLON.Tools.ToRadians(-45),
                 maxPitch:BABYLON.Tools.ToRadians(45),
                 minYaw:BABYLON.Tools.ToRadians(-45),
@@ -1439,10 +1443,21 @@ class CreatureController extends EntityController {
                 anim = this.animationGroups.idleLying01;
             }
         }
-        if (this.dead) { // TODO: complain about my lack of foresight with multiple blended animations
-            this.stopAnimation("idleStanding01");
+        if (this.animationPriorityUpdated) {
+            this.animationPriorityUpdated = false;
+            if (this.animationPriority >= 2) {
+                this.pauseAllAnimations();
+            }
+            else if (this.animationPriority == 0) {
+                this.unpauseAllAnimations();
+            }
         }
-        this.beginAnimation(anim);
+        if (this.animationPriority == 0) {
+            if (this.dead) { // TODO: complain about my lack of foresight with multiple blended animations
+                this.stopAnimation("idleStanding01");
+            }
+            this.beginAnimation(anim);
+        }
         return 0;
     }
     doAttack() {
@@ -1612,6 +1627,20 @@ class CreatureController extends EntityController {
     }
     clearTarget() {
         return this.removeTarget();
+    }
+
+    setAnimationPriority(number = 0) {
+        this.animationPriority = number;
+        this.animationPriorityUpdated = true;
+        if (this.hasLookController()) {
+            if (number == 0) {
+                this.lookController.slerpAmount = this.headTurnSpeed;
+            }
+            else {
+                this.lookController.slerpAmount = 1;
+            }
+        }
+        return 0;
     }
 
     updateID(newID) {

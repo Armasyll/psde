@@ -16,7 +16,6 @@ class CharacterControllerRigidBody extends CharacterController {
 
         this.turnSpeed = Tools.RAD_90; // degrees per second
         this.moving = false;
-        this.turning = false;
         this.startPosition = this.collisionMesh.position.clone();
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
@@ -63,7 +62,15 @@ class CharacterControllerRigidBody extends CharacterController {
             this.targetRay.direction.z = -this.collisionMesh.forward.z;
         }
         if (this.hasLookController()) {
-            this.lookController.update();
+            if (this.animationPriority == 0) {
+                this.lookController.update();
+            }
+            else if (Game.currentFrame == Math.floor(Game.engine.getFps()/2)) {
+                this.lookController.update();
+            }
+        }
+        if (this.propertiesChanged) {
+            this.updateProperties();
         }
         if (this.moving) {
             Game.transformsWorkerPostMessage(

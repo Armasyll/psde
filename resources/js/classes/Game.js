@@ -9,6 +9,7 @@ class Game {
     static initialize(options = {}) {
         BABYLON.Tools.Log("Initializing, Phase One; creating variables");
         Game.initialized = false;
+        Game.currentFrame = 0;
         Game.options = Object.assign({}, options);
         Game.assumeInitialized = false;
         Game.assumePlayerCellID = null;
@@ -27,6 +28,11 @@ class Game {
         Game.physicsForProjectilesOnly = true;
         Game.physicsPlugin = null;
         Game.showCollisionBoxes = false;
+
+        Game.bBeforeRenderForceCameraBounds = true;
+        Game.bBeforeRenderUpdateCharacterControllers = true;
+        Game.bBeforeRenderUpdateProjectiles = true;
+        Game.bBeforeRenderCameraBoundsCheck = true;
 
         Game.canvas = null;
         Game.engine = null;
@@ -498,6 +504,10 @@ class Game {
         if (!Game.initialized) {
             return 1;
         }
+        Game.currentFrame += 1;
+        if (Game.currentFrame > Math.floor(Game.engine.getFps())) {
+            Game.currentFrame = 0;
+        }
         Game.scene.render();
     }
     static _beforeRenderFunction() {
@@ -507,7 +517,7 @@ class Game {
         if (!(Game.hasPlayerEntity()) || !(Game.hasPlayerController())) {
             return 1;
         }
-        if (Game.camera instanceof BABYLON.ArcRotateCamera) {
+        if (Game.bBeforeRenderForceCameraBounds && Game.camera instanceof BABYLON.ArcRotateCamera) {
             Game.camera.alpha = Tools.moduloRadians(Game.camera.alpha);
             if (Game.camera.beta < Game.cameraFPDistance) {
                 Game.camera.beta = Game.cameraFPDistance;
@@ -517,19 +527,16 @@ class Game {
             }
         }
         for (let characterController in CharacterController.list()) {
-            if (CharacterController.get(characterController).animated) {
-                CharacterController.get(characterController).moveAV();
-                if (CharacterController.get(characterController).propertiesChanged) {
-                    CharacterController.get(characterController).updateProperties();
+            CharacterController.get(characterController).moveAV();
+        }
+        if (Game.bBeforeRenderUpdateProjectiles) {
+            for (let projectile in Projectile.list()) {
+                if (Projectile.get(projectile).falling) {
+                    Projectile.get(projectile).moveAV();
                 }
             }
         }
-        for (let projectile in Projectile.list()) {
-            if (Projectile.get(projectile).falling) {
-                Projectile.get(projectile).moveAV();
-            }
-        }
-        if (Game.hasPlayerController()) {
+        if (Game.bBeforeRenderCameraBoundsCheck && Game.hasPlayerController()) {
             Game.updateCameraTarget();
         }
         if (Game.defaultPipeline instanceof BABYLON.PostProcessRenderPipeline && Game.defaultPipeline.imageProcessing.vignetteEnabled) {
@@ -1198,6 +1205,12 @@ class Game {
         material.dispose();
         return 0;
     }
+    /**
+     * 
+     * @param {JSON} jsonBlob 
+     * @param {(function|null)} callback 
+     * @returns {number} Integer status code
+     */
     static setMeshPropertiesFromJSON(jsonBlob, callback = null) {
         for (let id in jsonBlob) {
             Game.meshProperties[id] = Object.assign({}, jsonBlob[id]);
@@ -1208,14 +1221,32 @@ class Game {
         }
         return 0;
     }
+    /**
+     * 
+     * @param {string} jsonFile 
+     * @param {(function|null)} [callback] 
+     * @returns {number} Integer status code
+     */
     static importMeshProperties(jsonFile = "resources/js/meshProperties.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setMeshPropertiesFromJSON, null, callback);
         return 0;
     }
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} location 
+     * @returns {number} Integer status code
+     */
     static setMeshLocation(id, location) {
         Game.meshLocations[id] = location;
         return 0;
     }
+    /**
+     * 
+     * @param {JSON} jsonBlob 
+     * @param {(function|null)} [callback] 
+     * @returns {number} Integer status code
+     */
     static setMeshLocationsFromJSON(jsonBlob, callback = null) {
         for (let id in jsonBlob) {
             Game.setMeshLocation(id, jsonBlob[id]);
@@ -1226,6 +1257,12 @@ class Game {
         }
         return 0;
     }
+    /**
+     * 
+     * @param {string} jsonFile 
+     * @param {(function|null)} [callback] 
+     * @returns {number} Integer status code
+     */
     static importMeshLocations(jsonFile = "resources/js/meshLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setMeshLocationsFromJSON, null, callback);
         return 0;
@@ -1233,6 +1270,8 @@ class Game {
     /**
      * Loads and create a BABYLON.Mesh
      * @param {string} meshID Mesh ID
+     * @param {(string|null)} callbackID 
+     * @param {boolean} loadOnlyMesh 
      * @returns {number} Integer status code
      */
     static loadMesh(meshID, callbackID = null, loadOnlyMesh = false) {
@@ -1274,7 +1313,14 @@ class Game {
         }
         return 2;
     }
-    static setLoadedMesh(meshID, mesh, options = undefined) {
+    /**
+     * 
+     * @param {string} meshID 
+     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {(object|null)} [options] 
+     * @returns {number} Integer status code
+     */
+    static setLoadedMesh(meshID, mesh, options = null) {
         meshID = Tools.filterID(meshID);
         if (meshID.length == 0) {
             return 2;
@@ -1287,15 +1333,23 @@ class Game {
         Game.loadedMeshes[meshID] = mesh;
         return 0;
     }
+    /**
+     * 
+     * @param {string} meshID 
+     * @returns {(BABYLON.AbstractMesh|null)}
+     */
     static getLoadedMesh(meshID) {
-        if (!Game.hasLoadedMesh(meshID) && Game.hasAvailableMesh(meshID)) {
-            Game.loadMesh(meshID);
-        }
         if (!Game.hasLoadedMesh(meshID)) {
-            return 2;
+            return null;
         }
         return Game.loadedMeshes[meshID];
     }
+    /**
+     * 
+     * @param {string} meshID 
+     * @param {object} options 
+     * @returns {number} Integer status code
+     */
     static updateLoadedMesh(meshID, options) {
         meshID = Tools.filterID(meshID);
         if (meshID.length == 0) {
@@ -5531,7 +5585,7 @@ class Game {
                 break;
             }
             case "sendTimestamp": {
-                Game.currentTime = event.data["msg"];
+                Game.currentTime = event.data["msg"][0];
                 if (Game.playerCellID != null) {
                     Game.updateSkybox();
                 }
