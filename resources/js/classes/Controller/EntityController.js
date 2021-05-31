@@ -26,10 +26,11 @@
  * @property {Object.<>} animations 
  * @property {Object.<>} animationGroups 
  * @property {Object.<>} additiveAnimations 
- * @property {boolean} started 
- * @property {boolean} stopAnim 
- * @property {(BABYLON.Animation|null)} currAnim 
- * @property {(BABYLON.Animation|null)} prevAnim 
+ * @property {(BABYLON.Animation|null)} animationCurrent 
+ * @property {(BABYLON.Animation|null)} animationPrevious 
+ * @property {(BABYLON.Animation|null)} animationOverride 
+ * @property {boolean} bAnimationOverride
+ * @property {boolean} bAnimationStopped 
  * @property {number} animationTransitionCount 
  * @property {number} animationTransitionSpeed 
  * @property {(BABYLON.Skeleton|null)} skeleton 
@@ -76,10 +77,10 @@ class EntityController extends AbstractController {
         this.animations = {};
         this.animationGroups = {};
         this.additiveAnimations = {};
-        this.started = false;
-        this.stopAnim = false;
-        this.currAnim = null;
-        this.prevAnim = null;
+        this.animationCurrent = null;
+        this.animationPrevious = null;
+        this.animationOverride = null;
+        this.bAnimationOverride = false;
         this.animationTransitionCount = 0.0;
         this.animationTransitionSpeed = 0.1;
         this.skeleton = null;
@@ -436,7 +437,7 @@ class EntityController extends AbstractController {
         if (!(scaling instanceof BABYLON.Vector3)) {
             mesh.scaling.copyFrom(this.mesh.scaling);
         }
-        if (this.prevAnim == undefined) {
+        if (this.animationPrevious == undefined) {
             /*
             Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
              */
@@ -883,7 +884,7 @@ class EntityController extends AbstractController {
                 mesh = Game.getMesh(mesh);
             }
             else {
-                return 0;
+                return 1;
             }
         }
         this.collisionMesh.setParent(mesh);
@@ -1035,16 +1036,45 @@ class EntityController extends AbstractController {
     updateAnimation() {
         return 0;
     }
-    stopAnimation(animation) {
-        if (!(animation instanceof BABYLON.AnimationGroup)) {
-            if (this.hasAnimationGroup(animation)) {
-                this.animation = this.animationGroups[animation];
-            }
-            else {
-                return 1;
-            }
+    /**
+     * 
+     * @param {(string|null)} animation 
+     */
+    stopAnimation(animation = null) {
+        if (animation == null) {
+            this.animation.setWeightForAllAnimatables(0);
         }
-        this.animation.setWeightForAllAnimatables(0);
+        else if (this.hasAnimationGroup(animation)) {
+            this.animationGroups[animation].setWeightForAllAnimatables(0);
+        }
+        else {
+            return 1;
+        }
+        return 0;
+    }
+    /**
+     * 
+     * @param {(string|null)} animation 
+     */
+    overrideAnimation(animation = null) {
+        if (animation == null) {
+            this.bAnimationOverride = false;
+            this.animationOverride = null;
+        }
+        else if (this.hasAnimationGroup(animation)) {
+            this.animationGroups[animation].setWeightForAllAnimatables(1);
+            this.animationOverride = animation;
+            this.beginAnimation(animation);
+        }
+        else {
+            return 1;
+        }
+        return 0;
+    }
+    stopAllAnimations() {
+        for (let id in this.animationGroups) {
+            this.animationGroups[id].setWeightForAllAnimatables(0);
+        }
         return 0;
     }
     pauseAllAnimations() {
@@ -1065,7 +1095,7 @@ class EntityController extends AbstractController {
      * @param {function} [callback] 
      */
     beginAnimation(animation, callback = null) {
-        if (this.stopAnim || this.animationPriority >= 2) {
+        if (this.bAnimationStopped || this.animationPriority >= 2) {
             return 1;
         }
         if (!(animation instanceof BABYLON.AnimationGroup)) {
@@ -1076,13 +1106,13 @@ class EntityController extends AbstractController {
                 return 1;
             }
         }
-        if (animation != this.currAnim) {
+        if (animation != this.animationCurrent) {
             /* Prevents an animation from having its weight > 0 when it's swapped out before it reaches 0 */
-            if (this.prevAnim != null && animation != this.prevAnim) {
-                this.prevAnim.setWeightForAllAnimatables(0.0);
+            if (this.animationPrevious != null && animation != this.animationPrevious) {
+                this.animationPrevious.setWeightForAllAnimatables(0.0);
             }
-            this.prevAnim = this.currAnim;
-            this.currAnim = animation;
+            this.animationPrevious = this.animationCurrent;
+            this.animationCurrent = animation;
             this.animationTransitionCount = 0.0;
         }
         if (this.animationTransitionCount < 1) {
@@ -1091,32 +1121,11 @@ class EntityController extends AbstractController {
         if (this.animationTransitionCount > 1) {
             this.animationTransitionCount = 1;
         }
-        if (this.prevAnim instanceof BABYLON.AnimationGroup) {
-            this.prevAnim.setWeightForAllAnimatables(1 - this.animationTransitionCount);
+        if (this.animationPrevious instanceof BABYLON.AnimationGroup) {
+            this.animationPrevious.setWeightForAllAnimatables(1 - this.animationTransitionCount);
         }
-        this.currAnim.setWeightForAllAnimatables(this.animationTransitionCount);
+        this.animationCurrent.setWeightForAllAnimatables(this.animationTransitionCount);
         return 0;
-    }
-    pauseAnim() {
-        this.stopAnim = true;
-        return 0;
-    }
-    resumeAnim() {
-        this.stopAnim = false;
-        return 0;
-    }
-    start() {
-        if (this.started) {
-            return 0;
-        }
-        this.started = true;
-    }
-    stop() {
-        if (!this.started) {
-            return 0;
-        }
-        this.started = false;
-        this.prevAnim = null;
     }
     moveAV() {
         return 0;
