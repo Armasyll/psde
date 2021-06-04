@@ -77,6 +77,7 @@ let SexEnum = {
     "NONE": 0,
     "MALE": 1,
     "FEMALE": 2,
+    "HERM": 3,
     "properties": {
         0: {
             "name": "None",
@@ -92,6 +93,11 @@ let SexEnum = {
             "name": "Female",
             "value": 2,
             "key": "FEMALE"
+        },
+        3: {
+            "name": "Hermaphrodite",
+            "value": 3,
+            "key": "HERM"
         }
     }
 };
@@ -148,7 +154,7 @@ let ItemEnum = {
         7: {
             "name": "Shields",
             "value": 7,
-            kay: "SHIELDS"
+            "key": "SHIELDS"
         }
     }
 };
@@ -561,8 +567,8 @@ let ApparelSlotEnum = {
  */
 let HandednessEnum = {
     "NONE": 0,
-    "HAND_L": 14,
-    "HAND_R": 15,
+    "HAND_L": ApparelSlotEnum.HAND_L,
+    "HAND_R": ApparelSlotEnum.HAND_R,
     "properties": ApparelSlotEnum.properties
 };
 /**
@@ -2760,7 +2766,7 @@ let ToolsAndKitsEnum = {
     "WATER_VEHICLES":ProficiencyEnum.WATER_VEHICLES, // are these really tools?
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Artisan Tools
  * @readonly
@@ -2787,7 +2793,7 @@ let ArtisanToolEnum = {
     "WOODCARVERS_TOOLS": ProficiencyEnum.WOODCARVERS_TOOLS,
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Kits
  * @readonly
@@ -2800,7 +2806,7 @@ let KitEnum = {
     "POISONERS_KIT":ProficiencyEnum.POISONERS_KIT,
     "ANY": ProficiencyEnum.ANY,
     "properties":ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Languages
  * @readonly
@@ -2825,7 +2831,7 @@ let LanguageEnum = {
     "DRUIDIC": ProficiencyEnum.DRUIDIC,
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Musical Instruments
  * @readonly
@@ -2844,7 +2850,7 @@ let MusicalInstrumentEnum = {
     "VIOL": ProficiencyEnum.VIOL,
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Armour Categories
  * @readonly
@@ -2966,7 +2972,7 @@ let SimpleMeleeWeaponEnum = {
     "SPEAR":ProficiencyEnum.SPEAR,
     "SIMPLE_MELEE":ProficiencyEnum.SIMPLE_MELEE,
     "properties":ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Simple Ranged Weapons
  * @readonly
@@ -2979,7 +2985,7 @@ let SimpleRangedWeaponEnum = {
     "SLING":ProficiencyEnum.SLING,
     "SIMPLE_RANGED":ProficiencyEnum.SIMPLE_RANGED,
     "properties":ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Martial Melee Weapons
  * @readonly
@@ -3006,7 +3012,7 @@ let MartialMeleeWeaponEnum = {
     "WHIP":ProficiencyEnum.WHIP,
     "MARTIAL_MELEE":ProficiencyEnum.MARTIAL_MELEE,
     "properties":ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Martial Ranged Weapons
  * @readonly
@@ -3020,7 +3026,7 @@ let MartialRangedWeaponEnum = {
     "NET":ProficiencyEnum.NET,
     "MARTIAL_RANGED":ProficiencyEnum.MARTIAL_RANGED,
     "properties":ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Melee Weapons
  * @readonly
@@ -3085,7 +3091,7 @@ let SkillEnum = {
     "STREETWISE": ProficiencyEnum.STREETWISE,
     "ANY": ProficiencyEnum.ANY,
     "properties": ProficiencyEnum.properties
-}
+};
 /**
  * Enum for Spell Components
  * @readonly
@@ -3342,45 +3348,6 @@ let CreatureSubTypeEnum = {
     }
 };
 /**
- * Enum for Areas
- * @readonly
- * @enum {number}
- */
-let AreaEnum = {
-    "CONE": 0,
-    "CUBE": 1,
-    "CYLINDER": 2,
-    "LINE": 3,
-    "SPHERE": 4,
-    "properties": {
-        0: {
-            "name": "Cone",
-            "value": 0,
-            "key": "CONE",
-        },
-        1: {
-            "name": "Cube",
-            "value": 1,
-            "key": "CUBE",
-        },
-        2: {
-            "name": "Cylinder",
-            "value": 2,
-            "key": "CYLINDER",
-        },
-        3: {
-            "name": "Line",
-            "value": 3,
-            "key": "LINE",
-        },
-        4: {
-            "name": "Sphere",
-            "value": 4,
-            "key": "SPHERE",
-        }
-    }
-}
-/**
  * Enum for Triggers
  * @readonly
  * @enum {number}
@@ -3406,7 +3373,7 @@ let TriggerEnum = {
             "key": "AREA"
         }
     }
-}
+};
 /**
  * Enum for Intervals
  * @readonly
