@@ -95,6 +95,9 @@ class GameGUI {
         GameGUI.inventoryMenu = InventoryGameGUI;
         GameGUI.inventoryMenu.initialize();
         GameGUI.menu.addControl(GameGUI.inventoryMenu.getController());
+        GameGUI.inventoryEquipmentMenu = InventoryEquipmentGameGUI;
+        GameGUI.inventoryEquipmentMenu.initialize();
+        GameGUI.menu.addControl(GameGUI.inventoryEquipmentMenu.getController());
         GameGUI.characterStats = CharacterStatsGUI;
         GameGUI.characterStats.initialize();
         GameGUI.menu.addControl(GameGUI.characterStats.getController());
@@ -120,6 +123,7 @@ class GameGUI {
         GameGUI.hud.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.menu.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
+        GameGUI.inventoryEquipmentMenu.resize();
         GameGUI.dialogue.resize();
         GameGUI.characterStats.resize();
         GameGUI.book.resize();

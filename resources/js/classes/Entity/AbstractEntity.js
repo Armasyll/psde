@@ -72,7 +72,7 @@ class AbstractEntity {
         this.materialID = "missingMaterial";
         /** @type {string} */
         this.textureID = "missingTexture";
-        /** @type {EntityController | null} */
+        /** @type {(EntityController|null)} */
         this.controller = null;
         /** @type {boolean} */
         this.enabled = true;
@@ -123,9 +123,9 @@ class AbstractEntity {
         this.hiddenAvailableActions = {};
         /** @type {Object} */
         this.specialProperties = {};
-        /** @type {ActionEnum | null} */
+        /** @type {(ActionEnum|null)} */
         this.defaultAction = null;
-        /** @type {Container | null} */
+        /** @type {(Container|null)} */
         this.container = null;
         /** @type {boolean} */
         this.held = false;
