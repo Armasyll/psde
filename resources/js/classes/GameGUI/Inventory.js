@@ -29,9 +29,9 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
         InventoryGameGUI.isVisible = false;
+        InventoryGameGUI.targetController = null;
+        InventoryGameGUI.otherController = null;
         InventoryGameGUI.selectedEntity = null;
-        InventoryGameGUI.selectedTarget = null;
-        InventoryGameGUI.selectedActor = Game.playerController;
         InventoryGameGUI.selectedTab = ItemEnum.GENERAL;
         InventoryGameGUI.defaultWidthInPixels = Game.renderWidth;
         InventoryGameGUI.defaultHeightInPixels = Game.renderHeight;
@@ -228,7 +228,7 @@ class InventoryGameGUI {
         InventoryGameGUI.isVisible = false;
     }
     static update() {
-        return InventoryGameGUI.set(InventoryGameGUI.selectedTarget);
+        return InventoryGameGUI.set(InventoryGameGUI.targetController);
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
@@ -249,7 +249,7 @@ class InventoryGameGUI {
         return 0;
     }
     static setResponse(entityController, response, parentCallbackID) {
-        InventoryGameGUI.selectedTarget = entityController;
+        InventoryGameGUI.targetController = entityController;
         InventoryGameGUI.resize();
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             let entry = InventoryGameGUI.items.children[i];

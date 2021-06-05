@@ -621,16 +621,14 @@ class EntityLogic {
             }
             case "getEquipment": {
                 let obj = {};
-                message.forEach((entityID) => {
-                    let entity = AbstractEntity.get(entityID);
-                    if (entity != 1 && entity.hasOwnProperty("equipment")) {
-                        let entityObj = {};
-                        entityObj["id"] = entity.id;
-                        entityObj["controller"] = entity.controller;
-                        entityObj["equipment"] = entity._objectifyProperty(entity.equipment);
-                        obj[entityID] = JSON.stringify(entityObj);
-                    }
-                });
+                let entity = AbstractEntity.get(message["entityID"]);
+                if (entity != 1 && entity.hasOwnProperty("equipment")) {
+                    let entityObj = {};
+                    entityObj["id"] = entity.id;
+                    entityObj["controller"] = entity.controller;
+                    entityObj["equipment"] = entity._objectifyProperty(entity.equipment);
+                    obj[entity.id] = JSON.stringify(entityObj);
+                }
                 EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
                 break;
             }

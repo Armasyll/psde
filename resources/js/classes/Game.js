@@ -5880,10 +5880,7 @@ class Game {
                     let target = null;
                     if (Game.hasCallback(callbackID)) {
                         let callback = Game.getCallback(callbackID);
-                        if (callback["params"].length > 0 && callback["params"][1].hasOwnProperty("entityID")) {
-                            target = callback["params"][1]["entityID"];
-                        }
-                        else if (callback["params"].length > 0 && callback["params"][0].hasOwnProperty("entityID")) {
+                        if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
                             target = callback["params"][0]["entityID"];
                         }
                     }

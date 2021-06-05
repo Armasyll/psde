@@ -29,6 +29,8 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.equipmentFinger1RBox = null;
         InventoryEquipmentGameGUI.equipmentFinger2RBox = null;
 
+        InventoryEquipmentGameGUI.selectedEntity = null;
+        InventoryEquipmentGameGUI.targetController = null;
         InventoryEquipmentGameGUI.defaultWidthInPixels = Game.renderWidth*2/3;
         InventoryEquipmentGameGUI.defaultHeightInPixels = Game.renderHeight*3/4;
         InventoryEquipmentGameGUI.posX = 0;
@@ -243,5 +245,33 @@ class InventoryEquipmentGameGUI {
     static hide() {
         InventoryEquipmentGameGUI.controller.isVisible = false;
         InventoryEquipmentGameGUI.isVisible = false;
+    }
+    static update() {
+        return InventoryEquipmentGameGUI.set(InventoryEquipmentGameGUI.targetController);
+    }
+    static set(entityController = Game.playerController, parentCallbackID = null) {
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
+            }
+            else {
+                return 2;
+            }
+        }
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [entityController], InventoryEquipmentGameGUI.setResponse);
+        Game.entityLogicWorkerPostMessage("getEquipment", 0, {"entityID":entityController.entityID}, callbackID);
+        return 0;
+    }
+    static setResponse(entityController, response, parentCallbackID) {
+        InventoryEquipmentGameGUI.targetController = entityController;
+        console.log(response);
+        return 0;
+    }
+    static clearSelected() {
+        InventoryEquipmentGameGUI.selectedEntity = null;
+    }
+    static clearTooltip() {
+        InventoryEquipmentGameGUI.tooltipEntity = null;
     }
 }
