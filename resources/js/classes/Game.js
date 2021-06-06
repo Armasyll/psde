@@ -5856,6 +5856,16 @@ class Game {
             }
             case "getEntity": {
                 if (status == 0) {
+                    if (typeof message == "string") {
+                        let json = JSON.parse(message);
+                        Game.setCachedEntity(json.id, json);
+                        Game.runCallback(callbackID, json);
+                    }
+                }
+                break;
+            }
+            case "getEntities": {
+                if (status == 0) {
                     if (message instanceof Object) {
                         for (let entry in message) {
                             if (typeof message[entry] == "string") {
@@ -5863,13 +5873,6 @@ class Game {
                                 Game.setCachedEntity(entry, json);
                                 Game.runCallback(callbackID, json);
                             }
-                        }
-                    }
-                    else {
-                        if (typeof message == "string") {
-                            let json = JSON.parse(message);
-                            Game.setCachedEntity(json.id, json);
-                            Game.runCallback(callbackID, json);
                         }
                     }
                 }
@@ -6194,6 +6197,9 @@ class Game {
                     Game.gui.inventoryMenu.update();
                 }
             }
+        }
+        if (Game.gui.inventoryEquipmentMenu.isVisible) {
+            Game.gui.inventoryEquipmentMenu.update();
         }
         return 0;
     }

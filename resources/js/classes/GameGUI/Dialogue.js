@@ -23,25 +23,26 @@ class DialogueGameGUI {
         if (DialogueGameGUI.initialized != true) {
             return 1;
         }
-        DialogueGameGUI.controller.width = String(DialogueGameGUI.defaultWidthInPixels).concat("px");
-        DialogueGameGUI.controller.height = String(DialogueGameGUI.defaultHeightInPixels).concat("px");
-            DialogueGameGUI.titleBar.width = DialogueGameGUI.controller.width;
-            DialogueGameGUI.titleBar.height = GameGUI.getFontSize(2);
-                DialogueGameGUI.title.width = String(DialogueGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
-                DialogueGameGUI.closeButton.width = GameGUI.getFontSize(2);
-                DialogueGameGUI.closeButton.height = GameGUI.getFontSize(2);
-            DialogueGameGUI.bodyContainer.width = DialogueGameGUI.controller.width;
-            DialogueGameGUI.bodyContainer.height = String(DialogueGameGUI.controller.heightInPixels - GameGUI.getFontSizeInPixels(8)).concat("px");
-                DialogueGameGUI.body.width = DialogueGameGUI.bodyContainer.width;
-                DialogueGameGUI.body.height = DialogueGameGUI.bodyContainer.height;
-            DialogueGameGUI.optionsContainer.width = DialogueGameGUI.bodyContainer.width;
-            DialogueGameGUI.optionsContainer.height = GameGUI.getFontSize(6);
-                DialogueGameGUI.optionsColA.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
-                DialogueGameGUI.optionsColA.height = GameGUI.getFontSize(6);
-                DialogueGameGUI.optionsColB.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
-                DialogueGameGUI.optionsColB.height = GameGUI.getFontSize(6);
-                DialogueGameGUI.optionsColC.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
-                DialogueGameGUI.optionsColC.height = GameGUI.getFontSize(6);
+        DialogueGameGUI.controller.widthInPixels = DialogueGameGUI.defaultWidthInPixels;
+        DialogueGameGUI.controller.heightInPixels = DialogueGameGUI.defaultHeightInPixels;
+        DialogueGameGUI.titleBar.widthInPixels = DialogueGameGUI.controller.widthInPixels;
+        DialogueGameGUI.titleBar.heightInPixels = GameGUI.titleBarHeightInPixels;
+        DialogueGameGUI.title.widthInPixels = DialogueGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2);
+        DialogueGameGUI.closeButton.width = GameGUI.getFontSize(2);
+        DialogueGameGUI.closeButton.height = GameGUI.getFontSize(2);
+        DialogueGameGUI.bodyContainer.widthInPixels = DialogueGameGUI.controller.widthInPixels;
+        DialogueGameGUI.bodyContainer.heightInPixels = DialogueGameGUI.controller.heightInPixels - DialogueGameGUI.titleBar.heightInPixels;
+
+            DialogueGameGUI.body.width = DialogueGameGUI.bodyContainer.width;
+            DialogueGameGUI.body.height = DialogueGameGUI.bodyContainer.height;
+        DialogueGameGUI.optionsContainer.width = DialogueGameGUI.bodyContainer.width;
+        DialogueGameGUI.optionsContainer.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsColA.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
+            DialogueGameGUI.optionsColA.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsColB.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
+            DialogueGameGUI.optionsColB.height = GameGUI.getFontSize(6);
+            DialogueGameGUI.optionsColC.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
+            DialogueGameGUI.optionsColC.height = GameGUI.getFontSize(6);
         return 0;
     }
     static generateController() {
@@ -78,18 +79,18 @@ class DialogueGameGUI {
             DialogueGameGUI.optionsContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
             DialogueGameGUI.optionsColA = GameGUI.createStackPanel();
                 DialogueGameGUI.optionsColA.isVertical = true;
-                DialogueGameGUI.optionsColA.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColA.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
                 DialogueGameGUI.optionsColA.height = GameGUI.getFontSize(6);
             DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColA);
             DialogueGameGUI.optionsColB = GameGUI.createStackPanel();
                 DialogueGameGUI.optionsColB.isVertical = true;
-                DialogueGameGUI.optionsColB.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColB.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
                 DialogueGameGUI.optionsColB.height = GameGUI.getFontSize(6);
             DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColB);
             
             DialogueGameGUI.optionsColC = GameGUI.createStackPanel();
                 DialogueGameGUI.optionsColC.isVertical = true;
-                DialogueGameGUI.optionsColC.width = String(DialogueGameGUI.optionsContainer.widthInPixels / 3).concat("px");
+                DialogueGameGUI.optionsColC.widthInPixels = Math.floor(DialogueGameGUI.optionsContainer.widthInPixels / 3);
                 DialogueGameGUI.optionsColC.height = GameGUI.getFontSize(6);
             DialogueGameGUI.optionsContainer.addControl(DialogueGameGUI.optionsColC);
         DialogueGameGUI.bodyContainer.addControl(DialogueGameGUI.optionsContainer);

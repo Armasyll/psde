@@ -43,57 +43,58 @@ class InventoryGameGUI {
         if (InventoryGameGUI.initialized != true) {
             return 1;
         }
-        InventoryGameGUI.controller.width = String(InventoryGameGUI.defaultWidthInPixels).concat("px");
-        InventoryGameGUI.controller.height = String(InventoryGameGUI.defaultHeightInPixels).concat("px");
-            InventoryGameGUI.titleBar.width = InventoryGameGUI.controller.width;
-            InventoryGameGUI.titleBar.height = GameGUI.getFontSize(2);
-                InventoryGameGUI.title.width = String(InventoryGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
-                InventoryGameGUI.closeButton.width = GameGUI.getFontSize(2);
-                InventoryGameGUI.closeButton.height = GameGUI.getFontSize(2);
-            InventoryGameGUI.bodyContainer.width = InventoryGameGUI.controller.width;
-            InventoryGameGUI.bodyContainer.height = String(InventoryGameGUI.controller.heightInPixels - GameGUI.getFontSizeInPixels(8)).concat("px");
-                InventoryGameGUI.tabsAndItems.height = InventoryGameGUI.bodyContainer.height;
-                InventoryGameGUI.tabsAndItems.width = String((InventoryGameGUI.bodyContainer.widthInPixels / 3) * 2).concat("px");
-                    InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
-                    InventoryGameGUI.tabs.width = InventoryGameGUI.tabsAndItems.width;
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsAll);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsClothing);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsWeapons);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsShields);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsConsumables);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsBooks);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsKeys);
-                        InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsMisc);
-                    InventoryGameGUI.itemsContainer.height = String(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2).concat("px");
-                    InventoryGameGUI.itemsContainer.width = InventoryGameGUI.tabsAndItems.width;
-                        InventoryGameGUI.items.height = "900px"
-                        InventoryGameGUI.items.width = InventoryGameGUI.itemsContainer.width;
-                    InventoryGameGUI.tabsAndItemsSummary.height = GameGUI.getFontSize(4);
-                    InventoryGameGUI.tabsAndItemsSummary.width = InventoryGameGUI.tabsAndItems.width;
-                        InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                        InventoryGameGUI.tAISWeightContainer.width = String(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2).concat("px");
-                            InventoryGameGUI.tAISWeightIcon.height = InventoryGameGUI.tAISWeightContainer.height;
-                            InventoryGameGUI.tAISWeightIcon.width = InventoryGameGUI.tAISWeightContainer.height;
-                            InventoryGameGUI.tAISWeight.height = InventoryGameGUI.tAISWeightContainer.height;
-                            InventoryGameGUI.tAISWeight.fontSize = InventoryGameGUI.tAISWeightContainer.height;
-                        InventoryGameGUI.tAISMoneyContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                        InventoryGameGUI.tAISMoneyContainer.width = String(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2).concat("px");
-                            InventoryGameGUI.tAISMoneyIcon.height = InventoryGameGUI.tAISMoneyContainer.height;
-                            InventoryGameGUI.tAISMoneyIcon.width = InventoryGameGUI.tAISMoneyContainer.height;
-                            InventoryGameGUI.tAISMoney.height = InventoryGameGUI.tAISMoneyContainer.height;
-                            InventoryGameGUI.tAISMoney.fontSize = InventoryGameGUI.tAISMoneyContainer.height;
-                InventoryGameGUI.selectedSummary.height = InventoryGameGUI.bodyContainer.height;
-                InventoryGameGUI.selectedSummary.width = String(InventoryGameGUI.bodyContainer.widthInPixels / 3).concat("px");
-                    InventoryGameGUI.selectedName.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedName.height = GameGUI.getFontSize(2);
-                    InventoryGameGUI.selectedImage.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedImage.height = String(InventoryGameGUI.bodyContainer.heightInPixels - GameGUI.getFontSizeInPixels(26)).concat("px");
-                    InventoryGameGUI.selectedDescription.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedDescription.height = GameGUI.getFontSize(8);
-                    InventoryGameGUI.selectedDetails.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedDetails.height = GameGUI.getFontSize(4);
-                    InventoryGameGUI.selectedActions.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedActions.height = GameGUI.getFontSize(12);
+        InventoryGameGUI.controller.widthInPixels = InventoryGameGUI.defaultWidthInPixels;
+        InventoryGameGUI.controller.heightInPixels = InventoryGameGUI.defaultHeightInPixels;
+        InventoryGameGUI.titleBar.widthInPixels = InventoryGameGUI.controller.widthInPixels;
+        InventoryGameGUI.titleBar.heightInPixels = GameGUI.titleBarHeightInPixels;
+        InventoryGameGUI.title.widthInPixels = InventoryGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2);
+        InventoryGameGUI.closeButton.width = GameGUI.getFontSize(2);
+        InventoryGameGUI.closeButton.height = GameGUI.getFontSize(2);
+        InventoryGameGUI.bodyContainer.widthInPixels = InventoryGameGUI.controller.widthInPixels;
+        InventoryGameGUI.bodyContainer.heightInPixels = InventoryGameGUI.controller.heightInPixels - InventoryGameGUI.titleBar.heightInPixels;
+        
+        InventoryGameGUI.tabsAndItems.height = InventoryGameGUI.bodyContainer.height;
+        InventoryGameGUI.tabsAndItems.widthInPixels = Math.floor((InventoryGameGUI.bodyContainer.widthInPixels / 3) * 2);
+            InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
+            InventoryGameGUI.tabs.width = InventoryGameGUI.tabsAndItems.width;
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsAll);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsClothing);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsWeapons);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsShields);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsConsumables);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsBooks);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsKeys);
+                InventoryGameGUI._resizeTabButton(InventoryGameGUI.tabsMisc);
+            InventoryGameGUI.itemsContainer.heightInPixels = Math.floor(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2);
+            InventoryGameGUI.itemsContainer.width = InventoryGameGUI.tabsAndItems.width;
+                InventoryGameGUI.items.height = "900px"
+                InventoryGameGUI.items.width = InventoryGameGUI.itemsContainer.width;
+            InventoryGameGUI.tabsAndItemsSummary.height = GameGUI.getFontSize(4);
+            InventoryGameGUI.tabsAndItemsSummary.width = InventoryGameGUI.tabsAndItems.width;
+                InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
+                InventoryGameGUI.tAISWeightContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
+                    InventoryGameGUI.tAISWeightIcon.height = InventoryGameGUI.tAISWeightContainer.height;
+                    InventoryGameGUI.tAISWeightIcon.width = InventoryGameGUI.tAISWeightContainer.height;
+                    InventoryGameGUI.tAISWeight.height = InventoryGameGUI.tAISWeightContainer.height;
+                    InventoryGameGUI.tAISWeight.fontSize = InventoryGameGUI.tAISWeightContainer.height;
+                InventoryGameGUI.tAISMoneyContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
+                InventoryGameGUI.tAISMoneyContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
+                    InventoryGameGUI.tAISMoneyIcon.height = InventoryGameGUI.tAISMoneyContainer.height;
+                    InventoryGameGUI.tAISMoneyIcon.width = InventoryGameGUI.tAISMoneyContainer.height;
+                    InventoryGameGUI.tAISMoney.height = InventoryGameGUI.tAISMoneyContainer.height;
+                    InventoryGameGUI.tAISMoney.fontSize = InventoryGameGUI.tAISMoneyContainer.height;
+        InventoryGameGUI.selectedSummary.height = InventoryGameGUI.bodyContainer.height;
+        InventoryGameGUI.selectedSummary.widthInPixels = Math.floor(InventoryGameGUI.bodyContainer.widthInPixels / 3);
+            InventoryGameGUI.selectedName.width = InventoryGameGUI.selectedSummary.width;
+            InventoryGameGUI.selectedName.height = GameGUI.getFontSize(2);
+            InventoryGameGUI.selectedImage.width = InventoryGameGUI.selectedSummary.width;
+            InventoryGameGUI.selectedImage.heightInPixels = Math.floor(InventoryGameGUI.bodyContainer.heightInPixels - GameGUI.getFontSizeInPixels(26));
+            InventoryGameGUI.selectedDescription.width = InventoryGameGUI.selectedSummary.width;
+            InventoryGameGUI.selectedDescription.height = GameGUI.getFontSize(8);
+            InventoryGameGUI.selectedDetails.width = InventoryGameGUI.selectedSummary.width;
+            InventoryGameGUI.selectedDetails.height = GameGUI.getFontSize(4);
+            InventoryGameGUI.selectedActions.width = InventoryGameGUI.selectedSummary.width;
+            InventoryGameGUI.selectedActions.height = GameGUI.getFontSize(12);
         return 0;
     }
     static generateController() {
@@ -101,7 +102,7 @@ class InventoryGameGUI {
         InventoryGameGUI.bodyContainer.isVertical = false;
         InventoryGameGUI.tabsAndItems = GameGUI.createStackPanel("tabsAndItems");
             InventoryGameGUI.tabsAndItems.height = InventoryGameGUI.bodyContainer.height;
-            InventoryGameGUI.tabsAndItems.width = String((InventoryGameGUI.bodyContainer.widthInPixels / 3) * 2).concat("px");
+            InventoryGameGUI.tabsAndItems.widthInPixels = Math.floor((InventoryGameGUI.bodyContainer.widthInPixels / 3) * 2);
             InventoryGameGUI.tabsAndItems.isVertical = true;
             InventoryGameGUI.tabs = GameGUI.createStackPanel("tabs");
                 InventoryGameGUI.tabs.height = GameGUI.getFontSize(4);
@@ -125,12 +126,12 @@ class InventoryGameGUI {
                     InventoryGameGUI.tabs.addControl(InventoryGameGUI.tabsMisc);
                 InventoryGameGUI.tabsAndItems.addControl(InventoryGameGUI.tabs);
             InventoryGameGUI.itemsContainer = new BABYLON.GUI.ScrollViewer("itemsContainer");
-                InventoryGameGUI.itemsContainer.height = String(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2).concat("px");
+                InventoryGameGUI.itemsContainer.heightInPixels = Math.floor(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2);
                 InventoryGameGUI.itemsContainer.width = InventoryGameGUI.tabsAndItems.width;
                 InventoryGameGUI.itemsContainer._horizontalBarSpace.isVisible = false;
                 InventoryGameGUI.itemsContainer._horizontalBarSpace.isEnabled = false;
                 InventoryGameGUI.items = GameGUI.createStackPanel("items");
-                    InventoryGameGUI.items.height = String(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2).concat("px"); // multiplied by two for both tabs, and summary
+                    InventoryGameGUI.items.heightInPixels = Math.floor(InventoryGameGUI.tabsAndItems.heightInPixels - InventoryGameGUI.tabs.heightInPixels * 2); // multiplied by two for both tabs, and summary
                     InventoryGameGUI.items.width = InventoryGameGUI.tabsAndItems.width;
                     InventoryGameGUI.items.horizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
                     InventoryGameGUI.items.isVertical = true;
@@ -143,7 +144,7 @@ class InventoryGameGUI {
                 InventoryGameGUI.tabsAndItems.addControl(InventoryGameGUI.tabsAndItemsSummary);
                 InventoryGameGUI.tAISWeightContainer = GameGUI.createStackPanel("tAISWeightContainer");
                     InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                    InventoryGameGUI.tAISWeightContainer.width = String(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2).concat("px");
+                    InventoryGameGUI.tAISWeightContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
                     InventoryGameGUI.tAISWeightContainer.isVertical = false;
                     InventoryGameGUI.tAISWeightIcon = new BABYLON.GUI.Image("tAISWeightIcon", Game.getIcon("genericBagIcon"));
                         InventoryGameGUI.tAISWeightIcon.height = InventoryGameGUI.tAISWeightContainer.height;
@@ -151,7 +152,7 @@ class InventoryGameGUI {
                         InventoryGameGUI.tAISWeightIcon.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                     InventoryGameGUI.tAISWeight = GameGUI.createTextBlock("tAISWeight", "0");
                         InventoryGameGUI.tAISWeight.height = InventoryGameGUI.tAISWeightContainer.height;
-                        InventoryGameGUI.tAISWeight.width = String(InventoryGameGUI.tAISWeightContainer.widthInPixels - InventoryGameGUI.tAISWeightIcon.widthInPixels).concat("px");
+                        InventoryGameGUI.tAISWeight.widthInPixels = Math.floor(InventoryGameGUI.tAISWeightContainer.widthInPixels - InventoryGameGUI.tAISWeightIcon.widthInPixels);
                         InventoryGameGUI.tAISWeight.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                         InventoryGameGUI.tAISWeight.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                         InventoryGameGUI.tAISWeight.fontSize = InventoryGameGUI.tAISWeightContainer.height;
@@ -160,7 +161,7 @@ class InventoryGameGUI {
                 InventoryGameGUI.tabsAndItemsSummary.addControl(InventoryGameGUI.tAISWeightContainer);
                 InventoryGameGUI.tAISMoneyContainer = GameGUI.createStackPanel("tAISMoneyContainer");
                     InventoryGameGUI.tAISMoneyContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                    InventoryGameGUI.tAISMoneyContainer.width = String(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2).concat("px");
+                    InventoryGameGUI.tAISMoneyContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
                     InventoryGameGUI.tAISMoneyContainer.isVertical = false;
                     InventoryGameGUI.tAISMoneyIcon = new BABYLON.GUI.Image("tAISMoneyIcon", Game.getIcon("genericMoneyIcon"));
                         InventoryGameGUI.tAISMoneyIcon.height = InventoryGameGUI.tAISMoneyContainer.height;
@@ -168,7 +169,7 @@ class InventoryGameGUI {
                         InventoryGameGUI.tAISMoneyIcon.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                     InventoryGameGUI.tAISMoney = GameGUI.createTextBlock("tAISMoney", "0");
                         InventoryGameGUI.tAISMoney.height = InventoryGameGUI.tAISMoneyContainer.height;
-                        InventoryGameGUI.tAISMoney.width = String(InventoryGameGUI.tAISMoneyContainer.widthInPixels - InventoryGameGUI.tAISMoneyIcon.widthInPixels).concat("px");
+                        InventoryGameGUI.tAISMoney.widthInPixels = Math.floor(InventoryGameGUI.tAISMoneyContainer.widthInPixels - InventoryGameGUI.tAISMoneyIcon.widthInPixels);
                         InventoryGameGUI.tAISMoney.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                         InventoryGameGUI.tAISMoney.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
                         InventoryGameGUI.tAISMoney.fontSize = InventoryGameGUI.tAISMoneyContainer.height;
@@ -179,7 +180,7 @@ class InventoryGameGUI {
             
             InventoryGameGUI.selectedSummary = GameGUI.createStackPanel("summary");
                 InventoryGameGUI.selectedSummary.height = InventoryGameGUI.bodyContainer.height;
-                InventoryGameGUI.selectedSummary.width = String(InventoryGameGUI.bodyContainer.widthInPixels / 3).concat("px");
+                InventoryGameGUI.selectedSummary.widthInPixels = Math.floor(InventoryGameGUI.bodyContainer.widthInPixels / 3);
                 InventoryGameGUI.selectedSummary.isVertical = true;
                 InventoryGameGUI.selectedName = GameGUI.createTextBlock("selectedName");
                     InventoryGameGUI.selectedName.width = InventoryGameGUI.selectedSummary.width;
@@ -187,7 +188,7 @@ class InventoryGameGUI {
                     InventoryGameGUI.selectedSummary.addControl(InventoryGameGUI.selectedName);
                 InventoryGameGUI.selectedImage = new BABYLON.GUI.Image("selectedImage", "resources/images/blank.svg");
                     InventoryGameGUI.selectedImage.width = InventoryGameGUI.selectedSummary.width;
-                    InventoryGameGUI.selectedImage.height = String(InventoryGameGUI.bodyContainer.heightInPixels - GameGUI.getFontSizeInPixels(26)).concat("px");
+                    InventoryGameGUI.selectedImage.heightInPixels = Math.floor(InventoryGameGUI.bodyContainer.heightInPixels - GameGUI.getFontSizeInPixels(26));
                     InventoryGameGUI.selectedImage.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
                     InventoryGameGUI.selectedSummary.addControl(InventoryGameGUI.selectedImage);
                 InventoryGameGUI.selectedDescription = GameGUI.createTextBlock("selectedDescription");
@@ -268,7 +269,7 @@ class InventoryGameGUI {
                 InventoryGameGUI.items.addControl(button);
                 itemsHeightInPixels += button.heightInPixels;
             };
-            InventoryGameGUI.items.height = String(itemsHeightInPixels).concat("px");
+            InventoryGameGUI.items.heightInPixels = Math.floor(itemsHeightInPixels);
             InventoryGameGUI.tAISWeight.text = String(response.container.size);
             InventoryGameGUI.tAISWeightContainer.isVisible = true;
             InventoryGameGUI.clearSelected();
@@ -306,7 +307,7 @@ class InventoryGameGUI {
         }
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponse);
-        Game.entityLogicWorkerPostMessage("getEntity", 0, [itemID], callbackID);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, itemID, callbackID);
         return 0;
     }
     static hasSelected() {
@@ -428,7 +429,7 @@ class InventoryGameGUI {
         id = Game.filterID(id);
         let button = new BABYLON.GUI.Button(id);
             button.width = InventoryGameGUI.items.width;
-            button.height = String(InventoryGameGUI.items.heightInPixels / 10).concat("px");
+            button.heightInPixels = Math.floor(InventoryGameGUI.items.heightInPixels / 10);
             button.thickness = 0;
             let container = GameGUI.createStackPanel(id + "StackPanel");
                 container.width = button.width;
@@ -442,7 +443,7 @@ class InventoryGameGUI {
                     image.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                     container.addControl(image);
                 let text = GameGUI.createTextBlock(id + "TextBlock", title);
-                    text.width = String(button.widthInPixels - button.heightInPixels).concat("px");
+                    text.widthInPixels = Math.floor(button.widthInPixels - button.heightInPixels);
                     text.text = title;
                     text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                     text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -452,7 +453,7 @@ class InventoryGameGUI {
     static createTabButton(id = "", title = "", iconPath = null, onClick = null) {
         id = Game.filterID(id);
         let button = new BABYLON.GUI.Button(id);
-            button.width = String(InventoryGameGUI.tabs.widthInPixels / 8).concat("px");
+            button.widthInPixels = Math.floor(InventoryGameGUI.tabs.widthInPixels / 8);
             button.height = InventoryGameGUI.tabs.height;
             button.thickness = 0;
             let container = GameGUI.createStackPanel(id + "StackPanel");
@@ -469,7 +470,7 @@ class InventoryGameGUI {
                     container.addControl(image);
                 }
                 let text = GameGUI.createTextBlock(id + "TextBlock", title);
-                    text.width = String(button.widthInPixels - button.heightInPixels).concat("px");
+                    text.widthInPixels = Math.floor(button.widthInPixels - button.heightInPixels);
                     text.text = title;
                     text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                     text.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -480,17 +481,17 @@ class InventoryGameGUI {
         return button;
     }
     static _resizeTabButton(tabButton) {
-        tabButton.width = String(InventoryGameGUI.tabs.widthInPixels / 8).concat("px");
-        tabButton.height = String(InventoryGameGUI.tabs.heightInPixels).concat("px");
+        tabButton.widthInPixels = Math.floor(InventoryGameGUI.tabs.widthInPixels / 8);
+        tabButton.heightInPixels = Math.floor(InventoryGameGUI.tabs.heightInPixels);
         if (tabButton.children[0].children.length == 1) {
-            tabButton.children[0].children[0].width = String(tabButton.widthInPixels).concat("px");
-            tabButton.children[0].children[0].height = String(tabButton.heightInPixels).concat("px");
+            tabButton.children[0].children[0].widthInPixels = Math.floor(tabButton.widthInPixels);
+            tabButton.children[0].children[0].heightInPixels = Math.floor(tabButton.heightInPixels);
         }
         else if (tabButton.children[0].children.length == 2) {
-            tabButton.children[0].children[0].width = String(tabButton.heightInPixels).concat("px");
-            tabButton.children[0].children[0].height = String(tabButton.heightInPixels).concat("px");
-            tabButton.children[0].children[1].width = String(tabButton.widthInPixels - tabButton.heightInPixels).concat("px");
-            tabButton.children[0].children[1].height = String(tabButton.heightInPixels).concat("px");
+            tabButton.children[0].children[0].widthInPixels = Math.floor(tabButton.heightInPixels);
+            tabButton.children[0].children[0].heightInPixels = Math.floor(tabButton.heightInPixels);
+            tabButton.children[0].children[1].widthInPixels = Math.floor(tabButton.widthInPixels - tabButton.heightInPixels);
+            tabButton.children[0].children[1].heightInPixels = Math.floor(tabButton.heightInPixels);
         }
         return 0;
     }

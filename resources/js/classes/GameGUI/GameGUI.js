@@ -24,6 +24,7 @@ class GameGUI {
         GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
         GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
+        GameGUI.titleBarHeightInPixels = GameGUI.getFontSize(2);
         GameGUI.alpha = 0.75;
         GameGUI.containerAlpha = 0.75;
         GameGUI.color = "#c3c3c3";
@@ -498,7 +499,7 @@ class GameGUI {
         rectangle.color = GameGUI.color;
         rectangle.disabledColorItem = GameGUI.color;
         rectangle.thickness = 0;
-        rectangle.background = GameGUI.background;
+        rectangle.background = null;
         return rectangle;
     }
     static createStackPanel(...params) {
@@ -506,7 +507,7 @@ class GameGUI {
         stackPanel.color = GameGUI.color;
         stackPanel.disabledColorItem = GameGUI.color;
         stackPanel.thickness = 0;
-        stackPanel.background = GameGUI.background;
+        stackPanel.background = null;
         return stackPanel;
     }
     static createContainedTextBlock(id, text) {
@@ -568,6 +569,7 @@ class GameGUI {
             tooltip.left = "6.25%";
             tooltip.alpha = GameGUI.alpha;
             tooltip.isVertical = false;
+            tooltip.background = GameGUI.focusedBackground;
         let keyName = GameGUI.createTextBlock();
             keyName.text = "E";
             keyName.top = 0;
@@ -855,9 +857,10 @@ class GameGUI {
             controller.isVertical = true;
             controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
             controller.isVisible = false;
+            controller.background = GameGUI.background;
         let titleBar = GameGUI.createStackPanel(String(id).concat("TitleBar"));
             titleBar.width = controller.width;
-            titleBar.height = GameGUI.getFontSize(2);
+            titleBar.height = GameGUI.titleBarHeightInPixels;
             titleBar.isVertical = false;
             titleBar.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         let title = GameGUI.createTextBlock(String(id).concat("Title"));

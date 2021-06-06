@@ -601,7 +601,7 @@ class EntityLogic {
                 }
                 break;
             }
-            case "getEntity": {
+            case "getEntities": {
                 if (!(message instanceof Array)) {
                     break;
                 }
@@ -612,10 +612,19 @@ class EntityLogic {
                     }
                 });
                 if (Object.keys(ids).length == 0) {
-                    EntityLogic.gameWorkerPostMessage("getEntity", 1, null, callbackID);
+                    EntityLogic.gameWorkerPostMessage("getEntities", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("getEntity", 0, ids, callbackID);
+                    EntityLogic.gameWorkerPostMessage("getEntities", 0, ids, callbackID);
+                }
+                break;
+            }
+            case "getEntity": {
+                if (AbstractEntity.has(message)) {
+                    EntityLogic.gameWorkerPostMessage("getEntity", 0, AbstractEntity.get(message).stringify(), callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("getEntity", 1, null, callbackID);
                 }
                 break;
             }

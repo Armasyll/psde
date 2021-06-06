@@ -1,4 +1,5 @@
 {
+    "blankIcon": "resources/images/blank.png",
     "charlieIcon": "resources/images/icons/characters/charlie_64.png",
     "genericItemIcon": "resources/images/icons/items/genericItem_64.png",
     "genericCharacterIcon": "resources/images/icons/characters/genericCharacter_64.png",
