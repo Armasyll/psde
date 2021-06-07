@@ -5923,6 +5923,10 @@ class Game {
                 }
                 break;
             }
+            case "hasItem": {
+                Game.runCallback(callbackID, message);
+                break;
+            }
             case "hasController": {
                 let ids = {};
                 message.forEach((id) => {
@@ -6082,6 +6086,15 @@ class Game {
                     }
                 }
                 break;
+            }
+            default: {
+                if (status == 0) {
+                    if (typeof message == "string") {
+                        let json = JSON.parse(message);
+                        Game.setCachedEntity(json.id, json);
+                        Game.runCallback(callbackID, json);
+                    }
+                }
             }
         }
         if (Game.debugMode) console.groupEnd();
@@ -6249,7 +6262,7 @@ class Game {
             id = [id];
         }
         callbackID = Game.filterID(callbackID);
-        Game.entityLogicWorkerPostMessage("getEntity", 0, id, callbackID);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":id}, callbackID);
         return 0;
     }
 

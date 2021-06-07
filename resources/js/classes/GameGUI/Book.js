@@ -6,6 +6,14 @@ class BookGameGUI {
         BookGameGUI.titleBar = null;
         BookGameGUI.closeButton = null;
         BookGameGUI.bodyContainer = null;
+        BookGameGUI.fullScreen = true;
+        BookGameGUI.defaultWidthInPixels = 0;
+        BookGameGUI.defaultHeightInPixels = 0;
+        BookGameGUI.windowWidthInPixels = -1;
+        BookGameGUI.windowHeightInPixels = -1;
+        BookGameGUI.posX = 0;
+        BookGameGUI.posY = 0;
+
         BookGameGUI.currentOffset = 0;
         BookGameGUI.currentBook = "";
         BookGameGUI.currentPage = 0;
@@ -20,13 +28,26 @@ class BookGameGUI {
         BookGameGUI.hasPreviousPage = false;
         BookGameGUI.locked = false;
         BookGameGUI.isVisible = false;
+
+        BookGameGUI.resetDefaultDimensions();
+        BookGameGUI.generateController();
+        return 0;
+    }
+    static resetDefaultDimensions() {
         BookGameGUI.defaultWidthInPixels = Game.renderWidth - GameGUI.fontSizeInPixels * 8;
         BookGameGUI.defaultHeightInPixels = Game.renderHeight - GameGUI.fontSizeInPixels * 8;
-        BookGameGUI.posX = 0;
-        BookGameGUI.posY = 0;
-        BookGameGUI.generateController();
+        return 0;
     }
     static resize() {
+        if (BookGameGUI.initialized != true) {
+            return 1;
+        }
+        BookGameGUI.resetDefaultDimensions();
+        if (BookGameGUI.fullScreen) {
+            BookGameGUI.windowWidthInPixels = Game.renderWidth;
+            BookGameGUI.windowHeightInPixels = Game.renderHeight;
+        }
+
         BookGameGUI.controller.widthInPixels = BookGameGUI.defaultWidthInPixels;
         BookGameGUI.controller.heightInPixels = BookGameGUI.defaultHeightInPixels;
         BookGameGUI.titleBar.widthInPixels = BookGameGUI.controller.widthInPixels;

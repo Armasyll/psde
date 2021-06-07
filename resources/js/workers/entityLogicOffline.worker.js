@@ -349,7 +349,7 @@ class EntityLogic {
             case "addAllClothing": {
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addAllClothing", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 let target = AbstractEntity.get(message["target"]);
                 for (let item in ClothingEntity.list()) {
@@ -364,7 +364,7 @@ class EntityLogic {
             case "addAllItems": {
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addAllItems", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 let target = AbstractEntity.get(message["target"]);
                 for (let item in ItemEntity.list()) {
@@ -379,7 +379,7 @@ class EntityLogic {
             case "addAllKeys": {
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addAllKeys", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 let target = AbstractEntity.get(message["target"]);
                 for (let item in KeyEntity.list()) {
@@ -394,7 +394,7 @@ class EntityLogic {
             case "addAllWeapons": {
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addAllWeapons", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 let target = AbstractEntity.get(message["target"]);
                 for (let item in WeaponEntity.list()) {
@@ -409,16 +409,16 @@ class EntityLogic {
             case "addItem": {
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 if (!AbstractEntity.has(message["entityID"])) {
                     EntityLogic.gameWorkerPostMessage("addItem", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 let target = AbstractEntity.get(message["target"]);
                 if (!target.hasContainer()) {
                     EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id}, callbackID);
-                    return 1;
+                    break;
                 }
                 let entity = AbstractEntity.get(message["entityID"]);
                 let amount = Number.parseInt(message["amount"]) || 1;
@@ -429,7 +429,7 @@ class EntityLogic {
                 }
                 else {
                     EntityLogic.gameWorkerPostMessage("addItem", 1, {"targetName": target.getName(), "targetID": target.id, "entityID": entity}, callbackID);
-                    return 1;
+                    break;
                 }
                 EntityLogic.gameWorkerPostMessage("addItem", 0, {"targetName": target.getName(), "targetID": target.id, "amount": amount, "itemName": entity.getName(), "itemID": entity.id}, callbackID);
                 if (target == EntityLogic.playerEntity) {
@@ -441,12 +441,12 @@ class EntityLogic {
                 let target = null;
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("addMoney", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 target = AbstractEntity.get(message["target"]);
                 if (!target.hasOwnProperty("money")) {
                     EntityLogic.gameWorkerPostMessage("addMoney", 1, {"targetName": target.getName(), "targetID": target.id, "amount": target.money}, callbackID);
-                    return 1;
+                    break;
                 }
                 let amount = Number.parseInt(message["amount"]) || 1;
                 target.modifyMoney(amount);
@@ -620,8 +620,8 @@ class EntityLogic {
                 break;
             }
             case "getEntity": {
-                if (AbstractEntity.has(message)) {
-                    EntityLogic.gameWorkerPostMessage("getEntity", 0, AbstractEntity.get(message).stringify(), callbackID);
+                if (AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("getEntity", 0, AbstractEntity.get(message["entityID"]).stringify(), callbackID);
                 }
                 else {
                     EntityLogic.gameWorkerPostMessage("getEntity", 1, null, callbackID);
@@ -659,12 +659,12 @@ class EntityLogic {
                 let target = null;
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("getMoney", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 target = AbstractEntity.get(message["target"]);
                 if (!target.hasOwnProperty("money")) {
                     EntityLogic.gameWorkerPostMessage("getMoney", 1, {"targetName": target.getName(), "targetID": target.id}, callbackID);
-                    return 1;
+                    break;
                 }
                 EntityLogic.gameWorkerPostMessage("getMoney", 0, {"targetName": target.getName(), "targetID": target.id, "amount": target.money}, callbackID);
                 break;
@@ -721,6 +721,40 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("hasInventory", 0, ids, callbackID);
                 break;
             }
+            case "hasItem": {
+                if (!message.hasOwnProperty("entityID") || !AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
+                    break;
+                }
+                if (message.hasOwnProperty("target")) {
+                    if (!AbstractEntity.has(message["target"])) {
+                        EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
+                        break;
+                    }
+                    let target = AbstractEntity.get(message["target"]);
+                    if (!target.hasContainer()) {
+                        EntityLogic.gameWorkerPostMessage("hasItem", 1, {"targetName": target.getName(), "targetID": target.id, "hasItem":false}, callbackID);
+                        break;
+                    }
+                    let entity = AbstractEntity.get(message["entityID"]);
+                    if (target == EntityLogic.playerEntity) {
+                        EntityLogic.sendPlayerEntityUpdates();
+                    }
+                    if (target.hasItem(entity)) {
+                        EntityLogic.gameWorkerPostMessage("hasItem", 0, {"targetName": target.getName(), "targetID": target.id, "itemName": entity.getName(), "itemID": entity.id, "hasItem":true}, callbackID);
+                    }
+                }
+                else if (InstancedItemEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 0, {"hasItem":true}, callbackID);
+                }
+                else if (ItemEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 0, {"hasItem":true}, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
+                }
+                break;
+            }
             case "hasAvailableMesh": {
                 break;
             }
@@ -774,12 +808,12 @@ class EntityLogic {
                 let target = null;
                 if (!AbstractEntity.has(message["target"])) {
                     EntityLogic.gameWorkerPostMessage("setMoney", 2, {}, callbackID);
-                    return 2;
+                    break;
                 }
                 target = AbstractEntity.get(message["target"]);
                 if (!target.hasOwnProperty("money")) {
                     EntityLogic.gameWorkerPostMessage("setMoney", 1, {"targetName": target.getName(), "targetID": target.id, "amount": target.money}, callbackID);
-                    return 1;
+                    break;
                 }
                 let amount = Number.parseInt(message["amount"]) || 1;
                 target.setMoney(amount);

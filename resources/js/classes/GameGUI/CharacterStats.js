@@ -6,19 +6,36 @@ class CharacterStatsGUI {
         CharacterStatsGUI.titleBar = null;
         CharacterStatsGUI.closeButton = null;
         CharacterStatsGUI.bodyContainer = null;
-        CharacterStatsGUI.nameField = null;
-        CharacterStatsGUI.isVisible = false;
-        CharacterStatsGUI.defaultWidthInPixels = Game.renderWidth;
-        CharacterStatsGUI.defaultHeightInPixels = Game.renderHeight;
+        CharacterStatsGUI.fullScreen = true;
+        CharacterStatsGUI.defaultWidthInPixels = 0;
+        CharacterStatsGUI.defaultHeightInPixels = 0;
+        CharacterStatsGUI.windowWidthInPixels = -1;
+        CharacterStatsGUI.windowHeightInPixels = -1;
         CharacterStatsGUI.posX = 0;
         CharacterStatsGUI.posY = 0;
+
+        CharacterStatsGUI.nameField = null;
+        CharacterStatsGUI.isVisible = false;
+
+        CharacterStatsGUI.resetDefaultDimensions();
         CharacterStatsGUI.generateController();
+        return 0;
+    }
+    static resetDefaultDimensions() {
+        CharacterStatsGUI.defaultWidthInPixels = Game.renderWidth;
+        CharacterStatsGUI.defaultHeightInPixels = Game.renderHeight;
         return 0;
     }
     static resize() {
         if (CharacterStatsGUI.initialized != true) {
             return 1;
         }
+        CharacterStatsGUI.resetDefaultDimensions();
+        if (CharacterStatsGUI.fullScreen) {
+            CharacterStatsGUI.windowWidthInPixels = Game.renderWidth;
+            CharacterStatsGUI.windowHeightInPixels = Game.renderHeight;
+        }
+
         CharacterStatsGUI.controller.widthInPixels = CharacterStatsGUI.defaultWidthInPixels;
         CharacterStatsGUI.controller.heightInPixels = CharacterStatsGUI.defaultHeightInPixels;
         CharacterStatsGUI.titleBar.widthInPixels = CharacterStatsGUI.controller.widthInPixels;
@@ -1680,7 +1697,7 @@ class CharacterStatsGUI {
         }
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [creatureController], CharacterStatsGUI.setResponse);
-        Game.entityLogicWorkerPostMessage("getEntity", 0, creatureController.entityID, callbackID);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":creatureController.entityID}, callbackID);
         return 0;
     }
     static setResponse(creatureController, response, callbackID) {

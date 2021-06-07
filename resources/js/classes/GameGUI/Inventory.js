@@ -6,6 +6,14 @@ class InventoryGameGUI {
         InventoryGameGUI.titleBar = null;
         InventoryGameGUI.closeButton = null;
         InventoryGameGUI.bodyContainer = null;
+        InventoryGameGUI.fullScreen = true;
+        InventoryGameGUI.defaultWidthInPixels = 0;
+        InventoryGameGUI.defaultHeightInPixels = 0;
+        InventoryGameGUI.windowWidthInPixels = -1;
+        InventoryGameGUI.windowHeightInPixels = -1;
+        InventoryGameGUI.posX = 0;
+        InventoryGameGUI.posY = 0;
+
         InventoryGameGUI.tabsAndItems = null;
         InventoryGameGUI.tabs = null;
         InventoryGameGUI.tabsAll = null;
@@ -33,18 +41,28 @@ class InventoryGameGUI {
         InventoryGameGUI.otherController = null;
         InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedTab = ItemEnum.GENERAL;
+
+        InventoryGameGUI.resetDefaultDimensions();
+        InventoryGameGUI.generateController();
+        return 0;
+    }
+    static resetDefaultDimensions() {
         InventoryGameGUI.defaultWidthInPixels = Game.renderWidth;
         InventoryGameGUI.defaultHeightInPixels = Game.renderHeight;
-        InventoryGameGUI.posX = 0;
-        InventoryGameGUI.posY = 0;
-        InventoryGameGUI.generateController();
+        return 0;
     }
     static resize() {
         if (InventoryGameGUI.initialized != true) {
             return 1;
         }
-        InventoryGameGUI.controller.widthInPixels = InventoryGameGUI.defaultWidthInPixels;
-        InventoryGameGUI.controller.heightInPixels = InventoryGameGUI.defaultHeightInPixels;
+        InventoryGameGUI.resetDefaultDimensions();
+        if (InventoryGameGUI.fullScreen) {
+            InventoryGameGUI.windowWidthInPixels = Game.renderWidth;
+            InventoryGameGUI.windowHeightInPixels = Game.renderHeight;
+        }
+
+        InventoryGameGUI.controller.widthInPixels = InventoryGameGUI.windowWidthInPixels;
+        InventoryGameGUI.controller.heightInPixels = InventoryGameGUI.windowHeightInPixelsc;
         InventoryGameGUI.titleBar.widthInPixels = InventoryGameGUI.controller.widthInPixels;
         InventoryGameGUI.titleBar.heightInPixels = GameGUI.titleBarHeightInPixels;
         InventoryGameGUI.title.widthInPixels = InventoryGameGUI.titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2);
@@ -306,8 +324,8 @@ class InventoryGameGUI {
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponse);
-        Game.entityLogicWorkerPostMessage("getEntity", 0, itemID, callbackID);
+        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseOne);
+        Game.entityLogicWorkerPostMessage("hasItem", 0, {"target":targetController.entityID, "entityID":itemID}, callbackID);
         return 0;
     }
     static hasSelected() {
@@ -323,7 +341,17 @@ class InventoryGameGUI {
         }
         return 0;
     }
-    static setSelectedResponse(itemID, targetController, actorController, response, parentCallbackID) {
+    static setSelectedResponsePhaseOne(itemID, targetController, actorController, response, parentCallbackID) {
+        if (!response.hasItem) {
+            InventoryGameGUI.clearSelected();
+            return 1;
+        }
+        let callbackID = Tools.genUUIDv4();
+        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseTwo);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":itemID}, callbackID);
+        return 0;
+    }
+    static setSelectedResponsePhaseTwo(itemID, targetController, actorController, response, parentCallbackID) {
         InventoryGameGUI.selectedEntity = response;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
@@ -347,12 +375,12 @@ class InventoryGameGUI {
             switch (action) {
                 case ActionEnum.CONSUME : {
                     actionButton = GameGUI.createButton("actionConsumeButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionConsume(response.id, actorController, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionConsume(response.id, actorController, InventoryGameGUI.setSelected);});
                     break;
                 }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI.createButton("actionDropButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionDrop(response.id, actorController, InventoryGameGUI.updateWith);});
+                    actionButton.onPointerUpObservable.add(function() {Game.actionDrop(response.id, actorController, InventoryGameGUI.setSelected);});
                     break;
                 }
                 case ActionEnum.EQUIP : {
@@ -421,6 +449,7 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedName.text = "";
         InventoryGameGUI.selectedImage.source = "";
         InventoryGameGUI.selectedDescription.text = "";
+        InventoryGameGUI.selectedDetails.text = "";
         for (let i = InventoryGameGUI.selectedActions.children.length - 1; i >= 0; i--) {
             InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
         }

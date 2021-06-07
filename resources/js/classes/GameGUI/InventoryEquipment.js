@@ -6,6 +6,14 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.titleBar = null;
         InventoryEquipmentGameGUI.closeButton = null;
         InventoryEquipmentGameGUI.bodyContainer = null;
+        InventoryEquipmentGameGUI.fullScreen = true;
+        InventoryEquipmentGameGUI.defaultWidthInPixels = 0;
+        InventoryEquipmentGameGUI.defaultHeightInPixels = 0;
+        InventoryEquipmentGameGUI.windowWidthInPixels = -1;
+        InventoryEquipmentGameGUI.windowHeightInPixels = -1;
+        InventoryEquipmentGameGUI.posX = 0;
+        InventoryEquipmentGameGUI.posY = 0;
+
         InventoryEquipmentGameGUI.equipmentArea = null;
         InventoryEquipmentGameGUI.equipmentNoneBox = null;
         InventoryEquipmentGameGUI.equipmentNoneBoxImage = null;
@@ -55,16 +63,29 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.selectedEntity = null;
         InventoryEquipmentGameGUI.targetController = null;
         InventoryEquipmentGameGUI.equipment = null;
-        InventoryEquipmentGameGUI.defaultWidthInPixels = Game.renderWidth*2/3;
-        InventoryEquipmentGameGUI.defaultHeightInPixels = Game.renderHeight*3/4;
-        InventoryEquipmentGameGUI.posX = 0;
-        InventoryEquipmentGameGUI.posY = 0;
         InventoryEquipmentGameGUI.gridColumns = 9;
         InventoryEquipmentGameGUI.gridRows = 11;
         InventoryEquipmentGameGUI.gridCellSize = 64;
+
+        InventoryEquipmentGameGUI.resetDefaultDimensions();
         InventoryEquipmentGameGUI.generateController();
+        return 0;
+    }
+    static resetDefaultDimensions() {
+        InventoryEquipmentGameGUI.defaultWidthInPixels = Game.renderWidth * 2 / 3;
+        InventoryEquipmentGameGUI.defaultHeightInPixels = Game.renderHeight * 3 / 4;
+        return 0;
     }
     static resize() {
+        if (InventoryEquipmentGameGUI.initialized != true) {
+            return 1;
+        }
+        InventoryEquipmentGameGUI.resetDefaultDimensions();
+        if (InventoryEquipmentGameGUI.fullScreen) {
+            InventoryEquipmentGameGUI.windowWidthInPixels = Game.renderWidth;
+            InventoryEquipmentGameGUI.windowHeightInPixels = Game.renderHeight;
+        }
+
         InventoryEquipmentGameGUI.controller.widthInPixels = InventoryEquipmentGameGUI.defaultWidthInPixels;
         InventoryEquipmentGameGUI.controller.heightInPixels = InventoryEquipmentGameGUI.defaultHeightInPixels;
         InventoryEquipmentGameGUI.titleBar.widthInPixels = InventoryEquipmentGameGUI.controller.widthInPixels;
@@ -416,7 +437,7 @@ class InventoryEquipmentGameGUI {
     static setSelected(itemID, parentCallbackID = null) {
         let callbackID = Tools.genUUIDv4();
         Game.createCallback(callbackID, parentCallbackID, [itemID], InventoryEquipmentGameGUI.setSelectedResponse);
-        Game.entityLogicWorkerPostMessage("getEntity", 0, itemID, callbackID);
+        Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":itemID}, callbackID);
         return 0;
     }
     static setSelectedResponse(itemID, response, parentCallbackID) {
