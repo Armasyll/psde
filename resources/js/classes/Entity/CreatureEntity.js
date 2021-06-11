@@ -448,6 +448,9 @@ class CreatureEntity extends Entity {
          */
         this.proficiencies = {};
 
+        /**
+         * @type {object} Map of ConditionEnum
+         */
         this.conditions = {};
 
         /**
@@ -1565,7 +1568,7 @@ class CreatureEntity extends Entity {
             return 1;
         }
         this.conditions[condition] = true;
-        this.applyCondition(condition);
+        this.tickCondition(condition);
         return 0;
     }
     /**
@@ -2099,10 +2102,10 @@ class CreatureEntity extends Entity {
         this.resetConditionProperties();
         for (let condition in this.conditions) {
             if (this.conditions[condition]) {
-                this.applyCondition(condition);
+                this.tickCondition(condition);
             }
         }
-        this.applyExhaustion();
+        this.tickExhaustion();
         return 0;
     }
     /**
@@ -2110,7 +2113,7 @@ class CreatureEntity extends Entity {
      * @param {string|number} condition ConditionEnum
      * @returns {number}
      */
-    applyCondition(condition) {
+    tickCondition(condition) {
         if (!ConditionEnum.hasOwnProperty(condition)) {
             if (ConditionEnum.properties.hasOwnProperty(condition)) {
                 condition = ConditionEnum.properties[condition];
@@ -2233,7 +2236,7 @@ class CreatureEntity extends Entity {
     /**
      * @returns {number}
      */
-    applyExhaustion() {
+    tickExhaustion() {
         switch (this.getExaustion()) {
             case 6: {
                 this.health = -DND5E.calculateAbilityModifier(this.getConstitution());
@@ -2630,7 +2633,7 @@ class CreatureEntity extends Entity {
         obj["armourClass"] = this.getArmourClass();
         obj["charisma"] = this.getCharisma();
         obj["constitution"] = this.getConstitution();
-        obj["cosmetics"] = this._objectifyProperty(this.cosmetics);
+        obj["cosmetics"] = AbstractEntity.objectifyProperty(this.cosmetics);
         obj["dexterity"] = this.getDexterity();
         obj["exhaustion"] = this.getExhaustion();
         obj["gender"] = this.getGender();
@@ -2645,8 +2648,8 @@ class CreatureEntity extends Entity {
         obj["proficiencyBonus"] = this.getProficiencyBonus();
         obj["sex"] = this.getSex();
         obj["spellSlotsUsed"] = this.spellSlotsUsed;
-        obj["spellsKnown"] = this._objectifyProperty(this.spellsKnown);
-        obj["spellSlots"] = this._objectifyProperty(this.spellSlots);
+        obj["spellsKnown"] = AbstractEntity.objectifyProperty(this.spellsKnown);
+        obj["spellSlots"] = AbstractEntity.objectifyProperty(this.spellSlots);
         obj["stabilized"] = this.stabilized;
         obj["stance"] = this.getStance();
         obj["strength"] = this.getStrength();

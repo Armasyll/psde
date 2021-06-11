@@ -576,6 +576,21 @@ class EntityLogic {
                 }
                 break;
             }
+            case "getConditions": {
+                if (!(message instanceof Object)) {
+                    break;
+                }
+                if (!message.hasOwnProperty("entityID")) {
+                    EntityLogic.gameWorkerPostMessage("getConditions", 2, null, callbackID);
+                }
+                if (CreatureEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("getConditions", 0, CreatureEntity.get(message["entityID"]).getConditions(), callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("getConditions", 1, null, callbackID);
+                }
+                break;
+            }
             case "getDialogue": {
                 if (!(message instanceof Object)) {
                     break;
@@ -608,7 +623,7 @@ class EntityLogic {
                 let ids = {};
                 message.forEach((entityID) => {
                     if (AbstractEntity.has(entityID)) {
-                        ids[entityID] = AbstractEntity.get(entityID).stringify();
+                        ids[entityID] = AbstractEntity.get(entityID).objectify();
                     }
                 });
                 if (Object.keys(ids).length == 0) {
@@ -620,8 +635,12 @@ class EntityLogic {
                 break;
             }
             case "getEntity": {
+                if (!message.hasOwnProperty("entityID")) {
+                    EntityLogic.gameWorkerPostMessage("getEntity", 2, null, callbackID);
+                    break;
+                }
                 if (AbstractEntity.has(message["entityID"])) {
-                    EntityLogic.gameWorkerPostMessage("getEntity", 0, AbstractEntity.get(message["entityID"]).stringify(), callbackID);
+                    EntityLogic.gameWorkerPostMessage("getEntity", 0, AbstractEntity.get(message["entityID"]).objectify(), callbackID);
                 }
                 else {
                     EntityLogic.gameWorkerPostMessage("getEntity", 1, null, callbackID);
@@ -635,7 +654,7 @@ class EntityLogic {
                     let entityObj = {};
                     entityObj["id"] = entity.id;
                     entityObj["controller"] = entity.controller;
-                    entityObj["equipment"] = entity._objectifyProperty(entity.equipment);
+                    entityObj["equipment"] = AbstractEntity.objectifyProperty(entity.equipment);
                     obj[entity.id] = JSON.stringify(entityObj);
                 }
                 EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
@@ -670,6 +689,19 @@ class EntityLogic {
                 break;
             }
             case "hasCell": {
+                if (!message.hasOwnProperty("cellID")) {
+                    EntityLogic.gameWorkerPostMessage("hasCell", 2, null, callbackID);
+                    break;
+                }
+                if (Cell.has(message["cellID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasCell", 0, {"callID": message["cellID"], "hasCell":true}, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("hasCell", 0, {"callID": message["cellID"], "hasCell":false}, callbackID);
+                }
+                break;
+            }
+            case "hasCells": {
                 let ids = {};
                 message.forEach((entityID) => {
                     if (Cell.has(entityID)) {
@@ -679,10 +711,23 @@ class EntityLogic {
                         ids[entityID] = false;
                     }
                 });
-                EntityLogic.gameWorkerPostMessage("hasCell", 0, ids, callbackID);
+                EntityLogic.gameWorkerPostMessage("hasCells", 0, ids, callbackID);
                 break;
             }
             case "hasEntity": {
+                if (!message.hasOwnProperty("entityID")) {
+                    EntityLogic.gameWorkerPostMessage("hasEntity", 2, null, callbackID);
+                    break;
+                }
+                if (AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasEntity", 0, {"callID": message["entityID"], "hasEntity":true}, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("hasEntity", 0, {"callID": message["entityID"], "hasEntity":false}, callbackID);
+                }
+                break;
+            }
+            case "hasEntities": {
                 let ids = {};
                 message.forEach((entityID) => {
                     if (AbstractEntity.has(entityID)) {
@@ -692,7 +737,7 @@ class EntityLogic {
                         ids[entityID] = false;
                     }
                 });
-                EntityLogic.gameWorkerPostMessage("hasEntity", 0, ids, callbackID);
+                EntityLogic.gameWorkerPostMessage("hasEntities", 0, ids, callbackID);
                 break;
             }
             case "hasInstancedEntity": {
@@ -1631,7 +1676,7 @@ class EntityLogic {
         //}
         /*else if (entity.hasOwnProperty(property)) {
             let obj = {"id":entity.id};
-            obj[property] = entity._objectifyProperty(entity["property"]);
+            obj[property] = AbstractEntity.objectifyProperty(entity["property"]);
             console.log(obj);
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, JSON.stringify(obj));
             return 0;

@@ -5856,11 +5856,8 @@ class Game {
             }
             case "getEntity": {
                 if (status == 0) {
-                    if (typeof message == "string") {
-                        let json = JSON.parse(message);
-                        Game.setCachedEntity(json.id, json);
-                        Game.runCallback(callbackID, json);
-                    }
+                    Game.setCachedEntity(message.id, message);
+                    Game.runCallback(callbackID, message);
                 }
                 break;
             }
@@ -5868,11 +5865,8 @@ class Game {
                 if (status == 0) {
                     if (message instanceof Object) {
                         for (let entry in message) {
-                            if (typeof message[entry] == "string") {
-                                let json = JSON.parse(message[entry]);
-                                Game.setCachedEntity(entry, json);
-                                Game.runCallback(callbackID, json);
-                            }
+                            Game.setCachedEntity(entry, message[entry]);
+                            Game.runCallback(callbackID, message[entry]);
                         }
                     }
                 }
@@ -6089,9 +6083,11 @@ class Game {
             }
             default: {
                 if (status == 0) {
-                    if (typeof message == "string") {
+                    if (message instanceof Object) {
+                        Game.runCallback(callbackID, message);
+                    }
+                    else if (typeof message == "string") {
                         let json = JSON.parse(message);
-                        Game.setCachedEntity(json.id, json);
                         Game.runCallback(callbackID, json);
                     }
                 }

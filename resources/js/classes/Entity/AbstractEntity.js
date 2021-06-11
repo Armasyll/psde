@@ -889,7 +889,7 @@ class AbstractEntity {
     objectify() {
         let obj = {};
         for (let property in this) {
-            obj[property] = this._objectifyProperty(this[property]);
+            obj[property] = AbstractEntity.objectifyProperty(this[property]);
         }
         return obj;
     }
@@ -919,106 +919,6 @@ class AbstractEntity {
         if (this.hasContainer()) {
             obj["container"] = this.container.objectify();
             obj["hasContainer"] = true;
-        }
-        return obj;
-    }
-    _objectifyProperty(property) {
-        let obj = null;
-        if (property instanceof AbstractEntity) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "materialID":property.getMaterialID(),
-                "meshID":property.getMeshID(),
-                "textureID":property.getTextureID(),
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof ActionData) {
-            obj = property.action;
-        }
-        else if (property instanceof Cell) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof CharacterClass) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof Container) {
-            obj = this.container.objectify();
-        }
-        else if (property instanceof Cosmetic) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "materialID":property.materialID,
-                "meshID":property.meshID,
-                "textureID":property.textureID,
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof Dialogue) {
-            obj = {
-                "id":property.id,
-                "name":property.getTitle(),
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof Effect) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof Spell) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "className":property.getClassName()
-            };
-        }
-        else if (property instanceof TeleportMarker) {
-            obj = {
-                "id":property.id,
-                "cellID":property.cellID,
-                "position":property.position,
-                "rotation":property.rotation
-            };
-        }
-        else if (property instanceof Array) {
-            obj = [];
-            for (let i = 0; i < property.length; i++) {
-                obj[i] = this._objectifyProperty(property[i]);
-            };
-        }
-        else if (property instanceof Object) {
-            obj = {};
-            for (let entry in property) {
-                obj[entry] = this._objectifyProperty(property[entry]);
-            }
-        }
-        else {
-            obj = property;
         }
         return obj;
     }
@@ -1105,6 +1005,106 @@ class AbstractEntity {
         return "AbstractEntity";
     }
 
+    static objectifyProperty(property) {
+        let obj = null;
+        if (property instanceof AbstractEntity) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "materialID":property.getMaterialID(),
+                "meshID":property.getMeshID(),
+                "textureID":property.getTextureID(),
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof ActionData) {
+            obj = property.action;
+        }
+        else if (property instanceof Cell) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof CharacterClass) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Container) {
+            obj = property.objectify();
+        }
+        else if (property instanceof Cosmetic) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "materialID":property.materialID,
+                "meshID":property.meshID,
+                "textureID":property.textureID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Dialogue) {
+            obj = {
+                "id":property.id,
+                "name":property.getTitle(),
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Effect) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof Spell) {
+            obj = {
+                "id":property.id,
+                "name":property.getName(),
+                "description":property.getDescription(),
+                "iconID":property.iconID,
+                "className":property.getClassName()
+            };
+        }
+        else if (property instanceof TeleportMarker) {
+            obj = {
+                "id":property.id,
+                "cellID":property.cellID,
+                "position":property.position,
+                "rotation":property.rotation
+            };
+        }
+        else if (property instanceof Array) {
+            obj = [];
+            for (let i = 0; i < property.length; i++) {
+                obj[i] = AbstractEntity.objectifyProperty(property[i]);
+            };
+        }
+        else if (property instanceof Object) {
+            obj = {};
+            for (let entry in property) {
+                obj[entry] = AbstractEntity.objectifyProperty(property[entry]);
+            }
+        }
+        else {
+            obj = property;
+        }
+        return obj;
+    }
     static initialize() {
         AbstractEntity.abstractEntityList = {};
         AbstractEntity.debugMode = false;

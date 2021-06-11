@@ -1085,7 +1085,7 @@ class CharacterEntity extends CreatureEntity {
         obj["weight"] = this.weight || 0;
         obj["height"] = this.height || 0;
         obj["width"] = this.width || 0;
-        obj["equipment"] = this._objectifyProperty(this.equipment);
+        obj["equipment"] = AbstractEntity.objectifyProperty(this.equipment);
         obj["furColourA"] = this.furColourA;
         obj["_furColourAHex"] = this._furColourAHex;
         obj["furColourB"] = this.furColourB;

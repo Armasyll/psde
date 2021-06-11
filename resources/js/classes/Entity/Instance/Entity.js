@@ -437,7 +437,7 @@ class InstancedEntity extends AbstractEntity {
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
         obj["meshID"] = this.getMeshID();
-        obj["owner"] = this._objectifyProperty(this.getOwner());
+        obj["owner"] = AbstractEntity.objectifyProperty(this.getOwner());
         obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();
         obj["textureID"] = this.getTextureID();
@@ -451,7 +451,7 @@ class InstancedEntity extends AbstractEntity {
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
         obj["meshID"] = this.getMeshID();
-        obj["owner"] = this._objectifyProperty(this.getOwner());
+        obj["owner"] = AbstractEntity.objectifyProperty(this.getOwner());
         obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();
         obj["textureID"] = this.getTextureID();

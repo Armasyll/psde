@@ -395,11 +395,20 @@ class Cell {
     objectify() {
         let obj = {};
         for (let property in this) {
-            obj[property] = this._objectifyProperty(this[property]);
+            obj[property] = Cell.objectifyProperty(this[property]);
         }
         return obj;
     }
-    _objectifyProperty(property) {
+
+    dispose() {
+        Cell.remove(this.id);
+        return undefined;
+    }
+    getClassName() {
+        return "Cell";
+    }
+
+    static objectifyProperty(property) {
         let obj = null;
         if (property instanceof AbstractEntity) {
             obj = property.id;
@@ -414,7 +423,7 @@ class Cell {
             obj = property.id;
         }
         else if (property instanceof Container) {
-            obj = this._objectifyProperty(property.items);
+            obj = Cell.objectifyProperty(property.items);
         }
         else if (property instanceof Cosmetic) {
             obj = property.id;
@@ -431,19 +440,19 @@ class Cell {
         else if (property instanceof Set) {
             obj = [];
             property.forEach((entry) => {
-                obj.push(this._objectifyProperty(entry));
+                obj.push(Cell.objectifyProperty(entry));
             });
         }
         else if (property instanceof Array) {
             obj = [];
             property.forEach((entry) => {
-                obj.push(this._objectifyProperty(entry));
+                obj.push(Cell.objectifyProperty(entry));
             });
         }
         else if (property instanceof Object) {
             obj = {};
             for (let entry in property) {
-                obj[entry] = this._objectifyProperty(property[entry]);
+                obj[entry] = Cell.objectifyProperty(property[entry]);
             }
         }
         else {
@@ -451,15 +460,6 @@ class Cell {
         }
         return obj;
     }
-
-    dispose() {
-        Cell.remove(this.id);
-        return undefined;
-    }
-    getClassName() {
-        return "Cell";
-    }
-
     static initialize() {
         Cell.debugMode = false;
         Cell.cellList = {};
