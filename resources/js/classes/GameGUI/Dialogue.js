@@ -1,4 +1,7 @@
 class DialogueGameGUI {
+    static getClassName() {
+        return "DialogueGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing DialogueGameGUI");
         DialogueGameGUI.initialized = false;
@@ -128,14 +131,19 @@ class DialogueGameGUI {
     static show() {
         if (Game.debugMode) console.log("Running DialogueGameGUI.show()");
         Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
+        GameGUI.windowStack.add(DialogueGameGUI);
         DialogueGameGUI.controller.isVisible = true;
         DialogueGameGUI.isVisible = true;
     }
-    static hide() {
+    static hide(updateChildren = true) {
         if (Game.debugMode) console.log("Running DialogueGameGUI.hideDialogueMenu()");
-        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         DialogueGameGUI.controller.isVisible = false;
         DialogueGameGUI.isVisible = false;
+        GameGUI.windowStack.remove(DialogueGameGUI);
+        if (updateChildren) {
+            GameGUI.afterHideMenuChildren();
+        }
+        return 0;
     }
     static set(dialogue = null, target = Game.playerController.getTarget(), actor = Game.playerController) {
         if (Game.debugMode) console.log("Running DialogueGameGUI.setDialogue()");

@@ -41,14 +41,8 @@ class NullGUI {
     static getFontSize(...params) {return 0;}
     static showHUD(...params) {return 0;}
     static hideHUD(...params) {return 0;}
-    static _hideHUDChildren(...params) {return 0;}
-    static isHUDVisible(...params) {return 0;}
-    static setHUDVisible(...params) {return 0;}
     static showMenu(...params) {return 0;}
     static hideMenu(...params) {return 0;}
-    static _hideMenuChildren(...params) {return 0;}
-    static isMenuVisible(...params) {return 0;}
-    static setMenuVisible(...params) {return 0;}
     static _generateCrosshair(...params) {return 0;}
     static showCrosshair(...params) {return 0;}
     static hideCrosshair(...params) {return 0;}

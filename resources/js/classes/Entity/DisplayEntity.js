@@ -11,8 +11,18 @@ class DisplayEntity extends FurnitureEntity {
      */
     constructor(id = "", name = "", description = "", iconID = "") {
         super(id, name, description, iconID, FurnitureEnum.TELEVISION);
+        
+        this.videoID = "missingVideo";
 
         DisplayEntity.set(this.id, this);
+    }
+
+    setVideo(videoID) {
+        this.videoID = Tools.filterID(videoID);
+        return 0;
+    }
+    getVideo() {
+        return this.videoID;
     }
 
     /**

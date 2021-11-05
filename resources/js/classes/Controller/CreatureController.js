@@ -1,5 +1,8 @@
 /**
  * Creature Controller
+ * @class
+ * @extends {EntityController}
+ * @typedef {Object} CreatureController
  */
 class CreatureController extends EntityController {
     /**
@@ -9,82 +12,42 @@ class CreatureController extends EntityController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
-        if (EntityController.debugMode) console.group(`Creating new CreatureController(${id}, meshObject, entityObject)`);
-        super(id, mesh, entityObject);
-        if (!this.hasMesh()) {
+        if (!(super(id, mesh, entityObject) instanceof EntityController)) {
+            if (AbstractController.debugMode) console.group(`Failed to create new CreatureController(${id}, ${mesh.id}, ${entityObject.id})`);
             return undefined;
         }
 
         this.targetRayVector3 = BABYLON.Vector3.Zero();
-        this.lookController = null;
+        this.stance = StanceEnum.STAND;
+        this.stanceFrameCount = 0;
         /**
-         * this.lookController.slerpAmount
+         * @type {number} Minimum frame count before changing animations
          */
-        this.headTurnSpeed = 0.05;
-        this.dead = false;
-        this.jumping = false;
-        this.standing = true;
-        this.crouching = false;
-        this.sitting = false;
-        this.lying = false;
-        this.climbing = false; // Ladder
-        this.walking = false; // While Standing or Crouching
-        this.running = false; // While Standing
-        this.sprinting = false; // While Standing
-        this.attacking = false; // While Standing Idle, Crouching Idle, Standing Walking, or Crouching Walking
+        this.stanceFrameCountMin = 50;
+        /**
+         * @type {number} Don't care to have a number go on forever
+         */
+        this.stanceFrameCountMax = 1023;
+        this.previousStance = null;
+        this.previousStanceFrameCount = 0;
+        this.otherPreviousStance = null;
+        this.otherPreviousStanceFrameCount = 0;
+        this.movementPace = MovementPaceEnum.NONE;
         this.canTransition = true;
+        this.oOverrideAnimation = null;
 
-        this.attachedOrgans = {};
-        this.attachedOrgans["HEAD"] = {};
-        this.attachedOrgans["EAR_L"] = {};
-        this.attachedOrgans["EAR_R"] = {};
-        this.attachedOrgans["EYE_L"] = {};
-        this.attachedOrgans["EYE_R"] = {};
-        this.attachedOrgans["NECK"] = {};
-        this.attachedOrgans["SHOULDER_L"] = {};
-        this.attachedOrgans["SHOULDER_R"] = {};
-        this.attachedOrgans["FOREARM_L"] = {};
-        this.attachedOrgans["FOREARM_R"] = {};
-        this.attachedOrgans["HAND_L"] = {};
-        this.attachedOrgans["HAND_R"] = {};
-        this.attachedOrgans["CHEST"] = {};
-        this.attachedOrgans["PELVIS"] = {};
-        this.attachedOrgans["LEGS"] = {};
-        this.attachedOrgans["FOOT_L"] = {};
-        this.attachedOrgans["FOOT_R"] = {};
-        this.attachedCosmetics = {};
-        this.attachedCosmetics["HEAD"] = {};
-        this.attachedCosmetics["EAR_L"] = {};
-        this.attachedCosmetics["EAR_R"] = {};
-        this.attachedCosmetics["EYE_L"] = {};
-        this.attachedCosmetics["EYE_R"] = {};
-        this.attachedCosmetics["NECK"] = {};
-        this.attachedCosmetics["SHOULDER_L"] = {};
-        this.attachedCosmetics["SHOULDER_R"] = {};
-        this.attachedCosmetics["FOREARM_L"] = {};
-        this.attachedCosmetics["FOREARM_R"] = {};
-        this.attachedCosmetics["HAND_L"] = {};
-        this.attachedCosmetics["HAND_R"] = {};
-        this.attachedCosmetics["CHEST"] = {};
-        this.attachedCosmetics["PELVIS"] = {};
-        this.attachedCosmetics["LEGS"] = {};
-        this.attachedCosmetics["FOOT_L"] = {};
-        this.attachedCosmetics["FOOT_R"] = {};
+        this._organMeshIDsAttachedToBones = {};
+        this._cosmeticMeshIDsAttachedToBones = {};
+
         this.bones["head"] = null;
         /**
          * @type {EyeEnum}
          */
-        this.eyeType = 0;
-        this.eyeImageID = "circularEye";
-        this.eyeBackground = "#FFFFFF";
-        this.eyeColour = "#C3C3C3";
-
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-            this.skeleton.animationPropertiesOverride.enableBlending = true;
-            this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
-            this.bones["head"] = this.getBoneByName("head") || null;
-        }
+        this.eEyeType = 0;
+        this.sEyeType = "circularEye";
+        this.sEyeScleraColour = "#FFFFFF";
+        this.sEyeIrisColour = "#C3C3C3";
+        this.sEyeTexture = "";
 
         this.key = new ControllerMovementKey();
         this.prevKey = this.key.clone();
@@ -92,1047 +55,291 @@ class CreatureController extends EntityController {
         this.target = null;
 
         this.offensiveStance = OffensiveStanceEnum.MARTIAL;
+        this.bHasRunPostConstructCreature = false;
         CreatureController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new CreatureController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructCreature) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructCreature = true;
+        if (this.skeleton instanceof BABYLON.Skeleton) {
+            this.skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
+            this.skeleton.animationPropertiesOverride.enableBlending = true;
+            this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
+            this.bones["head"] = this.getBoneByName("head") || null;
+        }
+        this.populateAnimatables();
+        this.populateAnimationGroup();
+        return 0;
     }
 
+    detachFromAllBones(destroyMesh = true) {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return 0;
+        }
+        for (let boneID in this._organMeshIDsAttachedToBones) {
+            for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
+                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                    let bone = this.getBone(boneID);
+                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+                }
+                delete this._organMeshIDsAttachedToBones[boneID][meshID];
+            }
+            delete this._organMeshIDsAttachedToBones[boneID];
+        }
+        for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
+            for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
+                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                    let bone = this.getBone(boneID);
+                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+                }
+                delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
+            }
+            delete this._cosmeticMeshIDsAttachedToBones[boneID];
+        }
+        super.detachFromAllBones(destroyMesh);
+        return 0;
+    }
     attachToHead(meshID, textureID, options) {
-        return this.attachMeshIDToBone(meshID, textureID, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), options);
+        return this.attachMeshIDToBone(meshID, textureID, "head", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromHead() {
         return this.detachAllFromBone("head");
     }
     attachToLeftEye(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.mesh.scaling.clone(), options);
     }
     detachFromLeftEye() {
         return this.detachAllFromBone("eye.l");
     }
     attachToRightEye(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(-90), 0, 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.mesh.scaling.clone(), options);
     }
     detachFromRightEye() {
         return this.detachAllFromBone("eye.r");
     }
     attachToLeftEar(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "ear.l", undefined, undefined, undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "ear.l", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), this.mesh.scaling.clone(), options);
     }
     detachFromLeftEar() {
         return this.detachAllFromBone("ear.l");
     }
     attachToRightEar(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "ear.r", undefined, undefined, undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "ear.r", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), this.mesh.scaling.clone(), options);
     }
     detachFromRightEar() {
         return this.detachAllFromBone("ear.r");
     }
     attachToNeck(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "neck", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "neck", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromNeck() {
         return this.detachAllFromBone("neck");
     }
     attachToLeftShoulder(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(315), BABYLON.Tools.ToRadians(120)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "shoulder.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(315), BABYLON.Tools.ToRadians(120)), this.mesh.scaling.clone(), options);
     }
     detachFromLeftShoulder() {
         return this.detachAllFromBone("shoulder.l");
     }
     attachToRightShoulder(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(60)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "shoulder.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(225), BABYLON.Tools.ToRadians(60)), this.mesh.scaling.clone(), options);
     }
     detachFromRightShoulder() {
         return this.detachAllFromBone("shoulder.r");
     }
     attachToLeftForearm(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
     }
     detachFromLeftForearm() {
         return this.detachAllFromBone("forearm.l");
     }
     attachToRightForearm(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "forearm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(120), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
     }
     detachFromRightForearm() {
         return this.detachAllFromBone("forearm.r");
     }
     attachToLeftHand(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), this.mesh.scaling.clone(), options);
     }
     detachFromLeftHand() {
         return this.detachAllFromBone("hand.l");
     }
     attachToRightHand(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "hand.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), this.mesh.scaling.clone(), options);
     }
     detachFromRightHand() {
         return this.detachAllFromBone("hand.r");
     }
     attachToChest(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "chest", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "chest", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromChest() {
         return this.detachAllFromBone("chest");
     }
     attachToSpine(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "spine", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "spine", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromSpine() {
         return this.detachAllFromBone("spine");
     }
     attachToPelvis(meshID, textureID = "missingTexture", options) {
-        return this.attachMeshIDToBone(meshID, textureID, "pelvis", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), undefined, options);
+        return this.attachMeshIDToBone(meshID, textureID, "pelvis", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromPelvis() {
         return this.detachAllFromBone("pelvis");
     }
 
-    attachOrganToBone(meshID, materialID, boneID, options) {
-        let result = 0;
-        switch (boneID) {
-            case "head":
-            case "HEAD": {
-                result = this.attachOrganToHead(meshID, materialID, options);
-                break;
-            }
-            case "ear.l":
-            case "EAR_L": {
-                result = this.attachOrganToLeftEar(meshID, materialID, options);
-                break;
-            }
-            case "ear.r":
-            case "EAR_R": {
-                result = this.attachOrganToRightEar(meshID, materialID, options);
-                break;
-            }
-            case "neck":
-            case "NECK": {
-                result = this.attachOrganToNeck(meshID, materialID, options);
-                break;
-            }
-            case "shoulder.l":
-            case "SHOULDER_L": {
-                result = this.attachOrganToLeftShoulder(meshID, materialID, options);
-                break;
-            }
-            case "shoulder.r":
-            case "SHOULDER_R": {
-                result = this.attachOrganToRightShoulder(meshID, materialID, options);
-                break;
-            }
-            case "forearm.l":
-            case "FOREARM_L": {
-                result = this.attachOrganToLeftForearm(meshID, materialID, options);
-                break;
-            }
-            case "forearm.r":
-            case "FOREARM_R": {
-                result = this.attachOrganToRightForearm(meshID, materialID, options);
-                break;
-            }
-            case "hand.l":
-            case "HAND_L": {
-                result = this.attachOrganToLeftHand(meshID, materialID, options);
-                break;
-            }
-            case "hand.r":
-            case "HAND_R": {
-                result = this.attachOrganToRightHand(meshID, materialID, options);
-                break;
-            }
-            default: {
-                result = 1;
-            }
-        }
-        return result;
+    attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID = "ROOT", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        return super.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
     }
-    detachOrganFromBone(boneID, destroyMesh = true) {
-        let result = 0;
-        switch (boneID) {
-            case "head":
-            case "HEAD": {
-                result = this.detachOrganFromHead(destroyMesh);
-                break;
-            }
-            case "ear.l":
-            case "EAR_L": {
-                result = this.detachOrganFromLeftEar(destroyMesh);
-                break;
-            }
-            case "ear.r":
-            case "EAR_R": {
-                result = this.detachOrganFromRightEar(destroyMesh);
-                break;
-            }
-            case "neck":
-            case "NECK": {
-                result = this.detachOrganFromNeck(destroyMesh);
-                break;
-            }
-            case "shoulder.l":
-            case "SHOULDER_L": {
-                result = this.detachOrganFromLeftShoulder(destroyMesh);
-                break;
-            }
-            case "shoulder.r":
-            case "SHOULDER_R": {
-                result = this.detachOrganFromRightShoulder(destroyMesh);
-                break;
-            }
-            case "forearm.l":
-            case "FOREARM_L": {
-                result = this.detachOrganFromLeftForearm(destroyMesh);
-                break;
-            }
-            case "forearm.r":
-            case "FOREARM_R": {
-                result = this.detachOrganFromRightForearm(destroyMesh);
-                break;
-            }
-            case "hand.l":
-            case "HAND_L": {
-                result = this.detachOrganFromLeftHand(destroyMesh);
-                break;
-            }
-            case "hand.r":
-            case "HAND_R": {
-                result = this.detachOrganFromRightHand(destroyMesh);
-                break;
-            }
-            default: {
-                result = 1;
-            }
-        }
-        return result;
-    }
-    attachOrganToHead(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["HEAD"]["meshID"] == "string") {
-            if (this.attachedOrgans["HEAD"]["meshID"] == meshID && this.attachedOrgans["HEAD"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromHead();
-        }
-        this.attachedOrgans["HEAD"]["meshID"] = meshID;
-        this.attachedOrgans["HEAD"]["materialID"] = materialID;
-        return this.attachToHead(meshID, materialID, options);
-    }
-    detachOrganFromHead(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["HEAD"]["meshID"], destroyMesh);
-        this.attachedOrgans["HEAD"]["meshID"] = null;
-        this.attachedOrgans["HEAD"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToLeftEye(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["EYE_L"]["meshID"] == "string") {
-            if (this.attachedOrgans["EYE_L"]["meshID"] == meshID && this.attachedOrgans["EYE_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromLeftEye();
-        }
-        this.attachedOrgans["EYE_L"]["meshID"] = meshID;
-        this.attachedOrgans["EYE_L"]["materialID"] = materialID;
-        return this.attachToLeftEye(meshID, materialID, options);
-    }
-    detachOrganFromLeftEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["EYE_L"]["meshID"], destroyMesh);
-        this.attachedOrgans["EYE_L"]["meshID"] = null;
-        this.attachedOrgans["EYE_L"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToRightEye(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["EYE_R"]["meshID"] == "string") {
-            if (this.attachedOrgans["EYE_R"]["meshID"] == meshID && this.attachedOrgans["EYE_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromRightEye();
-        }
-        this.attachedOrgans["EYE_R"]["meshID"] = meshID;
-        this.attachedOrgans["EYE_R"]["materialID"] = materialID;
-        return this.attachToRightEye(meshID, materialID, options);
-    }
-    detachOrganFromRightEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["EYE_R"]["meshID"], destroyMesh);
-        this.attachedOrgans["EYE_R"]["meshID"] = null;
-        this.attachedOrgans["EYE_R"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToLeftEar(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["EAR_L"]["meshID"] == "string") {
-            if (this.attachedOrgans["EAR_L"]["meshID"] == meshID && this.attachedOrgans["EAR_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromLeftEar();
-        }
-        this.attachedOrgans["EAR_L"]["meshID"] = meshID;
-        this.attachedOrgans["EAR_L"]["materialID"] = materialID;
-        return this.attachToLeftEar(meshID, materialID, options);
-    }
-    detachOrganFromLeftEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["EAR_L"]["meshID"], destroyMesh);
-        this.attachedOrgans["EAR_L"]["meshID"] = null;
-        this.attachedOrgans["EAR_L"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToRightEar(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["EAR_R"]["meshID"] == "string") {
-            if (this.attachedOrgans["EAR_R"]["meshID"] == meshID && this.attachedOrgans["EAR_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromRightEar();
-        }
-        this.attachedOrgans["EAR_R"]["meshID"] = meshID;
-        this.attachedOrgans["EAR_R"]["materialID"] = materialID;
-        return this.attachToRightEar(meshID, materialID, options);
-    }
-    detachOrganFromRightEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["EAR_R"]["meshID"], destroyMesh);
-        this.attachedOrgans["EAR_R"]["meshID"] = null;
-        this.attachedOrgans["EAR_R"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToNeck(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["NECK"]["meshID"] == "string") {
-            if (this.attachedOrgans["NECK"]["meshID"] == meshID && this.attachedOrgans["NECK"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromNeck();
-        }
-        this.attachedOrgans["NECK"]["meshID"] = meshID;
-        this.attachedOrgans["NECK"]["materialID"] = materialID;
-        return this.attachToNeck(meshID, materialID, options);
-    }
-    detachOrganFromNeck(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["NECK"]["meshID"], destroyMesh);
-        this.attachedOrgans["NECK"]["meshID"] = null;
-        this.attachedOrgans["NECK"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToLeftShoulder(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["SHOULDER_L"]["meshID"] == "string") {
-            if (this.attachedOrgans["SHOULDER_L"]["meshID"] == meshID && this.attachedOrgans["SHOULDER_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromLeftShoulder();
-        }
-        this.attachedOrgans["SHOULDER_L"]["meshID"] = meshID;
-        this.attachedOrgans["SHOULDER_L"]["materialID"] = materialID;
-        return this.attachToLeftShoulder(meshID, materialID, options);
-    }
-    detachOrganFromLeftShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["SHOULDER_L"]["meshID"], destroyMesh);
-        this.attachedOrgans["SHOULDER_L"]["meshID"] = null;
-        this.attachedOrgans["SHOULDER_L"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToRightShoulder(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["SHOULDER_R"]["meshID"] == "string") {
-            if (this.attachedOrgans["SHOULDER_R"]["meshID"] == meshID && this.attachedOrgans["SHOULDER_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromRightShoulder();
-        }
-        this.attachedOrgans["SHOULDER_R"]["meshID"] = meshID;
-        this.attachedOrgans["SHOULDER_R"]["materialID"] = materialID;
-        return this.attachToRightShoulder(meshID, materialID, options);
-    }
-    detachOrganFromRightShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["SHOULDER_R"]["meshID"], destroyMesh);
-        this.attachedOrgans["SHOULDER_R"]["meshID"] = null;
-        this.attachedOrgans["SHOULDER_R"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToLeftForearm(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["FOREARM_L"]["meshID"] == "string") {
-            if (this.attachedOrgans["FOREARM_L"]["meshID"] == meshID && this.attachedOrgans["FOREARM_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromLeftForearm();
-        }
-        this.attachedOrgans["FOREARM_L"]["meshID"] = meshID;
-        this.attachedOrgans["FOREARM_L"]["materialID"] = materialID;
-        return this.attachToLeftForearm(meshID, materialID, options);
-    }
-    detachOrganFromLeftForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["FOREARM_L"]["meshID"], destroyMesh);
-        this.attachedOrgans["FOREARM_L"]["meshID"] = null;
-        this.attachedOrgans["FOREARM_L"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToRightForearm(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["FOREARM_R"]["meshID"] == "string") {
-            if (this.attachedOrgans["FOREARM_R"]["meshID"] == meshID && this.attachedOrgans["FOREARM_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromRightForearm();
-        }
-        this.attachedOrgans["FOREARM_R"]["meshID"] = meshID;
-        this.attachedOrgans["FOREARM_R"]["materialID"] = materialID;
-        return this.attachToRightForearm(meshID, materialID, options);
-    }
-    detachOrganFromRightForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["FOREARM_R"]["meshID"], destroyMesh);
-        this.attachedOrgans["FOREARM_R"]["meshID"] = null;
-        this.attachedOrgans["FOREARM_R"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToLeftHand(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["HAND_L"]["meshID"] == "string") {
-            if (this.attachedOrgans["HAND_L"]["meshID"] == meshID && this.attachedOrgans["HAND_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromLeftHand();
-        }
-        this.attachedOrgans["HAND_L"]["meshID"] = meshID;
-        this.attachedOrgans["HAND_L"]["materialID"] = materialID;
-        return this.attachToLeftHand(meshID, materialID, options);
-    }
-    detachOrganFromLeftHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["HAND_L"]["meshID"], destroyMesh);
-        this.attachedOrgans["HAND_L"]["meshID"] = null;
-        this.attachedOrgans["HAND_L"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToRightHand(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["HAND_R"]["meshID"] == "string") {
-            if (this.attachedOrgans["HAND_R"]["meshID"] == meshID && this.attachedOrgans["HAND_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromRightHand();
-        }
-        this.attachedOrgans["HAND_R"]["meshID"] = meshID;
-        this.attachedOrgans["HAND_R"]["materialID"] = materialID;
-        return this.attachToRightHand(meshID, materialID, options);
-    }
-    detachOrganFromRightHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["HAND_R"]["meshID"], destroyMesh);
-        this.attachedOrgans["HAND_R"]["meshID"] = null;
-        this.attachedOrgans["HAND_R"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToChest(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["CHEST"]["meshID"] == "string") {
-            if (this.attachedOrgans["CHEST"]["meshID"] == meshID && this.attachedOrgans["CHEST"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromChest();
-        }
-        this.attachedOrgans["CHEST"]["meshID"] = meshID;
-        this.attachedOrgans["CHEST"]["materialID"] = materialID;
-        return this.attachToChest(meshID, materialID, options);
-    }
-    detachOrganFromChest(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["CHEST"]["meshID"], destroyMesh);
-        this.attachedOrgans["CHEST"]["meshID"] = null;
-        this.attachedOrgans["CHEST"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToSpine(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["SPINE"]["meshID"] == "string") {
-            if (this.attachedOrgans["SPINE"]["meshID"] == meshID && this.attachedOrgans["SPINE"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromSpine();
-        }
-        this.attachedOrgans["SPINE"]["meshID"] = meshID;
-        this.attachedOrgans["SPINE"]["materialID"] = materialID;
-        return this.attachToSpine(meshID, materialID, options);
-    }
-    detachOrganFromSpine(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["SPINE"]["meshID"], destroyMesh);
-        this.attachedOrgans["SPINE"]["meshID"] = null;
-        this.attachedOrgans["SPINE"]["materialID"] = null;
-        return result;
-    }
-    attachOrganToPelvis(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedOrgans["PELVIS"]["meshID"] == "string") {
-            if (this.attachedOrgans["PELVIS"]["meshID"] == meshID && this.attachedOrgans["PELVIS"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachOrganFromPelvis();
-        }
-        this.attachedOrgans["PELVIS"]["meshID"] = meshID;
-        this.attachedOrgans["PELVIS"]["materialID"] = materialID;
-        return this.attachToPelvis(meshID, materialID, options);
-    }
-    detachOrganFromPelvis(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedOrgans["PELVIS"]["meshID"], destroyMesh);
-        this.attachedOrgans["PELVIS"]["meshID"] = null;
-        this.attachedOrgans["PELVIS"]["materialID"] = null;
-        return result;
+    attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
+        return super.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
     }
 
-    attachCosmeticToBone(meshID, materialID, boneID, options) {
-        let result = 0;
-        switch (boneID) {
-            case "head":
-            case "HEAD": {
-                result = this.attachCosmeticToHead(meshID, materialID, options);
-                break;
-            }
-            case "ear.l":
-            case "EAR_L": {
-                result = this.attachCosmeticToLeftEar(meshID, materialID, options);
-                break;
-            }
-            case "ear.r":
-            case "EAR_R": {
-                result = this.attachCosmeticToRightEar(meshID, materialID, options);
-                break;
-            }
-            case "neck":
-            case "NECK": {
-                result = this.attachCosmeticToNeck(meshID, materialID, options);
-                break;
-            }
-            case "shoulder.l":
-            case "SHOULDER_L": {
-                result = this.attachCosmeticToLeftShoulder(meshID, materialID, options);
-                break;
-            }
-            case "shoulder.r":
-            case "SHOULDER_R": {
-                result = this.attachCosmeticToRightShoulder(meshID, materialID, options);
-                break;
-            }
-            case "forearm.l":
-            case "FOREARM_L": {
-                result = this.attachCosmeticToLeftForearm(meshID, materialID, options);
-                break;
-            }
-            case "forearm.r":
-            case "FOREARM_R": {
-                result = this.attachCosmeticToRightForearm(meshID, materialID, options);
-                break;
-            }
-            case "hand.l":
-            case "HAND_L": {
-                result = this.attachCosmeticToLeftHand(meshID, materialID, options);
-                break;
-            }
-            case "hand.r":
-            case "HAND_R": {
-                result = this.attachCosmeticToRightHand(meshID, materialID, options);
-                break;
-            }
-            default: {
-                result = 1;
-            }
+    attachOrganMeshToBone(mesh, boneID, position, rotation, scaling, options) {
+        if (!this.hasBone(boneID)) {
+            return 1;
         }
-        return result;
+        if (!this._organMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
+            this._organMeshIDsAttachedToBones[boneID] = {};
+        }
+        this._organMeshIDsAttachedToBones[boneID][mesh.name] = mesh.material.name;
+        let bone = this.getBoneByID(boneID);
+        this.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
+        return 0;
     }
-    detachCosmeticFromBone(boneID, destroyMesh = true) {
-        let result = 0;
-        switch (boneID) {
-            case "head":
-            case "HEAD": {
-                result = this.detachCosmeticFromHead(destroyMesh);
-                break;
+    attachOrganMeshIDToBone(meshID, materialID, boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+        if (AbstractController.debugMode) console.group(`Running {CreatureController} ${this.id}.attachOrganMeshIDToBone(${meshID}, ${materialID}, ${boneID}, ...)`);
+        if (!this.hasBone(boneID)) {
+            if (AbstractController.debugMode) {
+                console.error("Couldn't find bone " + boneID);
+                console.groupEnd();
             }
-            case "ear.l":
-            case "EAR_L": {
-                result = this.detachCosmeticFromLeftEar(destroyMesh);
-                break;
-            }
-            case "ear.r":
-            case "EAR_R": {
-                result = this.detachCosmeticFromRightEar(destroyMesh);
-                break;
-            }
-            case "neck":
-            case "NECK": {
-                result = this.detachCosmeticFromNeck(destroyMesh);
-                break;
-            }
-            case "shoulder.l":
-            case "SHOULDER_L": {
-                result = this.detachCosmeticFromLeftShoulder(destroyMesh);
-                break;
-            }
-            case "shoulder.r":
-            case "SHOULDER_R": {
-                result = this.detachCosmeticFromRightShoulder(destroyMesh);
-                break;
-            }
-            case "forearm.l":
-            case "FOREARM_L": {
-                result = this.detachCosmeticFromLeftForearm(destroyMesh);
-                break;
-            }
-            case "forearm.r":
-            case "FOREARM_R": {
-                result = this.detachCosmeticFromRightForearm(destroyMesh);
-                break;
-            }
-            case "hand.l":
-            case "HAND_L": {
-                result = this.detachCosmeticFromLeftHand(destroyMesh);
-                break;
-            }
-            case "hand.r":
-            case "HAND_R": {
-                result = this.detachCosmeticFromRightHand(destroyMesh);
-                break;
-            }
-            default: {
-                result = 1;
-            }
+            return 1;
         }
-        return result;
+        if (!this._organMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
+            this._organMeshIDsAttachedToBones[boneID] = {};
+        }
+        this._organMeshIDsAttachedToBones[boneID][meshID] = materialID;
+        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
+        if (AbstractController.debugMode) console.groupEnd();
+        return 0;
     }
-    attachCosmeticToHead(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
+    detachOrganMeshesFromBone(boneID, destroyMesh = true) {
+        let bone = null;
+        if (boneID instanceof BABYLON.Bone) {
+            bone = boneID;
+            boneID = bone.id;
         }
-        if (typeof this.attachedCosmetics["HEAD"]["meshID"] == "string") {
-            if (this.attachedCosmetics["HEAD"]["meshID"] == meshID && this.attachedCosmetics["HEAD"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromHead();
+        else if (!this.hasBone(boneID)) {
+            return 1;
         }
-        this.attachedCosmetics["HEAD"]["meshID"] = meshID;
-        this.attachedCosmetics["HEAD"]["materialID"] = materialID;
-        return this.attachToHead(meshID, materialID, options);
+        else {
+            bone = this.getBone(boneID);
+        }
+        for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
+            if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+            }
+        }
+        delete this._organMeshIDsAttachedToBones[boneID];
+        return 0;
     }
-    detachCosmeticFromHead(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["HEAD"]["meshID"], destroyMesh);
-        this.attachedCosmetics["HEAD"]["meshID"] = null;
-        this.attachedCosmetics["HEAD"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToLeftEye(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
+    detachOrganMeshes(destroyMesh = true) {
+        for (let boneID in this._organMeshIDsAttachedToBones) {
+            let bone = this.getBone(boneID);
+            for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
+                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+                }
+                delete this._organMeshIDsAttachedToBones[boneID][meshID];
             }
-            meshID = meshID.name;
+            delete this._organMeshIDsAttachedToBones[boneID];
         }
-        if (typeof this.attachedCosmetics["EYE_L"]["meshID"] == "string") {
-            if (this.attachedCosmetics["EYE_L"]["meshID"] == meshID && this.attachedCosmetics["EYE_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromLeftEye();
-        }
-        this.attachedCosmetics["EYE_L"]["meshID"] = meshID;
-        this.attachedCosmetics["EYE_L"]["materialID"] = materialID;
-        return this.attachToLeftEye(meshID, materialID, options);
+        return 0;
     }
-    detachCosmeticFromLeftEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["EYE_L"]["meshID"], destroyMesh);
-        this.attachedCosmetics["EYE_L"]["meshID"] = null;
-        this.attachedCosmetics["EYE_L"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToRightEye(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
+
+    attachCosmeticMeshToBone(mesh, boneID, position, rotation, scaling, options) {
+        if (!this.hasBone(boneID)) {
+            return 1;
         }
-        if (typeof this.attachedCosmetics["EYE_R"]["meshID"] == "string") {
-            if (this.attachedCosmetics["EYE_R"]["meshID"] == meshID && this.attachedCosmetics["EYE_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromRightEye();
+        if (!this._cosmeticMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
+            this._cosmeticMeshIDsAttachedToBones[boneID] = {};
         }
-        this.attachedCosmetics["EYE_R"]["meshID"] = meshID;
-        this.attachedCosmetics["EYE_R"]["materialID"] = materialID;
-        return this.attachToRightEye(meshID, materialID, options);
+        this._cosmeticMeshIDsAttachedToBones[boneID][mesh.name] = mesh.material.name;
+        this.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
+        return 0;
     }
-    detachCosmeticFromRightEye(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["EYE_R"]["meshID"], destroyMesh);
-        this.attachedCosmetics["EYE_R"]["meshID"] = null;
-        this.attachedCosmetics["EYE_R"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToLeftEar(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
+    attachCosmeticMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options) {
+        if (!this.hasBone(boneID)) {
+            return 1;
         }
-        if (typeof this.attachedCosmetics["EAR_L"]["meshID"] == "string") {
-            if (this.attachedCosmetics["EAR_L"]["meshID"] == meshID && this.attachedCosmetics["EAR_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromLeftEar();
+        if (!this._cosmeticMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
+            this._cosmeticMeshIDsAttachedToBones[boneID] = {};
         }
-        this.attachedCosmetics["EAR_L"]["meshID"] = meshID;
-        this.attachedCosmetics["EAR_L"]["materialID"] = materialID;
-        return this.attachToLeftEar(meshID, materialID, options);
+        this._cosmeticMeshIDsAttachedToBones[boneID][meshID] = materialID;
+        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
+        return 0;
     }
-    detachCosmeticFromLeftEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["EAR_L"]["meshID"], destroyMesh);
-        this.attachedCosmetics["EAR_L"]["meshID"] = null;
-        this.attachedCosmetics["EAR_L"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToRightEar(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
+    detachCosmeticMeshesFromBone(boneID, destroyMesh = true) {
+        let bone = null;
+        if (boneID instanceof BABYLON.Bone) {
+            bone = boneID;
+            boneID = bone.id;
         }
-        if (typeof this.attachedCosmetics["EAR_R"]["meshID"] == "string") {
-            if (this.attachedCosmetics["EAR_R"]["meshID"] == meshID && this.attachedCosmetics["EAR_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromRightEar();
+        else if (!this.hasBone(boneID)) {
+            return 1;
         }
-        this.attachedCosmetics["EAR_R"]["meshID"] = meshID;
-        this.attachedCosmetics["EAR_R"]["materialID"] = materialID;
-        return this.attachToRightEar(meshID, materialID, options);
-    }
-    detachCosmeticFromRightEar(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["EAR_R"]["meshID"], destroyMesh);
-        this.attachedCosmetics["EAR_R"]["meshID"] = null;
-        this.attachedCosmetics["EAR_R"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToNeck(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
+        else {
+            bone = this.getBone(boneID);
         }
-        if (typeof this.attachedCosmetics["NECK"]["meshID"] == "string") {
-            if (this.attachedCosmetics["NECK"]["meshID"] == meshID && this.attachedCosmetics["NECK"]["materialID"] == materialID) {
-                return 0;
+        for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
+            if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], boneID, destroyMesh)
             }
-            this.detachCosmeticFromNeck();
         }
-        this.attachedCosmetics["NECK"]["meshID"] = meshID;
-        this.attachedCosmetics["NECK"]["materialID"] = materialID;
-        return this.attachToNeck(meshID, materialID, options);
+        delete this._cosmeticMeshIDsAttachedToBones[boneID];
+        return 0;
     }
-    detachCosmeticFromNeck(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["NECK"]["meshID"], destroyMesh);
-        this.attachedCosmetics["NECK"]["meshID"] = null;
-        this.attachedCosmetics["NECK"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToLeftShoulder(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
+    detachCosmeticMeshes(destroyMesh = true) {
+        for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
+            let bone = this.getBone(boneID);
+            for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
+                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+                }
+                delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
             }
-            meshID = meshID.name;
+            delete this._cosmeticMeshIDsAttachedToBones[boneID];
         }
-        if (typeof this.attachedCosmetics["SHOULDER_L"]["meshID"] == "string") {
-            if (this.attachedCosmetics["SHOULDER_L"]["meshID"] == meshID && this.attachedCosmetics["SHOULDER_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromLeftShoulder();
-        }
-        this.attachedCosmetics["SHOULDER_L"]["meshID"] = meshID;
-        this.attachedCosmetics["SHOULDER_L"]["materialID"] = materialID;
-        return this.attachToLeftShoulder(meshID, materialID, options);
-    }
-    detachCosmeticFromLeftShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["SHOULDER_L"]["meshID"], destroyMesh);
-        this.attachedCosmetics["SHOULDER_L"]["meshID"] = null;
-        this.attachedCosmetics["SHOULDER_L"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToRightShoulder(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["SHOULDER_R"]["meshID"] == "string") {
-            if (this.attachedCosmetics["SHOULDER_R"]["meshID"] == meshID && this.attachedCosmetics["SHOULDER_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromRightShoulder();
-        }
-        this.attachedCosmetics["SHOULDER_R"]["meshID"] = meshID;
-        this.attachedCosmetics["SHOULDER_R"]["materialID"] = materialID;
-        return this.attachToRightShoulder(meshID, materialID, options);
-    }
-    detachCosmeticFromRightShoulder(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["SHOULDER_R"]["meshID"], destroyMesh);
-        this.attachedCosmetics["SHOULDER_R"]["meshID"] = null;
-        this.attachedCosmetics["SHOULDER_R"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToLeftForearm(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["FOREARM_L"]["meshID"] == "string") {
-            if (this.attachedCosmetics["FOREARM_L"]["meshID"] == meshID && this.attachedCosmetics["FOREARM_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromLeftForearm();
-        }
-        this.attachedCosmetics["FOREARM_L"]["meshID"] = meshID;
-        this.attachedCosmetics["FOREARM_L"]["materialID"] = materialID;
-        return this.attachToLeftForearm(meshID, materialID, options);
-    }
-    detachCosmeticFromLeftForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["FOREARM_L"]["meshID"], destroyMesh);
-        this.attachedCosmetics["FOREARM_L"]["meshID"] = null;
-        this.attachedCosmetics["FOREARM_L"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToRightForearm(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["FOREARM_R"]["meshID"] == "string") {
-            if (this.attachedCosmetics["FOREARM_R"]["meshID"] == meshID && this.attachedCosmetics["FOREARM_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromRightForearm();
-        }
-        this.attachedCosmetics["FOREARM_R"]["meshID"] = meshID;
-        this.attachedCosmetics["FOREARM_R"]["materialID"] = materialID;
-        return this.attachToRightForearm(meshID, materialID, options);
-    }
-    detachCosmeticFromRightForearm(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["FOREARM_R"]["meshID"], destroyMesh);
-        this.attachedCosmetics["FOREARM_R"]["meshID"] = null;
-        this.attachedCosmetics["FOREARM_R"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToLeftHand(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["HAND_L"]["meshID"] == "string") {
-            if (this.attachedCosmetics["HAND_L"]["meshID"] == meshID && this.attachedCosmetics["HAND_L"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromLeftHand();
-        }
-        this.attachedCosmetics["HAND_L"]["meshID"] = meshID;
-        this.attachedCosmetics["HAND_L"]["materialID"] = materialID;
-        return this.attachToLeftHand(meshID, materialID, options);
-    }
-    detachCosmeticFromLeftHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["HAND_L"]["meshID"], destroyMesh);
-        this.attachedCosmetics["HAND_L"]["meshID"] = null;
-        this.attachedCosmetics["HAND_L"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToRightHand(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["HAND_R"]["meshID"] == "string") {
-            if (this.attachedCosmetics["HAND_R"]["meshID"] == meshID && this.attachedCosmetics["HAND_R"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromRightHand();
-        }
-        this.attachedCosmetics["HAND_R"]["meshID"] = meshID;
-        this.attachedCosmetics["HAND_R"]["materialID"] = materialID;
-        return this.attachToRightHand(meshID, materialID, options);
-    }
-    detachCosmeticFromRightHand(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["HAND_R"]["meshID"], destroyMesh);
-        this.attachedCosmetics["HAND_R"]["meshID"] = null;
-        this.attachedCosmetics["HAND_R"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToChest(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["CHEST"]["meshID"] == "string") {
-            if (this.attachedCosmetics["CHEST"]["meshID"] == meshID && this.attachedCosmetics["CHEST"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromChest();
-        }
-        this.attachedCosmetics["CHEST"]["meshID"] = meshID;
-        this.attachedCosmetics["CHEST"]["materialID"] = materialID;
-        return this.attachToChest(meshID, materialID, options);
-    }
-    detachCosmeticFromChest(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["CHEST"]["meshID"], destroyMesh);
-        this.attachedCosmetics["CHEST"]["meshID"] = null;
-        this.attachedCosmetics["CHEST"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToSpine(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["SPINE"]["meshID"] == "string") {
-            if (this.attachedCosmetics["SPINE"]["meshID"] == meshID && this.attachedCosmetics["SPINE"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromSpine();
-        }
-        this.attachedCosmetics["SPINE"]["meshID"] = meshID;
-        this.attachedCosmetics["SPINE"]["materialID"] = materialID;
-        return this.attachToSpine(meshID, materialID, options);
-    }
-    detachCosmeticFromSpine(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["SPINE"]["meshID"], destroyMesh);
-        this.attachedCosmetics["SPINE"]["meshID"] = null;
-        this.attachedCosmetics["SPINE"]["materialID"] = null;
-        return result;
-    }
-    attachCosmeticToPelvis(meshID, materialID, options) {
-        if (meshID instanceof BABYLON.AbstractMesh) {
-            if (meshID.material instanceof BABYLON.Material) {
-                materialID = meshID.material.name;
-            }
-            meshID = meshID.name;
-        }
-        if (typeof this.attachedCosmetics["PELVIS"]["meshID"] == "string") {
-            if (this.attachedCosmetics["PELVIS"]["meshID"] == meshID && this.attachedCosmetics["PELVIS"]["materialID"] == materialID) {
-                return 0;
-            }
-            this.detachCosmeticFromPelvis();
-        }
-        this.attachedCosmetics["PELVIS"]["meshID"] = meshID;
-        this.attachedCosmetics["PELVIS"]["materialID"] = materialID;
-        return this.attachToPelvis(meshID, materialID, options);
-    }
-    detachCosmeticFromPelvis(destroyMesh = true) {
-        let result = this.detachMeshID(this.attachedCosmetics["PELVIS"]["meshID"], destroyMesh);
-        this.attachedCosmetics["PELVIS"]["meshID"] = null;
-        this.attachedCosmetics["PELVIS"]["materialID"] = null;
-        return result;
+        return 0;
     }
 
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
             return 1;
         }
-        let eyeString = String(this.eyeImageID).concat(this.eyeColour.slice(1)).concat(this.eyeBackground.slice(1));
-        if (!Game.hasLoadedTexture(eyeString)) {
+        /** @type {string} */
+        this.sEyeTexture = String(this.sEyeType).concat(this.sEyeIrisColour.slice(1)).concat(this.sEyeScleraColour.slice(1));
+        if (!Game.hasLoadedTexture(this.sEyeTexture)) {
             Game.modifySVG(
-                this.eyeImageID,
-                eyeString,
+                this.sEyeType,
+                this.sEyeTexture,
                 {
-                    "iris": {"background":this.eyeColour},
-                    "sclera": {"background":this.eyeBackground}
+                    "iris": {"background":this.sEyeIrisColour},
+                    "sclera": {"background":this.sEyeScleraColour}
                 }
             );
         }
-        this.attachOrganToRightEye("eye01", eyeString);
-        this.attachOrganToLeftEye("eye01", eyeString);
+        this.attachOrganMeshIDToBone("eye01", this.sEyeTexture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
+        this.attachOrganMeshIDToBone("eye01", this.sEyeTexture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
         return 0;
     }
     generateCosmeticMeshes() {
@@ -1155,42 +362,42 @@ class CreatureController extends EntityController {
             return 2;
         }
         super.populateFromEntity(entityObject);
-        if (entityObject.hasOwnProperty("eyeType")) this.eyeType = entityObject.eyeType;
-        switch (this.eyeType) {
+        if (entityObject.hasOwnProperty("eyeType")) this.eEyeType = entityObject.eyeType;
+        switch (this.eEyeType) {
             case EyeEnum.SLIT: {
-                this.eyeImageID = "feralEye";
+                this.sEyeType = "feralEye";
                 break;
             }
             case EyeEnum.OBLONG: {
-                this.eyeImageID = "oblongEye";
+                this.sEyeType = "oblongEye";
                 break;
             }
             case EyeEnum.CIRCLE:
             default: {
-                this.eyeImageID = "circularEye";
+                this.sEyeType = "circularEye";
             }
         }
         if (entityObject.hasOwnProperty("eyeColour")) {
             if (String(entityObject.eyeColour).slice(0,1) == '#') {
-                this.eyeColour = entityObject.eyeColour;
+                this.sEyeIrisColour = entityObject.eyeColour;
             }
             else {
-                this.eyeColour = Tools.colourNameToHex(entityObject.eyeColour);
+                this.sEyeIrisColour = Tools.colourNameToHex(entityObject.eyeColour);
             }
         }
         if (entityObject.hasOwnProperty("eyeBackground")) {
             if (String(entityObject.eyeBackground).slice(0,1) == '#') {
-                this.eyeBackground = entityObject.eyeBackground;
+                this.sEyeScleraColour = entityObject.eyeBackground;
             }
             else {
-                this.eyeBackground = Tools.colourNameToHex(entityObject.eyeBackground);
+                this.sEyeScleraColour = Tools.colourNameToHex(entityObject.eyeBackground);
             }
         }
         if (entityObject.hasOwnProperty("cosmetics")) {
             for (let boneID in entityObject["cosmetics"]) {
                 if (!(entityObject["cosmetics"][boneID] instanceof Object)) {
                     if (overwrite) {
-                        this.detachCosmeticFromBone(boneID, true);
+                        this.detachCosmeticMeshesFromBone(boneID, true);
                     }
                 }
                 else {
@@ -1206,7 +413,7 @@ class CreatureController extends EntityController {
                         else {
                             material = "missingMaterial";
                         }
-                        this.attachCosmeticToBone(meshID, materialID, boneID);
+                        this.attachCosmeticMeshIDToBone(meshID, materialID, boneID);
                     }
                 }
             }
@@ -1230,31 +437,6 @@ class CreatureController extends EntityController {
             }
         }
         return 0;
-    }
-    hasLookController() {
-        if (!this.enabled) {
-            return false;
-        }
-        return this.lookController instanceof BABYLON.BoneLookController;
-    }
-    createLookController(bone = "head") {
-        if (!this.hasBone(bone)) {
-            return null;
-        }
-        let lookController = new BABYLON.BoneLookController(
-            this.mesh,
-            this.getBoneByName(bone),
-            this.targetRayVector3,
-            {
-                slerpAmount: this.headTurnSpeed,
-                minPitch:BABYLON.Tools.ToRadians(-45),
-                maxPitch:BABYLON.Tools.ToRadians(45),
-                minYaw:BABYLON.Tools.ToRadians(-45),
-                maxYaw:BABYLON.Tools.ToRadians(45)
-            }
-        );
-        this.lookController = lookController;
-        return this.lookController;
     }
     /**
      * @override
@@ -1395,52 +577,151 @@ class CreatureController extends EntityController {
         return 0;
     }
 
+    populateAnimatables() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return 1;
+        }
+        let animatable = null;
+        animatable = this.createAnimatableFromRangeName("standingIdle", "90_idleStanding");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("crouchingIdle", "90_idleCrouching");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("proneIdle", "90_idleProne");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("sitting", "90_idleSitChair");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("lying", "90_idleLyingDown");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("dead", "91_death01");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("walking", "93_walkingKneesBent");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("running", "93_runningKneesBent");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("crouching", "93_crouchingKneesBent");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("prone", "93_proneKneesBent");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("blink", "70_blink");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        animatable = this.createAnimatableFromRangeName("blink_half_lidded", "70_blink_half_lidded");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(null);
+        // Punching blends
+        animatable = this.createAnimatableFromRangeName("punchRightIdle", "71_rightHandedPunch");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(this.animatables["standingIdle"]);
+        animatable = this.createAnimatableFromRangeName("punchRightWalking", "71_rightHandedPunch");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(this.animatables["walking"]);
+        animatable = this.createAnimatableFromRangeName("punchRightCrouchingIdle", "71_rightHandedPunch");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(this.animatables["crouchingIdle"]);
+        animatable = this.createAnimatableFromRangeName("punchRightCrouching", "71_rightHandedPunch");
+        if (animatable instanceof BABYLON.Animatable)
+            animatable.syncWith(this.animatables["crouching"]);
+        return 0;
+    }
+    populateAnimationGroup() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return 1;
+        }
+        this.createAnimationGroupFromAnimatables("standingIdle", "standingIdle");
+        this.createAnimationGroupFromAnimatables("crouchingIdle", "crouchingIdle");
+        this.createAnimationGroupFromAnimatables("proneIdle", "proneIdle");
+        this.createAnimationGroupFromAnimatables("walking", "walking");
+        this.createAnimationGroupFromAnimatables("running", "running", 0.0, true, (1.8 * this.getScaling().y));
+        this.createAnimationGroupFromAnimatables("crouching", "crouching", 0.0, true, 1.5);
+        this.createAnimationGroupFromAnimatables("prone", "prone", 0.0, 1.5);
+        this.createAnimationGroupFromAnimatables("sitting", "sitting");
+        this.createAnimationGroupFromAnimatables("lying", "lying");
+        this.createAnimationGroupFromAnimatables("dead", "dead", 0, false);
+        return 0;
+    }
     updateAnimation() {
-        let anim = this.animationGroups.idleStanding01;
-        if (this.dead) {
-            this.setLocked(true);
+        if (this.stanceFrameCount < this.stanceFrameCountMax) {
+            this.stanceFrameCount++;
         }
-        else if (this.locked) {
-            this.setLocked(false);
-        }
-        if (this.moving) {
-            if (this.falling) {}
-            else if (this.crouching) {}
-            else if (this.walking) {
-                if (this.dead) {
-                }
-                else {
-                    anim = this.animationGroups.walking01;
-                }
-            }
-            else if (this.running) {
-                if (this.dead) {
-                }
-                else {
-                    anim = this.animationGroups.running01;
-                }
-            }
-            else if (this.sprinting) {}
-            else if (this.climbing) {}
-            else if (this.flying) {}
+        let anim = "";
+        if (this.oOverrideAnimation != null) {
+            anim = this.oOverrideAnimation;
         }
         else {
-            if (this.falling) {
-
-            }
-            else if (this.crouching) {}
-            else if (this.sitting) {
-                if (this.dead) {
+            switch (this.groundedState) {
+                case GroundedStateEnum.FALL: {
+                    break;
                 }
-                else {
-                    anim = this.animationGroups.idleSitting01;
+                case GroundedStateEnum.GROUND: {
+                    switch (this.stance) {
+                        case StanceEnum.STAND: {
+                            switch (this.movementPace) {
+                                case MovementPaceEnum.NONE: {
+                                    anim = "standingIdle";
+                                    break;
+                                }
+                                case MovementPaceEnum.AMBLE: {
+                                    anim = "walking";
+                                    break;
+                                }
+                                case MovementPaceEnum.WALK: {
+                                    anim = "walking";
+                                    break;
+                                }
+                                case MovementPaceEnum.RUN: {
+                                    anim = "running";
+                                    break;
+                                }
+                                case MovementPaceEnum.SPRINT: {
+                                    anim = "running";
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case StanceEnum.CROUCH: {
+                            switch (this.movementPace) {
+                                case MovementPaceEnum.NONE: {
+                                    anim = "crouchingIdle";
+                                    break;
+                                }
+                                default: {
+                                    anim = "crouching";
+                                }
+                            }
+                            break;
+                        }
+                        case StanceEnum.PRONE: {
+                            switch (this.movementPace) {
+                                case MovementPaceEnum.NONE: {
+                                    anim = "proneIdle";
+                                    break;
+                                }
+                                default: {
+                                    anim = "prone";
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
                 }
-            }
-            else if (this.lying) {
-                if (this.dead) {
-                    this.animationGroups.idleLyingDeath01.setWeightForAllAnimatables(1);
+                case GroundedStateEnum.FLY: {
+                    break;
                 }
-                anim = this.animationGroups.idleLying01;
+                case GroundedStateEnum.SWIM: {
+                    break;
+                }
             }
         }
         if (this.animationPriorityUpdated) {
@@ -1453,85 +734,81 @@ class CreatureController extends EntityController {
             }
         }
         if (this.animationPriority == 0) {
-            if (this.dead) { // TODO: complain about my lack of foresight with multiple blended animations
-                this.stopAnimation("idleStanding01");
-            }
             this.beginAnimation(anim);
         }
         return 0;
     }
-    doAttack() {
-        this.setAttacking(true);
-        return 0;
-    }
-    doAttackBlocked() {
-        this.setAttacking(false);
-        return 0;
-    }
-    doAttackFinished() {
-        this.setAttacking(false);
+    doProne() {
+        this.setStance(StanceEnum.PRONE);
+        this.oOverrideAnimation = null;
         return 0;
     }
     doCrouch() {
-        if (this.crouching) {
-            return 1;
-        }
-        this.standing = false;
-        this.crouching = true;
-        this.sitting = false;
-        this.lying = false;
-        this.setLocked(true);
-        this.beginAnimation(this.crouch, () => {this.setLocked(false)});
-        return 0;
-    }
-    doDeath() {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        this.lying = true; // TODO: remove later when other death animations are actually implemented
-        this.dead = true;
-        return 0;
-    }
-    doLay() {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        this.standing = false;
-        this.crouching = false;
-        this.sitting = false;
-        this.lying = true;
-        return 0;
-    }
-    doSit() {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 1;
-        }
-        this.standing = false;
-        this.crouching = false;
-        this.sitting = true;
-        this.lying = false;
+        this.setStance(StanceEnum.CROUCH);
+        this.oOverrideAnimation = null;
         return 0;
     }
     doStand() {
-        if (this.standing) {
-            return 1;
-        }
-        this.standing = true;
-        this.crouching = false;
-        this.sitting = false;
-        this.lying = false;
-        //this.setLocked(true);
-        //this.beginAnimation(this.stand, () => {this.setLocked(false)});
+        this.setStance(StanceEnum.STAND);
+        this.oOverrideAnimation = null;
+        return 0;
+    }
+    doLay() {
+        this.setStance(StanceEnum.OVERRIDE);
+        this.oOverrideAnimation = this.animationGroups["lying"];
+        return 0;
+    }
+    doSit() {
+        this.setStance(StanceEnum.OVERRIDE);
+        this.oOverrideAnimation = this.animationGroups["sitting"];
+        return 0;
+    }
+    doAttack() {
+        return 0;
+    }
+    doAttackFinished() {
         return 0;
     }
 
-    setAttacking(bool = true) {
-        this.attacking = bool == true;
-        if (EntityController.debugMode) console.log(`Running {CreatureController} ${this.id}.setAttacking(${this.attacking ? "true" : "false"})`);
+    setGroundedState(groundedState) {
+        this.groundedState = groundedState;
+        return 0;
+    }
+    /**
+     * 
+     * @param {StanceEnum} stance 
+     * @returns {number}
+     */
+    setStance(stance) {
+        if (!StanceEnum.properties.hasOwnProperty(stance)) {
+            return 1;
+        }
+        if (stance != this.stance) {
+            if (this.previousStance == stance && this.stanceFrameCount < this.stanceFrameCountMin) {
+                this.stanceFrameCount = this.previousStanceFrameCount;
+                this.previousStance = this.otherPreviousStance;
+                this.previousStanceFrameCount = this.otherPreviousStanceFrameCount;
+            }
+            else {
+                this.otherPreviousStance = this.previousStance;
+                this.otherPreviousStanceFrameCount = this.previousStanceFrameCount;
+                this.previousStance = this.stance;
+                this.previousStanceFrameCount = this.stanceFrameCount;
+                this.stanceFrameCount = 0;
+            }
+        }
+        this.stance = stance;
+        return 0;
+    }
+    setMovementPace(movementPace) {
+        this.movementPace = Number.parseFloat(movementPace);
         return 0;
     }
 
     hideAttachedMeshes() {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
         }
@@ -1547,16 +824,27 @@ class CreatureController extends EntityController {
         return 0;
     }
     showAttachedMeshes() {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
         }
         for (let bone in this._meshesAttachedToBones) {
-            if (bone == "FOCUS" || bone == "ROOT") {}
-            else if (!this.helmetVisible && bone == "head") {}
-            else {
-                for (let mesh in this._meshesAttachedToBones[bone]) {
-                    if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
-                        this._meshesAttachedToBones[bone][mesh].isVisible = true;
+            switch (bone) {
+                case "FOCUS": case "ROOT": {
+                    break;
+                }
+                case "head": {
+                    if (!this.helmetVisible) {
+                        break;
+                    }
+                }
+                default: {
+                    for (let mesh in this._meshesAttachedToBones[bone]) {
+                        if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
+                            this._meshesAttachedToBones[bone][mesh].isVisible = true;
+                        }
                     }
                 }
             }
@@ -1604,6 +892,9 @@ class CreatureController extends EntityController {
         return 0;
     }
     setTarget(entityController) {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         if (!(entityController instanceof EntityController)) {
             if (EntityController.has(entityController)) {
                 entityController = EntityController.get(entityController);
@@ -1630,16 +921,11 @@ class CreatureController extends EntityController {
     }
 
     setAnimationPriority(number = 0) {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         this.animationPriority = number;
         this.animationPriorityUpdated = true;
-        if (this.hasLookController()) {
-            if (number == 0) {
-                this.lookController.slerpAmount = this.headTurnSpeed;
-            }
-            else {
-                this.lookController.slerpAmount = 1;
-            }
-        }
         return 0;
     }
 
@@ -1651,7 +937,9 @@ class CreatureController extends EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.detachFromAllBones();
+        this.removeTarget();
+        this.detachCosmeticMeshes(true);
+        this.detachOrganMeshes(true);
         CreatureController.remove(this.id);
         super.dispose();
         return null;

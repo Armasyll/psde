@@ -1,5 +1,8 @@
 /**
  * Character Controller for Rigid Bodies
+ * @class
+ * @extends {CharacterController}
+ * @typedef {Object} CharacterControllerRigidBody
  */
 class CharacterControllerRigidBody extends CharacterController {
     /**
@@ -9,8 +12,7 @@ class CharacterControllerRigidBody extends CharacterController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
-        super(id, mesh, entityObject);
-        if (!this.hasMesh()) {
+        if (!(super(id, mesh, entityObject) instanceof CharacterController)) {
             return undefined;
         }
 
@@ -19,10 +21,9 @@ class CharacterControllerRigidBody extends CharacterController {
         this.startPosition = this.collisionMesh.position.clone();
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
-        this.crawlspeed = 1.0 * this.getScaling().z;
-        this.walkSpeed = 1.4 * this.getScaling().z;
-        this.runSpeed = 3.2 * this.getScaling().z; // if it's a fox mesh
-        this.lookController = this.createLookController();
+        this.amblespeed = 0.5;
+        this.walkSpeed = 1.0;
+        this.runSpeed = 2.0;
 
         this.fallTime = 0;
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
@@ -32,9 +33,32 @@ class CharacterControllerRigidBody extends CharacterController {
         this.yDifferencePosition = new BABYLON.Vector3.Zero();
         this.fallFrameCount = 0;
         this.fallDistance = 0;
+        this.bHasRunPostConstructCharacterRigid = false;
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructCharacterRigid) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructCharacterRigid = true;
+        // TODO: match speeds with mesh' species
+        this.amblespeed = 0.05 * this.getScaling().z;
+        this.walkSpeed = 0.4 * this.getScaling().z;
+        this.runSpeed = 1.3 * this.getScaling().z;
+        return 0;
     }
 
     moveAV() {
+        if (this.locked) {
+            return 0;
+        }
+        if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
+            this.doMove();
+        }
+        return 0;
+    }
+    preMoveAV() {
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
             if (EntityController.debugMode) {
@@ -52,22 +76,16 @@ class CharacterControllerRigidBody extends CharacterController {
         }
         this.updateTargetRay();
         this.moving = false;
-        if (this.anyMovement() || this.falling) {
-            this.startPosition.copyFrom(this.collisionMesh.position);
+        if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
             this.doMove();
+        }
+        else {
+            this.setMovementPace(MovementPaceEnum.NONE);
         }
         this.updateAnimation();
         if (this.hasTargetRay() && this != Game.playerController) {
             this.targetRay.direction.y = 0; // up-down
             this.targetRay.direction.z = -this.collisionMesh.forward.z;
-        }
-        if (this.hasLookController()) {
-            if (this.animationPriority == 0) {
-                this.lookController.update();
-            }
-            else if (Game.currentFrame == Math.floor(Game.engine.getFps()/2)) {
-                this.lookController.update();
-            }
         }
         if (this.propertiesChanged) {
             this.updateProperties();
@@ -85,13 +103,13 @@ class CharacterControllerRigidBody extends CharacterController {
         return 0;
     }
     doMove() {
-        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`)
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`);
+        this.startPosition.copyFrom(this.collisionMesh.position);
         let dt = Game.engine.getDeltaTime() / 1000;
         let u = this.fallTime * -Game.scene.gravity.y;
-        this.collisionMesh.setParent(null);
         this.fallDistance = u * dt + -Game.scene.gravity.y * dt * dt / 2;
         this.fallTime = this.fallTime + dt;
-        if (this.falling) {
+        if (this.groundedState == GroundedStateEnum.FALL) {
             this.intendedMovement.y = -this.fallDistance;
             this.moving = true;
             if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
@@ -139,31 +157,12 @@ class CharacterControllerRigidBody extends CharacterController {
             }
         }
         if (this.moving) {
-            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
-                console.info("moving")
-            }
-            this.sitting = false;
-            this.lying = false;
-            if (!this.crouching) {
-                this.standing = true;
-            }
             if (this.key.shift) {
-                if (!this.standing) { // TODO: stall until transition from crouching/lying/sitting complete
-                    return this.doStand();
-                }
-                this.walking = false;
-                this.running = true;
+                this.setMovementPace(MovementPaceEnum.RUN);
             }
             else {
-                this.walking = true;
-                this.running = false;
+                this.setMovementPace(MovementPaceEnum.WALK);
             }
-            /*
-            lying + walking = crawling
-            crouching + walking = spycrabing
-            standing + walking = walking
-            standing + running = running
-            */
             if (Math.abs(this.intendedDirection - this.collisionMesh.rotation.y) > BABYLON.Tools.ToRadians(0.5)) {
                 /*
                 Anon_11487
@@ -180,76 +179,73 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.collisionMesh.rotation.y = this.intendedDirection;
             }
             this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
-            if (this.walking) {
+            if (this.movementPace == MovementPaceEnum.WALK) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * dt));
             }
-            else if (this.running) {
+            else if (this.movementPace == MovementPaceEnum.RUN) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * dt));
             }
-            else if (this.crawling) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.crawlSpeed * dt));
+            else if (this.movementPace == MovementPaceEnum.AMBLE) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.ambleSpeed * dt));
             }
-            // Start Mitigate jittering in Y direction
-            if (Game.useControllerGroundRay) {
-                this.updateGroundRay();
-                let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
-                    if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
-                        return true;
-                    }
-                    return false;
-                });
-                if (hit.hit) {
-                    if (hit.pickedMesh.id == "wall") {
-                        console.log(hit.pickedMesh);
-                    }
-                    if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
-                        this.intendedMovement.y = 0;
-                    }
+        }
+        // Start Mitigate jittering in Y direction
+        if (Game.bUseControllerGroundRay) {
+            this.updateGroundRay();
+            let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
+                if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
+                    return true;
+                }
+                return false;
+            });
+            if (hit.hit) {
+                if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
+                    this.intendedMovement.y = 0;
                 }
             }
-            // End Mitigate jittering in Y direction
-            this.collisionMesh.moveWithCollisions(this.intendedMovement);
-            if (this.collisionMesh.position.y > this.startPosition.y) {
-                let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                let slope = Tools.verticalSlope(actDisp);
-                if (slope >= this.maxSlopeLimit) {
-                    if (this.yDifference == 0) {
-                        this.yDifferencePosition.copyFrom(this.startPosition);
-                    }
-                    this.yDifference = this.yDifference + (this.collisionMesh.position.y - this.startPosition.y);
+        }
+        // End Mitigate jittering in Y direction
+        this.collisionMesh.moveWithCollisions(this.intendedMovement);
+        if (this.collisionMesh.position.y > this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            let slope = Tools.verticalSlope(actDisp);
+            if (slope >= this.maxSlopeLimit) {
+                if (this.yDifference == 0) {
+                    this.yDifferencePosition.copyFrom(this.startPosition);
+                }
+                this.yDifference = this.yDifference + (this.collisionMesh.position.y - this.startPosition.y);
+            }
+            else {
+                this.yDifference = 0;
+                if (slope > this.minSlopeLimit) {
+                    this.fallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
                 }
                 else {
-                    this.yDifference = 0;
-                    if (slope > this.minSlopeLimit) {
-                        this.fallFrameCount = 0;
-                        this.falling = false;
-                    }
-                    else {
-                        this.endFreeFall();
-                    }
+                    this.endFreeFall();
                 }
             }
-            else if (this.collisionMesh.position.y < this.startPosition.y) {
-                let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                if (!(Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
-                    if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
-                        this.endFreeFall();
-                    }
-                    else {
-                        this.fallFrameCount = 0;
-                        this.falling = false;
-                    }
+        }
+        else if (this.collisionMesh.position.y < this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            if (!(Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
+                if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
+                    this.endFreeFall();
                 }
                 else {
-                    this.fallFrameCount++;
-                    if (this.fallFrameCount > 60) {
-                        this.falling = true;
-                    }
+                    this.fallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
                 }
             }
             else {
-                this.endFreeFall();
+                this.fallFrameCount++;
+                if (this.fallFrameCount > 60) {
+                    this.groundedState = GroundedStateEnum.FALL;
+                }
             }
+        }
+        else {
+            this.endFreeFall();
         }
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.groupEnd();
         return 0;
@@ -257,7 +253,7 @@ class CharacterControllerRigidBody extends CharacterController {
     endFreeFall() {
         this.fallTime = 0;
         this.fallFrameCount = 0;
-        this.falling = false;
+        this.setGroundedState(GroundedStateEnum.GROUND);
         return 0;
     }
     getAlpha() {

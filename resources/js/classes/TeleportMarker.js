@@ -20,17 +20,17 @@ class TeleportMarker {
         this.cellID = "limbo";
         this.position = null;
         this.rotation = null;
-        this._setID(id);
-        this._setCellID(cellID);
-        this._setPosition(position);
-        this._setRotation(rotation);
+        this.setID(id);
+        this.setCellID(cellID);
+        this.setPosition(position);
+        this.setRotation(rotation);
         TeleportMarker.set(this.id, this);
     }
     /**
      * 
      * @param {string} id 
      */
-    _setID(id) {
+    setID(id) {
         this.id = Tools.filterID(id);
         return 0;
     }
@@ -44,7 +44,7 @@ class TeleportMarker {
      * 
      * @param {string} cellID 
      */
-    _setCellID(cellID) {
+    setCellID(cellID) {
         this.cellID = Tools.filterID(cellID);
         return 0;
     }
@@ -79,7 +79,7 @@ class TeleportMarker {
      * 
      * @param {array} rotation 
      */
-    _setPosition(position) {
+    setPosition(position) {
         this.position = Tools.filterArray3(position);
         return 0;
     }
@@ -93,7 +93,7 @@ class TeleportMarker {
      * 
      * @param {array} rotation 
      */
-    _setRotation(rotation) {
+    setRotation(rotation) {
         this.rotation = Tools.filterArray3(rotation);
         return 0;
     }

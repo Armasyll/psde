@@ -17,8 +17,8 @@ class MenuControls extends AbstractControls {
             case AbstractControls.showInventoryCode: {
                 if (Game.gui.inventoryMenu.isVisible) {
                     Game.gui.inventoryMenu.hide();
-                    Game.gui.hideMenu();
-                    Game.gui.showHUD();
+                    Game.gui.hide();
+                    Game.gui.hud.show();
                 }
                 else {
                     Game.gui.inventoryMenu.set(Game.playerEntityID);
@@ -29,8 +29,8 @@ class MenuControls extends AbstractControls {
             case AbstractControls.showCharacterCode : {
                 if (Game.gui.characterStats.isVisible) {
                     Game.gui.characterStats.hide();
-                    Game.gui.hideMenu();
-                    Game.gui.showHUD();
+                    Game.gui.hide();
+                    Game.gui.hud.show();
                 }
                 else {
                     Game.gui.characterStats.set(Game.playerEntityID);
@@ -40,7 +40,7 @@ class MenuControls extends AbstractControls {
             }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
-                Game.gui.hideMenu(true);
+                Game.gui.hide();
                 break;
             }
         }

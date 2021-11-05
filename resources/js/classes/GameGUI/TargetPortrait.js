@@ -1,4 +1,7 @@
 class TargetPortraitGameGUI {
+    static getClassName() {
+        return "TargetPortraitGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing TargetPortraitGameGUI");
         TargetPortraitGameGUI.targetName = null;
@@ -109,6 +112,9 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.targetStaminaBar = portraitStatsStaminaSlider;
         TargetPortraitGameGUI.targetStaminaText = portraitStatsStaminaText;
         return portrait;
+    }
+    static resize() {
+        return 0;
     }
     static show() {
         TargetPortraitGameGUI.controller.isVisible = true;

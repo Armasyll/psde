@@ -13,10 +13,18 @@ class ItemController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-
-        this.setDefaultAction(ActionEnum.TAKE);
-
+        this.bHasRunPostConstructItem = false;
         ItemController.set(this.id, this);
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructItem) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructItem = true;
+        this.setDefaultAction(ActionEnum.TAKE);
+        return 0;
     }
 
     createCollisionMesh() {

@@ -1,4 +1,4 @@
-importScripts("../../../vendors/babylonjs/babylon.js", "../BabylonOverrides.js", "../Overrides.js", "../classes/Tools.js");
+importScripts("../../../vendors/babylonjs/babylon.js", "../BabylonOverrides.js", "../Overrides.js", "../classes/Tools.js", "../classes/Callback.js");
 class EntityController {
     constructor(id, width = 0.0, height = 0.0, depth = 0.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), timestamp = 0) {
         this.id = id;
@@ -18,7 +18,7 @@ class EntityController {
     }
     setPosition(position) {
         if (!(position instanceof BABYLON.Vector3)) {
-            if (typeof position == "array") {
+            if (position instanceof Array) {
                 position = BABYLON.Vector3.FromArray(position);
             }
             else {
@@ -39,7 +39,7 @@ class EntityController {
     }
     setRotation(rotation) {
         if (!(rotation instanceof BABYLON.Vector3)) {
-            if (typeof rotation == "array") {
+            if (rotation instanceof Array) {
                 rotation = BABYLON.Vector3.FromArray(rotation);
             }
             else {
@@ -110,7 +110,6 @@ class Transforms {
         Transforms.debugMode = false;
         Transforms.debugVerbosity = 0;
         Transforms.entityLogicPort = null;
-        Transforms.callbacks = {};
 
         Transforms.player = null;
         Transforms.entityRadiusToPlayerLimit = 25.0;

@@ -835,14 +835,116 @@ let ActionEnum = {
  * @enum {number}
  */
 let StanceEnum = {
-    "LAY": ActionEnum.LAY,
-    "SIT": ActionEnum.SIT,
-    "CROUCH": ActionEnum.CROUCH,
-    "STAND": ActionEnum.STAND,
-    "FLY": ActionEnum.FLY,
-    "FALL": ActionEnum.FALL,
-    "SWIM": ActionEnum.SWIM,
-    "properties": ActionEnum.properties
+    "STAND": 0,
+    "CROUCH": 1,
+    "PRONE": 2,
+    "OVERRIDE": 3,
+    "properties": {
+        0: {
+            "name": "Stand",
+            "value": 0,
+            "key": "STAND"
+        },
+        1: {
+            "name": "Crouch",
+            "value": 1,
+            "key": "CROUCH"
+        },
+        2: {
+            "name": "Prone",
+            "value": 2,
+            "key": "PRONE"
+        },
+        3: {
+            "name": "Override",
+            "value": 3,
+            "key": "OVERRIDE"
+        }
+    }
+};
+/**
+ * Enum for Grounded States
+ * @readonly
+ * @enum {number}
+ */
+let GroundedStateEnum = {
+    "FALL": 0,
+    "GROUND": 1,
+    "FLY": 2,
+    "SWIM": 3,
+    "JUMP": 4,
+    "CLIMB": 5,
+    "properties": {
+        0: {
+            "name": "Fall",
+            "value": 0,
+            "key": "FALL"
+        },
+        1: {
+            "name": "Ground",
+            "value": 1,
+            "key": "GROUND"
+        },
+        2: {
+            "name": "Fly",
+            "value": 2,
+            "key": "FLY"
+        },
+        3: {
+            "name": "Swim",
+            "value": 3,
+            "key": "SWIM"
+        },
+        4: {
+            "name": "Jump",
+            "value": 4,
+            "key": "JUMP"
+        },
+        5: {
+            "name": "Climb",
+            "value": 5,
+            "key": "CLIMB"
+        }
+    }
+};
+/**
+ * Enum for Movement Pacing
+ * @readonly
+ * @enum {number}
+ */
+let MovementPaceEnum = {
+    "NONE": 0,
+    "AMBLE": 1,
+    "WALK": 2,
+    "RUN": 3,
+    "SPRINT": 4,
+    "properties": {
+        0: {
+            "name": "Still",
+            "value": 0,
+            "key": "NONE"
+        },
+        1: {
+            "name": "Amble",
+            "value": 1,
+            "key": "AMBLE"
+        },
+        2: {
+            "name": "Walk",
+            "value": 2,
+            "key": "WALK"
+        },
+        3: {
+            "name": "Run",
+            "value": 3,
+            "key": "RUN"
+        },
+        4: {
+            "name": "Sprint",
+            "value": 4,
+            "key": "SPRINT"
+        }
+    }
 };
 /**
  * Enum for Offensive Stances
@@ -3172,11 +3274,6 @@ let SizeEnum = {
             "value": 5,
             "key": "LARGE"
         },
-        5: {
-            "name": "Fluffy",
-            "value": 5,
-            "key": "FLUFFY"
-        },
         6: {
             "name": "Huge",
             "value": 6,
@@ -3326,23 +3423,29 @@ let CreatureTypeEnum = {
  * @enum {number}
  */
 let CreatureSubTypeEnum = {
-    "FOX": 0,
-    "SKELETON": 1,
-    "SHEEP": 2,
+    "NONE": 0,
+    "FOX": 1,
+    "SKELETON": 2,
+    "SHEEP": 3,
     "properties": {
         0: {
-            "name": "Fox",
+            "name": "None",
             "value": 0,
-            "key": "FOX"
+            "key": "NONE"
         },
         1: {
-            "name": "Skeleton",
+            "name": "Fox",
             "value": 1,
-            "key": "SKELETON"
+            "key": "FOX"
         },
         2: {
-            "name": "Sheep",
+            "name": "Skeleton",
             "value": 2,
+            "key": "SKELETON"
+        },
+        3: {
+            "name": "Sheep",
+            "value": 3,
             "key": "SHEEP"
         }
     }

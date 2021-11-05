@@ -13,24 +13,17 @@ class FurnitureController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-
-        // containers, doors: opening, opened, closing, closed
-        // maybe make 90_idle01 closed
-        if (this.skeleton instanceof BABYLON.Skeleton) {
-            this.createAnimatableFromRangeName("closed", "10_closed01", false);
-            //this.createAnimatableFromRangeName("open", "80_open01", false);
-            this.createAnimatableFromRangeName("opened", "10_opened01", false);
-            //this.createAnimatableFromRangeName("close", "80_close01", false);
-            if (this.hasAnimatable("opened") && this.hasAnimatable("closed")) {
-                this.createAnimationGroupFromAnimatables("closed", "closed", 1.0, false);
-                //this.createAnimationGroupFromAnimatables("open", "open", 0.0, false);
-                this.createAnimationGroupFromAnimatables("opened", "opened", 0.0, false);
-                //this.createAnimationGroupFromAnimatables("close", "close", 0.0, false);
-                this.animated = true;
-            }
-        }
-
+        this.bHasRunPostConstructFurniture = false;
         FurnitureController.set(this.id, this);
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructFurniture) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructFurniture = true;
+        return 0;
     }
 
     createCollisionMesh() {
@@ -57,32 +50,6 @@ class FurnitureController extends EntityController {
         var dt = Game.engine.getDeltaTime() / 1000;
         anim = this.doIdle(dt);
         this.beginAnimation(anim);*/
-        return 0;
-    }
-    doOpen() {
-        if (this.animated && this.hasAnimationGroup("opened") && this.hasAnimationGroup("closed")) {
-            this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
-            //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
-            this.animationGroups["opened"].setWeightForAllAnimatables(1.0);
-            //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
-            this.animationGroups["opened"].play(false);
-        }
-        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
-        this.setDefaultAction(ActionEnum.CLOSE);
-        this.addHiddenAvailableAction(ActionEnum.OPEN);
-        return 0;
-    }
-    doClose() {
-        if (this.animated && this.hasAnimationGroup("opened") && this.hasAnimationGroup("closed")) {
-            this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
-            //this.animationGroups["open"].setWeightForAllAnimatables(0.0);
-            this.animationGroups["closed"].setWeightForAllAnimatables(1.0);
-            //this.animationGroups["close"].setWeightForAllAnimatables(0.0);
-            this.animationGroups["closed"].play(false);
-        }
-        this.setDefaultAction(ActionEnum.OPEN);
-        this.removeHiddenAvailableAction(ActionEnum.OPEN);
-        this.addHiddenAvailableAction(ActionEnum.CLOSE);
         return 0;
     }
 

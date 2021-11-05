@@ -30,12 +30,12 @@ class CharacterControls extends AbstractControls {
             case 114: {
                 if (DebugGameGUI.infoController.isVisible) {
                     Game.functionsToRunBeforeRender.remove(DebugGameGUI.updateInfoController);
-                    GameGUI.hud.removeControl(DebugGameGUI.infoController);
+                    GameGUI.hud.getController().removeControl(DebugGameGUI.infoController);
                     DebugGameGUI.infoController.isVisible = false;
                 }
                 else {
                     Game.functionsToRunBeforeRender.push(DebugGameGUI.updateInfoController);
-                    GameGUI.hud.addControl(DebugGameGUI.infoController);
+                    GameGUI.hud.getController().addControl(DebugGameGUI.infoController);
                     DebugGameGUI.infoController.isVisible = true;
                 }
                 break;
@@ -69,7 +69,7 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.chatInputFocusCode : {
-                if (Game.gui.isHUDVisible()) {
+                if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
                     if (!Game.gui.chat.isFocused()) {
                         Game.gui.chat.setFocused(true);
                     }
@@ -95,7 +95,7 @@ class CharacterControls extends AbstractControls {
                         _radialEndInterval() {}
                         _radianIntervalFunction() {}
                  */
-                if (CharacterControls.usePressTime == 0 && !Game.gui.radialMenu.isVisible && !Game.gui.dialogue.isVisible) {
+                if (CharacterControls.usePressTime == 0 && !Game.gui.hud.radialMenu.isVisible && !Game.gui.dialogue.isVisible) {
                     CharacterControls.usePressTime = Date.now();
                     CharacterControls.useTimeoutFunction = setTimeout(function() {CharacterControls.triggerUse()}, CharacterControls.useTimeout);
                 }
@@ -103,39 +103,57 @@ class CharacterControls extends AbstractControls {
             }
             case AbstractControls.interfaceTargetedEntityCode : {
                 if (Game.playerController.hasTarget()) {
-                    Game.gui.clearRadialMenu();
-                    Game.gui.populateRadialMenuWithTarget();
-                    Game.gui.updateRadialMenu();
-                    Game.gui.showRadialMenu();
+                    Game.gui.hud.populateRadialMenuWithTarget();
+                    Game.gui.hud.showRadialMenu();
                 }
                 break;
             }
             case AbstractControls.showInventoryCode : {
                 Game.gui.inventoryMenu.set(Game.playerEntityID);
-                Game.gui.showMenu(true);
+                Game.gui.show();
                 Game.gui.inventoryMenu.show();
                 Game.pointerRelease();
                 break;
             }
             case AbstractControls.showCharacterCode : {
                 Game.gui.characterStats.set(Game.playerEntityID);
-                Game.gui.showMenu(true);
+                Game.gui.show();
                 Game.gui.characterStats.show();
                 Game.pointerRelease();
                 break;
             }
             case AbstractControls.showMainMenuCode : {
-                if (Game.gui.isMenuVisible()) {
+                if (Game.getInterfaceMode() == InterfaceModeEnum.MENU) {
                     if (Game.debugMode) console.log(`\tShowing HUD`);
-                    Game.gui.hideMenu(false);
-                    Game.gui.showHUD(false);
+                    Game.gui.hideLastMenuChild();
                 }
                 else {
                     if (Game.debugMode) console.log(`\tShowing Main Menu`);
-                    Game.gui.hideHUD(false);
-                    Game.gui.showCharacterChoiceMenu(false);
+                    Game.gui.hud.hide();
+                    Game.gui.showCharacterChoiceMenu();
                 }
                 break;
+            }
+            case CharacterControls.toggleProneCode : {
+                if (Game.playerController.stance != StanceEnum.PRONE) {
+                    Game.playerController.doProne();
+                }
+                else {
+                    Game.playerController.doStand();
+                }
+                break;
+            }
+            case CharacterControls.toggleCrouchCode : {
+                if (Game.playerController.stance != StanceEnum.CROUCH) {
+                    Game.playerController.doCrouch();
+                }
+                else {
+                    Game.playerController.doStand();
+                }
+                break;
+            }
+            default : {
+                console.log(keyboardEvent);
             }
         }
         if (!Game.playerController.key.equals(Game.playerController.prevKey)) {
@@ -214,7 +232,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onKeyPress(keyboardEvent) {
-        if (Game.gui.isHUDVisible()) {
+        if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
             Game.pointerLock();
         }
         return 0;
@@ -253,7 +271,7 @@ class CharacterControls extends AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
-        if (Game.gui.isHUDVisible()) {
+        if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
             Game.pointerLock();
         }
         if (Game.debugMode) console.log(`Running CharacterControls::onClick(${mouseEvent.button})`);
@@ -271,10 +289,8 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.playerController.hasTarget()) {
-            Game.gui.clearRadialMenu();
-            Game.gui.populateRadialMenuWithTarget();
-            Game.gui.updateRadialMenu();
-            Game.gui.showRadialMenu();
+            Game.gui.hud.populateRadialMenuWithTarget();
+            Game.gui.hud.showRadialMenu();
         }
         return 0;
     }
@@ -290,7 +306,7 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static triggerUse() {
-        if (CharacterControls.usePressTime == 0 || CharacterControls.useTriggered || Game.gui.dialogue.isVisible || Game.gui.radialMenu.isVisible) {
+        if (CharacterControls.usePressTime == 0 || CharacterControls.useTriggered || Game.gui.dialogue.isVisible || Game.gui.hud.radialMenu.isVisible) {
             return 1;
         }
         CharacterControls.useTriggered = true;
@@ -299,10 +315,8 @@ class CharacterControls extends AbstractControls {
             Game.doEntityAction(Game.playerController.getTarget(), Game.playerController);
         }
         else if (Game.playerController.hasTarget()) {
-            Game.gui.clearRadialMenu();
-            Game.gui.populateRadialMenuWithTarget();
-            Game.gui.updateRadialMenu();
-            Game.gui.showRadialMenu();
+            Game.gui.hud.populateRadialMenuWithTarget();
+            Game.gui.hud.showRadialMenu();
         }
         CharacterControls.usePressTime = 0;
         CharacterControls.useTriggered = false;
@@ -361,6 +375,8 @@ class CharacterControls extends AbstractControls {
         CharacterControls.attackTimeout = 800;
         CharacterControls.attackTimeoutFunction = null;
         CharacterControls.lastAttackWasHeavy = false;
+        CharacterControls.toggleProneCode = 90;
+        CharacterControls.toggleCrouchCode = 67;
         return 0;
     }
 }

@@ -2,6 +2,9 @@
  * Character Controller with Transformative Physics
  * Heavily referenced, borderline copied, Ssatguru's BabylonJS-CharacterController https://github.com/ssatguru/BabylonJS-CharacterController
  * It's great :v you should check it out.
+ * @class
+ * @extends {CharacterController}
+ * @typedef {Object} CharacterControllerTransform
  * 
  * TODO: Rotate towards velocity
  */
@@ -13,8 +16,7 @@ class CharacterControllerTransform extends CharacterController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
-        super(id, mesh, entityObject);
-        if (!this.hasMesh()) {
+        if (!(super(id, mesh, entityObject) instanceof CharacterController)) {
             return undefined;
         }
 
@@ -39,7 +41,18 @@ class CharacterControllerTransform extends CharacterController {
         this.idleFallTime = 0;
         this.groundFrameCount = 0;
         this.groundFrameMax = 10;
+        this.bHasRunPostConstructCharacterTransform = false;
+        this.postConstruct();
     }
+    postConstruct() {
+        if (this.bHasRunPostConstructCharacterTransform) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructCharacterTransform = true;
+        return 0;
+    }
+
     moveAV() {
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
             return 2;
@@ -259,7 +272,7 @@ class CharacterControllerTransform extends CharacterController {
         }
         /*if (moving && this.moveVector.length() > 0.001) {
             // Start Mitigate jittering in Y direction
-            if (Game.useControllerGroundRay) {
+            if (Game.bUseControllerGroundRay) {
                 this.updateGroundRay();
                 let hit = Game.scene.pickWithRay(this.groundRay, function(mesh) {
                     if (mesh.isPickable && mesh.checkCollisions) {

@@ -15,15 +15,15 @@ class InstancedLightingEntity extends InstancedFurnitureEntity {
             return null;
         }
 
-        this.lightOn = false;
+        this.powered = false;
 
         this.setOwner(owner);
 
         InstancedLightingEntity.set(this.id, this);
     }
 
-    setLightOn(lightOn) {
-        if (lightOn === true) {
+    setPowered(powered) {
+        if (powered === true) {
             this.on();
         }
         else {
@@ -31,26 +31,26 @@ class InstancedLightingEntity extends InstancedFurnitureEntity {
         }
         return 0;
     }
-    getLightOn() {
-        return this.lightOn;
+    getPowered() {
+        return this.powered;
     }
     on() {
         if (this.locked) {
-            return this.lightOn;
+            return this.powered;
         }
-        this.lightOn = true;
+        this.powered = true;
     }
     off() {
         if (this.locked) {
-            return this.lightOn;
+            return this.powered;
         }
-        this.lightOn = false;
+        this.powered = false;
     }
     toggle() {
         if (this.locked) {
-            return this.lightOn;
+            return this.powered;
         }
-        if (this.lightOn) {
+        if (this.powered) {
             this.off();
             return false;
         }
@@ -62,12 +62,12 @@ class InstancedLightingEntity extends InstancedFurnitureEntity {
 
     objectify() {
         let obj = super.objectify();
-        obj["lightOn"] = this.lightOn;
+        obj["powered"] = this.powered;
         return obj;
     }
     objectifyMinimal() {
         let obj = super.objectifyMinimal();
-        obj["lightOn"] = this.lightOn;
+        obj["powered"] = this.powered;
         return obj;
     }
     /**
@@ -86,12 +86,12 @@ class InstancedLightingEntity extends InstancedFurnitureEntity {
         }
         return clone;
     }
-    assign(entity) {
+    assign(entity, verify = true) {
         if (verify && !(entity instanceof InstancedLightingEntity)) {
             return 2;
         }
         super.assign(entity);
-        if (entity.hasOwnProperty("lightOn")) this.setLightOn(entity.lightOn);
+        if (entity.hasOwnProperty("powered")) this.setPowered(entity.powered);
         return 0;
     }
     updateID(newID) {

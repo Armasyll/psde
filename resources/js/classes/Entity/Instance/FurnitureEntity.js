@@ -158,7 +158,7 @@ class InstancedFurnitureEntity extends InstancedEntity {
         }
         return clone;
     }
-    assign(entity) {
+    assign(entity, verify = true) {
         if (verify && !(entity instanceof InstancedFurnitureEntity)) {
             return 2;
         }

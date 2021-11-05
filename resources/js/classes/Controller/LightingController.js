@@ -30,10 +30,19 @@ class LightingController extends FurnitureController {
         }
         this.light = light;
         this.light.range = Tools.filterFloat(lightRange) || 16.0;
-
-        this.light.setEnabled(false);
-
+        this.bHasRunPostConstructLighting = false;
         LightingController.set(this.id, this);
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructLighting) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructLighting = true;
+        if (this.light instanceof BABYLON.Light)
+            this.light.setEnabled(false);
+        return 0;
     }
 
     getLight() {
@@ -109,7 +118,8 @@ class LightingController extends FurnitureController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.light.dispose();
+        if (this.light instanceof BABYLON.Light)
+            this.light.dispose();
         LightingController.remove(this.id);
         super.dispose();
         return null;

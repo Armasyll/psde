@@ -55,7 +55,10 @@ var Tools = /** @class */ (function () {
      * @param {(string|null)} returnOnFail
      * @returns {string}
      */
-    Tools.filterID = function (s, returnOnFail) {
+    Tools.filterID = function (s, returnOnFail = Tools.genUUIDv4()) {
+        if (s == undefined) {
+            return returnOnFail;
+        }
         if (returnOnFail === void 0) { returnOnFail = null; }
         s = String(s);
         if (typeof s == "string") {

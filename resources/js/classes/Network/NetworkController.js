@@ -157,7 +157,7 @@ class NetworkController {
                         {"mass":0.8, "restitution":0.1},
                         newCallbackID
                     );
-                    Game.createCallback(newCallbackID, null, [message[1], message[1], message[9], message[10], message[11]], Game.createCharacterInstance);
+                    Callback.create(newCallbackID, null, [message[1], message[1], message[9], message[10], message[11]], Game.createCharacterInstance);
                     Client.addPlayerToCreate(message[1], message[0]);
                 }
                 break;

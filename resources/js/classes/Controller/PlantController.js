@@ -13,8 +13,17 @@ class PlantController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-
+        this.bHasRunPostConstructPlant = false;
         PlantController.set(this.id, this);
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructPlant) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructPlant = true;
+        return 0;
     }
 
     createCollisionMesh() {

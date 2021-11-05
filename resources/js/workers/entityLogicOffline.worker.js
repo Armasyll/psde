@@ -1,6 +1,6 @@
 importScripts("../Overrides.js", "../classes/Tools.js", "../classes/DND.js", "../classes/DND5E.js");
 
-importScripts("../classes/Enum.js");
+importScripts("../classes/Enum.js", "../classes/Callback.js");
 
 importScripts("../classes/ActionData.js", "../classes/Dialogue.js", "../classes/Cell.js", "../classes/TeleportMarker.js", "../classes/Cosmetic.js", "../classes/Container.js", "../classes/CharacterClass/CharacterClass.js", "../classes/CharacterClass/ClasslessClass.js", "../classes/CharacterClass/SorcererClass.js");
 
@@ -13,17 +13,21 @@ importScripts("../classes/Entity/ItemEntity.js", "../classes/Entity/BookEntity.j
 importScripts("../classes/Entity/EquipmentEntity.js", "../classes/Entity/ClothingEntity.js", "../classes/Entity/WeaponEntity.js", "../classes/Entity/ShieldEntity.js", "../classes/Entity/KeyEntity.js");
 importScripts("../classes/Entity/ConsumableEntity.js", "../classes/Entity/PlantEntity.js");
 
-importScripts("../classes/Entity/Instance/Entity.js", "../classes/Entity/Instance/FurnitureEntity.js", "../classes/Entity/Instance/LightingEntity.js");
+importScripts("../classes/Entity/Instance/Entity.js", "../classes/Entity/Instance/FurnitureEntity.js", "../classes/Entity/Instance/LightingEntity.js", "../classes/Entity/Instance/DisplayEntity.js");
 importScripts("../classes/Entity/Instance/ItemEntity.js", "../classes/Entity/Instance/BookEntity.js", "../classes/Entity/Instance/KeyEntity.js", "../classes/Entity/Instance/EquipmentEntity.js", "../classes/Entity/Instance/ClothingEntity.js", "../classes/Entity/Instance/WeaponEntity.js", "../classes/Entity/Instance/ShieldEntity.js");
 importScripts("../classes/Entity/Instance/ConsumableEntity.js", "../classes/Entity/Instance/PlantEntity.js");
 
+/**
+ * EntityLogic
+ * @class
+ * @typedef {Object} EntityLogic
+ */
 class EntityLogic {
     static initialize() {
         EntityLogic.debugMode = false;
         EntityLogic.debugVerbosity = 0;
         EntityLogic.tickPort = null;
         EntityLogic.transformsPort = null;
-        EntityLogic.callbacks = {};
 
         EntityLogic.currentTime = 0;
         EntityLogic.currentTick = 0;
@@ -39,6 +43,8 @@ class EntityLogic {
         EntityLogic.turnTime = 60;
 
         EntityLogic.playerEntity = null;
+        EntityLogic.previousCell = null;
+        EntityLogic.currentCell = null;
 
         EntityLogic.importEffects();
         EntityLogic.importClasses();
@@ -61,11 +67,16 @@ class EntityLogic {
             if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
             return 2;
         }
+        
+        /** @type {number} */
         let status = event.data["sta"];
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`with command (${event.data["cmd"]})`);
+        /** @type {string} UUIDv4 */
         let callbackID = event.data["callbackID"];
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`and callbackID (${callbackID})`);
+        /** @type {any} */
         let message = event.data["msg"];
+        
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3 && message) console.info(`and message`);
         switch (event.data.cmd) {
             case "triggerScheduledEffect": {
@@ -141,11 +152,16 @@ class EntityLogic {
             if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.groupEnd();
             return 2;
         }
+        
+        /** @type {number} */
         let status = event.data["sta"];
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`with command (${event.data["cmd"]})`);
+        /** @type {string} UUIDv4 */
         let callbackID = event.data["callbackID"];
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.info(`and callbackID (${callbackID})`);
+        /** @type {any} */
         let message = event.data["msg"];
+        
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3 && message) console.info(`and message`);
         switch (event.data["cmd"]) {
             case "fireProjectile":
@@ -153,11 +169,10 @@ class EntityLogic {
             case "inFrontOf":
             case "withinRange": {
                 if (status == 0) {
-                    EntityLogic.runCallback(callbackID, message);
+                    Callback.run(callbackID, message);
                 }
-                else if (EntityLogic.hasCallback(callbackID)) {
-                    EntityLogic.callbacks[callbackID]["hasRun"] = true;
-                    EntityLogic.callbacks[callbackID]["status"] = 1;
+                else if (Callback.has(callbackID)) {
+                    Callback.setRun(callbackID);
                 }
                 break;
             }
@@ -192,13 +207,22 @@ class EntityLogic {
             if (EntityLogic.debugMode) console.groupEnd();
             return 2;
         }
+
+        /** @type {number} */
         let status = event.data["sta"];
         if (EntityLogic.debugMode) console.info(`with command (${event.data["cmd"]})`);
+        /** @type {string} UUIDv4 */
         let callbackID = event.data["callbackID"];
         if (EntityLogic.debugMode) console.info(`and callbackID (${callbackID})`);
+        /** @type {any} */
         let message = event.data["msg"];
         if (EntityLogic.debugMode && message) console.info(`and message`);
+        
         switch (event.data["cmd"]) {
+            case "setDebugMode": {
+                EntityLogic.debugMode = message["debugMode"] == true;
+                break;
+            }
             case "actionAttack":
             case "actionAttackMain": {
                 let actor = AbstractEntity.get(message["actorID"]);
@@ -268,7 +292,7 @@ class EntityLogic {
                     break;
                 }
                 EntityLogic.gameWorkerPostMessage("actionDrop", 0, result, callbackID);
-                EntityLogic.gameWorkerPostMessage("createItemInstanceAtController", 0, {"entityID":target.id, "controllerID":actor.getController()}, callbackID);
+                EntityLogic.gameWorkerPostMessage("createItemAtController", 0, {"entityID":target.id, "controllerID":actor.id}, callbackID);
                 break;
             }
             case "actionEquip": {
@@ -289,26 +313,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("actionOpen", 1, false, callbackID);
                     break;
                 }
-                let canOpen = false;
-                if (target.isEntityLocked()) {
-                    if (actor.hasItem(target.getKey())) {
-                        canOpen = true;
-                    }
-                }
-                else {
-                    canOpen = true;
-                }
-                if (target instanceof DoorEntity && target.hasTeleportMarker()) {
-                    EntityLogic.gameWorkerPostMessage("loadCellAndSetPlayerAt", 0, {
-                        "cellID":target.teleportMarker.getCellID(),
-                        "position":target.teleportMarker.getPosition(),
-                        "rotation":target.teleportMarker.getRotation()
-                    });
-                }
-                else if (canOpen) {
-                    target.setOpen();
-                    EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), callbackID);
-                }
+                EntityLogic.actionOpen(target, actor, callbackID);
                 break;
             }
             case "actionTake": {
@@ -456,6 +461,14 @@ class EntityLogic {
                 }
                 break;
             }
+            case "assignPlayerResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "clearCacheResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
             case "connectTick": {
                 EntityLogic.tickPort = event.ports[0];
                 EntityLogic.tickPort.onmessage = EntityLogic.tickWorkerOnMessage;
@@ -466,99 +479,21 @@ class EntityLogic {
                 EntityLogic.transformsPort.onmessage = EntityLogic.transformsWorkerOnMessage;
                 break;
             }
-            case "createCharacterEntity": {
-                let entity = EntityLogic.createCharacterEntity(message["id"], message["name"], message["description"], message["iconID"], message["creatureType"], message["creatureSubType"], message["sex"], message["age"], message["meshID"], message["materialID"], message["options"]);
-                if (entity instanceof CreatureEntity) {
-                    EntityLogic.gameWorkerPostMessage("createCharacterEntity", 0, entity, callbackID);
-                }
-                else {
-                    EntityLogic.gameWorkerPostMessage("createCharacterEntity", 1, null, callbackID);
-                }
-                break;
-            }
-            case "createCharacterInstance": {
-                break;
-            }
-            case "createDoorEntity": {
-                let entity = new DoorEntity(message["id"], message["name"], message["description"], message["iconID"], message["locked"], message["key"], message["opensInward"], message["open"]);
-                entity.setMeshID(message["meshID"]);
-                entity.setMaterialID(message["materialID"]);
-                entity.setTeleportMarker(message["teleportMarker"]);
-                entity.assign(message["options"]);
-                EntityLogic.gameWorkerPostMessage("createDoorEntity", 0, entity, callbackID);
-                break;
-            }
-            case "createEntity": {
-                break;
-            }
-            case "createFurnitureEntity": {
-                let entity = new FurnitureEntity(message["id"], message["name"], message["description"], message["iconID"]);
-                entity.setMeshID(message["meshID"]);
-                entity.setMaterialID(message["materialID"]);
-                entity.assign(message["options"]);
-                EntityLogic.gameWorkerPostMessage("createFurnitureEntity", 0, entity, callbackID);
-                break;
-            }
-            case "createFurnitureInstance": {
-                let entity = FurnitureEntity.get(message["entityID"]);
-                if (entity == 1) {
-                    EntityLogic.gameWorkerPostMessage("createFurnitureInstance", 1, null, callbackID);
-                    break;
-                }
-                let instance = entity.createInstance(message["instanceID"]);
-                EntityLogic.gameWorkerPostMessage("createFurnitureInstance", 0, instance.objectifyMinimal(), callbackID);
-                break;
-            }
-            case "createItemInstance": {
-                let entity = null;
-                if (ItemEntity.has(message["entityID"])) {
-                    entity = ItemEntity.get(message["entityID"]).createInstance();
-                }
-                else if (InstancedItemEntity.has(message["entityID"])) {
-                    entity = InstancedItemEntity.get(message["entityID"]).clone();
-                }
-                else {
-                    EntityLogic.gameWorkerPostMessage("createItemInstance", 1, entity, callbackID);
-                    break;
-                }
-                EntityLogic.gameWorkerPostMessage("createItemInstance", 0, entity.objectifyMinimal(), callbackID);
-                break;
-            }
-            case "createLightingEntity": {
-                let entity = new LightingEntity(message["id"], message["name"], message["description"], message["iconID"], message["lightingType"], message["lightingPositionOffset"]);
-                entity.setMeshID(message["meshID"]);
-                entity.setMaterialID(message["materialID"]);
-                entity.assign(message["options"]);
-                EntityLogic.gameWorkerPostMessage("createLightingEntity", 0, entity, callbackID);
-                break;
-            }
-            case "createLightingInstance": {
-                let entity = LightingEntity.get(message["entityID"]);
-                if (entity == 1) {
-                    EntityLogic.gameWorkerPostMessage("createLightingInstance", 1, null, callbackID);
-                    break;
-                }
-                let instance = entity.createInstance(message["instanceID"]);
-                EntityLogic.gameWorkerPostMessage("createLightingInstance", 0, instance.objectifyMinimal(), callbackID);
-                break;
-            }
-            case "createPlantInstance": {
+            case "createCharacterResponse": {
+                Callback.run(callbackID, message);
                 break;
             }
             case "getCell": {
-                let ids = {};
-                message.forEach((entityID) => {
-                    if (Cell.has(entityID)) {
-                        ids[entityID] = Cell.get(entityID).stringify();
-                    }
-                    else {
-                        ids[entityID] = 1;
-                    }
-                });
-                EntityLogic.gameWorkerPostMessage("getCell", 0, ids, callbackID);
+                if (Cell.has(message["cellID"])) {
+                    EntityLogic.gameWorkerPostMessage("getCellResponse", 0, Cell.get(message["cellID"]).objectify(), callbackID);
+                }
                 break;
             }
-            case "getCharacterEntity": {
+            case "getCellResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "getCharacter": {
                 if (!(message instanceof Array)) {
                     break;
                 }
@@ -592,6 +527,19 @@ class EntityLogic {
                 break;
             }
             case "getDialogue": {
+                if (!(message instanceof Object)) {
+                    break;
+                }
+                if (!Dialogue.has(message["dialogueID"])) {
+                    EntityLogic.gameWorkerPostMessage("getDialogue", 1, null, callbackID);
+                }
+                let targetEntity = AbstractEntity.get(message["targetID"]);
+                let actorEntity = AbstractEntity.get(message["actorID"]);
+                let dialogue = Dialogue.get(message["dialogueID"]).objectify(targetEntity, actorEntity);
+                EntityLogic.gameWorkerPostMessage("getDialogue", 0, dialogue, callbackID);
+                break;
+            }
+            case "getDialogues": {
                 if (!(message instanceof Object)) {
                     break;
                 }
@@ -653,7 +601,7 @@ class EntityLogic {
                 if (entity != 1 && entity.hasOwnProperty("equipment")) {
                     let entityObj = {};
                     entityObj["id"] = entity.id;
-                    entityObj["controller"] = entity.controller;
+                    entityObj["controller"] = entity.id;
                     entityObj["equipment"] = AbstractEntity.objectifyProperty(entity.equipment);
                     obj[entity.id] = JSON.stringify(entityObj);
                 }
@@ -666,7 +614,7 @@ class EntityLogic {
                 if (entity != 1 && entity.hasContainer()) {
                     let entityObj = {};
                     entityObj["id"] = entity.id;
-                    entityObj["controller"] = entity.controller;
+                    entityObj["controller"] = entity.id;
                     entityObj["container"] = entity.container.objectifyMinimal(message["filter"]);
                     entityObj["money"] = entity.money;
                     obj[entity.id] = JSON.stringify(entityObj);
@@ -824,13 +772,39 @@ class EntityLogic {
             case "kill": {
                 break;
             }
+            case "loadCellResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "loadCellAndSetPlayerAt": {
+                EntityLogic.loadCellAndSetPlayerAt(message["cellID"], message["position"], null, message["options"]);
+                break;
+            }
+            case "loadEntitiesResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "loadPlayerAt": {
+                EntityLogic.createPlayerAt(message["position"], message["options"], null, callbackID);
+                break;
+            }
+            case "purgeCacheResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
             case "removeController": {
-                break;  
+                break;
+            }
+            case "setCachedCellResponse": {
+                Callback.run(callbackID, message, true, true);
+                break;
+            }
+            case "setCachedEntityResponse": {
+                Callback.run(callbackID, message, true, true);
+                break;
             }
             case "setController": {
-                if (AbstractEntity.has(message["entityID"])) {
-                    AbstractEntity.get(message["entityID"]).setController(message["controllerID"]);
-                }
+                Callback.run(callbackID, message);
                 break;
             }
             case "setDialogue": {
@@ -845,7 +819,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("setDialogue", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(true, targetEntity, actorEntity), callbackID);
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.objectify(targetEntity, actorEntity), callbackID);
                 }
                 break;
             }
@@ -870,44 +844,67 @@ class EntityLogic {
             }
             case "setPlayer": {
                 if (AbstractEntity.has(message["entityID"])) {
-                    EntityLogic.playerEntity = AbstractEntity.get(message["entityID"]);
-                    EntityLogic.sendPlayerEntityUpdates();
+                    EntityLogic.setPlayerEntity(message["entityID"]);
                 }
+                break;
+            }
+            case "unassignPlayerResponse": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "unloadCellResponse": {
+                Callback.run(callbackID, message);
                 break;
             }
         };
         console.groupEnd();
     }
+    static setPlayerEntity(entityID = "", parentCallbackID = null) {
+        if (!AbstractEntity.has(entityID)) {
+            return 1;
+        }
+        EntityLogic.playerEntity = AbstractEntity.get(entityID);
+        EntityLogic.gameWorkerPostMessage("getEntity", 0, EntityLogic.playerEntity.objectify(), parentCallbackID);
+        EntityLogic.sendPlayerEntityUpdates();
+        return 0;
+    }
+    static getPlayerEntity() {
+        return EntityLogic.playerEntity;
+    }
+    static hasPlayerEntity() {
+        return EntityLogic.playerEntity instanceof AbstractEntity;
+    }
     static actionAttack(target, actor, weapon, parentCallbackID) {
+        /** @type {string} UUIDv4 */
         let callbackID = Tools.genUUIDv4();
-        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor, weapon], EntityLogic.actionAttackResponse);
+        Callback.create(callbackID, parentCallbackID, [target, actor, weapon], EntityLogic.actionAttackResponse);
         EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
     static actionAttackResponse(target, actor, weapon, response, parentCallbackID) {
         let attackRoll = EntityLogic.calculateAttack(actor, weapon);
         if (attackRoll == 1) {
-            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.MISS, EntityLogic.getCallback(parentCallbackID).parent);
+            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.MISS, Callback.get(parentCallbackID).parent);
         }
         else {
             let damageRoll = EntityLogic.calculateDamage(target, actor, weapon, attackRoll >= 20)*-1;
             target.modifyHealth(damageRoll)
-            let entityJSON = JSON.stringify({"id":target.id, "health":target.getHealth()});
-            EntityLogic.gameWorkerPostMessage("updateEntity", 0, entityJSON);
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, {"id":target.id, "health":target.getHealth()});
             if (target.getHealth() <= 0) {
-                EntityLogic.gameWorkerPostMessage("doDeath", 0, {"controllerID": target.controller});
+                EntityLogic.gameWorkerPostMessage("doDeath", 0, {"controllerID": target.id});
             }
-            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.FINISH, EntityLogic.getCallback(parentCallbackID).parent);
+            EntityLogic.gameWorkerPostMessage("actionAttack", 0, AttackResponseEnum.FINISH, Callback.get(parentCallbackID).parent);
         }
         return 0;
     }
     static actionCast(target, actor, spell, parentCallbackID) {
+        /** @type {string} UUIDv4 */
         let callbackID = Tools.genUUIDv4();
-        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor, spell], EntityLogic.actionCastResponse);
+        Callback.create(callbackID, parentCallbackID, [target, actor, spell], EntityLogic.actionCastResponse);
         EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
-    static actionCastResponse(target, actor, spell, response, parentCallbackID) {
+    static actionCastResponse(target, actor, spell, response, parentCallbackID) { //TODO: this
         let attackRoll = EntityLogic.calculateAttack(actor, spell);
         if (attackRoll == 1) {
             
@@ -924,15 +921,79 @@ class EntityLogic {
         }
         return 0;
     }
+    static actionOpen(target, actor, parentCallbackID) {
+        switch (target.getClassName()) {
+            case "InstancedDoorEntity":
+            case "DoorEntity": {
+                EntityLogic.actionOpenDoor(target, actor, parentCallbackID);
+                break;
+            }
+            case "InstancedFurnitureEntity":
+            case "FurnitureEntity": {
+                EntityLogic.actionOpenFurniture(target, actor, parentCallbackID);
+                break;
+            }
+            case "CharacterEntity":
+            case "Container": {
+                EntityLogic.actionOpenContainer(target, actor, parentCallbackID);
+                break;
+            }
+        }
+        return 0;
+    }
+    static actionOpenFurniture(target, actor, parentCallbackID) {
+        /** @type {boolean} */
+        let canOpen = false;
+        if (target.isEntityLocked()) {
+            if (actor.hasItem(target.getKey())) {
+                canOpen = true;
+            }
+        }
+        else {
+            canOpen = true;
+        }
+        if (canOpen) {
+            target.setOpen();
+            EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
+        }
+        return 0;
+    }
+    static actionOpenContainer(target, actor, parentCallbackID) {
+        EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
+        return 0;
+    }
+    static actionOpenDoor(target, actor, parentCallbackID) {
+        /** @type {boolean} */
+        let canOpen = false;
+        if (target.isEntityLocked()) {
+            if (actor.hasItem(target.getKey())) {
+                canOpen = true;
+            }
+        }
+        else {
+            canOpen = true;
+        }
+        if (canOpen) {
+            if (target.hasTeleportMarker()) {
+                EntityLogic.loadCellAndSetPlayerAt(target.teleportMarker.getCellID(), target.teleportMarker.position, target.teleportMarker.rotation);
+            }
+            else {
+                target.setOpen();
+                EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
+            }
+        }
+        return 0;
+    }
     static actionTake(target, actor, parentCallbackID) {
+        /** @type {string} UUIDv4 */
         let callbackID = Tools.genUUIDv4();
-        EntityLogic.createCallback(callbackID, parentCallbackID, [target, actor], EntityLogic.actionTakeResponse);
+        Callback.create(callbackID, parentCallbackID, [target, actor], EntityLogic.actionTakeResponse);
         EntityLogic.transformsWorkerPostMessage("withinRange", 0, [target.id, actor.id, 1.5], callbackID);
         return 0;
     }
     static actionTakeResponse(target, actor, response, callbackID) {
         actor.addItem(target);
-        EntityLogic.gameWorkerPostMessage("removeItem", 0, target.controller);
+        EntityLogic.gameWorkerPostMessage("removeItem", 0, target.id);
         if (target == EntityLogic.playerEntity || actor == EntityLogic.playerEntity) {
             EntityLogic.sendPlayerEntityUpdates();
         }
@@ -1003,9 +1064,150 @@ class EntityLogic {
         return EntityLogic.importScript("../characters.js");
     }
 
+    static removeController(id) {
+        EntityLogic.gameWorkerPostMessage("removeController", 0, {"controllerID": id}, null);
+        return 0;
+    }
+
+    static createCell(cellID = "limbo", options = {}, parentCallbackID = null) {
+        if (!Cell.has(cellID)) {
+            cellID = "limbo";
+        }
+        if (EntityLogic.debugMode) console.log(`Running createCell(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.loadCell(cellID, Callback.create("createCellPhaseOne", parentCallbackID, [cellID, options], EntityLogic.createCellPhaseTwo));
+        return 0;
+    }
+    static createCellPhaseTwo(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseTwo(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("unassignPlayer", 0, null, Callback.create("unassignPlayerCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options], EntityLogic.createCellPhaseThree));
+        return 0;
+    }
+    static createCellPhaseThree(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseThree(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("unloadCell", 0, { "cellID": cellID }, Callback.create("unloadCellCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options], EntityLogic.createCellPhaseFour));
+        return 0;
+    }
+    static createCellPhaseFour(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseFour(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("clearCache", 0, null, Callback.create("clearCacheCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options], EntityLogic.createCellPhaseFive));
+        return 0;
+    }
+    static createCellPhaseFive(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseFive(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("setCachedCell", 0, Cell.get(cellID).objectify(), Callback.create("setCachedCellCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options], EntityLogic.createCellPhaseSix));
+        return 0;
+    }
+    static createCellPhaseSix(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseSix(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("loadCell", 0, { "cellID": cellID }, Callback.create("loadCellCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options], EntityLogic.createCellPhaseSeven));
+        return 0;
+    }
+    static createCellPhaseSeven(cellID, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseSeven(${cellID}, ..., ${parentCallbackID})`);
+        EntityLogic.gameWorkerPostMessage("loadEntitiesByCellID", 0, { "cellID": cellID }, Callback.create("loadEntitiesCallback-" + Tools.genUUIDv4(), parentCallbackID, [cellID, options]));
+        return 0;
+    }
+
+    static createPlayerAt(position, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseEight(${cellID}, ..., ${parentCallbackID})`);
+        if (!EntityLogic.hasPlayerEntity()) {
+            EntityLogic.setPlayerEntity("player");
+        }
+        EntityLogic.gameWorkerPostMessage("createCharacter", 0, { "instanceID": EntityLogic.playerEntity.id, "entityID": EntityLogic.playerEntity.id, "position": position, "options": {} }, Callback.create("createPlayerCharacter-" + Tools.genUUIDv4(), parentCallbackID, [position, options], EntityLogic.createPlayerAtPhaseTwo));
+        return 0;
+    }
+    static createPlayerAtPhaseTwo(position, options, response, parentCallbackID) {
+        if (EntityLogic.debugMode) console.log(`Running createCellPhaseNine(${cellID}, ...)`);
+        EntityLogic.gameWorkerPostMessage("assignPlayer", 0, { "controllerID":EntityLogic.playerEntity.id }, Callback.create("assignPlayer-" + Tools.genUUIDv4(), parentCallbackID, [position, options]));
+        return 0;
+    }
+
+    static unloadCell(cellID = EntityLogic.currentCell, parentCallbackID = null) {
+        if (!Cell.has(cellID)) {
+            return 1;
+        }
+        let cell = Cell.get(cellID);
+        for (let i = 0; i < cell.instancedEntities.length; i++) {
+            EntityLogic.removeController(cell.instancedEntities[i].id);
+            AbstractEntity.get(entityID).dispose();
+        }
+        return 0;
+    }
+    static loadCellAndSetPlayerAt(cellID, position, rotation, options, parentCallbackID = null) {
+        EntityLogic.createCell(
+            cellID,
+            options,
+            Callback.create(
+                null,
+                parentCallbackID,
+                [position, options],
+                EntityLogic.createPlayerAt
+            )
+        );
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} cellID Cell ID
+     * @param {(string|null)} parentCallbackID 
+     */
+    static loadCell(cellID, parentCallbackID = null) {
+        if (!Cell.has(cellID)) {
+            return 1;
+        }
+        let cell = Cell.get(cellID);
+        EntityLogic.previousCell = EntityLogic.currentCell;
+        EntityLogic.currentCell = cell;
+        for (let i = 0; i < cell.furniture.length; i++) {
+            //[instanceID, entityID, position, rotation, scaling, options]
+            /** @type {InstancedFurnitureEntity} */
+            let entity = FurnitureEntity.get(cell.furniture[i][1]).createInstance(cell.furniture[i][0]);
+            entity.assign(cell.furniture[i][5], false);
+        }
+        for (let i = 0; i < cell.doors.length; i++) {
+            //[entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]
+            /** @type {DoorEntity} */
+            let entity = new DoorEntity(cell.doors[i][0], cell.doors[i][1]);
+            entity.setTeleportMarker(cell.doors[i][2]);
+            entity.setMeshID(cell.doors[i][3]);
+            entity.setMaterialID(cell.doors[i][4]);
+            entity.assign(cell.doors[i][8], false);
+        }
+        for (let i = 0; i < cell.lighting.length; i++) {
+            //[instanceID, entityID, position, rotation, scaling, options]
+            /** @type {InstancedLightingEntity} */
+            let entity = LightingEntity.get(cell.lighting[i][1]).createInstance(cell.lighting[i][0]);
+            entity.assign(cell.lighting[i][5], false);
+        }
+        for (let i = 0; i < cell.displays.length; i++) {
+            //[instancedID, entityID, position, rotation, scaling, options]
+            /** @type {InstancedDisplayEntity} */
+            let entity = DisplayEntity.get(cell.displays[i][1]).createInstance(cell.displays[i][0])
+            entity.assign(cell.displays[i][5], false);
+        }
+        for (let i = 0; i < cell.items.length; i++) {
+            //[instanceID, entityID, position, rotation, scaling, options]
+            /** @type {InstancedItemEntity} */
+            let entity = ItemEntity.get(cell.items[i][1]).createInstance(cell.items[i][0]);
+            entity.assign(cell.items[i][5], false);
+        }
+        for (let i = 0; i < cell.creatures.length; i++) {
+            //[instanceID, entityID, position, rotation, scaling, options]
+            /** @type {CreatureEntity} */
+            let entity = CreatureEntity.get(cell.creatures[i][1]).createInstance(cell.creatures[i][0]);
+            entity.assign(cell.creatures[i][5], false);
+        }
+        for (let i = 0; i < cell.characters.length; i++) {
+            //[instanceID, entityID, position, rotation, scaling, options]
+            /** @type {CharacterEntity} */
+            let entity = CharacterEntity.get(cell.characters[i][1]).createInstance(cell.characters[i][0]);
+            entity.assign(cell.characters[i][5], false);
+        }
+        Callback.run(parentCallbackID);
+        return 0;
+    }
     /**
      * Creates a FurnitureEntity
-     * @memberof module:furniture
      * @param {string} [id] Unique ID
      * @param {string} name Name
      * @param {string} [description] Description
@@ -1022,7 +1224,7 @@ class EntityLogic {
             id = Tools.genUUIDv4();
         }
         let entity = new FurnitureEntity(id, name, description, iconID, furnitureType);
-        if (entity instanceof FurnitureEntity) {
+        if (entity instanceof AbstractEntity) {
             /**
              * TODO: allow setMeshID to handle arrays
              * eg, ["bathtub01", "showerPipes01"]
@@ -1033,7 +1235,7 @@ class EntityLogic {
             entity.setWeight(weight);
             return entity;
         }
-        return 2;
+        return null;
     }
     /**
      * 
@@ -1050,16 +1252,15 @@ class EntityLogic {
             id = Tools.genUUIDv4();
         }
         let entity = new LightingEntity(id, name, description, iconID, lightingType, lightingPositionOffset);
-        if (entity instanceof LightingEntity) {
+        if (entity instanceof AbstractEntity) {
             entity.setMeshID(meshID);
             entity.setTextureID(textureID);
             return entity;
         }
-        return 2;
+        return null;
     }
     /**
      * Creates a PlantEntity
-     * @memberof module:plants
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} [name] Name
      * @param  {string} [meshID] Mesh ID
@@ -1074,15 +1275,17 @@ class EntityLogic {
             id = Tools.genUUIDv4();
         }
         if (EntityLogic.debugMode) console.log(`Running EntityLogic.createPlantEntity(${id}, ${name}, ${description}, ${iconID}, ${meshID}, ${materialID}, ${plantType}, ${stages})`);
-        let plantEntity = new PlantEntity(id, name, description, iconID, plantType, stages);
-        plantEntity.setMeshID(meshID);
-        plantEntity.setMaterialID(materialID);
-        plantEntity.addStages(stages);
-        return plantEntity;
+        let entity = new PlantEntity(id, name, description, iconID, plantType, stages);
+        if (entity instanceof AbstractEntity) {
+            entity.setMeshID(meshID);
+            entity.setMaterialID(materialID);
+            entity.addStages(stages);
+            return entity;
+        }
+        return null;
     }
     /**
      * Creates an ItemEntity
-     * @memberof module:items
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} [description] Description
@@ -1100,50 +1303,49 @@ class EntityLogic {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let itemEntity = null;
+        let entity = null;
         switch (itemType) {
             case ItemEnum.GENERAL: {
-                itemEntity = new ItemEntity(id, name, description, iconID);
+                entity = new ItemEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.APPAREL: {
-                itemEntity = new ClothingEntity(id, name, description, iconID, subType);
+                entity = new ClothingEntity(id, name, description, iconID, subType);
                 break;
             }
             case ItemEnum.WEAPON: {
-                itemEntity = new WeaponEntity(id, name, description, iconID, subType);
+                entity = new WeaponEntity(id, name, description, iconID, subType);
                 break;
             }
             case ItemEnum.SHIELDS: {
-                itemEntity = new ShieldEntity(id, name, description, iconID);
+                entity = new ShieldEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.KEY: {
-                itemEntity = new KeyEntity(id, name, description, iconID);
+                entity = new KeyEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.BOOK: {
-                itemEntity = new BookEntity(id, name, description, iconID);
+                entity = new BookEntity(id, name, description, iconID);
                 break;
             }
             case ItemEnum.CONSUMABLE: {
-                itemEntity = new ConsumableEntity(id, name, description, iconID, subType);
+                entity = new ConsumableEntity(id, name, description, iconID, subType);
                 break;
             }
             default: {
-                itemEntity = new ItemEntity(id, name, description, iconID);
+                entity = new ItemEntity(id, name, description, iconID);
             }
         }
-        if (itemEntity instanceof ItemEntity) {
-            itemEntity.setMeshID(meshID);
-            itemEntity.setTextureID(textureID);
-            return itemEntity;
+        if (entity instanceof AbstractEntity) {
+            entity.setMeshID(meshID);
+            entity.setTextureID(textureID);
+            return entity;
         }
-        return 2;
+        return null;
     }
     /**
      * 
-     * @memberof module:characters
      * @param {string} id Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} [description] Description
@@ -1163,12 +1365,12 @@ class EntityLogic {
         }
         if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
-        let soul = new SoulEntity(String(id).concat("Soul"), name, description);
-        soul.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
-        soul.setCharisma(10);
-        soul.setIntelligence(10);
-        soul.setWisdom(10);
-        characterEntity.setSoul(soul, false); // Assign the body its soul, without updating its properties, because they've already been set
+        let soulEntity = new SoulEntity(String(id).concat("Soul"), name, description);
+        soulEntity.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
+        soulEntity.setCharisma(10);
+        soulEntity.setIntelligence(10);
+        soulEntity.setWisdom(10);
+        characterEntity.setSoul(soulEntity, false); // Assign the body its soul, without updating its properties, because they've already been set
         if (typeof options == "object") {
             for (let i in options) {
                 switch (i) {
@@ -1242,7 +1444,6 @@ class EntityLogic {
     }
     /**
      * Creates a Cosmetic
-     * @memberof module:cosmetics
      * @param {string} [id] Unique ID, auto-generated if none given
      * @param {string} name Name
      * @param {string} [description] Description
@@ -1261,7 +1462,7 @@ class EntityLogic {
         if (cosmetic instanceof Cosmetic) {
             return cosmetic;
         }
-        return 2;
+        return null;
     }
     /**
      * 
@@ -1274,11 +1475,10 @@ class EntityLogic {
     static createEffect(id = "", name = "", description = "", iconID = "", options = {}) {
         let effect = new Effect(id, name, description, iconID);
         effect.assign(options);
-        return 0;
+        return effect;
     }
     /**
      * 
-     * @memberof module:spells
      * @param {string} id 
      * @param {string} name 
      * @param {string} description 
@@ -1562,101 +1762,8 @@ class EntityLogic {
         return damageRoll;
     }
 
-    /**
-     * 
-     * @param {string} id Callback ID
-     * @param {(string|undefined)} parentID ID of parent callback, if any
-     * @param {function} callback Function to call
-     * @param {object} params Params to pass
-     */
-    static createCallback(id = "", parentID = null, params = [], callback = null) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
-        if (!(params instanceof Array)) {
-            params = [params];
-        }
-        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCallback(${id}, ${parentID}, ${params.toString()}, function())`);
-        EntityLogic.callbacks[id] = {"parent":parentID, "params":params, "callback":callback, "hasRun":false, "status":0};
-        return id;
-    }
-    static removeCallback(id) {
-        delete EntityLogic.callbacks[id]["parent"];
-        delete EntityLogic.callbacks[id]["params"];
-        delete EntityLogic.callbacks[id]["callback"];
-        delete EntityLogic.callbacks[id]["hasRun"];
-        delete EntityLogic.callbacks[id];
-        return 0;
-    }
-    static getCallback(id) {
-        if (EntityLogic.callbacks.hasOwnProperty(id)) {
-            return EntityLogic.callbacks[id];
-        }
-        return 1;
-    }
-    static getCallbacks(parent = null, callback = null, hasRun = null, status = null) {
-        let obj = {};
-        for (let entry in EntityLogic.callbacks) {
-            if (
-                (parent == null || parent == EntityLogic.callbacks[entry]["parent"]) &&
-                (callback == null || callback == EntityLogic.callbacks[entry]["callback"]) &&
-                (hasRun == null || hasRun == EntityLogic.callbacks[entry]["hasRun"]) &&
-                (status == null || status == EntityLogic.callbacks[entry]["status"])
-            ) {
-                obj[entry] = EntityLogic.callbacks[entry];
-            }
-        }
-        return obj;
-    }
-    static hasCallback(id) {
-        return EntityLogic.callbacks.hasOwnProperty(id);
-    }
-    /**
-     * 
-     * @param {string} id 
-     * @param {(object|null)} [response] 
-     */
-    static runCallback(id, response = null) {
-        if (!EntityLogic.hasCallback(id)) {
-            return 1;
-        }
-        let callback = EntityLogic.getCallback(id);
-        if (callback["hasRun"]) {
-            return 0;
-        }
-        callback["hasRun"] = true;
-        if (EntityLogic.debugMode) console.group(`Running EntityLogic.runCallback(${id}, ${response})`);
-        if (typeof callback["callback"] == "function") {
-            callback["callback"](...callback["params"], response, id);
-        }
-        if (EntityLogic.debugMode) console.groupEnd();
-        return 0;
-    }
-    /**
-     * 
-     * @param {string} id 
-     * @param {(object|null)} [response] 
-     */
-    static runCallbackParent(id, response = null) {
-        if (EntityLogic.callbacks.hasOwnProperty(id)) {
-            if (EntityLogic.callbacks.hasOwnProperty(EntityLogic.callbacks[id]["parent"])) {
-                EntityLogic.runCallback(EntityLogic.callbacks[id]["parent"], response);
-            }
-        }
-        return 0;
-    }
-    static hasRunCallback(id) {
-        return EntityLogic.callbacks.hasOwnProperty(id) && EntityLogic.callbacks[id]["hasRun"] === true;
-    }
-    static setHasRunCallback(id, hasRun = true) {
-        if (EntityLogic.hasCallback(id)) {
-            EntityLogic.getCallback(id)["hasRun"] = (hasRun === true);
-        }
-        return 0;
-    }
     static sendPlayerEntityUpdates() {
-        EntityLogic.gameWorkerPostMessage("updateEntity", 0, EntityLogic.playerEntity.stringify(true));
+        EntityLogic.gameWorkerPostMessage("updateEntity", 0, EntityLogic.playerEntity.objectify());
         return 0;
     }
     static sendEntityUpdate(entityID, property = null) {
@@ -1671,14 +1778,14 @@ class EntityLogic {
             return 1;
         }
         //if (property == null || !entity.hasOwnProperty(property)) {
-            EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.stringify(true));
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.objectify());
             return 0;
         //}
         /*else if (entity.hasOwnProperty(property)) {
             let obj = {"id":entity.id};
             obj[property] = AbstractEntity.objectifyProperty(entity["property"]);
             console.log(obj);
-            EntityLogic.gameWorkerPostMessage("updateEntity", 0, JSON.stringify(obj));
+            EntityLogic.gameWorkerPostMessage("updateEntity", 0, obj);
             return 0;
         }
         return 1;*/

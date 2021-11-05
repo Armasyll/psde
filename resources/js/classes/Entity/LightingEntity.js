@@ -14,7 +14,7 @@ class LightingEntity extends FurnitureEntity {
     constructor(id = "", name = "", description = "", iconID = "", lightingType = null, lightingPositionOffset = [0, 0, 0]) {
         super(id, name, description, iconID, FurnitureEnum.LAMP);
 
-        this.lightOn = false;
+        this.powered = false;
         this.lightingPositionOffset = [0,0,0];
 
         this.setLightingPositionOffset(lightingPositionOffset);
@@ -25,12 +25,12 @@ class LightingEntity extends FurnitureEntity {
         LightingEntity.set(this.id, this);
     }
 
-    setLightOn(lightOn = true) {
-        this.lightOn = (lightOn === true);
+    setPowered(powered = true) {
+        this.powered = (powered === true);
         return 0;
     }
-    getLightOn() {
-        return this.lightOn;
+    getPowered() {
+        return this.powered;
     }
     setLightingPositionOffset(x = 0, y = 0, z = 0) {
         if (x instanceof Array) {
@@ -71,7 +71,7 @@ class LightingEntity extends FurnitureEntity {
             return 2;
         }
         super.assign(entity, verify);
-        if (entity.hasOwnProperty("lightOn")) this.setLightOn(entity.lightOn);
+        if (entity.hasOwnProperty("powered")) this.setPowered(entity.powered);
         return 0;
     }
     updateID(newID) {

@@ -127,5 +127,7 @@
     "dirtGround01": "resources/images/textures/static/dirtGround01_256_by_smeggo.png",
     "cobbledConcrete01": "resources/images/textures/static/cobbledConcrete01_256_by_smeggo.png",
     "cobblessConcrete01": "resources/images/textures/static/cobblessConcrete01_256_by_smeggo.png",
-    "cobblessConcrete02": "resources/images/textures/static/cobblessConcrete02_256_by_smeggo.png"
+    "cobblessConcrete02": "resources/images/textures/static/cobblessConcrete02_256_by_smeggo.png",
+    "angelThrone": "resources/images/textures/characters/angelThronesTexture.png",
+    "slimeGreen": "resources/images/textures/characters/slimeGreenTexture.png"
 }

@@ -35,7 +35,7 @@ class InstancedPlantEntity extends InstancedEntity {
         clone.assign(this);
         return clone;
     }
-    assign(entity) {
+    assign(entity, verify = true) {
         if (verify && !(entity instanceof InstancedPlantEntity)) {
             return 2;
         }

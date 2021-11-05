@@ -1,4 +1,7 @@
 class BookGameGUI {
+    static getClassName() {
+        return "BookGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing BookGameGUI");
         BookGameGUI.initialized = true;
@@ -163,12 +166,16 @@ class BookGameGUI {
     static show() {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
-        GameGUI.showMenu();
+        GameGUI.windowStack.add(BookGameGUI);
         return 0;
     }
-    static hide() {
+    static hide(updateChildren = true) {
         BookGameGUI.controller.isVisible = false;
         BookGameGUI.isVisible = false;
+        GameGUI.windowStack.remove(BookGameGUI);
+        if (updateChildren) {
+            GameGUI.afterHideMenuChildren();
+        }
         return 0;
     }
     static updateWith(abstractEntity, page = 1) {

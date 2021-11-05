@@ -1,3 +1,8 @@
+/**
+ * Abstract Controller
+ * @class
+ * @typedef {Object} AbstractController
+ */
 class AbstractController {
     constructor(id, mesh, entityObject) {
         if (AbstractController.debugMode) console.group(`Creating new AbstractController(${id}, meshObject, entityObject)`);
@@ -11,8 +16,8 @@ class AbstractController {
             if (AbstractController.debugMode) console.groupEnd();
             return null;
         }
-        this.id = "";
-        this.entityID = "";
+        this.id = Tools.filterID(id);
+        this.entityID = entityObject.id;
         this.mesh = null;
 
         this.height = 0.0;
@@ -21,41 +26,23 @@ class AbstractController {
         this.enabled = true;
         this.locked = false;
         this.disposing = false;
-        this.grounded = false;
-        this.falling = false;
-        this.currentCell = null;
         this.targetRay = null;
         this.targetRayHelper = null;
         this.groundRay = null;
         this.groundRayHelper = null;
-
-        this.setID(id);
-        this.setEntityID(entityObject.id, true);
+        this.bHasRunPostConstructAbstract = false;
+        AbstractController.set(this.id, this);
+        this.postConstruct();
     }
-    setID(id) {
-        id = Tools.filterID(id);
-        if (typeof id != "string" || AbstractController.has(id)) {
-            id = Tools.genUUIDv4();
+    postConstruct() {
+        if (this.bHasRunPostConstructAbstract) {
+            return 0;
         }
-        this.id = id;
+        this.bHasRunPostConstructAbstract = true;
         return 0;
     }
     getID() {
         return this.id;
-    }
-    setEntityID(id, updateChild = true) {
-        this.entityID = id;
-        if (updateChild) {
-            Game.entityLogicWorkerPostMessage("setController", 0, {"controllerID": this.id, "entityID": this.entityID});
-        }
-        return 0;
-    }
-    removeEntityID(updateChild = true) {
-        if (updateChild) {
-            Game.entityLogicWorkerPostMessage("removeController", 0, [this.id]);
-        }
-        this.entityID = null;
-        return 0;
     }
     getEntityID() {
         return this.entityID;
@@ -137,6 +124,10 @@ class AbstractController {
         return null;
     }
 
+    generateHitboxes() {
+        return 0;
+    }
+
     updateTargetRay() {
         if (AbstractController.debugMode && AbstractController.debugVerbosity > 3) console.info(`${this.id}.updateTargetRay()`);
         if (this.locked || !this.enabled) {
@@ -199,26 +190,30 @@ class AbstractController {
         return 0;
     }
     updateID(newID) {
-        super.updateID(newID);
         AbstractController.updateID(this.id, newID);
+        this.id = newID;
         return 0;
     }
-    dispose() {
+    dispose(updateChild = false) {
         this.setLocked(true);
         this.setEnabled(false);
         if (this.disposing) {
             return null;
         }
         else {
-            this.disposting = true;
+            this.disposing = true;
         }
         if (Game.playerController == this) {
             Game.playerController = null;
         }
-        if (this.hasEntityID()) {
-            this.removeEntityID();
+        if (updateChild) {
+            if (this.hasEntityID()) {
+                this.removeEntityID();
+            }
         }
-        Game.removeMesh(this.mesh);
+        Game.removeMesh(this.collisionMesh, !updateChild);
+        Game.removeMesh(this.mesh, !updateChild);
+        return null;
     }
     getClassName() {
         return "AbstractController";

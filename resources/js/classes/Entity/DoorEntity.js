@@ -86,6 +86,14 @@ class DoorEntity extends FurnitureEntity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("open")) {
+            if (entity.open === true) {
+                this.setOpen();
+            }
+            else {
+                this.setClose();
+            }
+        }
         if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
         if (entity.hasOwnProperty("teleportMarker")) this.setTeleportMarker(entity.teleportMarker);
         return 0;

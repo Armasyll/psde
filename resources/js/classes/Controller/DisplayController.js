@@ -42,8 +42,17 @@ class DisplayController extends FurnitureController {
         }
         this.previousVolume = 1.0;
         this.previousVideoTexture = null;
-
+        this.bHasRunPostConstructDisplay = false;
         DisplayController.set(this.id, this);
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructDisplay) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructDisplay = true;
+        return 0;
     }
 
     play() {

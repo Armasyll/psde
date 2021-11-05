@@ -38,7 +38,7 @@ class InstancedKeyEntity extends InstancedItemEntity {
         clone.assign(this);
         return clone;
     }
-    assign(entity) {
+    assign(entity, verify = true) {
         if (verify && !(entity instanceof InstancedKeyEntity)) {
             return 2;
         }

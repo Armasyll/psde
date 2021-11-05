@@ -120,7 +120,7 @@ class EditControls extends AbstractControls {
                 break;
             }
             case AbstractControls.chatInputFocusCode : {
-                if (Game.gui.isHUDVisible()) {
+                if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
                     if (!Game.gui.chat.isFocused()) {
                         Game.gui.chat.setFocused(true);
                     }
@@ -321,9 +321,9 @@ class EditControls extends AbstractControls {
             EditControls.clearPickedMesh();
             EditControls.clearPickedController();
         }
-        EditControls.tempIntendedPosition.set({"x":0.0,"y":0.0,"z":0.0});
-        EditControls.tempIntendedRotation.set({"x":0.0,"y":0.0,"z":0.0});
-        //EditControls.tempIntendedScaling.set({"x":0.0,"y":0.0,"z":0.0});
+        EditControls.tempIntendedPosition.set(BABYLON.Vector3.Zero());
+        EditControls.tempIntendedRotation.set(BABYLON.Vector3.Zero());
+        //EditControls.tempIntendedScaling.set(BABYLON.Vector3.Zero());
         Game.camera.attachControl(Game.canvas);
         return 0;
     }

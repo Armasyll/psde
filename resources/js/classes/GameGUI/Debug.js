@@ -1,4 +1,7 @@
 class DebugGameGUI {
+    static getClassName() {
+        return "DebugGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing DebugGameGUI");
         DebugGameGUI.initialized = false;
@@ -18,6 +21,11 @@ class DebugGameGUI {
         DebugGameGUI.infoCoordinates = null;
         DebugGameGUI.infoRotation = null;
         DebugGameGUI.infoTargetRay = null;
+        DebugGameGUI.infoGroundedStateContainer = null;
+        DebugGameGUI.infoCStanceContainer = null;
+        DebugGameGUI.infoPStanceContainer = null;
+        DebugGameGUI.infoOStanceContainer = null;
+        DebugGameGUI.infoMovementPaceContainer = null;
         DebugGameGUI.isVisible = false;
         DebugGameGUI.generateController();
         DebugGameGUI.containerAlpha = 0.75;
@@ -130,23 +138,40 @@ class DebugGameGUI {
         let controller = GameGUI.createStackPanel("infoController");
         controller.background = GameGUI.background;
         controller.isVertical = true;
+        controller.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         controller.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         controller.alpha = DebugGameGUI.containerAlpha;
-        controller.heightInPixels = GameGUI.fontSizeInPixels * 4;
+        controller.heightInPixels = GameGUI.fontSizeInPixels * 7;
         controller.widthInPixels = GameGUI.fontSizeInPixels * 32;
-        controller.alpha = 0.25;
+        controller.alpha = 0.75;
         controller.isVisible = false;
-        let [infoCoordinatesContainer, infoCoordinates] = GameGUI.createContainedTextBlock("infoCoordinates");
-        let [infoRotationContainer, infoRotation] = GameGUI.createContainedTextBlock("infoRotation");
-        let [infoTargetRayContainer, infoTargetRay] = GameGUI.createContainedTextBlock("infoTargetRay");
+        controller.zIndex = 99;
+        let [infoCoordinatesContainer, infoCoordinates] = GameGUI.createContainedTextBlock("infoCoordinates", "Coordinates");
+        let [infoRotationContainer, infoRotation] = GameGUI.createContainedTextBlock("infoRotation", "Rotation");
+        let [infoTargetRayContainer, infoTargetRay] = GameGUI.createContainedTextBlock("infoTargetRay", "Target");
+        let [infoMovementPaceContainer, infoMovementPace] = GameGUI.createContainedTextBlock("infoMovementPace", "Movement Pace");
+        let [infoGroundedStateContainer, infoGroundedState] = GameGUI.createContainedTextBlock("infoGroundedState", "Grounded State");
+        let [infoCStanceContainer, infoCStance] = GameGUI.createContainedTextBlock("infoCStance", "CStance");
+        let [infoPStanceContainer, infoPStance] = GameGUI.createContainedTextBlock("infoPStance", "PStance");
+        let [infoOStanceContainer, infoOStance] = GameGUI.createContainedTextBlock("infoOStance", "OStance");
         controller.addControl(infoCoordinatesContainer);
         controller.addControl(infoRotationContainer);
         controller.addControl(infoTargetRayContainer);
+        controller.addControl(infoGroundedStateContainer);
+        controller.addControl(infoCStanceContainer);
+        controller.addControl(infoPStanceContainer);
+        controller.addControl(infoOStanceContainer);
+        controller.addControl(infoMovementPaceContainer);
 
         DebugGameGUI.infoController = controller;
         DebugGameGUI.infoCoordinates = infoCoordinates;
         DebugGameGUI.infoRotation = infoRotation;
         DebugGameGUI.infoTargetRay = infoTargetRay;
+        DebugGameGUI.infoGroundedState = infoGroundedState;
+        DebugGameGUI.infoCStance = infoCStance;
+        DebugGameGUI.infoPStance = infoPStance;
+        DebugGameGUI.infoOStance = infoOStance;
+        DebugGameGUI.infoMovementPace = infoMovementPace;
         return controller;
     }
     static updateInfoController() {
@@ -157,6 +182,27 @@ class DebugGameGUI {
         DebugGameGUI.infoRotation.text = String(`Rot: ${Number(BABYLON.Tools.ToDegrees(Game.playerController.collisionMesh.rotation.y)).toFixed(2)}`);
         let n = Game.rayDirectionToRadians(Game.playerController.targetRay.direction);
         DebugGameGUI.infoTargetRay.text = String(`Dir X: ${BABYLON.Tools.ToDegrees(n.x)}, Dir Y: ${BABYLON.Tools.ToDegrees(n.y)}`);
+        DebugGameGUI.infoGroundedState.text = String(`State: ${GroundedStateEnum.properties[Game.playerController.groundedState].key}`);
+        DebugGameGUI.infoMovementPace.text = String(`Pace: ${MovementPaceEnum.properties[Game.playerController.movementPace].key}`);
+        if (StanceEnum.properties.hasOwnProperty(Game.playerController.stance)) {
+            DebugGameGUI.infoCStance.text = String(`cStance: ${StanceEnum.properties[Game.playerController.stance].key}, Count: ${Game.playerController.stanceFrameCount}`);
+        }
+        else {
+            DebugGameGUI.infoCStance.isVisible = false;
+        }
+        
+        if (StanceEnum.properties.hasOwnProperty(Game.playerController.previousStance)) {
+            DebugGameGUI.infoPStance.text = String(`pStance: ${StanceEnum.properties[Game.playerController.previousStance].key}, Count: ${Game.playerController.previousStanceFrameCount}`);
+        }
+        else {
+            DebugGameGUI.infoPStance.isVisible = false;
+        }
+        if (StanceEnum.properties.hasOwnProperty(Game.playerController.otherStance)) {
+            DebugGameGUI.infoOStance.text = String(`oStance: ${StanceEnum.properties[Game.playerController.otherPreviousStance].key}, Count: ${Game.playerController.otherPreviousStanceFrameCount}`);
+        }
+        else {
+            DebugGameGUI.infoOStance.isVisible = false;
+        }
         return 0;
     }
     static showInfo() {

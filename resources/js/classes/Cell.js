@@ -10,10 +10,7 @@ class Cell {
      * @param {string} name Name
      */
     constructor(id = "", name = "") {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
+        id = Tools.filterID(id, Tools.genUUIDv4());
         this.id = id;
         this.name = "limbo";
         this.setName(name);
@@ -23,32 +20,23 @@ class Cell {
         this.skyboxAzimuth = 0.25;
         this.skyboxInclination = 0.0;
         this.ambientLightIntensity = 0.9;
-        this.hasBackloggedAdditions = false;
-        this.backloggedCollisionPlanes = [];
-        this.hasBackloggedCollisionPlanes = false;
-        this.backloggedCollisionRamps = [];
-        this.hasBackloggedCollisionRamps = false;
-        this.backloggedCollisionWalls = [];
-        this.hasBackloggedCollisionWalls = false;
-        this.backloggedMaterials = [];
-        this.hasBackloggedMaterials = false;
-        this.backloggedTiledMeshes = [];
-        this.hasBackloggedTiledMeshes = false;
-        this.backloggedMeshes = [];
-        this.hasBackloggedMeshes = false;
-        this.backloggedDoors = [];
-        this.hasBackloggedDoors = false;
-        this.backloggedFurniture = [];
-        this.hasBackloggedFurniture = false;
-        this.backloggedLighting = [];
-        this.hasBackloggedLighting = false;
-        this.backloggedCharacters = [];
-        this.hasBackloggedCharacters = false;
-        this.backloggedItems = [];
-        this.hasBackloggedItems = false;
+        this.collisionPlanes = [];
+        this.collisionRamps = [];
+        this.collisionWalls = [];
+        this.materials = [];
+        this.tiledMeshes = [];
+        this.meshes = [];
+        this.doors = [];
+        this.furniture = [];
+        this.lighting = [];
+        this.displays = [];
+        this.characters = [];
+        this.creatures = [];
+        this.items = [];
+        this.instancedEntities = [];
         this.meshIDs = new Set();
+        this.materialIDs = new Set();
         this.collisionMeshIDs = new Set();
-        this.controllerIDs = new Set();
 
         Cell.set(this.id, this);
     }
@@ -117,33 +105,24 @@ class Cell {
     }
 
     addCollisionWall(...parameters) {
-        this.backloggedCollisionWalls.push(parameters);
-        this.hasBackloggedCollisionWalls = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.collisionWalls.push(parameters);
+        return 0;
     }
     addCollisionPlane(...parameters) {
-        this.backloggedCollisionPlanes.push(parameters);
-        this.hasBackloggedCollisionPlanes = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.collisionPlanes.push(parameters);
+        return 0;
     }
     addCollisionPlaneByMesh(...parameters) {
-        this.backloggedCollisionPlanes.push(parameters);
-        this.hasBackloggedCollisionPlanes = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.collisionPlanes.push(parameters);
+        return 0;
     }
     addCollisionRamp(...parameters) {
-        this.backloggedCollisionRamps.push(parameters);
-        this.hasBackloggedCollisionRamps = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.collisionRamps.push(parameters);
+        return 0;
     }
     addMaterial(...parameters) {
-        this.backloggedMaterials.push(parameters);
-        this.hasBackloggedMaterials = true;
-        this.hasBackloggedAdditions = true;
+        this.materials.push(parameters);
+        return 0;
     }
     /**
      * Creates a mesh from those stored in loadedMeshes
@@ -158,31 +137,51 @@ class Cell {
      */
     addMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
         this.meshIDs.add(meshID);
-        this.backloggedMeshes.push([id, meshID, materialID, position, rotation, scaling, options]);
-        this.hasBackloggedMeshes = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.materialIDs.add(materialID);
+        this.meshes.push([id, meshID, materialID, position, rotation, scaling, options]);
+        return 0;
     }
     /**
      * 
      * @param {string} id 
-     * @param {object} meshOptions 
+     * @param {(object|array)} meshOptions 
+     * @example [1] creats a tiled mesh of 1 x 1 metres, with a subdivision of 1 x 1
+     * @example [2, 3] creates a tiled mesh of 2 x 3 metres, with a subdivision of 2 x 3
+     * @example [2, 3, 4, 6] creates a tiled mesh of 2 x 3, with a subdivision of 4 x 6
      * @param {string} material 
      * @param {array} position 
      * @param {array} [rotation] 
      * @param {array} [scaling] 
      * @param {object} [options] 
      */
-    addTiledGround(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {"checkCollisions":true}) {
+    addTiledGround(id = "", meshOptions = {"xmin":0, "zmin":0, "xmax": 1, "zmax": 1, "subdivisions": {"w":1, "h":1}}, materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {"checkCollisions":true}) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         this.meshIDs.add(id);
-        this.backloggedTiledMeshes.push([id, meshOptions, materialID, position, rotation, scaling, options]);
-        this.hasBackloggedTiledMeshes = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.materialIDs.add(materialID);
+        if (meshOptions instanceof Array) {
+            switch (meshOptions.length) {
+                case 1: {
+                    meshOptions = {"xmin":0, "zmin":0, "xmax": meshOptions[0], "zmax": meshOptions[0], "subdivisions": {"w":meshOptions[0], "h":meshOptions[0]}};
+                    break;
+                }
+                case 2: {
+                    meshOptions = {"xmin":0, "zmin":0, "xmax": meshOptions[0], "zmax": meshOptions[1], "subdivisions": {"w":meshOptions[0], "h":meshOptions[1]}}
+                    break;
+                }
+                case 4: {
+                    meshOptions = {"xmin":0, "zmin":0, "xmax": meshOptions[0], "zmax": meshOptions[1], "subdivisions": {"w":meshOptions[2], "h":meshOptions[3]}}
+                    break;
+                }
+                default: {
+                    meshOptions = {"xmin":0, "zmin":0, "xmax": 1, "zmax": 1, "subdivisions": {"w":1, "h":1}};
+                }
+            }
+        }
+        this.tiledMeshes.push([id, meshOptions, materialID, position, rotation, scaling, options]);
+        return 0;
     }
     /**
      * 
@@ -211,42 +210,64 @@ class Cell {
      */
     addCollidableMesh(id = "", meshID = "", materialID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
         this.meshIDs.add(meshID);
+        this.materialIDs.add(materialID);
         options["checkCollisions"] = true;
-        this.backloggedMeshes.push([id, meshID, materialID, position, rotation, scaling, options]);
-        this.hasBackloggedMeshes = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.meshes.push([id, meshID, materialID, position, rotation, scaling, options]);
+        return 0;
     }
     /**
-     * Creates a character mesh, and controller.
-     * @param  {string} [id] Unique ID, auto-generated if none given
-     * @param  {CharacterEntity} entity Character entity
+     * Creates an entry for a Creature controller
+     * @param  {string} [instanceID] Unique ID, auto-generated if none given
+     * @param  {string} entityID Creature entity
      * @param  {array} position Position
      * @param  {array} [rotation] Rotation
      * @param  {array} [scaling] Scale
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addCharacter(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        if (this.backloggedCharacters.indexOf(id) != -1) {
+    addCreature(instanceID = "", entityID, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.creatures.indexOf(instanceID) != -1) {
             return 1;
         }
-        if (!(entity instanceof CharacterEntity)) {
-            if (CharacterEntity.has(entity)) {
-                entity = CharacterEntity.get(entity);
-            }
-            else {
-                return 2;
-            }
+        if (!CreatureEntity.has(entityID)) {
+            return 1;
         }
-        this.backloggedCharacters.push([id, entity, position, rotation, scaling, options]);
-        this.hasBackloggedCharacters = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        let entity = CreatureEntity.get(entityID);
+        this.meshIDs.add(entity.meshID);
+        this.materialIDs.add(entity.materialID);
+        this.creatures.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
     }
     /**
-     * Creates a DoorController, DoorEntity, and InstancedMesh
-     * @param  {string} [id] Unique ID, auto-generated if none given
+     * Creates an entry for a Character controller
+     * @param  {string} [instanceID] Unique ID, auto-generated if none given
+     * @param  {string} entityID Character entity
+     * @param  {array} position Position
+     * @param  {array} [rotation] Rotation
+     * @param  {array} [scaling] Scale
+     * @param  {object} [options] Options
+     * @return {number} Integer status code
+     */
+    addCharacter(instanceID = "", entityID, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.characters.indexOf(instanceID) != -1) {
+            return 1;
+        }
+        if (!CharacterEntity.has(entityID)) {
+            return 1;
+        }
+        let entity = CharacterEntity.get(entityID);
+        this.meshIDs.add(entity.meshID);
+        this.materialIDs.add(entity.materialID);
+        this.characters.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
+    }
+    /**
+     * Creates an entry for a Door controller
+     * @param  {string} [entityID] Unique ID, auto-generated if none given
      * @param  {string} [name] Name
      * @param  {object} [teleportMarker] Future movement between cells
      * @param  {string} [meshID] Mesh ID
@@ -257,8 +278,9 @@ class Cell {
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addDoor(id = "", name = "", teleportMarker = null, meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        if (this.backloggedDoors.indexOf(id) != -1) {
+    addDoor(entityID = "", name = "", teleportMarker = null, meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        entityID = Tools.filterID(entityID, Tools.genUUIDv4());
+        if (this.doors.indexOf(entityID) != -1) {
             return 1;
         }
         if (!(options instanceof Object)) {
@@ -276,93 +298,110 @@ class Cell {
         options["open"] = options["open"] == true;
         options["checkCollisions"] = options["checkCollisions"] == true;
         this.meshIDs.add(meshID);
-        this.backloggedDoors.push([id, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]);
-        this.hasBackloggedDoors = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.materialIDs.add(materialID);
+        this.doors.push([entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]);
+        this.instancedEntities.push(entityID);
+        return 0;
     }
     /**
-     * Creates a FurnitureController, FurnitureEntity, and InstancedMesh
-     * @param  {string} [id] Unique ID, auto-generated if none given
-     * @param  {FurnitureEntity} entity Furniture entity
+     * Creates an entry for a Furniture controller
+     * @param  {string} [instanceID] Unique ID, auto-generated if none given
+     * @param  {string} entityID Furniture entity
      * @param  {array} position Position
      * @param  {array} [rotation] Rotation
      * @param  {array} [scaling] Scaling
      * @param  {object} [options] Options
      * @return {number} Integer status code
      */
-    addFurniture(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        if (this.backloggedFurniture.indexOf(id) != -1) {
+    addFurniture(instanceID = "", entityID, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.furniture.indexOf(instanceID) != -1) {
             return 1;
         }
-        if (!(entity instanceof FurnitureEntity)) {
-            if (FurnitureEntity.has(entity)) {
-                entity = FurnitureEntity.get(entity);
-            }
-            else {
-                return 2;
-            }
+        if (!FurnitureEntity.has(entityID)) {
+            return 1;
         }
+        let entity = FurnitureEntity.get(entityID);
         this.meshIDs.add(entity.meshID);
-        this.backloggedFurniture.push([id, entity, position, rotation, scaling, options]);
-        this.hasBackloggedFurniture = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.materialIDs.add(entity.materialID);
+        this.furniture.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
     }
     /**
-     * Creates a LightingEntity, LightingEntity, and InstancedMesh
-     * @param {string} [id] Unique ID, auto-generated if none given
-     * @param {LightingEntity} entity Lighting entity
+     * Creates an entry for a Lighting controller
+     * @param {string} [instanceID] Unique ID, auto-generated if none given
+     * @param {LightingEntity} entityID Lighting entity
      * @param {array} position Position
      * @param {array} [rotation] Rotation
      * @param {array} [scaling] Scaling
      * @param {object} [options] Options
      * @returns {number} Integer status code
      */
-    addLighting(id = "", entity = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        if (this.backloggedLighting.indexOf(id) != -1) {
+    addLighting(instanceID = "", entityID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.lighting.indexOf(instanceID) != -1) {
             return 1;
         }
-        if (!(entity instanceof LightingEntity)) {
-            if (LightingEntity.has(entity)) {
-                entity = LightingEntity.get(entity);
-            }
-            else {
-                return 2;
-            }
+        if (!LightingEntity.has(entityID)) {
+            return 1;
         }
+        let entity = LightingEntity.get(entityID);
         this.meshIDs.add(entity.meshID);
-        this.backloggedLighting.push([id, entity, position, rotation, scaling, options]);
-        this.hasBackloggedLighting = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        this.materialIDs.add(entity.materialID);
+        this.lighting.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
+    }
+    /**
+     * Creates an entry for a Display controller
+     * @param {string} [instanceID] Unique ID, auto-generated if none given
+     * @param {string} entityID Display entity
+     * @param {array} position Position
+     * @param {array} [rotation] Rotation
+     * @param {array} [scaling] Scaling
+     * @param {object} [options] Options
+     * @returns {number} Integer status code
+     */
+    addDisplay(instanceID = "", entityID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.lighting.indexOf(instanceID) != -1) {
+            return 1;
+        }
+        if (!DisplayEntity.has(entityID)) {
+            return 1;
+        }
+        let entity = DisplayEntity.get(entityID);
+        this.meshIDs.add(entity.meshID);
+        this.materialIDs.add(entity.materialID);
+        this.displays.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
     }
     /**
      * Places, or creates from an ItemEntity, an InstancedItemEntity in the world at the given position.
-     * @param {string} [id] Unique ID, auto-generated if none given
-     * @param {(AbstractEntity|string)} entity Abstract entity; preferably an InstancedItemEntity
+     * @param {string} [instanceID] Unique ID, auto-generated if none given
+     * @param {string} entityID Abstract entity; preferably an InstancedItemEntity
      * @param {array} position Position
      * @param {array} [rotation] Rotation
      * @param {array} [scaling] Scaling
      * @param {object} [options] Options
      * @returns {number} Integer status code
      */
-    addItem(id = "", entity, position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        if (this.backloggedItems.indexOf(id) != -1) {
+    addItem(instanceID = "", entityID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
+        instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
+        if (this.items.indexOf(instanceID) != -1) {
             return 1;
         }
-        if (!(entity instanceof AbstractEntity)) {
-            if (AbstractEntity.has(entity)) {
-                entity = AbstractEntity.get(entity);
-            }
-            else {
-                return 2;
-            }
+        if (!ItemEntity.has(entityID)) {
+            return 1;
         }
-        this.backloggedItems.push([id, entity, position, rotation, scaling, options]);
-        this.hasBackloggedItems = true;
-        this.hasBackloggedAdditions = true;
-        return 1;
+        let entity = ItemEntity.get(entityID);
+        this.meshIDs.add(entity.meshID);
+        this.materialIDs.add(entity.materialID);
+        this.items.push([instanceID, entityID, position, rotation, scaling, options]);
+        this.instancedEntities.push(instanceID);
+        return 0;
     }
 
     getMeshIDs() {
@@ -466,7 +505,8 @@ class Cell {
     }
     static createLimbo() {
         let limbo = new Cell("limbo", "Limbo");
-        limbo.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, 0);
+        limbo.createBarrier(32);
+        limbo.addCollisionPlane({x:-512,z:-512}, {x:512,z:512}, -0.125);
         limbo.addCollisionWall([-512, -512, 512], [512, 512, 512]);
         limbo.addCollisionWall([512, -512, 512], [512, 512, -512]);
         limbo.addCollisionWall([-512, -512, -512], [512, 512, -512]);

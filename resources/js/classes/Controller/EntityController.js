@@ -1,6 +1,7 @@
 /**
  * Entity Controller
  * @class
+ * @extends {AbstractController}
  * @typedef {Object} EntityController
  * @property {string} id 
  * @property {string} entityID 
@@ -11,6 +12,7 @@
  * @property {Object.<number, string>} materialStages 
  * @property {number} currentMaterialStage 
  * @property {string} mesh 
+ * @property {GroundedStateEnum} groundedState 
  * @property {ActionEnum} defaultAction 
  * @property {Object.<ActionEnum, boolean>} availableActions 
  * @property {Object.<ActionEnum, boolean>} hiddenAvailableActions 
@@ -39,9 +41,7 @@
  * @property {boolean} disposing 
  * @property {boolean} animated 
  * @property {BABYLON.Ray} groundRay 
- * @property {boolean} grounded 
- * @property {boolean} falling 
- * @property {(string|null)} currentCell 
+ * @property {number} groundedState 0 falling, 1 grounded, 2 flying
  * @property {Object.<>} bones 
  * @property {BABYLON.Mesh} focusMesh 
  * @property {BABYLON.Mesh} rootMesh 
@@ -51,6 +51,8 @@
  * @property {Object.<>} _meshesAttachedToBones 
  * @property {Object.<>} _bonesAttachedToMeshes 
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
+ * @property {boolean} bUseAnimationGroups 
+ * @property {boolean} bHasRunPostConstructEntity 
  */
 class EntityController extends AbstractController {
     /**
@@ -60,10 +62,13 @@ class EntityController extends AbstractController {
      * @param {object} entityObject 
      */
     constructor(id = "", mesh = null, entityObject = {}) {
-        super(id, mesh, entityObject);
+        if (!(super(id, mesh, entityObject) instanceof AbstractController)) {
+            return undefined;
+        }
         this.textureStages = [];
         this.currentTextureStage = 0;
         this.materialStages = [];
+        this.groundedState = 0;
         this.currentMaterialStage = 0;
         this.defaultAction = 0;
         this.availableActions = {};
@@ -102,7 +107,6 @@ class EntityController extends AbstractController {
          */
         this.animationPriority = 0;
         this.animationPriorityUpdated = false;
-
         /**
          * Map of bone IDs and the mesh attached to them.
          * @type {string, {string, BABYLON.Mesh}}
@@ -114,13 +118,21 @@ class EntityController extends AbstractController {
          */
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = new Set();
-
-        EntityController.set(this.id, this);
+        this.bUseAnimationGroups = true;
+        this.bHasRunPostConstructEntity = false;
         this.setMesh(mesh);
-        this.assign(entityObject, false);
-        this.sendTransforms();
+        EntityController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
+        this.postConstruct();
+    }
+    postConstruct() {
+        if (this.bHasRunPostConstructEntity) {
+            return 0;
+        }
+        super.postConstruct();
+        this.bHasRunPostConstructEntity = true;
+        return 0;
     }
     getPosition() {
         if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
@@ -150,6 +162,7 @@ class EntityController extends AbstractController {
     setCollisionMesh(mesh) {
         this.collisionMesh = mesh;
         this.mesh.setParent(this.collisionMesh);
+        return 0;
     }
     setMesh(mesh, updateChild = false) {
         if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.setMesh(meshObject, ${updateChild})`);
@@ -187,37 +200,56 @@ class EntityController extends AbstractController {
             this.currentMeshStage = 0;
         }
         this._attachedMeshes.add(this.mesh);
-        let position = this.mesh.position.clone();
-        this.createCollisionMesh();
-        if (this.hasCollisionMesh()) {
-            this.collisionMesh.position.copyFrom(position);
-            this.mesh.setParent(this.collisionMesh);
-            this._attachedMeshes.add(this.collisionMesh);
-        }
         this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
-        this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
+        this.depth = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
+        if (this.hasCollisionMesh()) {
+            this.removeCollisionMesh();
+        }
+        this.createCollisionMesh();
+        this.populateAnimatables();
+        this.populateAnimationGroups();
         if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
-    unsetMesh(mesh = this.mesh) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+    unsetMesh() {
+        if (!(this.mesh instanceof BABYLON.AbstractMesh)) {
             return 0;
         }
         if (this.hasMesh()) {
-            this._attachedMeshes.remove(mesh);
-            mesh.controller = null;
-            mesh.setParent(null);
+            this._attachedMeshes.remove(this.mesh);
+            this.mesh.controller = null;
+            this.mesh.setParent(null);
         }
-        if (this.hasCollisionMesh()) {
-            this._attachedMeshes.remove(this.collisionMesh);
-            Game.removeMesh(this.collisionMesh);
-            this.collisionMesh = null;
-        }
+        this.removeCollisionMesh();
         return 0;
     }
     createCollisionMesh() {
-        //this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
+        let collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.width, this.height, this.depth, this.getPosition(), this.getRotation());
+        if (!(collisionMesh instanceof BABYLON.AbstractMesh)) {
+            return 2;
+        }
+        this.collisionMesh = collisionMesh;
+        if (this.hasMesh()) {
+            this.collisionMesh.position.copyFrom(this.mesh.position);
+            this.collisionMesh.rotation.copyFrom(this.mesh.rotation);
+            this.mesh.setParent(this.collisionMesh);
+        }
+        this.collisionMesh.controller = this;
+        this._attachedMeshes.add(this.collisionMesh);
+        return 0;
+    }
+    removeCollisionMesh() {
+        if (!(this.hasCollisionMesh())) {
+            return 0;
+        }
+        if (this.hasMesh()) {
+            this.mesh.setParent(null);
+        }
+        this.collisionMesh.controller = null;
+        this._attachedMeshes.remove(this.collisionMesh);
+        Game.removeMesh(this.collisionMesh);
+        this.collisionMesh = null;
         return 0;
     }
     hasCollisionMesh() {
@@ -349,11 +381,15 @@ class EntityController extends AbstractController {
      * @param  {object} [options] Options
      * @returns {CharacterController} This character controller.
      */
-    attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
+    attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID = "ROOT", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
         if (EntityController.debugMode) console.log("Running attachMeshIDToBone");
         if (!Game.hasMesh(meshID)) {
             if (EntityController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
             return 2;
+        }
+        if (!Game.hasLoadedMesh(meshID)) {
+            //if (EntityController.debugMode) console.log(`Haven't loaded mesh:${meshID} to attach to bone:${boneID}`);
+            //return 1;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             if (EntityController.debugMode) console.log(`Couldn't find skeleton`);
@@ -363,35 +399,11 @@ class EntityController extends AbstractController {
             if (EntityController.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return 2;
         }
-        let bone = this.getBone(boneID);
-        position = Game.filterVector3(position);
-        rotation = Game.filterVector3(rotation);
-        scaling = Game.filterVector3(scaling);
-        if (!(Game.hasLoadedMesh(meshID))) {
-            Game.addBackloggedAttachment((this.id + bone.name + meshID), this, meshID, materialID, bone.name, position, rotation, scaling);
-            if (EntityController.debugMode) console.log(`Loading mesh:${meshID} hashtag-soon.`)
-            return 1;
-        }
         if (materialID != "collisionMaterial") {
             options["createClone"] = true;
         }
-        let loadedMesh = Game.createMesh(meshID.concat("Attachment").concat(this.id.capitalize()).concat(boneID), meshID, materialID, position, rotation, scaling, options);
-        /*
-        if the mesh is a billboard
-         */
-        if (loadedMesh.getBoundingInfo().boundingBox.maximum.z == 0) {
-            loadedMesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
-            if (bone.name == "hand.r") {
-                rotation.y -= BABYLON.Tools.ToRadians(90);
-                rotation.z += BABYLON.Tools.ToRadians(90);
-            }
-            else if (bone.name == "hand.l") {
-                rotation.y -= BABYLON.Tools.ToRadians(90);
-                rotation.z += BABYLON.Tools.ToRadians(270);
-            }
-            loadedMesh.material.backFaceCulling = false;
-        }
-        return this.attachMeshToBone(loadedMesh, bone, position, rotation, scaling);
+        Game.createControllerAttachedMesh(meshID, materialID, boneID, position, rotation, scaling, options, this.id);
+        return 0;
     }
     /**
      * Attaches a collision mesh to a bone
@@ -435,7 +447,10 @@ class EntityController extends AbstractController {
         mesh.position.copyFrom(position);
         mesh.rotation.copyFrom(rotation);
         if (!(scaling instanceof BABYLON.Vector3)) {
-            mesh.scaling.copyFrom(this.mesh.scaling);
+            mesh.scaling.copyFrom(this.scaling);
+        }
+        else {
+            mesh.scaling.copyFrom(scaling);
         }
         if (this.animationPrevious == undefined) {
             /*
@@ -513,6 +528,22 @@ class EntityController extends AbstractController {
         }
         return this.detachMeshFromBone(mesh, null, destroyMesh);
     }
+    detachMeshIDFromBone(meshID, boneID = null, destroyMesh = true) {
+        if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+            let bone = null;
+            if (boneID instanceof BABYLON.Bone) {
+                bone = boneID;
+            }
+            else if (!this.hasBone(boneID)) {
+                return 1;
+            }
+            else {
+                bone = this.getBone(boneID);
+            }
+            return this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+        }
+        return 0;
+    }
     detachMeshFromBone(mesh, bone = null, destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
@@ -560,14 +591,6 @@ class EntityController extends AbstractController {
             if (boneID == "FOCUS" || boneID == "ROOT") {}
             else {
                 this.detachAllFromBone(boneID, destroyMesh);
-            }
-            if (this.organs.hasOwnProperty(boneID)) {
-                this.organs[boneID]["meshID"] = null;
-                this.organs[boneID]["materialID"] = null;
-            }
-            if (this.cosmetics.hasOwnProperty(boneID)) {
-                this.cosmetics[boneID]["meshID"] = null;
-                this.cosmetics[boneID]["materialID"] = null;
             }
         }
         return 0;
@@ -925,6 +948,14 @@ class EntityController extends AbstractController {
     hasAnimationGroup(animationGroup) {
         return this.animationGroups.hasOwnProperty(animationGroup);
     }
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} rangeName 
+     * @param {boolean} [loopAnimation=true] 
+     * @param {number} [speedRatio=1.0] 
+     * @returns 
+     */
     createAnimatableFromRangeName(id, rangeName, loopAnimation = true, speedRatio = 1.0) {
         if (this.skeleton == null) {
             return 2;
@@ -933,17 +964,35 @@ class EntityController extends AbstractController {
         if (!(animationRange instanceof BABYLON.AnimationRange)) {
             return 1;
         }
-        return this.createAnimatable(id, animationRange.from + 1, animationRange.to, loopAnimation, speedRatio);
+        let to = animationRange.to;
+        if (to - animationRange.from > 1) {
+            to--;
+        }
+        return this.createAnimatable(id, animationRange.from, to, loopAnimation, speedRatio);
     }
+    /**
+     * 
+     * @param {string} id 
+     * @param {number} fromFrame 
+     * @param {number} toFrame 
+     * @param {boolean} [loopAnimation=true] 
+     * @param {number} [speedRatio=1.0] 
+     * @returns 
+     */
     createAnimatable(id, fromFrame = 0, toFrame = 0, loopAnimation = true, speedRatio = 1.0) {
         if (this.skeleton == null) {
             return 2;
         }
-        //let animatable = new BABYLON.Animatable(Game.scene, this.skeleton, fromFrame, toFrame, loopAnimation, speedRatio);
         let animatable = Game.scene.beginWeightedAnimation(this.skeleton, fromFrame, toFrame, 0.0, loopAnimation, speedRatio);
         this.animatables[id] = animatable;
         return animatable;
     }
+    /**
+     * 
+     * @param {string} id 
+     * @param {number} [weight=1.0] 
+     * @returns 
+     */
     setAnimatableWeight(id, weight = 1.0) {
         if (this.skeleton == null) {
             return 2;
@@ -957,21 +1006,20 @@ class EntityController extends AbstractController {
     /**
      * 
      * @param {string} id name of AnimationGroup to create
-     * @param {string|array} animatables ID of animation group(s)
-     * @param {number} weight 
-     * @param {boolean} loop 
-     * @param {number} speed 
-     * @param {boolean} start 
+     * @param {(string|array)} animatables ID of animation group(s)
+     * @param {number} [weight=0.0] 
+     * @param {number} [loopAnimation=false] 0 false, 1 true, -1 default
+     * @param {number} [speedRatio=-1] -1 default
+     * @param {boolean} [start=true] 
      */
-    createAnimationGroupFromAnimatables(id, animatables, weight = 0.0, loop = -1, speed = -1, start = true) {
+    createAnimationGroupFromAnimatables(id, animatables, weight = 0.0, loopAnimation = -1, speedRatio = -1, start = true) {
         let hasValidAnimations = true;
         let animationGroup = new BABYLON.AnimationGroup(id);
-        /*let maxFrameCount = 0;
-        let minFrameCount = Number.MAX_SAFE_INTEGER;
+        let maxFrameCount = 0;
         let tempFrameCount = 0;
-        let maxFrame = 0;
-        let minFrame = Number.MAX_SAFE_INTEGER;*/
-        if (typeof animatables != "array") {
+        let maxFrame = 1;
+        let minFrame = 0;
+        if (!(animatables instanceof Array)) {
             animatables = [animatables];
         }
         for (let i = 0; i < animatables.length; i++) {
@@ -982,58 +1030,82 @@ class EntityController extends AbstractController {
                 }
                 else {
                     hasValidAnimations = false;
-                    return 2;
+                    continue;
                 }
             }
             if (i == 0) {
-                if (loop == -1) {
-                    loop = animatable.loopAnimation;
+                if (loopAnimation === -1) {
+                    loopAnimation = animatable.loopAnimation;
                 }
-                if (speed == -1) {
-                    speed = animatable._speedRatio;
+                if (speedRatio === -1) {
+                    speedRatio = animatable.speedRatio;
                 }
             }
             for (let animation of animatable.getAnimations()) {
                 animationGroup.addTargetedAnimation(animation.animation, animation.target);
             }
-            /*tempFrameCount = animatable.toFrame - animatable.fromFrame;
-            if (tempFrameCount > maxFrameCount) {
+            tempFrameCount = animatable.toFrame - animatable.fromFrame;
+            if (tempFrameCount >= maxFrameCount) {
                 maxFrameCount = tempFrameCount;
-            }
-            if (tempFrameCount < minFrameCount) {
-                minFrameCount = tempFrameCount;
-            }
-            if (animatable.toFrame > maxFrame) {
+                minFrame = animatable.fromFrame;
                 maxFrame = animatable.toFrame;
             }
-            if (animatable.fromFrame < minFrame) {
-                minFrame = animatable.fromFrame;
-            }*/
-            animationGroup.normalize(animatable.fromFrame, animatable.toFrame);
         }
         if (!hasValidAnimations) {
             animationGroup.dispose();
             return 1;
         }
-        if (loop === -1) {
-            loop = true;
+        if (loopAnimation === -1) {
+            loopAnimation = true;
         }
-        if (speed === -1) {
-            speed = 1.0;
+        if (speedRatio === -1) {
+            speedRatio = 1.0;
         }
-        /*if (maxFrameCount != minFrameCount) {
-            animationGroup.normalize(minFrame, maxFrame);
-        }*/
-        animationGroup.start(start);
-        animationGroup.loopAnimation = loop;
-        animationGroup.speedRatio = speed;
+        animationGroup.normalize(minFrame, maxFrame);
+        animationGroup.loopAnimation = loopAnimation == true;
+        animationGroup.speedRatio = speedRatio;
         if (start) {
+            animationGroup.start(true);
             animationGroup.setWeightForAllAnimatables(weight);
         }
         this.animationGroups[id] = animationGroup;
         return animationGroup;
     }
+    clearAnimationGroups() {
+        for (let id in this.animationGroups) {
+            this.animationGroups[id].dispose();
+            delete this.animationGroups[id];
+        }
+        return 0;
+    }
     updateAnimation() {
+        let anim = this.animationGroups[Object.keys(this.animationGroups).length - 1];
+        switch (this.groundedState) {
+            case GroundedStateEnum.FALL: {
+                break;
+            }
+            case GroundedStateEnum.GROUND: {
+                break;
+            }
+            case GroundedStateEnum.FLY: {
+                break;
+            }
+            case GroundedStateEnum.SWIM: {
+                break;
+            }
+        }
+        if (this.animationPriorityUpdated) {
+            this.animationPriorityUpdated = false;
+            if (this.animationPriority >= 2) {
+                this.pauseAllAnimations();
+            }
+            else if (this.animationPriority == 0) {
+                this.unpauseAllAnimations();
+            }
+        }
+        if (this.animationPriority == 0) {
+            this.beginAnimation(anim);
+        }
         return 0;
     }
     /**
@@ -1056,7 +1128,7 @@ class EntityController extends AbstractController {
      * 
      * @param {(string|null)} animation 
      */
-    overrideAnimation(animation = null) {
+    forceOverrideAnimation(animation = null) {
         if (animation == null) {
             this.bAnimationOverride = false;
             this.animationOverride = null;
@@ -1089,18 +1161,72 @@ class EntityController extends AbstractController {
         }
         return 0;
     }
+    beginAnimation(animation) {
+        if (this.bUseAnimationGroups) {
+            return this.beginAnimationWithGroups(animation);
+        }
+        return this.beginAnimationWithAnimatables(animation);
+    }
     /**
      * 
-     * @param {BABYLON.Animation} animation 
-     * @param {function} [callback] 
+     * @param {(string|BABYLON.Animatable)} animation 
+     * @returns {number} 
      */
-    beginAnimation(animation, callback = null) {
+    beginAnimationWithAnimatables(animation) {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
+        if (!(animation instanceof BABYLON.Animatable)) {
+            if (this.animatables.hasOwnProperty(animation)) {
+                animation = this.animatables[animation];
+            }
+            else {
+                return 1;
+            }
+        }
+        if (animation != this.animationCurrent) {
+            /* Prevents an animation from having its weight > 0 when it's swapped out before it reaches 0 */
+            if (this.animationPrevious != null && animation != this.animationPrevious) {
+                this.animationPrevious.weight = 0.0;
+            }
+            this.animationPrevious = this.animationCurrent;
+            this.animationCurrent = animation;
+            this.animationTransitionCount = 0.0;
+        }
+        if (this.animationTransitionCount < 1) {
+            this.animationTransitionCount += this.animationTransitionSpeed;
+        }
+        if (this.animationTransitionCount > 1) {
+            this.animationTransitionCount = 1;
+        }
+        if (this.animationPrevious instanceof BABYLON.Animatable) {
+            let weight = 1 - this.animationTransitionCount;
+            if (weight < 0) {
+                weight = 0;
+            }
+            else if (weight > 1) {
+                weight = 0;
+            }
+            this.animationPrevious.weight = weight;
+        }
+        this.animationCurrent.weight = this.animationTransitionCount;
+        return 0;
+    }
+    /**
+     * 
+     * @param {(string|BABYLON.Animation)} animation 
+     * @returns {number} 
+     */
+    beginAnimationWithGroups(animation) {
+        if (this.locked || !this.enabled) {
+            return 0;
+        }
         if (this.bAnimationStopped || this.animationPriority >= 2) {
             return 1;
         }
         if (!(animation instanceof BABYLON.AnimationGroup)) {
-            if (this.hasAnimationGroup(animation)) {
-                this.animation = this.animationGroups[animation];
+            if (this.animationGroups.hasOwnProperty(animation)) {
+                animation = this.animationGroups[animation];
             }
             else {
                 return 1;
@@ -1115,45 +1241,112 @@ class EntityController extends AbstractController {
             this.animationCurrent = animation;
             this.animationTransitionCount = 0.0;
         }
-        if (this.animationTransitionCount < 1) {
-            this.animationTransitionCount += this.animationTransitionSpeed;
-        }
         if (this.animationTransitionCount > 1) {
             this.animationTransitionCount = 1;
         }
-        if (this.animationPrevious instanceof BABYLON.AnimationGroup) {
-            this.animationPrevious.setWeightForAllAnimatables(1 - this.animationTransitionCount);
+        else if (this.animationTransitionCount < 1) {
+            this.animationTransitionCount += this.animationTransitionSpeed;
+            if (this.animationPrevious instanceof BABYLON.AnimationGroup) {
+                this.animationPrevious.setWeightForAllAnimatables(1 - this.animationTransitionCount);
+            }
+            this.animationCurrent.setWeightForAllAnimatables(this.animationTransitionCount);
         }
-        this.animationCurrent.setWeightForAllAnimatables(this.animationTransitionCount);
         return 0;
     }
     moveAV() {
         return 0;
     }
+    populateAnimatables() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return 1;
+        }
+        if (this.skeleton.getAnimationRange("99_default") != null) {
+            this.createAnimatableFromRangeName("default", "99_default", false);
+        }
+        if (this.skeleton.getAnimationRange("10_closed01") != null) {
+            this.createAnimatableFromRangeName("closed", "10_closed01", false);
+        }
+        if (this.skeleton.getAnimationRange("80_open01") != null) {
+            this.createAnimatableFromRangeName("open", "80_open01", false);
+        }
+        if (this.skeleton.getAnimationRange("10_opened01") != null) {
+            this.createAnimatableFromRangeName("opened", "10_opened01", false);
+        }
+        if (this.skeleton.getAnimationRange("80_close01") != null) {
+            this.createAnimatableFromRangeName("close", "80_close01", false);
+        }
+        return 0;
+    }
+    populateAnimationGroups() {
+        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
+            return 1;
+        }
+        if (this.hasAnimatable("default"))
+            this.createAnimationGroupFromAnimatables("default", "default", 0.0, false);
+        if (this.hasAnimatable("opened"))
+            this.createAnimationGroupFromAnimatables("opened", "opened", 0.0, false);
+        if (this.hasAnimatable("closed"))
+            this.createAnimationGroupFromAnimatables("closed", "closed", 0.0, false);
+        if (this.hasAnimatable("open"))
+            this.createAnimationGroupFromAnimatables("open", "open", 0.0, false);
+        if (this.hasAnimatable("close"))
+            this.createAnimationGroupFromAnimatables("close", "close", 1.0, false);
+        for (let id in this.animationGroups) {
+            if (id == "default") {
+                continue;
+            }
+            this.animationGroups[id].setWeightForAllAnimatables(0.0);
+            this.animationGroups[id].stop(false);
+        }
+        return 0;
+    }
+    doOpen() {
+        if (this.animated) {
+            if (this.hasAnimationGroup("closed"))
+                this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
+            if (this.hasAnimationGroup("close")) {
+                this.animationGroups["close"].stop(false);
+                this.animationGroups["close"].setWeightForAllAnimatables(0.0);
+            }
+            if (this.hasAnimationGroup("opened"))
+                this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
+            if (this.hasAnimationGroup("open")) {
+                this.animationGroups["open"].setWeightForAllAnimatables(1.0);
+                this.animationGroups["open"].play(false);
+            }
+        }
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        return 0;
+    }
+    doClose() {
+        if (this.animated) {
+            if (this.hasAnimationGroup("opened"))
+                this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
+            if (this.hasAnimationGroup("open")) {
+                this.animationGroups["open"].stop(false);
+                this.animationGroups["open"].setWeightForAllAnimatables(0.0);
+            }
+            if (this.hasAnimationGroup("closed"))
+                this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
+            if (this.hasAnimationGroup("close")) {
+                this.animationGroups["close"].setWeightForAllAnimatables(1.0);
+                this.animationGroups["close"].play(false);
+            }
+        }
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.setDefaultAction(ActionEnum.OPEN);
+        return 0;
+    }
+
     /**
      * Returns all meshes associated with this controller.
      * @returns {Set<BABYLON.AbstractMesh>}
      */
     getMeshes() {
         return [this.collisionMesh, this.mesh];
-    }
-    setCell(cell) {
-        if (cell instanceof Cell) {
-            this.cell = cell;
-        }
-        else if (Game.hasCell(cell)) {
-            this.cell = Game.getCell(cell);
-        }
-        else {
-            return 2;
-        }
-        return 0;
-    }
-    getCell() {
-        return this.cell;
-    }
-    hasCell() {
-        return this.cell instanceof Cell;
     }
     updateGroundRay() {
         if (!(this.hasMesh())) {
@@ -1228,6 +1421,7 @@ class EntityController extends AbstractController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
+        this.clearAnimationGroups();
         for (let boneName in this.bones) {
             this.bones[boneName] = null;
         }
@@ -1241,9 +1435,9 @@ class EntityController extends AbstractController {
         if (this.hasCompoundController()) {
             this.removeCompoundController(true);
         }
+        this.detachFromAllBones(true);
         EntityController.remove(this.id);
         super.dispose();
-        Game.removeMesh(this.collisionMesh);
         return null;
     }
     getClassName() {

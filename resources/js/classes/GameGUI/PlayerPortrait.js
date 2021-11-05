@@ -1,4 +1,7 @@
 class PlayerPortraitGameGUI {
+    static getClassName() {
+        return "PlayerPortraitGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing PlayerPortraitGameGUI");
         PlayerPortraitGameGUI.playerName = null;
@@ -105,6 +108,9 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.playerStaminaText = portraitStatsStaminaText;
         return portrait;
     }
+    static resize() {
+        return 0;
+    }
     static show() {
         PlayerPortraitGameGUI.controller.isVisible = true;
         PlayerPortraitGameGUI.isVisible = true;
@@ -114,9 +120,6 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.isVisible = false;
     }
     static clear() {
-        PlayerPortraitGameGUI.hideHealth();
-        PlayerPortraitGameGUI.hideStamina();
-        PlayerPortraitGameGUI.hide();
         PlayerPortraitGameGUI.entityID = null;
         PlayerPortraitGameGUI.cachedEntity = null;
         PlayerPortraitGameGUI.targetIsCreature = false;

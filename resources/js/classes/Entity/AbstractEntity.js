@@ -10,7 +10,7 @@
  * @property {string} meshID
  * @property {string} materialID
  * @property {string} textureID
- * @property {(EntityController|null)} controller
+ * @property {(string|null)} controllerID
  * @property {number} health
  * @property {number} maxHealth
  * @property {number} maxHealthModifier
@@ -72,8 +72,8 @@ class AbstractEntity {
         this.materialID = "missingMaterial";
         /** @type {string} */
         this.textureID = "missingTexture";
-        /** @type {(EntityController|null)} */
-        this.controller = null;
+        /** @type {(string|null)} */
+        this.controllerID = null;
         /** @type {boolean} */
         this.enabled = true;
         /** @type {boolean} */
@@ -351,16 +351,16 @@ class AbstractEntity {
      * @param {string} entityControllerID 
      */
     setController(entityControllerID) {
-        this.controller = entityControllerID;
+        this.controllerID = entityControllerID;
     }
     getController() {
-        return this.controller;
+        return this.controllerID;
     }
     hasController() {
-        return this.controller != null;
+        return this.controllerID != null;
     }
     removeController() {
-        this.controller = null;
+        this.controllerID = null;
         return 0;
     }
 
@@ -897,7 +897,7 @@ class AbstractEntity {
         let obj = {};
         obj["availableActions"] = this.availableActions;
         obj["container"] = null;
-        obj["controller"] = this.controller;
+        obj["controller"] = this.controllerID;
         obj["defaultAction"] = this.defaultAction;
         obj["description"] = this.getDescription();
         obj["enabled"] = this.enabled;

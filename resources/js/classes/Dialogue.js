@@ -133,7 +133,7 @@ class Dialogue {
         return 0;
     }
 
-    stringify(minify = false, target = null, actor = null) {
+    stringify(target = null, actor = null) {
         return JSON.stringify(this.objectify(target, actor));
     }
     objectify(target = null, actor = null) {

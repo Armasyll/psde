@@ -8,7 +8,7 @@ class GameGUI {
     constructor() {
         GameGUI.initialized = false;
     }
-    static className() {
+    static getClassName() {
         return "GameGUI";
     }
     static initialize() {
@@ -38,73 +38,54 @@ class GameGUI {
         GameGUI._nameInput = "";
         GameGUI._ageInput = "";
         if (Game.debugMode) BABYLON.Tools.Log("Attempting to create an advanced dynamic texture");
-        //GameGUI.menu = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
-        GameGUI.menu = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("menu");
+        //GameGUI.controller = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
+        GameGUI.controller = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GameGUI");
         if (Game.debugMode) BABYLON.Tools.Log("Yes! :V");
-        GameGUI.menu.rootContainer.isVisible = false;
-        GameGUI.menu.rootContainer.zIndex = 5;
-        GameGUI.hud = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("hud");
-        GameGUI.hud.rootContainer.isVisible = false;
-        GameGUI.hud.rootContainer.zIndex = 3;
+        GameGUI.controller.rootContainer.isVisible = false;
+        GameGUI.controller.rootContainer.zIndex = 5;
 
-        GameGUI.actionTooltip = null;
-        GameGUI.actionTooltipLocked = false;
-        GameGUI.radialMenu = null;
-        GameGUI.radialMenuOptions = new Array();
-        GameGUI.dialogue = null;
-        GameGUI._initHUD();
-
-        GameGUI.characterChoiceMenu = null;
-        GameGUI.inventoryMenu = null;
-        GameGUI.characterStats = null;
-        GameGUI._initMenu();
-        GameGUI.debugMenu = null;
+        GameGUI.windowStack = new Array();
 
         GameGUI.locked = false;
         GameGUI.initialized = true;
-        GameGUI.resize();
-    }
-    static _initHUD() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._initHUD");
-        GameGUI.crosshair = GameGUI._generateCrosshair();
-        GameGUI.actionTooltip = GameGUI._generateTargetActionTooltip();
-        GameGUI.radialMenu = GameGUI._generateActionsRadialMenu();
-        GameGUI.hud.addControl(GameGUI.crosshair);
-        GameGUI.hud.addControl(GameGUI.radialMenu);
-        GameGUI.hud.addControl(GameGUI.actionTooltip);
+
+        GameGUI.hud = HUDGameGUI;
+        GameGUI.hud.initialize();
+        GameGUI.controller.addControl(GameGUI.hud.getController());
+
+        GameGUI.chat = ChatGameGUI;
+        GameGUI.chat.initialize();
+        GameGUI.controller.addControl(GameGUI.chat.getController());
+
+        GameGUI.dialogue = DialogueGameGUI;
+        GameGUI.dialogue.initialize();
+        GameGUI.controller.addControl(GameGUI.dialogue.getController());
 
         GameGUI.debugMenu = DebugGameGUI;
         GameGUI.debugMenu.initialize();
-        GameGUI.hud.addControl(GameGUI.debugMenu.getSkyboxController());
-        GameGUI.chat = ChatGameGUI;
-        GameGUI.chat.initialize();
-        GameGUI.hud.addControl(GameGUI.chat.getController());
-        GameGUI.dialogue = DialogueGameGUI;
-        GameGUI.dialogue.initialize();
-        GameGUI.hud.addControl(GameGUI.dialogue.getController());
-        GameGUI.playerPortrait = PlayerPortraitGameGUI;
-        GameGUI.playerPortrait.initialize();
-        GameGUI.hud.addControl(GameGUI.playerPortrait.getController());
-        GameGUI.targetPortrait = TargetPortraitGameGUI;
-        GameGUI.targetPortrait.initialize();
-        GameGUI.hud.addControl(GameGUI.targetPortrait.getController());
-    }
-    static _initMenu() {
-        GameGUI.characterChoiceMenu = GameGUI._generateCharacterChoiceMenu()
-        GameGUI.menu.addControl(GameGUI.characterChoiceMenu);
+        GameGUI.controller.addControl(GameGUI.debugMenu.getSkyboxController());
 
         GameGUI.inventoryMenu = InventoryGameGUI;
         GameGUI.inventoryMenu.initialize();
-        GameGUI.menu.addControl(GameGUI.inventoryMenu.getController());
+        GameGUI.controller.addControl(GameGUI.inventoryMenu.getController());
+
         GameGUI.inventoryEquipmentMenu = InventoryEquipmentGameGUI;
         GameGUI.inventoryEquipmentMenu.initialize();
-        GameGUI.menu.addControl(GameGUI.inventoryEquipmentMenu.getController());
-        GameGUI.characterStats = CharacterStatsGUI;
+        GameGUI.controller.addControl(GameGUI.inventoryEquipmentMenu.getController());
+
+        GameGUI.characterStats = CharacterStatsGameGUI;
         GameGUI.characterStats.initialize();
-        GameGUI.menu.addControl(GameGUI.characterStats.getController());
+        GameGUI.controller.addControl(GameGUI.characterStats.getController());
+
         GameGUI.book = BookGameGUI;
         GameGUI.book.initialize();
-        GameGUI.menu.addControl(GameGUI.book.getController());
+        GameGUI.controller.addControl(GameGUI.book.getController());
+
+        GameGUI.characterChoiceMenu = GameGUI._generateCharacterChoiceMenu();
+        GameGUI.controller.addControl(GameGUI.characterChoiceMenu);
+
+        GameGUI.resize();
+        return 0;
     }
     static resize() {
         if (!GameGUI.initialized) {
@@ -121,8 +102,7 @@ class GameGUI {
         GameGUI.fontSizeSmall = String(GameGUI.fontSizeSmallInPixels).concat("px");
         GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
-        GameGUI.hud.rootContainer.fontSize = GameGUI.fontSize;
-        GameGUI.menu.rootContainer.fontSize = GameGUI.fontSize;
+        GameGUI.controller.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.inventoryMenu.resize();
         GameGUI.inventoryEquipmentMenu.resize();
         GameGUI.dialogue.resize();
@@ -140,110 +120,36 @@ class GameGUI {
             return String(GameGUI.fontSizeInPixels * multiplier).concat("px");
         }
     }
-    static showHUD(_updateChild = true) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showHUD");
+
+    static show() {
+        GameGUI.controller.getChildren()[0].isVisible = true;
+        return 0;
+    }
+    static hide() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.hide");
         if (GameGUI.locked) {
-            return;
+            return 0;
         }
         Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        if (_updateChild === true) {
-            GameGUI.hideMenu(false);
+        for (let i = 0; i < GameGUI.windowStack.length; i++) {
+            GameGUI.windowStack[i].hide(false);
         }
-        GameGUI.hud.rootContainer.isVisible = true;
+        GameGUI.afterHideMenuChildren();
+        return 0;
     }
-    static hideHUD(_updateChild = false) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.hideHUD");
-        if (GameGUI.locked) {
-            return;
+
+    static hideLastMenuChild() {
+        if (GameGUI.windowStack.length > 0) {
+            let lastWindow = GameGUI.windowStack[GameGUI.windowStack.length - 1];
+            lastWindow.hide(true);
         }
-        if (_updateChild === true) {
-            GameGUI.showMenu(false);
-        }
-        GameGUI.hud.rootContainer.isVisible = false;
+        return 0;
     }
-    static _hideHUDChildren() {
-        for (var _i = GameGUI.hud.rootContainer.children.length - 1; _i > -1; _i--) {
-            GameGUI.hud.rootContainer.children[_i].isVisible = false;
+    static afterHideMenuChildren() {
+        if (GameGUI.interfaceMode == InterfaceModeEnum.CHARACTER && GameGUI.windowStack.length == 0) {
+            GameGUI.hud.show();
         }
-    }
-    static isHUDVisible() {
-        return GameGUI.hud.rootContainer.isVisible;
-    }
-    static setHUDVisible(_boolean) {
-        if (GameGUI.locked) {
-            return;
-        }
-        if (_boolean === true) {
-            GameGUI.hud.rootContainer.isVisible = true;
-        }
-        else {
-            GameGUI.hud.rootContainer.isVisible = false;
-        }
-    }
-    static showMenu(_updateChild = true) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showMenu");
-        if (GameGUI.locked) {
-            return;
-        }
-        Game.setInterfaceMode(InterfaceModeEnum.MENU);
-        if (_updateChild === true) {
-            GameGUI.hideHUD(false);
-        }
-        GameGUI.menu.rootContainer.isVisible = true;
-    }
-    static hideMenu(_updateChild = false) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.hideMenu");
-        if (GameGUI.locked) {
-            return;
-        }
-        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        if (_updateChild === true) {
-            GameGUI.showHUD(false);
-        }
-        GameGUI.menu.rootContainer.isVisible = false;
-    }
-    static _hideMenuChildren() {
-        for (var _i = GameGUI.menu.rootContainer.children.length - 1; _i > -1; _i--) {
-            GameGUI.menu.rootContainer.children[_i].isVisible = false;
-        }
-    }
-    static isMenuVisible() {
-        return GameGUI.menu.rootContainer.isVisible;
-    }
-    static setMenuVisible(_boolean) {
-        if (GameGUI.locked) {
-            return;
-        }
-        if (_boolean === true) {
-            GameGUI.menu.rootContainer.isVisible = true;
-        }
-        else {
-            GameGUI.menu.rootContainer.isVisible = false;
-        }
-    }
-    static _generateCrosshair() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateCrosshair");
-        let crosshair = new BABYLON.GUI.Ellipse("crosshair");
-        crosshair.width = "15px";
-        crosshair.background = "white";
-        crosshair.height = "15px";
-        crosshair.color = "black";
-        crosshair.alpha = GameGUI.alpha;
-        crosshair.isVisible = false;
-        crosshair.zIndex = 10;
-        return crosshair;
-    }
-    static showCrosshair() {
-        if (GameGUI.locked) {
-            return;
-        }
-        GameGUI.crosshair.isVisible = true;
-    }
-    static hideCrosshair() {
-        if (GameGUI.locked) {
-            return;
-        }
-        GameGUI.crosshair.isVisible = false;
+        return 0;
     }
     static _generateCharacterChoiceMenu() {
         if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateCharacterChoiceMenu");
@@ -359,18 +265,17 @@ class GameGUI {
                 GameGUI._ageInput.color = GameGUI.color;
                 GameGUI._ageInput.background = GameGUI.background;
             }
-            if (!doNotPassGo) {
+            /*if (!doNotPassGo) {
                 if (!Game.hasPlayerController()) {
-                    Game.setPlayerCell("apartmentCell");
-                    Game.createPlayer("player", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.entityLogicWorkerPostMessage("loadCellAndSetPlayerAt", 0, { "cellID": Game.selectedCellID, "position": [0,0,0] });
                 }
                 if (!Client.isOnline()) {
                     Client.connect();
                 }
                 GameGUI.hideCharacterChoiceMenu();
-                GameGUI.hideMenu();
-                GameGUI.showHUD();
-            }
+                GameGUI.hide();
+                GameGUI.hud.show();
+            }*/
         });
         submitOffline.onPointerClickObservable.add(function() {
             let doNotPassGo = false;
@@ -396,15 +301,14 @@ class GameGUI {
             }
             if (!doNotPassGo) {
                 if (!(Game.hasPlayerController())) {
-                    Game.setPlayerCell("apartmentCell");
-                    Game.createPlayer("player", GameGUI._nameInput.text, "It you :v", "genericCharacterIcon", CreatureTypeEnum.HUMANOID, CreatureSubTypeEnum.FOX, SexEnum.MALE, GameGUI._ageInput.text, "foxM", "foxRed", new BABYLON.Vector3(3, 0, -17), undefined, undefined, {eyes:EyeEnum.CIRCLE, eyesColour:"green"});
+                    Game.loadCellAndSetPlayerAt();
                 }
                 if (Client.isOnline()) {
                     Client.disconnect();
                 }
                 GameGUI.hideCharacterChoiceMenu();
-                GameGUI.hideMenu();
-                GameGUI.showHUD();
+                GameGUI.hide();
+                GameGUI.hud.show();
             }
         });
 
@@ -429,9 +333,8 @@ class GameGUI {
         if (GameGUI.locked) {
             return;
         }
-        GameGUI.hideHUD()
-        GameGUI.showMenu();
-        GameGUI._hideMenuChildren();
+        GameGUI.hud.hide();
+        GameGUI.show();
         GameGUI.characterChoiceMenu.isVisible = true;
     }
     static hideCharacterChoiceMenu() {
@@ -440,8 +343,15 @@ class GameGUI {
         }
         GameGUI.characterChoiceMenu.isVisible = false;
     }
-    static createSimpleButton(...params) {
-        let button = BABYLON.GUI.Button.CreateSimpleButton(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @returns {BABYLON.GUI.Button}
+     */
+    static createSimpleButton(name, text) {
+        name = Tools.filterID(name);
+        let button = BABYLON.GUI.Button.CreateSimpleButton(name, text);
         button.fontSize = GameGUI.fontSize;
         button.color = GameGUI.color;
         button.background = GameGUI.focusedBackground;
@@ -452,8 +362,16 @@ class GameGUI {
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         return button;
     }
-    static createImageButton(...params) {
-        let button = BABYLON.GUI.Button.CreateImageButton(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @param {string} [imageUri]
+     * @returns {BABYLON.GUI.Button}
+     */
+    static createImageButton(name, text, imageUri) {
+        name = Tools.filterID(name);
+        let button = BABYLON.GUI.Button.CreateImageButton(name, text, imageUri);
         button.fontSize = GameGUI.fontSize;
         button.color = GameGUI.color;
         button.background = GameGUI.focusedBackground;
@@ -464,8 +382,14 @@ class GameGUI {
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         return button;
     }
-    static createCheckbox(...params) {
-        let checkbox = new BABYLON.GUI.Checkbox(...params);
+    /**
+     * 
+     * @param {string} [text] 
+     * @returns {BABYLON.GUI.Checkbox}
+     */
+    static createCheckbox(name) {
+        name = Tools.filterID(name);
+        let checkbox = new BABYLON.GUI.Checkbox(name);
         checkbox.color = GameGUI.color;
         checkbox.disabledColor = GameGUI.background;
         checkbox.disabledColorItem = GameGUI.color;
@@ -475,8 +399,15 @@ class GameGUI {
         checkbox.background = null;
         return checkbox;
     }
-    static createInputText(...params) {
-        let inputText = new BABYLON.GUI.InputText(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @returns {BABYLON.GUI.InputText}
+     */
+    static createInputText(name, text) {
+        name = Tools.filterID(name);
+        let inputText = new BABYLON.GUI.InputText(name, text);
         inputText.fontSize = GameGUI.fontSize;
         inputText.color = GameGUI.color;
         inputText.focusedBackground = GameGUI.focusedBackground;
@@ -485,8 +416,15 @@ class GameGUI {
         inputText.background = null;
         return inputText;
     }
-    static createTextBlock(...params) {
-        let textBlock = new BABYLON.GUI.TextBlock(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @returns {BABYLON.GUI.TextBlock}
+     */
+    static createTextBlock(name, text) {
+        name = Tools.filterID(name);
+        let textBlock = new BABYLON.GUI.TextBlock(name, text);
         textBlock.fontSize = GameGUI.fontSize;
         textBlock.color = GameGUI.color;
         textBlock.disabledColorItem = GameGUI.color;
@@ -494,26 +432,46 @@ class GameGUI {
         textBlock.background = null;
         return textBlock;
     }
-    static createRectangle(...params) {
-        let rectangle = new BABYLON.GUI.Rectangle(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @returns {BABYLON.GUI.Rectangle}
+     */
+    static createRectangle(name) {
+        name = Tools.filterID(name);
+        let rectangle = new BABYLON.GUI.Rectangle(name);
         rectangle.color = GameGUI.color;
         rectangle.disabledColorItem = GameGUI.color;
         rectangle.thickness = 0;
         rectangle.background = null;
         return rectangle;
     }
-    static createStackPanel(...params) {
-        let stackPanel = new BABYLON.GUI.StackPanel(...params);
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @returns {BABYLON.GUI.StackPanel}
+     */
+    static createStackPanel(name) {
+        name = Tools.filterID(name);
+        let stackPanel = new BABYLON.GUI.StackPanel(name);
         stackPanel.color = GameGUI.color;
         stackPanel.disabledColorItem = GameGUI.color;
         stackPanel.thickness = 0;
         stackPanel.background = null;
         return stackPanel;
     }
-    static createContainedTextBlock(id, text) {
-        let stackPanel = GameGUI.createStackPanel(String(id).concat("StackPanel"));
+    /**
+     * 
+     * @param {(string|undefined)} [name] 
+     * @param {string} [text] 
+     * @returns {[BABYLON.GUI.StackPanel, BABYLON.GUI.TextBlock]}
+     */
+    static createContainedTextBlock(name, text) {
+        name = Tools.filterID(name);
+        let stackPanel = GameGUI.createStackPanel(String(name).concat("StackPanel"));
         stackPanel.isVertical = true;
-        let textBlock = GameGUI.createTextBlock(String(id).concat("TextBlock"));
+        let textBlock = GameGUI.createTextBlock(String(name).concat("TextBlock"));
         textBlock.text = text;
         textBlock.heightInPixels = GameGUI.fontSizeInPixels;
         stackPanel.addControl(textBlock);
@@ -560,277 +518,13 @@ class GameGUI {
         button.addControl(buttonText);
         return button;
     }
-    static _generateTargetActionTooltip() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateTargetActionTooltip");
-        let tooltip = GameGUI.createRectangle("targetActionTooltip");
-            tooltip.width = 0.125;
-            tooltip.height = 0.075;
-            tooltip.top = "3.75%";
-            tooltip.left = "6.25%";
-            tooltip.alpha = GameGUI.alpha;
-            tooltip.isVertical = false;
-            tooltip.background = GameGUI.focusedBackground;
-        let keyName = GameGUI.createTextBlock();
-            keyName.text = "E";
-            keyName.top = 0;
-            keyName.left = "10%";
-            keyName.textHorizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-        let actionPanelActionName = GameGUI.createTextBlock();
-            actionPanelActionName.text = "";
-            actionPanelActionName.height = 0.5;
-            //actionPanelActionName.top = "-25%";
-            actionPanelActionName.left = "25%";
-        let actionPanelTargetName = GameGUI.createTextBlock();
-            actionPanelTargetName.text = "";
-            actionPanelTargetName.height = 0.5;
-            actionPanelTargetName.top = "25%";
-            actionPanelTargetName.left = "25%";
-        tooltip.addControl(keyName);
-        tooltip.addControl(actionPanelActionName);
-        tooltip.addControl(actionPanelTargetName);
-        tooltip.isVisible = false;
-        tooltip.zIndex = 12;
-        return tooltip;
-    }
-    /**
-     * Sets the action tooltip's letter corresponding to Game.useTargetedEntityCode.
-     * @param {string} _string Top left character.
-     */
-    static setActionTooltipLetter(_string = String.fromCharCode(AbstractControls.useTargetedEntityCode)) {
-        GameGUI.actionTooltip.children[0].text = _string;
-    }
-    /**
-     * Sets the action tooltip's top right text.
-     * @param {String} _string Top right text.
-     */
-    static setActionTooltipString(_string = "Use") {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.setActionTooltipString");
-        if (typeof _string != "string") {
-            _string = "Use";
-        }
-        else {
-            _string = _string.capitalize();
-        }
-        GameGUI.actionTooltip.children[1].text = _string;
-    }
-    /**
-     * Sets the action tooltip's bottom text. Not used, I think. :D
-     * @param {String} _string Bottom text.
-     */
-    static setActionTooltipTarget(_string = "") {
-        if (typeof _string != "string") {
-            _string = "";
-        }
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.setActionTooltipTarget");
-        GameGUI.actionTooltip.children[2].text = _string;
-    }
-    /**
-     * Sets the action tooltip's top right and bottom text.
-     * @param {String} _action Top right text.
-     * @param {String} _target Bottom text.
-     */
-    static setActionTooltip(_action, _target = "") {
-        GameGUI.setActionTooltipString(_action);
-        GameGUI.setActionTooltipTarget(_target);
-    }
-    /**
-     * Show the action tooltip.
-     */
-    static showActionTooltip() {
-        if (GameGUI.locked) {
-            return;
-        }
-        if (!GameGUI.actionTooltipLocked) {
-            GameGUI.actionTooltip.isVisible = true;
-        }
-    }
-    /**
-     * Hide the action tooltip.
-     */
-    static hideActionTooltip() {
-        if (GameGUI.locked) {
-            return;
-        }
-        if (!GameGUI.actionTooltipLocked) {
-            GameGUI.actionTooltip.isVisible = false;
-        }
-    }
-    static lockActionTooltip() {
-        GameGUI.actionTooltipLocked = true;
-    }
-    static unlockActionTooltip() {
-        GameGUI.actionTooltipLocked = false;
-    }
-    /**
-     * A group of circular buttons arranged in a circle.
-     * @return {BABYLON.GUI.Container} Circular container of buttons.
-     */
-    static _generateActionsRadialMenu() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateActionsRadialMenu");
-        let actionsRadialMenu = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
-        actionsRadialMenu.width = String(Game.renderWidth / 4) + "px";
-        actionsRadialMenu.height = actionsRadialMenu.width;
-        actionsRadialMenu.background = GameGUI.background;
-        actionsRadialMenu.color = GameGUI.color;
-        actionsRadialMenu.alpha = GameGUI.containerAlpha;
-        actionsRadialMenu.isVisible = false;
-        actionsRadialMenu.zIndex = 12;
-        return actionsRadialMenu;
-    }
-    static populateRadialMenuWith(entityController) {
-        if (!(entityController instanceof EntityController)) {
-            if (EntityController.has(entityController)) {
-                entityController = EntityController.get(entityController);
-            }
-            else {
-                return 2;
-            }
-        }
-        GameGUI.radialMenuOptions.clear();
-        if (Object.keys(entityController.availableActions).length == 0) {
-            return 1;
-        }
-        for (let actionID in entityController.availableActions) {
-            if (!entityController.hasHiddenAvailableAction(actionID)) {
-                GameGUI.addRadialMenuOption(actionID, entityController);
-            }
-        }
-        return 0;
-    }
-    static populateRadialMenuWithTarget() {
-        if (Game.playerController.hasTarget()) {
-            return GameGUI.populateRadialMenuWith(Game.playerController.getTarget());
-        }
-        else {
-            GameGUI.clearRadialMenu();
-        }
-        return 0;
-    }
-    static addRadialMenuOption(actionID, entityController) {
-        if (!ActionEnum.properties.hasOwnProperty(actionID)) {
-            if (ActionEnum.hasOwnProperty(actionID)) {
-                actionID = ActionEnum[actionID];
-            }
-            else {
-                return 2;
-            }
-        }
-        else {
-            actionID = Number.parseInt(actionID);
-        }
-        if (!(entityController instanceof EntityController)) {
-            if (EntityController.has(entityController)) {
-                entityController = EntityController.get(entityController);
-            }
-            else {
-                return 2;
-            }
-        }
-        GameGUI.radialMenuOptions.push({
-            action:actionID,
-            target:entityController
-        });
-        if (GameGUI.radialMenu.isVisible) {
-            GameGUI.updateRadialMenu();
-        }
-        return 0;
-    }
-    static removeRadialMenuOption(actionID) {
-        if (!ActionEnum.properties.hasOwnProperty(actionID)) {
-            if (ActionEnum.hasOwnProperty(actionID)) {
-                actionID = ActionEnum[actionID];
-            }
-            else {
-                return 2;
-            }
-        }
-        else {
-            actionID = Number.parseInt(actionID);
-        }
-        for (var _i = 0; _i < GameGUI.radialMenuOptions.length; _i++) {
-            if (GameGUI.radialMenuOptions[_i].action == actionID) {
-                GameGUI.radialMenuOptions.splice(_i, 1);
-                _i = _radialMenuOptions.length;
-            }
-        }
-        if (GameGUI.radialMenu.isVisible) {
-            GameGUI.updateRadialMenu();
-        }
-        return 0;
-    }
-    static clearRadialMenu() {
-        for (let i = GameGUI.radialMenu.children.length - 1; i >= 0; i--) {
-            GameGUI.radialMenu.children[i].dispose();
-        }
-        GameGUI.radialMenuOptions.clear();
-        return 0;
-    }
-    static showRadialMenu(pointerRelease = true, updateChild = true) {
-        if (GameGUI.locked) {
-            return 1;
-        }
-        if (GameGUI.radialMenuOptions.length == 0) {
-            return 1;
-        }
-        if (updateChild) {
-            GameGUI.hideActionTooltip();
-            GameGUI.lockActionTooltip();
-        }
-        GameGUI.radialMenu.isVisible = true;
-        return 0;
-    }
-    static hideRadialMenu(pointerLock = true, updateChild = true) {
-        if (GameGUI.locked) {
-            return 1;
-        }
-        GameGUI.radialMenu.isVisible = false;
-        if (updateChild) {
-            GameGUI.unlockActionTooltip();
-            GameGUI.showActionTooltip();
-        }
-        return 0;
-    }
-    static updateRadialMenu() {
-        for (let i = GameGUI.radialMenu.children.length - 1; i >= 0; i--) {
-            GameGUI.radialMenu.children[i].dispose();
-        }
-        let xPosition = 0;
-        let yPosition = 0;
-        let button = GameGUI.createSimpleButton("closeRadialMenu", "X");
-        button.width = "24px";
-        button.height = "24px";
-        button.onPointerClickObservable.add(function() {
-            GameGUI.hideRadialMenu();
-        });
-        button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
-        GameGUI.radialMenu.addControl(button);
-        if (GameGUI.radialMenuOptions.length > 0) {
-            let name = "";
-            let key = "";
-            let value = 0;
-            for (let i = 0; i < GameGUI.radialMenuOptions.length; i++) {
-                value = GameGUI.radialMenuOptions[i].action;
-                name = ActionEnum.properties[GameGUI.radialMenuOptions[i].action].name;
-                key = ActionEnum.properties[GameGUI.radialMenuOptions[i].action].key;
-                xPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
-                yPosition = (GameGUI.radialMenu.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/GameGUI.radialMenuOptions.length*i - 90));
-                button = GameGUI.createSimpleButton(String(`action${name}Button`), name);
-                button.width = "96px";
-                button.height = "24px";
-                button._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
-                button.onPointerClickObservable.add(function() {
-                    GameGUI.hideRadialMenu();
-                    Game.doEntityAction(GameGUI.radialMenuOptions[i].target, Game.player, value);
-                });
-                GameGUI.radialMenu.addControl(button);
-            }
-        }
-    }
     static lock() {
         GameGUI.locked = true;
+        return 0;
     }
     static unlock() {
         GameGUI.locked = false;
+        return 0;
     }
     static setLocked(locked) {
         if (locked == true) {

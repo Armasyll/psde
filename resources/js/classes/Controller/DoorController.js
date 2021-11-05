@@ -13,27 +13,29 @@ class DoorController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-
-        this.mesh.checkCollisions = true;
         this.avStartRot = this.mesh.rotation.clone();
         this.avEndRot = BABYLON.Vector3.Zero();
         this.animated = true;
-
-        if (entityObject.opensInward) {
+        if (entityObject.opensInward === true)
             this.setOpensInward();
-        }
-        else {
+        else
             this.setOpensOutward();
-        }
-        if (entityObject.open === true) {
+        if (entityObject.open === true)
             this.doOpen();
-        }
-        else {
+        else
             this.doClose();
-        }
-
         DoorController.set(this.id, this);
+        this.postConstruct();
     }
+    postConstruct() {
+        super.postConstruct();
+        return 0;
+    }
+    createCollisionMesh() {
+        this.mesh.checkCollisions = true;
+        return 0;
+    }
+
     setOpensOutward() {
         this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
         return 0;

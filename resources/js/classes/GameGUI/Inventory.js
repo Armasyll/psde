@@ -1,4 +1,7 @@
 class InventoryGameGUI {
+    static getClassName() {
+        return "InventoryGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing InventoryGameGUI");
         InventoryGameGUI.initialized = false;
@@ -241,10 +244,17 @@ class InventoryGameGUI {
     static show() {
         InventoryGameGUI.controller.isVisible = true;
         InventoryGameGUI.isVisible = true;
+        GameGUI.windowStack.push(InventoryGameGUI);
+        return 0;
     }
-    static hide() {
+    static hide(updateChildren = true) {
         InventoryGameGUI.controller.isVisible = false;
         InventoryGameGUI.isVisible = false;
+        GameGUI.windowStack.remove(InventoryGameGUI);
+        if (updateChildren) {
+            GameGUI.afterHideMenuChildren();
+        }
+        return 0;
     }
     static update() {
         return InventoryGameGUI.set(InventoryGameGUI.targetController);
@@ -263,7 +273,7 @@ class InventoryGameGUI {
             }
         }
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setResponse);
+        Callback.create(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setResponse);
         Game.entityLogicWorkerPostMessage("getInventory", 0, {"entityID":entityController.entityID, "filter":InventoryGameGUI.selectedTab}, callbackID);
         return 0;
     }
@@ -324,7 +334,7 @@ class InventoryGameGUI {
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseOne);
+        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseOne);
         Game.entityLogicWorkerPostMessage("hasItem", 0, {"target":targetController.entityID, "entityID":itemID}, callbackID);
         return 0;
     }
@@ -347,7 +357,7 @@ class InventoryGameGUI {
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Game.createCallback(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseTwo);
+        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseTwo);
         Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":itemID}, callbackID);
         return 0;
     }
@@ -455,7 +465,7 @@ class InventoryGameGUI {
         }
     }
     static createInventoryItemsButton(id = "", title = "", iconPath = null) {
-        id = Game.filterID(id);
+        id = Tools.filterID(id);
         let button = new BABYLON.GUI.Button(id);
             button.width = InventoryGameGUI.items.width;
             button.heightInPixels = Math.floor(InventoryGameGUI.items.heightInPixels / 10);
@@ -480,7 +490,7 @@ class InventoryGameGUI {
         return button;
     }
     static createTabButton(id = "", title = "", iconPath = null, onClick = null) {
-        id = Game.filterID(id);
+        id = Tools.filterID(id);
         let button = new BABYLON.GUI.Button(id);
             button.widthInPixels = Math.floor(InventoryGameGUI.tabs.widthInPixels / 8);
             button.height = InventoryGameGUI.tabs.height;

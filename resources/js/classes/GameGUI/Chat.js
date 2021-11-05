@@ -1,4 +1,7 @@
 class ChatGameGUI {
+    static getClassName() {
+        return "ChatGameGUI";
+    }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing ChatGameGUI");
         ChatGameGUI.initialized = false;
@@ -70,11 +73,18 @@ class ChatGameGUI {
         if (Game.debugMode) console.log("Running ChatGameGUI::show");
         ChatGameGUI.controller.isVisible = true;
         ChatGameGUI.isVisible = true;
+        GameGUI.windowStack.add(ChatGameGUI.getClassName());
+        return 0;
     }
-    static hide() {
+    static hide(updateChildren = false) {
         if (Game.debugMode) console.log("Running ChatGameGUI::hide");
         ChatGameGUI.controller.isVisible = false;
         ChatGameGUI.isVisible = false;
+        GameGUI.windowStack.remove(ChatGameGUI.getClassName());
+        if (updateChildren) {
+            GameGUI.afterHideMenuChildren();
+        }
+        return 0;
     }
     static getOutput() {
         return String(ChatGameGUI.output.text).trim();
