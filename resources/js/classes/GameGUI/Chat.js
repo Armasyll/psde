@@ -73,7 +73,7 @@ class ChatGameGUI {
         if (Game.debugMode) console.log("Running ChatGameGUI::show");
         ChatGameGUI.controller.isVisible = true;
         ChatGameGUI.isVisible = true;
-        GameGUI.windowStack.add(ChatGameGUI.getClassName());
+        GameGUI.windowStack.push(ChatGameGUI.getClassName());
         return 0;
     }
     static hide(updateChildren = false) {

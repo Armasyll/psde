@@ -131,7 +131,7 @@ class DialogueGameGUI {
     static show() {
         if (Game.debugMode) console.log("Running DialogueGameGUI.show()");
         Game.setInterfaceMode(InterfaceModeEnum.DIALOGUE);
-        GameGUI.windowStack.add(DialogueGameGUI);
+        GameGUI.windowStack.push(DialogueGameGUI);
         DialogueGameGUI.controller.isVisible = true;
         DialogueGameGUI.isVisible = true;
     }

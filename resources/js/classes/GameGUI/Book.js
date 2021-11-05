@@ -166,7 +166,7 @@ class BookGameGUI {
     static show() {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
-        GameGUI.windowStack.add(BookGameGUI);
+        GameGUI.windowStack.push(BookGameGUI);
         return 0;
     }
     static hide(updateChildren = true) {

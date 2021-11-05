@@ -1684,7 +1684,7 @@ class CharacterStatsGameGUI {
     static show() {
         CharacterStatsGameGUI.controller.isVisible = true;
         CharacterStatsGameGUI.isVisible = true;
-        GameGUI.windowStack.add(CharacterStatsGameGUI);
+        GameGUI.windowStack.push(CharacterStatsGameGUI);
         return 0;
     }
     static hide(updateChildren = true) {

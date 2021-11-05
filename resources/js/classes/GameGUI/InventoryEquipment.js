@@ -402,7 +402,7 @@ class InventoryEquipmentGameGUI {
     static show() {
         InventoryEquipmentGameGUI.controller.isVisible = true;
         InventoryEquipmentGameGUI.isVisible = true;
-        GameGUI.windowStack.add(InventoryEquipmentGameGUI);
+        GameGUI.windowStack.push(InventoryEquipmentGameGUI);
         return 0;
     }
     static hide(updateChildren = true) {
