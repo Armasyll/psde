@@ -152,6 +152,7 @@
     "foxF": "resources/meshes/characters/fox.babylon",
     "foxSkeletonN": "resources/meshes/characters/fox.babylon",
     "foxM": "resources/meshes/characters/fox.babylon",
+    "foxM_lq": "resources/meshes/characters/foxM_lq.babylon",
     "sheepF": "resources/meshes/characters/sheep.babylon",
     "sheepM": "resources/meshes/characters/sheep.babylon",
     "slimeN": "resources/meshes/characters/slime.babylon",
