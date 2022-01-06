@@ -1,4 +1,4 @@
-window.document.body.onkeydown = function(e) {
+window.document.body.onkeydown = (e) => {
     if (e.metaKey) {}
     else {
         switch (e.keyCode) {
@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", function() {
     let gameOptions = {};
     let url = new URL(window.location.href);
     let urlMap = new Map(url.searchParams);
-    urlMap.forEach(function(val, key) {
+    urlMap.forEach((val, key) => {
         switch(key) {
             case "debugMode":
             case "debug": {
@@ -54,13 +54,41 @@ window.addEventListener("DOMContentLoaded", function() {
                 gameOptions["showCollisionBoxes"] = (val == "true" ? true : false);
                 break;
             }
-            case "cell": {
-                gameOptions["assumeInitialized"] = true;
-                gameOptions["assumePlayerCellID"] = String(val);
-                break;
-            }
             case "meatyThwack": {
                 gameOptions["meatyThwack"] = true;
+                break;
+            }
+            default: {
+                let skip = false;
+                switch (typeof val) {
+                    case "string": {
+                        if (val == "false") {
+                            val = false;
+                        }
+                        else if (val == "true") {
+                            val = true;
+                        }
+                        else if (!isNaN(Number.parseFloat(val))) {
+                            val = Number.parseFloat(val);
+                        }
+                        else if (String(val).length > 0) {
+                            val = String(val).replace(/[^a-zA-Z0-9]/, '').slice(0, 64);
+                        }
+                        else {
+                            skip = true;
+                        }
+                        break;
+                    }
+                    case "number":
+                    case "boolean": {
+                    }
+                    default: {
+                        skip = true;
+                    }
+                }
+                if (!skip) {
+                    gameOptions[String(key).replace(/[^a-zA-Z0-9]/, '').slice(0, 64)] = val;
+                }
             }
         }
     });

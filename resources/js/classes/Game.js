@@ -4662,7 +4662,6 @@ class Game {
             case InterfaceModeEnum.CHARACTER: {
                 Game.gui.hide();
                 Game.gui.hud.show();
-                Game.pointerLock();
                 Game.controls = CharacterControls;
                 break;
             }

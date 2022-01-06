@@ -379,7 +379,7 @@ class HUDGameGUI {
         }
         return 0;
     }
-    static showRadialMenu(pointerRelease = true, updateChild = true) {
+    static showRadialMenu(updateChild = true) {
         if (HUDGameGUI.locked) {
             return 1;
         }
@@ -388,14 +388,9 @@ class HUDGameGUI {
             HUDGameGUI.lockActionTooltip();
         }
         HUDGameGUI.radialMenu.isVisible = true;
-        if (pointerRelease) {
-            if (!Game.useNative) {
-                Game.pointerRelease();
-            }
-        }
         return 0;
     }
-    static hideRadialMenu(pointerLock = true, updateChild = true) {
+    static hideRadialMenu(updateChild = true) {
         if (HUDGameGUI.locked) {
             return 1;
         }
@@ -403,11 +398,6 @@ class HUDGameGUI {
         if (updateChild) {
             HUDGameGUI.unlockActionTooltip();
             HUDGameGUI.showActionTooltip();
-        }
-        if (pointerLock) {
-            if (!Game.useNative) {
-                Game.pointerLock();
-            }
         }
         return 0;
     }

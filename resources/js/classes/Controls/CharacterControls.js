@@ -112,14 +112,12 @@ class CharacterControls extends AbstractControls {
                 Game.gui.inventoryMenu.set(Game.playerEntityID);
                 Game.gui.show();
                 Game.gui.inventoryMenu.show();
-                Game.pointerRelease();
                 break;
             }
             case AbstractControls.showCharacterCode : {
                 Game.gui.characterStats.set(Game.playerEntityID);
                 Game.gui.show();
                 Game.gui.characterStats.show();
-                Game.pointerRelease();
                 break;
             }
             case AbstractControls.showMainMenuCode : {
@@ -232,9 +230,6 @@ class CharacterControls extends AbstractControls {
         return 0;
     }
     static onKeyPress(keyboardEvent) {
-        if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
-            Game.pointerLock();
-        }
         return 0;
     }
     static onMouseDown(mouseEvent) {
@@ -270,9 +265,6 @@ class CharacterControls extends AbstractControls {
         }
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
-        }
-        if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
-            Game.pointerLock();
         }
         if (Game.debugMode) console.log(`Running CharacterControls::onClick(${mouseEvent.button})`);
         return 0;
