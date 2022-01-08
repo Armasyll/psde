@@ -164,6 +164,7 @@ class BookGameGUI {
         return BookGameGUI.controller;
     }
     static show() {
+        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
         GameGUI.windowStack.push(BookGameGUI);

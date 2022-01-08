@@ -54,6 +54,7 @@ class DialogueControls extends MenuControls {
         return 0;
     }
     static onClick(mouseEvent) {
+        Game.pointerLock();
         return 0;
     }
     static onContext(mouseEvent) {

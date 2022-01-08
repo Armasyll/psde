@@ -162,6 +162,7 @@ class EditControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
+        Game.pointerLock();
         if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
             EditControls.pickedMeshOriginalPosition.copyFrom(EditControls.pickedMesh.position);
             EditControls.pickedMeshOriginalRotation.copyFrom(EditControls.pickedMesh.rotation);

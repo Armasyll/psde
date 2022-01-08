@@ -3823,6 +3823,18 @@ class Game {
         }
         return null;
     }
+    static cameraPointerControlDetach() {
+        if (Game.camera.getClassName() == "ArcRotateCamera") {
+            Game.camera.inputs.attached.pointers.detachControl();
+        }
+        return 0;
+    }
+    static cameraPointerControlAttach() {
+        if (Game.camera.getClassName() == "ArcRotateCamera") {
+            Game.camera.inputs.attached.pointers.attachControl();
+        }
+        return 0;
+    }
     static pointerLock(event) {
         if (Game.engine.isPointerLock) {
             return 0;
@@ -4660,21 +4672,25 @@ class Game {
         Game.interfaceMode = interfaceMode;
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
-                Game.gui.hide();
-                Game.gui.hud.show();
+                Game.cameraPointerControlAttach();
+                //Game.gui.hide();
+                //Game.gui.hud.show();
                 Game.controls = CharacterControls;
                 break;
             }
             case InterfaceModeEnum.DIALOGUE: {
+                Game.cameraPointerControlDetach();
                 Game.controls = DialogueControls;
                 break;
             }
             case InterfaceModeEnum.MENU: {
+                Game.cameraPointerControlDetach();
                 Game.controls = MenuControls;
                 break;
             }
             case InterfaceModeEnum.EDIT: {
-                Game.gui._hideHUDChildren();
+                Game.cameraPointerControlDetach();
+                //Game.gui._hideHUDChildren();
                 EditControls.clearPickedMesh();
                 EditControls.clearPickedController();
                 Game.controls = EditControls;

@@ -242,6 +242,7 @@ class InventoryGameGUI {
         return InventoryGameGUI.controller;
     }
     static show() {
+        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         InventoryGameGUI.controller.isVisible = true;
         InventoryGameGUI.isVisible = true;
         GameGUI.windowStack.push(InventoryGameGUI);

@@ -38,6 +38,12 @@ class MenuControls extends AbstractControls {
                 }
                 break;
             }
+            case AbstractControls.interfaceTargetedEntityCode : {
+                if (Game.gui.hud.radialMenu.isVisible) {
+                    Game.gui.hud.hideRadialMenu();
+                }
+                break;
+            }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
                 Game.gui.hide();
@@ -59,6 +65,7 @@ class MenuControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
+        Game.pointerLock();
         return 0;
     }
     static onContext(mouseEvent) {

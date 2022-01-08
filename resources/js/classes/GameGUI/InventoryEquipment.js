@@ -400,6 +400,7 @@ class InventoryEquipmentGameGUI {
         return InventoryEquipmentGameGUI.controller;
     }
     static show() {
+        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         InventoryEquipmentGameGUI.controller.isVisible = true;
         InventoryEquipmentGameGUI.isVisible = true;
         GameGUI.windowStack.push(InventoryEquipmentGameGUI);

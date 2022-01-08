@@ -102,22 +102,35 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.playerController.hasTarget()) {
+                if (Game.gui.hud.radialMenu.isVisible) {
+                    Game.gui.hud.hideRadialMenu();
+                }
+                else if (Game.playerController.hasTarget()) {
                     Game.gui.hud.populateRadialMenuWithTarget();
                     Game.gui.hud.showRadialMenu();
                 }
                 break;
             }
             case AbstractControls.showInventoryCode : {
-                Game.gui.inventoryMenu.set(Game.playerEntityID);
-                Game.gui.show();
-                Game.gui.inventoryMenu.show();
+                if (Game.gui.inventoryMenu.isVisible) {
+                    Game.gui.inventoryMenu.hide();
+                }
+                else {
+                    Game.gui.inventoryMenu.set(Game.playerEntityID);
+                    Game.gui.show();
+                    Game.gui.inventoryMenu.show();
+                }
                 break;
             }
             case AbstractControls.showCharacterCode : {
-                Game.gui.characterStats.set(Game.playerEntityID);
-                Game.gui.show();
-                Game.gui.characterStats.show();
+                if (Game.gui.characterStats.isVisible) {
+                    Game.gui.characterStats.hide();
+                }
+                else {
+                    Game.gui.characterStats.set(Game.playerEntityID);
+                    Game.gui.show();
+                    Game.gui.characterStats.show();
+                }
                 break;
             }
             case AbstractControls.showMainMenuCode : {
@@ -266,6 +279,7 @@ class CharacterControls extends AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
+        Game.pointerLock();
         if (Game.debugMode) console.log(`Running CharacterControls::onClick(${mouseEvent.button})`);
         return 0;
     }

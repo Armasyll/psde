@@ -383,6 +383,7 @@ class HUDGameGUI {
         if (HUDGameGUI.locked) {
             return 1;
         }
+        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         if (updateChild) {
             HUDGameGUI.hideActionTooltip();
             HUDGameGUI.lockActionTooltip();
@@ -394,6 +395,7 @@ class HUDGameGUI {
         if (HUDGameGUI.locked) {
             return 1;
         }
+        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         HUDGameGUI.radialMenu.isVisible = false;
         if (updateChild) {
             HUDGameGUI.unlockActionTooltip();
