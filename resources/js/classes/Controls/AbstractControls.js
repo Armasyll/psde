@@ -170,8 +170,8 @@ class AbstractControls {
         AbstractControls.initialized = false;
         AbstractControls.initQwertyKeyboardControls();
         AbstractControls.keysPressed = {};
-        AbstractControls.initialized = true;
         AbstractControls.mouseMovementVectors = new Array();
+        AbstractControls.initialized = true;
         return 0;
     }
     static initBaseKeyboardControls() {

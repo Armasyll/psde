@@ -39,6 +39,12 @@ class Game {
         Game.scene = null;
         Game.renderWidth = 80;
         Game.renderHeight = 24;
+        Game.internalPointerXMax = Math.floor(Game.renderWidth / 2);
+        Game.internalPointerXMin = Game.internalPointerXMax - Game.renderWidth;
+        Game.internalPointerYMax = Math.floor(Game.renderHeight / 2);
+        Game.internalPointerYMin = Game.internalPointerYMax - Game.renderHeight;
+        Game.internalPointerX = Math.floor(Game.renderWidth / 2);
+        Game.internalPointerY = Math.floor(Game.renderHeight / 2);
         Game.camera = null;
         Game.cameraFocus = null;
         Game.cameraRadius = 2.0;
@@ -458,7 +464,7 @@ class Game {
         else {
             Game.gui.showCharacterChoiceMenu();
         }
-        Game.gui.resize();
+        Game.resize();
         if (Game._playSoundTest) {
             Game.playAnnoyingMeatyThwack();
         }
@@ -467,9 +473,16 @@ class Game {
     static resize() {
         if (Game.useNative) {}
         else {
+            let tempInternalPointerX = Game.internalPointerX / Game.renderWidth;
+            let tempInternalPointerY = Game.internalPointerY / Game.renderHeight;
             Game.engine.resize();
             Game.renderWidth = Game.engine.getRenderWidth();
             Game.renderHeight = Game.engine.getRenderHeight();
+            Game.internalPointerXMax = Math.floor(Game.renderWidth / 2);
+            Game.internalPointerXMin = Game.internalPointerXMax - Game.renderWidth;
+            Game.internalPointerYMax = Math.floor(Game.renderHeight / 2);
+            Game.internalPointerYMin = Game.internalPointerYMax - Game.renderHeight;
+            Game.setInternalPointerPosition(tempInternalPointerX * Game.renderWidth, tempInternalPointerY * Game.renderHeight);
         }
         Game.gui.resize();
         return 0;
@@ -5562,6 +5575,23 @@ class Game {
             return 1;
         }
         return Game.fireProjectileFrom(mesh, controller.targetRay.origin, Game.rayDirectionToRadians(controller.targetRay.direction), force);
+    }
+    static setInternalPointerPosition(x, y) {
+        if (x < Game.internalPointerXMin) {
+            x = Game.internalPointerXMin;
+        }
+        else if (x > Game.internalPointerXMax) {
+            x = Game.internalPointerXMax;
+        }
+        if (y < Game.internalPointerYMin) {
+            y = Game.internalPointerYMin;
+        }
+        else if (y > Game.internalPointerYMax) {
+            y = Game.internalPointerYMax;
+        }
+        Game.internalPointerX = x;
+        Game.internalPointerY = y;
+        return 0;
     }
 
     static playAnnoyingMeatyThwack() {

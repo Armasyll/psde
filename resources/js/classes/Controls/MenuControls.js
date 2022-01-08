@@ -71,4 +71,11 @@ class MenuControls extends AbstractControls {
     static onContext(mouseEvent) {
         return 0;
     }
+    static onMove(mouseEvent) {
+        if (!AbstractControls.initialized) {
+            return 0;
+        }
+        Game.setInternalPointerPosition(Game.internalPointerX + mouseEvent.movementX, Game.internalPointerY + mouseEvent.movementY);
+        return 0;
+    }
 }

@@ -26,6 +26,8 @@ class DebugGameGUI {
         DebugGameGUI.infoPStanceContainer = null;
         DebugGameGUI.infoOStanceContainer = null;
         DebugGameGUI.infoMovementPaceContainer = null;
+        DebugGameGUI.infoPointer = null;
+        DebugGameGUI.debugCursor = null
         DebugGameGUI.isVisible = false;
         DebugGameGUI.generateController();
         DebugGameGUI.containerAlpha = 0.75;
@@ -37,11 +39,11 @@ class DebugGameGUI {
         if (!DebugGameGUI.initialized) {
             return 1;
         }
-        if (DebugGameGUI.skyboxController.isVisible) {
-            DebugGameGUI.updateSkyboxUI();
-        }
         if (DebugGameGUI.infoController.isVisible) {
             DebugGameGUI.updateInfoController();
+        }
+        if (DebugGameGUI.debugCursor.isVisible) {
+            DebugGameGUI.updateDebugCursor();
         }
     }
     static generateController() {
@@ -49,6 +51,7 @@ class DebugGameGUI {
         DebugGameGUI.selectionMenu = DebugGameGUI.generateSelectionMenu();
         DebugGameGUI.collisionListController = DebugGameGUI.generateCollisionListController();
         DebugGameGUI.infoController = DebugGameGUI.generateInfoController();
+        DebugGameGUI.debugCursor = DebugGameGUI.generateDebugCursor();
         DebugGameGUI.initialized = true;
     }
     static generateSelectionMenu() {
@@ -154,6 +157,7 @@ class DebugGameGUI {
         let [infoCStanceContainer, infoCStance] = GameGUI.createContainedTextBlock("infoCStance", "CStance");
         let [infoPStanceContainer, infoPStance] = GameGUI.createContainedTextBlock("infoPStance", "PStance");
         let [infoOStanceContainer, infoOStance] = GameGUI.createContainedTextBlock("infoOStance", "OStance");
+        let [infoPointerContainer, infoPointer] = GameGUI.createContainedTextBlock("infoPointer", "Pointer");
         controller.addControl(infoCoordinatesContainer);
         controller.addControl(infoRotationContainer);
         controller.addControl(infoTargetRayContainer);
@@ -162,6 +166,7 @@ class DebugGameGUI {
         controller.addControl(infoPStanceContainer);
         controller.addControl(infoOStanceContainer);
         controller.addControl(infoMovementPaceContainer);
+        controller.addControl(infoPointerContainer);
 
         DebugGameGUI.infoController = controller;
         DebugGameGUI.infoCoordinates = infoCoordinates;
@@ -172,16 +177,17 @@ class DebugGameGUI {
         DebugGameGUI.infoPStance = infoPStance;
         DebugGameGUI.infoOStance = infoOStance;
         DebugGameGUI.infoMovementPace = infoMovementPace;
+        DebugGameGUI.infoPointer = infoPointer;
         return controller;
     }
     static updateInfoController() {
         if (!DebugGameGUI.initialized) {
             return 1;
         }
-        DebugGameGUI.infoCoordinates.text = String(`Pos X: ${Number(Game.playerController.collisionMesh.position.x).toFixed(8)}, Pos Y: ${Number(Game.playerController.collisionMesh.position.y).toFixed(8)}, Pos Z: ${Number(Game.playerController.collisionMesh.position.z).toFixed(8)}`);
+        DebugGameGUI.infoCoordinates.text = String(`Pos X: ${Number(Game.playerController.collisionMesh.position.x).toFixed(8)}, Y: ${Number(Game.playerController.collisionMesh.position.y).toFixed(8)}, Z: ${Number(Game.playerController.collisionMesh.position.z).toFixed(8)}`);
         DebugGameGUI.infoRotation.text = String(`Rot: ${Number(BABYLON.Tools.ToDegrees(Game.playerController.collisionMesh.rotation.y)).toFixed(2)}`);
         let n = Game.rayDirectionToRadians(Game.playerController.targetRay.direction);
-        DebugGameGUI.infoTargetRay.text = String(`Dir X: ${BABYLON.Tools.ToDegrees(n.x)}, Dir Y: ${BABYLON.Tools.ToDegrees(n.y)}`);
+        DebugGameGUI.infoTargetRay.text = String(`Dir X: ${BABYLON.Tools.ToDegrees(n.x)}, Y: ${BABYLON.Tools.ToDegrees(n.y)}`);
         DebugGameGUI.infoGroundedState.text = String(`State: ${GroundedStateEnum.properties[Game.playerController.groundedState].key}`);
         DebugGameGUI.infoMovementPace.text = String(`Pace: ${MovementPaceEnum.properties[Game.playerController.movementPace].key}`);
         if (StanceEnum.properties.hasOwnProperty(Game.playerController.stance)) {
@@ -203,13 +209,49 @@ class DebugGameGUI {
         else {
             DebugGameGUI.infoOStance.isVisible = false;
         }
+        DebugGameGUI.infoPointer.text = String(`Pointer X: ${Game.internalPointerX}, Y: ${Game.internalPointerY}`);
+        return 0;
+    }
+    static generateDebugCursor() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running DebugGameGUI.generateDebugCursor");
+        let crosshair = new BABYLON.GUI.Ellipse("debugCursor");
+        crosshair.width = "15px";
+        crosshair.background = "red";
+        crosshair.height = "15px";
+        crosshair.color = "black";
+        crosshair.alpha = GameGUI.alpha;
+        crosshair.isVisible = false;
+        crosshair.zIndex = 99;
+        DebugGameGUI.debugCursor = crosshair;
+        return crosshair;
+    }
+    static updateDebugCursor() {
+        if (!DebugGameGUI.debugCursor.isVisible) {
+            return 0;
+        }
+        DebugGameGUI.debugCursor.leftInPixels = Game.internalPointerX;
+        DebugGameGUI.debugCursor.topInPixels = Game.internalPointerY;
+        return 0;
+    }
+    static hideCursor() {
+        Game.gui.hud.controller.removeControl(DebugGameGUI.debugCursor);
+        DebugGameGUI.debugCursor.isVisible = false;
+        return 0;
+    }
+    static showCursor() {
+        Game.gui.hud.controller.addControl(DebugGameGUI.debugCursor);
+        DebugGameGUI.debugCursor.isVisible = true;
         return 0;
     }
     static showInfo() {
+        GameGUI.hud.getController().addControl(DebugGameGUI.infoController);
         DebugGameGUI.infoController.isVisible = true;
+        return 0;
     }
     static hideInfo() {
+        GameGUI.hud.getController().removeControl(DebugGameGUI.infoController);
         DebugGameGUI.infoController.isVisible = false;
+        return 0;
     }
     static clearCollisionList() {
         if (!DebugGameGUI.initialized) {
@@ -246,13 +288,19 @@ class DebugGameGUI {
         if (overwriteInterface) {
             Game.setInterfaceMode(InterfaceModeEnum.DEBUG);
         }
+        Game.functionsToRunBeforeRender.push(DebugGameGUI.update);
         DebugGameGUI.isVisible = true;
+        DebugGameGUI.showInfo();
+        DebugGameGUI.showCursor();
         return 0;
     }
     static hide(overwriteInterface = true) {
         if (overwriteInterface) {
             Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         }
+        Game.functionsToRunBeforeRender.remove(DebugGameGUI.update);
+        DebugGameGUI.hideCursor();
+        DebugGameGUI.hideInfo();
         DebugGameGUI.isVisible = false;
         return 0;
     }

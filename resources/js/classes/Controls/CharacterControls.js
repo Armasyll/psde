@@ -28,15 +28,11 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             case 114: {
-                if (DebugGameGUI.infoController.isVisible) {
-                    Game.functionsToRunBeforeRender.remove(DebugGameGUI.updateInfoController);
-                    GameGUI.hud.getController().removeControl(DebugGameGUI.infoController);
-                    DebugGameGUI.infoController.isVisible = false;
+                if (DebugGameGUI.isVisible) {
+                    DebugGameGUI.hide();
                 }
                 else {
-                    Game.functionsToRunBeforeRender.push(DebugGameGUI.updateInfoController);
-                    GameGUI.hud.getController().addControl(DebugGameGUI.infoController);
-                    DebugGameGUI.infoController.isVisible = true;
+                    DebugGameGUI.show();
                 }
                 break;
             }
