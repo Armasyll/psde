@@ -66,6 +66,9 @@ class AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
+        if (!Game.engine.isPointerLock) {
+            return 1;
+        }
         if (Game.debugMode) console.log(`Running AbstractControl::onMouseDown(${mouseEvent.button})`);
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: return CharacterControls.onMouseDown(mouseEvent);
@@ -82,6 +85,9 @@ class AbstractControls {
         }
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
+        }
+        if (!Game.engine.isPointerLock) {
+            return 1;
         }
         if (Game.debugMode) console.log(`Running AbstractControl::onMouseUp(${mouseEvent.button})`);
         switch (Game.interfaceMode) {
@@ -100,6 +106,10 @@ class AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
+        if (!Game.engine.isPointerLock) {
+            return 1;
+        }
+        Game.gui.cursor.click();
         if (Game.debugMode) console.log(`Running AbstractControl::onClick(${mouseEvent.button})`);
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: return CharacterControls.onClick(mouseEvent);
@@ -117,6 +127,9 @@ class AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
+        if (!Game.engine.isPointerLock) {
+            return 1;
+        }
         if (Game.debugMode) console.log(`Running AbstractControl::onContext(${mouseEvent.button})`);
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: return CharacterControls.onContext(mouseEvent);
@@ -128,33 +141,36 @@ class AbstractControls {
         }
     }
     static onMove(event) {
-        let vec2 = new BABYLON.Vector2(event.movementX, event.movementY);
-        AbstractControls.mouseMovementVectors.push(vec2);
-        if (AbstractControls.mouseMovementVectors.length > 9) {
-            AbstractControls.mouseMovementVectors.shift();
+        if (Game.engine.isPointerLock) {
+            let vec2 = new BABYLON.Vector2(event.movementX, event.movementY);
+            AbstractControls.mouseMovementVectors.push(vec2);
+            if (AbstractControls.mouseMovementVectors.length > 9) {
+                AbstractControls.mouseMovementVectors.shift();
+            }
+            let xTotal = 0;
+            let yTotal = 0;
+            for (let i = AbstractControls.mouseMovementVectors.length - 1; i > 0; i--) {
+                xTotal += AbstractControls.mouseMovementVectors[i].x;
+                yTotal += AbstractControls.mouseMovementVectors[i].y;
+            }
+            /*if (Math.abs(xTotal) > Math.abs(yTotal)) {
+                if (xTotal < 0) {
+                    console.log("-x");
+                }
+                else {
+                    console.log("+x");
+                }
+            }
+            else if (Math.abs(xTotal) < Math.abs(yTotal)) {
+                if (yTotal < 0) {
+                    console.log("-y");
+                }
+                else {
+                    console.log("+y");
+                }
+            }*/
+            Game.gui.cursor.update(event.movementX, event.movementY);
         }
-        let xTotal = 0;
-        let yTotal = 0;
-        for (let i = AbstractControls.mouseMovementVectors.length - 1; i > 0; i--) {
-            xTotal += AbstractControls.mouseMovementVectors[i].x;
-            yTotal += AbstractControls.mouseMovementVectors[i].y;
-        }
-        /*if (Math.abs(xTotal) > Math.abs(yTotal)) {
-            if (xTotal < 0) {
-                console.log("-x");
-            }
-            else {
-                console.log("+x");
-            }
-        }
-        else if (Math.abs(xTotal) < Math.abs(yTotal)) {
-            if (yTotal < 0) {
-                console.log("-y");
-            }
-            else {
-                console.log("+y");
-            }
-        }*/
         return 0;
     }
     static onScroll(event) {

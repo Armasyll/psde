@@ -65,7 +65,6 @@ class MenuControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
-        Game.pointerLock();
         return 0;
     }
     static onContext(mouseEvent) {
@@ -75,7 +74,6 @@ class MenuControls extends AbstractControls {
         if (!AbstractControls.initialized) {
             return 0;
         }
-        Game.setInternalPointerPosition(Game.internalPointerX + mouseEvent.movementX, Game.internalPointerY + mouseEvent.movementY);
         return 0;
     }
 }

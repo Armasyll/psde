@@ -53,6 +53,10 @@ class GameGUI {
         GameGUI.hud.initialize();
         GameGUI.controller.addControl(GameGUI.hud.getController());
 
+        GameGUI.cursor = CursorGameGUI;
+        GameGUI.cursor.initialize();
+        GameGUI.controller.addControl(GameGUI.cursor.getController());
+
         GameGUI.chat = ChatGameGUI;
         GameGUI.chat.initialize();
         GameGUI.controller.addControl(GameGUI.chat.getController());
@@ -103,6 +107,7 @@ class GameGUI {
         GameGUI.fontSizeLargeInPixels = GameGUI.fontSizeInPixels + 8;
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
         GameGUI.controller.rootContainer.fontSize = GameGUI.fontSize;
+        GameGUI.cursor.resize();
         GameGUI.inventoryMenu.resize();
         GameGUI.inventoryEquipmentMenu.resize();
         GameGUI.dialogue.resize();
@@ -130,7 +135,6 @@ class GameGUI {
         if (GameGUI.locked) {
             return 0;
         }
-        Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
         for (let i = 0; i < GameGUI.windowStack.length; i++) {
             GameGUI.windowStack[i].hide(false);
         }

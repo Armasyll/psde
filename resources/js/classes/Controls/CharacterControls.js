@@ -275,7 +275,6 @@ class CharacterControls extends AbstractControls {
         if (!(mouseEvent instanceof MouseEvent)) {
             return 2;
         }
-        Game.pointerLock();
         if (Game.debugMode) console.log(`Running CharacterControls::onClick(${mouseEvent.button})`);
         return 0;
     }

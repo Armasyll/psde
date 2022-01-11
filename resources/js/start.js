@@ -21,7 +21,7 @@ window.addEventListener('resize', function() {
         Game.resize();
     }
 });
-window.addEventListener("DOMContentLoaded", function() {
+window.document.addEventListener("DOMContentLoaded", function() {
     let gameOptions = {};
     let url = new URL(window.location.href);
     let urlMap = new Map(url.searchParams);
@@ -94,3 +94,7 @@ window.addEventListener("DOMContentLoaded", function() {
     });
     Game.initialize(gameOptions);
 });
+window.document.addEventListener('click', Game.pointerLock);
+//window.document.addEventListener('pointerover', Game.pointerLockChange);
+window.document.addEventListener('pointerout', Game.pointerRelease);
+window.document.addEventListener('pointerlockerror', Game.requestPointerLock);

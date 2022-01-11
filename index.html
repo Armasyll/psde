@@ -37,6 +37,8 @@
                 width: 100%;
                 height: 100%;
                 touch-action: none;
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
             }
         </style>
     </head>
@@ -56,6 +58,7 @@
         <script src="vendors/babylonjs/materialsLibrary/babylon.skyMaterial.min.js"></script>
         <script src="vendors/babylonjs/materialsLibrary/babylon.waterMaterial.min.js"></script>
         <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+        <script src="vendors/babylonjs/babylon.gui.triangle.js"></script>
         <script src="resources/js/BabylonOverrides.js"></script>
         <script src="resources/js/Overrides.js"></script>
         <!--<script src="resources/js/classes/BoundedNumber.js"></script>-->
@@ -76,6 +79,7 @@
 
         <script src="resources/js/classes/GameGUI/GameGUI.js"></script>
         <script src="resources/js/classes/GameGUI/HUD.js"></script>
+        <script src="resources/js/classes/GameGUI/Cursor.js"></script>
         <script src="resources/js/classes/GameGUI/Debug.js"></script>
         <script src="resources/js/classes/GameGUI/Chat.js"></script>
         <script src="resources/js/classes/GameGUI/Dialogue.js"></script>

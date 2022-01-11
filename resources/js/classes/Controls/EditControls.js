@@ -162,7 +162,6 @@ class EditControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
-        Game.pointerLock();
         if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
             EditControls.pickedMeshOriginalPosition.copyFrom(EditControls.pickedMesh.position);
             EditControls.pickedMeshOriginalRotation.copyFrom(EditControls.pickedMesh.rotation);
@@ -195,17 +194,6 @@ class EditControls extends AbstractControls {
     }
     static onMove(event) {
         if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
-            let vec2 = new BABYLON.Vector2(event.movementX, event.movementY);
-            AbstractControls.mouseMovementVectors.push(vec2);
-            if (AbstractControls.mouseMovementVectors.length > 9) {
-                AbstractControls.mouseMovementVectors.shift();
-            }
-            let xTotal = 0;
-            let yTotal = 0;
-            for (let i = AbstractControls.mouseMovementVectors.length - 1; i > 0; i--) {
-                xTotal += AbstractControls.mouseMovementVectors[i].x;
-                yTotal += AbstractControls.mouseMovementVectors[i].y;
-            }
             if (EditControls.moving) {
             }
             else if (EditControls.rotating) {

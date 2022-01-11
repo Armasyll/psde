@@ -39,12 +39,6 @@ class Game {
         Game.scene = null;
         Game.renderWidth = 80;
         Game.renderHeight = 24;
-        Game.internalPointerXMax = Math.floor(Game.renderWidth / 2);
-        Game.internalPointerXMin = Game.internalPointerXMax - Game.renderWidth;
-        Game.internalPointerYMax = Math.floor(Game.renderHeight / 2);
-        Game.internalPointerYMin = Game.internalPointerYMax - Game.renderHeight;
-        Game.internalPointerX = Math.floor(Game.renderWidth / 2);
-        Game.internalPointerY = Math.floor(Game.renderHeight / 2);
         Game.camera = null;
         Game.cameraFocus = null;
         Game.cameraRadius = 2.0;
@@ -464,25 +458,28 @@ class Game {
         else {
             Game.gui.showCharacterChoiceMenu();
         }
-        Game.resize();
+        Game.resize(true);
         if (Game._playSoundTest) {
             Game.playAnnoyingMeatyThwack();
         }
         return 0;
     }
-    static resize() {
+    static setResolution(x, y) {
+        Game.renderWidth = Tools.filterInt(x, 480);
+        Game.renderHeight = Tools.filterInt(y, 480);
+        Game.canvas.width = Game.renderWidth;
+        Game.canvas.height = Game.renderHeight;
+        Game.resize(false);
+        return 0;
+    }
+    static resize(callEngineResize = true) {
         if (Game.useNative) {}
         else {
-            let tempInternalPointerX = Game.internalPointerX / Game.renderWidth;
-            let tempInternalPointerY = Game.internalPointerY / Game.renderHeight;
-            Game.engine.resize();
-            Game.renderWidth = Game.engine.getRenderWidth();
-            Game.renderHeight = Game.engine.getRenderHeight();
-            Game.internalPointerXMax = Math.floor(Game.renderWidth / 2);
-            Game.internalPointerXMin = Game.internalPointerXMax - Game.renderWidth;
-            Game.internalPointerYMax = Math.floor(Game.renderHeight / 2);
-            Game.internalPointerYMin = Game.internalPointerYMax - Game.renderHeight;
-            Game.setInternalPointerPosition(tempInternalPointerX * Game.renderWidth, tempInternalPointerY * Game.renderHeight);
+            if (callEngineResize) {
+                Game.engine.resize();
+                Game.renderWidth = Game.engine.getRenderWidth();
+                Game.renderHeight = Game.engine.getRenderHeight();
+            }
         }
         Game.gui.resize();
         return 0;
@@ -3837,18 +3834,27 @@ class Game {
         return null;
     }
     static cameraPointerControlDetach() {
-        if (Game.camera.getClassName() == "ArcRotateCamera") {
-            Game.camera.inputs.attached.pointers.detachControl();
+        if (Game.camera.getClassName() == "ArcRotateCamera" && Game.camera.inputs.attached.hasOwnProperty("pointers")) {
+            Game.camera.inputs.remove(Game.camera.inputs.attached.pointers);
         }
         return 0;
     }
     static cameraPointerControlAttach() {
         if (Game.camera.getClassName() == "ArcRotateCamera") {
-            Game.camera.inputs.attached.pointers.attachControl();
+            Game.camera.inputs.addPointers();
+        }
+        return 0;
+    }
+    static requestPointerLock() {
+        if (Game.pointerLockTimeoutFunction == null) {
+            Game.pointerLockTimeoutFunction = setTimeout(() => {Game.pointerLock()}, 200);
         }
         return 0;
     }
     static pointerLock(event) {
+        if (!Game.initialized) {
+            return 1;
+        }
         if (Game.engine.isPointerLock) {
             return 0;
         }
@@ -3856,20 +3862,33 @@ class Game {
         else {
             Game.canvas.requestPointerLock();
         }
-        /*Game.pointerLockTimeoutFunction = setTimeout(function () { document.addEventListener("pointerlockchange", Game.pointerRelease); }, 121);*/
+        Game.afterPointerLock(event);
+        return 0;
+    }
+    static afterPointerLock(event) {
+        Game.updateInterfaceMode();
         return 0;
     }
     static pointerRelease(event) {
+        if (!Game.initialized) {
+            return 1;
+        }
+        if (Game.pointerLockTimeoutFunction != null) {
+            clearTimeout(Game.pointerLockTimeoutFunction);
+            Game.pointerLockTimeoutFunction = null;
+        }
         if (!Game.engine.isPointerLock) {
             return 0;
         }
-        /*clearTimeout(Game.pointerLockTimeoutFunction);
-        document.removeEventListener("pointerlockchange", Game.pointerRelease);
-        document.exitPointerLock();*/
         if (Game.useNative) {}
         else {
+            document.removeEventListener("pointerlockchange", Game.pointerRelease);
             document.exitPointerLock();
         }
+        return 0;
+    }
+    static afterPointerRelease(event) {
+        Game.updateInterfaceMode();
         return 0;
     }
     static parseChat(chatString) {
@@ -4035,20 +4054,6 @@ class Game {
             }
             case "unloadcell": {
                 Game.unloadCell(false);
-                break;
-            }
-            case ":v":
-            case "v:":
-            case ":V":
-            case "V:": {
-                if (Game.controls == EditControls) {
-                    Game.gui.chat.appendOutput("\n    Bye, super powers v:\n");
-                    Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-                }
-                else {
-                    Game.gui.chat.appendOutput("\n    A developer is you :V\n");
-                    Game.setInterfaceMode(InterfaceModeEnum.EDIT);
-                }
                 break;
             }
             default: {
@@ -4666,9 +4671,6 @@ class Game {
         return Game.setDebugMode(false);
     }
     static setInterfaceMode(interfaceMode = InterfaceModeEnum.NONE) {
-        if (Game.interfaceMode == interfaceMode) {
-            return 0;
-        }
         if (InterfaceModeEnum.properties.hasOwnProperty(interfaceMode)) { }
         else if (isNaN(interfaceMode) && InterfaceModeEnum.hasOwnProperty(interfaceMode)) {
             interfaceMode = InterfaceModeEnum[interfaceMode];
@@ -4683,6 +4685,10 @@ class Game {
         }
         Game.previousInterfaceMode = Game.interfaceMode;
         Game.interfaceMode = interfaceMode;
+        Game.updateInterfaceMode();
+        return 0;
+    }
+    static updateInterfaceMode() {
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.cameraPointerControlAttach();
@@ -5575,23 +5581,6 @@ class Game {
             return 1;
         }
         return Game.fireProjectileFrom(mesh, controller.targetRay.origin, Game.rayDirectionToRadians(controller.targetRay.direction), force);
-    }
-    static setInternalPointerPosition(x, y) {
-        if (x < Game.internalPointerXMin) {
-            x = Game.internalPointerXMin;
-        }
-        else if (x > Game.internalPointerXMax) {
-            x = Game.internalPointerXMax;
-        }
-        if (y < Game.internalPointerYMin) {
-            y = Game.internalPointerYMin;
-        }
-        else if (y > Game.internalPointerYMax) {
-            y = Game.internalPointerYMax;
-        }
-        Game.internalPointerX = x;
-        Game.internalPointerY = y;
-        return 0;
     }
 
     static playAnnoyingMeatyThwack() {

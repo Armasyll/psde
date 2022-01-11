@@ -119,7 +119,6 @@ class ChatGameGUI {
     static setFocused(boolean) {
         if (boolean === true) {
             ChatGameGUI.focused = true;
-            Game.setInterfaceMode(InterfaceModeEnum.WRITING);
             GameGUI.hud.moveFocusToControl(ChatGameGUI.input);
         }
         else {

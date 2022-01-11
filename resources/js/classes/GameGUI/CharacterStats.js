@@ -1682,7 +1682,6 @@ class CharacterStatsGameGUI {
         return CharacterStatsGameGUI.controller;
     }
     static show() {
-        Game.setInterfaceMode(InterfaceModeEnum.MENU);
         CharacterStatsGameGUI.controller.isVisible = true;
         CharacterStatsGameGUI.isVisible = true;
         GameGUI.windowStack.push(CharacterStatsGameGUI);

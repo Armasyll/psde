@@ -18,7 +18,6 @@ class WritingControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
-        Game.pointerLock();
         return 0;
     }
     static onContext(mouseEvent) {

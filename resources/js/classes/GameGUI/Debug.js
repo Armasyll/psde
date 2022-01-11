@@ -285,9 +285,6 @@ class DebugGameGUI {
         return DebugGameGUI.skyboxController;
     }
     static show(overwriteInterface = true) {
-        if (overwriteInterface) {
-            Game.setInterfaceMode(InterfaceModeEnum.DEBUG);
-        }
         Game.functionsToRunBeforeRender.push(DebugGameGUI.update);
         DebugGameGUI.isVisible = true;
         DebugGameGUI.showInfo();
@@ -295,9 +292,6 @@ class DebugGameGUI {
         return 0;
     }
     static hide(overwriteInterface = true) {
-        if (overwriteInterface) {
-            Game.setInterfaceMode(InterfaceModeEnum.CHARACTER);
-        }
         Game.functionsToRunBeforeRender.remove(DebugGameGUI.update);
         DebugGameGUI.hideCursor();
         DebugGameGUI.hideInfo();
