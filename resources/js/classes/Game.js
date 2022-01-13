@@ -450,13 +450,14 @@ class Game {
                     break;
             }
         });
+        Game.gui.show();
         if (Game.assumeInitialized) {
             Game.setPlayerCell(Game.assumeCurrentCellID);
-            Game.gui.hideCharacterChoiceMenu();
+            Game.gui.mainMenu.hide();
             Game.gui.hide();
         }
         else {
-            Game.gui.showCharacterChoiceMenu();
+            Game.gui.mainMenu.show();
         }
         Game.resize(true);
         if (Game._playSoundTest) {
@@ -3547,7 +3548,7 @@ class Game {
         Game.playerController.collisionMesh.isPickable = false;
         Game.playerEntityID = controller.entityID;
         Game.gui.hud.playerPortrait.set(Game.playerController);
-        if (Game.gui.hud.isVisible()) {
+        if (Game.gui.hud.isVisible) {
             Game.gui.hud.playerPortrait.show();
         }
         Game.createControllerAttachedMesh("cameraFocus", "cameraFocus", "FOCUS", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), BABYLON.Vector3.One(), {}, controllerID, Callback.create(null, parentCallbackID, [controllerID], Game.assignPlayerPhaseTwo));
@@ -4030,7 +4031,7 @@ class Game {
                 break;
             }
             case "menu": {
-                Game.gui.showCharacterChoiceMenu();
+                Game.gui.mainMenu.show();
                 break;
             }
             case "quit": {
@@ -4692,18 +4693,20 @@ class Game {
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.cameraPointerControlAttach();
-                //Game.gui.hide();
-                //Game.gui.hud.show();
+                Game.gui.cursor.hide();
+                Game.gui.hud.show();
                 Game.controls = CharacterControls;
                 break;
             }
             case InterfaceModeEnum.DIALOGUE: {
                 Game.cameraPointerControlDetach();
+                Game.gui.cursor.show();
                 Game.controls = DialogueControls;
                 break;
             }
             case InterfaceModeEnum.MENU: {
                 Game.cameraPointerControlDetach();
+                Game.gui.cursor.show();
                 Game.controls = MenuControls;
                 break;
             }
@@ -4712,6 +4715,7 @@ class Game {
                 //Game.gui._hideHUDChildren();
                 EditControls.clearPickedMesh();
                 EditControls.clearPickedController();
+                Game.gui.cursor.show();
                 Game.controls = EditControls;
                 break;
             }
@@ -4720,6 +4724,12 @@ class Game {
     }
     static getInterfaceMode() {
         return Game.interfaceMode;
+    }
+    static checkAndSetInterfaceMode(interfaceMode = InterfaceModeEnum.CHARACTER) {
+        if (Game.gui.windowStack.length == 0) {
+            return Game.setInterfaceMode(interfaceMode);
+        }
+        return 0;
     }
     static setMeshScaling(mesh, scaling = BABYLON.Vector3.One()) {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {

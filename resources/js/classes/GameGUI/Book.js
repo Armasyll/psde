@@ -5,6 +5,7 @@ class BookGameGUI {
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing BookGameGUI");
         BookGameGUI.initialized = true;
+        BookGameGUI.isVisible = false;
         BookGameGUI.controller = null;
         BookGameGUI.titleBar = null;
         BookGameGUI.closeButton = null;
@@ -30,7 +31,6 @@ class BookGameGUI {
         BookGameGUI.hasNextPage = false;
         BookGameGUI.hasPreviousPage = false;
         BookGameGUI.locked = false;
-        BookGameGUI.isVisible = false;
 
         BookGameGUI.resetDefaultDimensions();
         BookGameGUI.generateController();
@@ -167,6 +167,7 @@ class BookGameGUI {
         BookGameGUI.controller.isVisible = true;
         BookGameGUI.isVisible = true;
         GameGUI.windowStack.push(BookGameGUI);
+        GameGUI.afterShow();
         return 0;
     }
     static hide(updateChildren = true) {
@@ -176,7 +177,11 @@ class BookGameGUI {
         if (updateChildren) {
             GameGUI.afterHideMenuChildren();
         }
+        GameGUI.afterHide();
         return 0;
+    }
+    static update(abstractEntity, page = 1) {
+        return BookGameGUI.updateWith(abstractEntity, page);
     }
     static updateWith(abstractEntity, page = 1) {
         BookGameGUI.resize();

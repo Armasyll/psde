@@ -5,6 +5,7 @@ class CharacterStatsGameGUI {
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing CharacterStatsGameGUI");
         CharacterStatsGameGUI.initialized = false;
+        CharacterStatsGameGUI.isVisible = false;
         CharacterStatsGameGUI.controller = null;
         CharacterStatsGameGUI.titleBar = null;
         CharacterStatsGameGUI.closeButton = null;
@@ -18,7 +19,6 @@ class CharacterStatsGameGUI {
         CharacterStatsGameGUI.posY = 0;
 
         CharacterStatsGameGUI.nameField = null;
-        CharacterStatsGameGUI.isVisible = false;
 
         CharacterStatsGameGUI.resetDefaultDimensions();
         CharacterStatsGameGUI.generateController();
@@ -1685,6 +1685,7 @@ class CharacterStatsGameGUI {
         CharacterStatsGameGUI.controller.isVisible = true;
         CharacterStatsGameGUI.isVisible = true;
         GameGUI.windowStack.push(CharacterStatsGameGUI);
+        GameGUI.afterShow();
         return 0;
     }
     static hide(updateChildren = true) {
@@ -1694,6 +1695,7 @@ class CharacterStatsGameGUI {
         if (updateChildren) {
             GameGUI.afterHideMenuChildren();
         }
+        GameGUI.afterHide();
         return 0;
     }
     static set(creatureController = Game.playerController, parentCallbackID = null) {

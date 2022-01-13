@@ -3,6 +3,8 @@ class CursorGameGUI {
         return "CursorGameGUI";
     }
     static initialize() {
+        CursorGameGUI.initialized = false;
+        CursorGameGUI.isVisible = false;
         CursorGameGUI.x = 0;
         CursorGameGUI.y = 0;
         CursorGameGUI.minX = 0;
@@ -20,8 +22,8 @@ class CursorGameGUI {
         cursor.heightInPixels = 16;
         cursor.color = "white";
         cursor.thickness = 1;
-        cursor.isVisible = true;
         cursor.zIndex = 127;
+        CursorGameGUI.initialized = true;
         return cursor;
     }
     static getController() {
@@ -29,10 +31,12 @@ class CursorGameGUI {
     }
     static show() {
         CursorGameGUI.controller.isVisible = true;
+        CursorGameGUI.isVisible = true;
         return 0;
     }
     static hide() {
         CursorGameGUI.controller.isVisible = false;
+        CursorGameGUI.isVisible = false;
         return 0;
     }
     static set(x, y) {

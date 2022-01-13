@@ -6,6 +6,7 @@ class InventoryEquipmentGameGUI {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing InventoryEquipmentGameGUI");
         InventoryEquipmentGameGUI.initialized = false;
         InventoryEquipmentGameGUI.controller = null;
+        InventoryEquipmentGameGUI.isVisible = false;
         InventoryEquipmentGameGUI.titleBar = null;
         InventoryEquipmentGameGUI.closeButton = null;
         InventoryEquipmentGameGUI.bodyContainer = null;
@@ -403,6 +404,7 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.controller.isVisible = true;
         InventoryEquipmentGameGUI.isVisible = true;
         GameGUI.windowStack.push(InventoryEquipmentGameGUI);
+        GameGUI.afterShow();
         return 0;
     }
     static hide(updateChildren = true) {
@@ -412,6 +414,7 @@ class InventoryEquipmentGameGUI {
         if (updateChildren) {
             GameGUI.afterHideMenuChildren();
         }
+        GameGUI.afterHide();
         return 0;
     }
     static update() {

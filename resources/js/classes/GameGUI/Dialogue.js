@@ -6,6 +6,7 @@ class DialogueGameGUI {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing DialogueGameGUI");
         DialogueGameGUI.initialized = false;
         DialogueGameGUI.controller = null;
+        DialogueGameGUI.isVisible = false;
         DialogueGameGUI.titleBar = null;
         DialogueGameGUI.closeButton = null;
         DialogueGameGUI.bodyContainer = null;
@@ -23,7 +24,6 @@ class DialogueGameGUI {
         DialogueGameGUI.optionsColB = null;
         DialogueGameGUI.optionsColC = null;
         DialogueGameGUI.dialogueOptions = new Array();
-        DialogueGameGUI.isVisible = false;
 
         DialogueGameGUI.resetDefaultDimensions();
         DialogueGameGUI.generateController();
@@ -133,6 +133,8 @@ class DialogueGameGUI {
         GameGUI.windowStack.push(DialogueGameGUI);
         DialogueGameGUI.controller.isVisible = true;
         DialogueGameGUI.isVisible = true;
+        GameGUI.afterShow();
+        return 0;
     }
     static hide(updateChildren = true) {
         if (Game.debugMode) console.log("Running DialogueGameGUI.hideDialogueMenu()");
@@ -142,6 +144,7 @@ class DialogueGameGUI {
         if (updateChildren) {
             GameGUI.afterHideMenuChildren();
         }
+        GameGUI.afterHide();
         return 0;
     }
     static set(dialogue = null, target = Game.playerController.getTarget(), actor = Game.playerController) {

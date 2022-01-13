@@ -35,8 +35,6 @@ class GameGUI {
         GameGUI.focusedBackground = "#3c3c3c";
         GameGUI.focusedBackgroundDisabled = "#0c3c3c";
 
-        GameGUI._nameInput = "";
-        GameGUI._ageInput = "";
         if (Game.debugMode) BABYLON.Tools.Log("Attempting to create an advanced dynamic texture");
         //GameGUI.controller = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
         GameGUI.controller = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GameGUI");
@@ -49,44 +47,16 @@ class GameGUI {
         GameGUI.locked = false;
         GameGUI.initialized = true;
 
-        GameGUI.hud = HUDGameGUI;
-        GameGUI.hud.initialize();
-        GameGUI.controller.addControl(GameGUI.hud.getController());
-
-        GameGUI.cursor = CursorGameGUI;
-        GameGUI.cursor.initialize();
-        GameGUI.controller.addControl(GameGUI.cursor.getController());
-
-        GameGUI.chat = ChatGameGUI;
-        GameGUI.chat.initialize();
-        GameGUI.controller.addControl(GameGUI.chat.getController());
-
-        GameGUI.dialogue = DialogueGameGUI;
-        GameGUI.dialogue.initialize();
-        GameGUI.controller.addControl(GameGUI.dialogue.getController());
-
-        GameGUI.debugMenu = DebugGameGUI;
-        GameGUI.debugMenu.initialize();
-        GameGUI.controller.addControl(GameGUI.debugMenu.getSkyboxController());
-
-        GameGUI.inventoryMenu = InventoryGameGUI;
-        GameGUI.inventoryMenu.initialize();
-        GameGUI.controller.addControl(GameGUI.inventoryMenu.getController());
-
-        GameGUI.inventoryEquipmentMenu = InventoryEquipmentGameGUI;
-        GameGUI.inventoryEquipmentMenu.initialize();
-        GameGUI.controller.addControl(GameGUI.inventoryEquipmentMenu.getController());
-
-        GameGUI.characterStats = CharacterStatsGameGUI;
-        GameGUI.characterStats.initialize();
-        GameGUI.controller.addControl(GameGUI.characterStats.getController());
-
-        GameGUI.book = BookGameGUI;
-        GameGUI.book.initialize();
-        GameGUI.controller.addControl(GameGUI.book.getController());
-
-        GameGUI.characterChoiceMenu = GameGUI._generateCharacterChoiceMenu();
-        GameGUI.controller.addControl(GameGUI.characterChoiceMenu);
+        GameGUI.addAndInitializeSubClass("hud", HUDGameGUI);
+        GameGUI.addAndInitializeSubClass("cursor", CursorGameGUI);
+        GameGUI.addAndInitializeSubClass("chat", ChatGameGUI);
+        GameGUI.addAndInitializeSubClass("mainMenu", MainMenuGameGUI);
+        GameGUI.addAndInitializeSubClass("dialogue", DialogueGameGUI);
+        GameGUI.addAndInitializeSubClass("debugMenu", DebugGameGUI);
+        GameGUI.addAndInitializeSubClass("inventoryMenu", InventoryGameGUI);
+        GameGUI.addAndInitializeSubClass("inventoryEquipmentMenu", InventoryEquipmentGameGUI);
+        GameGUI.addAndInitializeSubClass("characterStats", CharacterStatsGameGUI);
+        GameGUI.addAndInitializeSubClass("book", BookGameGUI);
 
         GameGUI.resize();
         return 0;
@@ -108,6 +78,7 @@ class GameGUI {
         GameGUI.fontSizeLarge = String(GameGUI.fontSizeLargeInPixels).concat("px");
         GameGUI.controller.rootContainer.fontSize = GameGUI.fontSize;
         GameGUI.cursor.resize();
+        GameGUI.mainMenu.resize();
         GameGUI.inventoryMenu.resize();
         GameGUI.inventoryEquipmentMenu.resize();
         GameGUI.dialogue.resize();
@@ -127,7 +98,10 @@ class GameGUI {
     }
 
     static show() {
-        GameGUI.controller.getChildren()[0].isVisible = true;
+        GameGUI.controller.rootContainer.isVisible = true;
+        return 0;
+    }
+    static afterShow() {
         return 0;
     }
     static hide() {
@@ -139,6 +113,10 @@ class GameGUI {
             GameGUI.windowStack[i].hide(false);
         }
         GameGUI.afterHideMenuChildren();
+        return 0;
+    }
+    static afterHide() {
+        Game.checkAndSetInterfaceMode();
         return 0;
     }
 
@@ -155,197 +133,19 @@ class GameGUI {
         }
         return 0;
     }
-    static _generateCharacterChoiceMenu() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI._generateCharacterChoiceMenu");
-        let characterChoiceMenuContainer = new BABYLON.GUI.Grid("characterChoiceMenu");
-        let nameLabel = GameGUI.createTextBlock("nameLabel");
-        GameGUI._nameInput = GameGUI.createInputText("nameInput");
-        let ageLabel = GameGUI.createTextBlock("ageLabel");
-        GameGUI._ageInput = GameGUI.createInputText("ageInput");
-        let buttonKBLayoutLabel = GameGUI.createTextBlock("kbLayoutLabel");
-        let buttonKBLayoutContainer = new BABYLON.GUI.Grid("kbLayoutContainer");
-        let buttonKBLayoutQwerty = GameGUI.createSimpleButton("kbLayoutQwerty", "QWERTY");
-        let buttonKBLayoutDvorak = GameGUI.createSimpleButton("kbLayoutDvorak", "Dvorak");
-        let buttonKBLayoutAzerty = GameGUI.createSimpleButton("kbLayoutAzerty", "AZERTY");
-        let submitOnline = GameGUI.createSimpleButton("submitOnline", "Online");
-        let submitOffline = GameGUI.createSimpleButton("submitOffline", "Offline");
-        let urlLabel = GameGUI.createTextBlock("urlLabel");
-        let urlButton = GameGUI.createSimpleButton("urlButton", "https://github.com/armasyll/psde");
-        
-        characterChoiceMenuContainer.zIndex = 90;
-        characterChoiceMenuContainer.height = 0.75;
-        characterChoiceMenuContainer.width = 0.75;
-        characterChoiceMenuContainer.background = GameGUI.background;
-        characterChoiceMenuContainer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        characterChoiceMenuContainer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        characterChoiceMenuContainer.addColumnDefinition(0.5, false);
-        characterChoiceMenuContainer.addColumnDefinition(0.5, false);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
-        characterChoiceMenuContainer.addRowDefinition(GameGUI.fontSizeInPixels * 2, true);
-        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
-        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
-        buttonKBLayoutContainer.addColumnDefinition(0.3, false);
-        buttonKBLayoutContainer.addRowDefinition(1.0, false);
-
-        urlLabel.text = "GitHub: ";
-        urlLabel.width = 1.0;
-
-        urlButton.width = 1.0;
-
-        nameLabel.text = "Name: ";
-        nameLabel.height = 1.0;
-        nameLabel.width = 1.0;
-
-        GameGUI._nameInput.text = "Player";
-        GameGUI._nameInput.height = 1.0;
-        GameGUI._nameInput.width = 1.0;
-
-        ageLabel.text = "Age: ";
-        ageLabel.height = 1.0;
-        ageLabel.width = 1.0;
-
-        GameGUI._ageInput.text = "18";
-        GameGUI._ageInput.height = 1.0;
-        GameGUI._ageInput.width = 1.0;
-
-        buttonKBLayoutLabel.text = "Keyboard Layout: ";
-        buttonKBLayoutLabel.height = 1.0;
-        buttonKBLayoutLabel.width = 1.0;
-
-        buttonKBLayoutQwerty.height = 1.0;
-        buttonKBLayoutQwerty.width = 1.0;
-        buttonKBLayoutDvorak.height = 1.0;
-        buttonKBLayoutDvorak.width = 1.0;
-        buttonKBLayoutAzerty.height = 1.0;
-        buttonKBLayoutAzerty.width = 1.0;
-
-        submitOffline.width = 1.0;
-
-        submitOnline.width = 1.0;
-
-        GameGUI._nameInput.onTextChangedObservable.add(function() {
-            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
-        });
-        GameGUI._ageInput.onTextChangedObservable.add(function() {
-            GameGUI._ageInput.text = String(Tools.filterInt(GameGUI._ageInput.text));
-        });
-        buttonKBLayoutQwerty.onPointerUpObservable.add(function() {
-            AbstractControls.initQwertyKeyboardControls();
-            Game.updateMenuKeyboardDisplayKeys();
-        });
-        buttonKBLayoutDvorak.onPointerUpObservable.add(function() {
-            AbstractControls.initDvorakKeyboardControls();
-            Game.updateMenuKeyboardDisplayKeys();
-        });
-        buttonKBLayoutAzerty.onPointerUpObservable.add(function() {
-            AbstractControls.initAzertyKeyboardControls();
-            Game.updateMenuKeyboardDisplayKeys();
-        });
-        urlButton.onPointerUpObservable.add(function() {
-            window.open('https://github.com/armasyll/psde', '_blank');
-        });
-        submitOnline.onPointerClickObservable.add(function() {
-            let doNotPassGo = false;
-            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
-            GameGUI._ageInput.text = Tools.filterInt(GameGUI._ageInput.text)
-            if (GameGUI._nameInput.text.length < 1) {
-                GameGUI._nameInput.color = GameGUI.colorDanger;
-                GameGUI._nameInput.background = GameGUI.backgroundDanger;
-                doNotPassGo = true;
-            }
-            else {
-                GameGUI._nameInput.color = GameGUI.color;
-                GameGUI._nameInput.background = GameGUI.background;
-            }
-            if (Number.parseInt(GameGUI._ageInput.text) <= 0) {
-                GameGUI._ageInput.color = GameGUI.colorDanger;
-                GameGUI._ageInput.background = GameGUI.backgroundDanger;
-                doNotPassGo = true;
-            }
-            else {
-                GameGUI._ageInput.color = GameGUI.color;
-                GameGUI._ageInput.background = GameGUI.background;
-            }
-            /*if (!doNotPassGo) {
-                if (!Game.hasPlayerController()) {
-                    Game.entityLogicWorkerPostMessage("loadCellAndSetPlayerAt", 0, { "cellID": Game.selectedCellID, "position": [0,0,0] });
-                }
-                if (!Client.isOnline()) {
-                    Client.connect();
-                }
-                GameGUI.hideCharacterChoiceMenu();
-                GameGUI.hide();
-                GameGUI.hud.show();
-            }*/
-        });
-        submitOffline.onPointerClickObservable.add(function() {
-            let doNotPassGo = false;
-            GameGUI._nameInput.text = Tools.filterID(GameGUI._nameInput.text);
-            GameGUI._ageInput.text = Tools.filterInt(GameGUI._ageInput.text)
-            if (GameGUI._nameInput.text.length < 1) {
-                GameGUI._nameInput.color = GameGUI.colorDanger;
-                GameGUI._nameInput.background = GameGUI.backgroundDanger;
-                doNotPassGo = true;
-            }
-            else {
-                GameGUI._nameInput.color = GameGUI.color;
-                GameGUI._nameInput.background = GameGUI.background;
-            }
-            if (Number.parseInt(GameGUI._ageInput.text) <= 0) {
-                GameGUI._ageInput.color = GameGUI.colorDanger;
-                GameGUI._ageInput.background = GameGUI.backgroundDanger;
-                doNotPassGo = true;
-            }
-            else {
-                GameGUI._ageInput.color = GameGUI.color;
-                GameGUI._ageInput.background = GameGUI.background;
-            }
-            if (!doNotPassGo) {
-                if (!(Game.hasPlayerController())) {
-                    Game.loadCellAndSetPlayerAt();
-                }
-                if (Client.isOnline()) {
-                    Client.disconnect();
-                }
-                GameGUI.hideCharacterChoiceMenu();
-                GameGUI.hide();
-                GameGUI.hud.show();
-            }
-        });
-
-        characterChoiceMenuContainer.addControl(nameLabel, 0, 0);
-        characterChoiceMenuContainer.addControl(GameGUI._nameInput, 0, 1);
-        characterChoiceMenuContainer.addControl(ageLabel, 1, 0);
-        characterChoiceMenuContainer.addControl(GameGUI._ageInput, 1, 1);
-        characterChoiceMenuContainer.addControl(buttonKBLayoutLabel, 2, 0);
-        characterChoiceMenuContainer.addControl(buttonKBLayoutContainer, 2, 1);
-            buttonKBLayoutContainer.addControl(buttonKBLayoutQwerty, 0, 0);
-            buttonKBLayoutContainer.addControl(buttonKBLayoutDvorak, 0, 1);
-            buttonKBLayoutContainer.addControl(buttonKBLayoutAzerty, 0, 2);
-        characterChoiceMenuContainer.addControl(submitOffline, 3, 0);
-        characterChoiceMenuContainer.addControl(submitOnline, 3, 1);
-        characterChoiceMenuContainer.addControl(urlLabel, 4, 0);
-        characterChoiceMenuContainer.addControl(urlButton, 4, 1);
-        characterChoiceMenuContainer.isVisible = false;
-        return characterChoiceMenuContainer;
-    }
-    static showCharacterChoiceMenu() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running GameGUI.showCharacterChoiceMenu");
-        if (GameGUI.locked) {
-            return;
+    static addAndInitializeSubClass(interiorName, classObject) {
+        if (!(classObject instanceof Object)) {
+            return 1;
         }
-        GameGUI.hud.hide();
-        GameGUI.show();
-        GameGUI.characterChoiceMenu.isVisible = true;
-    }
-    static hideCharacterChoiceMenu() {
-        if (GameGUI.locked) {
-            return;
+        if (!(classObject.hasOwnProperty("initialize")) || typeof classObject.initialize != "function") {
+            return 1;
         }
-        GameGUI.characterChoiceMenu.isVisible = false;
+        GameGUI[interiorName] = classObject;
+        GameGUI[interiorName].initialize();
+        if (classObject.hasOwnProperty("getController")) {
+            GameGUI.controller.addControl(GameGUI[interiorName].getController());
+        }
+        return GameGUI[interiorName];
     }
     /**
      * 

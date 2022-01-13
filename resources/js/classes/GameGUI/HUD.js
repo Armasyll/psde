@@ -7,13 +7,13 @@ class HUDGameGUI {
     }
     static initialize() {
         HUDGameGUI.controller = new BABYLON.GUI.Container("HUDGameGUI");
-        HUDGameGUI.width
         HUDGameGUI.actionTooltip = null;
         HUDGameGUI.actionTooltipLocked = false;
         HUDGameGUI.radialMenu = null;
         HUDGameGUI.radialMenuButtons = {};
         HUDGameGUI.radialTargetControllerID = null;
         HUDGameGUI.initialized = true;
+        HUDGameGUI.isVisible = false;
         HUDGameGUI.locked = false;
 
         if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.initialize()");
@@ -53,8 +53,10 @@ class HUDGameGUI {
             return 0;
         }
         HUDGameGUI.controller.isVisible = true;
+        HUDGameGUI.isVisible = true;
         HUDGameGUI.showCrosshair();
         HUDGameGUI.playerPortrait.show();
+        GameGUI.afterShow();
         return 0;
     }
     static hide() {
@@ -63,15 +65,14 @@ class HUDGameGUI {
             return 0;
         }
         HUDGameGUI.controller.isVisible = false;
+        HUDGameGUI.isVisible = false;
         HUDGameGUI.hideCrosshair();
         HUDGameGUI.hideActionTooltip();
         HUDGameGUI.hideRadialMenu();
         HUDGameGUI.playerPortrait.hide();
         HUDGameGUI.targetPortrait.hide();
+        GameGUI.afterHide();
         return 0;
-    }
-    static isVisible() {
-        return HUDGameGUI.controller.isVisible;
     }
     static generateCrosshair() {
         if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.generateCrosshair");

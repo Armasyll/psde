@@ -5,6 +5,7 @@ class DebugGameGUI {
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing DebugGameGUI");
         DebugGameGUI.initialized = false;
+        DebugGameGUI.isVisible = false;
         DebugGameGUI.locked = false;
         DebugGameGUI.width = Game.renderWidth / 2;
         DebugGameGUI.skyboxController = null;
@@ -26,11 +27,7 @@ class DebugGameGUI {
         DebugGameGUI.infoPStanceContainer = null;
         DebugGameGUI.infoOStanceContainer = null;
         DebugGameGUI.infoMovementPaceContainer = null;
-        DebugGameGUI.infoPointer = null;
-        DebugGameGUI.debugCursor = null
-        DebugGameGUI.isVisible = false;
         DebugGameGUI.generateController();
-        DebugGameGUI.containerAlpha = 0.75;
     }
     static resize() {
 
@@ -42,17 +39,16 @@ class DebugGameGUI {
         if (DebugGameGUI.infoController.isVisible) {
             DebugGameGUI.updateInfoController();
         }
-        if (DebugGameGUI.debugCursor.isVisible) {
-            DebugGameGUI.updateDebugCursor();
-        }
     }
     static generateController() {
         DebugGameGUI.skyboxController = DebugGameGUI.generateSkyboxController();
         DebugGameGUI.selectionMenu = DebugGameGUI.generateSelectionMenu();
         DebugGameGUI.collisionListController = DebugGameGUI.generateCollisionListController();
         DebugGameGUI.infoController = DebugGameGUI.generateInfoController();
-        DebugGameGUI.debugCursor = DebugGameGUI.generateDebugCursor();
         DebugGameGUI.initialized = true;
+    }
+    static getController() {
+        return DebugGameGUI.selectionMenu;
     }
     static generateSelectionMenu() {
         let controller = GameGUI.createStackPanel("selectionMenu");
@@ -157,7 +153,6 @@ class DebugGameGUI {
         let [infoCStanceContainer, infoCStance] = GameGUI.createContainedTextBlock("infoCStance", "CStance");
         let [infoPStanceContainer, infoPStance] = GameGUI.createContainedTextBlock("infoPStance", "PStance");
         let [infoOStanceContainer, infoOStance] = GameGUI.createContainedTextBlock("infoOStance", "OStance");
-        let [infoPointerContainer, infoPointer] = GameGUI.createContainedTextBlock("infoPointer", "Pointer");
         controller.addControl(infoCoordinatesContainer);
         controller.addControl(infoRotationContainer);
         controller.addControl(infoTargetRayContainer);
@@ -166,7 +161,6 @@ class DebugGameGUI {
         controller.addControl(infoPStanceContainer);
         controller.addControl(infoOStanceContainer);
         controller.addControl(infoMovementPaceContainer);
-        controller.addControl(infoPointerContainer);
 
         DebugGameGUI.infoController = controller;
         DebugGameGUI.infoCoordinates = infoCoordinates;
@@ -177,7 +171,6 @@ class DebugGameGUI {
         DebugGameGUI.infoPStance = infoPStance;
         DebugGameGUI.infoOStance = infoOStance;
         DebugGameGUI.infoMovementPace = infoMovementPace;
-        DebugGameGUI.infoPointer = infoPointer;
         return controller;
     }
     static updateInfoController() {
@@ -209,38 +202,6 @@ class DebugGameGUI {
         else {
             DebugGameGUI.infoOStance.isVisible = false;
         }
-        DebugGameGUI.infoPointer.text = String(`Pointer X: ${Game.internalPointerX}, Y: ${Game.internalPointerY}`);
-        return 0;
-    }
-    static generateDebugCursor() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running DebugGameGUI.generateDebugCursor");
-        let crosshair = new BABYLON.GUI.Ellipse("debugCursor");
-        crosshair.width = "15px";
-        crosshair.background = "red";
-        crosshair.height = "15px";
-        crosshair.color = "black";
-        crosshair.alpha = GameGUI.alpha;
-        crosshair.isVisible = false;
-        crosshair.zIndex = 99;
-        DebugGameGUI.debugCursor = crosshair;
-        return crosshair;
-    }
-    static updateDebugCursor() {
-        if (!DebugGameGUI.debugCursor.isVisible) {
-            return 0;
-        }
-        DebugGameGUI.debugCursor.leftInPixels = Game.internalPointerX;
-        DebugGameGUI.debugCursor.topInPixels = Game.internalPointerY;
-        return 0;
-    }
-    static hideCursor() {
-        Game.gui.hud.controller.removeControl(DebugGameGUI.debugCursor);
-        DebugGameGUI.debugCursor.isVisible = false;
-        return 0;
-    }
-    static showCursor() {
-        Game.gui.hud.controller.addControl(DebugGameGUI.debugCursor);
-        DebugGameGUI.debugCursor.isVisible = true;
         return 0;
     }
     static showInfo() {
@@ -284,18 +245,16 @@ class DebugGameGUI {
     static getSkyboxController() {
         return DebugGameGUI.skyboxController;
     }
-    static show(overwriteInterface = true) {
+    static show() {
         Game.functionsToRunBeforeRender.push(DebugGameGUI.update);
         DebugGameGUI.isVisible = true;
         DebugGameGUI.showInfo();
-        DebugGameGUI.showCursor();
         return 0;
     }
-    static hide(overwriteInterface = true) {
+    static hide() {
         Game.functionsToRunBeforeRender.remove(DebugGameGUI.update);
-        DebugGameGUI.hideCursor();
-        DebugGameGUI.hideInfo();
         DebugGameGUI.isVisible = false;
+        DebugGameGUI.hideInfo();
         return 0;
     }
     static updateSkyboxUI() {

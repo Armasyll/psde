@@ -10,13 +10,13 @@ class TargetPortraitGameGUI {
         TargetPortraitGameGUI.targetHealthText = null;
         TargetPortraitGameGUI.targetStaminaBar = null;
         TargetPortraitGameGUI.targetStaminaText = null;
-        TargetPortraitGameGUI.isVisible = false;
         TargetPortraitGameGUI.controller = TargetPortraitGameGUI.generateController();
         TargetPortraitGameGUI.initialized = true;
         TargetPortraitGameGUI.containerAlpha = 0.75;
         TargetPortraitGameGUI.entityID = null;
         TargetPortraitGameGUI.cachedEntity = null;
         TargetPortraitGameGUI.targetIsCreature = false;
+        TargetPortraitGameGUI.isVisible = false;
     }
     static generateController() {
         var portrait = GameGUI.createRectangle("targetPortrait");
@@ -118,11 +118,11 @@ class TargetPortraitGameGUI {
     }
     static show() {
         TargetPortraitGameGUI.controller.isVisible = true;
-        TargetPortraitGameGUI.isVisible = true;
+        return 0;
     }
     static hide() {
         TargetPortraitGameGUI.controller.isVisible = false;
-        TargetPortraitGameGUI.isVisible = false;
+        return 0;
     }
     static clear() {
         TargetPortraitGameGUI.hideHealth();

@@ -39,7 +39,6 @@ class InventoryGameGUI {
         InventoryGameGUI.selectedDescription = null;
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
-        InventoryGameGUI.isVisible = false;
         InventoryGameGUI.targetController = null;
         InventoryGameGUI.otherController = null;
         InventoryGameGUI.selectedEntity = null;
@@ -245,6 +244,7 @@ class InventoryGameGUI {
         InventoryGameGUI.controller.isVisible = true;
         InventoryGameGUI.isVisible = true;
         GameGUI.windowStack.push(InventoryGameGUI);
+        GameGUI.afterShow();
         return 0;
     }
     static hide(updateChildren = true) {
@@ -254,6 +254,7 @@ class InventoryGameGUI {
         if (updateChildren) {
             GameGUI.afterHideMenuChildren();
         }
+        GameGUI.afterHide();
         return 0;
     }
     static update() {

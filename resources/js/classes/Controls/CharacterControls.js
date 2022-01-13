@@ -137,7 +137,7 @@ class CharacterControls extends AbstractControls {
                 else {
                     if (Game.debugMode) console.log(`\tShowing Main Menu`);
                     Game.gui.hud.hide();
-                    Game.gui.showCharacterChoiceMenu();
+                    Game.gui.mainMenu.show();
                 }
                 break;
             }

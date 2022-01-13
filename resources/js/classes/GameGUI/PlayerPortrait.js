@@ -17,6 +17,7 @@ class PlayerPortraitGameGUI {
         PlayerPortraitGameGUI.entityID = null;
         PlayerPortraitGameGUI.cachedEntity = null;
         PlayerPortraitGameGUI.targetIsCreature = null;
+        PlayerPortraitGameGUI.isVisible = false;
     }
     static generateController() {
         var portrait = GameGUI.createRectangle("playerPortrait");
@@ -114,10 +115,12 @@ class PlayerPortraitGameGUI {
     static show() {
         PlayerPortraitGameGUI.controller.isVisible = true;
         PlayerPortraitGameGUI.isVisible = true;
+        return 0;
     }
     static hide() {
         PlayerPortraitGameGUI.controller.isVisible = false;
         PlayerPortraitGameGUI.isVisible = false;
+        return 0;
     }
     static clear() {
         PlayerPortraitGameGUI.entityID = null;
