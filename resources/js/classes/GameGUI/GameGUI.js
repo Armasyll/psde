@@ -102,6 +102,7 @@ class GameGUI {
         return 0;
     }
     static afterShow() {
+        Game.checkAndSetInterfaceMode();
         return 0;
     }
     static hide() {

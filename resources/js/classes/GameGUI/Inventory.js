@@ -43,6 +43,7 @@ class InventoryGameGUI {
         InventoryGameGUI.otherController = null;
         InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedTab = ItemEnum.GENERAL;
+        InventoryGameGUI.interfaceMode = InterfaceModeEnum.MENU;
 
         InventoryGameGUI.resetDefaultDimensions();
         InventoryGameGUI.generateController();
@@ -251,9 +252,6 @@ class InventoryGameGUI {
         InventoryGameGUI.controller.isVisible = false;
         InventoryGameGUI.isVisible = false;
         GameGUI.windowStack.remove(InventoryGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
         GameGUI.afterHide();
         return 0;
     }

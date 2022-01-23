@@ -70,6 +70,7 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.gridColumns = 9;
         InventoryEquipmentGameGUI.gridRows = 11;
         InventoryEquipmentGameGUI.gridCellSize = 64;
+        InventoryEquipmentGameGUI.interfaceMode = InterfaceModeEnum.MENU;
 
         InventoryEquipmentGameGUI.resetDefaultDimensions();
         InventoryEquipmentGameGUI.generateController();
@@ -411,9 +412,6 @@ class InventoryEquipmentGameGUI {
         InventoryEquipmentGameGUI.controller.isVisible = false;
         InventoryEquipmentGameGUI.isVisible = false;
         GameGUI.windowStack.remove(InventoryEquipmentGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
         GameGUI.afterHide();
         return 0;
     }

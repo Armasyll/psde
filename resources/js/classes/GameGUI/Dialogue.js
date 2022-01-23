@@ -24,6 +24,7 @@ class DialogueGameGUI {
         DialogueGameGUI.optionsColB = null;
         DialogueGameGUI.optionsColC = null;
         DialogueGameGUI.dialogueOptions = new Array();
+        DialogueGameGUI.interfaceMode = InterfaceModeEnum.DIALOGUE;
 
         DialogueGameGUI.resetDefaultDimensions();
         DialogueGameGUI.generateController();
@@ -141,9 +142,6 @@ class DialogueGameGUI {
         DialogueGameGUI.controller.isVisible = false;
         DialogueGameGUI.isVisible = false;
         GameGUI.windowStack.remove(DialogueGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
         GameGUI.afterHide();
         return 0;
     }

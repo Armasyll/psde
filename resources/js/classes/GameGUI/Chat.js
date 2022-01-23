@@ -11,12 +11,16 @@ class ChatGameGUI {
         ChatGameGUI.output = null;
         ChatGameGUI.input = null;
         ChatGameGUI.focused = false;
-        ChatGameGUI.controller = ChatGameGUI.generateController();
+        ChatGameGUI.controller = null;
         ChatGameGUI.containerAlpha = 0.75;
         ChatGameGUI.defaultWidthInPixels = GameGUI.getFontSize(24);
         ChatGameGUI.defaultHeightInPixels = Game.renderHeight / 3;
         ChatGameGUI.posX = 0;
         ChatGameGUI.posY = 0;
+        ChatGameGUI.interfaceMode = InterfaceModeEnum.WRITING;
+
+        ChatGameGUI.generateController();
+        return 0;
     }
     static resize() {
         if (ChatGameGUI.initialized != true) {
@@ -73,19 +77,12 @@ class ChatGameGUI {
         if (Game.debugMode) console.log("Running ChatGameGUI::show");
         ChatGameGUI.controller.isVisible = true;
         ChatGameGUI.isVisible = true;
-        GameGUI.windowStack.push(ChatGameGUI);
-        GameGUI.afterShow();
         return 0;
     }
     static hide(updateChildren = false) {
         if (Game.debugMode) console.log("Running ChatGameGUI::hide");
         ChatGameGUI.controller.isVisible = false;
         ChatGameGUI.isVisible = false;
-        GameGUI.windowStack.remove(ChatGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
-        GameGUI.afterHide();
         return 0;
     }
     static getOutput() {
@@ -121,11 +118,9 @@ class ChatGameGUI {
     static setFocused(boolean) {
         if (boolean === true) {
             ChatGameGUI.focused = true;
-            GameGUI.hud.moveFocusToControl(ChatGameGUI.input);
         }
         else {
             ChatGameGUI.focused = false;
-            GameGUI.hud.moveFocusToControl(null);
         }
     }
     static isFocused() {

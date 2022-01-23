@@ -31,6 +31,7 @@ class BookGameGUI {
         BookGameGUI.hasNextPage = false;
         BookGameGUI.hasPreviousPage = false;
         BookGameGUI.locked = false;
+        BookGameGUI.interfaceMode = InterfaceModeEnum.DIALOGUE;
 
         BookGameGUI.resetDefaultDimensions();
         BookGameGUI.generateController();
@@ -174,9 +175,6 @@ class BookGameGUI {
         BookGameGUI.controller.isVisible = false;
         BookGameGUI.isVisible = false;
         GameGUI.windowStack.remove(BookGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
         GameGUI.afterHide();
         return 0;
     }

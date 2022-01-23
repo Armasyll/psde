@@ -12,10 +12,11 @@ class CursorGameGUI {
         CursorGameGUI.minY = 0;
         CursorGameGUI.maxY = 24;
         CursorGameGUI.internalPointerChanging = false;
-        CursorGameGUI.controller = CursorGameGUI.generateCursor();
+        CursorGameGUI.controller = CursorGameGUI.generateController();
+        return 0;
     }
-    static generateCursor() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running DebugGameGUI.generateCursor");
+    static generateController() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running DebugGameGUI.generateController");
         let cursor = new BABYLON.GUI.Triangle("cursor");
         cursor.widthInPixels = 16;
         cursor.background = "black";

@@ -19,6 +19,7 @@ class CharacterStatsGameGUI {
         CharacterStatsGameGUI.posY = 0;
 
         CharacterStatsGameGUI.nameField = null;
+        CharacterStatsGameGUI.interfaceMode = InterfaceModeEnum.MENU;
 
         CharacterStatsGameGUI.resetDefaultDimensions();
         CharacterStatsGameGUI.generateController();
@@ -1692,9 +1693,6 @@ class CharacterStatsGameGUI {
         CharacterStatsGameGUI.controller.isVisible = false;
         CharacterStatsGameGUI.isVisible = false;
         GameGUI.windowStack.remove(CharacterStatsGameGUI);
-        if (updateChildren) {
-            GameGUI.afterHideMenuChildren();
-        }
         GameGUI.afterHide();
         return 0;
     }

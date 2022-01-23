@@ -6,19 +6,21 @@ class HUDGameGUI {
         return "HUDGameGUI";
     }
     static initialize() {
-        HUDGameGUI.controller = new BABYLON.GUI.Container("HUDGameGUI");
-        HUDGameGUI.actionTooltip = null;
-        HUDGameGUI.actionTooltipLocked = false;
+        HUDGameGUI.controller = null;
         HUDGameGUI.radialMenu = null;
         HUDGameGUI.radialMenuButtons = {};
         HUDGameGUI.radialTargetControllerID = null;
         HUDGameGUI.initialized = true;
         HUDGameGUI.isVisible = false;
         HUDGameGUI.locked = false;
-
+        HUDGameGUI.interfaceMode = InterfaceModeEnum.CHARACTER;
+        
         if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.initialize()");
+        HUDGameGUI.generateController();
+
+        HUDGameGUI.actionTooltip = ActionTooltipGameGUI;
+        HUDGameGUI.actionTooltip.initialize();
         HUDGameGUI.crosshair = HUDGameGUI.generateCrosshair();
-        HUDGameGUI.actionTooltip = HUDGameGUI.generateTargetActionTooltip();
         HUDGameGUI.radialMenu = HUDGameGUI.generateActionsRadialMenu();
 
         HUDGameGUI.playerPortrait = PlayerPortraitGameGUI;
@@ -27,8 +29,8 @@ class HUDGameGUI {
         HUDGameGUI.targetPortrait.initialize();
 
         HUDGameGUI.controller.addControl(HUDGameGUI.crosshair);
-        HUDGameGUI.controller.addControl(HUDGameGUI.actionTooltip);
         HUDGameGUI.controller.addControl(HUDGameGUI.radialMenu);
+        HUDGameGUI.controller.addControl(HUDGameGUI.actionTooltip.getController());
         HUDGameGUI.controller.addControl(HUDGameGUI.playerPortrait.getController());
         HUDGameGUI.controller.addControl(HUDGameGUI.targetPortrait.getController());
         
@@ -37,12 +39,19 @@ class HUDGameGUI {
         return 0;
     }
     static generateController() {
+        HUDGameGUI.controller = new BABYLON.GUI.Container("HUDGameGUI");
         return 0;
     }
     static getController() {
         return HUDGameGUI.controller;
     }
     static resize() {
+        HUDGameGUI.controller.width = "100%";
+        HUDGameGUI.controller.height = "100%";
+        HUDGameGUI.controller.fontSize = GameGUI.fontSize;
+        // Crosshair
+        // Tooltip
+        // Radial Menu
         HUDGameGUI.playerPortrait.resize();
         HUDGameGUI.targetPortrait.resize();
         return 0;
@@ -56,7 +65,6 @@ class HUDGameGUI {
         HUDGameGUI.isVisible = true;
         HUDGameGUI.showCrosshair();
         HUDGameGUI.playerPortrait.show();
-        GameGUI.afterShow();
         return 0;
     }
     static hide() {
@@ -67,11 +75,10 @@ class HUDGameGUI {
         HUDGameGUI.controller.isVisible = false;
         HUDGameGUI.isVisible = false;
         HUDGameGUI.hideCrosshair();
-        HUDGameGUI.hideActionTooltip();
+        HUDGameGUI.actionTooltip.hide();
         HUDGameGUI.hideRadialMenu();
         HUDGameGUI.playerPortrait.hide();
         HUDGameGUI.targetPortrait.hide();
-        GameGUI.afterHide();
         return 0;
     }
     static generateCrosshair() {
@@ -98,115 +105,6 @@ class HUDGameGUI {
             return 0;
         }
         HUDGameGUI.crosshair.isVisible = false;
-        return 0;
-    }
-    static generateTargetActionTooltip() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.generateTargetActionTooltip");
-        let tooltip = GameGUI.createRectangle("targetActionTooltip");
-            tooltip.width = 0.125;
-            tooltip.height = 0.075;
-            tooltip.top = "3.75%";
-            tooltip.left = "6.25%";
-            tooltip.alpha = GameGUI.alpha;
-            tooltip.isVertical = false;
-            tooltip.background = GameGUI.focusedBackground;
-        let keyName = GameGUI.createTextBlock();
-            keyName.text = "E";
-            keyName.top = 0;
-            keyName.left = "10%";
-            keyName.textHorizontalAlignment = BABYLON.GUI.HORIZONTAL_ALIGNMENT_LEFT;
-        let actionPanelActionName = GameGUI.createTextBlock();
-            actionPanelActionName.text = "";
-            actionPanelActionName.height = 0.5;
-            //actionPanelActionName.top = "-25%";
-            actionPanelActionName.left = "25%";
-        let actionPanelTargetName = GameGUI.createTextBlock();
-            actionPanelTargetName.text = "";
-            actionPanelTargetName.height = 0.5;
-            actionPanelTargetName.top = "25%";
-            actionPanelTargetName.left = "25%";
-        tooltip.addControl(keyName);
-        tooltip.addControl(actionPanelActionName);
-        tooltip.addControl(actionPanelTargetName);
-        tooltip.isVisible = false;
-        tooltip.zIndex = 12;
-        return tooltip;
-    }
-    /**
-     * Sets the action tooltip's letter corresponding to Game.useTargetedEntityCode.
-     * @param {string} _string Top left character.
-     */
-    static setActionTooltipLetter(_string = String.fromCharCode(AbstractControls.useTargetedEntityCode)) {
-        HUDGameGUI.actionTooltip.children[0].text = _string;
-        return 0;
-    }
-    /**
-     * Sets the action tooltip's top right text.
-     * @param {String} _string Top right text.
-     */
-    static setActionTooltipString(_string = "Use") {
-        if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.setActionTooltipString");
-        if (typeof _string != "string") {
-            _string = "Use";
-        }
-        else {
-            _string = _string.capitalize();
-        }
-        HUDGameGUI.actionTooltip.children[1].text = _string;
-        return 0;
-    }
-    /**
-     * Sets the action tooltip's bottom text. Not used, I think. :D
-     * @param {String} _string Bottom text.
-     */
-    static setActionTooltipTarget(_string = "") {
-        if (typeof _string != "string") {
-            _string = "";
-        }
-        if (Game.debugMode) BABYLON.Tools.Log("Running HUDGameGUI.setActionTooltipTarget");
-        HUDGameGUI.actionTooltip.children[2].text = _string;
-        return 0;
-    }
-    /**
-     * Sets the action tooltip's top right and bottom text.
-     * @param {String} _action Top right text.
-     * @param {String} _target Bottom text.
-     */
-    static setActionTooltip(_action, _target = "") {
-        HUDGameGUI.setActionTooltipString(_action);
-        HUDGameGUI.setActionTooltipTarget(_target);
-        return 0;
-    }
-    /**
-     * Show the action tooltip.
-     */
-    static showActionTooltip() {
-        if (HUDGameGUI.locked) {
-            return 0;
-        }
-        if (!HUDGameGUI.actionTooltipLocked) {
-            HUDGameGUI.actionTooltip.isVisible = true;
-        }
-        return 0;
-    }
-    /**
-     * Hide the action tooltip.
-     */
-    static hideActionTooltip() {
-        if (HUDGameGUI.locked) {
-            return 0;
-        }
-        if (!HUDGameGUI.actionTooltipLocked) {
-            HUDGameGUI.actionTooltip.isVisible = false;
-        }
-        return 0;
-    }
-    static lockActionTooltip() {
-        HUDGameGUI.actionTooltipLocked = true;
-        return 0;
-    }
-    static unlockActionTooltip() {
-        HUDGameGUI.actionTooltipLocked = false;
         return 0;
     }
     /**
@@ -384,8 +282,8 @@ class HUDGameGUI {
             return 1;
         }
         if (updateChild) {
-            HUDGameGUI.hideActionTooltip();
-            HUDGameGUI.lockActionTooltip();
+            HUDGameGUI.actionTooltip.hide();
+            HUDGameGUI.actionTooltip.lock();
         }
         HUDGameGUI.radialMenu.isVisible = true;
         return 0;
@@ -396,8 +294,8 @@ class HUDGameGUI {
         }
         HUDGameGUI.radialMenu.isVisible = false;
         if (updateChild) {
-            HUDGameGUI.unlockActionTooltip();
-            HUDGameGUI.showActionTooltip();
+            HUDGameGUI.actionTooltip.unlock();
+            HUDGameGUI.actionTooltip.show();
         }
         return 0;
     }

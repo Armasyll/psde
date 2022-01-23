@@ -9,6 +9,8 @@ class MainMenuGameGUI {
         MainMenuGameGUI.ageInput = null;
         MainMenuGameGUI.controller = null;
         MainMenuGameGUI.isVisible = false;
+        MainMenuGameGUI.interfaceMode = InterfaceModeEnum.MENU;
+
         MainMenuGameGUI.generateController();
         return 0;
     }
@@ -176,7 +178,7 @@ class MainMenuGameGUI {
         if (MainMenuGameGUI.locked) {
             return 0;
         }
-        GameGUI.windowStack.push(DialogueGameGUI);
+        GameGUI.windowStack.push(MainMenuGameGUI);
         MainMenuGameGUI.controller.isVisible = true;
         MainMenuGameGUI.isVisible = true;
         GameGUI.afterShow();
@@ -187,7 +189,7 @@ class MainMenuGameGUI {
         }
         MainMenuGameGUI.controller.isVisible = false;
         MainMenuGameGUI.isVisible = false;
-        GameGUI.windowStack.remove(DialogueGameGUI);
+        GameGUI.windowStack.remove(MainMenuGameGUI);
         GameGUI.afterHide();
         return 0;
     }

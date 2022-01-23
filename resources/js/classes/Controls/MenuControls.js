@@ -65,15 +65,19 @@ class MenuControls extends AbstractControls {
         return 0;
     }
     static onClick(mouseEvent) {
+        AbstractControls.onClick(mouseEvent);
         return 0;
     }
     static onContext(mouseEvent) {
+        AbstractControls.onContext(mouseEvent);
         return 0;
     }
     static onMove(mouseEvent) {
-        if (!AbstractControls.initialized) {
-            return 0;
-        }
+        AbstractControls.onMove(mouseEvent);
+        return 0;
+    }
+    static onScroll(mouseEvent) {
+        AbstractControls.onScroll(mouseEvent);
         return 0;
     }
 }

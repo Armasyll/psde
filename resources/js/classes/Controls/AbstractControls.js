@@ -140,9 +140,9 @@ class AbstractControls {
             default: return 0;
         }
     }
-    static onMove(event) {
+    static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
-            let vec2 = new BABYLON.Vector2(event.movementX, event.movementY);
+            let vec2 = new BABYLON.Vector2(mouseEvent.movementX, mouseEvent.movementY);
             AbstractControls.mouseMovementVectors.push(vec2);
             if (AbstractControls.mouseMovementVectors.length > 9) {
                 AbstractControls.mouseMovementVectors.shift();
@@ -169,15 +169,15 @@ class AbstractControls {
                     console.log("+y");
                 }
             }*/
-            Game.gui.cursor.update(event.movementX, event.movementY);
+            Game.gui.cursor.update(mouseEvent.movementX, mouseEvent.movementY);
         }
         return 0;
     }
-    static onScroll(event) {
-        if (event.wheelDeltaY > 0) {
+    static onScroll(mouseEvent) {
+        if (mouseEvent.wheelDeltaY > 0) {
             // scroll up
         }
-        else if (event.wheelDeltaY < 0) {
+        else if (mouseEvent.wheelDeltaY < 0) {
             // scroll down
         }
         return 0;

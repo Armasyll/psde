@@ -741,7 +741,7 @@ class Game {
     static updateMenuKeyboardDisplayKeys() {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateMenuKeyboardDisplayKeys()");
         if (Game.initialized && Game.gui.initialized) {
-            Game.gui.hud.setActionTooltipLetter();
+            Game.gui.hud.actionTooltip.setLetter();
         }
         return 0;
     }
@@ -3667,8 +3667,8 @@ class Game {
         Game.playerController.setTarget(entityController);
         Game.gui.hud.targetPortrait.set(entityController);
         Game.gui.hud.targetPortrait.show();
-        Game.gui.hud.setActionTooltip(ActionEnum.properties[actionEnum].name);
-        Game.gui.hud.showActionTooltip();
+        Game.gui.hud.actionTooltip.set(ActionEnum.properties[actionEnum].name);
+        Game.gui.hud.actionTooltip.show();
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
@@ -3685,7 +3685,7 @@ class Game {
         }
         Game.playerController.clearTarget();
         Game.gui.hud.targetPortrait.hide();
-        Game.gui.hud.hideActionTooltip();
+        Game.gui.hud.actionTooltip.hide();
         return 0;
     }
     /**
@@ -4712,7 +4712,6 @@ class Game {
             }
             case InterfaceModeEnum.EDIT: {
                 Game.cameraPointerControlDetach();
-                //Game.gui._hideHUDChildren();
                 EditControls.clearPickedMesh();
                 EditControls.clearPickedController();
                 Game.gui.cursor.show();
@@ -4728,6 +4727,10 @@ class Game {
     static checkAndSetInterfaceMode(interfaceMode = InterfaceModeEnum.CHARACTER) {
         if (Game.gui.windowStack.length == 0) {
             return Game.setInterfaceMode(interfaceMode);
+        }
+        let lastWindow = Game.gui.windowStack[Game.gui.windowStack.length - 1];
+        if (lastWindow.hasOwnProperty("interfaceMode")) {
+            return Game.setInterfaceMode(lastWindow["interfaceMode"]);
         }
         return 0;
     }
