@@ -99,4 +99,13 @@ class CursorGameGUI {
         CursorGameGUI.internalPointerChanging = false;
         return 0;
     }
+    static context() {
+        if (!CursorGameGUI.controller.isVisible) {
+            return 1;
+        }
+        if (CursorGameGUI.internalPointerChanging) {
+            return 0;
+        }
+        return 0;
+    }
 }

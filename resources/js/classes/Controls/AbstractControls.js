@@ -110,15 +110,6 @@ class AbstractControls {
             return 1;
         }
         Game.gui.cursor.click();
-        if (Game.debugMode) console.log(`Running AbstractControl::onClick(${mouseEvent.button})`);
-        switch (Game.interfaceMode) {
-            case InterfaceModeEnum.CHARACTER: return CharacterControls.onClick(mouseEvent);
-            case InterfaceModeEnum.DIALOGUE: return DialogueControls.onClick(mouseEvent);
-            case InterfaceModeEnum.MENU: return MenuControls.onClick(mouseEvent);
-            case InterfaceModeEnum.EDIT: return EditControls.onClick(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControls.onClick(mouseEvent);
-            default: return 0;
-        }
     }
     static onContext(mouseEvent) {
         if (!Game.initialized) {
@@ -130,15 +121,7 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        if (Game.debugMode) console.log(`Running AbstractControl::onContext(${mouseEvent.button})`);
-        switch (Game.interfaceMode) {
-            case InterfaceModeEnum.CHARACTER: return CharacterControls.onContext(mouseEvent);
-            case InterfaceModeEnum.DIALOGUE: return DialogueControls.onContext(mouseEvent);
-            case InterfaceModeEnum.MENU: return MenuControls.onContext(mouseEvent);
-            case InterfaceModeEnum.EDIT: return EditControls.onContext(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControls.onContext(mouseEvent);
-            default: return 0;
-        }
+        Game.gui.cursor.context();
     }
     static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
