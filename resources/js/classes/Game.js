@@ -47,6 +47,9 @@ class Game {
         Game.cameraMinDistance = 0.001;
         Game.cameraFPDistance = 0.087;
         Game.cameraMaxDistance = 3.054;
+        Game.cameraInertia = 0.9;
+        Game.cameraAngularSensitivityX = 3500;
+        Game.cameraAngularSensitivityY = 3500;
         Game.useCameraRay = false;
         Game.cameraRay = null;
         Game.ambientLight = null;
@@ -3843,6 +3846,8 @@ class Game {
     static cameraPointerControlAttach() {
         if (Game.camera.getClassName() == "ArcRotateCamera") {
             Game.camera.inputs.addPointers();
+            Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
+            Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
         }
         return 0;
     }
@@ -4093,7 +4098,9 @@ class Game {
             if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateArcRotateCameraTarget()");
             Game.playerController.showMesh();
             Game.camera.checkCollisions = false;
-            Game.camera.inertia = 0.9;
+            Game.camera.inertia = Game.cameraInertia;
+            Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
+            Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
             Game.gui.hud.hideCrosshair();
         }
         if (Game.useCameraRay) {
