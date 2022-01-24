@@ -69,15 +69,8 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        if (Game.debugMode) console.log(`Running AbstractControl::onMouseDown(${mouseEvent.button})`);
-        switch (Game.interfaceMode) {
-            case InterfaceModeEnum.CHARACTER: return CharacterControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.DIALOGUE: return DialogueControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.MENU: return MenuControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.EDIT: return EditControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControls.onMouseDown(mouseEvent);
-            default: return 0;
-        }
+        Game.gui.cursor.pointerDown(mouseEvent);
+        return 0;
     }
     static onMouseUp(mouseEvent) {
         if (!Game.initialized) {
@@ -89,15 +82,8 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        if (Game.debugMode) console.log(`Running AbstractControl::onMouseUp(${mouseEvent.button})`);
-        switch (Game.interfaceMode) {
-            case InterfaceModeEnum.CHARACTER: return CharacterControls.onMouseUp(mouseEvent);
-            case InterfaceModeEnum.DIALOGUE: return DialogueControls.onMouseUp(mouseEvent);
-            case InterfaceModeEnum.MENU: return MenuControls.onMouseDown(mouseEvent);
-            case InterfaceModeEnum.EDIT: return EditControls.onMouseUp(mouseEvent);
-            case InterfaceModeEnum.WRITING: return WritingControls.onMouseUp(mouseEvent);
-            default: return 0;
-        }
+        Game.gui.cursor.pointerUp(mouseEvent);
+        return 0;
     }
     static onClick(mouseEvent) {
         if (!Game.initialized) {
@@ -110,6 +96,7 @@ class AbstractControls {
             return 1;
         }
         Game.gui.cursor.click();
+        return 0;
     }
     static onContext(mouseEvent) {
         if (!Game.initialized) {
@@ -122,9 +109,11 @@ class AbstractControls {
             return 1;
         }
         Game.gui.cursor.context();
+        return 0;
     }
     static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
+            Game.scene.simulatePointerMove();
             let vec2 = new BABYLON.Vector2(mouseEvent.movementX, mouseEvent.movementY);
             AbstractControls.mouseMovementVectors.push(vec2);
             if (AbstractControls.mouseMovementVectors.length > 9) {

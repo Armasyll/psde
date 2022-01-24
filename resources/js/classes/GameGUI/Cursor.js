@@ -88,15 +88,24 @@ class CursorGameGUI {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
-        if (CursorGameGUI.internalPointerChanging) {
-            return 0;
+        return 0;
+    }
+    static pointerDown(event) {
+        if (!CursorGameGUI.controller.isVisible) {
+            return 1;
         }
-        CursorGameGUI.internalPointerChanging = true;
         Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
         Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
         Game.scene.simulatePointerDown();
+        return 0;
+    }
+    static pointerUp(event) {
+        if (!CursorGameGUI.controller.isVisible) {
+            return 1;
+        }
+        Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
+        Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
         Game.scene.simulatePointerUp();
-        CursorGameGUI.internalPointerChanging = false;
         return 0;
     }
     static context() {

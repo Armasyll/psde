@@ -48,9 +48,11 @@ class DialogueControls extends MenuControls {
         return 0;
     }
     static onMouseDown(mouseEvent) {
+        AbstractControls.onMouseDown(mouseEvent);
         return 0;
     }
     static onMouseUp(mouseEvent) {
+        AbstractControls.onMouseUp(mouseEvent);
         return 0;
     }
     static onClick(mouseEvent) {
