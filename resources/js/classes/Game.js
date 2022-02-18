@@ -3854,7 +3854,9 @@ class Game {
             return 1;
         }
         if (Game.camera.getClassName() == "ArcRotateCamera") {
-            Game.camera.inputs.addPointers();
+            if (!Game.camera.inputs.attached.hasOwnProperty("pointers")) {
+                Game.camera.inputs.addPointers();
+            }
             Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
             Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
         }
