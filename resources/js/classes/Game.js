@@ -5040,6 +5040,14 @@ class Game {
                 }
                 break;
             }
+            case "doSpawn": {
+                if (status == 0) {
+                    if (EntityController.has(message["controllerID"])) {
+                        EntityController.get(message["controllerID"]).doSpawn();
+                    }
+                }
+                break;
+            }
             case "doStand": {
                 if (status == 0) {
                     if (EntityController.has(message["controllerID"])) {

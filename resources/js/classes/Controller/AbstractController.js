@@ -158,6 +158,13 @@ class AbstractController {
         return 0;
     }
 
+    doDeath() {
+        return 0;
+    }
+    doSpawn() {
+        return 0;
+    }
+
     isEnabled() {
         return this.enabled;
     }
