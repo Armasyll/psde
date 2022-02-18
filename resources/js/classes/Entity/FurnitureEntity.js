@@ -15,9 +15,6 @@ class FurnitureEntity extends Entity {
 
         this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = FurnitureEnum.NONE;
-        this.entityLocked = false;
-        this.key = null;
-        this.open = false;
         this.availableSeats = 0;
 
         this.setFurnitureType(furnitureType);
@@ -183,52 +180,9 @@ class FurnitureEntity extends Entity {
     getAvailableSeats() {
         return this.availableSeats;
     }
-    /**
-     * Entity lock, not to be confused with the functionality lock.
-     * @param {boolean} entityLocked 
-     */
-    setEntityLocked(entityLocked) {
-        this.entityLocked = entityLocked == true;
-    }
-    isEntityLocked() {
-        return this.entityLocked;
-    }
-    setKey(itemEntity) {
-        if (!(itemEntity instanceof ItemEntity)) {
-            if (ItemEntity.has(itemEntity)) {
-                itemEntity = ItemEntity.get(itemEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        this.key = itemEntity;
-        return 0;
-    }
-    getKey() {
-        return this.key;
-    }
-    setOpen() {
-        this.open = true;
-        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
-        this.setDefaultAction(ActionEnum.CLOSE);
-        this.addHiddenAvailableAction(ActionEnum.OPEN);
-    }
-    setClose() {
-        this.open = false;
-        this.setDefaultAction(ActionEnum.OPEN);
-        this.removeHiddenAvailableAction(ActionEnum.OPEN);
-        this.addHiddenAvailableAction(ActionEnum.CLOSE);
-    }
-    getOpen() {
-        return this.open;
-    }
 
     objectifyMinimal() {
         let obj = super.objectifyMinimal();
-        obj["entityLocked"] = this.entityLocked;
-        obj["key"] = this.key;
-        obj["open"] = this.open;
         return obj;
     }
     /**
@@ -258,10 +212,7 @@ class FurnitureEntity extends Entity {
         }
         super.assign(entity, verify);
         if (entity.hasOwnProperty("availableSeats")) this.availableSeats = entity.availableSeats;
-        if (entity.hasOwnProperty("entityLocked")) this.setEntityLocked(entity.entityLocked);
         if (entity.hasOwnProperty("furnitureType")) this.setFurnitureType(entity.furnitureType);
-        if (entity.hasOwnProperty("key")) this.setKey(entity.key);
-        if (entity.hasOwnProperty("open")) this.setOpen(entity.open);
         return 0;
     }
     updateID(newID) {

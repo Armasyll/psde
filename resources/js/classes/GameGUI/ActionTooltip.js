@@ -103,6 +103,22 @@ class ActionTooltipGameGUI {
         ActionTooltipGameGUI.setTargetText(targetText);
         return 0;
     }
+    static update() {
+        if (!Game.playerController.hasTarget()) {
+            return 0;
+        }
+        let actionID = Tools.filterEnum(Game.playerController.getTarget().defaultAction, ActionEnum);
+        if (actionID == -1) {
+            return 0;
+        }
+        if (Game.playerController.hasTarget()) {
+            return ActionTooltipGameGUI.set(ActionEnum.properties[actionID].name);
+        }
+        else {
+            ActionTooltipGameGUI.clear();
+        }
+        return 0;
+    }
     /**
      * Show the action tooltip.
      */

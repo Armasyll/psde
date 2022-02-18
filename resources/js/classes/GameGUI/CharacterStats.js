@@ -23,6 +23,7 @@ class CharacterStatsGameGUI {
 
         CharacterStatsGameGUI.resetDefaultDimensions();
         CharacterStatsGameGUI.generateController();
+        CharacterStatsGameGUI.hide();
         return 0;
     }
     static resetDefaultDimensions() {

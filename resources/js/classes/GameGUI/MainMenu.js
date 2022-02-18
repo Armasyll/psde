@@ -12,6 +12,7 @@ class MainMenuGameGUI {
         MainMenuGameGUI.interfaceMode = InterfaceModeEnum.MENU;
 
         MainMenuGameGUI.generateController();
+        MainMenuGameGUI.hide();
         return 0;
     }
     static generateController() {

@@ -99,11 +99,11 @@ class CharacterControls extends AbstractControls {
             }
             case AbstractControls.interfaceTargetedEntityCode : {
                 if (Game.gui.hud.radialMenu.isVisible) {
-                    Game.gui.hud.hideRadialMenu();
+                    Game.gui.hud.radialMenu.hide();
                 }
                 else if (Game.playerController.hasTarget()) {
-                    Game.gui.hud.populateRadialMenuWithTarget();
-                    Game.gui.hud.showRadialMenu();
+                    Game.gui.hud.radialMenu.setWithTarget();
+                    Game.gui.hud.radialMenu.show();
                 }
                 break;
             }
@@ -290,8 +290,8 @@ class CharacterControls extends AbstractControls {
             return 2;
         }
         if (Game.playerController.hasTarget()) {
-            Game.gui.hud.populateRadialMenuWithTarget();
-            Game.gui.hud.showRadialMenu();
+            Game.gui.hud.radialMenu.setWithTarget();
+            Game.gui.hud.radialMenu.show();
         }
         return 0;
     }
@@ -316,8 +316,8 @@ class CharacterControls extends AbstractControls {
             Game.doEntityAction(Game.playerController.getTarget(), Game.playerController);
         }
         else if (Game.playerController.hasTarget()) {
-            Game.gui.hud.populateRadialMenuWithTarget();
-            Game.gui.hud.showRadialMenu();
+            Game.gui.hud.radialMenu.setWithTarget();
+            Game.gui.hud.radialMenu.show();
         }
         CharacterControls.usePressTime = 0;
         CharacterControls.useTriggered = false;

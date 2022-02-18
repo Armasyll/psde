@@ -20,6 +20,7 @@ class ChatGameGUI {
         ChatGameGUI.interfaceMode = InterfaceModeEnum.WRITING;
 
         ChatGameGUI.generateController();
+        ChatGameGUI.hide();
         return 0;
     }
     static resize() {

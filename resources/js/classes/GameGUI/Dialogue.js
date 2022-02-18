@@ -28,6 +28,7 @@ class DialogueGameGUI {
 
         DialogueGameGUI.resetDefaultDimensions();
         DialogueGameGUI.generateController();
+        DialogueGameGUI.hide();
         return 0;
     }
     static resetDefaultDimensions() {

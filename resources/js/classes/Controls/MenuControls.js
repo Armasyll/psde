@@ -40,7 +40,7 @@ class MenuControls extends AbstractControls {
             }
             case AbstractControls.interfaceTargetedEntityCode : {
                 if (Game.gui.hud.radialMenu.isVisible) {
-                    Game.gui.hud.hideRadialMenu();
+                    Game.gui.hud.radialMenu.hide();
                 }
                 break;
             }

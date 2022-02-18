@@ -506,6 +506,9 @@ class Game {
         if (!(Game.hasPlayerEntity()) || !(Game.hasPlayerController())) {
             return 1;
         }
+        if (Game.playerController.hasTarget()) {
+            Game.gui.hud.actionTooltip.update();
+        }
         if (Game.bBeforeRenderForceCameraBounds && Game.camera instanceof BABYLON.ArcRotateCamera) {
             Game.camera.alpha = Tools.moduloRadians(Game.camera.alpha);
             if (Game.camera.beta < Game.cameraFPDistance) {
@@ -3838,12 +3841,18 @@ class Game {
         return null;
     }
     static cameraPointerControlDetach() {
+        if (!(Game.camera instanceof BABYLON.Camera)) {
+            return 1;
+        }
         if (Game.camera.getClassName() == "ArcRotateCamera" && Game.camera.inputs.attached.hasOwnProperty("pointers")) {
             Game.camera.inputs.remove(Game.camera.inputs.attached.pointers);
         }
         return 0;
     }
     static cameraPointerControlAttach() {
+        if (!(Game.camera instanceof BABYLON.Camera)) {
+            return 1;
+        }
         if (Game.camera.getClassName() == "ArcRotateCamera") {
             Game.camera.inputs.addPointers();
             Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;

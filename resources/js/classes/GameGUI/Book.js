@@ -35,6 +35,7 @@ class BookGameGUI {
 
         BookGameGUI.resetDefaultDimensions();
         BookGameGUI.generateController();
+        BookGameGUI.hide();
         return 0;
     }
     static resetDefaultDimensions() {

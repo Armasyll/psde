@@ -19,9 +19,6 @@ class InstancedFurnitureEntity extends InstancedEntity {
 
         this.availableSeats = 0;
         this.usedSeats = [];
-        this.entityLocked = false;
-        this.key = null;
-        this.open = false;
 
         this.setAvailableSeats(entity.availableSeats);
         InstancedFurnitureEntity.set(this.id, this);
@@ -100,47 +97,6 @@ class InstancedFurnitureEntity extends InstancedEntity {
         this.usedSeats.clear();
         return 0;
     }
-    /**
-     * Entity lock, not to be confused with the functionality lock.
-     * @param {boolean} entityLocked 
-     */
-    setEntityLocked(entityLocked) {
-        this.entityLocked = entityLocked == true;
-    }
-    isEntityLocked() {
-        return this.entityLocked;
-    }
-    setKey(itemEntity) {
-        if (!(itemEntity instanceof ItemEntity)) {
-            if (ItemEntity.has(itemEntity)) {
-                itemEntity = ItemEntity.get(itemEntity);
-            }
-            else {
-                return 2;
-            }
-        }
-        this.key = itemEntity;
-        return 0;
-    }
-    getKey() {
-        return this.key;
-    }
-    setOpen() {
-        this.open = true;
-        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
-        this.setDefaultAction(ActionEnum.CLOSE);
-        this.addHiddenAvailableAction(ActionEnum.OPEN);
-    }
-    setClose() {
-        this.open = false;
-        this.removeHiddenAvailableAction(ActionEnum.OPEN);
-        this.setDefaultAction(ActionEnum.OPEN);
-        this.addHiddenAvailableAction(ActionEnum.CLOSE);
-    }
-    getOpen() {
-        return this.open;
-    }
-
 
     /**
      * Overrides InstancedEntity.clone

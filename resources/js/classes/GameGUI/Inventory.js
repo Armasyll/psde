@@ -47,6 +47,7 @@ class InventoryGameGUI {
 
         InventoryGameGUI.resetDefaultDimensions();
         InventoryGameGUI.generateController();
+        InventoryGameGUI.hide();
         return 0;
     }
     static resetDefaultDimensions() {

@@ -148,6 +148,8 @@ class AbstractEntity {
          * @type {Object.<ActionEnum, Object.<Effect, boolean>>}
          */
         this.actionEffects = {};
+
+        this.entityLocked = false;
         AbstractEntity.set(this.id, this);
     }
     /**
@@ -880,6 +882,17 @@ class AbstractEntity {
         return 0;
     }
 
+    /**
+     * Entity lock, not to be confused with the functionality lock.
+     * @param {boolean} entityLocked 
+     */
+    setEntityLocked(entityLocked) {
+        this.entityLocked = entityLocked == true;
+    }
+    isEntityLocked() {
+        return this.entityLocked;
+    }
+
     stringify(minimal = false) {
         if (minimal) {
             return JSON.stringify(this.objectifyMinimal());
@@ -901,6 +914,7 @@ class AbstractEntity {
         obj["defaultAction"] = this.defaultAction;
         obj["description"] = this.getDescription();
         obj["enabled"] = this.enabled;
+        obj["entityLocked"] = this.entityLocked;
         obj["equipped"] = false;
         obj["equipable"] = false;
         obj["hasContainer"] = false;
@@ -960,6 +974,7 @@ class AbstractEntity {
                 }
             }
         }
+        if (entity.hasOwnProperty("entityLocked")) this.entityLocked = entity.entityLocked;
         if (entity.hasOwnProperty("entityType")) this.entityType = entity.entityType;
         if (entity.hasOwnProperty("equipable")) this.equipable = entity.equipable;
         if (entity.hasOwnProperty("equipped")) this.equipped = entity.equipped;

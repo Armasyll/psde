@@ -1,7 +1,7 @@
 /**
  * Door Entity
  */
-class DoorEntity extends FurnitureEntity {
+class DoorEntity extends Entity {
     /**
      * Creates a Door Entity
      * @param  {string}  id 
@@ -18,6 +18,9 @@ class DoorEntity extends FurnitureEntity {
         this.entityType = EntityEnum.DOOR;
         this.opensInward = false;
         this.teleportMarker = null;
+        this.entityLocked = false;
+        this.key = null;
+        this.open = false;
 
         this.addAvailableAction(ActionEnum.CLOSE);
         this.addAvailableAction(ActionEnum.OPEN);
@@ -55,12 +58,55 @@ class DoorEntity extends FurnitureEntity {
     getTeleportMarker() {
         return this.teleportMarker;
     }
+    /**
+     * Entity lock, not to be confused with the functionality lock.
+     * @param {boolean} entityLocked 
+     */
+    setEntityLocked(entityLocked) {
+        this.entityLocked = entityLocked == true;
+    }
+    isEntityLocked() {
+        return this.entityLocked;
+    }
+    setKey(itemEntity) {
+        if (!(itemEntity instanceof ItemEntity)) {
+            if (ItemEntity.has(itemEntity)) {
+                itemEntity = ItemEntity.get(itemEntity);
+            }
+            else {
+                return 2;
+            }
+        }
+        this.key = itemEntity;
+        return 0;
+    }
+    getKey() {
+        return this.key;
+    }
+    setOpen() {
+        this.open = true;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+    }
+    setClose() {
+        this.open = false;
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+    }
+    getOpen() {
+        return this.open;
+    }
 
     objectifyMinimal() {
         let obj = super.objectifyMinimal();
         obj["key"] = AbstractEntity.objectifyProperty(this.key);
         obj["opensInward"] = this.opensInward;
         obj["teleportMarker"] = this.teleportMarker;
+        obj["entityLocked"] = this.entityLocked;
+        obj["key"] = this.key;
+        obj["open"] = this.open;
         return obj;
     }
     /**
@@ -74,7 +120,7 @@ class DoorEntity extends FurnitureEntity {
         return clone;
     }
     createInstance(id = "") {
-        return new InstancedFurnitureEntity(id, this); // not really a door instance :v
+        return this.clone(id);
     }
     /**
      * Clones the entity's values over this
@@ -96,6 +142,14 @@ class DoorEntity extends FurnitureEntity {
         }
         if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
         if (entity.hasOwnProperty("teleportMarker")) this.setTeleportMarker(entity.teleportMarker);
+        if (entity.hasOwnProperty("entityLocked")) this.setEntityLocked(entity.entityLocked);
+        if (entity.hasOwnProperty("key")) this.setKey(entity.key);
+        if (entity.hasOwnProperty("open") && entity.open == true) {
+            this.setOpen();
+        }
+        else {
+            this.setClose();
+        }
         return 0;
     }
     updateID(newID) {
