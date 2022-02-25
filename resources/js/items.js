@@ -18,12 +18,10 @@ EntityLogic.createItemEntity("bracer01r", "Right Bracer", "Right iron bracer.", 
 EntityLogic.createItemEntity("pauldron01l", "Left Pauldron", "Left iron pauldron.", undefined, "pauldron01.l", undefined, ItemEnum.APPAREL, ApparelSlotEnum.SHOULDER_L);
 EntityLogic.createItemEntity("pauldron01r", "Right Pauldron", "Right iron pauldron.", undefined, "pauldron01.r", undefined, ItemEnum.APPAREL, ApparelSlotEnum.SHOULDER_R);
 
-EntityLogic.createItemEntity("ring01Silver", "Silver Ring", "A simple silver ring.", "ring01SilverIcon", "ringSimple", "ring02Silver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
-EntityLogic.createItemEntity("ring01Gold", "Gold Ring", "A simple gold ring.", "ring01GoldIcon", "ringSimple", "ring02Gold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
-EntityLogic.createItemEntity("ring02SilverRuby", "Silver Ruby Ring", "A silver ring with an inset ruby.", "ring02SilverIcon", "ringSocketed06", "ring02Silver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
-EntityLogic.createItemEntity("ring02GoldRuby", "Gold Ruby Ring", "A gold ring with an inset ruby.", "ring02GoldIcon", "ringSocketed06", "ring02Gold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
-EntityLogic.createItemEntity("ring03SilverDRuby", "Damaged Silver Ruby Ring", "A silver ring with a damaged inset ruby.", "ring03SilverDRubyIcon", "ringSocketed04", "ring02SilverBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
-EntityLogic.createItemEntity("ring03GoldDRuby", "Damaged Gold Ruby Ring", "A gold ring with a damaged inset ruby.", "ring03GoldDRubyIcon", "ringSocketed04", "ring02GoldBrokenRuby", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+EntityLogic.createItemEntity("ring01Silver", "Silver Ring", "A simple silver ring.", "ring01SilverIcon", "ringSimple", "ringSilver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+EntityLogic.createItemEntity("ring01Gold", "Gold Ring", "A simple gold ring.", "ring01GoldIcon", "ringSimple", "ringGold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+EntityLogic.createItemEntity("ring02SilverSaphire", "Silver Saphire Ring", "A silver ring with an inset saphire.", "ring02SilverIcon", "ringSocketed06", "ringSilver", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
+EntityLogic.createItemEntity("ring02GoldSaphire", "Gold Saphire Ring", "A gold ring with an inset saphire.", "ring02GoldIcon", "ringSocketed06", "ringGold", ItemEnum.APPAREL, ApparelSlotEnum.FINGERS);
 
 EntityLogic.createItemEntity("toothbrushBlue01", "Blue Toothbrush", "Brushie brushie brushie!", "toothbrushBlue01Icon", "toothbrush01", "toothbrushBlue01", ItemEnum.GENERAL);
 EntityLogic.createItemEntity("bottle01", "Bottle", "A simple bottle.", "bottle01Icon", "bottle01", undefined, ItemEnum.GENERAL);
