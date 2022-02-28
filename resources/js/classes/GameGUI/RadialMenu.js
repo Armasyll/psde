@@ -182,9 +182,11 @@
             return 1;
         }
         for (let actionID in entityController.availableActions) {
-            RadialMenuGameGUI.buttons[actionID].isEnabled = true;
-            RadialMenuGameGUI.buttons[actionID].isVisible = true;
-            RadialMenuGameGUI.visibleButtons[actionID] = RadialMenuGameGUI.buttons[actionID];
+            if (!entityController.hiddenAvailableActions.hasOwnProperty(actionID)) {
+                RadialMenuGameGUI.buttons[actionID].isEnabled = true;
+                RadialMenuGameGUI.buttons[actionID].isVisible = true;
+                RadialMenuGameGUI.visibleButtons[actionID] = RadialMenuGameGUI.buttons[actionID];
+            }
         }
         RadialMenuGameGUI.update();
         return 0;
@@ -236,7 +238,7 @@
         if (!AbstractController.has(RadialMenuGameGUI.targetControllerID)) {
             return 1;
         }
-        let buttonCount = Object.keys(AbstractController.get(RadialMenuGameGUI.targetControllerID).availableActions).length;
+        let buttonCount = Object.keys(RadialMenuGameGUI.visibleButtons).length;
         if (buttonCount == 0) {
             return 1;
         }
@@ -244,10 +246,7 @@
         let xPosition = 0;
         let yPosition = 0;
         RadialMenuGameGUI.closeButton._moveToProjectedPosition(new BABYLON.Vector2(xPosition, yPosition));
-        for (let i in RadialMenuGameGUI.buttons) {
-            if (!RadialMenuGameGUI.buttons[i].isVisible) {
-                continue;
-            }
+        for (let i in RadialMenuGameGUI.visibleButtons) {
             xPosition = (RadialMenuGameGUI.controller.widthInPixels/3) * Math.cos(BABYLON.Tools.ToRadians(360/buttonCount*currentCount - 90));
             yPosition = (RadialMenuGameGUI.controller.widthInPixels/3) * Math.sin(BABYLON.Tools.ToRadians(360/buttonCount*currentCount - 90));
             RadialMenuGameGUI.buttons[i].width = "96px";

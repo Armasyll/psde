@@ -697,12 +697,12 @@ let ActionEnum = {
     "SLEEP": 6,
     "MOVE": 7,
     "CLOSE": 8,
-    "CONSUME": 9,
+    "OPEN": 9,
     "DROP": 10,
     "EQUIP": 11,
     "HOLD": 12,
     "LOOK": 13,
-    "OPEN": 14,
+    "CONSUME": 14,
     "RELEASE": 15,
     "TAKE": 16,
     "TALK": 17,
@@ -758,9 +758,9 @@ let ActionEnum = {
             "key": "CLOSE"
         },
         9: {
-            "name": "Consume",
+            "name": "Open",
             "value": 9,
-            "key": "CONSUME"
+            "key": "OPEN"
         },
         10: {
             "name": "Drop",
@@ -783,9 +783,9 @@ let ActionEnum = {
             "key": "LOOK"
         },
         14: {
-            "name": "Open",
+            "name": "Consume",
             "value": 14,
-            "key": "OPEN"
+            "key": "CONSUME"
         },
         15: {
             "name": "Release",

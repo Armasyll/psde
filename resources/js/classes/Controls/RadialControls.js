@@ -5,7 +5,7 @@
     static initialize() {
         RadialControls.mouseMovementVectors = new Array();
         RadialControls.currentButtonIndex = -1;
-        RadialControls.xyMax = 12;
+        RadialControls.xyMax = 18;
         RadialControls.xyIncrement = 1;
     }
     static reset() {
