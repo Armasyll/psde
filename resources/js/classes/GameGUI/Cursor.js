@@ -12,6 +12,8 @@ class CursorGameGUI {
         CursorGameGUI.minY = 0;
         CursorGameGUI.maxY = 24;
         CursorGameGUI.internalPointerChanging = false;
+        CursorGameGUI.lock = false;
+        CursorGameGUI.lastActionTime = 200;
         CursorGameGUI.controller = CursorGameGUI.generateController();
         return 0;
     }
@@ -94,18 +96,28 @@ class CursorGameGUI {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
+        if (CursorGameGUI.lock) {
+            return 0;
+        }
+        CursorGameGUI.lock = true;
         Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
         Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
         Game.scene.simulatePointerDown();
+        CursorGameGUI.lock = false;
         return 0;
     }
     static pointerUp(event) {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
+        if (CursorGameGUI.lock) {
+            return 0;
+        }
+        CursorGameGUI.lock = true;
         Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
         Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
         Game.scene.simulatePointerUp();
+        CursorGameGUI.lock = false;
         return 0;
     }
     static context() {

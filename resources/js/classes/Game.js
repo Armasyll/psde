@@ -3844,8 +3844,13 @@ class Game {
         if (!(Game.camera instanceof BABYLON.Camera)) {
             return 1;
         }
-        if (Game.camera.getClassName() == "ArcRotateCamera" && Game.camera.inputs.attached.hasOwnProperty("pointers")) {
-            Game.camera.inputs.remove(Game.camera.inputs.attached.pointers);
+        if (Game.camera.getClassName() == "ArcRotateCamera") {
+            if (Game.camera.inputs.attached.hasOwnProperty("pointers")) {
+                Game.camera.inputs.remove(Game.camera.inputs.attached.pointers);
+            }
+            if (Game.camera.inputs.attached.hasOwnProperty("mousewheel")) {
+                Game.camera.inputs.remove(Game.camera.inputs.attached.mousewheel);
+            }
         }
         return 0;
     }
@@ -3857,8 +3862,13 @@ class Game {
             if (!Game.camera.inputs.attached.hasOwnProperty("pointers")) {
                 Game.camera.inputs.addPointers();
             }
-            Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
-            Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
+            if (!Game.camera.inputs.attached.hasOwnProperty("mousewheel")) {
+                Game.camera.inputs.addMouseWheel();
+            }
+            if (Game.camera.inputs.attached.hasOwnProperty("pointers")) {
+                Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
+                Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
+            }
         }
         return 0;
     }
@@ -4711,27 +4721,39 @@ class Game {
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.cameraPointerControlAttach();
+                Game.gui.hud.actionTooltip.unlock();
                 Game.gui.cursor.hide();
                 Game.gui.hud.show();
                 Game.controls = CharacterControls;
                 break;
             }
             case InterfaceModeEnum.DIALOGUE: {
+                Game.gui.hud.actionTooltip.lock();
                 Game.cameraPointerControlDetach();
                 Game.gui.cursor.show();
                 Game.controls = DialogueControls;
                 break;
             }
             case InterfaceModeEnum.MENU: {
+                Game.gui.hud.actionTooltip.lock();
                 Game.cameraPointerControlDetach();
                 Game.gui.cursor.show();
                 Game.controls = MenuControls;
                 break;
             }
+            case InterfaceModeEnum.RADIAL: {
+                Game.gui.hud.actionTooltip.lock();
+                Game.cameraPointerControlDetach();
+                RadialControls.reset();
+                Game.gui.cursor.hide();
+                Game.gui.hud.hideCrosshair();
+                Game.gui.hud.actionTooltip.hide();
+                Game.controls = RadialControls;
+                break;
+            }
             case InterfaceModeEnum.EDIT: {
                 Game.cameraPointerControlDetach();
-                EditControls.clearPickedMesh();
-                EditControls.clearPickedController();
+                EditControls.reset();
                 Game.gui.cursor.show();
                 Game.controls = EditControls;
                 break;

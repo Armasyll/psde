@@ -21,7 +21,7 @@ class ActionTooltipGameGUI {
             ActionTooltipGameGUI.controller.leftInPixels = ActionTooltipGameGUI.controller.widthInPixels / 2;
             ActionTooltipGameGUI.controller.alpha = GameGUI.alpha;
             ActionTooltipGameGUI.controller.isVertical = false;
-            ActionTooltipGameGUI.controller.background = GameGUI.focusedBackground;
+            ActionTooltipGameGUI.controller.background = GameGUI.backgroundFocused;
         let keyName = GameGUI.createTextBlock();
             keyName.text = "E";
             keyName.top = 0;
@@ -104,6 +104,9 @@ class ActionTooltipGameGUI {
         return 0;
     }
     static update() {
+        if (ActionTooltipGameGUI.locked) {
+            return 0;
+        }
         if (!Game.playerController.hasTarget()) {
             return 0;
         }
@@ -112,9 +115,11 @@ class ActionTooltipGameGUI {
             return 0;
         }
         if (Game.playerController.hasTarget()) {
+            ActionTooltipGameGUI.show();
             return ActionTooltipGameGUI.set(ActionEnum.properties[actionID].name);
         }
         else {
+            ActionTooltipGameGUI.hide();
             ActionTooltipGameGUI.clear();
         }
         return 0;
@@ -133,9 +138,6 @@ class ActionTooltipGameGUI {
      * Hide the action tooltip.
      */
     static hide() {
-        if (ActionTooltipGameGUI.locked) {
-            return 0;
-        }
         ActionTooltipGameGUI.controller.isVisible = false;
         return 0;
     }

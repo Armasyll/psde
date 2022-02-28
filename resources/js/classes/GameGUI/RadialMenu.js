@@ -10,10 +10,11 @@
         RadialMenuGameGUI.initialized = false;
         RadialMenuGameGUI.controller = null;
         RadialMenuGameGUI.buttons = {};
+        RadialMenuGameGUI.visibleButtons = {};
         RadialMenuGameGUI.targetControllerID = null;
         RadialMenuGameGUI.isVisible = false;
         RadialMenuGameGUI.locked = false;
-        RadialMenuGameGUI.interfaceMode = InterfaceModeEnum.CHARACTER;
+        RadialMenuGameGUI.interfaceMode = InterfaceModeEnum.RADIAL;
 
         RadialMenuGameGUI.resetDefaultDimensions();
         RadialMenuGameGUI.generateController();
@@ -60,6 +61,8 @@
         for (let i in ActionEnum.properties) {
             i = Number.parseInt(i);
             button = GameGUI.createSimpleButton(String(`action${ActionEnum.properties[i].name}Button`), ActionEnum.properties[i].name);
+            button.color = GameGUI.color;
+            button.background = GameGUI.background;
             RadialMenuGameGUI.buttons[i] = button;
             RadialMenuGameGUI.controller.addControl(button);
             switch(i) {
@@ -181,6 +184,7 @@
         for (let actionID in entityController.availableActions) {
             RadialMenuGameGUI.buttons[actionID].isEnabled = true;
             RadialMenuGameGUI.buttons[actionID].isVisible = true;
+            RadialMenuGameGUI.visibleButtons[actionID] = RadialMenuGameGUI.buttons[actionID];
         }
         RadialMenuGameGUI.update();
         return 0;
@@ -195,6 +199,9 @@
         return 0;
     }
     static clear() {
+        for (let i in RadialMenuGameGUI.visibleButtons) {
+            delete RadialMenuGameGUI.visibleButtons[i];
+        }
         for (let i in RadialMenuGameGUI.buttons) {
             RadialMenuGameGUI.buttons[i].isEnabled = false;
             RadialMenuGameGUI.buttons[i].isVisible = false;
@@ -203,22 +210,26 @@
     }
     static show() {
         if (RadialMenuGameGUI.locked) {
-            return 1;
+            return 0;
         }
-        HUDGameGUI.actionTooltip.hide();
-        HUDGameGUI.actionTooltip.lock();
-        RadialMenuGameGUI.isVisible = true;
+        for (let i in RadialMenuGameGUI.visibleButtons) {
+            RadialMenuGameGUI.visibleButtons[i].color = GameGUI.color;
+            RadialMenuGameGUI.visibleButtons[i].background = GameGUI.background;
+        }
+        RadialControls.reset();
+        GameGUI.windowStack.push(RadialMenuGameGUI);
         RadialMenuGameGUI.controller.isVisible = true;
-        return 0;
+        RadialMenuGameGUI.isVisible = true;
+        GameGUI.afterShow();
     }
     static hide() {
         if (RadialMenuGameGUI.locked) {
-            return 1;
+            return 0;
         }
         RadialMenuGameGUI.controller.isVisible = false;
         RadialMenuGameGUI.isVisible = false;
-        HUDGameGUI.actionTooltip.unlock();
-        HUDGameGUI.actionTooltip.show();
+        GameGUI.windowStack.remove(RadialMenuGameGUI);
+        GameGUI.afterHide();
         return 0;
     }
     static update() {
@@ -246,6 +257,24 @@
             RadialMenuGameGUI.buttons[i].top = yPosition;
             currentCount++;
         }
+        return 0;
+    }
+    static unhighlightButtonIndex(index) {
+        if (!Object.keys(RadialMenuGameGUI.visibleButtons).hasOwnProperty(index)) {
+            return 0;
+        }
+        let button = RadialMenuGameGUI.visibleButtons[Object.keys(RadialMenuGameGUI.visibleButtons)[index]];
+        button.color = GameGUI.color;
+        button.background = GameGUI.background;
+        return 0;
+    }
+    static highlightButtonIndex(index) {
+        if (!Object.keys(RadialMenuGameGUI.visibleButtons).hasOwnProperty(index)) {
+            return 0;
+        }
+        let button = RadialMenuGameGUI.visibleButtons[Object.keys(RadialMenuGameGUI.visibleButtons)[index]];
+        button.color = GameGUI.colorFocused;
+        button.background = GameGUI.backgroundFocused;
         return 0;
     }
 }

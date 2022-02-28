@@ -114,33 +114,6 @@ class AbstractControls {
     static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
             Game.scene.simulatePointerMove();
-            let vec2 = new BABYLON.Vector2(mouseEvent.movementX, mouseEvent.movementY);
-            AbstractControls.mouseMovementVectors.push(vec2);
-            if (AbstractControls.mouseMovementVectors.length > 9) {
-                AbstractControls.mouseMovementVectors.shift();
-            }
-            let xTotal = 0;
-            let yTotal = 0;
-            for (let i = AbstractControls.mouseMovementVectors.length - 1; i > 0; i--) {
-                xTotal += AbstractControls.mouseMovementVectors[i].x;
-                yTotal += AbstractControls.mouseMovementVectors[i].y;
-            }
-            /*if (Math.abs(xTotal) > Math.abs(yTotal)) {
-                if (xTotal < 0) {
-                    console.log("-x");
-                }
-                else {
-                    console.log("+x");
-                }
-            }
-            else if (Math.abs(xTotal) < Math.abs(yTotal)) {
-                if (yTotal < 0) {
-                    console.log("-y");
-                }
-                else {
-                    console.log("+y");
-                }
-            }*/
             Game.gui.cursor.update(mouseEvent.movementX, mouseEvent.movementY);
         }
         return 0;
@@ -158,7 +131,6 @@ class AbstractControls {
         AbstractControls.initialized = false;
         AbstractControls.initQwertyKeyboardControls();
         AbstractControls.keysPressed = {};
-        AbstractControls.mouseMovementVectors = new Array();
         AbstractControls.initialized = true;
         return 0;
     }

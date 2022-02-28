@@ -27,13 +27,19 @@ class GameGUI {
         GameGUI.titleBarHeightInPixels = GameGUI.getFontSize(2);
         GameGUI.alpha = 0.75;
         GameGUI.containerAlpha = 0.75;
-        GameGUI.color = "#c3c3c3";
-        GameGUI.colorDanger = "#ffffff";
-        GameGUI.background = "#0c0c0c";
-        GameGUI.backgroundDisabled = "#030c0c";
-        GameGUI.backgroundDanger = "#dc3545";
-        GameGUI.focusedBackground = "#3c3c3c";
-        GameGUI.focusedBackgroundDisabled = "#0c3c3c";
+
+
+        GameGUI.color = "#C3C3C3";
+        GameGUI.background = "#0C0C0C";
+        GameGUI.backgroundDisabled = "#030303";
+
+        GameGUI.colorDanger = "#FFFFFF";
+        GameGUI.backgroundDanger = "#DC3545";
+        GameGUI.backgroundDangerDisabled = "#030303";
+        
+        GameGUI.colorFocused = "#FFFFFF";
+        GameGUI.backgroundFocused = "#3C3C3C";
+        GameGUI.backgroundFocusedDisabled = "#0C0C0C";
 
         if (Game.debugMode) BABYLON.Tools.Log("Attempting to create an advanced dynamic texture");
         //GameGUI.controller = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
@@ -56,6 +62,7 @@ class GameGUI {
         GameGUI.addAndInitializeSubClass("inventoryMenu", InventoryGameGUI);
         GameGUI.addAndInitializeSubClass("inventoryEquipmentMenu", InventoryEquipmentGameGUI);
         GameGUI.addAndInitializeSubClass("characterStats", CharacterStatsGameGUI);
+        GameGUI.addAndInitializeSubClass("radialMenu", RadialMenuGameGUI);
         GameGUI.addAndInitializeSubClass("book", BookGameGUI);
 
         GameGUI.resize();
@@ -113,6 +120,7 @@ class GameGUI {
         for (let i = 0; i < GameGUI.windowStack.length; i++) {
             GameGUI.windowStack[i].hide(false);
         }
+        GameGUI.radialMenu.hide();
         GameGUI.afterHideMenuChildren();
         return 0;
     }
@@ -158,8 +166,8 @@ class GameGUI {
         name = Tools.filterID(name);
         let button = BABYLON.GUI.Button.CreateSimpleButton(name, text);
         button.fontSize = GameGUI.fontSize;
-        button.color = GameGUI.color;
-        button.background = GameGUI.focusedBackground;
+        button.color = GameGUI.colorFocused;
+        button.background = GameGUI.backgroundFocused;
         button.thickness = 0;
         button.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         button.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
@@ -178,8 +186,8 @@ class GameGUI {
         name = Tools.filterID(name);
         let button = BABYLON.GUI.Button.CreateImageButton(name, text, imageUri);
         button.fontSize = GameGUI.fontSize;
-        button.color = GameGUI.color;
-        button.background = GameGUI.focusedBackground;
+        button.color = GameGUI.colorFocused;
+        button.background = GameGUI.backgroundFocused;
         button.thickness = 0;
         button.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         button.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
@@ -215,7 +223,7 @@ class GameGUI {
         let inputText = new BABYLON.GUI.InputText(name, text);
         inputText.fontSize = GameGUI.fontSize;
         inputText.color = GameGUI.color;
-        inputText.focusedBackground = GameGUI.focusedBackground;
+        inputText.backgroundFocused = GameGUI.backgroundFocused;
         inputText.disabledColorItem = GameGUI.color;
         inputText.thickness = 0;
         inputText.background = null;

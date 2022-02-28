@@ -317,6 +317,8 @@ class EditControls extends AbstractControls {
         return 0;
     }
     static reset() {
+        EditControls.clearPickedMesh();
+        EditControls.clearPickedController();
         EditControls.initialize();
         return 0;
     }

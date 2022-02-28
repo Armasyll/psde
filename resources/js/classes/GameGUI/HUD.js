@@ -18,8 +18,6 @@ class HUDGameGUI {
         HUDGameGUI.actionTooltip = ActionTooltipGameGUI;
         HUDGameGUI.actionTooltip.initialize();
         HUDGameGUI.crosshair = HUDGameGUI.generateCrosshair();
-        HUDGameGUI.radialMenu = RadialMenuGameGUI;
-        HUDGameGUI.radialMenu.initialize();
 
         HUDGameGUI.playerPortrait = PlayerPortraitGameGUI;
         HUDGameGUI.playerPortrait.initialize();
@@ -27,7 +25,6 @@ class HUDGameGUI {
         HUDGameGUI.targetPortrait.initialize();
 
         HUDGameGUI.controller.addControl(HUDGameGUI.crosshair);
-        HUDGameGUI.controller.addControl(HUDGameGUI.radialMenu.getController());
         HUDGameGUI.controller.addControl(HUDGameGUI.actionTooltip.getController());
         HUDGameGUI.controller.addControl(HUDGameGUI.playerPortrait.getController());
         HUDGameGUI.controller.addControl(HUDGameGUI.targetPortrait.getController());
@@ -73,7 +70,6 @@ class HUDGameGUI {
         HUDGameGUI.isVisible = false;
         HUDGameGUI.hideCrosshair();
         HUDGameGUI.actionTooltip.hide();
-        HUDGameGUI.radialMenu.hide();
         HUDGameGUI.playerPortrait.hide();
         HUDGameGUI.targetPortrait.hide();
         return 0;

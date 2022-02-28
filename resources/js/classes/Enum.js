@@ -1600,30 +1600,42 @@ let InterfaceModeEnum = {
     "MENU": 3,
     "EDIT": 4,
     "WRITING": 5,
+    "RADIAL": 6,
     "properties": {
         0: {
             "name": "None",
-            "value": 0
+            "value": 0,
+            "key": "NONE"
         },
         1: {
             "name": "Character",
-            "value": 1
+            "value": 1,
+            "key": "CHARACTER"
         },
         2: {
             "name": "Dialogue",
-            "value": 2
+            "value": 2,
+            "key": "DIALOGUE"
         },
         3: {
             "name": "Menu",
-            "value": 3
+            "value": 3,
+            "key": "MENU"
         },
         4: {
             "name": "Edit",
-            "value": 4
+            "value": 4,
+            "key": "EDIT"
         },
         5: {
             "name": "Writing",
-            "value": 5
+            "value": 5,
+            "key": "WRITING"
+        },
+        6: {
+            "name": "Radial",
+            "value": 6,
+            "key": "RADIAL"
         }
     }
 };
