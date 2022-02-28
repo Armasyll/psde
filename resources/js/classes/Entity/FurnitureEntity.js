@@ -16,6 +16,7 @@ class FurnitureEntity extends Entity {
         this.entityType = EntityEnum.FURNITURE;
         this.furnitureType = FurnitureEnum.NONE;
         this.availableSeats = 0;
+        this.open = false;
 
         this.setFurnitureType(furnitureType);
 
@@ -179,6 +180,21 @@ class FurnitureEntity extends Entity {
     }
     getAvailableSeats() {
         return this.availableSeats;
+    }
+    setOpen() {
+        this.open = true;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+    }
+    setClose() {
+        this.open = false;
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+    }
+    getOpen() {
+        return this.open;
     }
 
     objectifyMinimal() {
