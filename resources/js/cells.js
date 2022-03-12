@@ -58,8 +58,8 @@ apartmentCell.addCollidableMesh("ozzyBathroomWallS1", "craftsmanWall", "whiteWal
 apartmentCell.addCollidableMesh("ozzyBathroomWallW0Doorway", "craftsmanDoorway", "whiteWallpaperPlainWood", [6, 0, -2], [0, 270, 0]);
 apartmentCell.addCollidableMesh("ozzyBathroomWallW1", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, 0], [0, 270, 0]);
 apartmentCell.addFurniture("ozzyBathroomToilet", "animatedToilet01", [8.5, 0, -1], [0, 90, 0]);
-apartmentCell.addFurniture("ozzyBathroomSink", "sink01", [8.95, 0, -0.25], [0, 90, 0]);
-apartmentCell.addFurniture("ozzyBathroomFaucet", "animatedFaucet01", [8.95, 0, -0.25], [0, 90, 0]);
+apartmentCell.addFurniture("ozzyBathroomSink", "sink01Basin", [8.95, 0, -0.25], [0, 90, 0]);
+apartmentCell.addFurniture("ozzyBathroomFaucet", "animatedSinkFaucet01", [8.95, 0, -0.25], [0, 90, 0]);
 apartmentCell.addFurniture("ozzyBathroomTub", "bathtub01", [8.85, 0, -2.5], [0, 90, 0]);
 
 // Ozzy Hallway
