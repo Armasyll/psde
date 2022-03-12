@@ -196,12 +196,12 @@ apartmentCell.addCollidableMesh("commons1WallN4", "craftsmanWall", "greenWallpap
 apartmentCell.addCollidableMesh("commons1WallN5", "craftsmanWall", "greenWallpaperPlainWood", [10, 0, -18]);
 apartmentCell.addCollidableMesh("commons1WallN6", "craftsmanWall", "greenWallpaperPlainWood", [12, 0, -18]);
 apartmentCell.addCollidableMesh("commons1WallN7", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -18]);
-apartmentCell.addCollidableMesh("commons1WallE0", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -18], [0, 90, 0]);
-apartmentCell.addCollidableMesh("commons1WallE1", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -20], [0, 90, 0]);
-apartmentCell.addCollidableMesh("commons1WallE2", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -22], [0, 90, 0]);
-apartmentCell.addCollidableMesh("commons1WallE3Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]);
-apartmentCell.addCollidableMesh("commons1WallE3Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]);
-apartmentCell.addCollidableMesh("commons1WallE4", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -26], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE2", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -18], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE3", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -20], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE4", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -22], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE5Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE5Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]);
+apartmentCell.addCollidableMesh("commons1WallE6", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -26], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons1WallS0", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -26], [0, 180, 0]);
 apartmentCell.addCollidableMesh("commons1WallS1Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [12, 0, -26], [0, 180, 0]);
 apartmentCell.addCollidableMesh("commons1WallS1Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [12, 0, -26], [0, 180, 0]);
