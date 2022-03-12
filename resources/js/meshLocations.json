@@ -200,6 +200,7 @@
     "sink02BasinCounterWide": "resources/meshes/static/sinks.babylon",
     "sink02Faucet": "resources/meshes/static/sinks.babylon",
     "sink02Pipes": "resources/meshes/static/sinks.babylon",
+    "toilet01": "resources/meshes/static/toilet01.babylon",
     "bathtub01": "resources/meshes/static/bathtub01.babylon",
     "showerPipes01": "resources/meshes/static/bathtub01.babylon",
     "animatedDoor01": "resources/meshes/static/animatedDoor01.babylon",
