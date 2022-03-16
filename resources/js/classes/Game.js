@@ -1721,6 +1721,9 @@ class Game {
         if (vector3 == undefined) {
             return BABYLON.Vector3.Zero();
         }
+        else if (typeof vector3[0] == "number") {
+            return new BABYLON.Vector3(vector3[0], vector3[0], vector3[0]);
+        }
         else if (vector3[0] instanceof BABYLON.Vector3) {
             return vector3[0];
         }
