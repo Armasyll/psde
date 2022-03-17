@@ -1718,30 +1718,22 @@ class Game {
         }
     }
     static filterVector3(...vector3) {
-        if (vector3 == undefined) {
-            return BABYLON.Vector3.Zero();
-        }
-        else if (typeof vector3[0] == "number") {
+        if (vector3.length == 1 && !isNaN(vector3[0])) {
             return new BABYLON.Vector3(vector3[0], vector3[0], vector3[0]);
         }
         else if (vector3[0] instanceof BABYLON.Vector3) {
             return vector3[0];
         }
-        else if (typeof vector3[0] == null) {
-            return BABYLON.Vector3.Zero();
-        }
         else if (vector3[0] instanceof Object && vector3[0].hasOwnProperty("x") && vector3[0].hasOwnProperty("y") && vector3[0].hasOwnProperty("z") && !isNaN(vector3[0].x) && !isNaN(vector3[0].y) && !isNaN(vector3[0].z)) {
             return new BABYLON.Vector3(vector3[0].x, vector3[0].y, vector3[0].z);
         }
-        else if (!isNaN(vector3[0]) && !isNaN(vector3[1]) && !isNaN(vector3[2])) {
+        else if (vector3.length == 3 && !isNaN(vector3[0]) && !isNaN(vector3[1]) && !isNaN(vector3[2])) {
             return new BABYLON.Vector3(vector3[0], vector3[1], vector3[2]);
         }
         else if (vector3[0] instanceof Array && vector3[0].length == 3) {
             return new BABYLON.Vector3(vector3[0][0], vector3[0][1], vector3[0][2]);
         }
-        else {
-            return BABYLON.Vector3.Zero();
-        }
+        return BABYLON.Vector3.Zero();
     }
     static filterController(blob) {
         if (blob instanceof EntityController) {
