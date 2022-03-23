@@ -117,6 +117,7 @@
     "gem08": "resources/meshes/items/misc.babylon",
     "bowl01": "resources/meshes/items/dishware01.babylon",
     "plate01": "resources/meshes/items/dishware01.babylon",
+    "brain01": "resources/meshes/gibs.babylon",
     "eye01": "resources/meshes/gibs.babylon",
     "eye02": "resources/meshes/gibs.babylon",
     "_cD": "resources/meshes/items/misc.babylon",
