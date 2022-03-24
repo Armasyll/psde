@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg282"
+   sodipodi:docname="refrigerator01.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata288">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs286" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview284"
+     showgrid="false"
+     inkscape:current-layer="svg282" />
+  <desc
+     id="desc2">animatedRefrigerator01.blend, (Blender 3.1.0)</desc>
+  <path
+     style="opacity:1;vector-effect:none;fill:#e6e6e6;fill-opacity:1;stroke:none;stroke-width:3.82308125;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     d="M 0 0 L 0 1024 L 768 1024 L 768 768.09961 L 942.98633 768.09961 L 1024 768.09961 L 1024 572.46289 L 942.98633 572.46289 L 942.98633 512.09961 L 1024 512.09961 L 1024 0.099609375 L 768 0.099609375 L 768 0 L 0 0 z "
+     id="rect1108" />
+  <path
+     style="fill:#fffdf2;fill-opacity:1;stroke:none"
+     d="M 196.33203 384.67773 L 196.33203 536.17969 L 44.830078 536.17969 L 44.830078 867.72656 L 196.33203 867.72656 L 196.33203 1019.2266 L 366.84961 1019.2266 L 366.84961 867.72656 L 518.34961 867.72656 L 518.34961 536.17969 L 366.84961 536.17969 L 366.84961 384.67773 L 196.33203 384.67773 z M 204.82812 548.91406 L 358.41602 548.91406 L 357.75391 646.2168 L 205.4375 646.2168 L 204.82812 548.91406 z M 205.4375 655.89453 L 357.75391 655.89453 L 357.75391 859.69141 L 205.4375 859.69141 L 205.4375 655.89453 z "
+     id="polygon4" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="700.876,867.727 700.876,536.179 530.359,536.179 530.359,867.727 "
+     id="polygon6"
+     style="stroke:none;fill:#776e62;fill-opacity:1" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="672.002,473.339 778.170,473.339 778.170,345.646 672.002,345.646 "
+     id="polygon14"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="734.476,8.904 537.074,8.903 537.074,136.596 734.476,136.596 "
+     id="polygon16"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     points="392.739,239.478 520.431,239.478 520.431,87.908 392.739,87.907 "
+     id="polygon18"
+     stroke-width="1"
+     stroke="black"
+     fill-opacity="0.25"
+     fill="rgb(204, 204, 204)"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="392.739,239.478 392.739,345.646 520.431,345.646 520.431,239.478 "
+     id="polygon20"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="672.002,239.478 520.431,239.478 520.431,345.646 672.002,345.646 "
+     id="polygon22"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="886.047,136.596 886.047,333.998 1013.739,333.998 1013.739,136.596 "
+     id="polygon24"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="734.476,333.998 886.047,333.998 886.047,136.596 734.476,136.596 "
+     id="polygon26"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="520.431,473.339 672.002,473.339 672.002,345.646 520.431,345.646 "
+     id="polygon28"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="886.047,8.904 734.476,8.904 734.476,136.596 886.047,136.596 "
+     id="polygon30"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="973.101,898.795 973.101,891.391 821.716,891.391 821.716,898.795 "
+     id="polygon32"
+     style="fill:#fffdf5;fill-opacity:0.6111111;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="1013.739,485.569 1013.739,333.998 886.047,333.998 886.047,485.569 "
+     id="polygon38"
+     style="fill:#fffdf5;fill-opacity:1;stroke:none" />
+  <path
+     d="M 29.359375 760.44922 L 13.351562 760.48242 L 13.351562 760.62109 L 13.351562 889.08203 L 13.351562 889.21484 L 13.351562 899.42578 L 13.351562 899.42773 L 13.351562 950.83984 L 13.351562 950.84961 L 13.351562 950.875 L 13.351562 950.99219 L 13.351562 957.5332 L 13.351562 957.65039 L 13.351562 957.67188 L 13.351562 957.68359 L 13.351562 1007.4824 L 13.351562 1007.6367 L 13.351562 1017.8008 L 13.351562 1017.8027 L 29.359375 1017.8027 L 29.359375 1017.8008 L 29.359375 1007.6387 L 29.359375 1007.4922 L 29.359375 957.68359 L 29.359375 950.96094 L 29.359375 950.91406 L 29.359375 950.86914 L 29.359375 950.85156 L 29.359375 899.42773 L 29.359375 889.18164 L 29.359375 889.15625 L 29.359375 760.62109 L 29.359375 760.61523 L 29.359375 760.58984 L 29.359375 760.55664 L 29.359375 760.48242 L 29.359375 760.44922 z "
+     id="polygon46"
+     style="fill:#fff8d1;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="821.716,898.795 821.716,1007.417 973.101,1007.417 973.101,898.795 "
+     id="polygon70"
+     style="fill:#fffdf5;fill-opacity:0.6111111;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="821.716,891.391 973.101,891.391 973.101,782.789 821.716,782.789 "
+     id="polygon72"
+     style="fill:#fffdf5;fill-opacity:0.6111111;stroke:none" />
+  <path
+     d="M 13.351562 390.5918 L 13.351562 695.71875 L 13.351562 748.57617 L 27.203125 741.5918 L 27.203125 687.70312 L 27.199219 395.82422 L 13.351562 390.5918 z "
+     id="polygon82"
+     style="fill:#fff8d1;fill-opacity:1;stroke:none" />
+  <path
+     d="M 196.37891 144.54883 L 196.37891 155.4707 L 185.46094 155.66016 L 185.46094 360.91797 L 196.33203 360.72656 L 196.33203 371.64648 L 366.74805 371.65234 L 366.74805 360.73242 L 377.66992 360.73242 L 377.66992 155.4707 L 366.74805 155.56445 L 366.74805 155.4707 L 366.77539 155.4707 L 366.77539 144.54883 L 196.37891 144.54883 z "
+     id="polygon98"
+     style="fill:#fffdf2;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="173.451,155.661 3.081,155.661 3.081,360.918 173.451,360.918 "
+     id="polygon104"
+     style="fill:#fffdf2;fill-opacity:1;stroke:none" />
+  <path
+     d="M 194.10352 3.203125 L 194.29297 14.123047 L 183.37305 14.314453 L 185.46094 133.65234 L 196.37891 133.65234 L 196.37891 144.54883 L 366.77539 144.54883 L 366.77539 133.65234 L 377.66992 133.65234 L 377.66992 14.123047 L 366.77539 14.123047 L 366.77539 3.203125 L 194.10352 3.203125 z "
+     id="polygon110"
+     style="fill:#fffdf2;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="0.969,133.837 171.365,133.837 171.365,14.314 0.969,14.314 "
+     id="polygon120"
+     style="fill:#fffdf2;fill-opacity:1;stroke:none" />
+  <path
+     style="fill:#776e62;fill-opacity:1;stroke:none"
+     d="M 712.88477 855.29492 L 712.88477 860.34375 L 709.52734 865.04883 L 712.88477 869.75391 L 712.88477 874.80273 L 728.15625 874.80273 L 728.15625 869.75391 L 728.15625 865.04883 L 728.15625 860.34375 L 728.15625 855.29492 L 712.88477 855.29492 z "
+     id="polygon122" />
+  <path
+     style="fill:#776e62;fill-opacity:1;stroke:none"
+     d="M 712.88477 530.66992 L 712.88477 535.71875 L 709.52734 540.42383 L 712.88477 545.12891 L 712.88477 550.17578 L 728.15625 550.17578 L 728.15625 545.12891 L 728.15625 540.42383 L 728.15625 535.71875 L 728.15625 530.66992 L 712.88477 530.66992 z "
+     id="polygon132" />
+  <path
+     style="fill:#776e62;fill-opacity:1;stroke:none"
+     d="M 712.88477 640.85938 L 712.88477 645.9082 L 709.52734 650.61328 L 712.88477 655.31836 L 712.88477 660.36523 L 728.15625 660.36523 L 728.15625 655.31836 L 728.15625 650.61328 L 728.15625 645.9082 L 728.15625 640.85938 L 712.88477 640.85938 z "
+     id="polygon142" />
+  <path
+     style="fill:#fffdf5;fill-opacity:1;stroke:none"
+     d="M 927.54297 527.88281 L 904.18555 528.54102 L 904.18555 551.22852 L 900.07812 555.13477 L 897.41211 551.22852 L 897.41211 528.54102 L 874.29883 528.54102 L 874.29883 551.22852 L 870.10156 555.13477 L 866.9668 551.22852 L 866.9668 528.54102 L 844.25195 528.54102 L 844.25195 551.22852 L 840.73828 555.13477 L 837.31836 551.22852 L 837.31836 528.54102 L 816.1582 528.54102 L 816.06641 551.22852 L 811.34766 551.22852 L 813.1543 555.13477 L 813.1543 577.82227 L 840.73828 577.82227 L 870.10156 577.82227 L 900.07812 577.82227 L 931.64844 577.11914 L 931.64844 554.43164 L 927.54297 550.57031 L 927.54297 527.88281 z "
+     id="polygon152" />
+  <path
+     style="fill:#fffdf5;fill-opacity:1;stroke:none"
+     d="M 819.85742 585.00977 L 819.85742 609.14453 L 817.19141 613.25195 L 812.86523 612.35547 L 795.80078 597.63477 L 783.91016 625.15234 L 784.87305 627.30859 L 817.19141 637.38867 L 966.47656 637.38867 L 1001.3906 637.38867 L 1001.3887 613.25391 L 966.47656 613.25195 L 963.81055 609.14453 L 963.81055 585.00977 L 819.85742 585.00977 z M 966.47656 613.25195 L 1001.3887 613.25195 L 997.28125 610.58789 L 997.28125 586.44922 L 970.58203 586.44922 L 970.58203 610.58789 L 966.47656 613.25195 z "
+     id="polygon162" />
+  <path
+     style="fill:#fffdf5;fill-opacity:1;stroke:none"
+     d="M 819.85742 644.57422 L 819.85742 669.41992 L 817.11328 673.64648 L 812.65625 672.70703 L 795.02734 657.51172 L 782.82812 686.00977 L 783.83984 688.22266 L 817.11328 698.49023 L 970.77344 698.49023 L 1004.0391 688.11328 L 1005.0293 685.89453 L 992.79297 657.57031 L 975.22461 672.72461 L 970.77344 673.64648 L 968.0293 669.41992 L 968.0293 644.57422 L 819.85742 644.57422 z "
+     id="polygon164" />
+  <path
+     style="fill:#fffdf5;fill-opacity:1;stroke:none"
+     d="M 819.85547 705.67773 L 819.85547 730.51953 L 817.11328 734.74805 L 812.65625 733.80859 L 795.02734 718.61328 L 782.82812 747.11133 L 783.83984 749.32422 L 817.11328 759.5918 L 970.77344 759.5918 L 1004.0391 749.2168 L 1005.0293 746.99609 L 992.79297 718.67188 L 975.22656 733.82422 L 970.77344 734.74805 L 968.0293 730.51953 L 968.0293 705.67773 L 819.85547 705.67773 z "
+     id="polygon166" />
+  <path
+     style="fill:#fffdf5;fill-opacity:0.61176473;stroke:none"
+     d="M 950.92188 516.48047 L 950.45703 530.85742 L 950.88086 544.22461 L 945.86328 556.61914 L 951.64062 568.20703 L 991.30078 566.95117 L 990.54102 542.9668 L 991.30078 519.48242 L 950.92188 516.48047 z "
+     id="polygon246" />
+</svg>
