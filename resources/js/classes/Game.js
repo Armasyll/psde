@@ -50,6 +50,7 @@ class Game {
         Game.cameraInertia = 0.9;
         Game.cameraAngularSensitivityX = 3500;
         Game.cameraAngularSensitivityY = 3500;
+        Game.cameraWheelPrecision = 100;
         Game.useCameraRay = false;
         Game.cameraRay = null;
         Game.ambientLight = null;
@@ -3863,6 +3864,9 @@ class Game {
             if (Game.camera.inputs.attached.hasOwnProperty("pointers")) {
                 Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
                 Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
+            }
+            if (Game.camera.inputs.attached.hasOwnProperty("mousewheel")) {
+                Game.camera.inputs.attached.mousewheel.wheelPrecision = Game.cameraWheelPrecision;
             }
         }
         return 0;
