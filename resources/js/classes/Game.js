@@ -4646,6 +4646,7 @@ class Game {
             Game.createFurniture(...entry);
         });
         cell["lighting"].forEach((entry) => {
+            console.log(entry);
             Game.createLighting(...entry);
         });
         cell["creatures"].forEach((entry) => {

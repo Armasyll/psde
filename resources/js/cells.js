@@ -521,9 +521,9 @@ apartmentCell.addCollidableMesh("brickWallInstance05", "brickWall01", "brickWall
 apartmentCell.addCollidableMesh("brickWallInstance06", "brickWall01", "brickWall01", [-1.075, 0, -27.075], [0, 85, 0]);
 
 // Misc
-apartmentCell.addCharacter("rinehart", CharacterEntity.get("rinehart"), [3, 0, -20], [0, 180, 0]);
-apartmentCell.addCharacter("rosie", CharacterEntity.get("rosie"), [2, 0, -4.5]);
-apartmentCell.addCharacter("charlie", CharacterEntity.get("charlie"), [2, 0, -5], [0, 180, 0], [0.9, 0.9, 0.9]);
+apartmentCell.addCharacter("rinehart", "rinehart", [3, 0, -20], [0, 180, 0]);
+apartmentCell.addCharacter("rosie", "rosie", [2, 0, -4.5]);
+apartmentCell.addCharacter("charlie", "charlie", [2, 0, -5], [0, 180, 0], [0.9, 0.9, 0.9]);
 
 let packstreetApt3BasementCell = new Cell("packstreetApt3BasementCell");
 packstreetApt3BasementCell.createBarrier(32);
@@ -595,7 +595,7 @@ networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "si
 networkTestCell.addCollidableMesh(undefined, "stick01", "stick01", [0, 0, 3], undefined, [10, 10, 10]);
 networkTestCell.addCollidableMesh(undefined, "stopSign", "stopSign", [3, 0, 6]);
 networkTestCell.addLighting("commonsLamp", "lamp01", [6, 0, 3]);
-networkTestCell.addCharacter("rinehart", CharacterEntity.get("rinehart"), [3, 0, 0], [0, 180, 0]);
+networkTestCell.addCharacter("rinehart", "rinehart", [3, 0, 0], [0, 180, 0]);
 networkTestCell.addItem("cheeseWedgeInstance01", "cheeseWedge", [3, 0, 3]);
 networkTestCell.addItem("cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", [3, 0, 3]);
 

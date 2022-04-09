@@ -440,7 +440,12 @@ class Container {
     clone(id = "") {
         let clone = new Container(id, this.name, this.maxSize, this.maxWeight);
         for (let slot in this.items) {
-            clone.addItemToSlot(InstancedItemEntity.get(this.items[slot]).clone(), slot);
+            if (this.items[slot] instanceof InstancedItemEntity) {
+                clone.addItemToSlot(this.items[slot].clone(), slot);
+            }
+            else {
+                console.log(this.items[slot]);
+            }
         }
         clone.assign(this);
         return clone;
@@ -454,9 +459,9 @@ class Container {
         if (verify && !(container instanceof Container)) {
             return 2;
         }
-        this.setWeight(container.weight);
         this.setMaxSize(container.maxSize);
         this.setMaxWeight(container.maxWeight);
+        this.calculateWeight();
         return 0;
     }
     dispose() {

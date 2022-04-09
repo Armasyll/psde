@@ -458,9 +458,6 @@ class Cell {
         else if (property instanceof Cell) {
             obj = property.id;
         }
-        else if (property instanceof CharacterClass) {
-            obj = property.id;
-        }
         else if (property instanceof Container) {
             obj = Cell.objectifyProperty(property.items);
         }

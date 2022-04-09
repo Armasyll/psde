@@ -1131,10 +1131,8 @@ class CharacterEntity extends CreatureEntity {
         super.assign(entity, verify);
         if (entity.hasOwnProperty("equipment")) {
             for (let equipmentSlot in entity.equipment) {
-                if (Object.keys(entity.equipment[equipmentSlot]).length > 0) {
-                    for (let item in entity.equipment[equipmentSlot]) {
-                        this.equip(item, equipmentSlot);
-                    }
+                if (entity.equipment[equipmentSlot] instanceof InstancedItemEntity) {
+                    this.equip(entity.equipment[equipmentSlot].clone(), equipmentSlot);
                 }
             }
         }
