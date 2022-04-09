@@ -1813,55 +1813,9 @@ class Game {
      */
     static loadJSON(file, onload = null, onerror = null, onfinal = null) {
         if (Game.useNative) {
-            return Game.loadJSONNative(file, onload, onerror, onfinal);
+            return Tools.loadJSONNative(file, onload, onerror, onfinal);
         }
-        return Game.loadJSONBrowser(file, onload, onerror, onfinal);
-    }
-    static loadJSONNative(file, onload = null, onerror = null, onfinal = null) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running loadJSONNative");
-        let xhr = new XMLHttpRequest();
-        xhr.addEventListener("readystatechange", function() {
-            if (xhr.readyState === 4) {
-                try {
-                    xhr.onreadystatechange = null;
-                    if (onload) {
-                        onload(JSON.parse(xhr.responseText), onfinal);
-                    }
-                }
-                catch (e) {
-                    if (onerror) {
-                        onerror();
-                    }
-                }
-            }
-        }, false);
-        if (onerror) {
-            xhr.onerror = onerror();
-        }
-        xhr.open("GET", String("file://").concat(Game.rootDirectory).concat(file), true);
-        xhr.send();
-        return 0;
-    }
-    static loadJSONBrowser(file, onload = null, onerror = null, onfinal = null) {
-        if (Game.debugMode) BABYLON.Tools.Log("Running loadJSONBrowser");
-        let xhr = new XMLHttpRequest();
-        xhr.onload = (e) => {
-            if (e.target.status == 200) {
-                if (onload) {
-                    onload(JSON.parse(xhr.responseText), onfinal);
-                }
-            }
-        };
-        xhr.onerror = (e) => {
-            if (e.target.status == 404) {
-                if (onerror) {
-                    onerror(xhr);
-                }
-            }
-        };
-        xhr.open("GET", file, true);
-        xhr.send();
-        return 0;
+        return Tools.loadJSONBrowser(file, onload, onerror, onfinal);
     }
     /**
      * 
@@ -1872,28 +1826,9 @@ class Game {
      */
     static loadScript(file, onload = null, onerror = null, onfinal = null) {
         if (Game.useNative) {
-            return Game.loadScriptNative(file, onload, onerror, onfinal);
+            return Tools.loadScriptNative(file, onload, onerror, onfinal);
         }
-        return Game.loadScriptBrowser(file, onload, onerror, onfinal);
-    }
-    static loadScriptNative(file, onload = null, onerror = null, onfinal = null) {
-        return 0;
-    }
-    static loadScriptBrowser(file, onload = null, onerror = null, onfinal = null) {
-        let script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = file;
-        if (typeof onload == "function") {
-            script.onload = onload;
-        }
-        if (typeof onerror == "function") {
-            script.onerror = onerror;
-        }
-        document.body.appendChild(script);
-        if (typeof onfinal == "function") {
-            onfinal();
-        }
-        return 0;
+        return Tools.loadScriptBrowser(file, onload, onerror, onfinal);
     }
     static importDefaultMaterials() {
         return Game.loadScript("resources/js/materials.js");

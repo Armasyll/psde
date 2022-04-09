@@ -221,6 +221,83 @@ var Tools = /** @class */ (function () {
             return result;
         }
     };
+    Tools.loadJSONNative = function(file, onload = null, onerror = null, onfinal = null) {
+        let xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", function() {
+            if (xhr.readyState === 4) {
+                try {
+                    xhr.onreadystatechange = null;
+                    if (onload) {
+                        onload(JSON.parse(xhr.responseText), onfinal);
+                    }
+                }
+                catch (e) {
+                    if (onerror) {
+                        onerror();
+                    }
+                }
+            }
+        }, false);
+        if (onerror) {
+            xhr.onerror = onerror();
+        }
+        xhr.open("GET", String("file://").concat(file), true);
+        xhr.send();
+        return 0;
+    }
+    Tools.loadJSONBrowser = function(file, onload = null, onerror = null, onfinal = null) {
+        let xhr = new XMLHttpRequest();
+        xhr.onload = (e) => {
+            if (e.target.status == 200) {
+                if (onload) {
+                    onload(JSON.parse(xhr.responseText), onfinal);
+                }
+            }
+        };
+        xhr.onerror = (e) => {
+            if (e.target.status == 404) {
+                if (onerror) {
+                    onerror(xhr);
+                }
+            }
+        };
+        xhr.open("GET", file, true);
+        xhr.send();
+        return 0;
+    }
+    Tools.loadScriptNative = function(file, onload = null, onerror = null, onfinal = null) {
+        return 0;
+    }
+    Tools.loadScriptBrowser = function(file, onload = null, onerror = null, onfinal = null) {
+        if (typeof Document != "undefined" && self instanceof Window) {
+            let script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = file;
+            if (typeof onload == "function") {
+                script.onload = onload;
+            }
+            if (typeof onerror == "function") {
+                script.onerror = onerror;
+            }
+            document.body.appendChild(script);
+            if (typeof onfinal == "function") {
+                onfinal();
+            }
+        }
+        else if (typeof WorkerGlobalScope != "undefined" && self instanceof WorkerGlobalScope) {
+            importScripts(file);
+            if (typeof onload == "function" && typeof onfinal == "function") {
+                onload({}, onfinal);
+            }
+            else if (typeof onload == "function") {
+                onload();
+            }
+            else if (typeof onfinal == "function") {
+                onfinal();
+            }
+        }
+        return 0;
+    }
     Tools.RAD_0 = 0.00000000;
     Tools.RAD_1_HALF = 0.00872665;
     Tools.RAD_1_3RD = 0.00581776;
