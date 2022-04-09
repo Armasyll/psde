@@ -522,8 +522,8 @@ apartmentCell.addCollidableMesh("brickWallInstance06", "brickWall01", "brickWall
 
 // Misc
 apartmentCell.addCharacter("rinehart", "rinehart", [3, 0, -20], [0, 180, 0]);
-apartmentCell.addCharacter("rosie", "rosie", [2, 0, -4.5]);
-apartmentCell.addCharacter("charlie", "charlie", [2, 0, -5], [0, 180, 0], [0.9, 0.9, 0.9]);
+apartmentCell.addCharacter("rosie", "rosie", [2, 0, -3.35]);
+apartmentCell.addCharacter("charlie", "charlie", [2, 0, -4], [0, 180, 0], [0.9, 0.9, 0.9]);
 
 let packstreetApt3BasementCell = new Cell("packstreetApt3BasementCell");
 packstreetApt3BasementCell.createBarrier(32);
