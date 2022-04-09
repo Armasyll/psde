@@ -631,6 +631,7 @@ class Game {
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
+            Game.defaultPipeline.removeCamera(Game.camera);
         }
         if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
@@ -670,6 +671,7 @@ class Game {
     static initArcRotateCamera(offset = BABYLON.Vector3.Zero()) {
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
+            Game.defaultPipeline.removeCamera(Game.camera);
         }
         if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
@@ -703,7 +705,7 @@ class Game {
         if (Game.useCameraRay) {
             Game.cameraRay = new BABYLON.Ray(Game.cameraFocus.absolutePosition, BABYLON.Vector3.Forward());
         }
-        //Game.initPostProcessing();
+        Game.initPostProcessing();
         return 0;
     }
     static initFreeCamera(applyGravity = false, updateChild = false) {
@@ -712,6 +714,7 @@ class Game {
             Game.unassignPlayer(!updateChild);
         }
         if (Game.camera instanceof BABYLON.Camera) {
+            Game.defaultPipeline.removeCamera(Game.camera);
             Game.camera.dispose();
         }
         Game.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), Game.scene);

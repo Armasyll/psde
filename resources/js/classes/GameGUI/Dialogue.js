@@ -32,8 +32,8 @@ class DialogueGameGUI {
         return 0;
     }
     static resetDefaultDimensions() {
-        DialogueGameGUI.defaultWidthInPixels = Math.floor(Game.renderWidth / 2);
-        DialogueGameGUI.defaultHeightInPixels = Math.floor(Game.renderHeight * 2 / 3);
+        DialogueGameGUI.defaultWidthInPixels = Math.floor(GameGUI.renderWidth / 2);
+        DialogueGameGUI.defaultHeightInPixels = Math.floor(GameGUI.renderHeight * 2 / 3);
         return 0;
     }
     static resize() {
@@ -42,8 +42,8 @@ class DialogueGameGUI {
         }
         DialogueGameGUI.resetDefaultDimensions();
         if (DialogueGameGUI.fullScreen) {
-            DialogueGameGUI.windowWidthInPixels = Game.renderWidth;
-            DialogueGameGUI.windowHeightInPixels = Game.renderHeight;
+            DialogueGameGUI.windowWidthInPixels = GameGUI.renderWidth;
+            DialogueGameGUI.windowHeightInPixels = GameGUI.renderHeight;
         }
 
         DialogueGameGUI.controller.widthInPixels = DialogueGameGUI.defaultWidthInPixels;

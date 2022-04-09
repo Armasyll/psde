@@ -78,8 +78,8 @@ class InventoryEquipmentGameGUI {
         return 0;
     }
     static resetDefaultDimensions() {
-        InventoryEquipmentGameGUI.defaultWidthInPixels = Game.renderWidth * 2 / 3;
-        InventoryEquipmentGameGUI.defaultHeightInPixels = Game.renderHeight * 3 / 4;
+        InventoryEquipmentGameGUI.defaultWidthInPixels = GameGUI.renderWidth * 2 / 3;
+        InventoryEquipmentGameGUI.defaultHeightInPixels = GameGUI.renderHeight * 3 / 4;
         return 0;
     }
     static resize() {
@@ -88,8 +88,8 @@ class InventoryEquipmentGameGUI {
         }
         InventoryEquipmentGameGUI.resetDefaultDimensions();
         if (InventoryEquipmentGameGUI.fullScreen) {
-            InventoryEquipmentGameGUI.windowWidthInPixels = Game.renderWidth;
-            InventoryEquipmentGameGUI.windowHeightInPixels = Game.renderHeight;
+            InventoryEquipmentGameGUI.windowWidthInPixels = GameGUI.renderWidth;
+            InventoryEquipmentGameGUI.windowHeightInPixels = GameGUI.renderHeight;
         }
 
         InventoryEquipmentGameGUI.controller.widthInPixels = InventoryEquipmentGameGUI.defaultWidthInPixels;

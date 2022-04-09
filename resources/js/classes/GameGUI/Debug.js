@@ -7,7 +7,7 @@ class DebugGameGUI {
         DebugGameGUI.initialized = false;
         DebugGameGUI.isVisible = false;
         DebugGameGUI.locked = false;
-        DebugGameGUI.width = Game.renderWidth / 2;
+        DebugGameGUI.width = GameGUI.renderWidth / 2;
         DebugGameGUI.skyboxController = null;
         DebugGameGUI.skyboxIsEnabled = true;
         DebugGameGUI.skyboxAzimuth = 0;

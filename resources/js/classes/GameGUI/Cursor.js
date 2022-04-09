@@ -64,8 +64,7 @@ class CursorGameGUI {
         CursorGameGUI.y = y;
         CursorGameGUI.controller.leftInPixels = x + Math.ceil(CursorGameGUI.controller.widthInPixels / 2) + 1;
         CursorGameGUI.controller.topInPixels = y + Math.ceil(CursorGameGUI.controller.heightInPixels / 2) + 1;
-        Game.scene.pointerX = Math.floor(x + Game.engine.getRenderWidth() / 2);
-        Game.scene.pointerY = Math.floor(y + Game.engine.getRenderHeight() / 2);
+        CursorGameGUI._setPointer();
         return 0;
     }
     static update(x, y) {
@@ -77,13 +76,13 @@ class CursorGameGUI {
         return CursorGameGUI.set(x, y);
     }
     static resize() {
-        let tempX = CursorGameGUI.x / Game.renderWidth;
-        let tempY = CursorGameGUI.y / Game.renderHeight;
-        CursorGameGUI.maxX = Math.floor(Game.renderWidth / 2);
-        CursorGameGUI.minX = CursorGameGUI.maxX - Game.renderWidth;
-        CursorGameGUI.maxY = Math.floor(Game.renderHeight / 2);
-        CursorGameGUI.minY = CursorGameGUI.maxY - Game.renderHeight;
-        CursorGameGUI.set(tempX * Game.renderWidth, tempY * Game.renderHeight);
+        let tempX = CursorGameGUI.x / Game.engine.getHostWindow().innerWidth;
+        let tempY = CursorGameGUI.y / Game.engine.getHostWindow().innerHeight;
+        CursorGameGUI.maxX = Math.floor(Game.engine.getHostWindow().innerWidth / 2);
+        CursorGameGUI.minX = CursorGameGUI.maxX - Game.engine.getHostWindow().innerWidth;
+        CursorGameGUI.maxY = Math.floor(Game.engine.getHostWindow().innerHeight / 2);
+        CursorGameGUI.minY = CursorGameGUI.maxY - Game.engine.getHostWindow().innerHeight;
+        CursorGameGUI.set(tempX * Game.engine.getHostWindow().innerWidth, tempY * Game.engine.getHostWindow().innerHeight);
         return 0;
     }
     static click() {
@@ -100,8 +99,7 @@ class CursorGameGUI {
             return 0;
         }
         CursorGameGUI.lock = true;
-        Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
-        Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
+        CursorGameGUI._setPointer();
         Game.scene.simulatePointerDown();
         CursorGameGUI.lock = false;
         return 0;
@@ -114,8 +112,7 @@ class CursorGameGUI {
             return 0;
         }
         CursorGameGUI.lock = true;
-        Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getRenderWidth() / 2);
-        Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getRenderHeight() / 2);
+        CursorGameGUI._setPointer();
         Game.scene.simulatePointerUp();
         CursorGameGUI.lock = false;
         return 0;
@@ -127,6 +124,12 @@ class CursorGameGUI {
         if (CursorGameGUI.internalPointerChanging) {
             return 0;
         }
+        return 0;
+    }
+    // when renderWidth (and renderHeight) isn't equal to innerWidth (and innerHeight), pointing doesn't align :v
+    static _setPointer() {
+        Game.scene.pointerX = Math.floor(CursorGameGUI.x + Game.engine.getHostWindow().innerWidth  / 2);
+        Game.scene.pointerY = Math.floor(CursorGameGUI.y + Game.engine.getHostWindow().innerHeight / 2);
         return 0;
     }
 }

@@ -27,8 +27,8 @@ class CharacterStatsGameGUI {
         return 0;
     }
     static resetDefaultDimensions() {
-        CharacterStatsGameGUI.defaultWidthInPixels = Game.renderWidth;
-        CharacterStatsGameGUI.defaultHeightInPixels = Game.renderHeight;
+        CharacterStatsGameGUI.defaultWidthInPixels = GameGUI.renderWidth;
+        CharacterStatsGameGUI.defaultHeightInPixels = GameGUI.renderHeight;
         return 0;
     }
     static resize() {
@@ -37,8 +37,8 @@ class CharacterStatsGameGUI {
         }
         CharacterStatsGameGUI.resetDefaultDimensions();
         if (CharacterStatsGameGUI.fullScreen) {
-            CharacterStatsGameGUI.windowWidthInPixels = Game.renderWidth;
-            CharacterStatsGameGUI.windowHeightInPixels = Game.renderHeight;
+            CharacterStatsGameGUI.windowWidthInPixels = GameGUI.renderWidth;
+            CharacterStatsGameGUI.windowHeightInPixels = GameGUI.renderHeight;
         }
 
         CharacterStatsGameGUI.controller.widthInPixels = CharacterStatsGameGUI.defaultWidthInPixels;

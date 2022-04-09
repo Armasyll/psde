@@ -13,6 +13,8 @@ class GameGUI {
     }
     static initialize() {
         if (Game.debugMode) BABYLON.Tools.Log("Initializing GameGUI");
+        GameGUI.renderWidth = Game.engine.getHostWindow().innerWidth;
+        GameGUI.renderHeight = Game.engine.getHostWindow().innerHeight;
         GameGUI.fontSizeInPixels = 24;
         GameGUI.fontSizeSpacing = 8;
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
@@ -42,7 +44,7 @@ class GameGUI {
         GameGUI.backgroundFocusedDisabled = "#0C0C0C";
 
         if (Game.debugMode) BABYLON.Tools.Log("Attempting to create an advanced dynamic texture");
-        //GameGUI.controller = new BABYLON.GUI.AdvancedDynamicTexture("menu", Game.renderWidth, Game.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
+        //GameGUI.controller = new BABYLON.GUI.AdvancedDynamicTexture("menu", GameGUI.renderWidth, GameGUI.renderHeight, Game.scene, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, false);
         GameGUI.controller = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GameGUI");
         if (Game.debugMode) BABYLON.Tools.Log("Yes! :V");
         GameGUI.controller.rootContainer.isVisible = false;
@@ -72,7 +74,9 @@ class GameGUI {
         if (!GameGUI.initialized) {
             return;
         }
-        GameGUI.fontSizeInPixels = Math.max(Math.floor((Game.renderWidth/16)/5), 24);
+        GameGUI.renderWidth = Game.engine.getHostWindow().innerWidth;
+        GameGUI.renderHeight = Game.engine.getHostWindow().innerHeight;
+        GameGUI.fontSizeInPixels = Math.max(Math.floor((GameGUI.renderWidth/16)/5), 24);
         GameGUI.fontSizeSpacing = Math.max(Math.ceil(GameGUI.fontSizeInPixels/3), 8);
         GameGUI.fontSize = String(GameGUI.fontSizeInPixels).concat("px");
         GameGUI.fontSizeInPixelsWithSpacing = GameGUI.fontSizeInPixels + GameGUI.fontSizeSpacing;
@@ -354,10 +358,10 @@ class GameGUI {
      * @param {number} [bodyContainerType] 0 for ScrollViewer, 1 for Rectangle, 2 for StackPanel
      * @returns {array} [controller, titleBar, title, closeButton, bodyContainer]
      */
-    static createWindow(id = "", titleString = "Title :V", widthInPixels = Game.renderWidth, heightInPixels = Game.renderHeight, bodyContainerType = 0) {
+    static createWindow(id = "", titleString = "Title :V", widthInPixels = GameGUI.renderWidth, heightInPixels = GameGUI.renderHeight, bodyContainerType = 0) {
         titleString = Tools.filterID(titleString);
-        widthInPixels = Tools.filterInt(widthInPixels) || Game.renderWidth;
-        heightInPixels = Tools.filterInt(heightInPixels) || Game.renderHeight;
+        widthInPixels = Tools.filterInt(widthInPixels) || GameGUI.renderWidth;
+        heightInPixels = Tools.filterInt(heightInPixels) || GameGUI.renderHeight;
         let controller = GameGUI.createStackPanel(id);
             controller.width = String(widthInPixels).concat("px");
             controller.height = String(heightInPixels).concat("px");

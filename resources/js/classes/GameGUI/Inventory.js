@@ -51,8 +51,8 @@ class InventoryGameGUI {
         return 0;
     }
     static resetDefaultDimensions() {
-        InventoryGameGUI.defaultWidthInPixels = Game.renderWidth;
-        InventoryGameGUI.defaultHeightInPixels = Game.renderHeight;
+        InventoryGameGUI.defaultWidthInPixels = GameGUI.renderWidth;
+        InventoryGameGUI.defaultHeightInPixels = GameGUI.renderHeight;
         return 0;
     }
     static resize() {
@@ -61,8 +61,8 @@ class InventoryGameGUI {
         }
         InventoryGameGUI.resetDefaultDimensions();
         if (InventoryGameGUI.fullScreen) {
-            InventoryGameGUI.windowWidthInPixels = Game.renderWidth;
-            InventoryGameGUI.windowHeightInPixels = Game.renderHeight;
+            InventoryGameGUI.windowWidthInPixels = GameGUI.renderWidth;
+            InventoryGameGUI.windowHeightInPixels = GameGUI.renderHeight;
         }
 
         InventoryGameGUI.controller.widthInPixels = InventoryGameGUI.windowWidthInPixels;

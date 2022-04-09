@@ -31,7 +31,7 @@
             RadialMenuGameGUI.controller.dispose();
         }
         RadialMenuGameGUI.controller = new BABYLON.GUI.Ellipse("actionsRadialMenu", 0);
-        RadialMenuGameGUI.controller.width = String(Game.renderWidth / 4) + "px";
+        RadialMenuGameGUI.controller.width = String(GameGUI.renderWidth / 4) + "px";
         RadialMenuGameGUI.controller.height = RadialMenuGameGUI.controller.width;
         RadialMenuGameGUI.controller.background = GameGUI.background;
         RadialMenuGameGUI.controller.color = GameGUI.color;
