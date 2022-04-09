@@ -8,12 +8,15 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="plainDoor.svg"
+   sodipodi:docname="simpleDoor.svg"
    id="svg4115"
    version="1.1"
    viewBox="0 0 1024 1024"
    height="1024"
-   width="1024">
+   width="1024"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/static/simpleDoor_512.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
   <metadata
      id="metadata4121">
     <rdf:RDF>
@@ -22,6 +25,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -68,19 +72,19 @@
      id="polygon3719"
      inkscape:label="doorSideLeft" />
   <path
-     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     style="fill:#908e87;fill-opacity:1;stroke:none;stroke-width:1.04999995"
      d="m 777.49995,-0.8 v 33.6 33.6 33.6 33.6 33.6 33.6 H 882.502 V 167.2 133.6 100 66.4 32.8 -0.8 Z"
      id="polygon4027"
      inkscape:connector-curvature="0"
      inkscape:label="knobShaft" />
   <path
-     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     style="fill:#908e87;fill-opacity:1;stroke:none;stroke-width:1.04999995"
      d="M 919.34736,103.30527 893.54238,148 l 25.80498,44.69473 h 51.60997 L 996.76231,148 970.95733,103.30527 Z"
      id="polygon4041"
      inkscape:connector-curvature="0"
      inkscape:label="backKnob" />
   <path
-     style="fill:#b5a642;fill-opacity:1;stroke:none;stroke-width:1.04999995"
+     style="fill:#908e87;fill-opacity:1;stroke:none;stroke-width:1.04999995"
      d="m 919.34736,7.3345215 -25.80498,44.6947265 25.80498,44.696777 h 51.60997 L 996.76231,52.029248 970.95733,7.3345215 Z"
      id="polygon4035"
      inkscape:connector-curvature="0"
@@ -93,51 +97,16 @@
      x="4"
      y="4"
      inkscape:label="doorBackground" />
-  <g
-     id="g856"
-     inkscape:label="crossAndPanels"
-     transform="matrix(-1,0,0,1,688,0)">
-    <path
-       inkscape:label="panelTopLeft"
-       id="polygon3843"
-       d="M 100,104 V 364 H 244 V 104 Z"
-       style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:label="panelBottomRight"
-       id="polygon3845"
-       d="M 444,560 V 872 H 588 V 560 Z"
-       style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:label="panelTopRight"
-       id="polygon3847"
-       d="M 444,104 V 364 H 588 V 104 Z"
-       style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:label="panelBottomLeft"
-       id="polygon3841"
-       d="M 100,560 V 872 H 244 V 560 Z"
-       style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:label="crossPanel"
-       id="polygon3721"
-       d="M 4,4 V 55.998047 412 511.99805 920 1020 h 48 240 104 240 48 V 920 511.99805 412 55.998047 4 H 636 396 292 52 Z M 52,55.998047 H 292 V 412 H 52 Z m 344,0 H 636 V 412 H 396 Z M 52,511.99805 H 292 V 920 H 52 Z m 344,0 H 636 V 920 H 396 Z"
-       style="fill:#28170b;fill-opacity:1;stroke:none;stroke-width:1"
-       inkscape:connector-curvature="0" />
-  </g>
   <path
      inkscape:connector-curvature="0"
      d="M 780,468.08008 V 729.91992 H 904.7207 V 468.08008 Z"
      id="polygon400"
-     style="fill:#b5a642;fill-opacity:1"
+     style="fill:#908e87;fill-opacity:1"
      inkscape:label="frontKnobPlate" />
   <path
      inkscape:connector-curvature="0"
      d="M 780,206.24023 V 468.08008 H 904.7207 V 206.24023 Z"
      id="polygon404"
-     style="fill:#b5a642;fill-opacity:1"
+     style="fill:#908e87;fill-opacity:1"
      inkscape:label="backKnobPlate" />
 </svg>

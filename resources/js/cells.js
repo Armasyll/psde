@@ -69,14 +69,14 @@ apartmentCell.addTiledGround("ozzyHallwayFloor", [2, 6], "woodenFloorDark01", [3
 apartmentCell.addTiledCeiling("ozzyHallwayCeiling", [2, 6], "woodenFloorDark26", [3, 2.9, -7]);
 apartmentCell.addCollidableMesh("ozzyHallwayWallN0", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -2]);
 apartmentCell.addCollidableMesh("ozzyHallwayWallE0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -2], [0, 90, 0]);
-apartmentCell.addDoor("ozzyBathroomDoor", "Bathroom", undefined, "craftsmanDoor", "plainDoor", [5, 0, -2], [0, 90, 0], undefined, {opensInward:false});
+apartmentCell.addDoor("ozzyBathroomDoor", "Bathroom", undefined, "simpleDoor", "simpleDoor", [5, 0, -2], [0, 90, 0], undefined, {opensInward:false});
 apartmentCell.addCollidableMesh("ozzyHallwayWallE1", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -4], [0, 90, 0]);
 apartmentCell.addCollidableMesh("ozzyHallwayWallE2", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -6], [0, 90, 0]);
 apartmentCell.addCollidableMesh("ozzyHallwayWallW0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -6], [0, 270, 0]);
-apartmentCell.addDoor("ozzyHallwayClosetDoor", "Closet", undefined, "craftsmanDoor", "plainDoor", [3, 0, -6], [0, 270, 0], undefined, {opensInward:true});
+apartmentCell.addDoor("ozzyHallwayClosetDoor", "Closet", undefined, "simpleDoor", "simpleDoor", [3, 0, -6], [0, 270, 0], undefined, {opensInward:true});
 apartmentCell.addCollidableMesh("ozzyHallwayWallW1", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -4], [0, -90, 0]);
 apartmentCell.addCollidableMesh("ozzyHallwayWallW2Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -2], [0, 270, 0]);
-apartmentCell.addDoor("ozzyBedroomDoor", "Bedroom", undefined, "craftsmanDoor", "plainDoor", [3, 0, -2], [0, 270, 0], undefined, {opensInward:false});
+apartmentCell.addDoor("ozzyBedroomDoor", "Bedroom", undefined, "simpleDoor", "simpleDoor", [3, 0, -2], [0, 270, 0], undefined, {opensInward:false});
 
 // Ozzy Livingroom
 apartmentCell.addTiledGround("ozzyLivingroomFloor", [8, 6], "woodenFloorDark01", [-1, 0, -13]);
@@ -186,11 +186,11 @@ apartmentCell.addTiledGround("commonsFloor01d", [2, 6], "woodenFloorDark26", [-1
 apartmentCell.addTiledCeiling("commonsCeiling01d", [2, 6], "woodenFloorDark26", [-1, 2.9, -19]);
 apartmentCell.addCollidableMesh("commons1WallN0", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -14]);
 apartmentCell.addCollidableMesh("commons1WallN1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [2, 0, -14]);
-apartmentCell.addDoor("ozzyApartmentDoor", "Ozzy's Apartment", undefined, "craftsmanDoor", "plainDoor", [2, 0, -13], undefined, undefined, { "opensInward":false });
+apartmentCell.addDoor("ozzyApartmentDoor", "Ozzy's Apartment", undefined, "simpleDoor", "simpleDoor", [2, 0, -13], undefined, undefined, { "opensInward":false });
 apartmentCell.addCollidableMesh("commons1WallN2", "craftsmanWall", "greenWallpaperPlainWood", [4, 0, -14]);
 apartmentCell.addCollidableMesh("commons1WallE0", "craftsmanWall", "greenWallpaperPlainWood", [4, 0, -14], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons1WallE1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [4, 0, -16], [0, 90, 0]);
-apartmentCell.addDoor("landlordApartmentDoor", "Landlord's Apartment", undefined, "craftsmanDoor", "plainDoor", [5, 0, -16], [0, 90, 0], undefined, { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false});
+apartmentCell.addDoor("landlordApartmentDoor", "Landlord's Apartment", undefined, "simpleDoor", "simpleDoor", [5, 0, -16], [0, 90, 0], undefined, { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false});
 apartmentCell.addCollidableMesh("commons1WallE1Corner0", "craftsmanCorner", "greenWallpaperPlainWood", [4, 0, -18], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons1WallN3", "craftsmanWall", "greenWallpaperPlainWood", [6, 0, -18]);
 apartmentCell.addCollidableMesh("commons1WallN4", "craftsmanWall", "greenWallpaperPlainWood", [8, 0, -18]);
@@ -244,7 +244,7 @@ apartmentCell.addCollidableMesh("commons1WallW6", "craftsmanWall", "greenWallpap
  apartmentCell.addMesh("commons1StairBasementCrownBL", "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", [0, 3, -22]);
  apartmentCell.addMesh("commons1StairwellFloorGap0", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 0, -20], [0, 90, 0]);
  apartmentCell.addMesh("commons1StairwellFloorGap1", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 0, -22], [0, 90, 0]);
- apartmentCell.addDoor("packstreetApt3ApartmentToBasementDoor", "Basement", new TeleportMarker("packstreetApt3Basement", "packstreetApt3BasementCell", [0, 0, -19.5]), "craftsmanDoor", "plainDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
+ apartmentCell.addDoor("packstreetApt3ApartmentToBasementDoor", "Basement", new TeleportMarker("packstreetApt3Basement", "packstreetApt3BasementCell", [0, 0, -19.5]), "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
 
 apartmentCell.addFurniture("commonsCouch", "couch01", [8.25, 0, -22], [0, -90, 0]);
 apartmentCell.addCollidableMesh("commonsTableInstance01", "diningTable", "woodenFloorDark26", [10, 0, -22], [0, -90, 0]);
@@ -259,7 +259,7 @@ apartmentCell.addItem("packstreet24PaintJobInstance", "packstreet24PaintJob", [1
 
 apartmentCell.addLighting("commonsLamp", "lamp01", [-0.5, 0, -26.5]);
 
-apartmentCell.addDoor("apartmentBuildingDoor", "Door", undefined, "craftsmanDoor", "plainDoor", [4, 0, -27], undefined, undefined, { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false });
+apartmentCell.addDoor("apartmentBuildingDoor", "Door", undefined, "craftsmanDoor", "crossPanelDoor", [4, 0, -27], undefined, undefined, { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false });
 
 // Second Floor
 
@@ -272,11 +272,11 @@ apartmentCell.addTiledGround("commons2Floor2", {xmin:0, zmin:0, xmax: 2, zmax: 6
 apartmentCell.addTiledCeiling("commons2Ceiling2", {xmin:0, zmin:0, xmax: 2, zmax: 4, subdivisions: {w:2, h:4}}, "greenWallpaper", [-1, 5.9, -27]);
 apartmentCell.addCollidableMesh("commons2WallN0", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -14]);
 apartmentCell.addCollidableMesh("commons2WallN1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [2, 3, -14]);
-apartmentCell.addDoor("chartyApartmentDoor", "Charlie and Marty's Apartment", undefined, "craftsmanDoor", "plainDoor", [2, 3, -13], [0, 0, 0], undefined, {opensInward:false});
+apartmentCell.addDoor("chartyApartmentDoor", "Charlie and Marty's Apartment", undefined, "simpleDoor", "simpleDoor", [2, 3, -13], [0, 0, 0], undefined, {opensInward:false});
 apartmentCell.addCollidableMesh("commons2WallN2", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -14]);
 apartmentCell.addCollidableMesh("commons2WallE0", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -14], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons2WallE1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [4, 3, -16], [0, 90, 0]);
-apartmentCell.addDoor("kyleApartmentDoor", "Kyle's Apartment", undefined, "craftsmanDoor", "plainDoor", [5, 3, -16], [0, 90, 0], undefined, {opensInward:false});
+apartmentCell.addDoor("kyleApartmentDoor", "Kyle's Apartment", undefined, "simpleDoor", "simpleDoor", [5, 3, -16], [0, 90, 0], undefined, {opensInward:false});
 apartmentCell.addCollidableMesh("commons2WallE2", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -18], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons2WallE3", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -20], [0, 90, 0]);
 apartmentCell.addCollidableMesh("commons2WallE4", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -22], [0, 90, 0]);
@@ -344,14 +344,14 @@ apartmentCell.addCollisionPlaneByMesh("chartyHallwayFloor");
 apartmentCell.addCollisionWall([7, 3, -5], [9, 6, -5]); // Front wall between hallway and bathroom
 
 apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", [6, 3, -6]);
-apartmentCell.addDoor("chartyBathroomDoor", "Bathroom", undefined, "craftsmanDoor", "plainDoor", [6, 3, -5]);
+apartmentCell.addDoor("chartyBathroomDoor", "Bathroom", undefined, "simpleDoor", "simpleDoor", [6, 3, -5]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -6]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", [8, 3, -6], [0, 90, 0]);
-apartmentCell.addDoor("martyBedroomDoor", "Marty's Room", undefined, "craftsmanDoor", "plainDoor", [9, 3, -6], [0, 90, 0]);
+apartmentCell.addDoor("martyBedroomDoor", "Marty's Room", undefined, "simpleDoor", "simpleDoor", [9, 3, -6], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanCorner", "greenWallpaperPlainWood", [8, 3, -6], [0, 270, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -6], [0, 180, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", [6, 3, -6], [0, 270, 0]);
-apartmentCell.addDoor("charlieBedroomDoor", "Charlie's Room", undefined, "craftsmanDoor", "plainDoor",[5, 3, -6], [0, 90, 0], {opensInward:true});
+apartmentCell.addDoor("charlieBedroomDoor", "Charlie's Room", undefined, "simpleDoor", "simpleDoor",[5, 3, -6], [0, 90, 0], {opensInward:true});
 
 // Charlie bedroom
 apartmentCell.addTiledGround("charlieBedroomFloor", {xmin:0, zmin:0, xmax: 6, zmax: 8, subdivisions: {w:6, h:8}}, "carpet02-black", [-1, 3, -7]);
@@ -451,13 +451,13 @@ apartmentCell.addCollisionPlaneByMesh("commonsFloor03c");
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -14]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [2, 6, -14]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", [4, 6, -14]);
-apartmentCell.addDoor("twinsApartmentDoor", "Anneke and Wolter's Apartment", undefined, "craftsmanDoor", "plainDoor", [4, 6, -13], [0, 0, 0]);
+apartmentCell.addDoor("twinsApartmentDoor", "Anneke and Wolter's Apartment", undefined, "simpleDoor", "simpleDoor", [4, 6, -13], [0, 0, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -14], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -16], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -18], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -20], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanDoorway", "greenWallpaperPlainWood", [4, 6, -22], [0, 90, 0]);
-apartmentCell.addDoor("remmyApartmentDoor", "Remmy's Apartment", undefined, "craftsmanDoor", "plainDoor", [5, 6, -22], [0, 90, 0]);
+apartmentCell.addDoor("remmyApartmentDoor", "Remmy's Apartment", undefined, "simpleDoor", "simpleDoor", [5, 6, -22], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -24], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -26], [0, 90, 0]);
 apartmentCell.addCollidableMesh(undefined, "craftsmanWindowframe", "greenWallpaperPlainWood", [4, 6, -26], [0, 180, 0]);
@@ -530,7 +530,7 @@ packstreetApt3BasementCell.createBarrier(32);
 
 packstreetApt3BasementCell.addCollidableMesh("unusableBasementStairsBottom", "craftsmanStairs", "greenWallpaperPlainWood", [0, 0.05, -22]);
 packstreetApt3BasementCell.addCollidableMesh("unusableBasementStairsTop", "craftsmanStairs", "greenWallpaperPlainWood", [0, 1.55, -20]);
-packstreetApt3BasementCell.addDoor("packstreetApt3BasementToApartmentDoor", "Basement", new TeleportMarker("packstreetApt3", "apartmentCell", [0, 0, -18]), "craftsmanDoor", "plainDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
+packstreetApt3BasementCell.addDoor("packstreetApt3BasementToApartmentDoor", "Basement", new TeleportMarker("packstreetApt3", "apartmentCell", [0, 0, -18]), "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], undefined, {opensInward:true});
 packstreetApt3BasementCell.addCollidableMesh("basementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -20]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20], undefined, [-1, 1, 1]);
  packstreetApt3BasementCell.addCollidableMesh("basementStairwellLeftSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22], undefined, [-1, 1, 1]);
@@ -589,9 +589,9 @@ networkTestCell.addCollidableMesh(undefined, "craftsmanWall", "greenWallpaperPla
 networkTestCell.addCollidableMesh("yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [3, 0, 0], [0, 180, 0]);
 networkTestCell.addCollidableMesh("pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", [5, 0, 0], [0, 180, 0]);
 networkTestCell.addCollidableMesh("secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", [7, 0, 0], [0, 180, 0]);
-networkTestCell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "craftsmanDoor", "plainDoor", [1, 0, -1], [0, 180, 0], undefined, {"opensInward":true});
-networkTestCell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "craftsmanDoor", "plainDoor", [3, 0, -1], [0, 180, 0], undefined, {"opensInward":false});
-networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "craftsmanDoor", "plainDoor", [5, 0, -1], [0, 180, 0], undefined, {"open":true, "opensInward":true});
+networkTestCell.addDoor("inwardClosedDoor", "Inward Closed Door", undefined, "simpleDoor", "simpleDoor", [1, 0, -1], [0, 180, 0], undefined, {"opensInward":true});
+networkTestCell.addDoor("outwardClosedDoor", "Outward Closed Door", undefined, "simpleDoor", "simpleDoor", [3, 0, -1], [0, 180, 0], undefined, {"opensInward":false});
+networkTestCell.addDoor("inwardOpenedDoor", "Inward Opened Door", undefined, "simpleDoor", "simpleDoor", [5, 0, -1], [0, 180, 0], undefined, {"open":true, "opensInward":true});
 networkTestCell.addCollidableMesh(undefined, "stick01", "stick01", [0, 0, 3], undefined, [10, 10, 10]);
 networkTestCell.addCollidableMesh(undefined, "stopSign", "stopSign", [3, 0, 6]);
 networkTestCell.addLighting("commonsLamp", "lamp01", [6, 0, 3]);
@@ -608,4 +608,4 @@ debugMovementCell.addItem("cheeseWedgeInstance01", "cheeseWedge", [3, 0, 3]);
 let debugDoorCell = new Cell("debugDoorCell");
 debugDoorCell.createBarrier(32);
 debugDoorCell.addMesh("stoneFloor", "floor16x16", "stoneMaterial01", [-5, 0, -25]);
-debugDoorCell.addDoor("aDoor", "A Door", undefined, "craftsmanDoor", "plainDoor", [1, 0, -1]);
+debugDoorCell.addDoor("aDoor", "A Door", undefined, "simpleDoor", "simpleDoor", [1, 0, -1]);

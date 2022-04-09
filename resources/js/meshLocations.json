@@ -126,6 +126,7 @@
     "foxSkull02": "resources/meshes/gibs.babylon",
     "heart01": "resources/meshes/gibs.babylon",
     "sack01": "resources/meshes/items/misc.babylon",
+    "simpleDoor": "resources/meshes/static/simpleDoor.babylon",
     "craftsmanCorner": "resources/meshes/static/craftsmanWalls.babylon",
     "craftsmanCornerNoTrim": "resources/meshes/static/craftsmanWalls.babylon",
     "craftsmanDoor": "resources/meshes/static/craftsmanWalls.babylon",
