@@ -275,12 +275,12 @@ class Game {
         }
         BABYLON.Tools.Log("Initializing, Phase Two; loading lists of assets");
         Game.initializedPhaseTwo = true;
-        Game.importMeshLocations("resources/js/meshLocations.json", Game.initializePhaseThree);
-        Game.importMeshProperties("resources/js/meshProperties.json", Game.initializePhaseThree);
-        Game.importTextureLocations("resources/js/textureLocations.json", Game.initializePhaseThree);
-        Game.importIconLocations("resources/js/iconLocations.json", Game.initializePhaseThree);
-        Game.importSoundLocations("resources/js/soundLocations.json", Game.initializePhaseThree);
-        Game.importVideoLocations("resources/js/videoLocations.json", Game.initializePhaseThree);
+        Game.importMeshLocations("resources/json/meshLocations.json", Game.initializePhaseThree);
+        Game.importMeshProperties("resources/json/meshProperties.json", Game.initializePhaseThree);
+        Game.importTextureLocations("resources/json/textureLocations.json", Game.initializePhaseThree);
+        Game.importIconLocations("resources/json/iconLocations.json", Game.initializePhaseThree);
+        Game.importSoundLocations("resources/json/soundLocations.json", Game.initializePhaseThree);
+        Game.importVideoLocations("resources/json/videoLocations.json", Game.initializePhaseThree);
         return 0;
     }
     static initializePhaseThree() {
@@ -873,7 +873,7 @@ class Game {
         }
         return 0;
     }
-    static importVideoLocations(jsonFile = "resources/js/videoLocations.json", callback = null) {
+    static importVideoLocations(jsonFile = "resources/json/videoLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setVideoLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1251,7 +1251,7 @@ class Game {
      * @param {(function|null)} [callback] 
      * @returns {number} Integer status code
      */
-    static importMeshProperties(jsonFile = "resources/js/meshProperties.json", callback = null) {
+    static importMeshProperties(jsonFile = "resources/json/meshProperties.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setMeshPropertiesFromJSON, null, callback);
         return 0;
     }
@@ -1287,7 +1287,7 @@ class Game {
      * @param {(function|null)} [callback] 
      * @returns {number} Integer status code
      */
-    static importMeshLocations(jsonFile = "resources/js/meshLocations.json", callback = null) {
+    static importMeshLocations(jsonFile = "resources/json/meshLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setMeshLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1418,7 +1418,7 @@ class Game {
         }
         return 0;
     }
-    static importSoundLocations(jsonFile = "resources/js/soundLocations.json", callback = null) {
+    static importSoundLocations(jsonFile = "resources/json/soundLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setSoundLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1456,7 +1456,7 @@ class Game {
         }
         return 0;
     }
-    static importTextureLocations(jsonFile = "resources/js/textureLocations.json", callback = null) {
+    static importTextureLocations(jsonFile = "resources/json/textureLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setTextureLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1703,7 +1703,7 @@ class Game {
         }
         return 0;
     }
-    static importIconLocations(jsonFile = "resources/js/iconLocations.json", callback = null) {
+    static importIconLocations(jsonFile = "resources/json/iconLocations.json", callback = null) {
         Game.loadJSON(jsonFile, Game.setIconLocationsFromJSON, null, callback);
         return 0;
     }
@@ -1831,10 +1831,10 @@ class Game {
         return Tools.loadScriptBrowser(file, onload, onerror, onfinal);
     }
     static importDefaultMaterials() {
-        return Game.loadScript("resources/js/materials.js");
+        return Game.loadScript("resources/json/materials.js");
     }
     static importDefaultMeshes() {
-        return Game.loadScript("resources/js/meshes.js");
+        return Game.loadScript("resources/json/meshes.js");
     }
     /**
      * 

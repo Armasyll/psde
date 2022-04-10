@@ -1025,43 +1025,43 @@ class EntityLogic {
         return 0;
     }
     static importEffects() {
-        return EntityLogic.importScript("../effects.js");
+        return EntityLogic.importScript("../../json/effects.js");
     }
     static importClasses() {
-        return EntityLogic.importScript("../classes.js");
+        return EntityLogic.importScript("../../json/characterClasses.js");
     }
     static importConsumables() {
-        return EntityLogic.importScript("../consumables.js");
+        return EntityLogic.importScript("../../json/consumables.js");
     }
     static importDialogues() {
-        return EntityLogic.importScript("../dialogues.js");
+        return EntityLogic.importScript("../../json/dialogues.js");
     }
     static importBooks() {
-        return EntityLogic.importScript("../books.js");
+        return EntityLogic.importScript("../../json/books.js");
     }
     static importCells() {
-        return EntityLogic.importScript("../cells.js");
+        return EntityLogic.importScript("../../json/cells.js");
     }
     static importTeleportMarkers() {
-        return EntityLogic.importScript("../teleportMarkers.js");
+        return EntityLogic.importScript("../../json/teleportMarkers.js");
     }
     static importItems() {
-        return EntityLogic.importScript("../items.js");
+        return EntityLogic.importScript("../../json/items.js");
     }
     static importFurniture() {
-        return EntityLogic.importScript("../furniture.js");
+        return EntityLogic.importScript("../../json/furniture.js");
     }
     static importPlants() {
-        return EntityLogic.importScript("../plants.js");
+        return EntityLogic.importScript("../../json/plants.js");
     }
     static importSpells() {
-        return EntityLogic.importScript("../spells.js");
+        return EntityLogic.importScript("../../json/spells.js");
     }
     static importCosmetics() {
-        return EntityLogic.importScript("../cosmetics.js");
+        return EntityLogic.importScript("../../json/cosmetics.js");
     }
     static importCharacters() {
-        return EntityLogic.importScript("../characters.js");
+        return EntityLogic.importScript("../../json/characters.js");
     }
 
     static removeController(id) {
