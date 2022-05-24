@@ -94,7 +94,3 @@ window.document.addEventListener("DOMContentLoaded", function() {
     });
     Game.initialize(gameOptions);
 });
-window.document.addEventListener('click', Game.pointerLock);
-//window.document.addEventListener('pointerover', Game.pointerLockChange);
-window.document.addEventListener('pointerout', Game.pointerRelease);
-window.document.addEventListener('pointerlockerror', Game.requestPointerLock);

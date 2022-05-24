@@ -12,7 +12,7 @@ class CursorGameGUI {
         CursorGameGUI.minY = 0;
         CursorGameGUI.maxY = 24;
         CursorGameGUI.internalPointerChanging = false;
-        CursorGameGUI.lock = false;
+        CursorGameGUI.locked = false;
         CursorGameGUI.lastActionTime = 200;
         CursorGameGUI.controller = CursorGameGUI.generateController();
         return 0;
@@ -95,35 +95,49 @@ class CursorGameGUI {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
-        if (CursorGameGUI.lock) {
+        if (CursorGameGUI.locked) {
             return 0;
         }
-        CursorGameGUI.lock = true;
+        CursorGameGUI.locked = true;
         CursorGameGUI._setPointer();
         Game.scene.simulatePointerDown();
-        CursorGameGUI.lock = false;
+        CursorGameGUI.locked = false;
         return 0;
     }
     static pointerUp(event) {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
-        if (CursorGameGUI.lock) {
+        if (CursorGameGUI.locked) {
             return 0;
         }
-        CursorGameGUI.lock = true;
+        CursorGameGUI.locked = true;
         CursorGameGUI._setPointer();
         Game.scene.simulatePointerUp();
-        CursorGameGUI.lock = false;
+        CursorGameGUI.locked = false;
         return 0;
     }
     static context() {
         if (!CursorGameGUI.controller.isVisible) {
             return 1;
         }
+        if (CursorGameGUI.locked) {
+            return 0;
+        }
+        if (!CursorGameGUI.controller.isVisible) {
+            return 1;
+        }
         if (CursorGameGUI.internalPointerChanging) {
             return 0;
         }
+        return 0;
+    }
+    static lock() {
+        CursorGameGUI.locked = true;
+        return 0;
+    }
+    static unlock() {
+        CursorGameGUI.locked = false;
         return 0;
     }
     // when renderWidth (and renderHeight) isn't equal to innerWidth (and innerHeight), pointing doesn't align :v

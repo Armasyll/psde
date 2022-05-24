@@ -233,6 +233,8 @@ class Game {
         Game.entityLogicWorker = null;
         Game.entityLogicTickChannel = null;
         Game.entityLogicTransformsChannel = null;
+        Game.eventListeners = {};
+        Game.sceneExecuteCodeActions = {};
 
         if (options.hasOwnProperty("assumeInitialized")) {
             Game.assumeInitialized = options["assumeInitialized"] === true;
@@ -346,9 +348,7 @@ class Game {
         Game.initPostProcessing();
 
         Game.initialized = true;
-        Game.engine.runRenderLoop(Game._renderLoopFunction);
-        Game.scene.registerBeforeRender(Game._beforeRenderFunction);
-        Game.scene.registerAfterRender(Game._afterRenderFunction);
+        Game.initRenderLoops();
         Game.initializePhaseFour();
         return 0;
     }
@@ -407,54 +407,8 @@ class Game {
         }
         BABYLON.Tools.Log("Initializing, Phase Five; assuming direct control");
         Game.initializedPhaseFive = true;
-        window.addEventListener("contextmenu", Game.controls.onContext);
-        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-            Game.controls.onKeyDown(evt.sourceEvent);
-        }));
-        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-            Game.controls.onKeyUp(evt.sourceEvent);
-        }));
-        Game.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLongPressTrigger, function (evt) {
-            Game.controls.onLongPress(evt.sourceEvent);
-        }));
-        Game.scene.onPointerObservable.add((e) => {
-            switch (e.type) {
-                case BABYLON.PointerEventTypes.POINTERDOWN:
-                    if (e.event.button == 0) {
-                        Game.controls.onMouseDown(e.event);
-                    }
-                    else if (e.event.button == 1) { }
-                    else if (e.event.button == 2) { }
-                    break;
-                case BABYLON.PointerEventTypes.POINTERUP:
-                    if (e.event.button == 0) {
-                        Game.controls.onMouseUp(e.event);
-                    }
-                    else if (e.event.button == 1) { }
-                    else if (e.event.button == 2) { }
-                    break;
-                case BABYLON.PointerEventTypes.POINTERMOVE:
-                    Game.controls.onMove(e.event);
-                    break;
-                case BABYLON.PointerEventTypes.POINTERWHEEL:
-                    Game.controls.onScroll(e.event);
-                    break;
-                case BABYLON.PointerEventTypes.POINTERPICK:
-                    break;
-                case BABYLON.PointerEventTypes.POINTERTAP:
-                    if (e.event.button == 0) {
-                        Game.controls.onClick(e.event);
-                    }
-                    else if (e.event.button == 1) { }
-                    else if (e.event.button == 2) {
-                        Game.controls.onContext(e.event);
-                    }
-                    break;
-                case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
-                    break;
-            }
-        });
         Game.gui.show();
+        Game.initPointerEventListeners();
         if (Game.assumeInitialized) {
             Game.setPlayerCell(Game.assumeCurrentCellID);
             Game.gui.mainMenu.hide();
@@ -628,7 +582,122 @@ class Game {
         Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
         return 0;
     }
+    static sceneOnPointerObservable(e) {
+        switch (e.type) {
+            case BABYLON.PointerEventTypes.POINTERDOWN:
+                if (e.event.button == 0) {
+                    Game.controls.onMouseDown(e.event);
+                }
+                else if (e.event.button == 1) { }
+                else if (e.event.button == 2) { }
+                break;
+            case BABYLON.PointerEventTypes.POINTERUP:
+                if (e.event.button == 0) {
+                    Game.controls.onMouseUp(e.event);
+                }
+                else if (e.event.button == 1) { }
+                else if (e.event.button == 2) { }
+                break;
+            case BABYLON.PointerEventTypes.POINTERMOVE:
+                Game.controls.onMove(e.event);
+                break;
+            case BABYLON.PointerEventTypes.POINTERWHEEL:
+                Game.controls.onScroll(e.event);
+                break;
+            case BABYLON.PointerEventTypes.POINTERPICK:
+                break;
+            case BABYLON.PointerEventTypes.POINTERTAP:
+                if (e.event.button == 0) {
+                    Game.controls.onClick(e.event);
+                }
+                else if (e.event.button == 1) { }
+                else if (e.event.button == 2) {
+                    Game.controls.onContext(e.event);
+                }
+                break;
+            case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
+                break;
+        }
+        return 0;
+    }
+    static initPointerEventListeners() {
+        if (!Game.eventListeners.hasOwnProperty("click")) {
+            Game.eventListeners['click'] = window.document.addEventListener("click", Game.pointerLock);
+        }
+        if (!Game.eventListeners.hasOwnProperty("contextmenu")) {
+            Game.eventListeners['contextmenu'] = window.document.addEventListener("contextmenu", Game.controls.onContext);
+        }
+        if (!Game.eventListeners.hasOwnProperty("pointerover")) {
+            //Game.eventListenerPointerOver = window.document.addEventListener("pointerover", Game.pointerLockChange);
+        }
+        if (!Game.eventListeners.hasOwnProperty("pointerout")) {
+            Game.eventListeners['pointerout'] = window.document.addEventListener("pointerout", Game.pointerRelease);
+        }
+        if (!Game.eventListeners.hasOwnProperty("pointerlockerror")) {
+            Game.eventListeners['pointerlockerror'] = window.document.addEventListener("pointerlockerror", Game.requestPointerLock);
+        }
+        // Scene actions
+        if (!Game.sceneExecuteCodeActions.hasOwnProperty("keyDown")) {
+            Game.sceneExecuteCodeActions["keyDown"] = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                Game.controls.onKeyDown(evt.sourceEvent);
+            });
+        }
+        Game.scene.actionManager.registerAction(Game.sceneExecuteCodeActions["keyDown"]);
+        if (!Game.sceneExecuteCodeActions.hasOwnProperty("keyUp")) {
+            Game.sceneExecuteCodeActions["keyUp"] = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+                Game.controls.onKeyUp(evt.sourceEvent);
+            });
+        }
+        Game.scene.actionManager.registerAction(Game.sceneExecuteCodeActions["keyUp"]);
+        if (!Game.sceneExecuteCodeActions.hasOwnProperty("longPress")) {
+            Game.sceneExecuteCodeActions["longPress"] = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLongPressTrigger, function (evt) {
+                Game.controls.onLongPress(evt.sourceEvent);
+            });
+        }
+        Game.scene.actionManager.registerAction(Game.sceneExecuteCodeActions["longPress"]);
+        Game.scene.onPointerObservable.add(Game.sceneOnPointerObservable);
+        Game.gui.cursor.unlock();
+        return 0;
+    }
+    static detachPointerEventListeners() {
+        Game.gui.cursor.lock();
+        Game.pointerRelease();
+        if (Game.eventListeners.hasOwnProperty('click')) {
+            window.document.removeEventListener("click", Game.pointerLock);
+            delete Game.eventListeners['click'];
+        }
+        if (Game.eventListeners.hasOwnProperty('contextmenu')) {
+            window.document.removeEventListener("contextmenu", Game.controls.onContext);
+            delete Game.eventListeners['contextmenu'];
+        }
+        if (Game.eventListeners.hasOwnProperty('pointerover')) {
+            window.document.removeEventListener("pointerover", Game.pointerLockChange);
+            delete Game.eventListeners['pointerover'];
+        }
+        if (Game.eventListeners.hasOwnProperty('pointerout')) {
+            window.document.removeEventListener("pointerout", Game.pointerRelease);
+            delete Game.eventListeners['pointerout'];
+        }
+        if (Game.eventListeners.hasOwnProperty('pointerlockerror')) {
+            window.document.removeEventListener("pointerlockerror", Game.requestPointerLock);
+            delete Game.eventListeners['pointerlockerror'];
+        }
+        // Scene actions
+        if (Game.sceneExecuteCodeActions.hasOwnProperty("keyDown")) {
+            Game.scene.actionManager.unregisterAction(Game.sceneExecuteCodeActions["keyDown"]);
+        }
+        if (Game.sceneExecuteCodeActions.hasOwnProperty("keyUp")) {
+            Game.scene.actionManager.unregisterAction(Game.sceneExecuteCodeActions["keyUp"]);
+        }
+        if (Game.sceneExecuteCodeActions.hasOwnProperty("longPress")) {
+            Game.scene.actionManager.unregisterAction(Game.sceneExecuteCodeActions["longPress"]);
+        }
+        Game.scene.onPointerObservable.remove(Game.sceneOnPointerObservable);
+        return 0;
+    }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
+        Game.initRenderLoops();
+        Game.initPointerEventListeners();
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
             Game.defaultPipeline.removeCamera(Game.camera);
@@ -669,6 +738,8 @@ class Game {
         return 0;
     }
     static initArcRotateCamera(offset = BABYLON.Vector3.Zero()) {
+        Game.initRenderLoops();
+        Game.initPointerEventListeners();
         if (Game.camera instanceof BABYLON.Camera) {
             Game.camera.dispose();
             Game.defaultPipeline.removeCamera(Game.camera);
@@ -709,6 +780,8 @@ class Game {
         return 0;
     }
     static initFreeCamera(applyGravity = false, updateChild = false) {
+        Game.initRenderLoops();
+        Game.initPointerEventListeners();
         if (Game.debugMode) BABYLON.Tools.Log("Running initFreeCamera");
         if (Game.hasPlayerController() && updateChild) {
             Game.unassignPlayer(!updateChild);
@@ -734,6 +807,34 @@ class Game {
             Game.camera.checkCollisions = false;
         }
         Game.initPostProcessing();
+        return 0;
+    }
+    static detachCamera() {
+        Game.detachRenderLoops();
+        Game.detachPointerEventListeners();
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.defaultPipeline.removeCamera(Game.camera);
+            Game.camera.dispose();
+            Game.camera = null;
+        }
+        return 0;
+    }
+    static initRenderLoops() {
+        if (Game.engine._activeRenderLoops.length != 0) {
+            return 0;
+        }
+        Game.engine.runRenderLoop(Game._renderLoopFunction);
+        // idk how to check for these :V
+        // Game.scene.onBeforeRenderObservable["_observers"][0]["callback"] === Game._beforeRenderFunction
+        // too lazy and tired rn :v everything works, gonna push
+        Game.scene.registerBeforeRender(Game._beforeRenderFunction);
+        Game.scene.registerAfterRender(Game._afterRenderFunction);
+        return 0;
+    }
+    static detachRenderLoops() {
+        Game.scene.unregisterAfterRender(Game._afterRenderFunction);
+        Game.scene.unregisterBeforeRender(Game._beforeRenderFunction);
+        Game.engine.stopRenderLoop(Game._renderLoopFunction);
         return 0;
     }
     static overwriteCameraTransforms() {
@@ -3659,6 +3760,9 @@ class Game {
         return Game.currentCellID != null;
     }
     static castTargetRay() {
+        if (!(Game.camera instanceof BABYLON.Camera)) {
+            return 1;
+        }
         if (!Game.targetRayEnabled) {
             return 0;
         }
@@ -3831,6 +3935,9 @@ class Game {
     }
     static afterPointerLock(event) {
         Game.updateInterfaceMode();
+        return 0;
+    }
+    static pointerLockChange(event) {
         return 0;
     }
     static pointerRelease(event) {
