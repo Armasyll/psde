@@ -660,6 +660,7 @@ class Game {
         return 0;
     }
     static detachPointerEventListeners() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.detachPointerEventListeners()");
         Game.gui.cursor.lock();
         Game.pointerRelease();
         if (Game.eventListeners.hasOwnProperty('click')) {
@@ -668,6 +669,7 @@ class Game {
         }
         if (Game.eventListeners.hasOwnProperty('contextmenu')) {
             window.document.removeEventListener("contextmenu", Game.controls.onContext);
+            Game.canvas.removeEventListener("contextmenu", Game.controls.onContext);
             delete Game.eventListeners['contextmenu'];
         }
         if (Game.eventListeners.hasOwnProperty('pointerover')) {
@@ -693,6 +695,11 @@ class Game {
             Game.scene.actionManager.unregisterAction(Game.sceneExecuteCodeActions["longPress"]);
         }
         Game.scene.onPointerObservable.remove(Game.sceneOnPointerObservable);
+        for (let s in getEventListeners(Game.canvas)) {
+            for (let i = getEventListeners(Game.canvas)[s].length - 1; i >= 0; i--) {
+                Game.canvas.removeEventListener(s, getEventListeners(Game.canvas)[s][i]["listener"]);
+            }
+        }
         return 0;
     }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
@@ -782,7 +789,7 @@ class Game {
     static initFreeCamera(applyGravity = false, updateChild = false) {
         Game.initRenderLoops();
         Game.initPointerEventListeners();
-        if (Game.debugMode) BABYLON.Tools.Log("Running initFreeCamera");
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.initFreeCamera");
         if (Game.hasPlayerController() && updateChild) {
             Game.unassignPlayer(!updateChild);
         }
@@ -810,6 +817,7 @@ class Game {
         return 0;
     }
     static detachCamera() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.detachCamera()");
         Game.detachRenderLoops();
         Game.detachPointerEventListeners();
         if (Game.camera instanceof BABYLON.Camera) {
@@ -832,6 +840,7 @@ class Game {
         return 0;
     }
     static detachRenderLoops() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.detachRenderLoops()");
         Game.scene.unregisterAfterRender(Game._afterRenderFunction);
         Game.scene.unregisterBeforeRender(Game._beforeRenderFunction);
         Game.engine.stopRenderLoop(Game._renderLoopFunction);
@@ -3840,6 +3849,7 @@ class Game {
      * @returns {(BABYLON.AbstractMesh|null)}
      */
     static pickMesh() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.pickMesh()");
         let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
             if (mesh.isHitBox) {
                 return false;
@@ -3864,6 +3874,7 @@ class Game {
      * @returns {(EntityController|null)}
      */
     static pickController() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.pickController()");
         let pick = Game.scene.pickWithRay(Game.camera.getForwardRay(), (mesh) => {
             if (mesh.hasController()) {
                 if (mesh.controller == Game.playerController) {
@@ -3882,6 +3893,7 @@ class Game {
         if (!(Game.camera instanceof BABYLON.Camera)) {
             return 1;
         }
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.cameraPointerControlDetach()");
         if (Game.camera.getClassName() == "ArcRotateCamera") {
             if (Game.camera.inputs.attached.hasOwnProperty("pointers")) {
                 Game.camera.inputs.remove(Game.camera.inputs.attached.pointers);
@@ -3896,6 +3908,7 @@ class Game {
         if (!(Game.camera instanceof BABYLON.Camera)) {
             return 1;
         }
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.cameraPointerControlAttach()");
         if (Game.camera.getClassName() == "ArcRotateCamera") {
             if (!Game.camera.inputs.attached.hasOwnProperty("pointers")) {
                 Game.camera.inputs.addPointers();
@@ -3915,6 +3928,7 @@ class Game {
     }
     static requestPointerLock() {
         if (Game.pointerLockTimeoutFunction == null) {
+            if (Game.debugMode) BABYLON.Tools.Log("Running Game.requestPointerLock()");
             Game.pointerLockTimeoutFunction = setTimeout(() => {Game.pointerLock()}, 200);
         }
         return 0;
@@ -3926,6 +3940,7 @@ class Game {
         if (Game.engine.isPointerLock) {
             return 0;
         }
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.pointerLock()");
         if (Game.useNative) {}
         else {
             Game.canvas.requestPointerLock();
@@ -3944,6 +3959,7 @@ class Game {
         if (!Game.initialized) {
             return 1;
         }
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.pointerRelease()");
         if (Game.pointerLockTimeoutFunction != null) {
             clearTimeout(Game.pointerLockTimeoutFunction);
             Game.pointerLockTimeoutFunction = null;
@@ -3962,179 +3978,8 @@ class Game {
         Game.updateInterfaceMode();
         return 0;
     }
-    static parseChat(chatString) {
-        if (chatString.slice(0, 1) == "/") {
-            return Game.chatCommands(chatString.slice(1));
-        }
-        else {
-            return Game.gui.chat.appendOutput(`${new Date().toLocaleTimeString({ hour12: false })} ${Game.getCachedEntity(Game.playerEntityID).name}: ${chatString}`);
-        }
-        return 0;
-    }
-    static sendChatMessage() {
-        let chatString = Game.gui.chat.getInput();
-        if (chatString.length == 0) {
-            return 1;
-        }
-        if (Client.isOnline()) {
-            Client.sendChatMessage(chatString);
-        }
-        else {
-            Game.parseChat(chatString);
-        }
-        Game.gui.chat.clearInput();
-        Game.gui.chat.setFocused(false);
-        return 0;
-    }
-    static chatCommands(command, ...parameters) {
-        if (command == undefined || typeof command != "string") {
-            return 2;
-        }
-        if (command.slice(0, 1) == "/") {
-            command = command.slice(1);
-        }
-        let commandArray = command.split(" ");
-        if (commandArray.length == 0 || typeof commandArray[0] != "string" || commandArray[0].length <= 0) {
-            commandArray.push("help");
-        }
-        switch (commandArray[0].toLowerCase()) {
-            case "help": {
-                Game.gui.chat.appendOutput("Possible commands are: help, clear, menu, login, logout, quit, save, and load.\n");
-                break;
-            }
-            case "addallarmour":
-            case "addallarmor":
-            case "addallclothing": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllClothing", 0, {"target": target});
-                break;
-            }
-            case "addallitems": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllItems", 0, {"target": target});
-                break;
-            }
-            case "addallkeys": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllKeys", 0, {"target": target});
-                break;
-            }
-            case "addallweapons": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("addAllWeapons", 0, {"target": target});
-                break;
-            }
-            case "additem": {
-                let index = 1;
-                let item = commandArray[index];
-                index++;
-                let amount = 1;
-                if (commandArray.hasOwnProperty(index) && typeof commandArray[index] == "number") {
-                    amount = commandArray[index];
-                    index++;
-                }
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(index) && typeof commandArray[index] == "string") {
-                    target = commandArray[index];
-                }
-                Game.entityLogicWorkerPostMessage("addItem", 0, {"entityID": item, "amount": amount, "target": target});
-                break;
-            }
-            case "addmoney": {
-                let money = Tools.filterInt(commandArray[1]) || 1;
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(2)) {
-                    target = commandArray[2];
-                }
-                Game.entityLogicWorkerPostMessage("addMoney", 0, {"amount": money, "target": target});
-                break;
-            }
-            case "clear": {
-                Game.gui.chat.clearOutput();
-                break;
-            }
-            case "exit": {
-                break;
-            }
-            case "getmoney": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("getMoney", 0, {"target": target});
-                break;
-            }
-            case "kill": {
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(1)) {
-                    target = commandArray[1];
-                }
-                Game.entityLogicWorkerPostMessage("kill", 0, {"target": target});
-                break;
-            }
-            case "load": {
-                break;
-            }
-            case "loadcell": {
-                // TODO: this
-                //let cellID = commandArray[1];
-                //Game.setPlayerCell(cellID);
-                break;
-            }
-            case "login": {
-                break;
-            }
-            case "logout": {
-                Client.disconnect();
-                break;
-            }
-            case "menu": {
-                Game.gui.mainMenu.show();
-                break;
-            }
-            case "quit": {
-                break;
-            }
-            case "save": {
-                break;
-            }
-            case "setmoney": {
-                let money = Tools.filterInt(commandArray[1]) || 1;
-                let target = Game.playerEntityID;
-                if (commandArray.hasOwnProperty(2)) {
-                    target = commandArray[2];
-                }
-                Game.entityLogicWorkerPostMessage("setMoney", 0, {"amount": money, "target": target});
-                break;
-            }
-            case "showdebug": {
-                Game.gui.debug.show();
-                break;
-            }
-            case "unloadcell": {
-                Game.unloadCell(false);
-                break;
-            }
-            default: {
-                Game.gui.chat.appendOutput(`Command "${command}" not found.\n`);
-                return 0;
-            }
-        }
-        return 0;
-    }
     static updateCameraTarget() {
+        if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateCameraTarget()");
         if (Game.camera instanceof BABYLON.ArcRotateCamera) {
             return Game.updateArcRotateCameraTarget()
         }
@@ -4762,6 +4607,7 @@ class Game {
         return 0;
     }
     static updateInterfaceMode() {
+        if (Game.debugMode) console.group("Running Game.updateInterfaceMode()");
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.cameraPointerControlAttach();

@@ -70,13 +70,13 @@ class CharacterControls extends AbstractControls {
                         Game.gui.chat.setFocused(true);
                     }
                     else {
-                        Game.sendChatMessage();
+                        Game.gui.chat.sendInput();
                     }
                 }
                 break;
             }
             case AbstractControls.chatInputSubmitCode : {
-                Game.sendChatMessage();
+                Game.gui.chat.sendInput();
                 break;
             }
             case AbstractControls.useTargetedEntityCode : {
