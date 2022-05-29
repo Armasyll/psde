@@ -7,6 +7,8 @@
         RadialControls.currentButtonIndex = -1;
         RadialControls.xyMax = 18;
         RadialControls.xyIncrement = 1;
+        RadialControls.maxScrollSpeed = 100; // ms between scrolls
+        RadialControls.lastScrollTime = 0;
     }
     static reset() {
         RadialControls.currentButtonIndex = -1;
@@ -137,6 +139,11 @@
         return 0;
     }
     static onScroll(mouseEvent) {
+        let dateNow = Date.now();
+        if (dateNow - RadialControls.lastScrollTime < RadialControls.maxScrollSpeed) {
+            return 0;
+        }
+        RadialControls.lastScrollTime = dateNow;
         if (mouseEvent.wheelDelta > 0) {
             RadialControls.selectNextButton(1);
         }
