@@ -160,7 +160,6 @@ class CharacterControls extends AbstractControls {
                 break;
             }
             default : {
-                console.log(keyboardEvent);
             }
         }
         if (!Game.playerController.key.equals(Game.playerController.prevKey)) {

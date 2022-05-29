@@ -17,6 +17,8 @@ class Game {
         Game.initializedPhaseThree = false;
         Game.initializedPhaseFour = false;
         Game.initializedPhaseFive = false;
+        Game.initializingPointerEventListeners = false;
+        Game.initializedPointerEventListeners = false;
         Game.rootDirectory = "";
         Game.debugMode = false;
         Game.debugVerbosity = 2;
@@ -621,6 +623,13 @@ class Game {
         return 0;
     }
     static initPointerEventListeners() {
+        if (Game.initializingPointerEventListeners) {
+            return 0;
+        }
+        else if (Game.initializedPointerEventListeners) {
+            return 0;
+        }
+        Game.initializingPointerEventListeners = true;
         if (!Game.eventListeners.hasOwnProperty("click")) {
             Game.eventListeners['click'] = window.document.addEventListener("click", Game.pointerLock);
         }
@@ -657,10 +666,19 @@ class Game {
         Game.scene.actionManager.registerAction(Game.sceneExecuteCodeActions["longPress"]);
         Game.scene.onPointerObservable.add(Game.sceneOnPointerObservable);
         Game.gui.cursor.unlock();
+        Game.initializedPointerEventListeners = true;
+        Game.initializingPointerEventListeners = false;
         return 0;
     }
     static detachPointerEventListeners() {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.detachPointerEventListeners()");
+        if (Game.initializingPointerEventListeners) {
+            return 0;
+        }
+        else if (!Game.initializedPointerEventListeners) {
+            return 0;
+        }
+        Game.initializedPointerEventListeners = false;
         Game.gui.cursor.lock();
         Game.pointerRelease();
         if (Game.eventListeners.hasOwnProperty('click')) {
@@ -695,20 +713,19 @@ class Game {
             Game.scene.actionManager.unregisterAction(Game.sceneExecuteCodeActions["longPress"]);
         }
         Game.scene.onPointerObservable.remove(Game.sceneOnPointerObservable);
-        for (let s in getEventListeners(Game.canvas)) {
-            for (let i = getEventListeners(Game.canvas)[s].length - 1; i >= 0; i--) {
-                Game.canvas.removeEventListener(s, getEventListeners(Game.canvas)[s][i]["listener"]);
-            }
+        return 0;
+    }
+    static preInitCamera() {
+        if (Game.camera instanceof BABYLON.Camera) {
+            Game.defaultPipeline.removeCamera(Game.camera);
+            Game.detachCamera();
         }
+        Game.initRenderLoops();
+        Game.initPointerEventListeners();
         return 0;
     }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
-        Game.initRenderLoops();
-        Game.initPointerEventListeners();
-        if (Game.camera instanceof BABYLON.Camera) {
-            Game.camera.dispose();
-            Game.defaultPipeline.removeCamera(Game.camera);
-        }
+        Game.preInitCameras();
         if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
         }
@@ -745,12 +762,7 @@ class Game {
         return 0;
     }
     static initArcRotateCamera(offset = BABYLON.Vector3.Zero()) {
-        Game.initRenderLoops();
-        Game.initPointerEventListeners();
-        if (Game.camera instanceof BABYLON.Camera) {
-            Game.camera.dispose();
-            Game.defaultPipeline.removeCamera(Game.camera);
-        }
+        Game.preInitCamera();
         if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
         }
@@ -787,15 +799,10 @@ class Game {
         return 0;
     }
     static initFreeCamera(applyGravity = false, updateChild = false) {
-        Game.initRenderLoops();
-        Game.initPointerEventListeners();
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.initFreeCamera");
+        Game.preInitCamera();
         if (Game.hasPlayerController() && updateChild) {
             Game.unassignPlayer(!updateChild);
-        }
-        if (Game.camera instanceof BABYLON.Camera) {
-            Game.defaultPipeline.removeCamera(Game.camera);
-            Game.camera.dispose();
         }
         Game.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(2, 0.8, -20), Game.scene);
         Game.camera.radius = Game.cameraMaxDistance;
@@ -3979,7 +3986,7 @@ class Game {
         return 0;
     }
     static updateCameraTarget() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateCameraTarget()");
+        //if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateCameraTarget()");
         if (Game.camera instanceof BABYLON.ArcRotateCamera) {
             return Game.updateArcRotateCameraTarget()
         }
@@ -4649,6 +4656,7 @@ class Game {
                 break;
             }
         }
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static getInterfaceMode() {
