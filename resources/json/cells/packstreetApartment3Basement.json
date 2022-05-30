@@ -1,0 +1,59 @@
+{
+    "id":"packstreetApartment3Basement",
+    "name":"Packstreet Apt. 3 Basement",
+    "barrier":32,
+    "meshGroups":{
+        "tiledGrounds":[
+            ["basementStoneFloor", {"xmin":0, "zmin":0, "xmax": 14, "zmax": 14, "subdivisions": {"w":14, "h":14}}, "stoneMaterial01", [-1, -3, -27]]
+        ],
+        "tiledCeilings":[
+            ["basementStoneCeiling01", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 6, "subdivisions": {"w":2, "h":6}}, "woodenFloorDark26", [-1, -0.05, -19]],
+            ["basementStoneCeiling02", {"xmin":0, "zmin":0, "xmax": 12, "zmax": 14, "subdivisions": {"w":12, "h":14}}, "woodenFloorDark26", [1, -0.05, -27]],
+            ["basementStoneCeiling03", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 4, "subdivisions": {"w":2, "h":4}}, "woodenFloorDark26", [-1, -0.05, -27]]
+        ],
+        "collidableMeshes":[
+            ["unusableBasementStairsBottom", "craftsmanStairs", "greenWallpaperPlainWood", [0, 0.05, -22]],
+            ["unusableBasementStairsTop", "craftsmanStairs", "greenWallpaperPlainWood", [0, 1.55, -20]],
+            ["basementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -20]],
+            ["basementStairwellLeftSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0, 0, -20], [0, 0, 0], [-1, 1, 1]],
+            ["basementStairwellLeftSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0, 0, -22], [0, 0, 0], [-1, 1, 1]],
+            ["basementStairwellRightSidewall", "craftsmanStairWallSideNoTrim", "greenWallpaperPlainWood", [0.0525, 0, -20.0125]],
+            ["basementStairwellRightSidewallCorner", "craftsmanStairWallCornerNoTrim", "greenWallpaperPlainWood", [0.0525, 0, -22.0125]],
+            ["basementStairsTop", "craftsmanStairs", "greenWallpaperPlainWood", [0, -3, -22]],
+            ["basementStairsBottom", "craftsmanStairs", "greenWallpaperPlainWood", [0, -1.5, -20]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -14], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -16], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -18], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -20], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -22], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -24], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -26], [0, 270, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [2, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [4, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [6, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [8, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [10, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -26], [0, 180, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -26], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -24], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -22], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -20], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -18], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -16], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -14], [0, 90, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [12, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [10, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [8, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [6, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [4, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [2, -3, -14], [0, 0, 0]],
+            [null, "craftsmanWallNoTrim", "stoneMaterial01", [0, -3, -14], [0, 0, 0]]
+        ]
+    },
+    "entityGroups":{
+        "doors":[
+            ["packstreetApt3BasementToApartmentDoor", "Basement", ["packstreetApt3", "apartmentCell", [0, 0, -18]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], null, {"opensInward":true}]
+        ]
+    }
+}

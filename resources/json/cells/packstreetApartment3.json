@@ -1,0 +1,607 @@
+{
+    "id":"packstreetApartment3",
+    "name":"Packstreet Apt. 3",
+    "barrier":64,
+    "materials":[
+        ["greenWallpaperPlainWood", "greenWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["yellowWallpaperPlainWood", "yellowWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["pinkWallpaperPlainWood", "pinkWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["whiteWallpaperPlainWood", "whiteWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["blueWallpaperPlainWood", "blueWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["greenWallpaper", "greenWallpaper"],
+        ["whitePanelGrayStone", "whitePanelGrayStone", "stripped-NORMAL"],
+        ["carpet02-pink", "carpet02-pink", "carpet02-NORMAL", {"specularColor":[0, 0, 0]}],
+        ["carpet02-black", "carpet02-black", "carpet02-NORMAL", {"specularColor":[0, 0, 0]}],
+        ["linoleumMaterial", "checkerLinoleumFloor01", "checkerLinoleumFloor01-NORMAL", {"specularColor":[0, 0, 0]}],
+        ["brickWall01", "brickWall01", "brickWall01-NORMAL"]
+    ],
+    "meshGroups":{
+        "id":"ozzyApartment",
+        "name":"Ozzy's Apartment",
+        "tiledCeilings":[
+            ["ozzyHallwayClosetCeiling", [2, 2], "woodenFloorDark26", [1, 2.9, -7]],
+            ["ozzyBedroomClosetCeiling", [2, 2], "woodenFloorDark26", [-1, 2.9, -7]],
+            ["ozzyBedroomCeiling", [4, 6], "woodenFloorDark26", [-1, 2.9, -5]],
+            ["ozzyBathroomCeiling", [4, 4, 1, 1], "californiaKnockdown01", [5, 2.9, -3]],
+            ["ozzyHallwayCeiling", [2, 6], "woodenFloorDark26", [3, 2.9, -7]],
+            ["ozzyLivingroomCeiling", [8, 6], "woodenFloorDark26", [-1, 2.9, -13]],
+            ["landlordBedroomCeiling", [6, 6], "woodenFloorDark26", [9, 2.9, -5]]
+        ],
+        "tiledGrounds":[
+            ["ozzyHallwayClosetFloor", [2, 2], "woodenFloorDark26", [1, 0, -7]],
+            ["ozzyBedroomClosetFloor", [2, 2], "woodenFloorDark26", [-1, 0, -7]],
+            ["ozzyBedroomFloor", [4, 6], "woodenFloorDark01", [-1, 0, -5]],
+            ["ozzyBathroomFloor", [4, 4], "linoleumMaterial", [5, 0, -3]],
+            ["ozzyHallwayFloor", [2, 6], "woodenFloorDark01", [3, 0, -7]],
+            ["ozzyLivingroomFloor", [8, 6], "woodenFloorDark01", [-1, 0, -13]],
+            ["landlordBedroomFloor", [6, 6], "woodenFloorDark01", [9, 0, -5]]
+        ],
+        "meshes":[
+            ["ozzyBathroomSink", "sink01Basin", "ceramicsAndPipes", [8.95, 0, 0.125], [0, 90, 0], 1.5],
+            ["ozzyBathroomSinkPipes", "sink01Pipes", "ceramicsAndPipes", [8.95, 0, 0.125], [0, 90, 0], 1.5],
+            ["ozzyBathroomShower", "showerPipes01", "ceramicsAndPipes", [8.85, 0, -2.25], [0, 90, 0], 1.5]
+        ],
+        "collidableMeshes":[
+            ["ozzyHallwayClosetWallN0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -6]],
+            ["ozzyHallwayClosetWallE0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [2, 0, -6], [0, 90, 0]],
+            ["ozzyHallwayClosetWallS0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -6], [0, 180, 0]],
+            ["ozzyHallwayClosetWallW0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -6], [0, 270, 0]],
+            ["ozzyBedroomClosetWallN0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [0, 0, -6]],
+            ["ozzyBedroomClosetWallE0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -6], [0, 90, 0]],
+            ["ozzyBedroomClosetWallS0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -6], [0, 180, 0]],
+            ["ozzyBedroomClosetWallW0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -6], [0, 270, 0]],
+            ["ozzyBedroomWallN0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, 0]],
+            ["ozzyBedroomWallN1", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, 0]],
+            ["ozzyBedroomWallE0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, 0], [0, 90, 0]],
+            ["ozzyBedroomWallE1Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [2, 0, -2], [0, 90, 0]],
+            ["ozzyBedroomWallE2", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -4], [0, 90, 0]],
+            ["ozzyBedroomWallS0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -4], [0, 180, 0]],
+            ["ozzyBedroomWallS1Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [0, 0, -4], [0, 180, 0]],
+            ["ozzyBedroomWallW0Windowframe", "craftsmanWindowframe", "yellowWallpaperPlainWood", [0, 0, -4], [0, 270, 0]],
+            ["ozzyBedroomWallW0Window", "craftsmanWindowDouble", "yellowWallpaperPlainWood", [0, 0, -4], [0, 270, 0]],
+            ["ozzyBedroomWallW1", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -2], [0, 270, 0]],
+            ["ozzyBedroomWallW2", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, 0], [0, 270, 0]],
+            ["ozzyBathroomWallN0", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, 0]],
+            ["ozzyBathroomWallN1Windowframe", "craftsmanWindowframe", "whiteWallpaperPlainWood", [8, 0, 0]],
+            ["ozzyBathroomWallN1Window", "craftsmanWindowDouble", "whiteWallpaperPlainWood", [8, 0, 0]],
+            ["ozzyBathroomWallE0", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, 0], [0, 90, 0]],
+            ["ozzyBathroomWallE1", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, -2], [0, 90, 0]],
+            ["ozzyBathroomWallS0", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, -2], [0, 180, 0]],
+            ["ozzyBathroomWallS1", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, -2], [0, 180, 0]],
+            ["ozzyBathroomWallW0Doorway", "craftsmanDoorway", "whiteWallpaperPlainWood", [6, 0, -2], [0, 270, 0]],
+            ["ozzyBathroomWallW1", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, 0], [0, 270, 0]],
+            ["ozzyHallwayWallN0", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -2]],
+            ["ozzyHallwayWallE0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -2], [0, 90, 0]],
+            ["ozzyHallwayWallE1", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -4], [0, 90, 0]],
+            ["ozzyHallwayWallE2", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -6], [0, 90, 0]],
+            ["ozzyHallwayWallW0Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -6], [0, 270, 0]],
+            ["ozzyHallwayWallW1", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -4], [0, -90, 0]],
+            ["ozzyHallwayWallW2Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [4, 0, -2], [0, 270, 0]],
+            ["ozzyLivingroomWallN0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -8]],
+            ["ozzyLivingroomWallN1", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -8]],
+            ["ozzyLivingroomWallN2Corner0", "craftsmanCorner", "yellowWallpaperPlainWood", [4, 0, -8]],
+            ["ozzyLivingroomWallN2Corner1", "craftsmanCorner", "yellowWallpaperPlainWood", [4, 0, -8], [0, 90, 0]],
+            ["ozzyLivingroomWallN3", "craftsmanWall", "yellowWallpaperPlainWood", [6, 0, -8]],
+            ["ozzyLivingroomWallE0", "craftsmanWall", "yellowWallpaperPlainWood", [6, 0, -8], [0, 90, 0]],
+            ["ozzyLivingroomWallE1", "craftsmanWall", "yellowWallpaperPlainWood", [6, 0, -10], [0, 90, 0]],
+            ["ozzyLivingroomWallE2", "craftsmanWall", "yellowWallpaperPlainWood", [6, 0, -12], [0, 90, 0]],
+            ["ozzyLivingroomWallS0", "craftsmanWall", "yellowWallpaperPlainWood", [6, 0, -12], [0, 180, 0]],
+            ["ozzyLivingroomWallS1", "craftsmanWall", "yellowWallpaperPlainWood", [4, 0, -12], [0, 180, 0]],
+            ["ozzyLivingroomWallS2Doorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [2, 0, -12], [0, 180, 0]],
+            ["ozzyLivingroomWallS3", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -12], [0, 180, 0]],
+            ["ozzyLivingroomWallW0", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -12], [0, 270, 0]],
+            ["ozzyLivingroomWallW1Windowframe", "craftsmanWindowframe", "yellowWallpaperPlainWood", [0, 0, -10], [0, 270, 0]],
+            ["ozzyLivingroomWallW1Window", "craftsmanWindowDouble", "yellowWallpaperPlainWood", [0, 0, -10], [0, 270, 0]],
+            ["ozzyLivingroomWallW2", "craftsmanWall", "yellowWallpaperPlainWood", [0, 0, -8], [0, 270, 0]],
+            ["trashBagFullInstance01", "trashBagFull", "missingTexture", [6.4, 0, -9.8]],
+            ["trashCanInstance01", "trashCan", "missingTexture", [5.8, 0, -10.2]],
+            ["trashBagFullInstance02", "trashBagFull", "missingTexture", [6.5, 0, -10.6], [0, 90, 0]],
+            ["landlordBedroomWallN0", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, 0]],
+            ["landlordBedroomWallN1", "craftsmanWall", "blueWallpaperPlainWood", [12, 0, 0]],
+            ["landlordBedroomWallN2", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, 0]],
+            ["landlordBedroomWallE0", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, 0], [0, 90, 0]],
+            ["landlordBedroomWallE1", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -2], [0, 90, 0]],
+            ["landlordBedroomWallE2Windowframe", "craftsmanWindowframe", "blueWallpaperPlainWood", [14, 0, -4], [0, 90, 0]],
+            ["landlordBedroomWallE2Window", "craftsmanWindowDouble", "blueWallpaperPlainWood", [14, 0, -4], [0, 90, 0]],
+            ["landlordBedroomWallS0Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [14, 0, -4], [0, 180, 0]],
+            ["landlordBedroomWallS1Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [12, 0, -4], [0, 180, 0]],
+            ["landlordBedroomWallS2", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, -4], [0, 180, 0]],
+            ["landlordBedroomWallW0", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, -4], [0, 270, 0]],
+            ["landlordBedroomWallW1", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, -2], [0, 270, 0]],
+            ["landlordBedroomWallW2", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, 0], [0, 270, 0]]
+        ]
+    },
+    "entityGroups":{
+        "id":"ozzyApartment",
+        "name":"Ozzy's Apartment",
+        "furniture":[
+            ["ozzyBed", "mattress01", [-0.1, 0, -3.395], [0,0,0], [1.35, 1.35, 1.35]],
+            ["ozzyBathroomToilet", "animatedToilet01", [8.5, 0, -1], [0, 90, 0], 1.5],
+            ["ozzyBathroomSinkFaucet", "animatedSink01Faucet", [8.95, 0, 0.125], [0, 90, 0], 1.5],
+            ["ozzyBathroomTub", "bathtub01", [8.85, 0, -2.25], [0, 90, 0], 1.5],
+            ["refrigeratorOzzy", "animatedRefrigerator01", [6.35, 0, -7.75], [0, 90, 0]]
+        ],
+        "doors":[
+            ["ozzyBathroomDoor", "Bathroom", null, "simpleDoor", "simpleDoor", [5, 0, -2], [0, 90, 0], [1, 1, 1], {"opensInward":false}],
+            ["ozzyHallwayClosetDoor", "Closet", null, "simpleDoor", "simpleDoor", [3, 0, -6], [0, 270, 0], [1, 1, 1], {"opensInward":true}],
+            ["ozzyBedroomDoor", "Bedroom", null, "simpleDoor", "simpleDoor", [3, 0, -2], [0, 270, 0], [1, 1, 1], {"opensInward":false}]
+        ]
+    },
+    "metaGroups": [
+        {
+            "id":"landlordApartment",
+            "name":"Landlord's Apartment",
+            "meshGroups":{
+                "tiledCeilings":[
+                    ["landlordBedroomClosetCeiling", [2, 2], "woodenFloorDark26", [13, 2.9, -7]],
+                    ["landlordLivingroomCeiling0", [4, 2], "woodenFloorDark26", [9, 2.9, -7]],
+                    ["landlordLivingroomCeiling1", [8, 6], "woodenFloorDark26", [7, 2.9, -13]],
+                    ["landlordLivingroomCeiling2", [10, 4], "woodenFloorDark26", [5, 2.9, -17]],
+                    ["landlordBathroomCeiling", [4, 4, 1, 1], "californiaKnockdown01", [5, 2.9, -7]]
+                ],
+                "tiledGrounds":[
+                    ["landlordBedroomClosetFloor", [2, 2], "woodenFloorDark01", [13, 0, -7]],
+                    ["landlordLivingroomFloor0", [4, 2], "woodenFloorDark01", [9, 0, -7]],
+                    ["landlordLivingroomFloor1", [8, 6], "woodenFloorDark01", [7, 0, -13]],
+                    ["landlordLivingroomFloor2", [10, 4], "woodenFloorDark01", [5, 0, -17]],
+                    ["landlordBathroomFloor", [4, 4], "linoleumMaterial", [5, 0, -7]]
+                ],
+                "meshes":[],
+                "collidableMeshes":[
+                    ["landlordBedroomClosetWallN0Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [14, 0, -6]],
+                    ["landlordBedroomClosetWallE0", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -6], [0, 90, 0]],
+                    ["landlordBedroomClosetWallS0", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -6], [0, 180, 0]],
+                    ["landlordBedroomClosetWallW0", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -6], [0, 270, 0]],
+                    ["landlordLivingroomWallN0", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -8]],
+                    ["landlordLivingroomWallN0Corner0", "craftsmanCorner", "blueWallpaperPlainWood", [10, 0, -8]],
+                    ["landlordLivingroomWallN1", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, -6]],
+                    ["landlordLivingroomWallN2Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [12, 0, -6]],
+                    ["landlordLivingroomWallN3", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -8]],
+                    ["landlordLivingroomWallE0", "craftsmanWall", "blueWallpaperPlainWood", [12, 0, -6], [0, 90, 0]],
+                    ["landlordLivingroomWallE0Corner1", "craftsmanCorner", "blueWallpaperPlainWood", [12, 0, -8], [0, 90, 0]],
+                    ["landlordLivingroomWallE1", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -8], [0, 90, 0]],
+                    ["landlordLivingroomWallE2Windowframe", "craftsmanWindowframe", "blueWallpaperPlainWood", [14, 0, -10], [0, 90, 0]],
+                    ["landlordLivingroomWallE2Window", "craftsmanWindowDouble", "blueWallpaperPlainWood", [14, 0, -10], [0, 90, 0]],
+                    ["landlordLivingroomWallE3", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -12], [0, 90, 0]],
+                    ["landlordLivingroomWallE4", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -14], [0, 90, 0]],
+                    ["landlordLivingroomWallE5Windowframe", "craftsmanWindowframe", "blueWallpaperPlainWood", [14, 0, -16], [0, 90, 0]],
+                    ["landlordLivingroomWallE5Window", "craftsmanWindowDouble", "blueWallpaperPlainWood", [14, 0, -16], [0, 90, 0]],
+                    ["landlordLivingroomWallS0", "craftsmanWall", "blueWallpaperPlainWood", [14, 0, -16], [0, 180, 0]],
+                    ["landlordLivingroomWallS1", "craftsmanWall", "blueWallpaperPlainWood", [12, 0, -16], [0, 180, 0]],
+                    ["landlordLivingroomWallS2", "craftsmanWall", "blueWallpaperPlainWood", [10, 0, -16], [0, 180, 0]],
+                    ["landlordLivingroomWallS3", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -16], [0, 180, 0]],
+                    ["landlordLivingroomWallS4", "craftsmanWall", "blueWallpaperPlainWood", [6, 0, -16], [0, 180, 0]],
+                    ["landlordLivingroomWallW0Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [6, 0, -16], [0, 270, 0]],
+                    ["landlordLivingroomWallW1", "craftsmanWall", "blueWallpaperPlainWood", [6, 0, -14], [0, 270, 0]],
+                    ["landlordLivingroomWallN4", "craftsmanWall", "blueWallpaperPlainWood", [6, 0, -14]],
+                    ["landlordLivingroomDividerWallN0", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -14]],
+                    ["landlordLivingroomDividerWallN0Corner0", "craftsmanCorner", "blueWallpaperPlainWood", [10, 0, -14]],
+                    ["landlordLivingroomDividerWallS0Corner0", "craftsmanCorner", "blueWallpaperPlainWood", [10, 0, -12], [0, 270, 0]],
+                    ["landlordLivingroomDividerWallS0", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -12], [0, 180, 0]],
+                    ["landlordLivingroomWallW2", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -12], [0, 270, 0]],
+                    ["landlordLivingroomWallW3", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -10], [0, 270, 0]],
+                    ["landlordLivingroomWallW4", "craftsmanWall", "blueWallpaperPlainWood", [8, 0, -8], [0, 270, 0]],
+                    ["landlordLivingroomWallW5Doorway", "craftsmanDoorway", "blueWallpaperPlainWood", [10, 0, -6], [0, 270, 0]],
+                    ["landlordBathroomWallN0", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, -4]],
+                    ["landlordBathroomWallN1", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, -4]],
+                    ["landlordBathroomWallE0", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, -4], [0, 90, 0]],
+                    ["landlordBathroomWallE1Doorway", "craftsmanDoorway", "whiteWallpaperPlainWood", [8, 0, -6], [0, 90, 0]],
+                    ["landlordBathroomWallS0", "craftsmanWall", "whiteWallpaperPlainWood", [8, 0, -6], [0, 180, 0]],
+                    ["landlordBathroomWallS1", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, -6], [0, 180, 0]],
+                    ["landlordBathroomWallW0", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, -6], [0, 270, 0]],
+                    ["landlordBathroomWallW1", "craftsmanWall", "whiteWallpaperPlainWood", [6, 0, -4], [0, 270, 0]]
+                ]
+            },
+            "entityGroups":[]
+        },
+        {
+            "id":"aptCommons",
+            "name":"Commons",
+            "meshGroups":{
+                "ramps":[
+                    [[0, 0, -22.5], [2, 3, -17.5]]
+                ],
+                "tiledGrounds":[
+                    ["commons1Floor0", [4, 14], "woodenFloorDark26", [1, 0, -27]],
+                    ["commons1Floor2", [10], "woodenFloorDark26", [5, 0, -27]],
+                    ["commons1Floor2", [2, 4], "woodenFloorDark26", [-1, 0, -27]],
+                    ["commonsFloor01d", [2, 6], "woodenFloorDark26", [-1, 0, -19]]
+                ],
+                "tiledCeilings":[
+                    ["commons1Ceiling0", [4, 14], "woodenFloorDark26", [1, 2.9, -27]],
+                    ["commons1Ceiling2", [10], "woodenFloorDark26", [5, 2.9, -27]],
+                    ["commons1Ceiling2", [2, 4], "woodenFloorDark26", [-1, 2.9, -27]],
+                    ["commonsCeiling01d", [2, 6], "woodenFloorDark26", [-1, 2.9, -19]]
+                ],
+                "collidableMeshes":[
+                    ["commons1WallN0", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -14]],
+                    ["commons1WallN1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [2, 0, -14]],
+                    ["commons1WallN2", "craftsmanWall", "greenWallpaperPlainWood", [4, 0, -14]],
+                    ["commons1WallE0", "craftsmanWall", "greenWallpaperPlainWood", [4, 0, -14], [0, 90, 0]],
+                    ["commons1WallE1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [4, 0, -16], [0, 90, 0]],
+                    ["commons1WallE1Corner0", "craftsmanCorner", "greenWallpaperPlainWood", [4, 0, -18], [0, 90, 0]],
+                    ["commons1WallN3", "craftsmanWall", "greenWallpaperPlainWood", [6, 0, -18]],
+                    ["commons1WallN4", "craftsmanWall", "greenWallpaperPlainWood", [8, 0, -18]],
+                    ["commons1WallN5", "craftsmanWall", "greenWallpaperPlainWood", [10, 0, -18]],
+                    ["commons1WallN6", "craftsmanWall", "greenWallpaperPlainWood", [12, 0, -18]],
+                    ["commons1WallN7", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -18]],
+                    ["commons1WallE2", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -18], [0, 90, 0]],
+                    ["commons1WallE3", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -20], [0, 90, 0]],
+                    ["commons1WallE4", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -22], [0, 90, 0]],
+                    ["commons1WallE5Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]],
+                    ["commons1WallE5Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [14, 0, -24], [0, 90, 0]],
+                    ["commons1WallE6", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -26], [0, 90, 0]],
+                    ["commons1WallS0", "craftsmanWall", "greenWallpaperPlainWood", [14, 0, -26], [0, 180, 0]],
+                    ["commons1WallS1Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [12, 0, -26], [0, 180, 0]],
+                    ["commons1WallS1Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [12, 0, -26], [0, 180, 0]],
+                    ["commons1WallS2", "craftsmanWall", "greenWallpaperPlainWood", [10, 0, -26], [0, 180, 0]],
+                    ["commons1WallS3Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [8, 0, -26], [0, 180, 0]],
+                    ["commons1WallS3Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [8, 0, -26], [0, 180, 0]],
+                    ["commons1WallS4", "craftsmanWall", "greenWallpaperPlainWood", [6, 0, -26], [0, 180, 0]],
+                    ["commons1WallS5DividerWall0", "craftsmanWall", "greenWallpaperPlainWood", [6, 0, -26], [0, 270, 0]],
+                    ["commons1WallS5DividerCorner0", "craftsmanCorner", "greenWallpaperPlainWood", [4, 0, -24], [0, 180, 0]],
+                    ["commons1WallS5DividerCorner1", "craftsmanCorner", "greenWallpaperPlainWood", [6, 0, -24], [0, 270, 0]],
+                    ["commons1WallS5DividerWall1", "craftsmanWall", "greenWallpaperPlainWood", [4, 0, -26], [0, 90, 0]],
+                    ["commons1WallS5Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [4, 0, -26], [0, 180, 0]],
+                    ["commons1WallS6", "craftsmanWall", "greenWallpaperPlainWood", [2, 0, -26], [0, 180, 0]],
+                    ["commons1WallS7Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [0, 0, -26], [0, 180, 0]],
+                    ["commons1WallS7Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [0, 0, -26], [0, 180, 0]],
+                    ["commons1WallW0", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -26], [0, 270, 0]],
+                    ["commons1WallW1Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [0, 0, -24], [0, 270, 0]],
+                    ["commons1WallW1Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [0, 0, -24], [0, 270, 0]],
+                    ["commons1WallW2", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 0, -22], [0, 270, 0]],
+                    ["commons1WallW3", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 0, -20], [0, 270, 0]],
+                    ["commons1WallW4Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [0, 0, -18], [0, 270, 0]],
+                    ["commons1WallW4Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [0, 0, -18], [0, 270, 0]],
+                    ["commons1WallW5", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -16], [0, 270, 0]],
+                    ["commons1WallW6", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -14], [0, 270, 0]],
+                    ["commons1StairCorner", "craftsmanCorner", "greenWallpaperPlainWood", [2, 0, -18], [0, 270, 0]],
+                    ["commons1StairWallSide", "craftsmanStairWallSide", "greenWallpaperPlainWood", [2, 0, -20]],
+                    ["commons1StairWallCorner", "craftsmanStairWallCorner", "greenWallpaperPlainWood",[2, 0, -22]],
+                    ["commons1Stairs0", "craftsmanStairs", "greenWallpaperPlainWood", [0, 0, -22]],
+                    ["commons1Stairs1", "craftsmanStairs", "greenWallpaperPlainWood", [0, 1.5, -20]],
+                    ["commons1BasementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -18], [0, 180, 0]],
+                    ["commons1StairsRailing0", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 0, -22]],
+                    ["commons1StairsRailing1", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 1.5, -20]],
+                    ["commonsTableInstance01", "diningTable", "woodenFloorDark26", [10, 0, -22], [0, -90, 0]]
+                ],
+                "meshes":[
+                    ["commons1StairBasementBaseTL", "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", [0, 1.5, -20]],
+                    ["commons1StairBasementCrownTL", "craftsmanStairCrownTrimLeftTop", "greenWallpaperPlainWood", [0, 3, -20]],
+                    ["commons1StairBasementBaseBL", "craftsmanStairBaseTrimLeftBottom", "greenWallpaperPlainWood", [0, 0, -22]],
+                    ["commons1StairBasementCrownBL", "craftsmanStairCrownTrimLeftBottom", "greenWallpaperPlainWood", [0, 3, -22]],
+                    ["commons1StairwellFloorGap0", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 0, -20], [0, 90, 0]],
+                    ["commons1StairwellFloorGap1", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 0, -22], [0, 90, 0]]
+                ]
+            },
+            "entityGroups":{
+                "doors":[
+                    ["apartmentBuildingDoor", "Door", null, "craftsmanDoor", "crossPanelDoor", [4, 0, -27], [0, 0, 0], [1, 1, 1], { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false }],
+                    ["ozzyApartmentDoor", "Ozzy's Apartment", null, "simpleDoor", "simpleDoor", [2, 0, -13], [0, 0, 0], [1, 1, 1], { "opensInward":false }],
+                    ["landlordApartmentDoor", "Landlord's Apartment", null, "simpleDoor", "simpleDoor", [5, 0, -16], [0, 90, 0], [1, 1, 1], { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false}],
+                    ["packstreetApt3ApartmentToBasementDoor", "Basement", ["packstreetApt3Basement", "packstreetApt3BasementCell", [0, 0, -19.5]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], [1, 1, 1], {"opensInward":true}]
+                ],
+                "furniture":[
+                    ["commonsCouch", "couch01", [8.25, 0, -22], [0, -90, 0]]
+                ],
+                "items":[
+                    ["knife", "knife01", [9.7, 0.9, -22.5], [180, 0, 0]],
+                    ["cross", "cross01", [10, 0.85, -22]],
+                    ["plateInstance01", "plate01", [9.7, 0.75, -21.5]],
+                    ["cheeseWedgeInstance01", "cheeseWedge", [9.7, 0.775, -21.5]],
+                    ["plateInstance02", "plate01", [10, 0.75, -22.5]],
+                    ["alBuildingLocationKeyInstance", "alBuildingLocationKey", [10, 0.75, -22.75]],
+                    ["packstreet23StrangeNewDayInstance", "packstreet23StrangeNewDay", [10, 0.75, -21.25], [0, 180, 0]],
+                    ["packstreet24PaintJobInstance", "packstreet24PaintJob", [10, 0.75, -21], [0, 180, 0]]
+                ],
+                "lightings":[
+                    ["commonsLamp", "lamp01", [-0.5, 0, -26.5]]
+                ],
+                "characters":[
+                    ["rinehart", "rinehart", [3, 0, -20], [0, 180, 0]],
+                    ["rosie", "rosie", [2, 0, -3.35]],
+                    ["charlie", "charlie", [2, 0, -4], [0, 180, 0], [0.9, 0.9, 0.9]]
+                ]
+            }
+        },
+        {
+            "id":"aptCommons2",
+            "name":"Commons, 2nd Floor",
+            "meshGroups":{
+                "ramps":[
+                    [[0, 3, -22.5], [2, 6, -17.5]]
+                ],
+                "tiledGrounds":[
+                    ["commons2Floor0", {"xmin":0, "zmin":0, "xmax": 4, "zmax": 14, "subdivisions": {"w":4, "h":14}}, "carpet02-pink", [1, 3, -27]],
+                    ["commons2Floor1", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 4, "subdivisions": {"w":2, "h":4}}, "carpet02-pink", [-1, 3, -27]],
+                    ["commons2Floor2", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 6, "subdivisions": {"w":2, "h":6}}, "carpet02-pink", [-1, 3, -19]]
+                ],
+                "tiledCeilings":[
+                    ["commons2Ceiling0", {"xmin":0, "zmin":0, "xmax": 14, "zmax": 28, "subdivisions": {"w":14, "h":28}}, "greenWallpaper", [1, 5.9, -27]],
+                    ["commons2Ceiling1", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 20, "subdivisions": {"w":2, "h":20}}, "greenWallpaper", [-1, 5.9, -19]],
+                    ["commons2Ceiling2", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 4, "subdivisions": {"w":2, "h":4}}, "greenWallpaper", [-1, 5.9, -27]]
+                ],
+                "collidableMeshes":[
+                    ["commons2WallN0", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -14]],
+                    ["commons2WallN1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [2, 3, -14]],
+                    ["commons2WallN2", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -14]],
+                    ["commons2WallE0", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -14], [0, 90, 0]],
+                    ["commons2WallE1Doorway", "craftsmanDoorway", "greenWallpaperPlainWood", [4, 3, -16], [0, 90, 0]],
+                    ["commons2WallE2", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -18], [0, 90, 0]],
+                    ["commons2WallE3", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -20], [0, 90, 0]],
+                    ["commons2WallE4", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -22], [0, 90, 0]],
+                    ["commons2WallE5", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -24], [0, 90, 0]],
+                    ["commons2WallE6", "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -26], [0, 90, 0]],
+                    ["commons2WallS0Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [4, 3, -26], [0, 180, 0]],
+                    ["commons2WallS0Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [4, 3, -26], [0, 180, 0]],
+                    ["commons2WallS1", "craftsmanWall", "greenWallpaperPlainWood", [2, 3, -26], [0, 180, 0]],
+                    ["commons2WallS2Windowframe", "craftsmanWindowframe", "greenWallpaperPlainWood", [0, 3, -26], [0, 180, 0]],
+                    ["commons2WallS2Window", "craftsmanWindowDouble", "greenWallpaperPlainWood", [0, 3, -26], [0, 180, 0]],
+                    ["commons2WallW0", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -26], [0, 270, 0]],
+                    ["commons2WallW1", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -24], [0, 270, 0]],
+                    ["commons2WallW2", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 3, -22], [0, 270, 0]],
+                    ["commons2WallW3", "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 3, -20], [0, 270, 0]],
+                    ["commons2WallW4", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -18], [0, 270, 0]],
+                    ["commons2WallW5", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -16], [0, 270, 0]],
+                    ["commons2WallW6", "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -14], [0, 270, 0]],
+                    ["commons2Stairs0", "craftsmanStairs", "greenWallpaperPlainWood", [0, 3, -22]],
+                    ["commons2Stairs1", "craftsmanStairs", "greenWallpaperPlainWood", [0, 4.5, -20]],
+                    ["commons2StairwellRailing0", "craftsmanFloorRailingLeft", "greenWallpaperPlainWood", [-1, 3, -20], [0, 180, 0]],
+                    ["commons2StairwellRailing1", "craftsmanFloorRailingRight", "greenWallpaperPlainWood", [1, 3, -22]],
+                    ["commons2StairsRailing0", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 3, -22]],
+                    ["commons2StairsRailing1", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 4.5, -20]]
+                ],
+                "meshes":[
+                    ["commons2StairwellFloorGap0", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 3, -20], [0, 90, 0]],
+                    ["commons2StairwellFloorGap1", "craftsmanWallCeilingFloorGap", "greenWallpaperPlainWood", [0, 3, -22], [0, 90, 0]]
+                ]
+            },
+            "entityGroups":{
+                "doors":[
+                    ["chartyApartmentDoor", "Charlie and Marty's Apartment", null, "simpleDoor", "simpleDoor", [2, 3, -13], [0, 0, 0], [1, 1, 1], {"opensInward":false}],
+                    ["kyleApartmentDoor", "Kyle's Apartment", null, "simpleDoor", "simpleDoor", [5, 3, -16], [0, 90, 0], [1, 1, 1], {"opensInward":false}]
+                ]
+            }
+        },
+        {
+            "id":"chartyApartment",
+            "name":"Charlie and Marty's Apartment",
+            "meshGroups":{
+                "walls":[
+                    [-1, 3, -7], [7, 6, -7],
+                    [9, 3, -7], [15, 6, -7],
+                    [1, 3, -1], [5, 6, -1],
+                    [5, 3, 1], [5, 6, -5],
+                    [7, 3, -5], [9, 6, -5],
+                    [9, 3, -1], [13, 6, -1],
+                    [9, 3, 1], [9, 6, -5]
+                ],
+                "ramps":[],
+                "tiledGrounds":[
+                    ["chartyLivingroomFloor", {"xmin":0, "zmin":0, "xmax": 16, "zmax": 6, "subdivisions": {"w":16, "h":6}}, "carpet02-pink", [-1, 3, -13]],
+                    ["chartyHallwayFloor", {"xmin":0, "zmin":0, "xmax": 4, "zmax": 2, "subdivisions": {"w":4, "h":2}}, "carpet02-pink", [5, 3, -7]],
+                    ["charlieBedroomFloor", {"xmin":0, "zmin":0, "xmax": 6, "zmax": 8, "subdivisions": {"w":6, "h":8}}, "carpet02-black", [-1, 3, -7]],
+                    ["chartyBathroomFloor", {"xmin":0, "zmin":0, "xmax": 4, "zmax": 6, "subdivisions": {"w":4, "h":6}}, "linoleumMaterial", [5, 3, -5]],
+                    ["martyBedroomFloor", {"xmin":0, "zmin":0, "xmax": 6, "zmax": 8, "subdivisions": {"w":6, "h":8}}, "woodenFloorDark01", [9, 3, -7]]
+                ],
+                "tiledCeilings":[],
+                "collidableMeshes":[
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [2, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -8]],
+                    [null, "craftsmanCorner", "greenWallpaperPlainWood", [8, 3, -8]],
+                    [null, "craftsmanCorner", "greenWallpaperPlainWood", [8, 3, -8], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -8]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -8], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -10], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -12], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [2, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -12], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -12], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -10], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 3, -8], [0, 270, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [6, 3, -6]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -6]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [8, 3, -6], [0, 90, 0]],
+                    [null, "craftsmanCorner", "greenWallpaperPlainWood", [8, 3, -6], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [6, 3, -6], [0, 270, 0]],
+                    [null, "craftsmanDoorway", "blackWallpaperPlainWood", [0, 3, -2]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [2, 3, -2]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, -2]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, -2], [0, 90, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, -4], [0, 90, 0]],
+                    [null, "craftsmanDoorway", "blackWallpaperPlainWood", [4, 3, -6], [0, 90, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [2, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, -6], [0, 270, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, -4], [0, 270, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, -2], [0, 270, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [2, 3, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, 0], [0, 90, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [4, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [2, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanDoorway", "blackWallpaperPlainWood", [0, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanWall", "blackWallpaperPlainWood", [0, 3, 0], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, 0], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -2], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -4], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [8, 3, -4], [0, 180, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [6, 3, -4], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -4], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, -2], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [6, 3, 0], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -2]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, -2]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [14, 3, -2]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -2], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -4], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -6], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -6], [0, 180, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [10, 3, -6], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -4], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, -2], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [14, 3, 0], [0, 90, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [14, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [12, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, 0], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [10, 3, 0], [0, 270, 0]]
+                ],
+                "meshes":[],
+                "planesByMesh":[
+                    "chartyLivingroomFloor",
+                    "chartyHallwayFloor",
+                    "chartyBathroomFloor",
+                    "charlieBedroomFloor",
+                    "martyBedroomFloor"
+                ]
+            },
+            "entityGroups":{
+                "doors":[
+                    ["chartyBathroomDoor", "Bathroom", null, "simpleDoor", "simpleDoor", [6, 3, -5]],
+                    ["martyBedroomDoor", "Marty's Room", null, "simpleDoor", "simpleDoor", [9, 3, -6], [0, 90, 0]],
+                    ["charlieBedroomDoor", "Charlie's Room", null, "simpleDoor", "simpleDoor",[5, 3, -6], [0, 90, 0], {"opensInward":true}]
+                ],
+                "furniture":[],
+                "lightings":[],
+                "items":[],
+                "characters":[]
+            }
+        },
+        {
+            "id":"kyleApartment",
+            "name":"Kyle's Apartment",
+            "meshGroups":{
+                "planes":[
+                    [[5, -27], [15, -13], 3]
+                ]
+            }
+        },
+        {
+            "id":"aptCommons3",
+            "name":"Commons, 3rd Floor",
+            "meshGroups":{
+                "ramps":[
+                    [0, 6, -22.5], [2, 9, -17.5]
+                ],
+                "walls":[
+                    [-1, 6, -13], [3, 9, -13],
+                    [5, 6, -13], [5, 9, -21],
+                    [5, 6, -23], [5, 9, -27]
+                ],
+                "tiledGrounds":[
+                    ["commonsFloor03a", {"xmin":0, "zmin":0, "xmax": 4, "zmax": 14, "subdivisions": {"w":4, "h":14}}, "carpet02-pink", [1, 6, -27]],
+                    ["commonsFloor03b", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 4, "subdivisions": {"w":2, "h":4}}, "carpet02-pink", [-1, 6, -27]],
+                    ["commonsFloor03c", {"xmin":0, "zmin":0, "xmax": 2, "zmax": 6, "subdivisions": {"w":2, "h":6}}, "carpet02-pink", [-1, 6, -19]]
+                ],
+                "collidableMeshes":[
+                    [null, "craftsmanStairs", "greenWallpaperPlainWood", [0, 6, -22]],
+                    [null, "craftsmanStairs", "greenWallpaperPlainWood", [0, 7.5, -20]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -14]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [2, 6, -14]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [4, 6, -14]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -14], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -16], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -18], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -20], [0, 90, 0]],
+                    [null, "craftsmanDoorway", "greenWallpaperPlainWood", [4, 6, -22], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -24], [0, 90, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [4, 6, -26], [0, 90, 0]],
+                    [null, "craftsmanWindowframe", "greenWallpaperPlainWood", [4, 6, -26], [0, 180, 0]],
+                    [null, "craftsmanWindowDouble", "greenWallpaperPlainWood", [4, 6, -26], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [2, 6, -26], [0, 180, 0]],
+                    [null, "craftsmanWindowframe", "greenWallpaperPlainWood", [0, 6, -26], [0, 180, 0]],
+                    [null, "craftsmanWindowDouble", "greenWallpaperPlainWood", [0, 6, -26], [0, 180, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -26], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -24], [0, 270, 0]],
+                    [null, "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 6, -22], [0, 270, 0]],
+                    [null, "craftsmanWallNoTrim", "greenWallpaperPlainWood", [0, 6, -20], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -18], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -16], [0, 270, 0]],
+                    [null, "craftsmanWall", "greenWallpaperPlainWood", [0, 6, -14], [0, 270, 0]]
+                ],
+                "planesByMesh":[
+                    "commonsFloor03a",
+                    "commonsFloor03b",
+                    "commonsFloor03c"
+                ]
+            },
+            "entityGroups":{
+                "doors":[
+                    ["twinsApartmentDoor", "Anneke and Wolter's Apartment", null, "simpleDoor", "simpleDoor", [4, 6, -13], [0, 0, 0]],
+                    ["remmyApartmentDoor", "Remmy's Apartment", null, "simpleDoor", "simpleDoor", [5, 6, -22], [0, 90, 0]]
+                ]
+            }
+        },
+        {
+            "id":"packstreetApt3Exterior",
+            "name":"Packstreet Apt. 3 Exterior",
+            "meshGroups":{
+                "walls":[
+                    [[15, 0, -27], [15, 3, -31]],
+                    [[-1, 0, -27], [-1, 3, -31]],
+                    [[-1, 0, -31], [15, 3, -31]]
+                ],
+                "tiledGrounds":[
+                    ["outsideFloorStone", {"xmin":0, "zmin":0, "xmax": 16, "zmax": 4, "subdivisions": {"w":16, "h":4}}, "stoneMaterial01", [-1, -0.0625, -31]]
+                ],
+                "collidableMeshes":[
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [0, 0, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [2, 0, -28]],
+                    [null, "craftsmanDoorwayNoTrim", "whitePanelGrayStone", [4, 0, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [6, 0, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [8, 0, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [10, 0, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [12, 0, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [14, 0, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [0, 3, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [2, 3, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [4, 3, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [6, 3, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [8, 3, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [10, 3, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [12, 3, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [14, 3, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [0, 6, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [2, 6, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [4, 6, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [6, 6, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [8, 6, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [10, 6, -28]],
+                    [null, "craftsmanWindowframeNoTrim", "whitePanelGrayStone", [12, 6, -28]],
+                    [null, "craftsmanWallNoTrim", "whitePanelGrayStone", [14, 6, -28]],
+                    ["stopSignInstance01", "stopSign", "stopSign", [4, 0, -29], [0, 180, 0]],
+                    ["sawhorseInstance01", "sawhorse", null, [3.3, 0, -29], [0, 33, 0]],
+                    ["twoByFourByThreeSr", "twoByFourByThree", null, [3, 0, -29.2], [30, 33, -5]],
+                    ["twoByFourByThreeJr", "twoByFourByThree", null, [2.9, 0, -29.15], [30, 33, -5]],
+                    ["brickWallInstance00", "brickWall01", "brickWall01", [7, 0, -29], [0, 90, 0], [2, 1, 1]],
+                    ["brickWallInstance01", "brickWall01", "brickWall01", [6, 0, -30]],
+                    ["brickWallInstance02", "brickWall01", "brickWall01", [4, 0, -30]],
+                    ["brickWallInstance03", "brickWall01", "brickWall01", [2, 0, -30]],
+                    ["brickWallInstance04", "brickWall01", "brickWall01", [0, 0, -30]],
+                    ["brickWallInstance05", "brickWall01", "brickWall01", [-1, 0, -29], [0, 90, 0]],
+                    ["brickWallInstance06", "brickWall01", "brickWall01", [-1.075, 0, -27.075], [0, 85, 0]]
+                ]
+            }
+        }
+    ]
+}

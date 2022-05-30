@@ -181,7 +181,7 @@ class Game {
 
         Game.playerEntityID = null;
         Game.playerController = null;
-        Game.selectedCellID = "apartmentCell";
+        Game.selectedCellID = "packstreetApartment3";
         Game.currentCellID = null;
         Game.previousCellID = null;
         Game.targetRayEnabled = true;
@@ -394,6 +394,20 @@ class Game {
                 }
             });
         }
+        Game.tickWorker.postMessage({
+            "cmd": "useNative",
+            "sta": 0,
+            "msg": {
+                "useNative": Game.useNative
+            }
+        });
+        Game.entityLogicWorker.postMessage({
+            "cmd": "useNative",
+            "sta": 0,
+            "msg": {
+                "useNative": Game.useNative
+            }
+        });
 
         Game.tickWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTickChannel.port1]);
         Game.entityLogicWorker.postMessage({"cmd":"connectTick","sta":0,"msg":null}, [Game.entityLogicTickChannel.port2]);

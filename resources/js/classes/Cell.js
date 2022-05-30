@@ -425,6 +425,119 @@ class Cell {
         this.addCollisionWall(String(this.id).concat("WestBarrier"), [-limit, -limit, -limit], [-limit, limit, limit]);
     }
 
+    loadFromJSON(jsonBlob) {
+        if (jsonBlob.hasOwnProperty("barrier")) {
+            this.createBarrier(jsonBlob["barrier"]);
+        }
+        if (jsonBlob.hasOwnProperty("material") && jsonBlob["materials"].length > 0) {
+            for (let i = 0; i < jsonBlob["materials"].length; i++) {
+                this.addMaterial(...jsonBlob["materials"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("meshGroups")) {
+            this.loadMeshGroupsFromJSON(jsonBlob["meshGroups"]);
+        }
+        if (jsonBlob.hasOwnProperty("entityGroups")) {
+            this.loadEntityGroupsFromJSON(jsonBlob["entityGroups"]);
+        }
+        if (jsonBlob.hasOwnProperty("metaGroups") && jsonBlob["metaGroups"].length > 0) {
+            for (let i = 0; i < jsonBlob["metaGroups"].length; i++) {
+                if (jsonBlob["metaGroups"][i].hasOwnProperty("meshGroups")) {
+                    this.loadMeshGroupsFromJSON(jsonBlob["metaGroups"][i]["meshGroups"]);
+                }
+                if (jsonBlob["metaGroups"][i].hasOwnProperty("entityGroups")) {
+                    this.loadEntityGroupsFromJSON(jsonBlob["metaGroups"][i]["entityGroups"]);
+                }
+            }
+        }
+        return 0;
+    }
+    loadMeshGroupsFromJSON(jsonBlob) {
+        if (jsonBlob.hasOwnProperty("ramps") && jsonBlob["ramps"].length > 0) {
+            for (let i = 0; i < jsonBlob["ramps"].length; i++) {
+                this.addCollisionRamp(...jsonBlob["ramps"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("planes") && jsonBlob["planes"].length > 0) {
+            for (let i = 0; i < jsonBlob["planes"].length; i++) {
+                this.addCollisionPlane(...jsonBlob["planes"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("walls") && jsonBlob["walls"].length > 0) {
+            for (let i = 0; i < jsonBlob["walls"].length; i++) {
+                this.addCollisionWall(...jsonBlob["walls"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("tiledGrounds") && jsonBlob["tiledGrounds"].length > 0) {
+            for (let i = 0; i < jsonBlob["tiledGrounds"].length; i++) {
+                this.addTiledGround(...jsonBlob["tiledGrounds"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("tiledCeilings") && jsonBlob["tiledCeilings"].length > 0) {
+            for (let i = 0; i < jsonBlob["tiledCeilings"].length; i++) {
+                this.addTiledCeiling(...jsonBlob["tiledCeilings"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("collidableMeshes") && jsonBlob["collidableMeshes"].length > 0) {
+            for (let i = 0; i < jsonBlob["collidableMeshes"].length; i++) {
+                this.addCollidableMesh(...jsonBlob["collidableMeshes"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("meshes") && jsonBlob["meshes"].length > 0) {
+            for (let i = 0; i < jsonBlob["meshes"].length; i++) {
+                this.addMesh(...jsonBlob["meshes"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("planesByMesh") && jsonBlob["planesByMesh"].length > 0) {
+            for (let i = 0; i < jsonBlob["planesByMesh"].length; i++) {
+                this.addCollisionPlaneByMesh(...jsonBlob["planesByMesh"][i]);
+            }
+        }
+        return 0;
+    }
+    loadEntityGroupsFromJSON(jsonBlob) {
+        if (jsonBlob.hasOwnProperty("doors") && jsonBlob["doors"].length > 0) {
+            for (let i = 0; i < jsonBlob["doors"].length; i++) {
+                this.addDoor(...jsonBlob["doors"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("furniture") && jsonBlob["furniture"].length > 0) {
+            for (let i = 0; i < jsonBlob["furniture"].length; i++) {
+                this.addFurniture(...jsonBlob["furniture"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("lightings") && jsonBlob["lightings"].length > 0) {
+            for (let i = 0; i < jsonBlob["lightings"].length; i++) {
+                this.addLighting(...jsonBlob["lightings"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("displays") && jsonBlob["displays"].length > 0) {
+            for (let i = 0; i < jsonBlob["displays"].length; i++) {
+                this.addDisplay(...jsonBlob["displays"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("items") && jsonBlob["items"].length > 0) {
+            for (let i = 0; i < jsonBlob["items"].length; i++) {
+                this.addItem(...jsonBlob["items"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("plants") && jsonBlob["plants"].length > 0) {
+            for (let i = 0; i < jsonBlob["plants"].length; i++) {
+                //this.addPlant(...jsonBlob["plants"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("creature") && jsonBlob["creature"].length > 0) {
+            for (let i = 0; i < jsonBlob["creature"].length; i++) {
+                this.addCreature(...jsonBlob["creature"][i]);
+            }
+        }
+        if (jsonBlob.hasOwnProperty("characters") && jsonBlob["characters"].length > 0) {
+            for (let i = 0; i < jsonBlob["characters"].length; i++) {
+                this.addCharacter(...jsonBlob["characters"][i]);
+            }
+        }
+        return 0;
+    }
     stringify() {
         return JSON.stringify(this.objectify());
     }
@@ -447,6 +560,17 @@ class Cell {
         return "Cell";
     }
 
+    static loadFromJSON(jsonBlob = undefined) {
+        if (typeof jsonBlob != "object") {
+            return 1;
+        }
+        if (!jsonBlob.hasOwnProperty("id")) {
+            return 1;
+        }
+        let cell = new Cell(jsonBlob["id"], jsonBlob["name"]);
+        cell.loadFromJSON(jsonBlob);
+        return cell;
+    }
     static objectifyProperty(property) {
         let obj = null;
         if (property instanceof AbstractEntity) {

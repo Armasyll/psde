@@ -1,0 +1,41 @@
+{
+    "id":"networkTest",
+    "name":"Network Test Cell",
+    "barrier":16,
+    "materials":[],
+    "meshGroups":{
+        "collidableMeshes":[
+            ["stoneFloor", "floor16x16", "stoneMaterial01", [-5, 0, -5]],
+            ["greenWall", "craftsmanWall", "greenWallpaperPlainWood", [1, 0, -2], [0, 180, 0]],
+            ["yellowWall", "craftsmanWall", "yellowWallpaperPlainWood", [3, 0, -2], [0, 180, 0]],
+            ["pinkWall", "craftsmanWall", "pinkWallpaperPlainWood", [5, 0, -2], [0, 180, 0]],
+            ["greenDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [1, 0, 0], [0, 180, 0]],
+            ["secondGreenWall", "craftsmanWall", "greenWallpaperPlainWood", [-1, 0, 0], [0, 180, 0]],
+            [null, "craftsmanWall", "greenWallpaperPlainWood", [-3, 0, 0], [0, 180, 0]],
+            [null, "craftsmanWall", "greenWallpaperPlainWood", [-5, 0, 0], [0, 180, 0]],
+            ["yellowDoorway", "craftsmanDoorway", "yellowWallpaperPlainWood", [3, 0, 0], [0, 180, 0]],
+            ["pinkDoorway", "craftsmanDoorway", "pinkWallpaperPlainWood", [5, 0, 0], [0, 180, 0]],
+            ["secondPinkWall", "craftsmanWall", "pinkWallpaperPlainWood", [7, 0, 0], [0, 180, 0]],
+            [null, "stick01", "stick01", [0, 0, 3], [0, 0, 0], [10, 10, 10]],
+            [null, "stopSign", "stopSign", [3, 0, 6]],
+            ["debugMovementStairs", "craftsmanStairs", "missingMaterial", [-2, 0, 2], [0, 180, 0]]
+        ]
+    },
+    "entityGroups":{
+        "doors":[
+            ["inwardClosedDoor", "Inward Closed Door", null, "simpleDoor", "simpleDoor", [1, 0, -1], [0, 180, 0], [1, 1, 1], {"opensInward":true}],
+            ["outwardClosedDoor", "Outward Closed Door", null, "simpleDoor", "simpleDoor", [3, 0, -1], [0, 180, 0], [1, 1, 1], {"opensInward":false}],
+            ["inwardOpenedDoor", "Inward Opened Door", null, "simpleDoor", "simpleDoor", [5, 0, -1], [0, 180, 0], [1, 1, 1], {"open":true, "opensInward":true}]
+        ],
+        "lightings":[
+            "commonsLamp", "lamp01", [6, 0, 3]
+        ],
+        "items":[
+            ["cheeseWedgeInstance01", "cheeseWedge", [3, 0, 3]],
+            ["cheeseWheelSansWedgeInstance01", "cheeseWheelSansWedge", [3, 0, 3]]
+        ],
+        "characters":[
+            "rinehart", "rinehart", [3, 0, 0], [0, 180, 0]
+        ]
+    }
+}

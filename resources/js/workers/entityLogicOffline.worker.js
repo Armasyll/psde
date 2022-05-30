@@ -28,6 +28,7 @@ class EntityLogic {
         EntityLogic.debugVerbosity = 0;
         EntityLogic.tickPort = null;
         EntityLogic.transformsPort = null;
+        EntityLogic.useNative = false;
 
         EntityLogic.currentTime = 0;
         EntityLogic.currentTick = 0;
@@ -38,14 +39,20 @@ class EntityLogic {
         EntityLogic.turnsPerRound = 6;
         EntityLogic.turnTime = EntityLogic.ticksPerTurn * EntityLogic.gameTimeMultiplier;
         EntityLogic.roundTime = EntityLogic.turnTime * EntityLogic.turnsPerRound;
-        EntityLogic.gameTimeMultiplier = 10;
-        EntityLogic.roundTime = 6;
-        EntityLogic.turnTime = 60;
+
+        EntityLogic.cellLocations = {};
+        EntityLogic.characterLocations = {};
 
         EntityLogic.playerEntity = null;
         EntityLogic.previousCell = null;
         EntityLogic.currentCell = null;
 
+        EntityLogic.importingCellLocations = true;
+
+        EntityLogic.initializePhaseTwo();
+        return 0;
+    }
+    static initializePhaseTwo() {
         EntityLogic.importEffects();
         EntityLogic.importClasses();
         EntityLogic.importSpells();
@@ -57,8 +64,13 @@ class EntityLogic {
         EntityLogic.importPlants();
         EntityLogic.importDialogues();
         EntityLogic.importCharacters();
-        EntityLogic.importCells();
+        EntityLogic.importCellLocations("../../json/cells.json", EntityLogic.initializePhaseThree);
         EntityLogic.importTeleportMarkers();
+        return 0;
+    }
+    static initializePhaseThree() {
+        // TODO: don't be lazy, load when needed >:v
+        EntityLogic.importCells(); // imports ALL the cells :V
         addEventListener('message', EntityLogic.gameWorkerOnMessage, false);
     }
     static tickWorkerOnMessage(event) {
@@ -856,6 +868,10 @@ class EntityLogic {
                 Callback.run(callbackID, message);
                 break;
             }
+            case "useNative": {
+                EntityLogic.useNative = (message["useNative"] === true);
+                break;
+            }
         };
         console.groupEnd();
     }
@@ -1020,6 +1036,12 @@ class EntityLogic {
         }
         return 0;
     }
+    static loadJSON(file, onload = null, onerror = null, onfinal = null) {
+        if (EntityLogic.useNative) {
+            return Tools.loadJSONNative(file, onload, onerror, onfinal);
+        }
+        return Tools.loadJSONBrowser(file, onload, onerror, onfinal);
+    }
     static importScript(file, onload = null, onerror = null) {
         importScripts(file);
         return 0;
@@ -1039,8 +1061,40 @@ class EntityLogic {
     static importBooks() {
         return EntityLogic.importScript("../../json/books.js");
     }
+    static setCellLocation(id, location) {
+        EntityLogic.cellLocations[id] = location;
+        return 0;
+    }
+    static setCellLocationsFromJSON(jsonBlob, callback = null) {
+        for (let id in jsonBlob) {
+            EntityLogic.setCellLocation(id, jsonBlob[id]);
+        }
+        EntityLogic.importingCellLocations = false;
+        if (typeof callback == "function") {
+            callback();
+        }
+        return 0;
+    }
+    static importCellLocations(jsonFile = "../../json/cells.json", callback = null) {
+        EntityLogic.loadJSON(String(jsonFile), EntityLogic.setCellLocationsFromJSON, null, callback);
+        return 0;
+    }
     static importCells() {
-        return EntityLogic.importScript("../../json/cells.js");
+        for (let id in EntityLogic.cellLocations) {
+            EntityLogic.importCell(id);
+        }
+        return 0;
+    }
+    static importCell(id, callback = null) {
+        if (!EntityLogic.cellLocations.hasOwnProperty(id)) {
+            return 1;
+        }
+        EntityLogic.loadJSON(String("../../json/").concat(EntityLogic.cellLocations[id]), EntityLogic.importCellPhaseTwo, null, callback);
+        return 0;
+    }
+    static importCellPhaseTwo(jsonBlob) {
+        Cell.loadFromJSON(jsonBlob);
+        return 0;
     }
     static importTeleportMarkers() {
         return EntityLogic.importScript("../../json/teleportMarkers.js");
@@ -1074,6 +1128,7 @@ class EntityLogic {
             cellID = "limbo";
         }
         if (EntityLogic.debugMode) console.log(`Running createCell(${cellID}, ..., ${parentCallbackID})`);
+        console.log(Cell.get(cellID));
         EntityLogic.loadCell(cellID, Callback.create("createCellPhaseOne", parentCallbackID, [cellID, options], EntityLogic.createCellPhaseTwo));
         return 0;
     }
@@ -1109,7 +1164,7 @@ class EntityLogic {
     }
 
     static createPlayerAt(position, options, response, parentCallbackID) {
-        if (EntityLogic.debugMode) console.log(`Running createCellPhaseEight(${cellID}, ..., ${parentCallbackID})`);
+        if (EntityLogic.debugMode) console.log(`Running createPlayerAt(..., ${parentCallbackID})`);
         if (!EntityLogic.hasPlayerEntity()) {
             EntityLogic.setPlayerEntity("player");
         }
@@ -1117,7 +1172,7 @@ class EntityLogic {
         return 0;
     }
     static createPlayerAtPhaseTwo(position, options, response, parentCallbackID) {
-        if (EntityLogic.debugMode) console.log(`Running createCellPhaseNine(${cellID}, ...)`);
+        if (EntityLogic.debugMode) console.log(`Running createPlayerAtPhaseTwo(..., parentCallbackID)`);
         EntityLogic.gameWorkerPostMessage("assignPlayer", 0, { "controllerID":EntityLogic.playerEntity.id }, Callback.create("assignPlayer-" + Tools.genUUIDv4(), parentCallbackID, [position, options]));
         return 0;
     }
