@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg180"
+   sodipodi:docname="bottleWithRedSarcophagusJuice.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/images/textures/items/bottleWithPurple.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
+  <metadata
+     id="metadata186">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs184">
+    <filter
+       y="-0.15000001"
+       height="1.3"
+       x="-0.15000001"
+       width="1.3"
+       inkscape:menu-tooltip="Aquarelle paper effect which can be used for pictures as for objects"
+       inkscape:menu="Textures"
+       inkscape:label="Rough Paper"
+       style="color-interpolation-filters:sRGB"
+       id="filter919">
+      <feTurbulence
+         type="fractalNoise"
+         baseFrequency="0.04"
+         numOctaves="5"
+         seed="0"
+         result="result4"
+         id="feTurbulence905" />
+      <feDisplacementMap
+         in="SourceGraphic"
+         in2="result4"
+         yChannelSelector="G"
+         xChannelSelector="R"
+         scale="10"
+         result="result3"
+         id="feDisplacementMap907" />
+      <feDiffuseLighting
+         lighting-color="#e9e6d7"
+         diffuseConstant="1"
+         surfaceScale="-4.66666651"
+         result="result1"
+         in="result4"
+         id="feDiffuseLighting911">
+        <feDistantLight
+           azimuth="235"
+           elevation="40"
+           id="feDistantLight909" />
+      </feDiffuseLighting>
+      <feComposite
+         operator="in"
+         in="result3"
+         in2="result1"
+         result="result2"
+         id="feComposite913"
+         surfaceScale="-4.6669999999999998" />
+      <feComposite
+         k4="0"
+         k3="-0.11"
+         k2="-0.22"
+         in2="result1"
+         result="result5"
+         operator="arithmetic"
+         k1="1.7"
+         id="feComposite915" />
+      <feBlend
+         in="result5"
+         in2="result3"
+         mode="normal"
+         id="feBlend917" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview182"
+     showgrid="false"
+     inkscape:snap-page="true"
+     inkscape:current-layer="svg180" />
+  <desc
+     id="desc2">dishware01.blend, (Blender 3.1.0)</desc>
+  <path
+     d="M 0,322.1875 V 381.79787 441.41066 499.7534 560 h 128 128 128 128 128 128 128 128 V 499.7534 441.41066 381.79787 322.1875 H 896 768 640 512 384 256 128 Z"
+     id="polygon20"
+     style="fill:#e6fcfc;fill-opacity:1;stroke-width:1.11292708"
+     inkscape:connector-curvature="0" />
+  <path
+     d="M 89.044922 4.2597656 L 16.443359 76.859375 L 16.761719 177.98047 L 89.044922 252.13086 L 191.7168 252.13086 L 264.31641 179.53125 L 264.31641 76.859375 L 191.7168 4.2597656 L 89.044922 4.2597656 z "
+     id="polygon110"
+     style="fill:#98552a;fill-opacity:1" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#e92f2f;fill-opacity:1;stroke:none;stroke-width:3.8581028;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect994"
+     width="1024"
+     height="463.99997"
+     x="0"
+     y="560" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#e9c6af;fill-opacity:1;stroke:none;stroke-width:0.82818693px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.00392157;filter:url(#filter919)"
+     id="rect888"
+     width="460.76144"
+     height="62.265053"
+     x="281.61929"
+     y="682.06982"
+     transform="matrix(1,0,0,1.8553057,-3.8527689e-6,-610.00602)" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot890"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.33333397px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#502d16;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     transform="matrix(1.6869848,0,0,1.6869848,249.38197,-478.37802)"><flowRegion
+       id="flowRegion892"
+       style="fill:#502d16"><rect
+         id="rect894"
+         width="248.0049"
+         height="28.494167"
+         x="33.770882"
+         y="693.67859"
+         style="fill:#502d16" /></flowRegion><flowPara
+       id="flowPara896">Red Sarcophagus Juice</flowPara></flowRoot></svg>
