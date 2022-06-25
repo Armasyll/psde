@@ -180,19 +180,18 @@ class AbstractController {
         return 0;
     }
 
+    update(objectBlob) {
+        return 0;
+    }
     /**
      * Clones the controller's values over this; but not really anything important :v
-     * @param {(AbstractController|object)} controller 
-     * @param {boolean} [verify] Set to false to skip verification
+     * @param {(AbstractController|object)} objectBlob 
      */
-    assign(controller, verify = true) {
-        if (verify && !(controller instanceof AbstractController)) {
-            return 2;
-        }
-        if (AbstractController.debugMode) console.group(`Running {AbstractController} ${this.id}.assign(controllerObject, ${verify})`);
-        if (controller.hasOwnProperty("height")) this.height = controller.height;
-        if (controller.hasOwnProperty("width")) this.width = controller.width;
-        if (controller.hasOwnProperty("depth")) this.depth = controller.depth;
+    assign(objectBlob) {
+        if (AbstractController.debugMode) console.group(`Running {AbstractController} ${this.id}.assign(controllerObject)`);
+        if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
+        if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;
+        if (objectBlob.hasOwnProperty("depth")) this.depth = objectBlob.depth;
         if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }

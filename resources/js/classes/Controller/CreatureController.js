@@ -354,90 +354,6 @@ class CreatureController extends EntityController {
         }
         return 0;
     }
-    populateFromEntity(entityObject) {
-        if (EntityController.debugMode) console.group(`Running {CreatureController} ${this.id}.populateFromEntity(entityObject)`);
-        if (!(entityObject instanceof Object)) {
-            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
-            if (EntityController.debugMode) console.groupEnd();
-            return 2;
-        }
-        super.populateFromEntity(entityObject);
-        if (entityObject.hasOwnProperty("eyeType")) this.eEyeType = entityObject.eyeType;
-        switch (this.eEyeType) {
-            case EyeEnum.SLIT: {
-                this.sEyeType = "feralEye";
-                break;
-            }
-            case EyeEnum.OBLONG: {
-                this.sEyeType = "oblongEye";
-                break;
-            }
-            case EyeEnum.CIRCLE:
-            default: {
-                this.sEyeType = "circularEye";
-            }
-        }
-        if (entityObject.hasOwnProperty("eyeColour")) {
-            if (String(entityObject.eyeColour).slice(0,1) == '#') {
-                this.sEyeIrisColour = entityObject.eyeColour;
-            }
-            else {
-                this.sEyeIrisColour = Tools.colourNameToHex(entityObject.eyeColour);
-            }
-        }
-        if (entityObject.hasOwnProperty("eyeBackground")) {
-            if (String(entityObject.eyeBackground).slice(0,1) == '#') {
-                this.sEyeScleraColour = entityObject.eyeBackground;
-            }
-            else {
-                this.sEyeScleraColour = Tools.colourNameToHex(entityObject.eyeBackground);
-            }
-        }
-        if (entityObject.hasOwnProperty("cosmetics")) {
-            for (let boneID in entityObject["cosmetics"]) {
-                if (!(entityObject["cosmetics"][boneID] instanceof Object)) {
-                    if (overwrite) {
-                        this.detachCosmeticMeshesFromBone(boneID, true);
-                    }
-                }
-                else {
-                    let cosmeticsObject = entityObject["cosmetics"][boneID];
-                    if (cosmeticsObject.hasOwnProperty("meshID")) {
-                        meshID = entityObject.cosmetics[boneID]["meshID"];
-                        if (cosmeticsObject.hasOwnProperty("materialID")) {
-                            materialID = entityObject.cosmetics[boneID]["materialID"];
-                        }
-                        else if (cosmeticsObject.hasOwnProperty("textureID")) {
-                            materialID = entityObject.cosmetics[boneID]["textureID"];
-                        }
-                        else {
-                            material = "missingMaterial";
-                        }
-                        this.attachCosmeticMeshIDToBone(meshID, materialID, boneID);
-                    }
-                }
-            }
-        }
-        this.offensiveStance = entityObject.offensiveStance;
-        if (EntityController.debugMode) console.info(`Finished running {CreatureController} ${this.id}.populateFromEntity(entityObject)`);
-        if (EntityController.debugMode) console.groupEnd();
-        return 0;
-    }
-    updateFromEntity(thatEntity) {
-        super.updateFromEntity(thatEntity);
-        let thisEntity = Game.getCachedEntity(this.entityID);
-        if (thisEntity.hasOwnProperty("organs") && thatEntity.hasOwnProperty("organs")) {
-            for (let cosmeticSlot in thisEntity["organs"]) {
-                // TODO: this
-            }
-        }
-        if (thisEntity.hasOwnProperty("cosmetics") && thatEntity.hasOwnProperty("cosmetics")) {
-            for (let cosmeticSlot in thisEntity["cosmetics"]) {
-                // TODO: this
-            }
-        }
-        return 0;
-    }
     /**
      * @override
      */
@@ -929,6 +845,79 @@ class CreatureController extends EntityController {
         return 0;
     }
 
+    update(controller) {
+        super.update(controller);
+        let thisEntity = Game.getCachedEntity(this.entityID);
+        if (thisEntity.hasOwnProperty("organs") && controller.hasOwnProperty("organs")) {
+            for (let cosmeticSlot in thisEntity["organs"]) {
+                // TODO: this
+            }
+        }
+        if (thisEntity.hasOwnProperty("cosmetics") && controller.hasOwnProperty("cosmetics")) {
+            for (let cosmeticSlot in thisEntity["cosmetics"]) {
+                // TODO: this
+            }
+        }
+    }
+    assign(objectBlob) {
+        super.assign(objectBlob);
+        if (objectBlob.hasOwnProperty("eyeType")) this.eEyeType = objectBlob.eyeType;
+        switch (this.eEyeType) {
+            case EyeEnum.SLIT: {
+                this.sEyeType = "feralEye";
+                break;
+            }
+            case EyeEnum.OBLONG: {
+                this.sEyeType = "oblongEye";
+                break;
+            }
+            case EyeEnum.CIRCLE:
+            default: {
+                this.sEyeType = "circularEye";
+            }
+        }
+        if (objectBlob.hasOwnProperty("eyeColour")) {
+            if (String(objectBlob.eyeColour).slice(0,1) == '#') {
+                this.sEyeIrisColour = objectBlob.eyeColour;
+            }
+            else {
+                this.sEyeIrisColour = Tools.colourNameToHex(objectBlob.eyeColour);
+            }
+        }
+        if (objectBlob.hasOwnProperty("eyeBackground")) {
+            if (String(objectBlob.eyeBackground).slice(0,1) == '#') {
+                this.sEyeScleraColour = objectBlob.eyeBackground;
+            }
+            else {
+                this.sEyeScleraColour = Tools.colourNameToHex(objectBlob.eyeBackground);
+            }
+        }
+        if (objectBlob.hasOwnProperty("cosmetics")) {
+            for (let boneID in objectBlob["cosmetics"]) {
+                if (!(objectBlob["cosmetics"][boneID] instanceof Object)) {
+                    this.detachCosmeticMeshesFromBone(boneID, true);
+                }
+                else {
+                    let cosmeticsObject = objectBlob["cosmetics"][boneID];
+                    if (cosmeticsObject.hasOwnProperty("meshID")) {
+                        meshID = objectBlob.cosmetics[boneID]["meshID"];
+                        if (cosmeticsObject.hasOwnProperty("materialID")) {
+                            materialID = objectBlob.cosmetics[boneID]["materialID"];
+                        }
+                        else if (cosmeticsObject.hasOwnProperty("textureID")) {
+                            materialID = objectBlob.cosmetics[boneID]["textureID"];
+                        }
+                        else {
+                            material = "missingMaterial";
+                        }
+                        this.attachCosmeticMeshIDToBone(meshID, materialID, boneID);
+                    }
+                }
+            }
+        }
+        if (objectBlob.hasOwnProperty("offensiveStance")) this.offensiveStance = objectBlob.offensiveStance;
+        return 0;
+    }
     updateID(newID) {
         super.updateID(newID);
         CreatureController.updateID(this.id, newID);

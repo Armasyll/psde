@@ -1128,7 +1128,6 @@ class EntityLogic {
             cellID = "limbo";
         }
         if (EntityLogic.debugMode) console.log(`Running createCell(${cellID}, ..., ${parentCallbackID})`);
-        console.log(Cell.get(cellID));
         EntityLogic.loadCell(cellID, Callback.create("createCellPhaseOne", parentCallbackID, [cellID, options], EntityLogic.createCellPhaseTwo));
         return 0;
     }

@@ -273,6 +273,14 @@ class CharacterControllerRigidBody extends CharacterController {
         }
     }
 
+    update(objectBlob) {
+        super.update(objectBlob);
+        return 0;
+    }
+    assign(objectBlob) {
+        super.assign(objectBlob);
+        return 0;
+    }
     updateID(newID) {
         super.updateID(newID);
         return 0;

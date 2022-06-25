@@ -796,20 +796,6 @@ class EntityController extends AbstractController {
         }
         return 0;
     }
-    populateFromEntity(entityObject) {
-        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.populateFromEntity(entityObject)`);
-        if (!(entityObject instanceof Object)) {
-            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
-            if (EntityController.debugMode) console.groupEnd();
-            return 2;
-        }
-        if (EntityController.debugMode) console.info(`Finished running {EntityController} ${this.id}.populateFromEntity(entityObject)`);
-        if (EntityController.debugMode) console.groupEnd();
-        return 0;
-    }
-    updateFromEntity(thatEntity) {
-        return 0;
-    }
 
     setCompoundController(instancedCompoundController) {
         instancedCompoundController = Tools.filterClass(instancedCompoundController, InstancedCompoundController, null);
@@ -1383,30 +1369,30 @@ class EntityController extends AbstractController {
         this.animated = animated == true;
         return 0;
     }
+
+    update(controller) {
+        super.update(controller);
+    }
     /**
      * Clones the controller's values over this; but not really anything important :v
-     * @param {(EntityController|object)} controller 
-     * @param {boolean} [verify] Set to false to skip verification
+     * @param {(EntityController|object)} objectBlob 
      */
-    assign(controller, verify = true) {
-        if (verify && !(controller instanceof EntityController)) {
-            return 2;
-        }
-        super.assign(controller, verify);
-        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject, ${verify})`);
-        if (controller.hasOwnProperty("height")) this.height = controller.height;
-        if (controller.hasOwnProperty("width")) this.width = controller.width;
-        if (controller.hasOwnProperty("depth")) this.depth = controller.depth;
-        if (controller.hasOwnProperty("defaultAction")) this.setDefaultAction(controller.defaultAction);
-        if (controller.hasOwnProperty("availableActions")) {
+    assign(objectBlob) {
+        super.assign(objectBlob);
+        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
+        if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
+        if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;
+        if (objectBlob.hasOwnProperty("depth")) this.depth = objectBlob.depth;
+        if (objectBlob.hasOwnProperty("defaultAction")) this.setDefaultAction(objectBlob.defaultAction);
+        if (objectBlob.hasOwnProperty("availableActions")) {
             this.availableActions = {};
-            for (let action in controller.availableActions) {
+            for (let action in objectBlob.availableActions) {
                 this.addAvailableAction(action);
             }
         }
-        if (controller.hasOwnProperty("hiddenAvailableActions")) {
+        if (objectBlob.hasOwnProperty("hiddenAvailableActions")) {
             this.hiddenAvailableActions = {};
-            for (let action in controller.hiddenAvailableActions) {
+            for (let action in objectBlob.hiddenAvailableActions) {
                 this.addHiddenAvailableAction(action);
             }
         }

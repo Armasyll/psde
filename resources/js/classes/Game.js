@@ -3530,6 +3530,11 @@ class Game {
             if (Game.debugMode) console.groupEnd();
             return 1;
         }
+        if (!Game.hasCachedEntity(entityID)) {
+            console.error(`The cached entity, ${entityID}, was probably yeeted between then and now. {"callbackID": "${parentCallbackID}"}`);
+            return 2;
+        }
+        /** @type {AbstractEntity} */
         let entity = Game.getCachedEntity(entityID);
         /** @type {CharacterController} */
         let controller = null;
@@ -3539,7 +3544,7 @@ class Game {
         else {
             controller = new CharacterControllerTransform(instanceID, response, entity);
         }
-        controller.populateFromEntity(entity);
+        controller.assign(entity);
         controller.generateHitboxes();
         controller.generateOrganMeshes();
         controller.generateCosmeticMeshes();
@@ -4360,7 +4365,7 @@ class Game {
         return 0;
     }
     static actionUnequipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
-        actorController.populateFromEntity(response);
+        actorController.assign(response);
         actorController.generateEquippedMeshes();
         return 0;
     }
@@ -5444,7 +5449,7 @@ class Game {
             return Game.getEntity(id);
         }
         if (EntityController.has(id)) {
-            EntityController.get(id).updateFromEntity(object);
+            EntityController.get(id).update(object);
         }
         let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
         if (Game.cachedEntities.hasOwnProperty(id)) {

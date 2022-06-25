@@ -113,66 +113,6 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
-    populateFromEntity(entityObject, overwrite = true) {
-        if (EntityController.debugMode) console.group(`Running {CharacterController} ${this.id}.populateFromEntity(entityObject)`);
-        if (!(entityObject instanceof Object)) {
-            if (EntityController.debugMode) console.warn(`entityObject was not an object`);
-            if (EntityController.debugMode) console.groupEnd();
-            return 2;
-        }
-        super.populateFromEntity(entityObject);
-        let equipmentObject = null;
-        let meshID = null;
-        let materialID = null;
-        if (entityObject.hasOwnProperty("equipment")) {
-            for (let boneID in entityObject["equipment"]) {
-                if (!(entityObject["equipment"][boneID] instanceof Object)) {
-                    if (overwrite) {
-                        this.detachEquipmentMeshesFromBone(boneID, true);
-                    }
-                }
-                else {
-                    equipmentObject = entityObject["equipment"][boneID];
-                    if (equipmentObject.hasOwnProperty("meshID")) {
-                        meshID = entityObject.equipment[boneID]["meshID"];
-                        if (equipmentObject.hasOwnProperty("materialID")) {
-                            materialID = entityObject.equipment[boneID]["materialID"];
-                        }
-                        else if (equipmentObject.hasOwnProperty("textureID")) {
-                            materialID = entityObject.equipment[boneID]["textureID"];
-                        }
-                        else {
-                            material = "missingMaterial";
-                        }
-                        this.attachEquipmentMeshIDToBone(meshID, materialID, boneID);
-                    }
-                }
-            }
-        }
-        if (EntityController.debugMode) console.info(`Finished running {CharacterController} ${this.id}.populateFromEntity(entityObject)`);
-        if (EntityController.debugMode) console.groupEnd();
-        return 0;
-    }
-    updateFromEntity(thatEntity) {
-        super.updateFromEntity(thatEntity);
-        let thisEntity = Game.getCachedEntity(this.entityID);
-        if (thisEntity.hasOwnProperty("equipment") && thatEntity.hasOwnProperty("equipment")) {
-            for (let equipmentSlot in thisEntity.equipment) {
-                if (thatEntity["equipment"][equipmentSlot] == null) {
-                    this.detachEquipmentMeshesFromBone(equipmentSlot);
-                }
-                else if (thisEntity["equipment"][equipmentSlot] == null) {
-                    this.attachEquipmentMeshToBone(thatEntity["equipment"][equipmentSlot]["meshID"], thatEntity["equipment"][equipmentSlot]["materialID"], equipmentSlot);
-                }
-                else if (thisEntity["equipment"][equipmentSlot]["id"] != thatEntity["equipment"][equipmentSlot]["id"]) {
-                    this.detachEquipmentMeshesFromBone(equipmentSlot);
-                    this.attachEquipmentMeshToBone(thatEntity["equipment"][equipmentSlot]["meshID"], thatEntity["equipment"][equipmentSlot]["materialID"], equipmentSlot);
-                }
-            }
-        }
-        return 0;
-    }
-
     hideHelmet() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
@@ -262,6 +202,54 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
+    update(objectBlob) {
+        super.update(objectBlob);
+        let thisEntity = Game.getCachedEntity(this.entityID);
+        if (thisEntity.hasOwnProperty("equipment") && objectBlob.hasOwnProperty("equipment")) {
+            for (let equipmentSlot in thisEntity.equipment) {
+                if (objectBlob["equipment"][equipmentSlot] == null) {
+                    this.detachEquipmentMeshesFromBone(equipmentSlot);
+                }
+                else if (thisEntity["equipment"][equipmentSlot] == null) {
+                    this.attachEquipmentMeshToBone(objectBlob["equipment"][equipmentSlot]["meshID"], objectBlob["equipment"][equipmentSlot]["materialID"], equipmentSlot);
+                }
+                else if (thisEntity["equipment"][equipmentSlot]["id"] != objectBlob["equipment"][equipmentSlot]["id"]) {
+                    this.detachEquipmentMeshesFromBone(equipmentSlot);
+                    this.attachEquipmentMeshToBone(objectBlob["equipment"][equipmentSlot]["meshID"], objectBlob["equipment"][equipmentSlot]["materialID"], equipmentSlot);
+                }
+            }
+        }
+    }
+    assign(objectBlob) {
+        super.assign(objectBlob);
+        let equipmentObject = null;
+        let meshID = null;
+        let materialID = null;
+        if (objectBlob.hasOwnProperty("equipment")) {
+            for (let boneID in objectBlob["equipment"]) {
+                if (!(objectBlob["equipment"][boneID] instanceof Object)) {
+                    this.detachEquipmentMeshesFromBone(boneID, true);
+                }
+                else {
+                    equipmentObject = objectBlob["equipment"][boneID];
+                    if (equipmentObject.hasOwnProperty("meshID")) {
+                        meshID = objectBlob.equipment[boneID]["meshID"];
+                        if (equipmentObject.hasOwnProperty("materialID")) {
+                            materialID = objectBlob.equipment[boneID]["materialID"];
+                        }
+                        else if (equipmentObject.hasOwnProperty("textureID")) {
+                            materialID = objectBlob.equipment[boneID]["textureID"];
+                        }
+                        else {
+                            material = "missingMaterial";
+                        }
+                        this.attachEquipmentMeshIDToBone(meshID, materialID, boneID);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
     updateID(newID) {
         super.updateID(newID);
         CharacterController.updateID(this.id, newID);
