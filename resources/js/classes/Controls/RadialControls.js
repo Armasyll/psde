@@ -3,12 +3,12 @@
  */
  class RadialControls extends MenuControls {
     static initialize() {
-        RadialControls.mouseMovementVectors = new Array();
         RadialControls.currentButtonIndex = -1;
-        RadialControls.xyMax = 18;
-        RadialControls.xyIncrement = 1;
         RadialControls.maxScrollSpeed = 100; // ms between scrolls
         RadialControls.lastScrollTime = 0;
+        RadialControls.aLastMovements = [];
+        RadialControls.iMaxRecordedMovements = 9;
+        RadialControls.iMaxMovementSpeed = 50;
     }
     static reset() {
         RadialControls.currentButtonIndex = -1;
@@ -66,75 +66,52 @@
         return 0;
     }
     static onMove(mouseEvent) {
+        let dateNow = Date.now();
+        if (RadialControls.aLastMovements.length > 1) {
+            if (RadialControls.aLastMovements[RadialControls.aLastMovements.length - 1][2] == dateNow) {
+                return 0;
+            }
+            else if (RadialControls.aLastMovements[RadialControls.aLastMovements.length - 1][2] + RadialControls.iMaxMovementSpeed >= dateNow) {
+                return 0;
+            }
+        }
+        if (RadialControls.aLastMovements.length >= RadialControls.iMaxRecordedMovements) {
+            RadialControls.aLastMovements.shift();
+        }
+        RadialControls.aLastMovements.push([mouseEvent.movementX, mouseEvent.movementY, dateNow]);
+
         // da magic
-        let vec2 = new BABYLON.Vector2(mouseEvent.movementX, mouseEvent.movementY);
-        if (Math.sqrt(vec2.x^2 + vec2.y^2) > 4) {
-            RadialControls.mouseMovementVectors.push(vec2);
-            if (RadialControls.mouseMovementVectors.length > 2) {
-                RadialControls.mouseMovementVectors.shift();
-            }
-            let xTotal = 0;
-            let yTotal = 0;
-            for (let i = RadialControls.mouseMovementVectors.length - 1; i > 0; i--) {
-                xTotal += RadialControls.mouseMovementVectors[i].x;
-                yTotal += RadialControls.mouseMovementVectors[i].y;
-            }
-            xTotal /= RadialControls.mouseMovementVectors.length;
-            yTotal /= RadialControls.mouseMovementVectors.length;
-            if (xTotal > RadialControls.xyMax) {
-                xTotal = RadialControls.xyMax;
-            }
-            else if (xTotal < -RadialControls.xyMax) {
-                xTotal = -RadialControls.xyMax;
-            }
-            if (yTotal > RadialControls.xyMax) {
-                yTotal = RadialControls.xyMax;
-            }
-            else if (yTotal < -RadialControls.xyMax) {
-                yTotal = -RadialControls.xyMax;
-            }
-            if (Math.abs(yTotal) >= RadialControls.xyMax - RadialControls.xyIncrement) {
-                if (xTotal > 0) {
-                    xTotal -= RadialControls.xyIncrement;
-                }
-                else if (xTotal < 0) {
-                    xTotal += RadialControls.xyIncrement;
-                }
-            }
-            else if (Math.abs(xTotal) >= RadialControls.xyMax - RadialControls.xyIncrement) {
-                if (yTotal > 0) {
-                    yTotal -= RadialControls.xyIncrement;
-                }
-                else if (yTotal < 0) {
-                    yTotal += RadialControls.xyIncrement;
-                }
-            }
-            let slices = Object.keys(RadialMenuGameGUI.visibleButtons).length;
-    
-            // thank you, Joe M. :V - 2022-02-27
-            let degrees = (Math.atan2(xTotal, -yTotal) * 180.0 / Math.PI);
-            if (degrees < 0) {
-                degrees = 360 + degrees;
-            }
-            let slicesDegrees = 360/slices;
-            let nDegrees = (degrees + (slicesDegrees / 2));
-            if (nDegrees > 360) {
-                nDegrees = nDegrees - 360;
-            }
+        let xTotal = 0;
+        let yTotal = 0;
+        for (let i = RadialControls.aLastMovements.length - 1; i > 0; i--) {
+            xTotal += RadialControls.aLastMovements[i][0];
+            yTotal += RadialControls.aLastMovements[i][1];
+        }
+        let slices = Object.keys(RadialMenuGameGUI.visibleButtons).length;
 
-            let tempIndex = Math.floor(nDegrees / slicesDegrees);
-            if (tempIndex < 0) { 
-                tempIndex = 0;
-            }
-            else if (tempIndex > slices - 1) {
-                tempIndex = slices - 1;
-            }
+        // thank you, Joe M. :V - 2022-02-27
+        let degrees = (Math.atan2(xTotal, -yTotal) * 180.0 / Math.PI);
+        if (degrees < 0) {
+            degrees = 360 + degrees;
+        }
+        let slicesDegrees = 360/slices;
+        let nDegrees = (degrees + (slicesDegrees / 2));
+        if (nDegrees > 360) {
+            nDegrees = nDegrees - 360;
+        }
 
-            if (tempIndex != RadialControls.currentButtonIndex) {
-                RadialMenuGameGUI.unhighlightButtonIndex(RadialControls.currentButtonIndex);
-                RadialControls.currentButtonIndex = tempIndex;
-                RadialMenuGameGUI.highlightButtonIndex(RadialControls.currentButtonIndex);
-            }
+        let tempIndex = Math.floor(nDegrees / slicesDegrees);
+        if (tempIndex < 0) { 
+            tempIndex = 0;
+        }
+        else if (tempIndex > slices - 1) {
+            tempIndex = slices - 1;
+        }
+
+        if (tempIndex != RadialControls.currentButtonIndex) {
+            RadialMenuGameGUI.unhighlightButtonIndex(RadialControls.currentButtonIndex);
+            RadialControls.currentButtonIndex = tempIndex;
+            RadialMenuGameGUI.highlightButtonIndex(RadialControls.currentButtonIndex);
         }
         return 0;
     }
