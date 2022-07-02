@@ -1222,7 +1222,9 @@ class EntityLogic {
             //[entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]
             /** @type {DoorEntity} */
             let entity = new DoorEntity(cell.doors[i][0], cell.doors[i][1]);
-            entity.setTeleportMarker(cell.doors[i][2]);
+            if (cell.doors[i][2] instanceof Array) {
+                entity.setTeleportMarker(new TeleportMarker(...cell.doors[i][2]));
+            }
             entity.setMeshID(cell.doors[i][3]);
             entity.setMaterialID(cell.doors[i][4]);
             entity.assign(cell.doors[i][8], false);

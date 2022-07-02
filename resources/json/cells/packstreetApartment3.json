@@ -279,7 +279,7 @@
                     ["apartmentBuildingDoor", "Door", null, "craftsmanDoor", "crossPanelDoor", [4, 0, -27], [0, 0, 0], [1, 1, 1], { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false }],
                     ["ozzyApartmentDoor", "Ozzy's Apartment", null, "simpleDoor", "simpleDoor", [2, 0, -13], [0, 0, 0], [1, 1, 1], { "opensInward":false }],
                     ["landlordApartmentDoor", "Landlord's Apartment", null, "simpleDoor", "simpleDoor", [5, 0, -16], [0, 90, 0], [1, 1, 1], { "entityLocked":true, "key":"alBuildingLocationKey", "opensInward":false}],
-                    ["packstreetApt3ApartmentToBasementDoor", "Basement", ["packstreetApt3Basement", "packstreetApt3BasementCell", [0, 0, -19.5]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], [1, 1, 1], {"opensInward":true}]
+                    ["packstreetApt3ApartmentToBasementDoor", "Basement", ["packstreetApt3Basement", "packstreetApartment3Basement", [0, 0, -19.5]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], [1, 1, 1], {"opensInward":true}]
                 ],
                 "furniture":[
                     ["commonsCouch", "couch01", [8.25, 0, -22], [0, -90, 0]]

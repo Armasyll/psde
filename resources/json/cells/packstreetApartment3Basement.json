@@ -53,7 +53,7 @@
     },
     "entityGroups":{
         "doors":[
-            ["packstreetApt3BasementToApartmentDoor", "Basement", ["packstreetApt3", "apartmentCell", [0, 0, -18]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], null, {"opensInward":true}]
+            ["packstreetApt3BasementToApartmentDoor", "Basement", ["packstreetApt3", "packstreetApartment3", [0, 0, -18]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], [1, 1, 1], {"opensInward":true}]
         ]
     }
 }
