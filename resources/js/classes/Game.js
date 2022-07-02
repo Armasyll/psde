@@ -3695,9 +3695,9 @@ class Game {
         if (entityController == Game.playerController) {
             return 0;
         }
-        if (Game.debugMode) console.group("Running Game.setPlayerTarget()");
+        if (Game.debugMode && Game.debugVerbosity > 9) console.group("Running Game.setPlayerTarget()");
         if (!(Game.hasPlayerController())) {
-            if (Game.debugMode) {
+            if (Game.debugMode && Game.debugVerbosity > 9) {
                 console.error("Player doesn't have a controller; returning 1");
                 console.groupEnd();
             }
@@ -3708,7 +3708,7 @@ class Game {
                 entityController = EntityController.get(entityController);
             }
             else {
-                if (Game.debugMode) {
+                if (Game.debugMode && Game.debugVerbosity > 9) {
                     console.error("Target doesn't have a controller; returning 1");
                     console.groupEnd();
                 }
@@ -3717,7 +3717,7 @@ class Game {
             }
         }
         if (!entityController.isEnabled()) {
-            if (Game.debugMode) {
+            if (Game.debugMode && Game.debugVerbosity > 9) {
                 console.info("Target has a controller, but it is disabled; returning 0");
                 console.groupEnd();
             }
@@ -3727,7 +3727,7 @@ class Game {
             return 0;
         }
         if (entityController == Game.playerController.target) {
-            if (Game.debugMode) {
+            if (Game.debugMode && Game.debugVerbosity > 9) {
                 console.groupEnd();
             }
             Game.gui.hud.targetPortrait.update();
@@ -3745,7 +3745,7 @@ class Game {
         Game.gui.hud.targetPortrait.show();
         Game.gui.hud.actionTooltip.set(ActionEnum.properties[actionEnum].name);
         Game.gui.hud.actionTooltip.show();
-        if (Game.debugMode) console.groupEnd();
+        if (Game.debugMode && Game.debugVerbosity > 9) console.groupEnd();
         return 0;
     }
     /**
@@ -4332,6 +4332,7 @@ class Game {
         return 0;
     }
     static actionTalkResponse(targetController, actorController, response, parentCallbackID) {
+        if (Game.debugMode) BABYLON.Tools.Log(`Game.actionTalkResponse(${targetController.id}, ${actorController.id}, {}, ${parentCallbackID})`);
         Game.gui.dialogue.set(response, targetController, actorController);
         Game.gui.dialogue.show();
         return 0;
@@ -5507,8 +5508,13 @@ class Game {
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
         let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [id, targetController, actorController], Game.gui.dialogue.set)
+        Callback.create(callbackID, parentCallbackID, [id, targetController, actorController], Game.setDialoguePhaseTwo)
         Game.entityLogicWorkerPostMessage("setDialogue", 0, {"dialogueID": id, "targetID": targetController.entityID, "actorID": actorController.entityID}, callbackID);
+        return 0;
+    }
+    static setDialoguePhaseTwo(id, targetController, actorController, response, parentCallbackID) {
+        let json = JSON.parse(response)
+        Game.gui.dialogue.set(json);
         return 0;
     }
     static getEntity(id, callbackID) {

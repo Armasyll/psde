@@ -20,6 +20,9 @@ class Container {
      * @param {number} [maxWeight] 
      */
     constructor(id = "", name = "", maxSize = 9, maxWeight = 10) {
+        if (Container.has(id)) {
+            id = Tools.genUUIDv4();
+        }
         /** @type {string} */
         this.id = "";
         /** @type {string} */

@@ -13,7 +13,7 @@ class ActionTooltipGameGUI {
         return 0;
     }
     static generateController() {
-        if (Game.debugMode) BABYLON.Tools.Log("Running ActionTooltipGameGUI.generateController()");
+        if (Game.debugMode && Game.debugVerbosity > 9) BABYLON.Tools.Log("Running ActionTooltipGameGUI.generateController()");
         ActionTooltipGameGUI.controller = GameGUI.createRectangle("targetActionTooltip");
             ActionTooltipGameGUI.controller.widthInPixels = GameGUI.getFontSizeInPixels() * 12;
             ActionTooltipGameGUI.controller.heightInPixels = GameGUI.getFontSizeInPixels() * 3;
@@ -71,7 +71,7 @@ class ActionTooltipGameGUI {
      * @param {String} actionText Top right text.
      */
     static setActionText(actionText = "Use") {
-        if (Game.debugMode) BABYLON.Tools.Log("Running ActionTooltipGameGUI.setActionText");
+        if (Game.debugMode && Game.debugVerbosity > 9) BABYLON.Tools.Log("Running ActionTooltipGameGUI.setActionText");
         if (typeof actionText != "string") {
             actionText = "Use";
         }
@@ -89,7 +89,7 @@ class ActionTooltipGameGUI {
         if (typeof targetText != "string") {
             targetText = "";
         }
-        if (Game.debugMode) BABYLON.Tools.Log("Running ActionTooltipGameGUI.setTargetText");
+        if (Game.debugMode && Game.debugVerbosity > 9) BABYLON.Tools.Log("Running ActionTooltipGameGUI.setTargetText");
         ActionTooltipGameGUI.controller.children[2].text = targetText;
         return 0;
     }

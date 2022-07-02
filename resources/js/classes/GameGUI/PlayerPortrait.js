@@ -3,7 +3,7 @@ class PlayerPortraitGameGUI {
         return "PlayerPortraitGameGUI";
     }
     static initialize() {
-        if (Game.debugMode) BABYLON.Tools.Log("Initializing PlayerPortraitGameGUI");
+        if (Game.debugMode && Game.debugVerbosity > 9) BABYLON.Tools.Log("Initializing PlayerPortraitGameGUI");
         PlayerPortraitGameGUI.playerName = null;
         PlayerPortraitGameGUI.playerIcon = null;
         PlayerPortraitGameGUI.playerHealthBar = null;

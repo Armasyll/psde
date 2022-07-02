@@ -250,14 +250,22 @@ class SoulEntity extends AbstractEntity {
         return this.dialogue != null;
     }
     setDialogue(dialogue) {
-        if (dialogue instanceof Dialogue) {
+        /*if (dialogue instanceof Dialogue) {
             dialogue = dialogue.id;
         }
         else if (Dialogue.has(dialogue)) {}
         else {
             return 2;
+        }*/
+        if (dialogue instanceof Dialogue) {
+            this.dialogue = dialogue.id;
         }
-        this.dialogue = dialogue;
+        else if (typeof dialogue == "string") {
+            this.dialogue = Tools.filterID(dialogue);
+        }
+        else {
+            return 2;
+        }
         this.addAvailableAction(ActionEnum.TALK);
         this.setDefaultAction(ActionEnum.TALK);
         return 0;

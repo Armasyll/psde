@@ -158,10 +158,14 @@ class AbstractEntity {
      */
     setID(id) {
         this.locked = true;
-        AbstractEntity.remove(this.id);
-        id = Tools.filterID(id);
-        if (id.length == 0) {
+        if (AbstractEntity.has(id)) {
             id = Tools.genUUIDv4();
+        }
+        else {
+            id = Tools.filterID(id);
+            if (id.length == 0) {
+                id = Tools.genUUIDv4();
+            }
         }
         this.id = id;
         AbstractEntity.set(this.id, this);

@@ -342,14 +342,19 @@ class EntityLogic {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
                 if (target == 1 || actor == 1) {
-                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, false, callbackID);
+                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, `Target (${message["targetID"]}) or Actor (${message["actorID"]}) don't exist.`, callbackID);
                     break;
                 }
                 if (!target.hasDialogue()) {
-                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, false, callbackID);
+                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, `Target (${target.id}) doesn't have a dialogue.`, callbackID);
                     break;
                 }
-                EntityLogic.gameWorkerPostMessage("actionTalk", 0, target.getDialogue(target).stringify(false, target, actor), callbackID);
+                if (!Dialogue.has(target.getDialogue())) {
+                    EntityLogic.gameWorkerPostMessage("actionTalk", 1, "Dialogue doesn't exist.", callbackID);
+                    break;
+                }
+                let dialogue = Dialogue.get(target.getDialogue());
+                EntityLogic.gameWorkerPostMessage("actionTalk", 0, dialogue.stringify(target, actor), callbackID);
                 break;
             }
             case "actionUnequip": {
@@ -547,8 +552,8 @@ class EntityLogic {
                 }
                 let targetEntity = AbstractEntity.get(message["targetID"]);
                 let actorEntity = AbstractEntity.get(message["actorID"]);
-                let dialogue = Dialogue.get(message["dialogueID"]).objectify(targetEntity, actorEntity);
-                EntityLogic.gameWorkerPostMessage("getDialogue", 0, dialogue, callbackID);
+                let dialogue = Dialogue.get(message["dialogueID"]);
+                EntityLogic.gameWorkerPostMessage("getDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
                 break;
             }
             case "getDialogues": {
@@ -831,7 +836,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("setDialogue", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.objectify(targetEntity, actorEntity), callbackID);
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
                 }
                 break;
             }

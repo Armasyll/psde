@@ -589,7 +589,6 @@ class CreatureEntity extends Entity {
             //this.characterDisposition = Object.assign({}, soul.characterDisposition);
             //this.defaultDisposition = Object.assign({}, soul.defaultDisposition);
         }
-        this.setDialogue(soul.getDialogue());
     }
     getSoul() {
         return this.soul;
@@ -602,7 +601,6 @@ class CreatureEntity extends Entity {
     }
     removeSoul() {
         this.soul = null;
-        this.removeDialogue();
         this.abilityScore["INTELLIGENCE"] = 0;
         this.abilityScore["WISDOM"] = 0;
         this.abilityScore["CHARISMA"] = 0;
@@ -855,18 +853,26 @@ class CreatureEntity extends Entity {
     }
 
     hasDialogue() {
-        return this.dialogue instanceof Dialogue;
+        return this.dialogue != null;
     }
     setDialogue(dialogue) {
-        if (!(dialogue instanceof Dialogue)) {
+        /*if (!(dialogue instanceof Dialogue)) {
             if (Dialogue.has(dialogue)) {
                 dialogue = Dialogue.get(dialogue);
             }
             else {
                 return 2;
             }
+        }*/
+        if (dialogue instanceof Dialogue) {
+            this.dialogue = dialogue.id;
         }
-        this.dialogue = dialogue;
+        else if (typeof dialogue == "string") {
+            this.dialogue = Tools.filterID(dialogue);
+        }
+        else {
+            return 2;
+        }
         this.addAvailableAction(ActionEnum.TALK);
         this.setDefaultAction(ActionEnum.TALK);
         return 0;
@@ -877,7 +883,7 @@ class CreatureEntity extends Entity {
         this.setDefaultAction(ActionEnum.LOOK);
         return 0;
     }
-    getDialogue(target = null) {
+    getDialogue() {
         return this.dialogue;
     }
 
@@ -2711,6 +2717,7 @@ class CreatureEntity extends Entity {
             return 2;
         }
         super.assign(entity, verify);
+        if (entity.hasOwnProperty("dialogue")) this.dialogue = entity.dialogue;
         if (entity.hasOwnProperty("cantripsKnown")) this.cantripsKnown = Object.assign({}, entity.cantripsKnown);
         if (entity.hasOwnProperty("cantripsKnownLimit")) this.cantripsKnownLimit = entity.cantripsKnownLimit;
         if (entity.hasOwnProperty("spellsKnown")) this.spellsKnown = Object.assign({}, entity.spellsKnown);
