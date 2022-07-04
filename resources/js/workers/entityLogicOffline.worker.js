@@ -1255,14 +1255,22 @@ class EntityLogic {
         for (let i = 0; i < cell.creatures.length; i++) {
             //[instanceID, entityID, position, rotation, scaling, options]
             /** @type {CreatureEntity} */
-            let entity = CreatureEntity.get(cell.creatures[i][1]).createInstance(cell.creatures[i][0]);
-            entity.assign(cell.creatures[i][5], false);
+            if (typeof cell.characters[i][5] == "object") {
+                if (cell.characters[i][5].hasOwnProperty("instanced") && cell.characters[i][5]["instanced"] == true) {
+                    let entity = CreatureEntity.get(cell.creatures[i][1]).createInstance(cell.creatures[i][0]);
+                    entity.assign(cell.creatures[i][5], false);
+                }
+            }
         }
         for (let i = 0; i < cell.characters.length; i++) {
             //[instanceID, entityID, position, rotation, scaling, options]
             /** @type {CharacterEntity} */
-            let entity = CharacterEntity.get(cell.characters[i][1]).createInstance(cell.characters[i][0]);
-            entity.assign(cell.characters[i][5], false);
+            if (typeof cell.characters[i][5] == "object") {
+                if (cell.characters[i][5].hasOwnProperty("instanced") && cell.characters[i][5]["instanced"] == true) {
+                    let entity = CharacterEntity.get(cell.characters[i][1]).createInstance(cell.characters[i][0]);
+                    entity.assign(cell.creatures[i][5], false);
+                }
+            }
         }
         Callback.run(parentCallbackID);
         return 0;
