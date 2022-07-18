@@ -25,21 +25,21 @@ class CreatureEntity extends Entity {
          * @type {ApparelSlotEnum: [Cosmetics]} Bone ID and Cosmetic
          */
         this.cosmetics = {};
-        this.cosmetics["HEAD"] = [];
-        this.cosmetics["EAR_L"] = [];
-        this.cosmetics["EAR_R"] = [];
-        this.cosmetics["NECK"] = [];
-        this.cosmetics["SHOULDER_L"] = [];
-        this.cosmetics["SHOULDER_R"] = [];
-        this.cosmetics["FOREARM_L"] = [];
-        this.cosmetics["FOREARM_R"] = [];
-        this.cosmetics["HAND_L"] = [];
-        this.cosmetics["HAND_R"] = [];
-        this.cosmetics["CHEST"] = [];
-        this.cosmetics["PELVIS"] = [];
-        this.cosmetics["LEGS"] = [];
-        this.cosmetics["FOOT_L"] = [];
-        this.cosmetics["FOOT_R"] = [];
+        this.cosmetics["HEAD"] = null;
+        this.cosmetics["EAR_L"] = null;
+        this.cosmetics["EAR_R"] = null;
+        this.cosmetics["NECK"] = null;
+        this.cosmetics["SHOULDER_L"] = null;
+        this.cosmetics["SHOULDER_R"] = null;
+        this.cosmetics["FOREARM_L"] = null;
+        this.cosmetics["FOREARM_R"] = null;
+        this.cosmetics["HAND_L"] = null;
+        this.cosmetics["HAND_R"] = null;
+        this.cosmetics["CHEST"] = null;
+        this.cosmetics["PELVIS"] = null;
+        this.cosmetics["LEGS"] = null;
+        this.cosmetics["FOOT_L"] = null;
+        this.cosmetics["FOOT_R"] = null;
         /**
          * @type {string|null}
          */
@@ -672,7 +672,7 @@ class CreatureEntity extends Entity {
         else {
             return 2;
         }
-        this.cosmetics[cosmeticSlot][cosmetic.id] = cosmetic;
+        this.cosmetics[cosmeticSlot] = cosmetic;
         return 0;
     }
     detachCosmetic(cosmetic, cosmeticSlot = "") {
@@ -689,7 +689,7 @@ class CreatureEntity extends Entity {
         else {
             return 2;
         }
-        delete this.cosmetics[cosmeticSlot][cosmetic.id];
+        this.cosmetics[cosmeticSlot] = null;
         return 0;
     }
 

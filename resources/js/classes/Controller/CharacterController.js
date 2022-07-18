@@ -38,78 +38,7 @@ class CharacterController extends CreatureController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 0;
         }
-        for (let boneID in this._equipmentMeshIDsAttachedToBones) {
-            for (let meshID in this._equipmentMeshIDsAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    let bone = this.getBone(boneID);
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-                }
-                delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
-            }
-            delete this._equipmentMeshIDsAttachedToBones[boneID];
-        }
         super.detachFromAllBones(destroyMesh);
-        return 0;
-    }
-    attachEquipmentMeshToBone(mesh, boneID, position, rotation, scaling, options) {
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        if (!this._equipmentMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._equipmentMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._equipmentMeshIDsAttachedToBones[boneID][mesh.name] = mesh.material.name;
-        this.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
-        return 0;
-    }
-    attachEquipmentMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options) {
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        if (!this._equipmentMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._equipmentMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._equipmentMeshIDsAttachedToBones[boneID][meshID] = materialID;
-        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
-        return 0;
-    }
-    detachEquipmentMeshID(meshID) {
-        return 0;
-    }
-    detachEquipmentMesh(mesh) {
-        return 0;
-    }
-    detachEquipmentMeshesFromBone(boneID, destroyMesh = true) {
-        let bone = null;
-        if (boneID instanceof BABYLON.Bone) {
-            bone = boneID;
-            boneID = bone.id;
-        }
-        else if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        else {
-            bone = this.getBone(boneID);
-        }
-        for (let meshID in this._equipmentMeshIDsAttachedToBones[boneID]) {
-            if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], boneID, destroyMesh)
-            }
-        }
-        delete this._equipmentMeshIDsAttachedToBones[boneID];
-        return 0;
-    }
-    detachEquipmentMeshes(destroyMesh = true) {
-        for (let boneID in this._equipmentMeshIDsAttachedToBones) {
-            for (let meshID in this._equipmentMeshIDsAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    let bone = this.getBone(boneID);
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-                }
-                delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
-            }
-            delete this._equipmentMeshIDsAttachedToBones[boneID];
-        }
         return 0;
     }
 
@@ -206,47 +135,13 @@ class CharacterController extends CreatureController {
         super.update(objectBlob);
         let thisEntity = Game.getCachedEntity(this.entityID);
         if (thisEntity.hasOwnProperty("equipment") && objectBlob.hasOwnProperty("equipment")) {
-            for (let equipmentSlot in thisEntity.equipment) {
-                if (objectBlob["equipment"][equipmentSlot] == null) {
-                    this.detachEquipmentMeshesFromBone(equipmentSlot);
-                }
-                else if (thisEntity["equipment"][equipmentSlot] == null) {
-                    this.attachEquipmentMeshToBone(objectBlob["equipment"][equipmentSlot]["meshID"], objectBlob["equipment"][equipmentSlot]["materialID"], equipmentSlot);
-                }
-                else if (thisEntity["equipment"][equipmentSlot]["id"] != objectBlob["equipment"][equipmentSlot]["id"]) {
-                    this.detachEquipmentMeshesFromBone(equipmentSlot);
-                    this.attachEquipmentMeshToBone(objectBlob["equipment"][equipmentSlot]["meshID"], objectBlob["equipment"][equipmentSlot]["materialID"], equipmentSlot);
-                }
-            }
+            //...
         }
     }
     assign(objectBlob) {
         super.assign(objectBlob);
-        let equipmentObject = null;
-        let meshID = null;
-        let materialID = null;
-        if (objectBlob.hasOwnProperty("equipment")) {
-            for (let boneID in objectBlob["equipment"]) {
-                if (!(objectBlob["equipment"][boneID] instanceof Object)) {
-                    this.detachEquipmentMeshesFromBone(boneID, true);
-                }
-                else {
-                    equipmentObject = objectBlob["equipment"][boneID];
-                    if (equipmentObject.hasOwnProperty("meshID")) {
-                        meshID = objectBlob.equipment[boneID]["meshID"];
-                        if (equipmentObject.hasOwnProperty("materialID")) {
-                            materialID = objectBlob.equipment[boneID]["materialID"];
-                        }
-                        else if (equipmentObject.hasOwnProperty("textureID")) {
-                            materialID = objectBlob.equipment[boneID]["textureID"];
-                        }
-                        else {
-                            material = "missingMaterial";
-                        }
-                        this.attachEquipmentMeshIDToBone(meshID, materialID, boneID);
-                    }
-                }
-            }
+        if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {
+            this.assignAttachments(objectBlob["equipment"], this._equipmentMeshIDsAttachedToBones);
         }
         return 0;
     }
@@ -258,7 +153,6 @@ class CharacterController extends CreatureController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        this.detachEquipmentMeshes(true);
         CharacterController.remove(this.id);
         super.dispose();
         return undefined;

@@ -82,25 +82,14 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 0;
         }
-        for (let boneID in this._organMeshIDsAttachedToBones) {
-            for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
+        for (let boneID in this._meshesAttachedToBones) {
+            for (let meshID in this._meshesAttachedToBones[boneID]) {
                 if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    let bone = this.getBone(boneID);
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
+                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], this.getBone(boneID), destroyMesh);
                 }
-                delete this._organMeshIDsAttachedToBones[boneID][meshID];
+                delete this._meshesAttachedToBones[boneID][meshID];
             }
-            delete this._organMeshIDsAttachedToBones[boneID];
-        }
-        for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
-            for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    let bone = this.getBone(boneID);
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-                }
-                delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
-            }
-            delete this._cosmeticMeshIDsAttachedToBones[boneID];
+            delete this._meshesAttachedToBones[boneID];
         }
         super.detachFromAllBones(destroyMesh);
         return 0;
@@ -203,125 +192,6 @@ class CreatureController extends EntityController {
         return super.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
     }
 
-    attachOrganMeshToBone(mesh, boneID, position, rotation, scaling, options) {
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        if (!this._organMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._organMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._organMeshIDsAttachedToBones[boneID][mesh.name] = mesh.material.name;
-        let bone = this.getBoneByID(boneID);
-        this.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
-        return 0;
-    }
-    attachOrganMeshIDToBone(meshID, materialID, boneID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (AbstractController.debugMode) console.group(`Running {CreatureController} ${this.id}.attachOrganMeshIDToBone(${meshID}, ${materialID}, ${boneID}, ...)`);
-        if (!this.hasBone(boneID)) {
-            if (AbstractController.debugMode) {
-                console.error("Couldn't find bone " + boneID);
-                console.groupEnd();
-            }
-            return 1;
-        }
-        if (!this._organMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._organMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._organMeshIDsAttachedToBones[boneID][meshID] = materialID;
-        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
-        if (AbstractController.debugMode) console.groupEnd();
-        return 0;
-    }
-    detachOrganMeshesFromBone(boneID, destroyMesh = true) {
-        let bone = null;
-        if (boneID instanceof BABYLON.Bone) {
-            bone = boneID;
-            boneID = bone.id;
-        }
-        else if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        else {
-            bone = this.getBone(boneID);
-        }
-        for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
-            if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-            }
-        }
-        delete this._organMeshIDsAttachedToBones[boneID];
-        return 0;
-    }
-    detachOrganMeshes(destroyMesh = true) {
-        for (let boneID in this._organMeshIDsAttachedToBones) {
-            let bone = this.getBone(boneID);
-            for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-                }
-                delete this._organMeshIDsAttachedToBones[boneID][meshID];
-            }
-            delete this._organMeshIDsAttachedToBones[boneID];
-        }
-        return 0;
-    }
-
-    attachCosmeticMeshToBone(mesh, boneID, position, rotation, scaling, options) {
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        if (!this._cosmeticMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._cosmeticMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._cosmeticMeshIDsAttachedToBones[boneID][mesh.name] = mesh.material.name;
-        this.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
-        return 0;
-    }
-    attachCosmeticMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options) {
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        if (!this._cosmeticMeshIDsAttachedToBones.hasOwnProperty(boneID)) {
-            this._cosmeticMeshIDsAttachedToBones[boneID] = {};
-        }
-        this._cosmeticMeshIDsAttachedToBones[boneID][meshID] = materialID;
-        this.attachMeshIDToBone(meshID, materialID, boneID, position, rotation, scaling, options);
-        return 0;
-    }
-    detachCosmeticMeshesFromBone(boneID, destroyMesh = true) {
-        let bone = null;
-        if (boneID instanceof BABYLON.Bone) {
-            bone = boneID;
-            boneID = bone.id;
-        }
-        else if (!this.hasBone(boneID)) {
-            return 1;
-        }
-        else {
-            bone = this.getBone(boneID);
-        }
-        for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
-            if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], boneID, destroyMesh)
-            }
-        }
-        delete this._cosmeticMeshIDsAttachedToBones[boneID];
-        return 0;
-    }
-    detachCosmeticMeshes(destroyMesh = true) {
-        for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
-            let bone = this.getBone(boneID);
-            for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
-                }
-                delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
-            }
-            delete this._cosmeticMeshIDsAttachedToBones[boneID];
-        }
-        return 0;
-    }
-
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
             return 1;
@@ -338,8 +208,8 @@ class CreatureController extends EntityController {
                 }
             );
         }
-        this.attachOrganMeshIDToBone("eye01", this.sEyeTexture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
-        this.attachOrganMeshIDToBone("eye01", this.sEyeTexture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
+        this.attachMeshIDToBone("eye01", this.sEyeTexture, "eye.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
+        this.attachMeshIDToBone("eye01", this.sEyeTexture, "eye.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(270), 0, 0), this.getScaling());
         return 0;
     }
     generateCosmeticMeshes() {
@@ -859,6 +729,92 @@ class CreatureController extends EntityController {
             }
         }
     }
+    /**
+     * 
+     * @param {Object.<string, Object.<string, Object<...>>>} attachmentBlob Object-map of bones to objectified entities containing a meshID and materialID
+     * @example {"HAND_R": {"meshID": "knife01", "materialID": "knife01Texture"}}
+     * @returns 
+     */
+    assignAttachments(attachmentBlob, attachmentMap = {}) {
+        let meshID = "";
+        let materialID = "";
+        if (!(attachmentBlob instanceof Object)) {
+            return 1;
+        }
+        for (let boneID in attachmentBlob) {
+            if (attachmentBlob[boneID] == null) {
+                continue;
+            }
+            if (!(attachmentBlob[boneID] instanceof Object)) {
+                continue;
+            }
+            if (attachmentBlob[boneID].hasOwnProperty("meshID")) {
+                meshID = attachmentBlob[boneID]["meshID"];
+            }
+            else {
+                meshID = "missingMesh";
+            }
+            if (attachmentBlob[boneID].hasOwnProperty("materialID")) {
+                materialID = attachmentBlob[boneID]["materialID"];
+            }
+            else if (attachmentBlob[boneID].hasOwnProperty("textureID")) {
+                materialID = attachmentBlob[boneID]["textureID"];
+            }
+            else {
+                materialID = "missingMaterial";
+            }
+            switch (boneID.toLowerCase()) {
+                case "focus": {
+                    this.attachToFOCUS(meshID, materialID);
+                    break;
+                }
+                case "head": {
+                    this.attachToHead(meshID, materialID);
+                    break;
+                }
+                case "ear_r":
+                case "ear.r": {
+                    this.attachToRightEar(meshID, materialID);
+                    break;
+                }
+                case "ear_l":
+                case "ear.l": {
+                    this.attachToLeftEar(meshID, materialID);
+                    break;
+                }
+                case "neck": {
+                    this.attachToNeck(meshID, materialID);
+                    break;
+                }
+                case "chest": {
+                    this.attachToChest(meshID, materialID);
+                    break;
+                }
+                case "hand_r":
+                case "hand.r": {
+                    this.attachToRightHand(meshID, materialID);
+                    break;
+                }
+                case "hand_l":
+                case "hand.l": {
+                    this.attachToLeftHand(meshID, materialID);
+                    break;
+                }
+                case "root": {
+                    this.attachToROOT(meshID, materialID);
+                    break;
+                }
+            }
+            if (!attachmentMap.hasOwnProperty(boneID)) {
+                attachmentMap[boneID] = {};
+            }
+            if (!attachmentMap[boneID].hasOwnProperty(meshID)) {
+                attachmentMap[boneID][meshID] = {};
+            }
+            attachmentMap[boneID][meshID] = materialID;
+        }
+        return 0;
+    }
     assign(objectBlob) {
         super.assign(objectBlob);
         if (objectBlob.hasOwnProperty("eyeType")) this.eEyeType = objectBlob.eyeType;
@@ -892,8 +848,9 @@ class CreatureController extends EntityController {
                 this.sEyeScleraColour = Tools.colourNameToHex(objectBlob.eyeBackground);
             }
         }
-        if (objectBlob.hasOwnProperty("cosmetics")) {
-            for (let boneID in objectBlob["cosmetics"]) {
+        if (objectBlob.hasOwnProperty("cosmetics") && objectBlob["cosmetics"] instanceof Object) {
+            this.assignAttachments(objectBlob["cosmetics"], this._cosmeticMeshIDsAttachedToBones);
+            /*for (let boneID in objectBlob["cosmetics"]) {
                 if (!(objectBlob["cosmetics"][boneID] instanceof Object)) {
                     this.detachCosmeticMeshesFromBone(boneID, true);
                 }
@@ -913,7 +870,7 @@ class CreatureController extends EntityController {
                         this.attachCosmeticMeshIDToBone(meshID, materialID, boneID);
                     }
                 }
-            }
+            }*/
         }
         if (objectBlob.hasOwnProperty("offensiveStance")) this.offensiveStance = objectBlob.offensiveStance;
         return 0;

@@ -148,7 +148,7 @@ class EntityController extends AbstractController {
     }
     getScaling() {
         if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
-            return this.collisionMesh.scaling
+            return this.collisionMesh.scaling;
         }
         return BABYLON.Vector3.One();
     }

@@ -1852,23 +1852,43 @@ class Game {
             return Game.iconLocations["missingIcon"];
         }
     }
-    static filterVector3(...vector3) {
-        if (vector3.length == 1 && !isNaN(vector3[0])) {
-            return new BABYLON.Vector3(vector3[0], vector3[0], vector3[0]);
+    static filterVector3(vector3, returnOnFail = BABYLON.Vector3.Zero()) {
+        if (vector3 instanceof Array) {
+            let x = returnOnFail.x;
+            let y = returnOnFail.y;
+            let z = returnOnFail.z;
+            if (vector3.length >= 3) {
+                z = Number.parseFloat(vector3[2]);
+                if (isNaN(z))
+                    z = returnOnFail.z;
+            }
+            if (vector3.length >= 2) {
+                y = Number.parseFloat(vector3[1]);
+                if (isNaN(y))
+                    y = returnOnFail.y;
+            }
+            if (vector3.length >= 0) {
+                x = Number.parseFloat(vector3[0]);
+                if (isNaN(x))
+                    x = returnOnFail.x;
+            }
+            return new BABYLON.Vector3(x, y, z);
         }
-        else if (vector3[0] instanceof BABYLON.Vector3) {
-            return vector3[0];
+        else if (vector3 instanceof BABYLON.Vector3) {
+            return Game.filterVector3([vector3.x, vector3.y, vector3.z], returnOnFail);
         }
-        else if (vector3[0] instanceof Object && vector3[0].hasOwnProperty("x") && vector3[0].hasOwnProperty("y") && vector3[0].hasOwnProperty("z") && !isNaN(vector3[0].x) && !isNaN(vector3[0].y) && !isNaN(vector3[0].z)) {
-            return new BABYLON.Vector3(vector3[0].x, vector3[0].y, vector3[0].z);
+        else if (vector3 instanceof Object) {
+            if (vector3.hasOwnProperty("x") && vector3.hasOwnProperty("y") && vector3.hasOwnProperty("z")) {
+                return Game.filterVector3([vector3.x, vector3.y, vector3.z], returnOnFail);
+            }
         }
-        else if (vector3.length == 3 && !isNaN(vector3[0]) && !isNaN(vector3[1]) && !isNaN(vector3[2])) {
-            return new BABYLON.Vector3(vector3[0], vector3[1], vector3[2]);
+        else if (Number.parseFloat(vector3) != NaN) {
+            vector3 = Number.parseFloat(vector3);
+            if (isNaN(vector3))
+                vector3 = 0;
+            return new BABYLON.Vector3(vector3, vector3, vector3);
         }
-        else if (vector3[0] instanceof Array && vector3[0].length == 3) {
-            return new BABYLON.Vector3(vector3[0][0], vector3[0][1], vector3[0][2]);
-        }
-        return BABYLON.Vector3.Zero();
+        return returnOnFail;
     }
     static filterController(blob) {
         if (blob instanceof EntityController) {
@@ -2673,7 +2693,7 @@ class Game {
         materialID = Game.filterMaterialID(materialID);
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
-        scaling = Game.filterVector3(scaling);
+        scaling = Game.filterVector3(scaling, BABYLON.Vector3.One());
         if (typeof options != "object") {
             options = {};
         }
@@ -2701,7 +2721,7 @@ class Game {
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
-    static createMeshPhaseTwo(id, meshID, materialID, position, rotation, scaling, options, response, parentCallbackID) {
+    static createMeshPhaseTwo(id, meshID, materialID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options, response, parentCallbackID) {
         if (Game.debugMode) console.group(`Running Game.createMeshPhaseTwo(${id}, ${meshID}, ..., ${response}, ${parentCallbackID})`);
         let masterMesh = Game.getLoadedMesh(meshID);
         let mesh = null;
@@ -3479,7 +3499,7 @@ class Game {
         instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
-        scaling = Game.filterVector3(scaling);
+        scaling = Game.filterVector3(scaling, BABYLON.Vector3.One());
         if (Game.debugMode) console.group(`Running Game.createCharacter(${instanceID}, ${entityID}, ${position}, ${rotation}, ${scaling}, ${options}, ${parentCallbackID})`);
         if (Game.hasCachedEntity(entityID)) {
             if (Game.debugMode) console.info("Have cached entity");
@@ -3550,7 +3570,11 @@ class Game {
         controller.generateCosmeticMeshes();
         controller.generateEquippedMeshes();
         controller.updateTargetRay();
-        controller.mesh.scaling.setAll(entity.height / entity.baseHeight);
+        let scaleAll = entity.height / entity.baseHeight;
+        if (scaleAll <= 0) {
+            scaleAll = 1.0;
+        }
+        controller.mesh.scaling.setAll(scaleAll);
         if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
             Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
         }
@@ -4690,36 +4714,6 @@ class Game {
         if (lastWindow.hasOwnProperty("interfaceMode")) {
             return Game.setInterfaceMode(lastWindow["interfaceMode"]);
         }
-        return 0;
-    }
-    static setMeshScaling(mesh, scaling = BABYLON.Vector3.One()) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (!Game.hasMesh(mesh)) {
-                return 2;
-            }
-            mesh = Game.getMesh(mesh);
-        }
-        mesh.scaling.copyFrom(scaling);
-        return 0;
-    }
-    static setMeshRotation(mesh, rotation = BABYLON.Vector3.Zero()) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (!Game.hasMesh(mesh)) {
-                return 2;
-            }
-            mesh = Game.getMesh(mesh);
-        }
-        mesh.rotation.copyFrom(rotation);
-        return 0;
-    }
-    static setMeshPosition(mesh, position = BABYLON.Vector3.Zero()) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (!Game.hasMesh(mesh)) {
-                return 2;
-            }
-            mesh = Game.getMesh(mesh);
-        }
-        mesh.position.copyFrom(position);
         return 0;
     }
 
