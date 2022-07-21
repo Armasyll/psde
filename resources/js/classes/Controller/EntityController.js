@@ -435,23 +435,24 @@ class EntityController extends AbstractController {
      * @returns {CharacterController} This character controller.
      */
     attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
+        if (EntityController.debugMode) console.group(`Running <EntityController> ${this.id}.attachMeshToBone(...)`);
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            if (EntityController.debugMode) console.log(`mesh (${String(mesh)}) is not instance of BABYLON.AbstractMesh`);
+            if (EntityController.debugMode) console.groupEnd();
             return 2;
         }
         if (!(bone instanceof BABYLON.Bone)) {
+            if (EntityController.debugMode) console.log(`bone (${String(bone)}) is not instance of BABYLON.Bone`);
+            if (EntityController.debugMode) console.groupEnd();
             return 2;
         }
+        if (EntityController.debugMode) console.log(`(${mesh.id}, ${bone.id})`);
         mesh.setParent(this.mesh);
         mesh.attachToBone(bone, this.mesh);
         mesh.controller = this;
         mesh.position.copyFrom(position);
         mesh.rotation.copyFrom(rotation);
-        if (!(scaling instanceof BABYLON.Vector3)) {
-            mesh.scaling.copyFrom(this.scaling);
-        }
-        else {
-            mesh.scaling.copyFrom(scaling);
-        }
+        mesh.scaling.copyFrom(this.getScaling()); // screw its own scaling >:V - 2022-07-21
         if (this.animationPrevious == undefined) {
             /*
             Because meshes became inverted when they were attached and scaled before actually being rendered for the first time, or something like that :v
@@ -477,6 +478,7 @@ class EntityController extends AbstractController {
         if (mesh.material.name != "collisionMaterial") {
             this._attachedMeshes.add(mesh);
         }
+        if (EntityController.debugMode) console.groupEnd();
         return 0;
     }
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {

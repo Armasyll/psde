@@ -1,0 +1,15 @@
+{
+    "id":"characterHoldingItemTest",
+    "name":"NPC Holding Item Test Cell",
+    "barrier":16,
+    "materials":[],
+    "meshGroups":{},
+    "entityGroups":{
+        "doors":[],
+        "lightings":[],
+        "items":[],
+        "characters":[
+            "rinehart", "rinehart", [3, 0, 0], [0, 180, 0]
+        ]
+    }
+}

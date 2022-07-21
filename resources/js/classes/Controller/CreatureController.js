@@ -142,6 +142,18 @@ class CreatureController extends EntityController {
     detachFromRightShoulder() {
         return this.detachAllFromBone("shoulder.r");
     }
+    attachToLeftUpperArm(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "upperArm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftUpperArm() {
+        return this.detachAllFromBone("upperArm.l");
+    }
+    attachToRightUpperArm(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "upperArm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromToRightUpperArm() {
+        return this.detachAllFromBone("upperArm.r");
+    }
     attachToLeftForearm(meshID, textureID = "missingTexture", options) {
         return this.attachMeshIDToBone(meshID, textureID, "forearm.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
     }
@@ -153,6 +165,18 @@ class CreatureController extends EntityController {
     }
     detachFromRightForearm() {
         return this.detachAllFromBone("forearm.r");
+    }
+    attachToLeftWrist(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "wrist.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftWrist() {
+        return this.detachAllFromBone("wrist.l");
+    }
+    attachToRightWrist(meshID, textureID = "missingTexture", options) {
+        return this.attachMeshIDToBone(meshID, textureID, "wrist.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightWrist() {
+        return this.detachAllFromBone("wrist.r");
     }
     attachToLeftHand(meshID, textureID = "missingTexture", options) {
         return this.attachMeshIDToBone(meshID, textureID, "hand.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(90), BABYLON.Tools.ToRadians(90)), this.mesh.scaling.clone(), options);
@@ -166,6 +190,66 @@ class CreatureController extends EntityController {
     detachFromRightHand() {
         return this.detachAllFromBone("hand.r");
     }
+    attachToLeftPinkieFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersPinkieProximinalPhalanx.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftPinkieFinger() {
+        return this.detachAllFromBone("fingersPinkieProximinalPhalanx.l");
+    }
+    attachToLeftRingFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersRingProximinalPhalanx.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftRingFinger() {
+        return this.detachAllFromBone("fingersRingProximinalPhalanx.l");
+    }
+    attachToLeftMiddleFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersRingProximinalPhalanx.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftMiddleFinger() {
+        return this.detachAllFromBone("fingersRingProximinalPhalanx.l");
+    }
+    attachToLeftIndexFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersIndexProximinalPhalanx.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftIndexFinger() {
+        return this.detachAllFromBone("fingersIndexProximinalPhalanx.l");
+    }
+    attachToLeftThumb(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "thumbProximinalPhalanx.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftThumb() {
+        return this.detachAllFromBone("thumbProximinalPhalanx.l");
+    }
+    attachToRightPinkieFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersPinkieProximinalPhalanx.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightPinkieFinger() {
+        return this.detachAllFromBone("fingersPinkieProximinalPhalanx.r");
+    }
+    attachToRightRingFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersRingProximinalPhalanx.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightRingFinger() {
+        return this.detachAllFromBone("fingersRingProximinalPhalanx.r");
+    }
+    attachToRightMiddleFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersProximinalPhalanx.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightMiddleFinger() {
+        return this.detachAllFromBone("fingersProximinalPhalanx.r");
+    }
+    attachToRightIndexFinger(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "fingersIndexProximinalPhalanx.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightIndexFinger() {
+        return this.detachAllFromBone("fingersIndexProximinalPhalanx.r");
+    }
+    attachToRightThumb(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "thumbProximinalPhalanx.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightThumb() {
+        return this.detachAllFromBone("thumbProximinalPhalanx.r");
+    }
     attachToChest(meshID, textureID = "missingTexture", options) {
         return this.attachMeshIDToBone(meshID, textureID, "chest", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
@@ -178,11 +262,53 @@ class CreatureController extends EntityController {
     detachFromSpine() {
         return this.detachAllFromBone("spine");
     }
-    attachToPelvis(meshID, textureID = "missingTexture", options) {
+    attachToPelvis(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
         return this.attachMeshIDToBone(meshID, textureID, "pelvis", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
     }
     detachFromPelvis() {
         return this.detachAllFromBone("pelvis");
+    }
+    attachToTailBase(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "tailBaseMiddle", BABYLON.Vector3.Zero(), new BABYLON.Vector3(BABYLON.Tools.ToRadians(180), BABYLON.Tools.ToRadians(180), 0), this.mesh.scaling.clone(), options);
+    }
+    detachFromTailBase() {
+        return this.detachAllFromBone("tailBaseMiddle");
+    }
+    attachToLeftThigh(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "thigh.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftThigh() {
+        return this.detachAllFromBone("thigh.l");
+    }
+    attachToRightThigh(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "thigh.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightThigh() {
+        return this.detachAllFromBone("thigh.r");
+    }
+    attachToLeftShin(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "shin.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftShin() {
+        return this.detachAllFromBone("shin.l");
+    }
+    attachToRightShin(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "shin.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightShin() {
+        return this.detachAllFromBone("shin.r");
+    }
+    attachToLeftFoot(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "foot.l", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromLeftFoot() {
+        return this.detachAllFromBone("foot.l");
+    }
+    attachToRightFoot(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
+        return this.attachMeshIDToBone(meshID, textureID, "foot.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.mesh.scaling.clone(), options);
+    }
+    detachFromRightFoot() {
+        return this.detachAllFromBone("foot.r");
     }
 
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID = "ROOT", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
@@ -732,20 +858,28 @@ class CreatureController extends EntityController {
     /**
      * 
      * @param {Object.<string, Object.<string, Object<...>>>} attachmentBlob Object-map of bones to objectified entities containing a meshID and materialID
+     * @param {Object} [attachmentMap] 
      * @example {"HAND_R": {"meshID": "knife01", "materialID": "knife01Texture"}}
      * @returns 
      */
     assignAttachments(attachmentBlob, attachmentMap = {}) {
+        if (EntityController.debugMode) console.group(`Running <CreatureController> ${this.id}.assignAttachments(...)`)
         let meshID = "";
         let materialID = "";
         if (!(attachmentBlob instanceof Object)) {
+            if (EntityController.debugMode) {
+                console.log("Attachment parameters aren't an object.");
+                console.groupEnd();
+            }
             return 1;
         }
         for (let boneID in attachmentBlob) {
             if (attachmentBlob[boneID] == null) {
+                if (EntityController.debugMode) console.log(`Attachment bone is null.`)
                 continue;
             }
             if (!(attachmentBlob[boneID] instanceof Object)) {
+                if (EntityController.debugMode) console.log(`Attachment bone isn't an object.`)
                 continue;
             }
             if (attachmentBlob[boneID].hasOwnProperty("meshID")) {
@@ -763,46 +897,154 @@ class CreatureController extends EntityController {
             else {
                 materialID = "missingMaterial";
             }
-            switch (boneID.toLowerCase()) {
+            let fBoneID = boneID.toLowerCase().replace(/[_\-]+/g, ".");
+            switch (fBoneID) {
                 case "focus": {
+                    boneID = "FOCUS";
                     this.attachToFOCUS(meshID, materialID);
                     break;
                 }
                 case "head": {
+                    boneID = "head";
                     this.attachToHead(meshID, materialID);
                     break;
                 }
-                case "ear_r":
                 case "ear.r": {
+                    boneID = "ear.r";
                     this.attachToRightEar(meshID, materialID);
                     break;
                 }
-                case "ear_l":
                 case "ear.l": {
+                    boneID = "ear.l";
                     this.attachToLeftEar(meshID, materialID);
                     break;
                 }
                 case "neck": {
+                    boneID = "neck";
                     this.attachToNeck(meshID, materialID);
                     break;
                 }
                 case "chest": {
+                    boneID = "chest";
                     this.attachToChest(meshID, materialID);
                     break;
                 }
-                case "hand_r":
+                case "shoulder.r": {
+                    boneID = "shoulder.r";
+                    this.attachToRightShoulder(meshID, materialID);
+                    break;
+                }
+                case "shoulder.l": {
+                    boneID = "shoulder.l";
+                    this.attachToLeftShoulder(meshID, materialID);
+                    break;
+                }
+                case "upperarm.r": {
+                    boneID = "upperarm.r";
+                    this.attachToRightUpperArm(meshID, materialID);
+                    break;
+                }
+                case "upperarm.l": {
+                    boneID = "upperarm.l";
+                    this.attachToLeftUpperArm(meshID, materialID);
+                    break;
+                }
+                case "forearm.r": {
+                    boneID = "forearm.r";
+                    this.attachToRightForeArm(meshID, materialID);
+                    break;
+                }
+                case "forearm.l": {
+                    boneID = "forearm.l";
+                    this.attachToLeftForeArm(meshID, materialID);
+                    break;
+                }
+                case "wrist.r": {
+                    boneID = "wrist.r";
+                    this.attachToRightWrist(meshID, materialID);
+                    break;
+                }
+                case "wrist.l": {
+                    boneID = "wrist.l";
+                    this.attachToLeftWrist(meshID, materialID);
+                    break;
+                }
                 case "hand.r": {
+                    boneID = "hand.r";
                     this.attachToRightHand(meshID, materialID);
                     break;
                 }
-                case "hand_l":
                 case "hand.l": {
+                    boneID = "hand.l";
                     this.attachToLeftHand(meshID, materialID);
                     break;
                 }
+                case "fingerspinkieproximinalphalanx.l":
+                case "pinkiefinger.l": {
+                    boneID = "fingersPinkieProximinalPhalanx.l";
+                    this.attachToLeftPinkieFinger(meshID, materialID);
+                    break;
+                }
+                case "fingersringproximinalphalanx.l":
+                case "ringfinger.l": {
+                    // wat do if only 4 fingers :u or 2
+                    // fuck - 2022-07-21
+                    boneID = "fingersRingProximinalPhalanx.l";
+                    this.attachToLeftRingFinger(meshID, materialID);
+                    break;
+                }
+                case "fingersproximinalphalanx.l":
+                case "middlefinger.l": {
+                    boneID = "fingersProximinalPhalanx.l";
+                    this.attachToLeftMiddleFinger(meshID, materialID);
+                    break;
+                }
+                case "fingersindexproximinalphalanx.l":
+                case "indexfinger.l": {
+                    boneID = "fingersIndexProximinalPhalanx.l";
+                    this.attachToLeftIndexFinger(meshID, materialID);
+                    break;
+                }
+                case "thumbproximinalphalanx.l":
+                case "thumb.l": {
+                    boneID = "thumbProximinalPhalanx.l";
+                    this.attachToLeftThumb(meshID, materialID);
+                    break;
+                }
+                case "pelvis":
+                case "hips": {
+                    boneID = "pelvis";
+                    this.attachToPelvis(meshID, materialID);
+                    break;
+                }
+                case "shin.r": {
+                    boneID = "shin.r";
+                    this.attachToRightShin(meshID, materialID);
+                    break;
+                }
+                case "shin.l": {
+                    boneID = "shin.l";
+                    this.attachToLeftShin(meshID, materialID);
+                    break;
+                }
+                case "foot.r": {
+                    boneID = "foot.r";
+                    this.attachToRightFoot(meshID, materialID);
+                    break;
+                }
+                case "foot.l": {
+                    boneID = "foot.l";
+                    this.attachToLeftFoot(meshID, materialID);
+                    break;
+                }
                 case "root": {
+                    boneID = "ROOT";
                     this.attachToROOT(meshID, materialID);
                     break;
+                }
+                default: {
+                    if (EntityController.debugMode) console.log(`Bone "${boneID}" doesn't exist.`)
+                    continue;
                 }
             }
             if (!attachmentMap.hasOwnProperty(boneID)) {
@@ -811,7 +1053,8 @@ class CreatureController extends EntityController {
             if (!attachmentMap[boneID].hasOwnProperty(meshID)) {
                 attachmentMap[boneID][meshID] = {};
             }
-            attachmentMap[boneID][meshID] = materialID;
+            attachmentMap[boneID] = Object.assign({}, attachmentBlob);
+            if (EntityController.debugMode) console.groupEnd();
         }
         return 0;
     }
@@ -850,27 +1093,6 @@ class CreatureController extends EntityController {
         }
         if (objectBlob.hasOwnProperty("cosmetics") && objectBlob["cosmetics"] instanceof Object) {
             this.assignAttachments(objectBlob["cosmetics"], this._cosmeticMeshIDsAttachedToBones);
-            /*for (let boneID in objectBlob["cosmetics"]) {
-                if (!(objectBlob["cosmetics"][boneID] instanceof Object)) {
-                    this.detachCosmeticMeshesFromBone(boneID, true);
-                }
-                else {
-                    let cosmeticsObject = objectBlob["cosmetics"][boneID];
-                    if (cosmeticsObject.hasOwnProperty("meshID")) {
-                        meshID = objectBlob.cosmetics[boneID]["meshID"];
-                        if (cosmeticsObject.hasOwnProperty("materialID")) {
-                            materialID = objectBlob.cosmetics[boneID]["materialID"];
-                        }
-                        else if (cosmeticsObject.hasOwnProperty("textureID")) {
-                            materialID = objectBlob.cosmetics[boneID]["textureID"];
-                        }
-                        else {
-                            material = "missingMaterial";
-                        }
-                        this.attachCosmeticMeshIDToBone(meshID, materialID, boneID);
-                    }
-                }
-            }*/
         }
         if (objectBlob.hasOwnProperty("offensiveStance")) this.offensiveStance = objectBlob.offensiveStance;
         return 0;
