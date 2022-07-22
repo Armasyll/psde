@@ -326,15 +326,7 @@ class Game {
         Game.ambientLightCeiling = new BABYLON.HemisphericLight("ambientLightCeiling", new BABYLON.Vector3(0, -1, 0), Game.scene);
         Game.ambientLightCeiling.intensity = 0.5;
         if (Game.useShadows) {
-            Game.sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-1, -1, -1), Game.scene);
-            Game.sunLight.intensity = 1;
-            Game.sunLight.shadowMinZ = -90 * 2;
-            Game.sunLight.shadowMaxZ = 130 * 2;
-            Game.shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, Game.sunLight);
-            Game.shadowGenerator.usePercentageCloserFiltering = true;
-            Game.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
-            Game.shadowGenerator.bias = 0.003;
-            Game.shadowGenerator.autoCalcDepthBounds = false;
+            Game.initializeShadows();
         }
         Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {"size":1024.0}, Game.scene);
 
@@ -437,6 +429,22 @@ class Game {
         if (Game._playSoundTest) {
             Game.playAnnoyingMeatyThwack();
         }
+        return 0;
+    }
+    static initializeShadows() {
+        if (!Game.useShadows) {
+            return 0;
+        }
+        BABYLON.Tools.Log("Initializing shadows");
+        Game.sunLight = new BABYLON.DirectionalLight("sunLight", new BABYLON.Vector3(-1, -1, -1), Game.scene);
+        Game.sunLight.intensity = 1;
+        Game.sunLight.shadowMinZ = -90 * 2;
+        Game.sunLight.shadowMaxZ = 130 * 2;
+        Game.shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, Game.sunLight);
+        Game.shadowGenerator.usePercentageCloserFiltering = true;
+        Game.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
+        Game.shadowGenerator.bias = 0.003;
+        Game.shadowGenerator.autoCalcDepthBounds = false;
         return 0;
     }
     static setResolution(x, y) {
