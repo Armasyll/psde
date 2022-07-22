@@ -880,11 +880,11 @@ class CreatureController extends EntityController {
                 break;
             }
             case "upperarm.r": {
-                boneID = "upperarm.r";
+                boneID = "upperArm.r";
                 break;
             }
             case "upperarm.l": {
-                boneID = "upperarm.l";
+                boneID = "upperArm.l";
                 break;
             }
             case "forearm.r": {
@@ -911,6 +911,32 @@ class CreatureController extends EntityController {
                 boneID = "hand.l";
                 break;
             }
+            case "fingerspinkieproximinalphalanx.r":
+            case "pinkiefinger.r": {
+                boneID = "fingersPinkieProximinalPhalanx.r";
+                break;
+            }
+            case "fingersringproximinalphalanx.r":
+            case "ringfinger.r": {
+                boneID = "fingersRingProximinalPhalanx.r";
+                break;
+            }
+            case "fingersproximinalphalanx.r":
+            case "middlefinger.r": {
+                boneID = "fingersProximinalPhalanx.r";
+                break;
+            }
+            case "fingersindexproximinalphalanx.r":
+            case "indexfinger.r": {
+                boneID = "fingersIndexProximinalPhalanx.r";
+                break;
+            }
+            case "thumbproximinalphalanx.r":
+            case "thumb.r": {
+                boneID = "thumbProximinalPhalanx.r";
+                break;
+            }
+            
             case "fingerspinkieproximinalphalanx.l":
             case "pinkiefinger.l": {
                 boneID = "fingersPinkieProximinalPhalanx.l";
@@ -936,9 +962,22 @@ class CreatureController extends EntityController {
                 boneID = "thumbProximinalPhalanx.l";
                 break;
             }
+            case "lowerback":
+            case "spine": {
+                boneID = "spine";
+                break;
+            }
             case "pelvis":
             case "hips": {
                 boneID = "pelvis";
+                break;
+            }
+            case "thigh.r": {
+                boneID = "thigh.r";
+                break;
+            }
+            case "thigh.l": {
+                boneID = "thigh.l";
                 break;
             }
             case "shin.r": {
@@ -1035,7 +1074,7 @@ class CreatureController extends EntityController {
                 }
             }
             switch (fBoneID) {
-                case "focus": {
+                case "FOCUS": {
                     if (removeAttachment) {
                         this.detachFromFOCUS();
                     }
@@ -1108,7 +1147,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "upperarm.r": {
+                case "upperArm.r": {
                     if (removeAttachment) {
                         this.detachFromRightUpperArm();
                     }
@@ -1117,7 +1156,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "upperarm.l": {
+                case "upperArm.l": {
                     if (removeAttachment) {
                         this.detachFromLeftUpperArm();
                     }
@@ -1180,8 +1219,52 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "fingerspinkieproximinalphalanx.l":
-                case "pinkiefinger.l": {
+                case "fingersPinkieProximinalPhalanx.r": {
+                    if (removeAttachment) {
+                        this.detachFromRightPinkieFinger();
+                    }
+                    else {
+                        this.attachToRightPinkieFinger(meshID, materialID);
+                    }
+                    break;
+                }
+                case "fingersRingProximinalPhalanx.r": {
+                    if (removeAttachment) {
+                        this.detachFromRightRingFinger();
+                    }
+                    else {
+                        this.attachToRightRingFinger(meshID, materialID);
+                    }
+                    break;
+                }
+                case "fingersProximinalPhalanx.r": {
+                    if (removeAttachment) {
+                        this.detachFromRightMiddleFinger();
+                    }
+                    else {
+                        this.attachToRightMiddleFinger(meshID, materialID);
+                    }
+                    break;
+                }
+                case "fingersIndexProximinalPhalanx.r": {
+                    if (removeAttachment) {
+                        this.detachFromRightIndexFinger();
+                    }
+                    else {
+                        this.attachToRightIndexFinger(meshID, materialID);
+                    }
+                    break;
+                }
+                case "thumbProximinalPhalanx.r": {
+                    if (removeAttachment) {
+                        this.detachFromRightThumb();
+                    }
+                    else {
+                        this.attachToRightThumb(meshID, materialID);
+                    }
+                    break;
+                }
+                case "fingersPinkieProximinalPhalanx.l": {
                     if (removeAttachment) {
                         this.detachFromLeftPinkieFinger();
                     }
@@ -1190,10 +1273,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "fingersringproximinalphalanx.l":
-                case "ringfinger.l": {
-                    // wat do if only 4 fingers :u or 2
-                    // fuck - 2022-07-21
+                case "fingersRingProximinalPhalanx.l": {
                     if (removeAttachment) {
                         this.detachFromLeftRingFinger();
                     }
@@ -1202,8 +1282,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "fingersproximinalphalanx.l":
-                case "middlefinger.l": {
+                case "fingersProximinalPhalanx.l": {
                     if (removeAttachment) {
                         this.detachFromLeftMiddleFinger();
                     }
@@ -1212,8 +1291,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "fingersindexproximinalphalanx.l":
-                case "indexfinger.l": {
+                case "fingersIndexProximinalPhalanx.l": {
                     if (removeAttachment) {
                         this.detachFromLeftIndexFinger();
                     }
@@ -1222,8 +1300,7 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "thumbproximinalphalanx.l":
-                case "thumb.l": {
+                case "thumbProximinalPhalanx.l": {
                     if (removeAttachment) {
                         this.detachFromLeftThumb();
                     }
@@ -1232,8 +1309,16 @@ class CreatureController extends EntityController {
                     }
                     break;
                 }
-                case "pelvis":
-                case "hips": {
+                case "spine": {
+                    if (removeAttachment) {
+                        this.detachFromSpine();
+                    }
+                    else {
+                        this.attachToSpine(meshID, materialID);
+                    }
+                    break;
+                }
+                case "pelvis": {
                     if (removeAttachment) {
                         this.detachFromPelvis();
                     }
@@ -1355,8 +1440,6 @@ class CreatureController extends EntityController {
         this.setLocked(true);
         this.setEnabled(false);
         this.removeTarget();
-        this.detachCosmeticMeshes(true);
-        this.detachOrganMeshes(true);
         CreatureController.remove(this.id);
         super.dispose();
         return null;

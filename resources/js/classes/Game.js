@@ -2353,7 +2353,7 @@ class Game {
         else {
             return 2;
         }
-        switch (abstractMesh.name) {
+        switch (abstractMesh.id) {
             case "NONE":
             case "missingMesh":
             case "loadingMesh":
@@ -2379,16 +2379,23 @@ class Game {
             if (Game.clonedMeshes.hasOwnProperty(abstractMesh.id)) {
                 delete Game.clonedMeshes[abstractMesh.id];
             }
-            abstractMesh.dispose();
+            else if (Game.instancedMeshes.hasOwnProperty(abstractMesh.id)) {
+                delete Game.instancedMeshes[abstractMesh.id];
+            }
+            for (let i = abstractMesh.skeleton.getAnimatables().length - 1; i >= 0; i--) {
+                abstractMesh.skeleton.getAnimatables()[i].dispose();
+            }
+            abstractMesh.skeleton.dispose();
         }
-        else if (Game.meshMaterialMeshes.hasOwnProperty(abstractMesh.name)) {
+        if (Game.meshMaterialMeshes.hasOwnProperty(abstractMesh.name)) {
             if (Game.meshMaterialMeshes[abstractMesh.name].hasOwnProperty(abstractMesh.material.name)) {
                 Game.removeMeshMaterialMeshes(abstractMesh.name, abstractMesh.material.name, abstractMesh.id);
             }
         }
-        else {
-            abstractMesh.dispose();
+        if (Game.loadedMeshes.hasOwnProperty(abstractMesh.id)) {
+            delete Game.loadedMeshes[abstractMesh.id];
         }
+        abstractMesh.dispose();
         return 0;
     }
     static removeMeshMaterial(meshID, materialID) {
@@ -2708,11 +2715,6 @@ class Game {
         switch (meshID) {
             case "cameraFocus": {
                 options["createClone"] = true;
-                break;
-            }
-            case "craftsmanStairs": {
-                Game.createMesh(id + "-CollisionMesh", "stairsCollision", "collisionMaterial", position, rotation, scaling, { checkCollisions: true });
-                options["checkCollisions"] = false;
                 break;
             }
         }
@@ -4464,6 +4466,14 @@ class Game {
             }
             mesh = null;
             delete Game.collisionMeshes[meshID];
+        }
+        if (deleteCache) {
+            for (let meshID in Game.loadedMeshes) {
+                Game.removeMesh(meshID);
+            }
+            for (let materialID in Game.loadedMaterials) {
+                Game.removeMaterial(materialID);
+            }
         }
         Callback.run(parentCallbackID);
         if (Game.debugMode) console.groupEnd();
