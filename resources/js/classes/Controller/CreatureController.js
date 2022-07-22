@@ -732,12 +732,13 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
         }
-        for (let bone in this._meshesAttachedToBones) {
-            if (bone == "FOCUS" || bone == "ROOT") {}
-            else if (this.helmetVisible && bone == "head") {}
-            for (let mesh in this._meshesAttachedToBones[bone]) {
-                if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
-                    this._meshesAttachedToBones[bone][mesh].isVisible = false;
+        for (let boneID in this._meshesAttachedToBones) {
+            if (boneID == "FOCUS" || boneID == "ROOT") {
+                continue;
+            }
+            for (let meshID in this._meshesAttachedToBones[boneID]) {
+                if (Game.hasMesh(meshID)) {
+                    Game.getMesh(meshID).isVisible = false;
                 }
             }
         }
@@ -750,22 +751,16 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 2;
         }
-        for (let bone in this._meshesAttachedToBones) {
-            switch (bone) {
-                case "FOCUS": case "ROOT": {
-                    break;
-                }
-                case "head": {
-                    if (!this.helmetVisible) {
-                        break;
-                    }
-                }
-                default: {
-                    for (let mesh in this._meshesAttachedToBones[bone]) {
-                        if (this._meshesAttachedToBones[bone][mesh] instanceof BABYLON.AbstractMesh) {
-                            this._meshesAttachedToBones[bone][mesh].isVisible = true;
-                        }
-                    }
+        for (let boneID in this._meshesAttachedToBones) {
+            if (boneID == "FOCUS" || boneID == "ROOT") {
+                continue;
+            }
+            else if (this.helmetVisible && boneID == "head") {
+                continue;
+            }
+            for (let meshID in this._meshesAttachedToBones[boneID]) {
+                if (Game.hasMesh(meshID)) {
+                    Game.getMesh(meshID).isVisible = true;
                 }
             }
         }

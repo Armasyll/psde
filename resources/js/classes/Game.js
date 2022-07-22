@@ -2442,6 +2442,12 @@ class Game {
         else if (Game.hasAvailableMesh(meshID)) {
             return true;
         }
+        else if (Game.hasClonedMesh(meshID)) {
+            return true;
+        }
+        else if (Game.hasInstancedMesh(meshID)) {
+            return true;
+        }
         return false;
     }
     static hasAvailableSound(soundID) {
