@@ -318,7 +318,7 @@ class Game {
         Game.renderWidth = Game.engine.getRenderWidth();
         Game.renderHeight = Game.engine.getRenderHeight();
         if (Game.physicsEnabled) {
-            Game.initPhysics();
+            Game.initializePhysics();
         }
         Game.scene.collisionsEnabled = true;
         Game.scene.workerCollisions = false;
@@ -601,7 +601,7 @@ class Game {
         return 0;
     }
 
-    static initPhysics() {
+    static initializePhysics() {
         Game.physicsPlugin = new BABYLON.CannonJSPlugin();
         Game.scene.enablePhysics(Game.scene.gravity, Game.physicsPlugin);
         return 0;
