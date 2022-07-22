@@ -78,20 +78,28 @@ class CreatureController extends EntityController {
         return 0;
     }
 
-    detachFromAllBones(destroyMesh = true) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 0;
-        }
-        for (let boneID in this._meshesAttachedToBones) {
-            for (let meshID in this._meshesAttachedToBones[boneID]) {
-                if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-                    this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], this.getBone(boneID), destroyMesh);
+    _removeMeshReferences(meshID) {
+        for (let boneID in this._organMeshIDsAttachedToBones) {
+            for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
+                if (this._organMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                    delete this._organMeshIDsAttachedToBones[boneID][meshID];
                 }
-                delete this._meshesAttachedToBones[boneID][meshID];
             }
-            delete this._meshesAttachedToBones[boneID];
+            if (Object.keys(this._organMeshIDsAttachedToBones[boneID]).length == 0) {
+                delete this._organMeshIDsAttachedToBones[boneID];
+            }
         }
-        super.detachFromAllBones(destroyMesh);
+        for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
+            for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
+                if (this._cosmeticMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                    delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
+                }
+            }
+            if (Object.keys(this._cosmeticMeshIDsAttachedToBones[boneID]).length == 0) {
+                delete this._cosmeticMeshIDsAttachedToBones[boneID];
+            }
+        }
+        super._removeMeshReferences(meshID);
         return 0;
     }
     attachToHead(meshID, textureID, options) {

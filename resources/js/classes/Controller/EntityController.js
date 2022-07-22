@@ -488,6 +488,9 @@ class EntityController extends AbstractController {
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
         return this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
     }
+    _removeMeshReferences(meshID) {
+        return 0;
+    }
     detachAllFromBone(bone, destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
@@ -576,6 +579,7 @@ class EntityController extends AbstractController {
                 delete this._bonesAttachedToMeshes[mesh.id];
             }
         }
+        this._removeMeshReferences(mesh.id);
         mesh.controller = null;
         mesh.detachFromBone();
         if (destroyMesh) {

@@ -34,9 +34,28 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
+    _removeMeshReferences(meshID) {
+        for (let boneID in this._equipmentMeshIDsAttachedToBones) {
+            for (let meshID in this._equipmentMeshIDsAttachedToBones[boneID]) {
+                if (this._equipmentMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                    delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
+                }
+            }
+            if (Object.keys(this._equipmentMeshIDsAttachedToBones[boneID]).length == 0) {
+                delete this._equipmentMeshIDsAttachedToBones[boneID];
+            }
+        }
+        super._removeMeshReferences(meshID);
+        return 0;
+    }
     detachFromAllBones(destroyMesh = true) {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 0;
+        }
+        for (let boneID in this._equipmentMeshIDsAttachedToBones) {
+            for (let meshID in this._equipmentMeshIDsAttachedToBones) {
+                delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
+            }
         }
         super.detachFromAllBones(destroyMesh);
         return 0;
