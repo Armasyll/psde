@@ -48,8 +48,8 @@
  * @property {CompoundController} compoundController 
  * @property {number} animationPriority 
  * @property {boolean} animationPriorityUpdated 
- * @property {Object.<>} _meshesAttachedToBones 
- * @property {Object.<>} _bonesAttachedToMeshes 
+ * @property {Object.<String, Object>} _meshesAttachedToBones 
+ * @property {Object.<String, Object>} _bonesAttachedToMeshes 
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
  * @property {boolean} bUseAnimationGroups 
  * @property {boolean} bHasRunPostConstructEntity 
@@ -117,7 +117,7 @@ class EntityController extends AbstractController {
          * @type {string, {string, BABYLON.Bone}}
          */
         this._bonesAttachedToMeshes = {};
-        this._attachedMeshes = new Set();
+        this._attachedMeshes = {};
         this.bUseAnimationGroups = true;
         this.bHasRunPostConstructEntity = false;
         this.setMesh(mesh);
@@ -199,7 +199,7 @@ class EntityController extends AbstractController {
             }
             this.currentMeshStage = 0;
         }
-        this._attachedMeshes.add(this.mesh);
+        this._attachedMeshes[this.mesh.id];
         this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
         this.depth = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
@@ -217,7 +217,7 @@ class EntityController extends AbstractController {
             return 0;
         }
         if (this.hasMesh()) {
-            this._attachedMeshes.remove(this.mesh);
+            delete this._attachedMeshes[this.mesh.id];
             this.mesh.controller = null;
             this.mesh.setParent(null);
         }
@@ -236,7 +236,7 @@ class EntityController extends AbstractController {
             this.mesh.setParent(this.collisionMesh);
         }
         this.collisionMesh.controller = this;
-        this._attachedMeshes.add(this.collisionMesh);
+        this._attachedMeshes[this.collisionMesh.id];
         return 0;
     }
     removeCollisionMesh() {
@@ -247,7 +247,7 @@ class EntityController extends AbstractController {
             this.mesh.setParent(null);
         }
         this.collisionMesh.controller = null;
-        this._attachedMeshes.remove(this.collisionMesh);
+        delete this._attachedMeshes[this.collisionMesh];
         Game.removeMesh(this.collisionMesh);
         this.collisionMesh = null;
         return 0;
@@ -462,21 +462,25 @@ class EntityController extends AbstractController {
         if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
             this._meshesAttachedToBones[bone.id] = {};
         }
-        this._meshesAttachedToBones[bone.id][mesh.id] = mesh;
+        this._meshesAttachedToBones[bone.id][mesh.id] = true;
         if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
             this._bonesAttachedToMeshes[mesh.id] = {};
         }
-        this._bonesAttachedToMeshes[mesh.id][bone.id] = bone;
-        if (bone.id == "FOCUS") {
-            this.focusMesh = mesh;
-            mesh.isVisible = false;
-        }
-        else if (bone.id == "ROOT") {
-            this.rootMesh = mesh;
-            mesh.isVisible = false;
+        this._bonesAttachedToMeshes[mesh.id][bone.id] = true;
+        switch (bone.id) {
+            case "FOCUS": {
+                this.focusMesh = mesh;
+                mesh.isVisible = false;
+                break;
+            }
+            case "ROOT": {
+                this.rootMesh = mesh;
+                mesh.isVisible = false;
+                break;
+            }
         }
         if (mesh.material.name != "collisionMaterial") {
-            this._attachedMeshes.add(mesh);
+            this._attachedMeshes[mesh.id] = true;
         }
         if (EntityController.debugMode) console.groupEnd();
         return 0;
@@ -489,17 +493,20 @@ class EntityController extends AbstractController {
             return 1;
         }
         if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(bone)) {
-                bone = this.getBone(bone);
+            if (this.hasBone(boneID)) {
+                bone = this.getBone(boneID);
             }
             else {
-                return 2;
+                return 1;
             }
         }
         if (!(this._meshesAttachedToBones.hasOwnProperty(bone.id))) {
             return 1;
         }
-        for (let meshID in this._meshesAttachedToBones[bone.id]) {
+        if (Object.keys(this._meshesAttachedToBones[bone.id]).length == 0) {
+            return 0;
+        }
+        for (let meshID in Object.assign({}, this._meshesAttachedToBones[bone.id])) {
             this.detachMeshFromBone(this._meshesAttachedToBones[bone.id][meshID], bone, destroyMesh);
         }
         return 0;
@@ -510,41 +517,32 @@ class EntityController extends AbstractController {
             return 1;
         }
         if (!Game.hasMesh(meshID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find {AbstractMesh} ${meshID}`);
-            return 2;
-        }
-        let mesh = null;
-        this._attachedMeshes.forEach((attachedMesh) => {
-            if (attachedMesh instanceof BABYLON.AbstractMesh) {
-                if (attachedMesh.name == meshID || attachedMesh.id == meshID) {
-                    mesh = attachedMesh;
-                    return true;
-                }
-            }
-            else {
-                this._attachedMeshes.remove(attachedMesh);
-            }
-        });
-        if (mesh == null) {
             return 1;
         }
-        return this.detachMeshFromBone(mesh, null, destroyMesh);
-    }
-    detachMeshIDFromBone(meshID, boneID = null, destroyMesh = true) {
-        if (this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
-            let bone = null;
-            if (boneID instanceof BABYLON.Bone) {
-                bone = boneID;
+        if (!this._attachedMeshes.hasOwnProperty(meshID)) {
+            return 1;
+        }
+        for (let boneID in this._meshesAttachedToBones) {
+            if (this._meshesAttachedToBones[boneID] == meshID) {
+                this.detachMeshFromBone(Game.getMesh(meshID), this.getBone(boneID), destroyMesh);
             }
-            else if (!this.hasBone(boneID)) {
-                return 1;
-            }
-            else {
-                bone = this.getBone(boneID);
-            }
-            return this.detachMeshFromBone(this._bonesAttachedToMeshes[meshID], bone, destroyMesh);
         }
         return 0;
+    }
+    detachMeshIDFromBone(meshID, boneID = null, destroyMesh = true) {
+        if (!this._bonesAttachedToMeshes.hasOwnProperty(meshID)) {
+            return 0;
+        }
+        if (!Game.hasMesh(meshID)) {
+            return 1;
+        }
+        if (!this._attachedMeshes.hasOwnProperty(meshID)) {
+            return 1;
+        }
+        if (!this.hasBone(boneID)) {
+            return 1;
+        }
+        return this.detachMeshFromBone(Game.getMesh(meshID), boneID, destroyMesh);
     }
     detachMeshFromBone(mesh, bone = null, destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
@@ -553,33 +551,33 @@ class EntityController extends AbstractController {
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
-        if (!(this._bonesAttachedToMeshes.hasOwnProperty(mesh.id))) {
-            return 1;
-        }
         if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(bone)) {
-                bone = this.getBone(bone);
+            if (this.hasBone(boneID)) {
+                bone = this.getBone(boneID);
             }
             else {
-                bone = null;
+                return 1;
             }
         }
-        if (bone instanceof BABYLON.Bone) {
-            this._meshesAttachedToBones[bone.id][mesh.id].controller = null;
-            delete this._meshesAttachedToBones[bone.id][mesh.id];
+        if (this._attachedMeshes.hasOwnProperty(mesh.id)) {
+            delete this._attachedMeshes[mesh.id];
         }
         else {
-            for (let boneWithAttachment in this._bonesAttachedToMeshes[mesh.id]) {
-                if (this._bonesAttachedToMeshes[mesh.id][boneWithAttachment] instanceof BABYLON.Bone) {
-                    this._meshesAttachedToBones[boneWithAttachment][mesh.id].controller = null;
-                    delete this._meshesAttachedToBones[boneWithAttachment][mesh.id];
-                }
+            return 1;
+        }
+        if (this._meshesAttachedToBones.hasOwnProperty(bone.id)) {
+            delete this._meshesAttachedToBones[bone.id][mesh.id];
+        }
+        if (this._bonesAttachedToMeshes.hasOwnProperty(mesh.id)) {
+            if (this.this._bonesAttachedToMeshes[mesh.id].hasOwnProperty(bone.id)) {
+                delete this._bonesAttachedToMeshes[mesh.id][bone.id];
+            }
+            if (Object.keys(this._bonesAttachedToMeshes[mesh.id]).length == 0) {
+                delete this._bonesAttachedToMeshes[mesh.id];
             }
         }
         mesh.controller = null;
         mesh.detachFromBone();
-        delete this._bonesAttachedToMeshes[mesh.id];
-        this._attachedMeshes.delete(mesh);
         if (destroyMesh) {
             Game.removeMesh(mesh);
         }
@@ -604,7 +602,7 @@ class EntityController extends AbstractController {
         return this.attachMeshIDToBone(mesh, undefined, "ROOT");
     }
     detachFromROOT() {
-        return this.detachAllFromBone("ROOT", false)[0];
+        return this.detachAllFromBone("ROOT", false);
     }
     attachToFOCUS(mesh) {
         if (mesh instanceof BABYLON.AbstractMesh) {
@@ -613,7 +611,7 @@ class EntityController extends AbstractController {
         return this.attachMeshIDToBone(mesh, undefined, "FOCUS");
     }
     detachFromFOCUS() {
-        return this.detachAllFromBone("FOCUS", false)[0];
+        return this.detachAllFromBone("FOCUS", false);
     }
 
     setStage(index = 0) {
