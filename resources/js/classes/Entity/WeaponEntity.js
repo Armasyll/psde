@@ -595,10 +595,10 @@ class WeaponEntity extends EquipmentEntity {
     static initialize() {
         WeaponEntity.weaponEntityList = {};
         let weaponHand = new WeaponEntity("weaponHand", "Hand", "A hand.", "missingIcon", WeaponEnum.NONE);
-        weaponHand.setMeshID("missingMesh");
+        weaponHand.setMeshIDs(["missingMesh"]);
         weaponHand.setMaterialID("collisionMaterial");
         let weaponClaw = new WeaponEntity("weaponClaw", "Claw", "A clawed hand.", "missingIcon", WeaponEnum.DAGGER);
-        weaponClaw.setMeshID("NONE");
+        weaponClaw.setMeshIDs(["NONE"]);
         weaponClaw.setMaterialID("collisionMaterial");
     }
     static get(id) {

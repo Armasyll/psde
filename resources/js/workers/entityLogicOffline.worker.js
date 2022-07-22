@@ -1224,13 +1224,13 @@ class EntityLogic {
             entity.assign(cell.furniture[i][5], false);
         }
         for (let i = 0; i < cell.doors.length; i++) {
-            //[entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]
+            //[entityID, name, teleportMarker, aMeshIDs, materialID, position, rotation, scaling, options]
             /** @type {DoorEntity} */
             let entity = new DoorEntity(cell.doors[i][0], cell.doors[i][1]);
             if (cell.doors[i][2] instanceof Array) {
                 entity.setTeleportMarker(new TeleportMarker(...cell.doors[i][2]));
             }
-            entity.setMeshID(cell.doors[i][3]);
+            entity.setMeshIDs(cell.doors[i][3]);
             entity.setMaterialID(cell.doors[i][4]);
             entity.assign(cell.doors[i][8], false);
         }
@@ -1281,24 +1281,20 @@ class EntityLogic {
      * @param {string} name Name
      * @param {string} [description] Description
      * @param {string} [iconID] Icon ID
-     * @param {string} meshID Mesh ID
+     * @param {Array.<String>} aMeshIDs Array of Mesh IDs
      * @param {string} textureID Texture ID
      * @param {FurnitureEnum} furnitureType FurnitureEnum
      * @param {number} weight Weight in kilograms
      * @param {number} price Price, non-decimal
      */
-    static createFurnitureEntity(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", furnitureType = FurnitureEnum.NONE, weight = 1, price = 1) {
+    static createFurnitureEntity(id, name = "", description = "", iconID = "", aMeshIDs = ["missingMesh"], textureID = "missingMaterial", furnitureType = FurnitureEnum.NONE, weight = 1, price = 1) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         let entity = new FurnitureEntity(id, name, description, iconID, furnitureType);
         if (entity instanceof AbstractEntity) {
-            /**
-             * TODO: allow setMeshID to handle arrays
-             * eg, ["bathtub01", "showerPipes01"]
-             */
-            entity.setMeshID(meshID);
+            entity.setMeshIDs(aMeshIDs);
             entity.setTextureID(textureID);
             entity.setPrice(price);
             entity.setWeight(weight);
@@ -1312,17 +1308,17 @@ class EntityLogic {
      * @param {string} name 
      * @param {string} [description] 
      * @param {string} [iconID] 
-     * @param {string} meshID 
+     * @param {Array.<String>} aMeshIDs 
      * @param {string} textureID 
      */
-    static createLightingEntity(id = "", name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", lightingType = null, lightingPositionOffset = [0, 0, 0]) {
+    static createLightingEntity(id = "", name = "", description = "", iconID = "", aMeshIDs = ["missingMesh"], textureID = "missingMaterial", lightingType = null, lightingPositionOffset = [0, 0, 0]) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
         let entity = new LightingEntity(id, name, description, iconID, lightingType, lightingPositionOffset);
         if (entity instanceof AbstractEntity) {
-            entity.setMeshID(meshID);
+            entity.setMeshIDs(aMeshIDs);
             entity.setTextureID(textureID);
             return entity;
         }
@@ -1332,21 +1328,21 @@ class EntityLogic {
      * Creates a PlantEntity
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} [name] Name
-     * @param  {string} [meshID] Mesh ID
+     * @param  {Array.<String>} [aMeshIDs] Array of Mesh IDs
      * @param  {string} [materialID] Texture ID
      * @param  {array} [stages] Stages
      * @param  {object} [options] Options
      * @return {PlantEntity} 
      */
-    static createPlantEntity(id = "", name = "Plant",  description = "", iconID = "missingIcon", meshID = "missingMesh", materialID = "missingMaterial", plantType = PlantEnum.GRASS, stages = [], options = {}) {
+    static createPlantEntity(id = "", name = "Plant",  description = "", iconID = "missingIcon", aMeshIDs = ["missingMesh"], materialID = "missingMaterial", plantType = PlantEnum.GRASS, stages = [], options = {}) {
         id = Tools.filterID(id);
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
-        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createPlantEntity(${id}, ${name}, ${description}, ${iconID}, ${meshID}, ${materialID}, ${plantType}, ${stages})`);
+        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createPlantEntity(${id}, ${name}, ${description}, ${iconID}, ${aMeshIDs}, ${materialID}, ${plantType}, ${stages})`);
         let entity = new PlantEntity(id, name, description, iconID, plantType, stages);
         if (entity instanceof AbstractEntity) {
-            entity.setMeshID(meshID);
+            entity.setMeshIDs(aMeshIDs);
             entity.setMaterialID(materialID);
             entity.addStages(stages);
             return entity;
@@ -1359,7 +1355,7 @@ class EntityLogic {
      * @param {string} name Name
      * @param {string} [description] Description
      * @param {string} [iconID] Icon ID
-     * @param {string} meshID Mesh ID
+     * @param {Array.<String>} aMeshIDs Array of Mesh IDs
      * @param {string} textureID Texture ID
      * @param {ItemEnum} itemType ItemEnum
      * @param {number} [subType] Dependant on itemType
@@ -1367,7 +1363,7 @@ class EntityLogic {
      * @param {number} [price] Price, non-decimal
      * @returns {(ItemEntity|number)} An ItemEntity or an integer status code
      */
-    static createItemEntity(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", itemType = ItemEnum.GENERAL, subType = 0, weight = 1, price = 0) {
+    static createItemEntity(id, name = "", description = "", iconID = "", aMeshIDs = ["missingMesh"], textureID = "missingMaterial", itemType = ItemEnum.GENERAL, subType = 0, weight = 1, price = 0) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
@@ -1407,7 +1403,7 @@ class EntityLogic {
             }
         }
         if (entity instanceof AbstractEntity) {
-            entity.setMeshID(meshID);
+            entity.setMeshIDs(aMeshIDs);
             entity.setTextureID(textureID);
             return entity;
         }
@@ -1423,16 +1419,16 @@ class EntityLogic {
      * @param {CreatureSubTypeEnum} [creatureSubType] Creature Sub-Type
      * @param {SexEnum} [sex] SexEnum
      * @param {number} [age] Age
-     * @param {string} meshID Mesh ID
+     * @param {Array.<String>} aMeshIDs Array of mesh IDs
      * @param {string} materialID Material ID
      * @param {object} [options] Options
      */
-    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, meshID = "missingMesh", materialID = "missingMaterial", options = {}) {
+    static createCharacterEntity(id = "", name = "", description = "", iconID = "genericCharacterIcon", creatureType = CreatureTypeEnum.HUMANOID, creatureSubType = CreatureSubTypeEnum.FOX, sex = SexEnum.MALE, age = 18, aMeshIDs = ["missingMesh"], materialID = "missingMaterial", options = {}) {
         id = Tools.filterID(id);
         if ((id.length == 0)) {
             id = Tools.genUUIDv4();
         }
-        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${meshID}, ${materialID})`);
+        if (EntityLogic.debugMode) console.log(`Running EntityLogic.createCharacterEntity(${id}, ${name}, ${description}, ${iconID}, ${creatureType}, ${creatureSubType}, ${sex}, ${age}, ${aMeshIDs}, ${materialID})`);
         let characterEntity = new CharacterEntity(id, name, description, iconID, creatureType, creatureSubType, sex, age, undefined);
         let soulEntity = new SoulEntity(String(id).concat("Soul"), name, description);
         soulEntity.assign(characterEntity, false); // Assuming this soul is just initialized, copy over some needed properties from its body
@@ -1458,33 +1454,33 @@ class EntityLogic {
                 }
             }
         }
-        if (meshID == "missingMesh" || meshID == undefined) {
+        if (aMeshIDs[0] == "missingMesh" || aMeshIDs[0] == undefined || aMeshIDs.length == 0) {
             if (characterEntity.getCreatureType() == CreatureTypeEnum.HUMANOID) {
                 if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.FOX) {
                     if (characterEntity.getSex() == SexEnum.MALE) {
-                        characterEntity.setMeshID("foxM");
+                        characterEntity.setMeshIDs(["foxM"]);
                     }
                     else {
-                        characterEntity.setMeshID("foxF");
+                        characterEntity.setMeshIDs(["foxF"]);
                     }
                 }
                 else if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SHEEP) {
                     if (characterEntity.getSex() == SexEnum.MALE) {
-                        characterEntity.setMeshID("sheepM");
+                        characterEntity.setMeshIDs(["sheepM"]);
                     }
                     else {
-                        characterEntity.setMeshID("sheepF");
+                        characterEntity.setMeshIDs(["sheepF"]);
                     }
                 }
             }
             else if (characterEntity.getCreatureType() == CreatureTypeEnum.UNDEAD) {
                 if (characterEntity.getCreatureSubType() == CreatureSubTypeEnum.SKELETON) {
-                    characterEntity.setMeshID("foxSkeletonN");
+                    characterEntity.setMeshIDs(["foxSkeletonN"]);
                 }
             }
         }
         else {
-            characterEntity.setMeshID(meshID);
+            characterEntity.setMeshIDs(aMeshIDs);
         }
         if (materialID == "missingMaterial" || materialID == "missingTexture" || materialID == undefined) {
             /** @type {string} texture ID */
@@ -1517,17 +1513,17 @@ class EntityLogic {
      * @param {string} name Name
      * @param {string} [description] Description
      * @param {string} [iconID] Icon ID
-     * @param {string} meshID Mesh ID
+     * @param {Array.<String>} aMeshIDs Array of Mesh IDs
      * @param {string} textureID Texture ID
      * @param {ApparelSlotEnum} equipmentSlot ApparelSlotEnum
      * @returns {(Cosmetic|number)} A Cosmetic or an integer status code
      */
-    static createCosmetic(id, name = "", description = "", iconID = "", meshID = "missingMesh", textureID = "missingMaterial", equipmentSlot = ApparelSlotEnum.HEAD) {
+    static createCosmetic(id, name = "", description = "", iconID = "", aMeshIDs = ["missingMesh"], textureID = "missingMaterial", equipmentSlot = ApparelSlotEnum.HEAD) {
         id = Tools.filterID(id);
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        let cosmetic = new Cosmetic(id, name, description, iconID, meshID, textureID, equipmentSlot);
+        let cosmetic = new Cosmetic(id, name, description, iconID, aMeshIDs, textureID, equipmentSlot);
         if (cosmetic instanceof Cosmetic) {
             return cosmetic;
         }
@@ -1552,13 +1548,13 @@ class EntityLogic {
      * @param {string} name 
      * @param {string} description 
      * @param {string} iconID 
-     * @param {string} meshID 
+     * @param {Array.<String>} aMeshIDs 
      * @param {string} materialID 
      * @param {object} options 
      */
-    static createSpell(id = "", name = "", description = "", iconID = "", meshID = "", materialID = "", options = {}) {
+    static createSpell(id = "", name = "", description = "", iconID = "", aMeshIDs = [""], materialID = "", options = {}) {
         let spell = new Spell(id, name, description, iconID);
-        spell.setMeshID(meshID);
+        spell.setMeshIDs(aMeshIDs);
         spell.setMaterialID(materialID);
         spell.assign(options);
         return spell;

@@ -27,11 +27,11 @@ class PlantController extends EntityController {
     }
 
     createCollisionMesh() {
-        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
+        this.collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.meshes[0].getBoundingInfo().boundingBox.extendSize.x * 2, this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2, this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2, this.meshes[0].position, this.meshes[0].rotation);
         return this.collisionMesh;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
+        if (this.meshes[0] instanceof BABYLON.AbstractMesh) {
             return 1;
         }
         id = Tools.filterID(id);
@@ -40,8 +40,10 @@ class PlantController extends EntityController {
         }
         this.locked = true;
         let mesh = Game.createPlantMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
-        Game.removeMesh(this.mesh);
-        this.mesh = mesh;
+        for (let i = 0; i < this.meshes.length; i++) {
+            Game.removeMesh(this.meshes[i]);
+        }
+        this.meshes[0] = mesh;
         this.locked = false;
         return mesh;
     }

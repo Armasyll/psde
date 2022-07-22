@@ -45,11 +45,11 @@ class InstancedEntity extends AbstractEntity {
     hasEntity() {
         return this.entity instanceof Entity;
     }
-    getMeshID() {
+    getMeshIDs() {
         if (!this.hasEntity()) {
             return "missingMesh";
         }
-        return this.entity.getMeshID();
+        return this.entity.getMeshIDs();
     }
     getTextureID() {
         if (!this.hasEntity()) {
@@ -436,7 +436,7 @@ class InstancedEntity extends AbstractEntity {
         obj["defaultAction"] = this.getDefaultAction();
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
-        obj["meshID"] = this.getMeshID();
+        obj["meshIDs"] = this.getMeshIDs();
         obj["owner"] = AbstractEntity.objectifyProperty(this.getOwner());
         obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();
@@ -450,7 +450,7 @@ class InstancedEntity extends AbstractEntity {
         obj["defaultAction"] = this.getDefaultAction();
         obj["hiddenAvailableActions"] = this.getHiddenAvailableActions();
         obj["materialID"] = this.getMaterialID();
-        obj["meshID"] = this.getMeshID();
+        obj["meshIDs"] = this.getMeshIDs();
         obj["owner"] = AbstractEntity.objectifyProperty(this.getOwner());
         obj["price"] = this.getPrice();
         obj["specialProperties"] = this.getSpecialProperties();

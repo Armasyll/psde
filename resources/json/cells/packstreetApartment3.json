@@ -106,7 +106,7 @@
             ["ozzyBathroomToilet", "animatedToilet01", [8.5, 0, -1], [0, 90, 0], 1.5],
             ["ozzyBathroomSinkFaucet", "animatedSink01Faucet", [8.95, 0, 0.125], [0, 90, 0], 1.5],
             ["ozzyBathroomTub", "bathtub01", [8.85, 0, -2.25], [0, 90, 0], 1.5],
-            ["refrigeratorOzzy", "animatedRefrigerator01", [6.35, 0, -7.75], [0, 90, 0]]
+            ["refrigeratorOzzy", "animatedRefrigerator01", [6.35, 0, -7.75], [0, 90, 0], 1.25]
         ],
         "doors":[
             ["ozzyBathroomDoor", "Bathroom", null, "simpleDoor", "simpleDoor", [5, 0, -2], [0, 90, 0], [1, 1, 1], {"opensInward":false}],
@@ -263,7 +263,7 @@
                     ["commons1BasementDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [0, 0, -18], [0, 180, 0]],
                     ["commons1StairsRailing0", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 0, -22]],
                     ["commons1StairsRailing1", "craftsmanStairsRailingRight", "greenWallpaperPlainWood", [0, 1.5, -20]],
-                    ["commonsTableInstance01", "diningTable", "woodenFloorDark26", [10, 0, -22], [0, -90, 0]]
+                    ["commonsTableInstance01", "diningTable", "woodenFloorDark26", [14, 0, -22], [0, -90, 0]]
                 ],
                 "meshes":[
                     ["commons1StairBasementBaseTL", "craftsmanStairBaseTrimLeftTop", "greenWallpaperPlainWood", [0, 1.5, -20]],
@@ -282,17 +282,10 @@
                     ["packstreetApt3ApartmentToBasementDoor", "Basement", ["packstreetApt3Basement", "packstreetApartment3Basement", [0, 0, -19.5]], "simpleDoor", "simpleDoor", [0, 0, -19], [0, 180, 0], [1, 1, 1], {"opensInward":true}]
                 ],
                 "furniture":[
-                    ["commonsCouch", "couch01", [8.25, 0, -22], [0, -90, 0]]
+                    ["commonsCouch", "couch01", [8.25, 0, -22], [0, -90, 0], 1.5]
                 ],
                 "items":[
-                    ["knife", "knife01", [9.7, 0.9, -22.5], [180, 0, 0]],
-                    ["cross", "cross01", [10, 0.85, -22]],
-                    ["plateInstance01", "plate01", [9.7, 0.75, -21.5]],
-                    ["cheeseWedgeInstance01", "cheeseWedge", [9.7, 0.775, -21.5]],
-                    ["plateInstance02", "plate01", [10, 0.75, -22.5]],
-                    ["alBuildingLocationKeyInstance", "alBuildingLocationKey", [10, 0.75, -22.75]],
-                    ["packstreet23StrangeNewDayInstance", "packstreet23StrangeNewDay", [10, 0.75, -21.25], [0, 180, 0]],
-                    ["packstreet24PaintJobInstance", "packstreet24PaintJob", [10, 0.75, -21], [0, 180, 0]]
+                    ["alBuildingLocationKeyInstance", "alBuildingLocationKey", [10, 0.0125, -22.75]]
                 ],
                 "lightings":[
                     ["commonsLamp", "lamp01", [-0.5, 0, -26.5]]

@@ -8,7 +8,7 @@
  * @property {number} weightModifier
  * @property {number} price
  * @property {number} priceModifier
- * @property {string} meshID
+ * @property {Array.<string>} meshIDs
  * @property {Array.<string>} meshStages
  * @property {number} currentMeshStage
  * @property {string} textureID
@@ -40,8 +40,8 @@ class Entity extends AbstractEntity {
         this.price = 0;
         /** @type {number} */
         this.priceModifier = 0;
-        /** @type {string} */
-        this.meshID = "missingMesh";
+        /** @type {Array.<string>} */
+        this.meshIDs = [];
         /** @type {Array} */
         this.meshStages = [];
         /** @type {number} */
@@ -108,10 +108,20 @@ class Entity extends AbstractEntity {
         return 0;
     }
 
-    setMeshID(meshID) {
-        this.meshID = meshID;
+    /**
+     * 
+     * @param {(String|Array.<String>)} aMeshIDs 
+     * @returns 
+     */
+    setMeshIDs(aMeshIDs) {
+        if (typeof aMeshIDs == "string") {
+            let array = [];
+            array[0] = aMeshIDs;
+            aMeshIDs = array;
+        }
+        this.meshIDs = aMeshIDs;
         if (this.meshStages.length == 0) {
-            this.addMeshStage(meshID);
+            this.addMeshStage(this.meshIDs);
             this.currentMeshStage = 0;
         }
         return 0;
@@ -149,13 +159,13 @@ class Entity extends AbstractEntity {
             return 0;
         }
         this.currentMeshStage = index;
-        this.setMeshID(this.meshStages[index]);
+        this.setMeshIDs(this.meshStages[index]);
         this.setMaterialID(this.materialStages[index]);
         this.setTextureID(this.textureStages[index]);
         return this;
     }
-    addMeshStage(meshID = "missingMesh") {
-        this.meshStages.push(meshID);
+    addMeshStage(aMeshIDs = ["missingMesh"]) {
+        this.meshStages.push(aMeshIDs);
         return this;
     }
     getMeshStage(index) {
@@ -458,7 +468,7 @@ class Entity extends AbstractEntity {
         if (entity.hasOwnProperty("currentTextureStage")) this.currentTextureStage = entity.currentTextureStage;
         if (entity.hasOwnProperty("materialStages")) this.materialStages = [...entity.materialStages];
         if (entity.hasOwnProperty("currentMaterialStage")) this.currentMaterialStage = entity.currentMaterialStage;
-        if (entity.hasOwnProperty("meshID")) this.setMeshID(entity.meshID);
+        if (entity.hasOwnProperty("meshIDs")) this.setMeshIDs(entity.meshIDs);
         if (entity.hasOwnProperty("textureID")) this.setTextureID(entity.textureID);
         if (entity.hasOwnProperty("materialID")) this.setMaterialID(entity.materialID);
         if (entity.hasOwnProperty("availableActions")) {

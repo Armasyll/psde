@@ -7,7 +7,7 @@
  * @property {string} name
  * @property {string} description
  * @property {string} iconID
- * @property {string} meshID
+ * @property {Array.<String>} meshIDs
  * @property {string} materialID
  * @property {string} textureID
  * @property {(string|null)} controllerID
@@ -67,7 +67,7 @@ class AbstractEntity {
         this.iconID = "genericItem";
         this.setIcon(iconID);
         /** @type {string} */
-        this.meshID = "missingMesh";
+        this.meshIDs = [];
         /** @type {string} */
         this.materialID = "missingMaterial";
         /** @type {string} */
@@ -349,7 +349,10 @@ class AbstractEntity {
         return this.textureID;
     }
     getMeshID() {
-        return this.meshID;
+        return this.meshIDs[0]
+    }
+    getMeshIDs() {
+        return this.meshIDs;
     }
 
     /**
@@ -930,7 +933,7 @@ class AbstractEntity {
         obj["locked"] = this.locked;
         obj["materialID"] = this.materialID || "missingMaterial";
         obj["maxHealth"] = this.getMaxHealth();
-        obj["meshID"] = this.meshID || "missingMesh";
+        obj["meshIDs"] = this.meshIDs || ["missingMesh"];
         obj["name"] = this.getName();
         obj["textureID"] = this.textureID || "missingTexture";
         obj["size"] = this.size;
@@ -1033,7 +1036,7 @@ class AbstractEntity {
                 "description":property.getDescription(),
                 "iconID":property.iconID,
                 "materialID":property.getMaterialID(),
-                "meshID":property.getMeshID(),
+                "meshIDs":property.getMeshIDs(),
                 "textureID":property.getTextureID(),
                 "className":property.getClassName()
             };
@@ -1069,7 +1072,7 @@ class AbstractEntity {
                 "description":property.getDescription(),
                 "iconID":property.iconID,
                 "materialID":property.materialID,
-                "meshID":property.meshID,
+                "meshIDs":property.meshIDs,
                 "textureID":property.textureID,
                 "className":property.getClassName()
             };

@@ -99,7 +99,10 @@ class CharacterController extends CreatureController {
     }
 
     generateHitboxes() {
-        switch (this.meshID) {
+        if (!this.hasMesh()) {
+            return 1;
+        }
+        switch (this.meshes[0].name) {
             case "aardwolfM":
             case "aardwolfF":
             case "foxM":

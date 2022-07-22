@@ -13,7 +13,7 @@ class DoorController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-        this.avStartRot = this.mesh.rotation.clone();
+        this.avStartRot = this.meshes[0].rotation.clone();
         this.avEndRot = BABYLON.Vector3.Zero();
         this.animated = true;
         if (entityObject.opensInward === true)
@@ -32,7 +32,9 @@ class DoorController extends EntityController {
         return 0;
     }
     createCollisionMesh() {
-        this.mesh.checkCollisions = true;
+        for (let i = 0; i < this.meshes.length; i++) {
+            this.meshes[i].checkCollisions = true;
+        }
         return 0;
     }
 
@@ -45,14 +47,14 @@ class DoorController extends EntityController {
         return 0;
     }
     doOpen() {
-        this.mesh.rotation = this.avEndRot;
+        this.meshes[0].rotation = this.avEndRot;
         this.removeHiddenAvailableAction(ActionEnum.CLOSE);
         this.setDefaultAction(ActionEnum.CLOSE);
         this.addHiddenAvailableAction(ActionEnum.OPEN);
         return 0;
     }
     doClose() {
-        this.mesh.rotation = this.avStartRot;
+        this.meshes[0].rotation = this.avStartRot;
         this.setDefaultAction(ActionEnum.OPEN);
         this.removeHiddenAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);

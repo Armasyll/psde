@@ -18,7 +18,7 @@ class AbstractController {
         }
         this.id = Tools.filterID(id);
         this.entityID = entityObject.id;
-        this.mesh = null;
+        this.meshes = [];
 
         this.controller = this.id;
         this.height = 0.0;
@@ -51,78 +51,74 @@ class AbstractController {
     hasEntityID() {
         return this.entityID != null;
     }
-    getPosition() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.position;
-        }
-        return BABYLON.Vector3.Zero();
-    }
-    getRotation() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.rotation;
-        }
-        return BABYLON.Vector3.Zero();
-    }
-    getScaling() {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
-            return this.mesh.scaling;
-        }
-        return BABYLON.Vector3.One();
-    }
     hasMesh() {
-        return this.mesh instanceof BABYLON.AbstractMesh;
+        return this.meshes[0] instanceof BABYLON.AbstractMesh;
     }
-    setMesh(mesh, updateChild = false) {
+    setMeshes(aMeshes, updateChild = false) {
         if (AbstractController.debugMode) console.group(`Running {AbstractController} ${this.id}.setMesh(meshObject, ${updateChild})`);
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (AbstractController.debugMode) console.error(`meshObject wasn't an instance of BABYLON.AbstractMesh`);
+        if (aMeshes instanceof BABYLON.AbstractMesh) {
+            let array = [];
+            array[0] = aMeshes;
+            aMeshes = array;
+        }
+        if (!(aMeshes[0] instanceof BABYLON.AbstractMesh)) {
+            if (AbstractController.debugMode) console.error(`aMeshes didn't contain any BABYLON.AbstractMesh(es)`);
             if (AbstractController.debugMode) console.groupEnd();
             return 2;
         }
-        if (this.mesh instanceof BABYLON.AbstractMesh && this.mesh != mesh) {
-            this.unsetMesh(this.mesh);
+        if (this.meshes[0] instanceof BABYLON.AbstractMesh && this.meshes[0].id != aMeshes[0].id) {
+            this.unsetMeshes(true);
         }
-        this.mesh = mesh;
-        this.mesh.isPickable = false;
-        this.mesh.alwaysSelectAsActiveMesh = false;
-        this.mesh.controller = this;
-        this.height = this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
-        this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
-        this.width = this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
+        this.meshes = aMeshes;
+        for (let i = 0; i < this.meshes.length; i++) {
+            this.meshes[i].isPickable = false;
+            this.meshes[i].alwaysSelectAsActiveMesh = false;
+            this.meshes[i].controller = this;
+            if (i > 0) {
+                this.meshes[i].setParent(this.meshes[0]);
+            }
+        }
+        this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
+        this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.x * 2;
+        this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2;
         if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }
-    unsetMesh(mesh = this.mesh) {
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+    unsetMeshes(destroyMeshes) {
+        if (!(this.meshes[0] instanceof BABYLON.AbstractMesh)) {
             return 0;
         }
-        if (!(this.mesh instanceof BABYLON.AbstractMesh)) {
-            return 0;
+        for (let i = this.meshes.length - 1; i >= 0; i--) {
+            this.meshes[i].controller = null;
+            this.meshes[i].setParent(null);
+            if (destroyMeshes) {
+                this.meshes[i].setEnabled(false);
+                Game.removeMesh(this.meshes[i]);
+            }
         }
-        mesh.controller = null;
-        mesh.setParent(null);
         return 0;
     }
     getMesh() {
-        return this.mesh;
+        return this.meshes[0];
     }
-    getTexture() {
-        if (!(this.mesh instanceof BABYLON.AbstractMesh)) {
-            return null;
-        }
-        if (this.mesh.material instanceof BABYLON.Material && this.mesh.material.hasOwnProperty("diffuseTexture")) {
-            return this.mesh.material.diffuseTexture;
-        }
-        return null;
+    getMeshes() {
+        return this.meshes;
     }
-    getMaterial() {
-        if (!(this.mesh instanceof BABYLON.AbstractMesh)) {
-            return null;
+    getPosition() {
+        return this.collisionMesh.position.clone();
+    }
+    getRotation() {
+        return this.collisionMesh.rotation.clone();
+    }
+    setScaling(vector3) {
+        vector3 = Game.filterVector3(vector3);
+        for (let i = 0; i < this.meshes.length; i++) {
+            this.meshes[i].scaling.copyFrom(vector3);
         }
-        if (this.mesh.hasOwnProperty("material")) {
-            return this.mesh.material;
-        }
-        return null;
+        return 0;
+    }
+    getScaling() {
+        return this.meshes[0].scaling.clone();
     }
 
     generateHitboxes() {
@@ -135,9 +131,9 @@ class AbstractController {
             return 0;
         }
         if (!(this.targetRay instanceof BABYLON.Ray)) {
-            this.targetRay = new BABYLON.Ray(this.mesh.position, this.mesh.getDirection(this.mesh.forward), 1.524 * this.mesh.scaling.y);
+            this.targetRay = new BABYLON.Ray(this.collisionMesh.position, this.collisionMesh.getDirection(this.collisionMesh.forward), 1.524 * this.collisionMesh.scaling.y); // TODO: figure out the last parameter
         }
-        this.targetRay.origin.copyFrom(this.mesh.position);
+        this.targetRay.origin.copyFrom(this.collisionMesh.position);
         return 0;
     }
     hasTargetRay() {
@@ -215,8 +211,6 @@ class AbstractController {
                 this.removeEntityID();
             }
         }
-        Game.removeMesh(this.collisionMesh, !updateChild);
-        Game.removeMesh(this.mesh, !updateChild);
         return null;
     }
     getClassName() {

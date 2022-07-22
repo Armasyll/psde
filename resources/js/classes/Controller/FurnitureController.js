@@ -27,7 +27,14 @@ class FurnitureController extends EntityController {
     }
 
     createCollisionMesh() {
-        let collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.mesh.getBoundingInfo().boundingBox.extendSize.x * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.y * 2, this.mesh.getBoundingInfo().boundingBox.extendSize.z * 2, this.mesh.position, this.mesh.rotation);
+        let collisionMesh = Game.createAreaMesh(
+            String(this.id).concat("-collisionMesh"),
+            "CUBE",
+            this.meshes[0].getBoundingInfo().boundingBox.extendSize.x * 2,
+            this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2,
+            this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2,
+            this.meshes[0].position,
+            this.meshes[0].rotation);
         if (collisionMesh instanceof BABYLON.AbstractMesh) {
             this.collisionMesh = collisionMesh;
             return this.collisionMesh;
@@ -35,14 +42,14 @@ class FurnitureController extends EntityController {
         return null;
     }
     createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
-        if (this.mesh instanceof BABYLON.AbstractMesh) {
+        if (this.meshes[0] instanceof BABYLON.AbstractMesh) {
             return null;
         }
         id = Tools.filterID(id);
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
         }
-        return Game.createFurnitureMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
+        return Game.createFurnitureMesh(id, this.meshStages[stageIndex][0], this.materialStages[stageIndex], position, rotation, scaling);
     }
 
     moveAV() { // animate it :V
