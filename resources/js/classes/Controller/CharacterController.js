@@ -150,13 +150,6 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
-    update(objectBlob) {
-        super.update(objectBlob);
-        let thisEntity = Game.getCachedEntity(this.entityID);
-        if (thisEntity.hasOwnProperty("equipment") && objectBlob.hasOwnProperty("equipment")) {
-            //...
-        }
-    }
     assign(objectBlob) {
         super.assign(objectBlob);
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {

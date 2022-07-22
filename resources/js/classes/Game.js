@@ -4389,7 +4389,7 @@ class Game {
     }
     static actionUnequipResponsePhaseOne(targetController, actorController, response, parentCallbackID) {
         if (response) {
-            // TODO: this
+            console.log(response);
             let callbackID = Tools.genUUIDv4();
             Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
         }
@@ -5450,7 +5450,7 @@ class Game {
             return Game.getEntity(id);
         }
         if (EntityController.has(id)) {
-            EntityController.get(id).update(object);
+            EntityController.get(id).assign(object);
         }
         let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
         if (Game.cachedEntities.hasOwnProperty(id)) {

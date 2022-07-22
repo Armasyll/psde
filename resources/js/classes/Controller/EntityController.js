@@ -496,8 +496,8 @@ class EntityController extends AbstractController {
             return 1;
         }
         if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(boneID)) {
-                bone = this.getBone(boneID);
+            if (this.hasBone(bone)) {
+                bone = this.getBone(bone);
             }
             else {
                 return 1;
@@ -510,7 +510,7 @@ class EntityController extends AbstractController {
             return 0;
         }
         for (let meshID in Object.assign({}, this._meshesAttachedToBones[bone.id])) {
-            this.detachMeshFromBone(this._meshesAttachedToBones[bone.id][meshID], bone, destroyMesh);
+            this.detachMeshIDFromBone(meshID, bone, destroyMesh);
         }
         return 0;
     }
@@ -539,12 +539,6 @@ class EntityController extends AbstractController {
         if (!Game.hasMesh(meshID)) {
             return 1;
         }
-        if (!this._attachedMeshes.hasOwnProperty(meshID)) {
-            return 1;
-        }
-        if (!this.hasBone(boneID)) {
-            return 1;
-        }
         return this.detachMeshFromBone(Game.getMesh(meshID), boneID, destroyMesh);
     }
     detachMeshFromBone(mesh, bone = null, destroyMesh = true) { // TODO: check what happens if we've got 2 of the same meshes on different bones :v srsly, what if
@@ -555,8 +549,8 @@ class EntityController extends AbstractController {
             return 2;
         }
         if (!(bone instanceof BABYLON.Bone)) {
-            if (this.hasBone(boneID)) {
-                bone = this.getBone(boneID);
+            if (this.hasBone(bone)) {
+                bone = this.getBone(bone);
             }
             else {
                 return 1;
@@ -572,7 +566,7 @@ class EntityController extends AbstractController {
             delete this._meshesAttachedToBones[bone.id][mesh.id];
         }
         if (this._bonesAttachedToMeshes.hasOwnProperty(mesh.id)) {
-            if (this.this._bonesAttachedToMeshes[mesh.id].hasOwnProperty(bone.id)) {
+            if (this._bonesAttachedToMeshes[mesh.id].hasOwnProperty(bone.id)) {
                 delete this._bonesAttachedToMeshes[mesh.id][bone.id];
             }
             if (Object.keys(this._bonesAttachedToMeshes[mesh.id]).length == 0) {
@@ -1374,9 +1368,6 @@ class EntityController extends AbstractController {
         return 0;
     }
 
-    update(controller) {
-        super.update(controller);
-    }
     /**
      * Clones the controller's values over this; but not really anything important :v
      * @param {(EntityController|object)} objectBlob 

@@ -844,19 +844,128 @@ class CreatureController extends EntityController {
         return 0;
     }
 
-    update(controller) {
-        super.update(controller);
-        let thisEntity = Game.getCachedEntity(this.entityID);
-        if (thisEntity.hasOwnProperty("organs") && controller.hasOwnProperty("organs")) {
-            for (let cosmeticSlot in thisEntity["organs"]) {
-                // TODO: this
+    _filterBoneNames(boneID) {
+        let fBoneID = boneID.toLowerCase().replace(/[_\-]+/g, ".");
+        switch (fBoneID) {
+            case "focus": {
+                boneID = "FOCUS";
+                break;
+            }
+            case "head": {
+                boneID = "head";
+                break;
+            }
+            case "ear.r": {
+                boneID = "ear.r";
+                break;
+            }
+            case "ear.l": {
+                boneID = "ear.l";
+                break;
+            }
+            case "neck": {
+                boneID = "neck";
+                break;
+            }
+            case "chest": {
+                boneID = "chest";
+                break;
+            }
+            case "shoulder.r": {
+                boneID = "shoulder.r";
+                break;
+            }
+            case "shoulder.l": {
+                boneID = "shoulder.l";
+                break;
+            }
+            case "upperarm.r": {
+                boneID = "upperarm.r";
+                break;
+            }
+            case "upperarm.l": {
+                boneID = "upperarm.l";
+                break;
+            }
+            case "forearm.r": {
+                boneID = "forearm.r";
+                break;
+            }
+            case "forearm.l": {
+                boneID = "forearm.l";
+                break;
+            }
+            case "wrist.r": {
+                boneID = "wrist.r";
+                break;
+            }
+            case "wrist.l": {
+                boneID = "wrist.l";
+                break;
+            }
+            case "hand.r": {
+                boneID = "hand.r";
+                break;
+            }
+            case "hand.l": {
+                boneID = "hand.l";
+                break;
+            }
+            case "fingerspinkieproximinalphalanx.l":
+            case "pinkiefinger.l": {
+                boneID = "fingersPinkieProximinalPhalanx.l";
+                break;
+            }
+            case "fingersringproximinalphalanx.l":
+            case "ringfinger.l": {
+                boneID = "fingersRingProximinalPhalanx.l";
+                break;
+            }
+            case "fingersproximinalphalanx.l":
+            case "middlefinger.l": {
+                boneID = "fingersProximinalPhalanx.l";
+                break;
+            }
+            case "fingersindexproximinalphalanx.l":
+            case "indexfinger.l": {
+                boneID = "fingersIndexProximinalPhalanx.l";
+                break;
+            }
+            case "thumbproximinalphalanx.l":
+            case "thumb.l": {
+                boneID = "thumbProximinalPhalanx.l";
+                break;
+            }
+            case "pelvis":
+            case "hips": {
+                boneID = "pelvis";
+                break;
+            }
+            case "shin.r": {
+                boneID = "shin.r";
+                break;
+            }
+            case "shin.l": {
+                boneID = "shin.l";
+                break;
+            }
+            case "foot.r": {
+                boneID = "foot.r";
+                break;
+            }
+            case "foot.l": {
+                boneID = "foot.l";
+                break;
+            }
+            case "root": {
+                boneID = "ROOT";
+                break;
+            }
+            default: {
+                boneID = "ROOT";
             }
         }
-        if (thisEntity.hasOwnProperty("cosmetics") && controller.hasOwnProperty("cosmetics")) {
-            for (let cosmeticSlot in thisEntity["cosmetics"]) {
-                // TODO: this
-            }
-        }
+        return boneID;
     }
     /**
      * 
@@ -869,6 +978,7 @@ class CreatureController extends EntityController {
         if (EntityController.debugMode) console.group(`Running <CreatureController> ${this.id}.assignAttachments(...)`)
         let meshID = "";
         let materialID = "";
+        let removeAttachment = false;
         if (!(attachmentBlob instanceof Object)) {
             if (EntityController.debugMode) {
                 console.log("Attachment parameters aren't an object.");
@@ -879,170 +989,302 @@ class CreatureController extends EntityController {
         for (let boneID in attachmentBlob) {
             if (attachmentBlob[boneID] == null) {
                 if (EntityController.debugMode) console.log(`Attachment bone is null.`)
-                continue;
+                removeAttachment = true;
             }
-            if (!(attachmentBlob[boneID] instanceof Object)) {
+            else if (!(attachmentBlob[boneID] instanceof Object)) {
                 if (EntityController.debugMode) console.log(`Attachment bone isn't an object.`)
-                continue;
-            }
-            if (attachmentBlob[boneID].hasOwnProperty("meshID")) {
-                meshID = attachmentBlob[boneID]["meshID"];
+                removeAttachment = true;
             }
             else {
-                meshID = "missingMesh";
+                removeAttachment = false;
+                if (attachmentBlob[boneID].hasOwnProperty("meshID")) {
+                    meshID = attachmentBlob[boneID]["meshID"];
+                    if (!Game.hasMesh(meshID)) {
+                        removeAttachment = true;
+                        meshID = "missingMesh";
+                    }
+                }
+                else {
+                    removeAttachment = true;
+                    meshID = "missingMesh";
+                }
+                if (meshID == "NONE") { // I feel dirty :V 2022-07-22
+                    removeAttachment = true;
+                }
+                if (attachmentBlob[boneID].hasOwnProperty("materialID")) {
+                    materialID = attachmentBlob[boneID]["materialID"];
+                }
+                else if (attachmentBlob[boneID].hasOwnProperty("textureID")) {
+                    materialID = attachmentBlob[boneID]["textureID"];
+                }
+                else {
+                    removeAttachment = true;
+                    materialID = "missingMaterial";
+                }
             }
-            if (attachmentBlob[boneID].hasOwnProperty("materialID")) {
-                materialID = attachmentBlob[boneID]["materialID"];
+            let fBoneID = this._filterBoneNames(boneID);
+            if (attachmentMap.hasOwnProperty(fBoneID)) {
+                for (let otherMeshID in this._meshesAttachedToBones[fBoneID]) {
+                    if (!Game.hasMesh(otherMeshID)) {
+                        continue;
+                    }
+                    let otherMesh = Game.getMesh(otherMeshID);
+                    if (otherMesh.name == attachmentMap[fBoneID]["meshID"]) {
+                        this.detachMeshFromBone(otherMesh, fBoneID, true);
+                    }
+                }
             }
-            else if (attachmentBlob[boneID].hasOwnProperty("textureID")) {
-                materialID = attachmentBlob[boneID]["textureID"];
-            }
-            else {
-                materialID = "missingMaterial";
-            }
-            let fBoneID = boneID.toLowerCase().replace(/[_\-]+/g, ".");
             switch (fBoneID) {
                 case "focus": {
-                    boneID = "FOCUS";
-                    this.attachToFOCUS(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromFOCUS();
+                    }
+                    else {
+                        
+                        this.attachToFOCUS(meshID, materialID);
+                    }
                     break;
                 }
                 case "head": {
-                    boneID = "head";
-                    this.attachToHead(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromHead();
+                    }
+                    else {
+                        this.attachToHead(meshID, materialID);
+                    }
                     break;
                 }
                 case "ear.r": {
-                    boneID = "ear.r";
-                    this.attachToRightEar(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightEar();
+                    }
+                    else {
+                        this.attachToRightEar(meshID, materialID);
+                    }
                     break;
                 }
                 case "ear.l": {
-                    boneID = "ear.l";
-                    this.attachToLeftEar(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftEar();
+                    }
+                    else {
+                        this.attachToLeftEar(meshID, materialID);
+                    }
                     break;
                 }
                 case "neck": {
-                    boneID = "neck";
-                    this.attachToNeck(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromNeck();
+                    }
+                    else {
+                        this.attachToNeck(meshID, materialID);
+                    }
                     break;
                 }
                 case "chest": {
-                    boneID = "chest";
-                    this.attachToChest(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromChest();
+                    }
+                    else {
+                        this.attachToChest(meshID, materialID);
+                    }
                     break;
                 }
                 case "shoulder.r": {
-                    boneID = "shoulder.r";
-                    this.attachToRightShoulder(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightShoulder();
+                    }
+                    else {
+                        this.attachToRightShoulder(meshID, materialID);
+                    }
                     break;
                 }
                 case "shoulder.l": {
-                    boneID = "shoulder.l";
-                    this.attachToLeftShoulder(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftShoulder();
+                    }
+                    else {
+                        this.attachToLeftShoulder(meshID, materialID);
+                    }
                     break;
                 }
                 case "upperarm.r": {
-                    boneID = "upperarm.r";
-                    this.attachToRightUpperArm(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightUpperArm();
+                    }
+                    else {
+                        this.attachToRightUpperArm(meshID, materialID);
+                    }
                     break;
                 }
                 case "upperarm.l": {
-                    boneID = "upperarm.l";
-                    this.attachToLeftUpperArm(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftUpperArm();
+                    }
+                    else {
+                        this.attachToLeftUpperArm(meshID, materialID);
+                    }
                     break;
                 }
                 case "forearm.r": {
-                    boneID = "forearm.r";
-                    this.attachToRightForeArm(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightForearm();
+                    }
+                    else {
+                        this.attachToRightForearm(meshID, materialID);
+                    }
                     break;
                 }
                 case "forearm.l": {
-                    boneID = "forearm.l";
-                    this.attachToLeftForeArm(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftForearm();
+                    }
+                    else {
+                        this.attachToLeftForearm(meshID, materialID);
+                    }
                     break;
                 }
                 case "wrist.r": {
-                    boneID = "wrist.r";
-                    this.attachToRightWrist(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightWrist();
+                    }
+                    else {
+                        this.attachToRightWrist(meshID, materialID);
+                    }
                     break;
                 }
                 case "wrist.l": {
-                    boneID = "wrist.l";
-                    this.attachToLeftWrist(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftWrist();
+                    }
+                    else {
+                        this.attachToLeftWrist(meshID, materialID);
+                    }
                     break;
                 }
                 case "hand.r": {
-                    boneID = "hand.r";
-                    this.attachToRightHand(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightHand();
+                    }
+                    else {
+                        this.attachToRightHand(meshID, materialID);
+                    }
                     break;
                 }
                 case "hand.l": {
-                    boneID = "hand.l";
-                    this.attachToLeftHand(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftHand();
+                    }
+                    else {
+                        this.attachToLeftHand(meshID, materialID);
+                    }
                     break;
                 }
                 case "fingerspinkieproximinalphalanx.l":
                 case "pinkiefinger.l": {
-                    boneID = "fingersPinkieProximinalPhalanx.l";
-                    this.attachToLeftPinkieFinger(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftPinkieFinger();
+                    }
+                    else {
+                        this.attachToLeftPinkieFinger(meshID, materialID);
+                    }
                     break;
                 }
                 case "fingersringproximinalphalanx.l":
                 case "ringfinger.l": {
                     // wat do if only 4 fingers :u or 2
                     // fuck - 2022-07-21
-                    boneID = "fingersRingProximinalPhalanx.l";
-                    this.attachToLeftRingFinger(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftRingFinger();
+                    }
+                    else {
+                        this.attachToLeftRingFinger(meshID, materialID);
+                    }
                     break;
                 }
                 case "fingersproximinalphalanx.l":
                 case "middlefinger.l": {
-                    boneID = "fingersProximinalPhalanx.l";
-                    this.attachToLeftMiddleFinger(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftMiddleFinger();
+                    }
+                    else {
+                        this.attachToLeftMiddleFinger(meshID, materialID);
+                    }
                     break;
                 }
                 case "fingersindexproximinalphalanx.l":
                 case "indexfinger.l": {
-                    boneID = "fingersIndexProximinalPhalanx.l";
-                    this.attachToLeftIndexFinger(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftIndexFinger();
+                    }
+                    else {
+                        this.attachToLeftIndexFinger(meshID, materialID);
+                    }
                     break;
                 }
                 case "thumbproximinalphalanx.l":
                 case "thumb.l": {
-                    boneID = "thumbProximinalPhalanx.l";
-                    this.attachToLeftThumb(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftThumb();
+                    }
+                    else {
+                        this.attachToLeftThumb(meshID, materialID);
+                    }
                     break;
                 }
                 case "pelvis":
                 case "hips": {
-                    boneID = "pelvis";
-                    this.attachToPelvis(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromPelvis();
+                    }
+                    else {
+                        this.attachToPelvis(meshID, materialID);
+                    }
                     break;
                 }
                 case "shin.r": {
-                    boneID = "shin.r";
-                    this.attachToRightShin(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightShin();
+                    }
+                    else {
+                        this.attachToRightShin(meshID, materialID);
+                    }
                     break;
                 }
                 case "shin.l": {
-                    boneID = "shin.l";
-                    this.attachToLeftShin(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftShin();
+                    }
+                    else {
+                        this.attachToLeftShin(meshID, materialID);
+                    }
                     break;
                 }
                 case "foot.r": {
-                    boneID = "foot.r";
-                    this.attachToRightFoot(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromRightFoot();
+                    }
+                    else {
+                        this.attachToRightFoot(meshID, materialID);
+                    }
                     break;
                 }
                 case "foot.l": {
-                    boneID = "foot.l";
-                    this.attachToLeftFoot(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromLeftFoot();
+                    }
+                    else {
+                        this.attachToLeftFoot(meshID, materialID);
+                    }
                     break;
                 }
                 case "root": {
-                    boneID = "ROOT";
-                    this.attachToROOT(meshID, materialID);
+                    if (removeAttachment) {
+                        this.detachFromROOT();
+                    }
+                    else {
+                        this.attachToROOT(meshID, materialID);
+                    }
                     break;
                 }
                 default: {
@@ -1050,13 +1292,17 @@ class CreatureController extends EntityController {
                     continue;
                 }
             }
-            if (!attachmentMap.hasOwnProperty(boneID)) {
-                attachmentMap[boneID] = {};
+            if (removeAttachment) {
+                if (attachmentMap.hasOwnProperty(fBoneID)) {
+                    delete attachmentMap[fBoneID];
+                }
             }
-            if (!attachmentMap[boneID].hasOwnProperty(meshID)) {
-                attachmentMap[boneID][meshID] = {};
+            else {
+                if (attachmentMap.hasOwnProperty(fBoneID)) {
+                    delete attachmentMap[fBoneID];
+                }
+                attachmentMap[fBoneID] = {"meshID": meshID, "materialID": materialID};
             }
-            attachmentMap[boneID] = Object.assign({}, attachmentBlob);
             if (EntityController.debugMode) console.groupEnd();
         }
         return 0;

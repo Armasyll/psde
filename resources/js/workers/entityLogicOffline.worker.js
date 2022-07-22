@@ -1846,18 +1846,17 @@ class EntityLogic {
         else {
             return 1;
         }
-        //if (property == null || !entity.hasOwnProperty(property)) {
+        if (property == null || !entity.hasOwnProperty(property)) {
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.objectify());
             return 0;
-        //}
-        /*else if (entity.hasOwnProperty(property)) {
-            let obj = {"id":entity.id};
-            obj[property] = AbstractEntity.objectifyProperty(entity["property"]);
-            console.log(obj);
+        }
+        else if (entity.hasOwnProperty(property)) {
+            let obj = {"id":entity.id, "controller":entity.controllerID};
+            obj[property] = AbstractEntity.objectifyProperty(entity[property]);
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, obj);
             return 0;
         }
-        return 1;*/
+        return 1;
     }
 }
 EntityLogic.initialize();

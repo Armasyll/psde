@@ -20,6 +20,7 @@ class AbstractController {
         this.entityID = entityObject.id;
         this.mesh = null;
 
+        this.controller = this.id;
         this.height = 0.0;
         this.width = 0.0;
         this.depth = 0.0;
@@ -180,9 +181,6 @@ class AbstractController {
         return 0;
     }
 
-    update(objectBlob) {
-        return 0;
-    }
     /**
      * Clones the controller's values over this; but not really anything important :v
      * @param {(AbstractController|object)} objectBlob 
