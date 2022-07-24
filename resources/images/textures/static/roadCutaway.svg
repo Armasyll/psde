@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   id="svg28"
+   sodipodi:docname="roadCutaway.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   inkscape:export-filename="/home/www/psde.equus.et/html/resources/meshes/static/roadCutaway.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs32" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview30"
+     showgrid="false"
+     inkscape:snap-page="true"
+     inkscape:current-layer="svg28" />
+  <desc
+     id="desc2">_roadCutaway.blend, (Blender 3.1.0)</desc>
+  <rect
+     style="opacity:1;vector-effect:none;fill:#999999;fill-opacity:1;stroke:none;stroke-width:3.79999995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect890"
+     width="1024"
+     height="1024"
+     x="0"
+     y="0" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,409.609 0.047,409.609 0.047,696.303 218.480,696.303 "
+     id="polygon4"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="0.047,805.520 0.047,1023.953 218.480,1023.953 218.480,805.520 "
+     id="polygon6"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,785.041 0.047,785.041 0.047,805.520 218.480,805.520 "
+     id="polygon8"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,764.563 0.047,764.563 0.047,785.041 218.480,785.041 "
+     id="polygon10"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="0.047,696.303 0.047,764.563 218.480,764.563 218.480,696.303 "
+     id="polygon12"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,409.609 218.480,0.047 0.047,0.047 0.047,409.609 "
+     id="polygon14"
+     style="stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,409.609 218.480,696.303 0.047,696.303 0.047,409.609 "
+     id="polygon16"
+     style="fill:#999999;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="0.047,805.520 218.480,805.520 218.480,1023.953 0.047,1023.953 "
+     id="polygon18"
+     style="stroke:none;fill:#cccccc;fill-opacity:1" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,785.041 218.480,805.520 0.047,805.520 0.047,785.041 "
+     id="polygon20"
+     style="fill:#808080;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,764.563 218.480,785.041 0.047,785.041 0.047,764.563 "
+     id="polygon22"
+     style="fill:#808080;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="0.047,696.303 218.480,696.303 218.480,764.563 0.047,764.563 "
+     id="polygon24"
+     style="fill:#999999;fill-opacity:1;stroke:none" />
+  <polygon
+     stroke="black"
+     stroke-width="1"
+     fill="rgb(204, 204, 204)"
+     fill-opacity="0.25"
+     points="218.480,409.609 0.047,409.609 0.047,0.047 218.480,0.047 "
+     id="polygon26"
+     style="fill:#999999;fill-opacity:1;stroke:none" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#dbdb00;fill-opacity:1;stroke:none;stroke-width:3.81258273;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect36"
+     width="219.433"
+     height="18"
+     x="0"
+     y="9.0469999" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#ededed;fill-opacity:1;stroke:none;stroke-width:3.80784941;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect38"
+     width="219.433"
+     height="18"
+     x="0"
+     y="409.60901" />
+  <polygon
+     points="0.047,409.609 0.047,0.047 218.48,0.047 218.48,409.609 "
+     id="polygon26-3"
+     style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:1"
+     transform="translate(218.433)" />
+  <polygon
+     points="0.047,0.047 218.48,0.047 218.48,409.609 0.047,409.609 "
+     id="polygon26-3-6"
+     style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:1"
+     transform="translate(436.866)" />
+  <polygon
+     points="218.48,0.047 218.48,409.609 0.047,409.609 0.047,0.047 "
+     id="polygon26-3-6-7"
+     style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:1"
+     transform="translate(655.299)" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#ededed;fill-opacity:1;stroke:none;stroke-width:2.69255614;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect38-5"
+     width="109.7165"
+     height="18"
+     x="274.29126"
+     y="409.60901" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#dbdb00;fill-opacity:1;stroke:none;stroke-width:2.69590306;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect36-3"
+     width="109.7165"
+     height="18"
+     x="274.29126"
+     y="9.0469999" />
+  <polygon
+     points="218.48,805.52 218.48,1023.953 0.047,1023.953 0.047,805.52 "
+     id="polygon18-5"
+     style="fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:1"
+     transform="translate(218.433)" />
+  <rect
+     style="opacity:1;vector-effect:none;fill:#95873c;fill-opacity:1;stroke:none;stroke-width:2.47729683;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect4641"
+     width="185.66805"
+     height="109.2165"
+     x="234.86247"
+     y="821.77673" />
+</svg>
