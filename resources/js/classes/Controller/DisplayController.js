@@ -5,15 +5,15 @@ class DisplayController extends FurnitureController {
     /**
      * 
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      * @param {string} videoID 
      * @param {number} videoWidth 
      * @param {number} videoHeight 
      * @param {number} videoPosition 
      */
-    constructor(id, mesh, entityObject, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
-        super(id, mesh, entityObject);
+    constructor(id, aMeshes = [], entityObject = {}, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
+        super(id, aMeshes, entityObject);
         if (!this.hasMesh()) {
             return undefined;
         }
@@ -29,11 +29,11 @@ class DisplayController extends FurnitureController {
             if (!(this.videoMesh instanceof BABYLON.Mesh)) {
                 return null;
             }
-            this.videoMesh.position.copyFrom(mesh.position);
-            this.videoMesh.rotation.copyFrom(mesh.rotation);
-            this.videoMesh.scaling.copyFrom(mesh.scaling);
-            this.videoMesh.setParent(mesh);
-            this.videoMesh.position.copyFrom(videoPosition.multiply(mesh.scaling));
+            this.videoMesh.position.copyFrom(aMeshes.position);
+            this.videoMesh.rotation.copyFrom(aMeshes.rotation);
+            this.videoMesh.scaling.copyFrom(aMeshes.scaling);
+            this.videoMesh.setParent(aMeshes);
+            this.videoMesh.position.copyFrom(videoPosition.multiply(aMeshes.scaling));
             this.videoMaterial = this.videoMesh.material;
             this.videoTexture = this.videoMesh.material.diffuseTexture;
         }

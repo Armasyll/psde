@@ -61,7 +61,7 @@ class Callback {
             return 0;
         }
         groupedCallback["hasRun"] = true;
-        if (Callback.debugMode) console.group(`Running Callback.runGroupedCallback(${id}, ${response})`);
+        if (Callback.debugMode) console.group(`Running Callback.runGroupedCallback("${id}", ${response})`);
         if (groupedCallback["callbackIDs"].length > 0) {
             groupedCallback["callbackIDs"].forEach((callbackID) => {
                 Callback.run(callbackID, response);
@@ -82,7 +82,7 @@ class Callback {
         if (!(params instanceof Array)) {
             params = [params];
         }
-        if (Callback.debugMode) BABYLON.Tools.Log(`Running Callback.create(${id}, ${parentID}, {${params.toString()}}, function())`);
+        if (Callback.debugMode) console.log(`Running Callback.create("${id}", ${parentID}, {${params.toString().slice(0,16)}}, {${String(callback).slice(0,16)}})`);
         Callback.callbacks[id] = {"parent":parentID, "params":params, "callback":callback, "hasRun":(callback == null), "status":0};
         return id;
     }
@@ -107,6 +107,28 @@ class Callback {
             return Callback.callbacks[id];
         }
         return null;
+    }
+    static getNthParent(id, nth) {
+        let currentID = id;
+        if (!Callback.callbacks.hasOwnProperty(currentID)) {
+            return null;
+        }
+        for (let i = 0; i < nth + 1; i++) {
+            if (Callback.callbacks.hasOwnProperty(currentID)) {
+                currentID = Callback.get(currentID).parent;
+            }
+            else {
+                currentID = null;
+            }
+        }
+        return currentID;
+    }
+    static runNthParent(id, nth, response = null, flipRun = true, recursive = false) {
+        let callbackID = Callback.getNthParent(id, nth);
+        if (callbackID == null) {
+            return null;
+        }
+        return Callback.run(callbackID, response, flipRun, recursive);
     }
     static list() {
         return this.callbacks;
@@ -146,7 +168,7 @@ class Callback {
         if (!Callback.has(id)) {
             return 1;
         }
-        if (Callback.debugMode) console.group(`Running Callback.run(${id}, ${response})`);
+        if (Callback.debugMode) console.group(`Running Callback.run("${id}", {${String(response).slice(0,16)}})`);
         let callback = Callback.get(id);
         if (!callback["hasRun"]) {
             if (typeof callback["callback"] == "function") {

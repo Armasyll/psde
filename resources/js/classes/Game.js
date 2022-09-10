@@ -1250,9 +1250,12 @@ class Game {
      * @param {object} options Options
      * @returns {number} Integer status code
      */
-    static loadMaterial(materialID = "", diffuseTextureID = "", bumpTextureID = "", options = {}) {
+    static loadMaterial(materialID = "", diffuseTextureID = "", bumpTextureID = "", options = {}, parentCallbackID) {
         materialID = Tools.filterID(materialID);
+        if (Game.debugMode) console.group(`Running Game.loadMaterial(${materialID}, ..., ${parentCallbackID})`);
         if (materialID.length == 0) {
+            console.warn("Material ID is invalid.");
+            console.groupEnd();
             return 2;
         }
         diffuseTextureID = Tools.filterID(diffuseTextureID);
@@ -1299,6 +1302,11 @@ class Game {
             }
         }
         Game.setLoadedMaterial(materialID, loadedMaterial);
+        if (Callback.has(parentCallbackID)) {
+            console.log(parentCallbackID);
+            Callback.run(parentCallbackID);
+        }
+        console.groupEnd();
         return 0;
     }
     /**
@@ -1911,57 +1919,19 @@ class Game {
     static filterID(string) {
         return Tools.filterID(string, Tools.genUUIDv4());
     }
-    static filterMeshID(id) {
-        return Tools.filterID(id);
-    }
-    static filterMaterialID(id) {
-        id = Tools.filterID(id);
-        if (!Game.hasLoadedMaterial(id)) {
-            if (Game.hasAvailableTexture(id)) {
-                if (!Game.hasLoadedTexture(id)) {
-                    Game.loadTexture(id);
-                }
-                Game.loadMaterial(id, id);
-            }
-            else if (Game.hasLoadedTexture(id)) {
-                Game.loadMaterial(id, id);
-            }
-            else {
-                id = "missingMaterial";
-            }
+    static generateMeshID(string, prefix = "", suffix = "") {
+        string = Tools.filterID(string, String(prefix).concat(Tools.genUUIDv4()).concat(suffix));
+        if (Game.scene.getMeshByID(string) != null) {
+            string = String(prefix).concat(string).concat(Tools.genUUIDv4()).concat(suffix);
         }
-        return id;
+        return string;
     }
-    static filterIconID(id) {
-        id = Tools.filterID(id);
-        if (!Game.hasIcon(id)) {
-            id = "missingIcon";
+    static generateMaterialID(string, prefix = "", suffix = "") {
+        string = Tools.filterID(string, String(prefix).concat(Tools.genUUIDv4()).concat(suffix));
+        if (Game.scene.getMaterialByID(string) != null) {
+            string = String(prefix).concat(string).concat(Tools.genUUIDv4()).concat(suffix);
         }
-        return id;
-    }
-    static filterSoundID(id) {
-        id = Tools.filterID(id);
-        if (!Game.hasLoadedSound(id)) {
-            if (Game.hasAvailableSound(id)) {
-                Game.loadSound(id);
-            }
-            else {
-                id = "missingSound";
-            }
-        }
-        return id;
-    }
-    static filterVideoID(id) {
-        id = Tools.filterID(id);
-        if (!Game.hasLoadedVideo(id)) {
-            if (Game.hasAvailableVideo(id)) {
-                Game.loadVideo(id);
-            }
-            else {
-                id = "missingVideo";
-            }
-        }
-        return id;
+        return string;
     }
     /**
      * 
@@ -2006,8 +1976,8 @@ class Game {
      * @param {object} options 
      */
     static createTiledMesh(id = "", meshOptions = {xmin:0, zmin:0, xmax: 1, zmax: 1, subdivisions: {w:1, h:1}}, materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions":true}) {
-        id = Tools.filterID(id, Tools.genUUIDv4());
-        Game.filterMaterialID(materialID);
+        id = Game.generateMeshID(id, "tiledMesh-");
+        materialID = Tools.filterID(materialID, "missingMaterial");
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling);
@@ -2064,10 +2034,7 @@ class Game {
      */
     static createCollisionWall(id = "", start = BABYLON.Vector3.Zero(), end = BABYLON.Vector3.Zero(), yRotation = 0) {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.createCollisionWall");
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = String("wall-").concat(Tools.genUUIDv4());
-        }
+        id = Game.generateMeshID(id, "wall-");
         if (yRotation != 0 && Tools.isInt(yRotation)) {
             yRotation = BABYLON.Tools.ToRadians(yRotation);
         }
@@ -2107,10 +2074,7 @@ class Game {
      */
     static createCollisionPlane(id = "", start = BABYLON.Vector2.Zero(), end = BABYLON.Vector2.One(), yPosition = 0) {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.createCollisionPlane");
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = String("plane-").concat(Tools.genUUIDv4());
-        }
+        id = Game.generateMeshID(id, "plane-");
         if (start instanceof BABYLON.AbstractMesh || typeof start == "string") {
             return Game.createCollisionPlaneByMesh(start);
         }
@@ -2686,10 +2650,10 @@ class Game {
      * @returns {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createBillboard(id = "", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"billboardMode":BABYLON.Mesh.BILLBOARDMODE_Y, "backFaceCulling":false}) {
-        id = Tools.filterID(id, Tools.genUUIDv4());
+        id = Game.generateMeshID(id, "billboard-");
         let mesh = BABYLON.Mesh.CreatePlane(id, 1, Game.scene);
         mesh.id = id;
-        mesh.name = name;
+        mesh.name = id;
         Game.setLoadedMesh(id, mesh);
         mesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
         mesh.backFaceCulling = false;
@@ -2709,9 +2673,9 @@ class Game {
      * @returns {BABYLON.AbstractMesh|array|number} The created mesh
      */
     static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
-        id = Game.filterID(id, Tools.genUUIDv4());
-        meshID = Game.filterMeshID(meshID);
-        materialID = Game.filterMaterialID(materialID);
+        meshID = Tools.filterID(meshID);
+        id = Game.generateMeshID(id, meshID);
+        materialID = Tools.filterID(materialID);
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling, BABYLON.Vector3.One());
@@ -2726,23 +2690,38 @@ class Game {
                 break;
             }
         }
-        if (!Game.hasLoadedMesh(meshID)) {
-            let callbackID = Tools.genUUIDv4();
+        if (!Game.hasLoadedMaterial(materialID)) {
+            let callbackID = String("createMeshPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseTwo);
-            Game.loadMesh(meshID, callbackID);
+            Game.loadMaterial(materialID, "", "", {}, callbackID);
             if (Game.debugMode) console.groupEnd();
             return 1;
         }
-        Game.createMeshPhaseTwo(id, meshID, materialID, position, rotation, scaling, options, null, Callback.create(null, parentCallbackID));
+        Game.createMeshPhaseTwo(id, meshID, materialID, position, rotation, scaling, options, null, Callback.create(String("createMeshPhaseOneStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static createMeshPhaseTwo(id, meshID, materialID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options, response, parentCallbackID) {
-        if (Game.debugMode) console.group(`Running Game.createMeshPhaseTwo(${id}, ${meshID}, ..., ${response}, ${parentCallbackID})`);
+        if (Game.debugMode) console.group(`Running Game.createMeshPhaseTwo(${id}, ${meshID}, ${materialID}, POT, ROT, SCA, OPT, ${parentCallbackID})`);
+        if (!Game.hasLoadedMesh(meshID)) {
+            let callbackID = String("createMeshPhaseTwo-").concat(Tools.genUUIDv4());
+            Callback.create(callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseThree);
+            Game.loadMesh(meshID, callbackID);
+            if (Game.debugMode) console.groupEnd();
+            return 1;
+        }
+        Game.createMeshPhaseThree(id, meshID, materialID, position, rotation, scaling, options, null, Callback.create(String("createMeshPhaseTwoStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
+        if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    static createMeshPhaseThree(id, meshID, materialID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options, response, parentCallbackID) {
+        if (Game.debugMode) console.group(`Running Game.createMeshPhaseThree(${id}, ${meshID}, ${materialID}, ..., ${response}, ${parentCallbackID})`);
         let masterMesh = Game.getLoadedMesh(meshID);
         let mesh = null;
         let material = Game.getLoadedMaterial(materialID);
         if (masterMesh.skeleton instanceof BABYLON.Skeleton) {
+            if (Game.debugMode) console.info("Mesh has a skeleton.");
+            if (Game.debugMode) console.info("Creating a clone of the mesh.");
             mesh = masterMesh.clone(id);
             mesh.makeGeometryUnique();
             mesh.id = id;
@@ -2753,6 +2732,7 @@ class Game {
             Game.setMeshMaterial(mesh, material);
         }
         else {
+            if (Game.debugMode) console.info("Mesh doesn't have a skeleton.");
             if (!Game.loadedMeshMaterials.hasOwnProperty(meshID)) {
                 Game.loadedMeshMaterials[meshID] = {};
             }
@@ -2771,12 +2751,13 @@ class Game {
                 Game.setMeshMaterial(mesh, material);
             }
             if (options["createClone"]) {
+                if (Game.debugMode) console.info("Creating a clone of the mesh.");
                 if (Game.debugMode && Game.debugVerbosity > 3) console.log("Creating clone...");
                 if (Game.hasMeshMaterial(meshID, materialID)) {
                     mesh = Game.getMeshMaterial(meshID, materialID).clone(id);
                 }
                 else {
-
+                    console.info(`Material ${materialID} is missing.`);
                 }
                 mesh.id = id;
                 mesh.material = material;
@@ -2789,12 +2770,13 @@ class Game {
                 Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
             else {
+                if (Game.debugMode) console.info("Creating an instance of the mesh.");
                 if (Game.debugMode && Game.debugVerbosity > 3) console.log(`Creating instance of Mesh:(${meshID}), Material:(${materialID})...`);
                 if (Game.hasMeshMaterial(meshID, materialID)) {
                     mesh = Game.getMeshMaterial(meshID, materialID).createInstance(id);
                 }
                 else {
-                    
+                    console.info(`Material ${materialID} is missing.`);
                 }
                 mesh.id = id;
                 mesh.name = meshID;
@@ -2802,6 +2784,7 @@ class Game {
                 Game.addMeshMaterialMeshes(mesh.name, material.name, mesh);
             }
         }
+        if (Game.debugMode) console.info("Setting mesh transforms.");
         mesh.isVisible = true;
         mesh.position.copyFrom(position);
         mesh.rotation = new BABYLON.Vector3(BABYLON.Tools.ToRadians(rotation.x), BABYLON.Tools.ToRadians(rotation.y), BABYLON.Tools.ToRadians(rotation.z));
@@ -2813,7 +2796,7 @@ class Game {
         if (options["isHitbox"]) {
             mesh.isHitbox = options["isHitbox"];
         }
-        Callback.runParent(parentCallbackID, mesh);
+        Callback.runNthParent(parentCallbackID, 1, mesh);
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
@@ -2828,6 +2811,7 @@ class Game {
      * @param {BABYLON.Vector3} [scaling] 
      */
     static createAreaMesh(id = "", shape = "CUBE", diameter = 1.0, height = 1.0, depth = 1.0, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One()) {
+        id = Game.generateMeshID(id, "area-");
         let mesh = null;
         switch (shape) {
             case "CYLINDER": {
@@ -2908,7 +2892,7 @@ class Game {
         }
         if (Game.debugMode) console.group(`Running Game.createControllerAttachedMesh(${meshID}, ..., ${rotation}, ..., ${controllerID})`);
         let id = String(meshID).concat("Attachment").concat(controllerID.capitalize()).concat(boneID.capitalize());
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createControllerAttachedMeshPhaseOne-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [meshID, materialID, boneID, position, rotation, scaling, options, controllerID], Game.createControllerAttachedMeshPhaseTwo);
         Game.createMesh(id, meshID, materialID, position, rotation, scaling, options, callbackID);
         if (Game.debugMode) console.groupEnd();
@@ -2942,6 +2926,59 @@ class Game {
         controller.attachMeshToBone(response, bone, position, rotation, scaling);
         Callback.runParent(parentCallbackID, response, true, true);
         if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    static replaceControllerMesh(controllerID, meshID, materialID, options, parentCallbackID) {
+        Callback.setRun(parentCallbackID);
+        if (Game.debugMode) console.group(`Running Game.replaceControllerMesh(${controllerID}, ${meshID}, ${materialID}, ...)`);
+        if (!Game.hasLoadedMesh(meshID)) {
+            if (Game.debugMode) console.info(`Don't have loaded meshID ${meshID}, loading`);
+            let callbackID = String("replaceControllerMeshPhaseOne-").concat(Tools.genUUIDv4());
+            Callback.create(callbackID, parentCallbackID, [controllerID, meshID, materialID, options], Game.replaceControllerMeshPhaseTwo);
+            Game.loadMesh(meshID, callbackID);
+            Game.loadTexture(materialID);
+            Game.loadMaterial(materialID);
+            if (Game.debugMode) console.groupEnd();
+            return 1;
+        }
+        Game.replaceControllerMeshPhaseTwo(controllerID, meshID, materialID, options, Game.getLoadedMesh(meshID), Callback.create(String("replaceControllerMeshPhaseOneStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
+        if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    static replaceControllerMeshPhaseTwo(controllerID, meshID, materialID, options, response, parentCallbackID) {
+        Callback.setRun(parentCallbackID);
+        if (Game.debugMode) console.group(`Running Game.replaceControllerMeshPhaseTwo(${controllerID}, ...)`);
+        let callbackID = String("replaceControllerMeshPhaseTwo-").concat(Tools.genUUIDv4());
+        Callback.create(callbackID, parentCallbackID, [controllerID, meshID, materialID, options], Game.replaceControllerMeshPhaseThree);
+        let controller = AbstractController.get(controllerID);
+        Game.createMesh(String(meshID).concat(controllerID).concat(Tools.genUUIDv4()), meshID, materialID, controller.getPosition(), controller.getRotation(), controller.getScaling(), options, callbackID);
+        if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    static replaceControllerMeshPhaseThree(controllerID, meshID, materialID, options, response, parentCallbackID) {
+        if (!Game.hasCachedEntity(entityID)) {
+            console.error(`The cached entity, ${entityID}, was probably yeeted between then and now. {"callbackID": "${parentCallbackID}"}`);
+            return 2;
+        }
+        /** @type {CharacterController} */
+        let controller = AbstractController.get(controllerID);
+        controller.setMeshes([response]);
+        controller.generateHitboxes();
+        /*controller.generateOrganMeshes();
+        controller.generateCosmeticMeshes();
+        controller.generateEquippedMeshes();*/
+        controller.updateTargetRay();
+        let scaleAll = entity.height / entity.baseHeight;
+        if (scaleAll <= 0) {
+            scaleAll = 1.0;
+        }
+        controller.setScaling(scaleAll);
+        if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
+            Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
+        }
+        Callback.run(parentCallbackID, controller.getID(), true, true);
+        if (Game.debugMode) console.groupEnd();
+        return 0;
         return 0;
     }
 
@@ -2984,7 +3021,7 @@ class Game {
             Game.createFurniturePhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createFurniturePhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createFurniturePhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -2993,7 +3030,7 @@ class Game {
     static createFurniturePhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createFurniturePhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createFurniturePhaseThree);
             Game.loadMesh(entity["meshIDs"][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3005,7 +3042,7 @@ class Game {
     }
     static createFurniturePhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createFurniturePhaseThree-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createFurniturePhaseFour)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
@@ -3060,7 +3097,7 @@ class Game {
             Game.createDoorPhaseTwo(entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createDoorPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options], Game.createDoorPhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -3068,7 +3105,7 @@ class Game {
     }
     static createDoorPhaseTwo(entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options, response, parentCallbackID) {
         if (!(Game.hasLoadedMesh(response["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createDoorPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options], Game.createDoorPhaseThree);
             Game.loadMesh(response["meshIDs"][0], callbackID);
             return 1;
@@ -3082,7 +3119,7 @@ class Game {
         let yRotation = rotation.y * Math.PI / 180;
         let xPosition = radius * (Math.cos(yRotation) | 0);
         let yPosition = radius * (Math.sin(yRotation) | 0);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createDoorPhaseThree-").concat(Tools.genUUIDv4());
         position.addInPlace(new BABYLON.Vector3(xPosition, 0, -yPosition));
         Callback.create(callbackID, parentCallbackID, [entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options], Game.createDoorPhaseFour);
         Game.createMesh(entityID, entity["meshIDs"][0], entity["materialID"], position, rotation, scaling, options, callbackID);
@@ -3136,7 +3173,7 @@ class Game {
             Game.createFurniturePhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createDisplayPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -3145,7 +3182,7 @@ class Game {
     static createDisplayPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createDisplayPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseThree);
             Game.loadMesh(entity["meshIDs"][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3165,7 +3202,7 @@ class Game {
     }
     static createDisplayPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createDisplayPhaseFour-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseFive)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
@@ -3278,7 +3315,7 @@ class Game {
             Game.createLightingPhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createLightingPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createLightingPhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -3287,7 +3324,7 @@ class Game {
     static createLightingPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createLightingPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options, response], Game.createLightingPhaseThree);
             Game.loadMesh(entity["meshIDs"][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3299,7 +3336,7 @@ class Game {
     }
     static createLightingPhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createLightingPhaseThree-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createLightingPhaseFour)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
@@ -3326,8 +3363,7 @@ class Game {
         }
         return Game.removeController(controllerID);
     }
-
-    
+   
     /**
      * @module plants
      */
@@ -3352,7 +3388,7 @@ class Game {
             Game.createPlantPhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createPlantPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createPlantPhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -3361,7 +3397,7 @@ class Game {
     static createPlantPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createPlantPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options, response], Game.createPlantPhaseThree);
             Game.loadMesh(entity["meshIDs"][0][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3373,7 +3409,7 @@ class Game {
     }
     static createPlantPhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createPlantPhaseThree-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createPlantPhaseFour)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
@@ -3444,7 +3480,7 @@ class Game {
             Game.createItemPhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createItemPhaseOne-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createItemPhaseTwo);
             Game.getEntity(entityID, callbackID);
         }
@@ -3453,7 +3489,7 @@ class Game {
     static createItemPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createItemPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options, response], Game.createItemPhaseThree);
             Game.loadMesh(entity["meshIDs"][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3465,7 +3501,7 @@ class Game {
     }
     static createItemPhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createItemPhaseThree-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createItemPhaseFour)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
@@ -3517,7 +3553,7 @@ class Game {
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling, BABYLON.Vector3.One());
         if (Game.debugMode) console.group(`Running Game.createCharacter(${instanceID}, ${entityID}, ${position}, ${rotation}, ${scaling}, ${options}, ${parentCallbackID})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createCharacterPhaseOne-").concat(Tools.genUUIDv4())
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createCharacterPhaseTwo);
         Game.getEntity(entityID, callbackID);
         if (Game.debugMode) console.groupEnd();
@@ -3525,11 +3561,11 @@ class Game {
     }
     static createCharacterPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         Callback.setRun(parentCallbackID);
-        if (Game.debugMode) console.group(`Running Game.createCharacterPhaseTwo(${instanceID}, ...)`);
+        if (Game.debugMode) console.group(`Running Game.createCharacterPhaseTwo(${instanceID}, ${entityID}, ...)`);
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
             if (Game.debugMode) console.info(`Don't have loaded meshID ${entity["meshIDs"][0]}, loading`);
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("createCharacterPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createCharacterPhaseThree);
             Game.loadMesh(entity["meshIDs"][0], callbackID);
             Game.loadTexture(entity["textureID"]);
@@ -3537,15 +3573,15 @@ class Game {
             if (Game.debugMode) console.groupEnd();
             return 1;
         }
-        Game.createCharacterPhaseThree(instanceID, entityID, position, rotation, scaling, options, Game.getLoadedMesh(entity["meshIDs"][0]), Callback.create(null, parentCallbackID));
+        Game.createCharacterPhaseThree(instanceID, entityID, position, rotation, scaling, options, Game.getLoadedMesh(entity["meshIDs"][0]), Callback.create(String("createCharacterPhaseTwoStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static createCharacterPhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         Callback.setRun(parentCallbackID);
-        if (Game.debugMode) console.group(`Running Game.createCharacterPhaseThree(${instanceID}, ...)`);
+        if (Game.debugMode) console.group(`Running Game.createCharacterPhaseThree(${instanceID}, ${entityID}, ...)`);
         let entity = Game.getCachedEntity(entityID);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createCharacterPhaseThree-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createCharacterPhaseFour)
         Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
         if (Game.debugMode) console.groupEnd();
@@ -3568,16 +3604,14 @@ class Game {
         /** @type {CharacterController} */
         let controller = null;
         if (Game.useRigidBodies) {
-            controller = new CharacterControllerRigidBody(instanceID, response, entity);
+            controller = new CharacterControllerRigidBody(instanceID, [response], entity);
         }
         else {
-            controller = new CharacterControllerTransform(instanceID, response, entity);
+            controller = new CharacterControllerTransform(instanceID, [response], entity);
         }
         controller.assign(entity);
+        controller.generateAttachedMeshes();
         controller.generateHitboxes();
-        controller.generateOrganMeshes();
-        controller.generateCosmeticMeshes();
-        controller.generateEquippedMeshes();
         controller.updateTargetRay();
         let scaleAll = entity.height / entity.baseHeight;
         if (scaleAll <= 0) {
@@ -3587,7 +3621,8 @@ class Game {
         if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
             Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
         }
-        Callback.run(parentCallbackID, controller.getID(), true, true);
+        console.log(Callback.getNthParent(parentCallbackID, 2))
+        Callback.runNthParent(parentCallbackID, 2, controller.getID(), true, true);
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
@@ -3624,7 +3659,7 @@ class Game {
      * @memberof module:character
      */
     /*static createPlayer(instanceID, entityID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("createPlayer-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createPlayerPhaseTwo);
         Game.createCharacter(instanceID, entityID, position, rotation, scaling, options, callbackID);
         return 0;
@@ -3662,7 +3697,7 @@ class Game {
         if (Game.gui.hud.isVisible) {
             Game.gui.hud.playerPortrait.show();
         }
-        Game.createControllerAttachedMesh("cameraFocus", "cameraFocus", "FOCUS", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), BABYLON.Vector3.One(), {}, controllerID, Callback.create(null, parentCallbackID, [controllerID], Game.assignPlayerPhaseTwo));
+        Game.createControllerAttachedMesh("cameraFocus", "missingMaterial", "FOCUS", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), BABYLON.Vector3.One(), {}, controllerID, Callback.create(String("assignPlayerStatic-").concat(Tools.genUUIDv4()), parentCallbackID, [controllerID], Game.assignPlayerPhaseTwo));
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
@@ -4192,7 +4227,7 @@ class Game {
             return 1;
         }
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionAttack(${targetController.id}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("actionAttack-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionAttackResponse);
         Game.entityLogicWorkerPostMessage("actionAttack", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         actorController.doAttack();
@@ -4227,7 +4262,7 @@ class Game {
             return 1;
         }
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionClose(${targetController.id}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("actionClose-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
         Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         return 0;
@@ -4260,7 +4295,7 @@ class Game {
         }
         actorController = Game.filterController(actorController);
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionDrop(${targetController}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("actionDrop-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionDropResponse);
         Game.entityLogicWorkerPostMessage("actionDrop", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
         return 0;
@@ -4330,7 +4365,7 @@ class Game {
             return 1;
         }
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionOpen(${targetController.id}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("actionOpen-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionOpenResponse);
         Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
         return 0;
@@ -4391,7 +4426,7 @@ class Game {
             return 1;
         }
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionTalk(${targetController.id}, ${actorController.id})`);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("actionTalk-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionTalkResponse);
         Game.entityLogicWorkerPostMessage("actionTalk", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         return 0;
@@ -4417,20 +4452,20 @@ class Game {
             }
         }
         actorController = Game.filterController(actorController);
-        let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseOne);
+        let callbackID = String("actionUnequipPhaseOne-").concat(Tools.genUUIDv4());
+        Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
         Game.entityLogicWorkerPostMessage("actionUnequip", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
         return 0;
     }
-    static actionUnequipResponsePhaseOne(targetController, actorController, response, parentCallbackID) {
+    static actionUnequipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
         if (response) {
             console.log(response);
-            let callbackID = Tools.genUUIDv4();
-            Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
+            let callbackID = String("actionUnequipPhaseTwo-").concat(Tools.genUUIDv4());
+            Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseThree);
         }
         return 0;
     }
-    static actionUnequipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
+    static actionUnequipResponsePhaseThree(targetController, actorController, response, parentCallbackID) {
         actorController.assign(response);
         actorController.generateEquippedMeshes();
         return 0;
@@ -4533,10 +4568,10 @@ class Game {
         }
         if (Game.hasCachedCell(cellID)) {
             if (Game.debugMode) console.groupEnd();
-            return Game.loadCellPhaseTwo(cellID, Game.getCachedCell(cellID), Callback.create(null, parentCallbackID));
+            return Game.loadCellPhaseTwo(cellID, Game.getCachedCell(cellID), Callback.create(String("loadCellStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
         }
         else {
-            let callbackID = Tools.genUUIDv4();
+            let callbackID = String("loadCell-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [cellID], Game.loadCellPhaseTwo);
             Game.getCell(cellID, callbackID);
         }
@@ -4617,10 +4652,10 @@ class Game {
     }
     static loadEntitiesByCellID(cellID, parentCallbackID) {
         if (Game.hasCachedCell(cellID)) {
-            Game.loadEntitiesByCellIDPhaseTwo(cellID, Game.getCachedCell(cellID), Callback.create(null, parentCallbackID));
+            Game.loadEntitiesByCellIDPhaseTwo(cellID, Game.getCachedCell(cellID), Callback.create(String("loadEntitiesByCellIDStatic-").concat(Tools.genUUIDv4()), parentCallbackID));
         }
         else {
-            Game.getCell(cellID, Callback.create(null, parentCallbackID, [cellID], Game.loadEntitiesByCellIDPhaseTwo))
+            Game.getCell(cellID, Callback.create(String("loadEntitiesByCellIDStatic-getCell-").concat(Tools.genUUIDv4()), parentCallbackID, [cellID], Game.loadEntitiesByCellIDPhaseTwo))
         }
         return 0;
     }
@@ -4780,7 +4815,7 @@ class Game {
      * @param {(function|null)} callback 
      */
     static fireProjectile(diameter, force, position, rotation, distanceLimit = 127.0, hitLimit = 1, meshID, materialID, parentCallbackID, callback = Game.fireProjectileResponse) {
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("fireProjectile-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [diameter, force, position, rotation, distanceLimit, hitLimit, meshID, materialID], callback);
         Game.transformsWorkerPostMessage("inProjectPath", 0, {"diameter":diameter, "force":force, "position":position, "rotation":rotation, "distanceLimit":distanceLimit, "hitLimit":hitLimit}, callbackID);
         return callbackID;
@@ -4976,19 +5011,21 @@ class Game {
                 break;
             }
             case "assignPlayer": {
-                Game.assignPlayer(message["controllerID"], Callback.create(null, callbackID, [message["controllerID"]], Game.assignPlayerResponse));
+                Game.assignPlayer(message["controllerID"], Callback.create(String("entityLogicWorkerOnMessage-assignPlayer-").concat(Tools.genUUIDv4()), callbackID, [message["controllerID"]], Game.assignPlayerResponse));
                 break;
             }
             case "clearCache": {
-                Game.clearCache(false, Callback.create(null, callbackID, null, Game.clearCacheResponse));
+                Game.clearCache(false, Callback.create(String("entityLogicWorkerOnMessage-clearCache-").concat(Tools.genUUIDv4()), callbackID, null, Game.clearCacheResponse));
                 break;
             }
             case "purgeCache": {
-                Game.clearCache(true, Callback.create(null, callbackID, null, Game.clearCacheResponse));
+                if (status == 0) {
+                    Game.purgeCache(Callback.create(String("entityLogicWorkerOnMessage-purgeCache-").concat(Tools.genUUIDv4()), callbackID, null, Game.purgeCacheResponse));
+                }
                 break;
             }
             case "createCharacter": {
-                Game.createCharacter(message["instanceID"], message["entityID"], BABYLON.Vector3.FromArray(message["position"]), null, null, message["options"], Callback.create(null, callbackID, [message["instanceID"], message["entityID"], message["position"]], Game.createCharacterResponse));
+                Game.createCharacter(message["instanceID"], message["entityID"], BABYLON.Vector3.FromArray(message["position"]), null, null, message["options"], Callback.create(String("entityLogicWorkerOnMessage-createCharacter-").concat(Tools.genUUIDv4()), callbackID, [message["instanceID"], message["entityID"], message["position"]], Game.createCharacterResponse));
                 break;
             }
             case "createDoor":
@@ -5232,25 +5269,19 @@ class Game {
             }
             case "loadCell": {
                 if (status == 0) {
-                    Game.loadCell(message["cellID"], Callback.create(null, callbackID, [message["cellID"]], Game.loadCellResponse));
+                    Game.loadCell(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadCell-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadCellResponse));
                 }
                 break;
             }
             case "loadEntities": {
                 if (status == 0) {
-                    Game.loadEntities(message["entityIDs"], Callback.create(null, callbackID, message["entityIDs"], Game.loadEntitiesResponse));
+                    Game.loadEntities(message["entityIDs"], Callback.create(String("entityLogicWorkerOnMessage-loadEntities-").concat(Tools.genUUIDv4()), callbackID, message["entityIDs"], Game.loadEntitiesResponse));
                 }
                 break;
             }
             case "loadEntitiesByCellID": {
                 if (status == 0) {
-                    Game.loadEntitiesByCellID(message["cellID"], Callback.create(null, callbackID, [message["cellID"]], Game.loadEntitiesResponse));
-                }
-                break;
-            }
-            case "purgeCache": {
-                if (status == 0) {
-                    Game.purgeCache(Callback.create(null, callbackID, null, Game.purgeCacheResponse));
+                    Game.loadEntitiesByCellID(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadEntitiesByCellID-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadEntitiesResponse));
                 }
                 break;
             }
@@ -5278,7 +5309,7 @@ class Game {
             }
             case "setCachedCell": {
                 if (status == 0) {
-                    Game.setCachedCell(message["id"], message, Callback.create(null, callbackID, null, Game.setCachedCellResponse));
+                    Game.setCachedCell(message["id"], message, Callback.create(String("entityLogicWorkerOnMessage-setCachedCell-").concat(Tools.genUUIDv4()), callbackID, null, Game.setCachedCellResponse));
                 }
                 break;
             }
@@ -5538,7 +5569,7 @@ class Game {
 
     static getCell(cellID, parentCallbackID = null) {
         if (Game.debugMode) console.log(`Running Game.getCell(${cellID}, ${parentCallbackID})`);
-        Game.entityLogicWorkerPostMessage("getCell", 0, { "cellID": cellID }, Callback.create(null, parentCallbackID, [cellID], Game.getCellResponse));
+        Game.entityLogicWorkerPostMessage("getCell", 0, { "cellID": cellID }, Callback.create(String("getCell-").concat(Tools.genUUIDv4()), parentCallbackID, [cellID], Game.getCellResponse));
         return 0;
     }
     static getCellResponse(cellID, response, parentCallbackID) {
@@ -5550,7 +5581,7 @@ class Game {
         id = Tools.filterID(id);
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
-        let callbackID = Tools.genUUIDv4();
+        let callbackID = String("setDialogue-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [id, targetController, actorController], Game.setDialoguePhaseTwo)
         Game.entityLogicWorkerPostMessage("setDialogue", 0, {"dialogueID": id, "targetID": targetController.entityID, "actorID": actorController.entityID}, callbackID);
         return 0;

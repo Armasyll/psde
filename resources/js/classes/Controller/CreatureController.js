@@ -8,12 +8,12 @@ class CreatureController extends EntityController {
     /**
      * Creates a Creature Controller
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      */
-    constructor(id = "", mesh = null, entityObject = {}) {
-        if (!(super(id, mesh, entityObject) instanceof EntityController)) {
-            if (AbstractController.debugMode) console.group(`Failed to create new CreatureController(${id}, ${mesh.id}, ${entityObject.id})`);
+    constructor(id = "", aMeshes = [], entityObject = {}) {
+        if (!(super(id, aMeshes, entityObject) instanceof EntityController)) {
+            if (AbstractController.debugMode) console.group(`Failed to create new CreatureController(${id}, ${aMeshes.id}, ${entityObject.id})`);
             return undefined;
         }
 
@@ -326,6 +326,11 @@ class CreatureController extends EntityController {
         return super.attachMeshToBone(mesh, bone, position, rotation, scaling, options);
     }
 
+    generateAttachedMeshes() {
+        this.generateOrganMeshes();
+        this.generateCosmeticMeshes();
+        return 0;
+    }
     generateOrganMeshes() {
         if (!this.hasSkeleton()) {
             return 1;
@@ -391,16 +396,6 @@ class CreatureController extends EntityController {
         this.collisionMesh.ellipsoid.y = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y;
         this.collisionMesh.ellipsoid.z = this.meshes[0].getBoundingInfo().boundingBox.extendSize.x;
         return this.collisionMesh;
-    }
-    createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
-        if (this.meshes[0] instanceof BABYLON.AbstractMesh) {
-            return null;
-        }
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return Game.createCharacterMesh(id, this.meshStages[stageIndex][0], this.materialStages[stageIndex], position, rotation, scaling);
     }
 
     anyMovement() {

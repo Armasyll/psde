@@ -4,20 +4,15 @@
  * @typedef {Object} AbstractController
  */
 class AbstractController {
-    constructor(id, mesh, entityObject) {
-        if (AbstractController.debugMode) console.group(`Creating new AbstractController(${id}, meshObject, entityObject)`);
-        if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (AbstractController.debugMode) console.error(`Failed to create AbstractController ${id} due to invalid mesh`);
-            if (AbstractController.debugMode) console.groupEnd();
-            return null;
-        }
+    constructor(id, aMeshes, entityObject) {
+        if (AbstractController.debugMode) console.group(`Creating new AbstractController(${id}, aMeshes, entityObject)`);
         if (!(entityObject.hasOwnProperty("id"))) {
             if (AbstractController.debugMode) console.error(`Failed to create AbstractController ${id} due to invalid entityObject`);
             if (AbstractController.debugMode) console.groupEnd();
-            return null;
+            return undefined;
         }
-        this.id = Tools.filterID(id);
-        this.entityID = entityObject.id;
+        this.id = Tools.filterID(id, Tools.genUUIDv4());
+        this.entityID = "";
         this.meshes = [];
 
         this.controller = this.id;
@@ -52,6 +47,9 @@ class AbstractController {
         return this.entityID != null;
     }
     hasMesh() {
+        if (!(this.meshes instanceof Array)) {
+            return false;
+        }
         return this.meshes[0] instanceof BABYLON.AbstractMesh;
     }
     setMeshes(aMeshes, updateChild = false) {
@@ -61,10 +59,14 @@ class AbstractController {
             array[0] = aMeshes;
             aMeshes = array;
         }
-        if (!(aMeshes[0] instanceof BABYLON.AbstractMesh)) {
-            if (AbstractController.debugMode) console.error(`aMeshes didn't contain any BABYLON.AbstractMesh(es)`);
+        if (!(aMeshes instanceof Array)) {
+            if (AbstractController.debugMode) console.error(`aMeshes isn't an array`);
             if (AbstractController.debugMode) console.groupEnd();
             return 2;
+        }
+        if (!(aMeshes[0] instanceof BABYLON.AbstractMesh)) {
+            if (AbstractController.debugMode) console.error(`aMeshes didn't contain any BABYLON.AbstractMesh(es); using missingMesh`);
+            aMeshes[0] = Game.getMesh("missingMesh");
         }
         if (this.meshes[0] instanceof BABYLON.AbstractMesh && this.meshes[0].id != aMeshes[0].id) {
             this.unsetMeshes(true);

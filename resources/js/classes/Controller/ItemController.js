@@ -5,11 +5,11 @@ class ItemController extends EntityController {
     /**
      * Creates an Item Controller
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      */
-    constructor(id = "", mesh = null, entityObject = {}) {
-        super(id, mesh, entityObject);
+    constructor(id = "", aMeshes = [], entityObject = {}) {
+        super(id, aMeshes, entityObject);
         if (!this.hasMesh()) {
             return undefined;
         }

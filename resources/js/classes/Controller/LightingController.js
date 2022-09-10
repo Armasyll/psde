@@ -5,14 +5,14 @@ class LightingController extends FurnitureController {
     /**
      * Creates a Light Controller
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      * @param {BABYLON.Light} light 
      * @param {BABYLON.Vector3} lightPositionOffset 
      * @param {number} lightRange 
      */
-    constructor(id, mesh, entityObject, light = null, lightPositionOffset = BABYLON.Vector3.Zero(), lightRange = 16) {
-        super(id, mesh, entityObject);
+    constructor(id, aMeshes, entityObject, light = null, lightPositionOffset = BABYLON.Vector3.Zero(), lightRange = 16) {
+        super(id, aMeshes, entityObject);
         if (!this.hasMesh()) {
             return undefined;
         }
@@ -22,10 +22,10 @@ class LightingController extends FurnitureController {
         }
         if (!(light instanceof BABYLON.Light)) {
             light = new BABYLON.PointLight(id, lightPositionOffset, Game.scene);
-            light.parent = mesh;
+            light.parent = aMeshes[0];
         }
         else {
-            light.parent = mesh;
+            light.parent = aMeshes[0];
             light.position = lightPositionOffset;
         }
         this.light = light;

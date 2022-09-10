@@ -8,12 +8,12 @@ class CharacterController extends CreatureController {
     /**
      * Creates a Character Controller
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      */
-    constructor(id = "", mesh = null, entityObject = {}) {
+    constructor(id = "", aMeshes = [], entityObject = {}) {
         if (EntityController.debugMode) console.group(`Creating new CharacterController(${id}, meshObject, entityObject)`);
-        if (!(super(id, mesh, entityObject) instanceof CreatureController)) {
+        if (!(super(id, aMeshes, entityObject) instanceof CreatureController)) {
             return undefined;
         }
 
@@ -121,25 +121,9 @@ class CharacterController extends CreatureController {
         }
         return 0;
     }
-    /**
-     * Generates attached organ meshes :V
-     * @returns {null} null
-     */
-    generateOrganMeshes() {
-        if (!this.hasSkeleton()) {
-            return 1;
-        }
-        super.generateOrganMeshes();
-        return 0;
-    }
-    /**
-     * Generates attached cosmetic meshes according to entity's cosmetics
-     * @returns {null} null
-     */
-    generateCosmeticMeshes() { // TODO
-        if (!this.hasSkeleton()) {
-            return 1;
-        }
+    generateAttachedMeshes() {
+        super.generateAttachedMeshes();
+        this.generateEquippedMeshes();
         return 0;
     }
     /**

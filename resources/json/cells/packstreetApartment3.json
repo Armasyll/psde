@@ -203,15 +203,15 @@
                 ],
                 "tiledGrounds":[
                     ["commons1Floor0", [4, 14], "woodenFloorDark26", [1, 0, -27]],
-                    ["commons1Floor2", [10], "woodenFloorDark26", [5, 0, -27]],
+                    ["commons1Floor1", [10], "woodenFloorDark26", [5, 0, -27]],
                     ["commons1Floor2", [2, 4], "woodenFloorDark26", [-1, 0, -27]],
-                    ["commonsFloor01d", [2, 6], "woodenFloorDark26", [-1, 0, -19]]
+                    ["commons1Floor3", [2, 6], "woodenFloorDark26", [-1, 0, -19]]
                 ],
                 "tiledCeilings":[
                     ["commons1Ceiling0", [4, 14], "woodenFloorDark26", [1, 2.9, -27]],
-                    ["commons1Ceiling2", [10], "woodenFloorDark26", [5, 2.9, -27]],
+                    ["commons1Ceiling1", [10], "woodenFloorDark26", [5, 2.9, -27]],
                     ["commons1Ceiling2", [2, 4], "woodenFloorDark26", [-1, 2.9, -27]],
-                    ["commonsCeiling01d", [2, 6], "woodenFloorDark26", [-1, 2.9, -19]]
+                    ["commons1Ceiling3", [2, 6], "woodenFloorDark26", [-1, 2.9, -19]]
                 ],
                 "collidableMeshes":[
                     ["commons1WallN0", "craftsmanWall", "greenWallpaperPlainWood", [0, 0, -14]],

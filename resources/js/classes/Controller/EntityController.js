@@ -61,10 +61,8 @@ class EntityController extends AbstractController {
      * @param {Array.<BABYLON.AbstractMesh>} aMeshes 
      * @param {object} entityObject 
      */
-    constructor(id = "", aMeshes = null, entityObject = {}) {
-        if (!(super(id, aMeshes, entityObject) instanceof AbstractController)) {
-            return undefined;
-        }
+    constructor(id = "", aMeshes = [], entityObject = {}) {
+        super(id, aMeshes, entityObject);
         this.textureStages = [];
         this.currentTextureStage = 0;
         this.materialStages = [];
@@ -120,10 +118,14 @@ class EntityController extends AbstractController {
         this._attachedMeshes = {};
         this.bUseAnimationGroups = true;
         this.bHasRunPostConstructEntity = false;
+        if (!entityObject.hasOwnProperty("id")) {
+            return undefined;
+        }
+        this.entityID = entityObject.id;
         this.setMeshes(aMeshes);
         EntityController.set(this.id, this);
-        if (EntityController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
-        if (EntityController.debugMode) console.groupEnd();
+        if (AbstractController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
+        if (AbstractController.debugMode) console.groupEnd();
         this.postConstruct();
     }
     postConstruct() {
@@ -167,16 +169,20 @@ class EntityController extends AbstractController {
         return 0;
     }
     setMeshes(aMeshes, updateChild = false) {
-        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.setMesh(aMeshes, ${updateChild})`);
+        if (AbstractController.debugMode) console.group(`Running {EntityController} ${this.id}.setMesh(aMeshes, ${updateChild})`);
         if (aMeshes instanceof BABYLON.AbstractMesh) {
             let array = [];
             array[0] = aMeshes;
             aMeshes = array;
         }
-        if (!(aMeshes[0] instanceof BABYLON.AbstractMesh)) {
-            if (AbstractController.debugMode) console.error(`aMeshes didn't contain any BABYLON.AbstractMesh(es)`);
+        if (!(aMeshes instanceof Array)) {
+            if (AbstractController.debugMode) console.error(`aMeshes isn't an array`);
             if (AbstractController.debugMode) console.groupEnd();
             return 2;
+        }
+        if (!(aMeshes[0] instanceof BABYLON.AbstractMesh)) {
+            if (AbstractController.debugMode) console.error(`aMeshes didn't contain any BABYLON.AbstractMesh(es); using missingMesh`);
+            aMeshes[0] = Game.getMesh("missingMesh").createInstance(String(this.id).concat("-").concat("missingMesh"));
         }
         if (this.meshes.length >= 1 && this.meshes[0] instanceof BABYLON.AbstractMesh && this.meshes[0] != aMeshes) {
             this.unsetMeshes(true);
@@ -281,16 +287,6 @@ class EntityController extends AbstractController {
         }
         return this.collisionMesh instanceof BABYLON.AbstractMesh;
     }
-    createMesh(id = "", stageIndex = this.currentMeshStage, position = this.getPosition(), rotation = this.getRotation(), scaling = this.getScaling()) {
-        if (this.meshes instanceof BABYLON.AbstractMesh) {
-            return 1;
-        }
-        id = Tools.filterID(id);
-        if (typeof id != "string") {
-            id = Tools.genUUIDv4();
-        }
-        return Game.createMesh(id, this.meshStages[stageIndex][0], this.materialStages[stageIndex], position, rotation, scaling);
-    }
     sendTransforms() {
         if (this.hasCollisionMesh()) {
             Game.transformsWorkerPostMessage(
@@ -366,7 +362,7 @@ class EntityController extends AbstractController {
         return false;
     }
     getBone(bone) {
-        if (EntityController.debugMode) console.log("Running getBone");
+        if (AbstractController.debugMode) console.log("Running getBone");
         if (this.skeleton instanceof BABYLON.Skeleton) {
             if (bone instanceof BABYLON.Bone) {
                 return bone;
@@ -405,21 +401,21 @@ class EntityController extends AbstractController {
      * @returns {CharacterController} This character controller.
      */
     attachMeshIDToBone(meshID = "missingMesh", materialID = "missingTexture", boneID = "ROOT", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}) {
-        if (EntityController.debugMode) console.log("Running attachMeshIDToBone");
+        if (AbstractController.debugMode) console.log("Running attachMeshIDToBone");
         if (!Game.hasMesh(meshID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
+            if (AbstractController.debugMode) console.log(`Couldn't find mesh:${meshID} to attach to bone:${boneID}`);
             return 2;
         }
         if (!Game.hasLoadedMesh(meshID)) {
-            //if (EntityController.debugMode) console.log(`Haven't loaded mesh:${meshID} to attach to bone:${boneID}`);
+            //if (AbstractController.debugMode) console.log(`Haven't loaded mesh:${meshID} to attach to bone:${boneID}`);
             //return 1;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            if (EntityController.debugMode) console.log(`Couldn't find skeleton`);
+            if (AbstractController.debugMode) console.log(`Couldn't find skeleton`);
             return 1;
         }
         if (!this.hasBone(boneID)) {
-            if (EntityController.debugMode) console.log(`Couldn't find bone:${boneID}`);
+            if (AbstractController.debugMode) console.log(`Couldn't find bone:${boneID}`);
             return 2;
         }
         if (materialID != "collisionMaterial") {
@@ -458,18 +454,18 @@ class EntityController extends AbstractController {
      * @returns {CharacterController} This character controller.
      */
     attachMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options) {
-        if (EntityController.debugMode) console.group(`Running <EntityController> ${this.id}.attachMeshToBone(...)`);
+        if (AbstractController.debugMode) console.group(`Running <EntityController> ${this.id}.attachMeshToBone(...)`);
         if (!(mesh instanceof BABYLON.AbstractMesh)) {
-            if (EntityController.debugMode) console.log(`mesh (${String(mesh)}) is not instance of BABYLON.AbstractMesh`);
-            if (EntityController.debugMode) console.groupEnd();
+            if (AbstractController.debugMode) console.log(`mesh (${String(mesh)}) is not instance of BABYLON.AbstractMesh`);
+            if (AbstractController.debugMode) console.groupEnd();
             return 2;
         }
         if (!(bone instanceof BABYLON.Bone)) {
-            if (EntityController.debugMode) console.log(`bone (${String(bone)}) is not instance of BABYLON.Bone`);
-            if (EntityController.debugMode) console.groupEnd();
+            if (AbstractController.debugMode) console.log(`bone (${String(bone)}) is not instance of BABYLON.Bone`);
+            if (AbstractController.debugMode) console.groupEnd();
             return 2;
         }
-        if (EntityController.debugMode) console.log(`(${mesh.id}, ${bone.id})`);
+        if (AbstractController.debugMode) console.log(`(${mesh.id}, ${bone.id})`);
         mesh.setParent(this.meshes[0]);
         mesh.attachToBone(bone, this.meshes[0]);
         mesh.controller = this;
@@ -505,7 +501,7 @@ class EntityController extends AbstractController {
         if (mesh.material.name != "collisionMaterial") {
             this._attachedMeshes[mesh.id] = true;
         }
-        if (EntityController.debugMode) console.groupEnd();
+        if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
@@ -538,7 +534,7 @@ class EntityController extends AbstractController {
         return 0;
     }
     detachMeshID(meshID = "missingMesh", destroyMesh = true) {
-        if (EntityController.debugMode) console.log("Running detachMeshID");
+        if (AbstractController.debugMode) console.log("Running detachMeshID");
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
@@ -647,15 +643,10 @@ class EntityController extends AbstractController {
             return 0;
         }
         this.setLocked(true);
-        let position = this.getPosition();
-        let rotation = this.getRotation();
-        let scaling = this.getScaling();
         this.currentMeshStage = index;
         this.detachFromAllBones();
         Game.removeMesh(this.meshes[0]);
-        let mesh = this.createMesh(undefined, index, position, rotation, scaling);
-        this.setMesh(mesh);
-        this.generateAttachedMeshes();
+        Game.replaceControllerMesh(this.id, this.meshStages[index], this.materialStages[index]);
         this.setLocked(false);
         return 0;
     }
@@ -1387,7 +1378,7 @@ class EntityController extends AbstractController {
      */
     assign(objectBlob) {
         super.assign(objectBlob);
-        if (EntityController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
+        if (AbstractController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
         if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;
         if (objectBlob.hasOwnProperty("depth")) this.depth = objectBlob.depth;
@@ -1404,7 +1395,7 @@ class EntityController extends AbstractController {
                 this.addHiddenAvailableAction(action);
             }
         }
-        if (EntityController.debugMode) console.groupEnd();
+        if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }
     updateID(newID) {
@@ -1441,7 +1432,7 @@ class EntityController extends AbstractController {
 
     static initialize() {
         EntityController.entityControllerList = {};
-        EntityController.debugMode = false;
+        AbstractController.debugMode = false;
         EntityController.debugVerbosity = 2;
     }
     static get(id) {
@@ -1481,13 +1472,13 @@ class EntityController extends AbstractController {
     }
     static setDebugMode(debugMode) {
         if (debugMode == true) {
-            EntityController.debugMode = true;
+            AbstractController.debugMode = true;
             for (let entityController in EntityController.entityControllerList) {
                 EntityController.entityControllerList[entityController].debugMode = true;
             }
         }
         else if (debugMode == false) {
-            EntityController.debugMode = false;
+            AbstractController.debugMode = false;
             for (let entityController in EntityController.entityControllerList) {
                 EntityController.entityControllerList[entityController].debugMode = false;
             }
@@ -1495,7 +1486,7 @@ class EntityController extends AbstractController {
         return 0;
     }
     static getDebugMode() {
-        return EntityController.debugMode === true;
+        return AbstractController.debugMode === true;
     }
 }
 EntityController.initialize();

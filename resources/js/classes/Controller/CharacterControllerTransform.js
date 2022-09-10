@@ -12,11 +12,11 @@ class CharacterControllerTransform extends CharacterController {
     /**
      * Creates a Character Controller with a Transformative Body
      * @param {string} id 
-     * @param {BABYLON.AbstractMesh} mesh 
+     * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      */
-    constructor(id = "", mesh = null, entityObject = {}) {
-        if (!(super(id, mesh, entityObject) instanceof CharacterController)) {
+    constructor(id = "", aMeshes = [], entityObject = {}) {
+        if (!(super(id, aMeshes, entityObject) instanceof CharacterController)) {
             return undefined;
         }
 
