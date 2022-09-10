@@ -11,5 +11,5 @@ CharacterEntity.get("charlie").setHealth("66");
 CharacterEntity.get("charlie").setDialogue("charlieTalk");
 CharacterEntity.get("rosie").setDialogue("rosieTalk");
 CharacterEntity.get("rinehart").setDialogue("rinehartTalk");
-CharacterEntity.get("rinehart").addItem("mountainChocolateBar");
+CharacterEntity.get("rinehart").addItem(ItemEntity.get("mountainChocolateBar").createInstance("rinehartsChocolateBar"));
 CharacterEntity.get("rinehart").hold("mountainChocolateBar");

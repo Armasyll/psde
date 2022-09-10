@@ -4295,6 +4295,21 @@ class Game {
         return 0;
     }
     static actionHold(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasCachedEntity(targetController)) {}
+        else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
+            targetController = targetController.entityID;
+        }
+        else {
+            let tempController = Game.filterController(actorController);
+            if (tempController instanceof EntityController) {
+                targetController = tempController.entityID;
+            }
+            else {
+                return 2;
+            }
+        }
+        actorController = Game.filterController(actorController);
+        Game.entityLogicWorkerPostMessage("actionHold", 0, {"actorID":actorController.entityID, "targetID":targetController});
         return 0;
     }
     static actionLay(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4338,6 +4353,21 @@ class Game {
         return 0;
     }
     static actionRelease(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasCachedEntity(targetController)) {}
+        else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
+            targetController = targetController.entityID;
+        }
+        else {
+            let tempController = Game.filterController(actorController);
+            if (tempController instanceof EntityController) {
+                targetController = tempController.entityID;
+            }
+            else {
+                return 2;
+            }
+        }
+        actorController = Game.filterController(actorController);
+        Game.entityLogicWorkerPostMessage("actionRelease", 0, {"actorID":actorController.entityID, "targetID":targetController});
         return 0;
     }
     static actionSit(targetController = null, actorController = Game.playerController, parentCallbackID = null) {

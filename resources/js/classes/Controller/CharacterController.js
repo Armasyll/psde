@@ -158,6 +158,9 @@ class CharacterController extends CreatureController {
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {
             this.assignAttachments(objectBlob["equipment"], this._equipmentMeshIDsAttachedToBones);
         }
+        if (objectBlob.hasOwnProperty("held") && objectBlob["held"] instanceof Object) {
+            this.assignAttachments(objectBlob["held"], this._equipmentMeshIDsAttachedToBones);
+        }
         return 0;
     }
     updateID(newID) {

@@ -318,6 +318,17 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("actionEquip", 0, result, callbackID);
                 break;
             }
+            case "actionHold": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionHold", 1, null, callbackID);
+                    break;
+                }
+                let result = actor.hold(target) == 0;
+                EntityLogic.gameWorkerPostMessage("actionHold", 0, result, callbackID);
+                break;
+            }
             case "actionOpen": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
@@ -326,6 +337,17 @@ class EntityLogic {
                     break;
                 }
                 EntityLogic.actionOpen(target, actor, callbackID);
+                break;
+            }
+            case "actionRelease": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionRelease", 1, null, callbackID);
+                    break;
+                }
+                let result = actor.release(target) == 0;
+                EntityLogic.gameWorkerPostMessage("actionRelease", 0, result, callbackID);
                 break;
             }
             case "actionTake": {

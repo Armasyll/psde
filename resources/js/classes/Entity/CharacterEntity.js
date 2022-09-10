@@ -40,6 +40,8 @@ class CharacterEntity extends CreatureEntity {
         this.equipment["FOOT_L"] = null;
         this.equipment["FOOT_R"] = null;
         this.previousEquipment = Object.assign({}, this.equipment);
+        this.held = {"HAND_R":null, "HAND_L":null};
+        this.previousHeld = Object.assign({}, this.held);
         /**
          * Primary fur colour
          * @type {string}
@@ -152,27 +154,14 @@ class CharacterEntity extends CreatureEntity {
         }
         if (this.equipment.hasOwnProperty(equipmentSlot)) {}
         else if (equipmentSlot == "HANDS") {
-            if (this.handedness == HandednessEnum.LEFT) {
-                if (this.equipment["HAND_L"] == null) {
-                    equipmentSlot = "HAND_L";
-                }
-                else if (this.equipment["HAND_R"] == null) {
-                    equipmentSlot = "HAND_R";
-                }
-                else {
-                    equipmentSlot = "HAND_L";
-                }
+            if (this.equipment["HAND_R"] == null) {
+                equipmentSlot = "HAND_R";
+            }
+            else if (this.equipment["HAND_L"] == null) {
+                equipmentSlot = "HAND_L";
             }
             else {
-                if (this.equipment["HAND_R"] == null) {
-                    equipmentSlot = "HAND_R";
-                }
-                else if (this.equipment["HAND_L"] == null) {
-                    equipmentSlot = "HAND_L";
-                }
-                else {
-                    equipmentSlot = "HAND_R";
-                }
+                equipmentSlot = "HAND_R";
             }
         }
         else if (equipmentSlot == "EARS") {
@@ -208,10 +197,9 @@ class CharacterEntity extends CreatureEntity {
         return this.equipment;
     }
     getHeld() {
-        return {"HAND_R":this.equipment["HAND_R"], "HAND_L":this.equipment["HAND_L"]};
+        return {"HAND_R":this.held["HAND_R"], "HAND_L":this.held["HAND_L"]};
     }
-    equip(instancedItemEntity, equipmentSlot = "NONE", hold = false, tellGameWorker = true) {
-        hold = hold == true;
+    equip(instancedItemEntity, equipmentSlot = "NONE", tellGameWorker = true) {
         tellGameWorker = tellGameWorker == true;
         /*
         Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
@@ -240,7 +228,7 @@ class CharacterEntity extends CreatureEntity {
             equipmentSlot = Tools.filterEnum(instancedItemEntity.getEquipmentSlot(), ApparelSlotEnum, false);
         }
         /*
-        Clear out the equipment slot if it's in use, and set its value to _entity
+        Clear out the equipment slot if it's in use, and set its value to instancedEntity
          */
         equipmentSlot = this.filterEquipmentSlot(equipmentSlot);
         if (equipmentSlot == "NONE") {
@@ -251,24 +239,9 @@ class CharacterEntity extends CreatureEntity {
             this.unequipBySlot(equipmentSlot);
         }
         this.equipment[equipmentSlot] = instancedItemEntity;
-        if (instancedItemEntity instanceof InstancedWeaponEntity) {
-            if (instancedItemEntity.isTwoHanded()) {
-                if (equipmentSlot == "HAND_L") {
-                    this.equipmentSlot["HAND_R"] = instancedItemEntity;
-                }
-                else if (equipmentSlot == "HAND_R") {
-                    this.equipmentSlot["HAND_L"] = instancedItemEntity;
-                }
-            }
-        }
         /*
-        Flip bits and do tricks
+        Maybe tell the frontend
          */
-        if (equipmentSlot == "HAND_L" || equipmentSlot == "HAND_R") {
-            instancedItemEntity.held = true;
-            this.calculateIsArmed();
-        }
-        instancedItemEntity.equipped = true;
         if (tellGameWorker) {
             EntityLogic.sendEntityUpdate(this, "equipment");
         }
@@ -301,7 +274,7 @@ class CharacterEntity extends CreatureEntity {
     unequipByInstancedEntity(instancedEntity, tellGameWorker = true) {
         for (let equipmentSlot in this.equipment) {
             if (this.equipment[equipmentSlot] instanceof AbstractEntity) {
-                if (this.equipment[equipmentSlot] == instancedEntity) {
+                if (this.equipment[equipmentSlot].getID() == instancedEntity.getID()) {
                     return this.unequipBySlot(equipmentSlot, tellGameWorker);
                 }
             }
@@ -362,15 +335,6 @@ class CharacterEntity extends CreatureEntity {
         this.equipment[equipmentSlot].equipped = false;
         this.equipment[equipmentSlot].held = false;
         this.equipment[equipmentSlot] = null;
-        if (equipmentSlot == "HAND_R" || equipmentSlot == "HAND_L") {
-            if (this.predator) {
-                this.equipment[equipmentSlot] = InstancedWeaponEntity.get("weaponClawInstance");
-            }
-            else {
-                this.equipment[equipmentSlot] = InstancedWeaponEntity.get("weaponHandInstance");
-            }
-            this.calculateIsArmed();
-        }
         if (tellGameWorker) {
             EntityLogic.sendEntityUpdate(this, "equipment");
         }
@@ -397,38 +361,7 @@ class CharacterEntity extends CreatureEntity {
         }
         else if (abstractEntity instanceof InstancedEntity) {
             for (let equipmentSlot in this.equipment) {
-                if (this.equipment[equipmentSlot] == abstractEntity.getID()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    hasHeldItem(abstractEntity) {
-        if (!(abstractEntity instanceof AbstractEntity)) {
-            if (InstancedItemEntity.has(abstractEntity)) {
-                abstractEntity = InstancedItemEntity.get(abstractEntity);
-            }
-            else {
-                return false;
-            }
-        }
-        let equipmentSlots = {};
-        equipmentSlots["HAND_L"] = true;
-        equipmentSlots["HAND_R"] = true;
-        if (abstractEntity instanceof Entity) {
-            for (let equipmentSlot in equipmentSlots) {
-                if (InstancedItemEntity.has(this.equipment[equipmentSlot])) {
-                    let instancedItemEntity = InstancedItemEntity.get(this.equipment[equipmentSlot]);
-                    if (instancedItemEntity.getEntity() == abstractEntity) {
-                        return true;
-                    }
-                }
-            }
-        }
-        else if (abstractEntity instanceof InstancedEntity) {
-            for (let equipmentSlot in equipmentSlots) {
-                if (this.equipment[equipmentSlot] == abstractEntity.getID()) {
+                if (this.equipment[equipmentSlot] instanceof InstancedEntity && this.equipment[equipmentSlot].getID() == abstractEntity.getID()) {
                     return true;
                 }
             }
@@ -456,8 +389,14 @@ class CharacterEntity extends CreatureEntity {
         }
         tellGameWorker = tellGameWorker == true;
         let result = 0;
-        if (instancedItemEntity.equipped) {
+        if (this.hasEquipment(instancedItemEntity)) {
             result = this.unequip(instancedItemEntity, tellGameWorker);
+            if (result != 0) {
+                return result;
+            }
+        }
+        else if (this.hasHeld(instancedItemEntity)) {
+            result = this.release(instancedItemEntity, tellGameWorker);
             if (result != 0) {
                 return result;
             }
@@ -469,28 +408,195 @@ class CharacterEntity extends CreatureEntity {
         return result;
     }
 
-    /**
-     * 
-     * @param {InstancedEntity} instancedEntity 
-     * @param {HandednessEnum} hand 
-     */
-    hold(instancedEntity, hand) { // TODO: Separate holding an item from equipping an item to the hand; wearing gloves while holding a cup (or sword :v)
-        if (hand != ApparelSlotEnum.HAND_L && hand != ApparelSlotEnum.HAND_R) {
-            if (this.handedness == HandednessEnum.LEFT) {
-                hand = ApparelSlotEnum.HAND_L;
+    hasHeld(abstractEntity) {
+        if (!(abstractEntity instanceof AbstractEntity)) {
+            if (InstancedItemEntity.has(abstractEntity)) {
+                abstractEntity = InstancedItemEntity.get(abstractEntity);
             }
             else {
-                hand = ApparelSlotEnum.HAND_R;
+                return false;
             }
         }
-        return this.equip(instancedEntity, hand);
+        if (abstractEntity instanceof Entity) {
+            for (let heldSlot in this.held) {
+                if (InstancedItemEntity.has(this.held[heldSlot])) {
+                    let instancedItemEntity = InstancedItemEntity.get(this.held[heldSlot]);
+                    if (instancedItemEntity.getEntity().getID() == abstractEntity.getID()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if (abstractEntity instanceof InstancedEntity) {
+            for (let heldSlot in this.held) {
+                if (this.held[heldSlot] instanceof InstancedEntity && this.held[heldSlot].getID() == abstractEntity.getID()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     /**
-     * Wrapper for unequip
-     * @param {InstancedEntity} instancedEntity 
+     * 
+     * @param {InstancedEntity} instancedItemEntity 
+     * @param {HandednessEnum} heldSlot 
      */
-    release(instancedEntity) {
-        return this.unequip(instancedEntity);
+    hold(instancedItemEntity, heldSlot = "NONE", tellGameWorker = true) {
+        tellGameWorker = tellGameWorker == true;
+        /*
+        Get an instanced entity out of whatever instancedItemEntity is, otherwise fail
+        */
+        if (!(instancedItemEntity instanceof AbstractEntity)) {
+            if (AbstractEntity.has(instancedItemEntity)) {
+                instancedItemEntity = AbstractEntity.get(instancedItemEntity);
+            }
+            else {
+                if (AbstractEntity.debugMode) console.log(`\t The item (${instancedItemEntity}) doesn't exist.`);
+                return 2;
+            }
+        }
+        if (this.hasItem(instancedItemEntity)) {
+            instancedItemEntity = this.getItem(instancedItemEntity);
+        }
+        else {
+            if (AbstractEntity.debugMode) console.log(`\tCharacter (${this.id}) doesn't have the item (${instancedItemEntity.id}).`);
+            return 1;
+        }
+        if (AbstractEntity.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${instancedItemEntity.id}, ${heldSlot})`);
+        /*
+        Get an apparel slot out of whatever heldSlot is
+         */
+        if (heldSlot != "HAND_L" && heldSlot != "HAND_R") {
+            if (this.handedness == HandednessEnum.LEFT) {
+                if (this.held["HAND_L"] == null) {
+                    heldSlot = "HAND_L";
+                }
+                else if (this.held["HAND_R"] == null) {
+                    heldSlot = "HAND_R";
+                }
+                else {
+                    heldSlot = "HAND_L";
+                }
+            }
+            else {
+                if (this.held["HAND_R"] == null) {
+                    heldSlot = "HAND_R";
+                }
+                else if (this.held["HAND_L"] == null) {
+                    heldSlot = "HAND_L";
+                }
+                else {
+                    heldSlot = "HAND_R";
+                }
+            }
+        }
+        /*
+        Clear out the equipment slot if it's in use, and set its value to instancedItemEntity
+         */
+        if (this.held[heldSlot] instanceof InstancedItemEntity) {
+            if (this.held[heldSlot].id != instancedItemEntity.id) {
+                this.releaseBySlot(heldSlot, false);
+            }
+        }
+        if (instancedItemEntity instanceof InstancedWeaponEntity) {
+            if (instancedItemEntity.isTwoHanded()) {
+                if (heldSlot == "HAND_L") {
+                    this.held["HAND_R"] = instancedItemEntity;
+                }
+                else if (heldSlot == "HAND_R") {
+                    this.held["HAND_L"] = instancedItemEntity;
+                }
+            }
+        }
+        else {
+            this.held[heldSlot] = instancedItemEntity;
+        }
+        /*
+        Maybe tell the frontend
+         */
+        if (tellGameWorker) {
+            this.calculateIsArmed();
+            EntityLogic.sendEntityUpdate(this, "held");
+        }
+        return 0;
+    }
+    release(any, tellGameWorker = true) {
+        tellGameWorker = tellGameWorker == true;
+        if (any instanceof InstancedEntity) {
+            return this.releaseByInstancedEntity(any, tellGameWorker);
+        }
+        else if (any instanceof Entity) {
+            return this.releaseByEntity(any, tellGameWorker);
+        }
+        else if (typeof any == "string") {
+            if (InstancedEntity.has(any)) {
+                return this.releaseByInstancedEntity(InstancedEntity.get(any), tellGameWorker);
+            }
+            else if (Entity.has(any)) {
+                return this.releaseByEntity(Entity.get(any), tellGameWorker);
+            }
+            else if (ApparelSlotEnum.hasOwnProperty(any)) {
+                return this.releaseBySlot(any, tellGameWorker);
+            }
+        }
+        else if (ApparelSlotEnum.properties.hasOwnProperty(any)) {
+            return this.releaseBySlot(ApparelSlotEnum.properties[any].key, tellGameWorker);
+        }
+        return 2;
+    }
+    releaseByInstancedEntity(instancedEntity, tellGameWorker = true) {
+        for (let heldSlot in this.held) {
+            if (this.held[heldSlot] instanceof AbstractEntity) {
+                if (this.held[heldSlot].getID() == instancedEntity.getID()) {
+                    return this.releaseBySlot(heldSlot, tellGameWorker);
+                }
+            }
+        }
+        if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not held.`);
+        return 1;
+    }
+    releaseByEntity(entity, tellGameWorker = true) {
+        for (let heldSlot in this.held) {
+            if (this.held[heldSlot] instanceof AbstractEntity) {
+                if (this.held[heldSlot].entity == entity) {
+                    return this.releaseBySlot(heldSlot, tellGameWorker);
+                }
+            }
+        }
+        if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not held.`);
+        return 1;
+    }
+    releaseBySlot(heldSlot = "NONE", tellGameWorker = true) {
+        tellGameWorker = tellGameWorker == true;
+        if (this.held.hasOwnProperty(heldSlot)) {}
+        else if (heldSlot == "HANDS") {
+            this.releaseBySlot("HAND_L");
+            this.releaseBySlot("HAND_R");
+            return 0;
+        }
+        else {
+            if (AbstractEntity.debugMode) console.log(`\tNo equipment slot was defined.`);
+            return 2;
+        }
+        if (this.held[heldSlot] == null) {
+            return 1;
+        }
+        else if (!(this.held[heldSlot] instanceof AbstractEntity)) {
+            this.held[heldSlot] = null;
+            return 1;
+        }
+        this.held[heldSlot] = null;
+        if (this.predator) {
+            this.held[heldSlot] = InstancedWeaponEntity.get("weaponClawInstance");
+        }
+        else {
+            this.held[heldSlot] = InstancedWeaponEntity.get("weaponHandInstance");
+        }
+        if (tellGameWorker) {
+            this.calculateIsArmed();
+            EntityLogic.sendEntityUpdate(this, "held");
+        }
+        return 0;
     }
 
     setPaws(pawEnum = PawEnum.PAD) {
@@ -680,11 +786,11 @@ class CharacterEntity extends CreatureEntity {
 
     calculateIsArmed() {
         let weapon = null;
-        if (this.isRightHanded() && this.equipment["HAND_R"] instanceof InstancedWeaponEntity) {
-            weapon = this.equipment["HAND_R"] || this.equipment["HAND_L"];
+        if (this.isRightHanded() && this.held["HAND_R"] instanceof InstancedWeaponEntity) {
+            weapon = this.held["HAND_R"] || this.held["HAND_L"];
         }
-        else if (this.isLeftHanded() && this.equipment["HAND_L"] instanceof InstancedWeaponEntity) {
-            weapon = this.equipment["HAND_L"] || this.equipment["HAND_R"];
+        else if (this.isLeftHanded() && this.held["HAND_L"] instanceof InstancedWeaponEntity) {
+            weapon = this.held["HAND_L"] || this.held["HAND_R"];
         }
         else {
             this.armed = false;
@@ -1069,6 +1175,36 @@ class CharacterEntity extends CreatureEntity {
         }
         // Width is 1/3rd(-ish) of height, times the ratio of weight to base weight
         this.width = (this.height / 3.5294) * (this.weight / this.baseWeight);
+        switch(this.pawType) {
+            case PawEnum.FUR: {
+                if (this.held["HAND_R"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponPawInstance"), "HAND_R", false);
+                if (this.held["HAND_L"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponPawInstance"), "HAND_L", false);
+                break;
+            }
+            case PawEnum.PAD: {
+                if (this.held["HAND_R"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponClawInstance"), "HAND_R", false);
+                if (this.held["HAND_L"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponClawInstance"), "HAND_L", false);
+                break;
+            }
+            case PawEnum.HOOF: {
+                if (this.held["HAND_R"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponHoofInstance"), "HAND_R", false);
+                if (this.held["HAND_L"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponHoofInstance"), "HAND_L", false);
+                break;
+            }
+            case PawEnum.SKIN: {
+                if (this.held["HAND_R"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponHandInstance"), "HAND_R", false);
+                if (this.held["HAND_L"] == null)
+                    this.hold(InstancedWeaponEntity.get("weaponHandInstance"), "HAND_L", false);
+                break;
+            }
+        }
         return 0;
     }
 
@@ -1086,6 +1222,7 @@ class CharacterEntity extends CreatureEntity {
         obj["height"] = this.height || 0;
         obj["width"] = this.width || 0;
         obj["equipment"] = AbstractEntity.objectifyProperty(this.equipment);
+        obj["held"] = AbstractEntity.objectifyProperty(this.held);
         obj["furColourA"] = this.furColourA;
         obj["_furColourAHex"] = this._furColourAHex;
         obj["furColourB"] = this.furColourB;
@@ -1136,8 +1273,16 @@ class CharacterEntity extends CreatureEntity {
                 }
             }
         }
+        if (entity.hasOwnProperty("held")) {
+            for (let heldSlot in entity.held) {
+                if (entity.held[heldSlot] instanceof InstancedItemEntity) {
+                    this.equip(entity.held[heldSlot].clone(), heldSlot);
+                }
+            }
+        }
         // ...
         if (entity.hasOwnProperty("previousEquipment")) this.previousEquipment = Object.assign({}, entity.previousEquipment);
+        if (entity.hasOwnProperty("previousHeld")) this.previousHeld = Object.assign({}, entity.previousHeld);
         if (entity.hasOwnProperty("furColourA")) this.furColourA = entity.furColourA;
         if (entity.hasOwnProperty("_furColourAHex")) this._furColourAHex = entity._furColourAHex;
         if (entity.hasOwnProperty("furColourB")) this.furColourB = entity.furColourB;

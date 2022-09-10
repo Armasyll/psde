@@ -394,6 +394,9 @@ class InventoryGameGUI {
                     break;
                 }
                 case ActionEnum.EQUIP : {
+                    if (response.itemType == ItemEnum.WEAPON || response.itemType == ItemEnum.SHIELDS) {
+                        break;
+                    }
                     if (response.equipped) {
                         actionButton = GameGUI.createButton("actionUnequipButton", ActionEnum.properties[ActionEnum.UNEQUIP].name);
                         actionButton.onPointerUpObservable.add(function() {Game.actionUnequip(response.id, actorController, InventoryGameGUI.setSelected);});
@@ -405,15 +408,40 @@ class InventoryGameGUI {
                     break;
                 }
                 case ActionEnum.HOLD : {
-                    if (response.itemType == ItemEnum.WEAPON || response.itemType == ItemEnum.SHIELDS) {
-                        break;
+                    let buttonText = "";
+                    let isHeld = false;
+                    if (!Game.cachedEntities.hasOwnProperty(targetController.entityID)) {}
+                    else if (!Game.cachedEntities[targetController.entityID].hasOwnProperty("held")) {}
+                    else {
+                        if (Game.cachedEntities[targetController.entityID]["held"]["HAND_L"] != null && Game.cachedEntities[targetController.entityID]["held"]["HAND_L"].id == response.id) {
+                            isHeld = true;
+                        }
+                        else if (Game.cachedEntities[targetController.entityID]["held"]["HAND_R"] != null && Game.cachedEntities[targetController.entityID]["held"].hasOwnProperty("HAND_R") && Game.cachedEntities[targetController.entityID]["held"]["HAND_R"].id == response.id) {
+                            isHeld = true;
+                        }
                     }
-                    if (response.held) {
-                        actionButton = GameGUI.createButton("actionReleaseButton", ActionEnum.properties[ActionEnum.RELEASE].name);
+                    if (response.itemType == ItemEnum.WEAPON || response.itemType == ItemEnum.SHIELDS) {
+                        if (isHeld) {
+                            buttonText = ActionEnum.properties[ActionEnum.UNEQUIP].name;
+                        }
+                        else {
+                            buttonText = ActionEnum.properties[ActionEnum.EQUIP].name;
+                        }
+                    }
+                    else {
+                        if (isHeld) {
+                            buttonText = ActionEnum.properties[ActionEnum.RELEASE].name;
+                        }
+                        else {
+                            buttonText = ActionEnum.properties[ActionEnum.HOLD].name;
+                        }
+                    }
+                    if (isHeld) {
+                        actionButton = GameGUI.createButton("actionReleaseButton", buttonText);
                         actionButton.onPointerUpObservable.add(function() {Game.actionRelease(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     else {
-                        actionButton = GameGUI.createButton("actionHoldButton", ActionEnum.properties[ActionEnum.HOLD].name);
+                        actionButton = GameGUI.createButton("actionHoldButton", buttonText);
                         actionButton.onPointerUpObservable.add(function() {Game.actionHold(itemID, actorController, InventoryGameGUI.setSelected);});
                     }
                     break;
