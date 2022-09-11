@@ -516,7 +516,7 @@ class CreatureController extends EntityController {
         animatable = this.createAnimatableFromRangeName("lying", "90_idleLyingDown");
         if (animatable instanceof BABYLON.Animatable)
             animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("dead", "91_death01");
+        animatable = this.createAnimatableFromRangeName("dead", "80_deathPose01");
         if (animatable instanceof BABYLON.Animatable)
             animatable.syncWith(null);
         animatable = this.createAnimatableFromRangeName("walking", "93_walkingKneesBent");
@@ -686,6 +686,11 @@ class CreatureController extends EntityController {
         return 0;
     }
     doAttackFinished() {
+        return 0;
+    }
+    doDeath() {
+        this.setStance(StanceEnum.OVERRIDE);
+        this.oOverrideAnimation = this.animationGroups["dead"];
         return 0;
     }
 
