@@ -1303,10 +1303,10 @@ class Game {
         }
         Game.setLoadedMaterial(materialID, loadedMaterial);
         if (Callback.has(parentCallbackID)) {
-            console.log(parentCallbackID);
+            if (Game.debugMode) console.log(parentCallbackID);
             Callback.run(parentCallbackID);
         }
-        console.groupEnd();
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     /**
@@ -3621,7 +3621,6 @@ class Game {
         if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
             Game.assignBoxPhysicsToMesh(controller.collisionMesh, options);
         }
-        console.log(Callback.getNthParent(parentCallbackID, 2))
         Callback.runNthParent(parentCallbackID, 2, controller.getID(), true, true);
         if (Game.debugMode) console.groupEnd();
         return 0;
