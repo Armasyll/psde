@@ -333,5 +333,7 @@
     "lotionBottle01":"resources/meshes/static/lotionBottles.babylon",
     "lotionBottleSqueeze01": "resources/meshes/static/lotionBottles.babylon",
     "lotionBottlePush01": "resources/meshes/static/lotionBottles.babylon",
-    "animatedOven01": "resources/meshes/static/animatedOven01.babylon"
+    "animatedOven01": "resources/meshes/static/animatedOven01.babylon",
+    "animatedBuickGrandNational": "resources/meshes/vehicles/animatedBuickGrandNational.babylon",
+    "animatedChest01": "resources/meshes/static/animatedChest.babylon"
 }
