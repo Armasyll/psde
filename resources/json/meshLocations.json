@@ -215,6 +215,7 @@
     "animatedDoor01": "resources/meshes/static/animatedDoor01.babylon",
     "chair02": "resources/meshes/static/furniture.babylon",
     "chair03": "resources/meshes/static/furniture.babylon",
+    "cheapChair01": "resources/meshes/static/furniture.babylon",
     "grass01": "resources/meshes/static/nature.babylon",
     "mushroom01": "resources/meshes/static/nature.babylon",
     "mushroom02": "resources/meshes/static/nature.babylon",
@@ -328,5 +329,9 @@
     "counterTopEdgeRight": "resources/meshes/static/cabinets.babylon",
     "counterTopForBasin": "resources/meshes/static/cabinets.babylon",
     "counterTopHalf": "resources/meshes/static/cabinets.babylon",
-    "counterTopHalfForBasin": "resources/meshes/static/cabinets.babylon"
+    "counterTopHalfForBasin": "resources/meshes/static/cabinets.babylon",
+    "lotionBottle01":"resources/meshes/static/lotionBottles.babylon",
+    "lotionBottleSqueeze01": "resources/meshes/static/lotionBottles.babylon",
+    "lotionBottlePush01": "resources/meshes/static/lotionBottles.babylon",
+    "animatedOven01": "resources/meshes/static/animatedOven01.babylon"
 }
