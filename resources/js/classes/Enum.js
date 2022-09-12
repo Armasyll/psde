@@ -1690,6 +1690,7 @@ let ConditionEnum = {
     "STUNNED": 13,
     "UNCONSCIOUS": 14,
     "SILENCED": 15,
+    "DEAD": 16,
     "properties": {
         0: {
             "name": "Blinded",
@@ -1770,6 +1771,11 @@ let ConditionEnum = {
             "name": "Silenced",
             "value": 15,
             "key": "SILENCED"
+        },
+        16: {
+            "name": "Dead",
+            "value": 16,
+            "key": "DEAD"
         }
     }
 };

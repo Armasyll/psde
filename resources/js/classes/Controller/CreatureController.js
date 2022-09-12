@@ -35,6 +35,8 @@ class CreatureController extends EntityController {
         this.movementPace = MovementPaceEnum.NONE;
         this.canTransition = true;
         this.oOverrideAnimation = null;
+        this.stanceAnimationGroups = {};
+        this.subAnimationGroups = {};
 
         this._organMeshIDsAttachedToBones = {};
         this._cosmeticMeshIDsAttachedToBones = {};
@@ -500,147 +502,143 @@ class CreatureController extends EntityController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
-        let animatable = null;
-        animatable = this.createAnimatableFromRangeName("standingIdle", "90_idleStanding");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("crouchingIdle", "90_idleCrouching");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("proneIdle", "90_idleProne");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("sitting", "90_idleSitChair");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("lying", "90_idleLyingDown");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("dead", "80_deathPose01");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("walking", "93_walkingKneesBent");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("running", "93_runningKneesBent");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("crouching", "93_crouchingKneesBent");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("prone", "93_proneKneesBent");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("blink", "70_blink");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        animatable = this.createAnimatableFromRangeName("blink_half_lidded", "70_blink_half_lidded");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(null);
-        // Punching blends
-        animatable = this.createAnimatableFromRangeName("punchRightIdle", "71_rightHandedPunch");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(this.animatables["standingIdle"]);
-        animatable = this.createAnimatableFromRangeName("punchRightWalking", "71_rightHandedPunch");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(this.animatables["walking"]);
-        animatable = this.createAnimatableFromRangeName("punchRightCrouchingIdle", "71_rightHandedPunch");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(this.animatables["crouchingIdle"]);
-        animatable = this.createAnimatableFromRangeName("punchRightCrouching", "71_rightHandedPunch");
-        if (animatable instanceof BABYLON.Animatable)
-            animatable.syncWith(this.animatables["crouching"]);
         return 0;
     }
     populateAnimationGroup() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
-        this.createAnimationGroupFromAnimatables("standingIdle", "standingIdle");
-        this.createAnimationGroupFromAnimatables("crouchingIdle", "crouchingIdle");
-        this.createAnimationGroupFromAnimatables("proneIdle", "proneIdle");
-        this.createAnimationGroupFromAnimatables("walking", "walking");
-        this.createAnimationGroupFromAnimatables("running", "running", 0.0, true, (1.8 * this.getScaling().y));
-        this.createAnimationGroupFromAnimatables("crouching", "crouching", 0.0, true, 1.5);
-        this.createAnimationGroupFromAnimatables("prone", "prone", 0.0, 1.5);
-        this.createAnimationGroupFromAnimatables("sitting", "sitting");
-        this.createAnimationGroupFromAnimatables("lying", "lying");
-        this.createAnimationGroupFromAnimatables("dead", "dead", 0, false);
+        this.createSubAnimation("idle", "action_idle", true, 1.0);
+        this.createSubAnimation("walking", "action_walking", true);
+        this.createSubAnimation("running", "action_running", true);
+        this.createSubAnimation("punchRight", "action_punch_r");
+
+        this.createStanceAnimation("standing", "pose_stand");
+        this.createStanceAnimation("crouching", "pose_crouch");
+        this.createStanceAnimation("prone", "pose_prone");
+        //this.createStanceAnimation("flying", "flying");
+        //this.createStanceAnimation("swimming", "swimming");
+        return 0;
+    }
+    createSubAnimation(id, rangeName, loopAnimation = false, weight = 0.0, speedRatio = 1.0) {
+        //let animationGroup = Game.scene.animationGroups.find(a => a.name === rangeName); // glb/gltf
+        let animatable = this.createAnimatableFromRangeName(rangeName, rangeName, loopAnimation, speedRatio);
+        let animationGroup = this.createAnimationGroupFromAnimatables(id, rangeName, weight, loopAnimation, speedRatio);
+        if (!(animationGroup instanceof BABYLON.AnimationGroup)) {
+            return 1;
+        }
+        animationGroup.start(true);
+        animationGroup.setWeightForAllAnimatables(weight);
+        this.subAnimationGroups[id] = {"animationGroup":animationGroup, "weight": weight};
+        if (Object.keys(this.animationGroups).length != 0) {
+            let firstAnimationGroup = this.animationGroups[Object.keys(this.animationGroups)[0]];
+            animationGroup.syncAllAnimationsWith(firstAnimationGroup.animatables[0]);
+        }
+        else {
+            animationGroup.syncAllAnimationsWith(null);
+        }
+        return animationGroup;
+    }
+    createStanceAnimation(id, rangeName, loopAnimation = true, weight = 0.0, speedRatio = 1.0) {
+        //let animationGroup = Game.scene.animationGroups.find(a => a.name === rangeName); // glb/gltf
+        let animatable = this.createAnimatableFromRangeName(rangeName, rangeName, loopAnimation, speedRatio);
+        let animationGroup = this.createAnimationGroupFromAnimatables(id, rangeName, weight, loopAnimation, speedRatio);
+        if (!(animationGroup instanceof BABYLON.AnimationGroup)) {
+            return 1;
+        }
+        animationGroup = BABYLON.AnimationGroup.MakeAnimationAdditive(animationGroup);
+        animationGroup.start(true, 1, 0.03333333507180214 * 60, 0.03333333507180214 * 60);
+        this.stanceAnimationGroups[id] = {"animationGroup":animationGroup, "weight": weight};
+        return animationGroup;
+    }
+    transitionStances() {
+        for (let id in this.stanceAnimationGroups) {
+            let isCurrentStance = false;
+            switch (this.stance) {
+                case StanceEnum.STAND: {
+                    isCurrentStance = id == "standing";
+                    break;
+                }
+                case StanceEnum.CROUCH: {
+                    isCurrentStance = id == "crouching";
+                    break;
+                }
+                case StanceEnum.PRONE: {
+                    isCurrentStance = id == "prone";
+                    break;
+                }
+                case StanceEnum.SWIM: {
+                    isCurrentStance = id == "swimming";
+                    break;
+                }
+                case StanceEnum.FLY: {
+                    isCurrentStance = id == "flying";
+                    break;
+                }
+            }
+            if (isCurrentStance) {
+                if (this.stanceAnimationGroups[id].weight + this.animationTransitionSpeed > 1.0) {
+                    this.stanceAnimationGroups[id].weight = 1.0
+                }
+                else {
+                    this.stanceAnimationGroups[id].weight += this.animationTransitionSpeed;
+                }
+            }
+            else {
+                if (this.stanceAnimationGroups[id].weight - this.animationTransitionSpeed < 0.0) {
+                    this.stanceAnimationGroups[id].weight = 0.0
+                }
+                else {
+                    this.stanceAnimationGroups[id].weight -= this.animationTransitionSpeed;
+                }
+            }
+            this.stanceAnimationGroups[id].animationGroup.setWeightForAllAnimatables(this.stanceAnimationGroups[id].weight);
+        }
         return 0;
     }
     updateAnimation() {
         if (this.stanceFrameCount < this.stanceFrameCountMax) {
             this.stanceFrameCount++;
         }
+        this.transitionStances();
         let anim = "";
         if (this.oOverrideAnimation != null) {
             anim = this.oOverrideAnimation;
         }
-        else {
-            switch (this.groundedState) {
-                case GroundedStateEnum.FALL: {
-                    break;
-                }
-                case GroundedStateEnum.GROUND: {
-                    switch (this.stance) {
-                        case StanceEnum.STAND: {
-                            switch (this.movementPace) {
-                                case MovementPaceEnum.NONE: {
-                                    anim = "standingIdle";
-                                    break;
-                                }
-                                case MovementPaceEnum.AMBLE: {
-                                    anim = "walking";
-                                    break;
-                                }
-                                case MovementPaceEnum.WALK: {
-                                    anim = "walking";
-                                    break;
-                                }
-                                case MovementPaceEnum.RUN: {
-                                    anim = "running";
-                                    break;
-                                }
-                                case MovementPaceEnum.SPRINT: {
-                                    anim = "running";
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                        case StanceEnum.CROUCH: {
-                            switch (this.movementPace) {
-                                case MovementPaceEnum.NONE: {
-                                    anim = "crouchingIdle";
-                                    break;
-                                }
-                                default: {
-                                    anim = "crouching";
-                                }
-                            }
-                            break;
-                        }
-                        case StanceEnum.PRONE: {
-                            switch (this.movementPace) {
-                                case MovementPaceEnum.NONE: {
-                                    anim = "proneIdle";
-                                    break;
-                                }
-                                default: {
-                                    anim = "prone";
-                                }
-                            }
-                            break;
-                        }
+        switch (this.groundedState) {
+            case GroundedStateEnum.FALL: {
+                break;
+            }
+            case GroundedStateEnum.GROUND: {
+                switch (this.movementPace) {
+                    case MovementPaceEnum.NONE: {
+                        anim = "idle";
+                        break;
                     }
-                    break;
+                    case MovementPaceEnum.AMBLE: {
+                        anim = "walking";
+                        break;
+                    }
+                    case MovementPaceEnum.WALK: {
+                        anim = "walking";
+                        break;
+                    }
+                    case MovementPaceEnum.RUN: {
+                        anim = "running";
+                        break;
+                    }
+                    case MovementPaceEnum.SPRINT: {
+                        anim = "running";
+                        break;
+                    }
                 }
-                case GroundedStateEnum.FLY: {
-                    break;
-                }
-                case GroundedStateEnum.SWIM: {
-                    break;
-                }
+                break;
+            }
+            case GroundedStateEnum.FLY: {
+                break;
+            }
+            case GroundedStateEnum.SWIM: {
+                break;
             }
         }
         if (this.animationPriorityUpdated) {
@@ -651,6 +649,9 @@ class CreatureController extends EntityController {
             else if (this.animationPriority == 0) {
                 this.unpauseAllAnimations();
             }
+        }
+        if (anim.length == 0) {
+            return 0;
         }
         if (this.animationPriority == 0) {
             this.beginAnimation(anim);
@@ -674,15 +675,26 @@ class CreatureController extends EntityController {
     }
     doLay() {
         this.setStance(StanceEnum.OVERRIDE);
-        this.oOverrideAnimation = this.animationGroups["lying"];
         return 0;
     }
     doSit() {
         this.setStance(StanceEnum.OVERRIDE);
-        this.oOverrideAnimation = this.animationGroups["sitting"];
         return 0;
     }
     doAttack() {
+        switch (this.stance) {
+            case StanceEnum.STAND: {
+                this.beginAnimation("punchRight");
+                break;
+            }
+            case StanceEnum.CROUCH: {
+                this.beginAnimation("punchRight");
+                break;
+            }
+            default: {
+                return 1;
+            }
+        }
         return 0;
     }
     doAttackFinished() {
@@ -690,7 +702,18 @@ class CreatureController extends EntityController {
     }
     doDeath() {
         this.setStance(StanceEnum.OVERRIDE);
-        this.oOverrideAnimation = this.animationGroups["dead"];
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.TALK);
+        return 0;
+    }
+    doResurrect() {
+        this.removeHiddenAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.TALK);
+        return 0;
+    }
+    doSpawn() {
+        this.removeHiddenAvailableAction(ActionEnum.TALK);
+        this.setDefaultAction(ActionEnum.TALK);
         return 0;
     }
 

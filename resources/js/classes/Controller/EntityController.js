@@ -14,6 +14,7 @@
  * @property {Array.<BABYLON.AbstractMesh>} meshes 
  * @property {GroundedStateEnum} groundedState 
  * @property {ActionEnum} defaultAction 
+ * @property {ActionEnum} previousDefaultAction 
  * @property {Object.<ActionEnum, boolean>} availableActions 
  * @property {Object.<ActionEnum, boolean>} hiddenAvailableActions 
  * @property {number} height 
@@ -25,13 +26,11 @@
  * @property {string} networkID 
  * @property {boolean} propertiesChanged 
  * @property {Object.<>} animatables 
- * @property {Object.<>} animations 
  * @property {Object.<>} animationGroups 
- * @property {Object.<>} additiveAnimations 
  * @property {(BABYLON.Animation|null)} animationCurrent 
  * @property {(BABYLON.Animation|null)} animationPrevious 
  * @property {(BABYLON.Animation|null)} animationOverride 
- * @property {boolean} bAnimationOverride
+ * @property {boolean} bAnimationOverride 
  * @property {boolean} bAnimationStopped 
  * @property {number} animationTransitionCount 
  * @property {number} animationTransitionSpeed 
@@ -51,7 +50,6 @@
  * @property {Object.<String, Object>} _meshesAttachedToBones 
  * @property {Object.<String, Object>} _bonesAttachedToMeshes 
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
- * @property {boolean} bUseAnimationGroups 
  * @property {boolean} bHasRunPostConstructEntity 
  */
 class EntityController extends AbstractController {
@@ -69,6 +67,7 @@ class EntityController extends AbstractController {
         this.groundedState = 0;
         this.currentMaterialStage = 0;
         this.defaultAction = 0;
+        this.previousDefaultAction = ActionEnum.LOOK;
         this.availableActions = {};
         this.hiddenAvailableActions = {};
         this.collisionMesh = null;
@@ -77,9 +76,7 @@ class EntityController extends AbstractController {
         this.networkID = null;
         this.propertiesChanged = true;
         this.animatables = {};
-        this.animations = {};
         this.animationGroups = {};
-        this.additiveAnimations = {};
         this.animationCurrent = null;
         this.animationPrevious = null;
         this.animationOverride = null;
@@ -116,7 +113,6 @@ class EntityController extends AbstractController {
          */
         this._bonesAttachedToMeshes = {};
         this._attachedMeshes = {};
-        this.bUseAnimationGroups = true;
         this.bHasRunPostConstructEntity = false;
         if (!entityObject.hasOwnProperty("id")) {
             return undefined;
@@ -752,9 +748,17 @@ class EntityController extends AbstractController {
     getAvailableActions() {
         return this.availableActions;
     }
-    hasAvailableAction(actionEnum) {
+    hasAvailableAction(actionEnum, checkHiddenActions = false) {
         actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
-        return this.availableActions.hasOwnProperty(actionEnum);
+        if (this.availableActions.hasOwnProperty(actionEnum)) {
+            if (!checkHiddenActions) {
+                return true;
+            }
+            else if (this.hiddenAvailableActions.hasOwnProperty(actionEnum)) {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -766,6 +770,17 @@ class EntityController extends AbstractController {
         if (actionEnum == -1) {
             return 1;
         }
+        if (this.defaultAction == actionEnum) {
+            if (this.hasAvailableAction(ActionEnum.TOUCH, true)) {
+                this.setDefaultAction(ActionEnum.TOUCH);
+            }
+            else if (this.hasAvailableAction(ActionEnum.LOOK, true)) {
+                this.setDefaultAction(ActionEnum.LOOK);
+            }
+            else {
+                this.setDefaultAction(ActionEnum.NONE);
+            }
+        }
         this.hiddenAvailableActions[actionEnum] = true;
         return 0;
     }
@@ -776,6 +791,9 @@ class EntityController extends AbstractController {
      */
     removeHiddenAvailableAction(actionEnum) {
         actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        if (this.previousDefaultAction == actionEnum) {
+            this.resetDefaultAction();
+        }
         delete this.hiddenAvailableActions[actionEnum];
         return 0;
     }
@@ -930,9 +948,6 @@ class EntityController extends AbstractController {
     hasAnimatable(animatable) {
         return this.animatables.hasOwnProperty(animatable);
     }
-    hasAnimation(animation) {
-        return this.animations.hasOwnProperty(animation);
-    }
     hasAnimationGroup(animationGroup) {
         return this.animationGroups.hasOwnProperty(animationGroup);
     }
@@ -953,8 +968,8 @@ class EntityController extends AbstractController {
             return 1;
         }
         let to = animationRange.to;
-        if (to - animationRange.from > 1) {
-            to--;
+        if (to - animationRange.from > 2) {
+            to = to - 1;
         }
         return this.createAnimatable(id, animationRange.from, to, loopAnimation, speedRatio);
     }
@@ -988,7 +1003,7 @@ class EntityController extends AbstractController {
         if (!this.hasAnimatable(id)) {
             return 2;
         }
-        this.animations[id].weight = weight;
+        this.animatables[id].weight = weight;
         return 0;
     }
     /**
@@ -1001,7 +1016,8 @@ class EntityController extends AbstractController {
      * @param {boolean} [start=true] 
      */
     createAnimationGroupFromAnimatables(id, animatables, weight = 0.0, loopAnimation = -1, speedRatio = -1, start = true) {
-        let hasValidAnimations = true;
+        if (AbstractController.debugMode) console.group(`Running <EntityController> ${this.id}.createAnimationGroupFromAnimatables("${id}", [${animatables.toString()}], ...)`);
+        let hasValidAnimations = false;
         let animationGroup = new BABYLON.AnimationGroup(id);
         let maxFrameCount = 0;
         let tempFrameCount = 0;
@@ -1014,10 +1030,11 @@ class EntityController extends AbstractController {
             let animatable = animatables[i];
             if (!(animatable instanceof BABYLON.Animation)) {
                 if (this.hasAnimatable(animatable)) {
+                    hasValidAnimations = true;
                     animatable = this.animatables[animatable];
                 }
                 else {
-                    hasValidAnimations = false;
+                    if (AbstractController.debugMode) console.warn(`Animatable "${animatables[i]}" doesn't exist.`);
                     continue;
                 }
             }
@@ -1041,6 +1058,8 @@ class EntityController extends AbstractController {
         }
         if (!hasValidAnimations) {
             animationGroup.dispose();
+            if (AbstractController.debugMode) console.warn("There were no useable animatables. Disposing of this AnimationGroup.");
+            if (AbstractController.debugMode) console.groupEnd();
             return 1;
         }
         if (loopAnimation === -1) {
@@ -1057,6 +1076,7 @@ class EntityController extends AbstractController {
             animationGroup.setWeightForAllAnimatables(weight);
         }
         this.animationGroups[id] = animationGroup;
+        if (AbstractController.debugMode) console.groupEnd();
         return animationGroup;
     }
     clearAnimationGroups() {
@@ -1067,33 +1087,6 @@ class EntityController extends AbstractController {
         return 0;
     }
     updateAnimation() {
-        let anim = this.animationGroups[Object.keys(this.animationGroups).length - 1];
-        switch (this.groundedState) {
-            case GroundedStateEnum.FALL: {
-                break;
-            }
-            case GroundedStateEnum.GROUND: {
-                break;
-            }
-            case GroundedStateEnum.FLY: {
-                break;
-            }
-            case GroundedStateEnum.SWIM: {
-                break;
-            }
-        }
-        if (this.animationPriorityUpdated) {
-            this.animationPriorityUpdated = false;
-            if (this.animationPriority >= 2) {
-                this.pauseAllAnimations();
-            }
-            else if (this.animationPriority == 0) {
-                this.unpauseAllAnimations();
-            }
-        }
-        if (this.animationPriority == 0) {
-            this.beginAnimation(anim);
-        }
         return 0;
     }
     /**
@@ -1103,14 +1096,13 @@ class EntityController extends AbstractController {
     stopAnimation(animation = null) {
         if (animation == null) {
             this.animation.setWeightForAllAnimatables(0);
+            return 0;
         }
-        else if (this.hasAnimationGroup(animation)) {
+        if (this.hasAnimationGroup(animation)) {
             this.animationGroups[animation].setWeightForAllAnimatables(0);
+            return 0;
         }
-        else {
-            return 1;
-        }
-        return 0;
+        return 1;
     }
     /**
      * 
@@ -1120,8 +1112,9 @@ class EntityController extends AbstractController {
         if (animation == null) {
             this.bAnimationOverride = false;
             this.animationOverride = null;
+            return 0;
         }
-        else if (this.hasAnimationGroup(animation)) {
+        if (this.hasAnimationGroup(animation)) {
             this.animationGroups[animation].setWeightForAllAnimatables(1);
             this.animationOverride = animation;
             this.beginAnimation(animation);
@@ -1134,6 +1127,7 @@ class EntityController extends AbstractController {
     stopAllAnimations() {
         for (let id in this.animationGroups) {
             this.animationGroups[id].setWeightForAllAnimatables(0);
+            this.animationGroups[id].stop();
         }
         return 0;
     }
@@ -1150,10 +1144,7 @@ class EntityController extends AbstractController {
         return 0;
     }
     beginAnimation(animation) {
-        if (this.bUseAnimationGroups) {
-            return this.beginAnimationWithGroups(animation);
-        }
-        return this.beginAnimationWithAnimatables(animation);
+        return this.beginAnimationWithGroups(animation);
     }
     /**
      * 
@@ -1212,6 +1203,7 @@ class EntityController extends AbstractController {
         if (this.bAnimationStopped || this.animationPriority >= 2) {
             return 1;
         }
+        return 99;
         if (!(animation instanceof BABYLON.AnimationGroup)) {
             if (this.animationGroups.hasOwnProperty(animation)) {
                 animation = this.animationGroups[animation];
@@ -1248,60 +1240,22 @@ class EntityController extends AbstractController {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
-        if (this.skeleton.getAnimationRange("99_default") != null) {
-            this.createAnimatableFromRangeName("default", "99_default", false);
-        }
-        if (this.skeleton.getAnimationRange("10_closed01") != null) {
-            this.createAnimatableFromRangeName("closed", "10_closed01", false);
-        }
-        if (this.skeleton.getAnimationRange("80_open01") != null) {
-            this.createAnimatableFromRangeName("open", "80_open01", false);
-        }
-        if (this.skeleton.getAnimationRange("10_opened01") != null) {
-            this.createAnimatableFromRangeName("opened", "10_opened01", false);
-        }
-        if (this.skeleton.getAnimationRange("80_close01") != null) {
-            this.createAnimatableFromRangeName("close", "80_close01", false);
-        }
+        this.createAnimatableFromRangeName("default", "99_default", false);
+        this.createAnimatableFromRangeName("closed", "10_closed01", false);
+        this.createAnimatableFromRangeName("open", "80_open01", false);
+        this.createAnimatableFromRangeName("opened", "10_opened01", false);
+        this.createAnimatableFromRangeName("close", "80_close01", false);
         return 0;
     }
     populateAnimationGroups() {
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
             return 1;
         }
-        if (this.hasAnimatable("default"))
-            this.createAnimationGroupFromAnimatables("default", "default", 0.0, false);
-        if (this.hasAnimatable("opened"))
-            this.createAnimationGroupFromAnimatables("opened", "opened", 0.0, false);
-        if (this.hasAnimatable("closed"))
-            this.createAnimationGroupFromAnimatables("closed", "closed", 0.0, false);
-        if (this.hasAnimatable("open"))
-            this.createAnimationGroupFromAnimatables("open", "open", 0.0, false);
-        if (this.hasAnimatable("close"))
-            this.createAnimationGroupFromAnimatables("close", "close", 1.0, false);
-        for (let id in this.animationGroups) {
-            if (id == "default") {
-                continue;
-            }
-            this.animationGroups[id].setWeightForAllAnimatables(0.0);
-            this.animationGroups[id].stop(false);
-        }
         return 0;
     }
     doOpen() {
         if (this.animated) {
-            if (this.hasAnimationGroup("closed"))
-                this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
-            if (this.hasAnimationGroup("close")) {
-                this.animationGroups["close"].stop(false);
-                this.animationGroups["close"].setWeightForAllAnimatables(0.0);
-            }
-            if (this.hasAnimationGroup("opened"))
-                this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
-            if (this.hasAnimationGroup("open")) {
-                this.animationGroups["open"].setWeightForAllAnimatables(1.0);
-                this.animationGroups["open"].play(false);
-            }
+            this.beginAnimation("open");
         }
         this.addHiddenAvailableAction(ActionEnum.OPEN);
         this.removeHiddenAvailableAction(ActionEnum.CLOSE);
@@ -1310,18 +1264,7 @@ class EntityController extends AbstractController {
     }
     doClose() {
         if (this.animated) {
-            if (this.hasAnimationGroup("opened"))
-                this.animationGroups["opened"].setWeightForAllAnimatables(0.0);
-            if (this.hasAnimationGroup("open")) {
-                this.animationGroups["open"].stop(false);
-                this.animationGroups["open"].setWeightForAllAnimatables(0.0);
-            }
-            if (this.hasAnimationGroup("closed"))
-                this.animationGroups["closed"].setWeightForAllAnimatables(0.0);
-            if (this.hasAnimationGroup("close")) {
-                this.animationGroups["close"].setWeightForAllAnimatables(1.0);
-                this.animationGroups["close"].play(false);
-            }
+            this.beginAnimation("close");
         }
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
         this.removeHiddenAvailableAction(ActionEnum.OPEN);
@@ -1355,8 +1298,14 @@ class EntityController extends AbstractController {
         return 0;
     }
 
+    resetDefaultAction() {
+        this.defaultAction = this.previousDefaultAction;
+        this.previousDefaultAction = ActionEnum.LOOK;
+        return 0;
+    }
     setDefaultAction(actionEnum) {
         actionEnum = Tools.filterEnum(actionEnum, ActionEnum);
+        this.previousDefaultAction = this.defaultAction;
         this.defaultAction = actionEnum;
         return 0;
     }
