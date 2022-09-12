@@ -62,8 +62,8 @@
     "ingot01": "resources/meshes/items/misc.babylon",
     "trumpet01": "resources/meshes/items/misc.babylon",
     "oreRefined01": "resources/meshes/items/misc.babylon",
-    "oreRefined01": "resources/meshes/items/misc.babylon",
-    "oreRefined01": "resources/meshes/items/misc.babylon",
+    "oreRefined02": "resources/meshes/items/misc.babylon",
+    "oreRefined03": "resources/meshes/items/misc.babylon",
     "gear8Teeth": "resources/meshes/items/misc.babylon",
     "mountainChocolateBar01": "resources/meshes/items/food01.babylon",
     "mountainChocolateWrapper01": "resources/dmeshes/items/food01.babylon",
@@ -334,6 +334,5 @@
     "lotionBottleSqueeze01": "resources/meshes/static/lotionBottles.babylon",
     "lotionBottlePush01": "resources/meshes/static/lotionBottles.babylon",
     "animatedOven01": "resources/meshes/static/animatedOven01.babylon",
-    "animatedBuickGrandNational": "resources/meshes/vehicles/animatedBuickGrandNational.babylon",
-    "animatedChest01": "resources/meshes/static/animatedChest.babylon"
+    "animatedBuickGrandNational": "resources/meshes/vehicles/animatedBuickGrandNational.babylon"
 }
