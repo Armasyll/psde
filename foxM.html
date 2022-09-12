@@ -6,11 +6,11 @@
         <title>Babylon.js sample code</title>
 
         <!-- Babylon.js -->
-        <script src="vendors/babylonjs/cannon.js"></script>
-        <script src="vendors/babylonjs/babylon.js"></script>
-        <script src="vendors/babylonjs/loaders/babylonjs.loaders.min.js"></script>
-        <script src="vendors/babylonjs/loaders/babylon.glTF2FileLoader.min.js"></script>
-        <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+        <script src="vendors/babylonjs-5.23.0/cannon.js"></script>
+        <script src="vendors/babylonjs-5.23.0/babylon.js"></script>
+        <script src="vendors/babylonjs-5.23.0/loaders/babylonjs.loaders.min.js"></script>
+        <script src="vendors/babylonjs-5.23.0/loaders/babylon.glTF2FileLoader.min.js"></script>
+        <script src="vendors/babylonjs-5.23.0/babylon.gui.min.js"></script>
 
         <style>
             html, body {
@@ -65,8 +65,7 @@
         	var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, -1.0), scene);
         	light2.position = new BABYLON.Vector3(0, 5, 5);
         
-        	// Model by Mixamo
-        	BABYLON.SceneLoader.ImportMesh("", "./resources/meshes/characters/", "xbotF.glb", scene, function (newMeshes) {
+        	BABYLON.SceneLoader.ImportMesh("", "./resources/meshes/characters/", "foxM.glb", scene, function (newMeshes) {
         		for (var index = 0; index < newMeshes.length; index++) {
         			newMeshes[index].receiveShadows = false;;
         		}
