@@ -65,14 +65,8 @@
         	var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, -1.0), scene);
         	light2.position = new BABYLON.Vector3(0, 5, 5);
         
-        	// Shadows
-        	var shadowGenerator = new BABYLON.ShadowGenerator(1024, light2);
-        	shadowGenerator.useBlurExponentialShadowMap = true;
-        	shadowGenerator.blurKernel = 32;
-        
         	// Model by Mixamo
-        	BABYLON.SceneLoader.ImportMesh("", "./resources/meshes/characters/", "foxM.glb", scene, function (newMeshes) {
-        		shadowGenerator.addShadowCaster(scene.meshes[0], true);
+        	BABYLON.SceneLoader.ImportMesh("", "./resources/meshes/characters/", "xbotF.glb", scene, function (newMeshes) {
         		for (var index = 0; index < newMeshes.length; index++) {
         			newMeshes[index].receiveShadows = false;;
         		}
