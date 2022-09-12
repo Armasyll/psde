@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="vendors/babylonjs/cannon.js"></script>
+        <script src="vendors/babylonjs/babylon.js"></script>
+        <script src="vendors/babylonjs/loaders/babylonjs.loaders.min.js"></script>
+        <script src="vendors/babylonjs/loaders/babylon.glTF2FileLoader.min.js"></script>
+        <script src="vendors/babylonjs/babylon.gui.min.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var startRenderLoop = function (engine, canvas) {
+            engine.runRenderLoop(function () {
+                if (sceneToRender && sceneToRender.activeCamera) {
+                    sceneToRender.render();
+                }
+            });
+        }
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        var delayCreateScene = function () {
+        	engine.enableOfflineSupport = false;
+        	engine.displayLoadingUI();
+        	var scene = new BABYLON.Scene(engine);
+        
+        	// Camera
+        	var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 3, new BABYLON.Vector3(0, 1, 0), scene);
+        	camera.attachControl(canvas, true);
+        	camera.lowerRadiusLimit = 2;
+        	camera.upperRadiusLimit = 10;
+        	camera.wheelDeltaPercentage = 0.01;
+        
+        	// Lights
+        	var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+        	light.intensity = 0.6;
+        	light.specular = BABYLON.Color3.Black();
+        
+        	var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, -1.0), scene);
+        	light2.position = new BABYLON.Vector3(0, 5, 5);
+        
+        	// Shadows
+        	var shadowGenerator = new BABYLON.ShadowGenerator(1024, light2);
+        	shadowGenerator.useBlurExponentialShadowMap = true;
+        	shadowGenerator.blurKernel = 32;
+        
+        	// Model by Mixamo
+        	BABYLON.SceneLoader.ImportMesh("", "./resources/meshes/characters/", "foxM.glb", scene, function (newMeshes) {
+        		shadowGenerator.addShadowCaster(scene.meshes[0], true);
+        		for (var index = 0; index < newMeshes.length; index++) {
+        			newMeshes[index].receiveShadows = false;;
+        		}
+        
+        		var helper = scene.createDefaultEnvironment({
+        			enableGroundShadow: true
+        		});
+        		helper.setMainColor(BABYLON.Color3.Gray());
+        		helper.ground.position.y += 0.01;
+        
+        		// Initialize override animations, turn on idle by default
+        		var idleAnim = scene.animationGroups.find(a => a.name === 'action_idle');
+        		var idleParam = { name: "Idle", anim: idleAnim, weight: 1 };
+        		idleAnim.play(true);
+        		idleAnim.setWeightForAllAnimatables(1);
+        
+        		var walkAnim = scene.animationGroups.find(a => a.name === 'action_walking');
+        		var walkParam = { name: "Walking", anim: walkAnim, weight: 0 };
+        		walkAnim.play(true);
+        		walkAnim.setWeightForAllAnimatables(0);
+        
+        		var runAnim = scene.animationGroups.find(a => a.name === 'action_running');
+        		var runParam = { name: "Running", anim: runAnim, weight: 0 };
+        		runAnim.play(true);
+        		runAnim.setWeightForAllAnimatables(0);
+        
+        		var punchAnim = scene.animationGroups.find(a => a.name === 'action_punch_r');
+        		var punchParam = { name: "Punching", anim: punchAnim, weight: 0 };
+        		punchAnim.play(true);
+        		punchAnim.setWeightForAllAnimatables(0);
+        
+        		// Initialize additive poses. Slice of reference pose at first frame
+        		var standPoseAnim = BABYLON.AnimationGroup.MakeAnimationAdditive(scene.animationGroups.find(a => a.name === 'pose_stand'));
+        		var standPoseParam = { name: "Stand Pose", anim: standPoseAnim, weight: 0 };
+        		standPoseAnim.start(true, 1, 0.03333333507180214 * 60, 0.03333333507180214 * 60);
+        
+        		var crouchPoseAnim = BABYLON.AnimationGroup.MakeAnimationAdditive(scene.animationGroups.find(a => a.name === 'pose_crouch'));
+        		var crouchPoseParam = { name: "Crouch Pose", anim: crouchPoseAnim, weight: 0 };
+        		crouchPoseAnim.start(true, 1, 0.03333333507180214 * 60, 0.03333333507180214 * 60);
+        
+        		// Initialize additive animations
+        		var pronePoseAnim = BABYLON.AnimationGroup.MakeAnimationAdditive(scene.animationGroups.find(a => a.name === 'pose_prone'));
+        		var pronePoseParam = { name: "Prone Pose", anim: pronePoseAnim, weight: 0 };
+        		pronePoseAnim.start(true, 1, 0.03333333507180214 * 60, 0.03333333507180214 * 60);
+        
+        		// UI
+        		var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        		var UiPanel = new BABYLON.GUI.StackPanel();
+        		UiPanel.width = "220px";
+        		UiPanel.fontSize = "14px";
+        		UiPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        		UiPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        		advancedTexture.addControl(UiPanel);
+        
+        		// Keep track of the current override animation
+        		var currentParam = idleParam;
+        
+        		function onBeforeAnimation() {
+        			// Increment the weight of the current override animation
+        			if (currentParam) {
+        				currentParam.weight = BABYLON.Scalar.Clamp(currentParam.weight + 0.01, 0, 1);
+        				currentParam.anim.setWeightForAllAnimatables(currentParam.weight);
+        			}
+        
+        			// Decrement the weight of all override animations that aren't current
+        			if (currentParam !== idleParam) {
+        				idleParam.weight = BABYLON.Scalar.Clamp(idleParam.weight - 0.01, 0, 1);
+        				idleParam.anim.setWeightForAllAnimatables(idleParam.weight);
+        			}
+        
+        			if (currentParam !== walkParam) {
+        				walkParam.weight = BABYLON.Scalar.Clamp(walkParam.weight - 0.01, 0, 1);
+        				walkParam.anim.setWeightForAllAnimatables(walkParam.weight);
+        			}
+        
+        			if (currentParam !== runParam) {
+        				runParam.weight = BABYLON.Scalar.Clamp(runParam.weight - 0.01, 0, 1);
+        				runParam.anim.setWeightForAllAnimatables(runParam.weight);
+        			}
+        
+        			if (currentParam !== punchParam) {
+        				punchParam.weight = BABYLON.Scalar.Clamp(punchParam.weight - 0.01, 0, 1);
+        				punchParam.anim.setWeightForAllAnimatables(punchParam.weight);
+        			}
+        
+        			// Remove the callback the current animation weight reaches 1 or
+        			// when all override animations reach 0 when current is undefined
+        			if ((currentParam && currentParam.weight === 1)
+        				|| (idleParam.weight === 0 && walkParam.weight === 0 && runParam.weight === 0 && punchParam.weight === 0)) {
+        				scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);
+        			}
+        		};
+        
+        		// Button for blending to bind pose
+        		var button = BABYLON.GUI.Button.CreateSimpleButton("but0", "None");
+        		button.paddingTop = "10px";
+        		button.width = "100px";
+        		button.height = "50px";
+        		button.color = "white";
+        		button.background = "green";
+        		button.onPointerDownObservable.add(function () {
+        			// Remove current animation
+        			currentParam = undefined;
+        
+        			// Restart animation observer
+        			scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);
+        			scene.onBeforeAnimationsObservable.add(onBeforeAnimation);
+        		});
+        		UiPanel.addControl(button);
+        
+        		// Button for blending to idle
+        		var button = BABYLON.GUI.Button.CreateSimpleButton("but0", "Idle");
+        		button.paddingTop = "10px";
+        		button.width = "100px";
+        		button.height = "50px";
+        		button.color = "white";
+        		button.background = "green";
+        		button.onPointerDownObservable.add(function () {
+        			// Do nothing if idle is already the current animation
+        			if (currentParam === idleParam) {
+        				return;
+        			}
+        
+        			// Restart animation observer with idle set to current
+        			scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);	
+        			currentParam = idleParam;
+        			scene.onBeforeAnimationsObservable.add(onBeforeAnimation);
+        		});
+        		UiPanel.addControl(button);
+        
+        		// Button for blending to walk
+        		button = BABYLON.GUI.Button.CreateSimpleButton("but0", "Walk");
+        		button.paddingTop = "10px";
+        		button.width = "100px";
+        		button.height = "50px";
+        		button.color = "white";
+        		button.background = "green";
+        		button.onPointerDownObservable.add(function () {
+        			// Do nothing if walk is already the current animation
+        			if (currentParam === walkParam) {
+        				return;
+        			}
+        
+        			// Synchronize animations
+        			if (currentParam) {
+        				walkParam.anim.syncAllAnimationsWith(null);
+        				currentParam.anim.syncAllAnimationsWith(walkParam.anim.animatables[0]);
+        			}
+        
+        			// Restart animation observer with walk set to current
+        			scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);	
+        			currentParam = walkParam;
+        			scene.onBeforeAnimationsObservable.add(onBeforeAnimation);
+        		});
+        		UiPanel.addControl(button);
+        
+        		// Button for blending to run
+        		button = BABYLON.GUI.Button.CreateSimpleButton("but0", "Run");
+        		button.paddingTop = "10px";
+        		button.width = "100px";
+        		button.height = "50px";
+        		button.color = "white";
+        		button.background = "green";
+        		button.onPointerDownObservable.add(function () {
+        			// Do nothing if run is already the current animation
+        			if (currentParam === runParam) {
+        				return;
+        			}
+        
+        			// Synchronize animations
+        			if (currentParam) {
+        				runParam.anim.syncAllAnimationsWith(null);
+        				currentParam.anim.syncAllAnimationsWith(runParam.anim.animatables[0]);
+        			}
+        
+        			// Restart animation observer with run set to current
+        			scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);	
+        			currentParam = runParam;
+        			scene.onBeforeAnimationsObservable.add(onBeforeAnimation);
+        		});
+        		UiPanel.addControl(button);
+        
+        		// Button for blending to punch
+        		button = BABYLON.GUI.Button.CreateSimpleButton("but0", "Punch");
+        		button.paddingTop = "10px";
+        		button.width = "100px";
+        		button.height = "50px";
+        		button.color = "white";
+        		button.background = "green";
+        		button.onPointerDownObservable.add(function () {
+        			// Do nothing if run is already the current animation
+        			if (currentParam === punchParam) {
+        				return;
+        			}
+        
+        			// Synchronize animations
+        			if (currentParam) {
+        				punchParam.anim.syncAllAnimationsWith(null);
+        				currentParam.anim.syncAllAnimationsWith(punchParam.anim.animatables[0]);
+        			}
+        
+        			// Restart animation observer with run set to current
+        			scene.onBeforeAnimationsObservable.removeCallback(onBeforeAnimation);	
+        			currentParam = punchParam;
+        			scene.onBeforeAnimationsObservable.add(onBeforeAnimation);
+        		});
+        		UiPanel.addControl(button);
+        
+        		// Create a slider to control the weight of each additive pose/animation
+        		var params = [
+        			standPoseParam,
+        			crouchPoseParam,
+        			pronePoseParam
+        		]
+        		params.forEach((param) => {
+        			// Label
+        			var header = new BABYLON.GUI.TextBlock();
+        			header.text = param.name + ":" + param.weight.toFixed(2);
+        			header.height = "40px";
+        			header.color = "green";
+        			header.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        			header.paddingTop = "10px";
+        			UiPanel.addControl(header);
+        
+        			// Slider
+        			var slider = new BABYLON.GUI.Slider();
+        			slider.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        			slider.minimum = 0;
+        			slider.maximum = 1;
+        			slider.color = "green";
+        			slider.value = param.anim.weight;
+        			slider.height = "20px";
+        			slider.width = "205px";
+        			UiPanel.addControl(slider);
+        
+        			// Update animation weight value according to slider value
+        			slider.onValueChangedObservable.add((v) => {
+        				param.anim.setWeightForAllAnimatables(v);
+        				param.weight = v;
+        				header.text = param.name + ":" + param.weight.toFixed(2);
+        			})
+        			param.anim._slider = slider;
+        			slider.value = param.weight;
+        		});
+        
+        		engine.hideLoadingUI();
+        	}, function () {
+        	});
+        
+        	return scene;
+        }
+                window.initFunction = async function() {
+                    
+                    
+                    var asyncEngineCreation = async function() {
+                        try {
+                        return createDefaultEngine();
+                        } catch(e) {
+                        console.log("the available createEngine function failed. Creating the default engine instead");
+                        return createDefaultEngine();
+                        }
+                    }
+
+                    window.engine = await asyncEngineCreation();
+        if (!engine) throw 'engine should not be null.';
+        startRenderLoop(engine, canvas);
+        window.scene = delayCreateScene();};
+        initFunction().then(() => {sceneToRender = scene                    
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
