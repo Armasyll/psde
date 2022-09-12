@@ -68,7 +68,7 @@ class DebugGameGUI {
                 title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
                 title.text = "Selection Menu";
             titleBar.addControl(title);
-            let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
+            let closeButton = BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
                 closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 closeButton.width = GameGUI.getFontSize(2);
                 closeButton.height = GameGUI.getFontSize(2);
@@ -92,7 +92,7 @@ class DebugGameGUI {
                 title.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
                 title.width = String(titleBar.widthInPixels - GameGUI.getFontSizeInPixels(2)).concat("px");
                 title.text = "Skybox UI Controller";
-            let closeButton = new BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
+            let closeButton = BABYLON.GUI.Button.CreateSimpleButton("selectionMenuCloseButton", "X");
                 closeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 closeButton.width = GameGUI.getFontSize(2);
                 closeButton.height = GameGUI.getFontSize(2);
