@@ -802,6 +802,7 @@ class CreatureController extends EntityController {
         if (!(this.focusMesh instanceof BABYLON.AbstractMesh)) {
             return 1;
         }
+        //console.log(`Running <CreatureController> ${this.id}.updateTargetRay()`);
         /* Use this.bones["FOCUS"] instead of this.focusMesh; the position used needs to be relative to the mesh */
         if (!(this.targetRay instanceof BABYLON.Ray)) {
             this.targetRay = new BABYLON.Ray(this.bones["FOCUS"].getAbsolutePosition(), this.bones["FOCUS"].getAbsolutePosition().add(this.collisionMesh.calcMovePOV(0,0,1)), 2 * this.collisionMesh.scaling.y);

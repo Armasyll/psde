@@ -3881,7 +3881,9 @@ class Game {
         if (!Game.hasPlayerController() || !Game.playerController.hasMesh() || !Game.playerController.hasSkeleton()) {
             return 1;
         }
+        //console.log("Running Game.castTargetRay()");
         Game.playerController.targetRay = Game.camera.getForwardRay(2 * Game.playerController.meshes[0].scaling.y, Game.camera.getWorldMatrix(), Game.camera.getTarget());
+        Game.playerController.targetRay.origin = Game.camera.lockedTarget.absolutePosition;
         if (Game.debugMode) {
             if (Game.playerController.targetRayHelper != null) {
                 Game.playerController.targetRayHelper.dispose();

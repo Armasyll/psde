@@ -74,7 +74,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             return 0;
         }
-        this.updateTargetRay();
+        //this.updateTargetRay();
         this.moving = false;
         if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
             this.doMove();
