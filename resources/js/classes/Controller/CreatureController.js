@@ -1077,7 +1077,7 @@ class CreatureController extends EntityController {
                         continue;
                     }
                     let otherMesh = Game.getMesh(otherMeshID);
-                    if (otherMesh.name == attachmentMap[fBoneID]["meshID"]) {
+                    if (attachmentMap[fBoneID].hasOwnProperty("meshID") && otherMesh.name == attachmentMap[fBoneID]["meshID"]) {
                         this.detachMeshFromBone(otherMesh, fBoneID, true);
                     }
                 }
