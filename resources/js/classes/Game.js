@@ -331,6 +331,7 @@ class Game {
         Game.skybox = new BABYLON.MeshBuilder.CreateBox("skybox", {"size":1024.0}, Game.scene);
 
         Game.loadDefaultAssets();
+        Game.loadedDefaultAssetsAfterObservable = false;
 
         Game.updateMenuKeyboardDisplayKeys();
         /**
@@ -906,14 +907,22 @@ class Game {
         return 0;
     }
     static loadDefaultAssets() {
+        Game.loadedDefaultAssetsAfterObservable = false;
         Game.loadDefaultTextures();
         if (!Game.useNative) Game.loadDefaultImages(); // Problem in BabylonNative
         Game.loadDefaultMaterials();
         Game.loadDefaultMeshes();
-        if (!Game.useNative) Game.loadDefaultSounds(); // Problem in BabylonNative
-        if (!Game.useNative) Game.loadDefaultVideos(); // Problem in BabylonNative
         Game.importDefaultMaterials();
         Game.importDefaultMeshes();
+        return 0;
+    }
+    static loadDefaultAssetsAfterObservable() {
+        if (Game.loadedDefaultAssetsAfterObservable) {
+            return 0;
+        }
+        Game.loadedDefaultAssetsAfterObservable = true;
+        if (!Game.useNative) Game.loadDefaultSounds(); // Problem in BabylonNative
+        if (!Game.useNative) Game.loadDefaultVideos(); // Problem in BabylonNative
         return 0;
     }
     static loadDefaultImages() {
@@ -4045,6 +4054,9 @@ class Game {
     }
     static afterPointerLock(event) {
         Game.updateInterfaceMode();
+        if (!Game.loadedDefaultAssetsAfterObservable) {
+            Game.loadDefaultAssetsAfterObservable();
+        }
         return 0;
     }
     static pointerLockChange(event) {
@@ -5412,6 +5424,7 @@ class Game {
                 Game.removeTexture(id);
             }
             Game.loadDefaultAssets();
+            Game.loadDefaultAssetsAfterObservable();
         }
         Callback.run(parentCallbackID);
         return 0;
