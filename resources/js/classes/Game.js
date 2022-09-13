@@ -740,6 +740,7 @@ class Game {
     }
     static preInitCamera() {
         if (Game.camera instanceof BABYLON.Camera) {
+            Game.backupCameraTransforms();
             Game.defaultPipeline.removeCamera(Game.camera);
             Game.detachCamera();
         }
@@ -747,8 +748,12 @@ class Game {
         Game.initPointerEventListeners();
         return 0;
     }
+    static postInitCamera() {
+        Game.overwriteCameraTransforms();
+        return 0;
+    }
     static initFollowCamera(offset = BABYLON.Vector3.Zero()) {
-        Game.preInitCameras();
+        Game.preInitCamera();
         if (!(Game.playerController instanceof EntityController) || !(Game.playerController.getBoneByName("FOCUS") instanceof BABYLON.Bone)) {
             return 1;
         }
@@ -768,7 +773,6 @@ class Game {
         //Game.camera.keysRight = [];
         //Game.camera.keysUp = [];
         //Game.camera.keysDown = [];
-        Game.overwriteCameraTransforms();
         if (Game.useNative) {}
         else {
             Game.camera.attachControl(Game.canvas, false);
@@ -781,6 +785,7 @@ class Game {
         Game.camera.cameraAcceleration = 0.0035;
         Game.camera.maxSpeed = 1;
         Game.camera.lockedTarget = Game.playerController.focusMesh;
+        Game.postInitCamera();
         Game.initPostProcessing();
         return 0;
     }
@@ -807,7 +812,6 @@ class Game {
         Game.camera.keysRight = [];
         Game.camera.keysUp = [];
         Game.camera.keysDown = [];
-        Game.overwriteCameraTransforms();
         if (Game.useNative) {}
         else {
             Game.camera.attachControl(Game.canvas, false);
@@ -818,6 +822,7 @@ class Game {
         if (Game.useCameraRay) {
             Game.cameraRay = new BABYLON.Ray(Game.cameraFocus.absolutePosition, BABYLON.Vector3.Forward());
         }
+        Game.postInitCamera();
         Game.initPostProcessing();
         return 0;
     }
@@ -843,6 +848,7 @@ class Game {
             Game.camera.ellipsoid = new BABYLON.Vector3(0.1, 1.1, 0.1);
             Game.camera.checkCollisions = false;
         }
+        Game.postInitCamera();
         Game.initPostProcessing();
         return 0;
     }
@@ -3690,7 +3696,6 @@ class Game {
             return 1;
         }
         if (Game.playerController instanceof AbstractController) {
-            Game.backupCameraTransforms();
             Game.unassignPlayer();
         }
         let controller = AbstractController.get(controllerID);
@@ -3732,7 +3737,6 @@ class Game {
      */
     static unassignPlayer(parentCallbackID = null) {
         if (Game.debugMode) console.group(`Running Game.unassignPlayer(${parentCallbackID})`);
-        Game.overwriteCameraTransforms();
         Game.transformsWorkerPostMessage("clearPlayer", 0);
         Game.initFreeCamera(false);
         Game.gui.hud.playerPortrait.hide();
