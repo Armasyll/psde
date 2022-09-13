@@ -849,7 +849,6 @@ class Game {
     static detachCamera() {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.detachCamera()");
         Game.detachRenderLoops();
-        Game.detachPointerEventListeners();
         if (Game.camera instanceof BABYLON.Camera) {
             Game.defaultPipeline.removeCamera(Game.camera);
             Game.camera.dispose();
