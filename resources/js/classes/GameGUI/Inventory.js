@@ -31,16 +31,18 @@ class InventoryGameGUI {
         InventoryGameGUI.tabsAndItemsSummary = null;
         InventoryGameGUI.tAISWeightIcon = null;
         InventoryGameGUI.tAISWeight = null;
-        InventoryGameGUI.tAISMoneyIcon = null;
-        InventoryGameGUI.tAISMoney = null;
+        InventoryGameGUI.tAISSwitchActor = null;
+        InventoryGameGUI.tAISSwitchIcon = null;
+        InventoryGameGUI.tAISSwitchTarget = null;
         InventoryGameGUI.selectedSummary = null;
         InventoryGameGUI.selectedName = null;
         InventoryGameGUI.selectedImage = null;
         InventoryGameGUI.selectedDescription = null;
         InventoryGameGUI.selectedDetails = null;
         InventoryGameGUI.selectedActions = null;
-        InventoryGameGUI.targetController = null;
-        InventoryGameGUI.otherController = null;
+        InventoryGameGUI.targetController = "player";
+        InventoryGameGUI.otherController = "";
+        InventoryGameGUI.otherControllerSelected = false;
         InventoryGameGUI.selectedEntity = null;
         InventoryGameGUI.selectedTab = ItemEnum.GENERAL;
         InventoryGameGUI.interfaceMode = InterfaceModeEnum.MENU;
@@ -93,18 +95,19 @@ class InventoryGameGUI {
                 InventoryGameGUI.items.width = InventoryGameGUI.itemsContainer.width;
             InventoryGameGUI.tabsAndItemsSummary.height = GameGUI.getFontSize(4);
             InventoryGameGUI.tabsAndItemsSummary.width = InventoryGameGUI.tabsAndItems.width;
-                InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
+                /*InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
                 InventoryGameGUI.tAISWeightContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
                     InventoryGameGUI.tAISWeightIcon.height = InventoryGameGUI.tAISWeightContainer.height;
                     InventoryGameGUI.tAISWeightIcon.width = InventoryGameGUI.tAISWeightContainer.height;
-                    InventoryGameGUI.tAISWeight.height = InventoryGameGUI.tAISWeightContainer.height;
-                    InventoryGameGUI.tAISWeight.fontSize = InventoryGameGUI.tAISWeightContainer.height;
-                InventoryGameGUI.tAISMoneyContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                InventoryGameGUI.tAISMoneyContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
-                    InventoryGameGUI.tAISMoneyIcon.height = InventoryGameGUI.tAISMoneyContainer.height;
-                    InventoryGameGUI.tAISMoneyIcon.width = InventoryGameGUI.tAISMoneyContainer.height;
-                    InventoryGameGUI.tAISMoney.height = InventoryGameGUI.tAISMoneyContainer.height;
-                    InventoryGameGUI.tAISMoney.fontSize = InventoryGameGUI.tAISMoneyContainer.height;
+                    InventoryGameGUI.tAISWeight.height = InventoryGameGUI.tAISWeightContainer.height;*/
+                InventoryGameGUI.tAISSwitchContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
+                InventoryGameGUI.tAISSwitchContainer.widthInPixels = InventoryGameGUI.tabsAndItemsSummary.widthInPixels;
+                    InventoryGameGUI.tAISSwitchIcon.heightInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                    InventoryGameGUI.tAISSwitchIcon.widthInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                    InventoryGameGUI.tAISSwitchActor.heightInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                    InventoryGameGUI.tAISSwitchActor.widthInPixels = (InventoryGameGUI.tAISSwitchContainer.widthInPixels - InventoryGameGUI.tAISSwitchIcon.widthInPixels) / 2;
+                    InventoryGameGUI.tAISSwitchTarget.heightInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                    InventoryGameGUI.tAISSwitchTarget.widthInPixels = (InventoryGameGUI.tAISSwitchContainer.widthInPixels - InventoryGameGUI.tAISSwitchIcon.widthInPixels) / 2;
         InventoryGameGUI.selectedSummary.height = InventoryGameGUI.bodyContainer.height;
         InventoryGameGUI.selectedSummary.widthInPixels = Math.floor(InventoryGameGUI.bodyContainer.widthInPixels / 3);
             InventoryGameGUI.selectedName.width = InventoryGameGUI.selectedSummary.width;
@@ -120,7 +123,7 @@ class InventoryGameGUI {
         return 0;
     }
     static generateController() {
-        [InventoryGameGUI.controller, InventoryGameGUI.titleBar, InventoryGameGUI.title, InventoryGameGUI.closeButton, InventoryGameGUI.bodyContainer] = GameGUI.createWindow("inventory", "Inventory", InventoryGameGUI.defaultWidthInPixels, InventoryGameGUI.defaultHeightInPixels, 2);
+        [InventoryGameGUI.controller, InventoryGameGUI.titleBar, InventoryGameGUI.title, InventoryGameGUI.closeButton, InventoryGameGUI.bodyContainer] = GameGUI.createWindow("inventory", "Your Inventory", InventoryGameGUI.defaultWidthInPixels, InventoryGameGUI.defaultHeightInPixels, 2);
         InventoryGameGUI.bodyContainer.isVertical = false;
         InventoryGameGUI.tabsAndItems = GameGUI.createStackPanel("tabsAndItems");
             InventoryGameGUI.tabsAndItems.height = InventoryGameGUI.bodyContainer.height;
@@ -164,7 +167,7 @@ class InventoryGameGUI {
                 InventoryGameGUI.tabsAndItemsSummary.width = InventoryGameGUI.tabsAndItems.width;
                 InventoryGameGUI.tabsAndItemsSummary.isVertical = false;
                 InventoryGameGUI.tabsAndItems.addControl(InventoryGameGUI.tabsAndItemsSummary);
-                InventoryGameGUI.tAISWeightContainer = GameGUI.createStackPanel("tAISWeightContainer");
+                /*InventoryGameGUI.tAISWeightContainer = GameGUI.createStackPanel("tAISWeightContainer");
                     InventoryGameGUI.tAISWeightContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
                     InventoryGameGUI.tAISWeightContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
                     InventoryGameGUI.tAISWeightContainer.isVertical = false;
@@ -177,27 +180,26 @@ class InventoryGameGUI {
                         InventoryGameGUI.tAISWeight.widthInPixels = Math.floor(InventoryGameGUI.tAISWeightContainer.widthInPixels - InventoryGameGUI.tAISWeightIcon.widthInPixels);
                         InventoryGameGUI.tAISWeight.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
                         InventoryGameGUI.tAISWeight.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                        InventoryGameGUI.tAISWeight.fontSize = InventoryGameGUI.tAISWeightContainer.height;
                     InventoryGameGUI.tAISWeightContainer.addControl(InventoryGameGUI.tAISWeightIcon);
                     InventoryGameGUI.tAISWeightContainer.addControl(InventoryGameGUI.tAISWeight);
-                InventoryGameGUI.tabsAndItemsSummary.addControl(InventoryGameGUI.tAISWeightContainer);
-                InventoryGameGUI.tAISMoneyContainer = GameGUI.createStackPanel("tAISMoneyContainer");
-                    InventoryGameGUI.tAISMoneyContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
-                    InventoryGameGUI.tAISMoneyContainer.widthInPixels = Math.floor(InventoryGameGUI.tabsAndItemsSummary.widthInPixels / 2);
-                    InventoryGameGUI.tAISMoneyContainer.isVertical = false;
-                    InventoryGameGUI.tAISMoneyIcon = new BABYLON.GUI.Image("tAISMoneyIcon", Game.getIcon("genericMoneyIcon"));
-                        InventoryGameGUI.tAISMoneyIcon.height = InventoryGameGUI.tAISMoneyContainer.height;
-                        InventoryGameGUI.tAISMoneyIcon.width = InventoryGameGUI.tAISMoneyContainer.height;
-                        InventoryGameGUI.tAISMoneyIcon.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
-                    InventoryGameGUI.tAISMoney = GameGUI.createTextBlock("tAISMoney", "0");
-                        InventoryGameGUI.tAISMoney.height = InventoryGameGUI.tAISMoneyContainer.height;
-                        InventoryGameGUI.tAISMoney.widthInPixels = Math.floor(InventoryGameGUI.tAISMoneyContainer.widthInPixels - InventoryGameGUI.tAISMoneyIcon.widthInPixels);
-                        InventoryGameGUI.tAISMoney.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-                        InventoryGameGUI.tAISMoney.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-                        InventoryGameGUI.tAISMoney.fontSize = InventoryGameGUI.tAISMoneyContainer.height;
-                    InventoryGameGUI.tAISMoneyContainer.addControl(InventoryGameGUI.tAISMoneyIcon);
-                    InventoryGameGUI.tAISMoneyContainer.addControl(InventoryGameGUI.tAISMoney);
-                InventoryGameGUI.tabsAndItemsSummary.addControl(InventoryGameGUI.tAISMoneyContainer);
+                InventoryGameGUI.tabsAndItemsSummary.addControl(InventoryGameGUI.tAISWeightContainer);*/
+                InventoryGameGUI.tAISSwitchContainer = GameGUI.createStackPanel("tAISSwitchContainer");
+                    InventoryGameGUI.tAISSwitchContainer.height = InventoryGameGUI.tabsAndItemsSummary.height;
+                    InventoryGameGUI.tAISSwitchContainer.widthInPixels = InventoryGameGUI.tabsAndItemsSummary.widthInPixels;
+                    InventoryGameGUI.tAISSwitchContainer.isVertical = false;
+                    InventoryGameGUI.tAISSwitchIcon = GameGUI.createButton("tAISSwitchIcon", ">");
+                        InventoryGameGUI.tAISSwitchIcon.heightInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                        InventoryGameGUI.tAISSwitchIcon.widthInPixels = InventoryGameGUI.tAISSwitchContainer.heightInPixels;
+                    InventoryGameGUI.tAISSwitchActor = GameGUI.createTextBlock("tAISSwitchActor", "Player");
+                        InventoryGameGUI.tAISSwitchActor.height = InventoryGameGUI.tAISSwitchContainer.height;
+                        InventoryGameGUI.tAISSwitchActor.widthInPixels = Math.floor((InventoryGameGUI.tAISSwitchContainer.widthInPixels - InventoryGameGUI.tAISSwitchIcon.widthInPixels)/2);
+                    InventoryGameGUI.tAISSwitchTarget = GameGUI.createTextBlock("tAISSwitchTarget", "Target");
+                        InventoryGameGUI.tAISSwitchTarget.height = InventoryGameGUI.tAISSwitchContainer.height;
+                        InventoryGameGUI.tAISSwitchTarget.widthInPixels = Math.floor((InventoryGameGUI.tAISSwitchContainer.widthInPixels - InventoryGameGUI.tAISSwitchIcon.widthInPixels)/2);
+                    InventoryGameGUI.tAISSwitchContainer.addControl(InventoryGameGUI.tAISSwitchActor);
+                    InventoryGameGUI.tAISSwitchContainer.addControl(InventoryGameGUI.tAISSwitchIcon);
+                    InventoryGameGUI.tAISSwitchContainer.addControl(InventoryGameGUI.tAISSwitchTarget);
+                InventoryGameGUI.tabsAndItemsSummary.addControl(InventoryGameGUI.tAISSwitchContainer);
             InventoryGameGUI.bodyContainer.addControl(InventoryGameGUI.tabsAndItems);
             
             InventoryGameGUI.selectedSummary = GameGUI.createStackPanel("summary");
@@ -230,6 +232,9 @@ class InventoryGameGUI {
                     InventoryGameGUI.selectedSummary.addControl(InventoryGameGUI.selectedActions);
             InventoryGameGUI.bodyContainer.addControl(InventoryGameGUI.selectedSummary);
         
+        InventoryGameGUI.tAISSwitchIcon.onPointerUpObservable.add(function() {
+            InventoryGameGUI.switchController();
+        });
         InventoryGameGUI.closeButton.onPointerUpObservable.add(function() {
             InventoryGameGUI.clearSelected();
             InventoryGameGUI.hide();
@@ -256,8 +261,14 @@ class InventoryGameGUI {
         GameGUI.afterHide();
         return 0;
     }
-    static update() {
-        return InventoryGameGUI.set(InventoryGameGUI.targetController);
+    static update(parentCallbackID) {
+        if (InventoryGameGUI.otherControllerSelected) {
+            InventoryGameGUI.set(InventoryGameGUI.otherController);
+        }
+        else {
+            InventoryGameGUI.set(InventoryGameGUI.targetController);
+        }
+        return 0;
     }
     /**
      * Sets the inventory menu's content using an entity's inventory.
@@ -272,14 +283,53 @@ class InventoryGameGUI {
                 return 2;
             }
         }
+        InventoryGameGUI.targetController = entityController.id;
+        InventoryGameGUI.otherControllerSelected = false;
+        InventoryGameGUI.setPhaseTwo(entityController, parentCallbackID);
+        return 0;
+    }
+    static setOther(entityController = Game.playerController, parentCallbackID = null) {
+        if (!(entityController instanceof EntityController)) {
+            if (EntityController.has(entityController)) {
+                entityController = EntityController.get(entityController);
+            }
+            else {
+                return 2;
+            }
+        }
+        InventoryGameGUI.otherController = entityController.id;
+        InventoryGameGUI.otherControllerSelected = true;
+        InventoryGameGUI.setPhaseTwo(entityController, parentCallbackID);
+        return 0;
+    }
+    static setPhaseTwo(entityController, parentCallbackID) {
         let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setResponse);
+        Callback.create(callbackID, parentCallbackID, [entityController], InventoryGameGUI.setPhaseThree);
         Game.entityLogicWorkerPostMessage("getInventory", 0, {"entityID":entityController.entityID, "filter":InventoryGameGUI.selectedTab}, callbackID);
         return 0;
     }
-    static setResponse(entityController, response, parentCallbackID) {
-        InventoryGameGUI.targetController = entityController;
+    static setPhaseThree(entityController, response, parentCallbackID) {
         InventoryGameGUI.resize();
+        if (InventoryGameGUI.otherControllerSelected) {
+            let otherController = AbstractController.get(InventoryGameGUI.otherController);
+            let otherEntity = Game.getCachedEntity(otherController.entityID);
+            let theirName = "Their";
+            if (otherEntity instanceof Object && otherEntity.hasOwnProperty("name")) {
+                theirName = otherEntity.name;
+                if (['s', 'z'].contains(theirName.slice(-1).toLowerCase())) {
+                    theirName = theirName.concat('\'');
+                }
+                else {
+                    theirName = theirName.concat('\'s');
+                }
+            }
+            InventoryGameGUI.title.text = String(theirName).concat(" Inventory");
+            InventoryGameGUI.tAISSwitchIcon.children[0].text = "<";
+        }
+        else {
+            InventoryGameGUI.title.text = "Your Inventory";
+            InventoryGameGUI.tAISSwitchIcon.children[0].text = ">";
+        }
         for (let i = InventoryGameGUI.items.children.length - 1; i > -1; i--) {
             let entry = InventoryGameGUI.items.children[i];
             InventoryGameGUI.items.removeControl(entry);
@@ -298,20 +348,15 @@ class InventoryGameGUI {
                 itemsHeightInPixels += button.heightInPixels;
             };
             InventoryGameGUI.items.heightInPixels = Math.floor(itemsHeightInPixels);
-            InventoryGameGUI.tAISWeight.text = String(response.container.size);
-            InventoryGameGUI.tAISWeightContainer.isVisible = true;
             InventoryGameGUI.clearSelected();
         }
-        else {
-            InventoryGameGUI.tAISWeightContainer.isVisible = false;
+        return 0;
+    }
+    static switchController() {
+        if (InventoryGameGUI.otherController == null) {
+            return 0;
         }
-        if (response.hasOwnProperty("money")) {
-            InventoryGameGUI.tAISMoney.text = String(response.money);
-            InventoryGameGUI.tAISMoneyContainer.isVisible = true;
-        }
-        else {
-            InventoryGameGUI.tAISMoneyContainer.isVisible = false;
-        }
+        InventoryGameGUI.otherControllerSelected = !InventoryGameGUI.otherControllerSelected;
         return 0;
     }
     /**
@@ -351,17 +396,17 @@ class InventoryGameGUI {
         }
         return 0;
     }
-    static setSelectedResponsePhaseOne(itemID, targetController, actorController, response, parentCallbackID) {
+    static setSelectedResponsePhaseOne(itemID, response, parentCallbackID) {
         if (!response.hasItem) {
             InventoryGameGUI.clearSelected();
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseTwo);
+        Callback.create(callbackID, parentCallbackID, [itemID], InventoryGameGUI.setSelectedResponsePhaseTwo);
         Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":itemID}, callbackID);
         return 0;
     }
-    static setSelectedResponsePhaseTwo(itemID, targetController, actorController, response, parentCallbackID) {
+    static setSelectedResponsePhaseTwo(itemID, response, parentCallbackID) {
         InventoryGameGUI.selectedEntity = response;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);

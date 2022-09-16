@@ -647,6 +647,22 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
                 break;
             }
+            case "getInventories": {
+                let obj = {};
+                for (let entityID in message["entityIDs"]) {
+                    let entity = AbstractEntity.get(entityID);
+                    if (entity != 1 && entity.hasContainer()) {
+                        let entityObj = {};
+                        entityObj["id"] = entity.id;
+                        entityObj["controller"] = entity.id;
+                        entityObj["container"] = entity.container.objectifyMinimal(message["filter"]);
+                        entityObj["money"] = entity.money;
+                        obj[entity.id] = JSON.stringify(entityObj);
+                    }
+                }
+                EntityLogic.gameWorkerPostMessage("getInventories", 0, obj, callbackID);
+                break;
+            }
             case "getInventory": {
                 let obj = {};
                 let entity = AbstractEntity.get(message["entityID"]);
@@ -1001,8 +1017,18 @@ class EntityLogic {
         }
         return 0;
     }
-    static actionOpenContainer(target, actor, parentCallbackID) {
-        EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
+    static actionOpenContainer(target, actor, filter = "", parentCallbackID) {
+        if (!target.hasContainer()) {
+            return 0;
+        }
+        let obj = {};
+        let entityObj = {};
+        entityObj["id"] = target.id;
+        entityObj["entityType"] = target.entityType;
+        entityObj["controller"] = target.id;
+        entityObj["container"] = target.container.objectifyMinimal(filter);
+        obj[target.id] = JSON.stringify(entityObj);
+        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, callbackID);
         return 0;
     }
     static actionOpenDoor(target, actor, parentCallbackID) {

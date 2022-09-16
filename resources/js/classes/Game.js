@@ -5157,6 +5157,16 @@ class Game {
                 }
                 break;
             }
+            case "getInventories": {
+                if (status == 0) {
+                    for (let entry in message) {
+                        let json = JSON.parse(message[entry]);
+                        Game.updateCachedEntity(json.id, json);
+                    }
+                    Callback.run(callbackID, json);
+                }
+                break;
+            }
             case "getInventory": {
                 if (status == 0) {
                     let target = null;
