@@ -143,7 +143,9 @@ class Dialogue {
         obj["text"] = this.getText(target, actor);
         obj["options"] = {};
         for (let option in this.options) {
-            obj["options"][option] = this.options[option].objectify();
+            if (this.options[option].getCondition(target, actor)) {
+                obj["options"][option] = this.options[option].objectify();
+            }
         }
         obj["parentOptions"] = {};
         for (let option in this.parentOptions) {
@@ -299,7 +301,7 @@ class DialogueOption {
             obj["dialogue"] = null;
         }
         obj["title"] = this.title;
-        obj["condition"] = this.condition;
+        //obj["condition"] = this.condition;
         obj["className"] = this.getClassName();
         return obj;
     }

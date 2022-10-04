@@ -5018,8 +5018,7 @@ class Game {
             }
             case "actionTalk": {
                 if (status == 0) {
-                    let json = JSON.parse(message);
-                    Callback.run(callbackID, json);
+                    Callback.run(callbackID, message);
                 }
                 else {
                     Callback.setRun(callbackID, true, 2);

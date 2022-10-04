@@ -375,8 +375,10 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("actionTalk", 1, "Dialogue doesn't exist.", callbackID);
                     break;
                 }
+                /** @type {Dialogue} dialogue */
                 let dialogue = Dialogue.get(target.getDialogue());
-                EntityLogic.gameWorkerPostMessage("actionTalk", 0, dialogue.stringify(target, actor), callbackID);
+                let dialogueObject = dialogue.objectify(target, actor);
+                EntityLogic.gameWorkerPostMessage("actionTalk", 0, dialogueObject, callbackID);
                 break;
             }
             case "actionUnequip": {
