@@ -182,6 +182,7 @@ class Game {
         Game.playerEntityID = null;
         Game.playerController = null;
         Game.selectedCellID = "packstreetApartment3";
+        Game.selectedPosition = new BABYLON.Vector3(3, 0, -17);
         Game.currentCellID = null;
         Game.previousCellID = null;
         Game.targetRayEnabled = true;
@@ -237,39 +238,55 @@ class Game {
         Game.entityLogicTransformsChannel = null;
         Game.eventListeners = {};
         Game.sceneExecuteCodeActions = {};
-
-        if (options.hasOwnProperty("assumeInitialized")) {
-            Game.assumeInitialized = options["assumeInitialized"] === true;
-        }
-        if (options.hasOwnProperty("assumeCurrentCellID")) {
-            Game.assumeCurrentCellID = String(options["assumeCurrentCellID"]);
-        }
-        if (options.hasOwnProperty("rootDirectory")) {
-            Game.rootDirectory = String(options["rootDirectory"]);
-        }
-        if (options.hasOwnProperty("debugMode")) {
-            Game.debugMode = options["debugMode"] === true;
-        }
-        if (options.hasOwnProperty("debugVerbosity")) {
-            Game.debugVerbosity = Number.parseInt(options["debugVerbosity"]) || 2;
-        }
-        if (options.hasOwnProperty("useNative")) {
-            Game.useNative = options["useNative"] === true;
-        }
-        if (options.hasOwnProperty("useRigidBodies")) {
-            Game.useRigidBodies = options["useRigidBodies"] === true;
-        }
-        if (options.hasOwnProperty("useShadows")) {
-            Game.useShadows = options["useShadows"] === true;
-        }
-        if (options.hasOwnProperty("showCollisionBoxes")) {
-            Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
-        }
-        if (options.hasOwnProperty("meatyThwack")) {
-            Game._playSoundTest = true;
-        }
-        if (options.hasOwnProperty("cellID")) {
-            Game.selectedCellID = options["cellID"];
+        for (let option in options) {
+            switch (option) {
+                case "assumeInitialized": {
+                    Game.assumeInitialized = options["assumeInitialized"] === true;
+                    break;
+                }
+                case "assumeCurrentCellID": {
+                    Game.assumeCurrentCellID = String(options["assumeCurrentCellID"]);
+                    break;
+                }
+                case "rootDirectory": {
+                    Game.rootDirectory = String(options["rootDirectory"]);
+                    break;
+                }
+                case "debugMode": {
+                    Game.debugMode = options["debugMode"] === true;
+                    break;
+                }
+                case "debugVerbosity": {
+                    Game.debugVerbosity = Number.parseInt(options["debugVerbosity"]) || 2;
+                    break;
+                }
+                case "useNative": {
+                    Game.useNative = options["useNative"] === true;
+                    break;
+                }
+                case "useRigidBodies": {
+                    Game.useRigidBodies = options["useRigidBodies"] === true;
+                    break;
+                }
+                case "useShadows": {
+                    Game.useShadows = options["useShadows"] === true;
+                    break;
+                }
+                case "showCollisionBoxes": {
+                    Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
+                    break;
+                }
+                case "meatyThwack": {
+                    Game._playSoundTest = true;
+                    break;
+                }
+                case "cell":
+                case "cellID": {
+                    Game.selectedCellID = options["cellID"];
+                    Game.selectedPosition.set(0,0,0);
+                    break;
+                }
+            }
         }
         Game.initializePhaseTwo();
     }
@@ -4708,7 +4725,7 @@ class Game {
         Game.entityLogicWorkerPostMessage("loadEntitiesResponse", 0, null, parentCallbackID);
         return 0;
     }
-    static loadCellAndSetPlayerAt(cellID = Game.selectedCellID, position = [3,0,-17], rotation = [0,0,0], options = null) {
+    static loadCellAndSetPlayerAt(cellID = Game.selectedCellID, position = [0,0,0], rotation = [0,0,0], options = null) {
         Game.entityLogicWorkerPostMessage("loadCellAndSetPlayerAt", 0, { "cellID": cellID, "position": position, "rotation": rotation });
         return 0;
     }
