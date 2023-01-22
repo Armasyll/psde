@@ -1,0 +1,75 @@
+{
+    "id":"televisionTest",
+    "name":"Television Test Cell",
+    "barrier":4,
+    "materials":[
+        ["greenWallpaperPlainWood", "greenWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["yellowWallpaperPlainWood", "yellowWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["pinkWallpaperPlainWood", "pinkWallpaperPlainWood", null, {"hasAlpha":true}],
+        ["whiteWallpaperPlainWood", "whiteWallpaperPlainWood", null, {"hasAlpha":true}]
+    ],
+    "meshGroups":{
+        "ramps":[],
+        "planes":[],
+        "walls":[],
+        "tiledGrounds":[
+            ["floor", [6, 6], "woodenFloorDark01", [-3, 0, -3]]
+        ],
+        "tiledCeilings":[
+            ["ceiling", [6, 6], "woodenFloorDark01", [-3, 2.9, -3]]],
+        "collidableMeshes":[
+            ["wallN0", "craftsmanWall", "whiteWallpaperPlainWood", [-2, 0, -2], [0, 180, 0]],
+            ["wallN1", "craftsmanWall", "whiteWallpaperPlainWood", [0, 0, -2], [0, 180, 0]],
+            ["wallN2", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, -2], [0, 180, 0]],
+            ["wallE0", "craftsmanWall", "greenWallpaperPlainWood", [-2, 0, 2], [0, 270, 0]],
+            ["wallE1", "craftsmanWall", "greenWallpaperPlainWood", [-2, 0, 0], [0, 270, 0]],
+            ["wallE2", "craftsmanWall", "greenWallpaperPlainWood", [-2, 0, -2], [0, 270, 0]],
+            ["wallS0", "craftsmanWall", "pinkWallpaperPlainWood", [-2, 0, 2]],
+            ["wallS1", "craftsmanWall", "pinkWallpaperPlainWood", [0, 0, 2]],
+            ["wallS2", "craftsmanWall", "pinkWallpaperPlainWood", [2, 0, 2]],
+            ["wallW0", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, 2], [0, 90, 0]],
+            ["wallW1", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, 0], [0, 90, 0]],
+            ["wallW2", "craftsmanWall", "yellowWallpaperPlainWood", [2, 0, -2], [0, 90, 0]]
+        ],
+        "meshes":[],
+        "planesByMesh":[]
+    },
+    "entityGroups":{
+        "doors":[],
+        "furniture":[],
+        "lightings":[],
+        "displays":[
+            ["television", "flatScreenMonitor01", [0, 0.8, -2.2], [0, 180, 0]]
+        ],
+        "items":[],
+        "plants":[],
+        "creature":[],
+        "characters":[]
+    },
+    "metaGroups":[
+        {
+            "id":"",
+            "name":"",
+            "meshGroups":{
+                "ramps":[],
+                "planes":[],
+                "walls":[],
+                "tiledGrounds":[],
+                "tiledCeilings":[],
+                "collidableMeshes":[],
+                "meshes":[],
+                "planesByMesh":[]
+            },
+            "entityGroups":{
+                "doors":[],
+                "furniture":[],
+                "lightings":[],
+                "displays":[],
+                "items":[],
+                "plants":[],
+                "creature":[],
+                "characters":[]
+            }
+        }
+    ]
+}

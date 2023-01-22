@@ -1375,6 +1375,28 @@ class EntityLogic {
         return null;
     }
     /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {string} [description] 
+     * @param {string} [iconID] 
+     * @param {Array.<String>} aMeshIDs 
+     * @param {string} textureID 
+     */
+    static createDisplayEntity(id = "", name = "", description = "", iconID = "", aMeshIDs = ["missingMesh"], textureID = "missingMaterial") {
+        id = Tools.filterID(id);
+        if (id.length == 0) {
+            id = Tools.genUUIDv4();
+        }
+        let entity = new DisplayEntity(id, name, description, iconID);
+        if (entity instanceof AbstractEntity) {
+            entity.setMeshIDs(aMeshIDs);
+            entity.setTextureID(textureID);
+            return entity;
+        }
+        return null;
+    }
+    /**
      * Creates a PlantEntity
      * @param  {string} [id] Unique ID, auto-generated if none given
      * @param  {string} [name] Name

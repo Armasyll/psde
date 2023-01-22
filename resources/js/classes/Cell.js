@@ -125,7 +125,7 @@ class Cell {
         return 0;
     }
     /**
-     * Creates a mesh from those stored in loadedMeshes
+     * Creates an entry for a regular, non-interactable mesh
      * @param  {string} id New ID for Mesh and EntityController
      * @param  {string} meshID String ID of Mesh to create
      * @param  {string} [materialID] String ID of Material to apply to Mesh
@@ -136,9 +136,25 @@ class Cell {
      * @return {number} Integer status code
      */
     addMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        this.meshIDs.add(meshID);
+        this._addMeshID(meshID);
         this.materialIDs.add(materialID);
         this.meshes.push([id, meshID, materialID, position, rotation, scaling, options]);
+        return 0;
+    }
+    /**
+     * Adds the string of a mesh ID to this cell's internal list of mesh IDs
+     * @param {(string|array)} meshIDs Mesh ID or array of Mesh IDs
+     * @returns 
+     */
+    _addMeshID(meshIDs) {
+        if (typeof meshIDs == "string") {
+            this.meshIDs.add(Tools.filterID(meshIDs));
+        }
+        else if (meshIDs instanceof Array) {
+            meshIDs.forEach((entry) => {
+                this._addMeshID(entry);
+            });
+        }
         return 0;
     }
     /**
@@ -159,7 +175,7 @@ class Cell {
         if (id.length == 0) {
             id = Tools.genUUIDv4();
         }
-        this.meshIDs.add(id);
+        this._addMeshID(id);
         this.materialIDs.add(materialID);
         if (meshOptions instanceof Array) {
             switch (meshOptions.length) {
@@ -198,7 +214,7 @@ class Cell {
         return this.addTiledGround(id, meshOptions, materialID, position, rotation, scaling, options);
     }
     /**
-     * Creates a mesh from those stored in loadedMeshes
+     * Creates an entry for a collidable mesh
      * @param  {string} id New ID for Mesh and EntityController
      * @param  {string} meshID String ID of Mesh to create
      * @param  {string} [materialID] String ID of Material to apply to Mesh
@@ -209,7 +225,7 @@ class Cell {
      * @return {number} Integer status code
      */
     addCollidableMesh(id = "", meshID = "", materialID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
-        this.meshIDs.add(meshID);
+        this._addMeshID(meshID);
         this.materialIDs.add(materialID);
         options["checkCollisions"] = true;
         this.meshes.push([id, meshID, materialID, position, rotation, scaling, options]);
@@ -234,7 +250,7 @@ class Cell {
             return 1;
         }
         let entity = CreatureEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.creatures.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);
@@ -259,7 +275,7 @@ class Cell {
             return 1;
         }
         let entity = CharacterEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.characters.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);
@@ -297,7 +313,7 @@ class Cell {
         options["opensInward"] = options["opensInward"] == true;
         options["open"] = options["open"] == true;
         options["checkCollisions"] = options["checkCollisions"] == true;
-        this.meshIDs.add(meshID);
+        this._addMeshID(meshID);
         this.materialIDs.add(materialID);
         this.doors.push([entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options]);
         this.instancedEntities.push(entityID);
@@ -322,7 +338,7 @@ class Cell {
             return 1;
         }
         let entity = FurnitureEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.furniture.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);
@@ -347,7 +363,7 @@ class Cell {
             return 1;
         }
         let entity = LightingEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.lighting.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);
@@ -365,14 +381,14 @@ class Cell {
      */
     addDisplay(instanceID = "", entityID = "", position = [0,0,0], rotation = [0,0,0], scaling = [1,1,1], options = {}) {
         instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
-        if (this.lighting.indexOf(instanceID) != -1) {
+        if (this.displays.indexOf(instanceID) != -1) {
             return 1;
         }
         if (!DisplayEntity.has(entityID)) {
             return 1;
         }
         let entity = DisplayEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.displays.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);
@@ -397,7 +413,7 @@ class Cell {
             return 1;
         }
         let entity = ItemEntity.get(entityID);
-        this.meshIDs.add(entity.meshID);
+        this._addMeshID(entity.meshIDs);
         this.materialIDs.add(entity.materialID);
         this.items.push([instanceID, entityID, position, rotation, scaling, options]);
         this.instancedEntities.push(instanceID);

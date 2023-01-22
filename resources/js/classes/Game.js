@@ -3201,7 +3201,7 @@ class Game {
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling);
         if (Game.hasCachedEntity(entityID)) {
-            Game.createFurniturePhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
+            Game.createDisplayPhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
         else {
             let callbackID = String("createDisplayPhaseOne-").concat(Tools.genUUIDv4());
@@ -4702,6 +4702,9 @@ class Game {
         });
         cell["lighting"].forEach((entry) => {
             Game.createLighting(...entry);
+        });
+        cell["displays"].forEach((entry) => {
+            Game.createDisplay(...entry);
         });
         cell["creatures"].forEach((entry) => {
             Game.createCreature(...entry);

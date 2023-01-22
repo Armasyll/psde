@@ -1,5 +1,6 @@
 {
     "networkTest":"cells/networkTest.json",
     "packstreetApartment3":"cells/packstreetApartment3.json",
-    "packstreetApartment3Basement":"cells/packstreetApartment3Basement.json"
+    "packstreetApartment3Basement":"cells/packstreetApartment3Basement.json",
+    "televisionTest":"cells/televisionTest.json"
 }

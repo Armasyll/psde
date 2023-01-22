@@ -13,6 +13,7 @@ class DisplayController extends FurnitureController {
      * @param {number} videoPosition 
      */
     constructor(id, aMeshes = [], entityObject = {}, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
+        /* TODO: Assign the actual video display mesh somewhere in the params, and have the 'options' as an options param 2023-01-22 */
         super(id, aMeshes, entityObject);
         if (!this.hasMesh()) {
             return undefined;
@@ -27,7 +28,7 @@ class DisplayController extends FurnitureController {
         if (typeof videoID == "string" && Game.hasVideo(videoID)) {
             this.videoMesh = Game.createVideo(undefined, videoID, videoWidth, videoHeight);
             if (!(this.videoMesh instanceof BABYLON.Mesh)) {
-                return null;
+                return undefined;
             }
             this.videoMesh.position.copyFrom(aMeshes.position);
             this.videoMesh.rotation.copyFrom(aMeshes.rotation);
@@ -38,7 +39,7 @@ class DisplayController extends FurnitureController {
             this.videoTexture = this.videoMesh.material.diffuseTexture;
         }
         else {
-            return null;
+            return undefined;
         }
         this.previousVolume = 1.0;
         this.previousVideoTexture = null;
