@@ -8,12 +8,8 @@ class DisplayController extends FurnitureController {
      * @param {BABYLON.AbstractMesh} aMeshes 
      * @param {object} entityObject 
      * @param {string} videoID 
-     * @param {number} videoWidth 
-     * @param {number} videoHeight 
-     * @param {number} videoPosition 
      */
-    constructor(id, aMeshes = [], entityObject = {}, videoID = "", videoWidth = 0.98, videoHeight = 0.6250, videoPosition = BABYLON.Vector3.Zero()) {
-        /* TODO: Assign the actual video display mesh somewhere in the params, and have the 'options' as an options param 2023-01-22 */
+    constructor(id, aMeshes = [], entityObject = {}, videoID = "") {
         super(id, aMeshes, entityObject);
         if (!this.hasMesh()) {
             return undefined;
@@ -22,24 +18,11 @@ class DisplayController extends FurnitureController {
         this.videoMaterial = null;
         this.videoTexture = null;
         this.videoMesh = null;
-        if (!(videoPosition instanceof BABYLON.Vector3)) {
-            videoPosition = Game.filterVector3(videoPosition);
-        }
         if (typeof videoID == "string" && Game.hasVideo(videoID)) {
-            this.videoMesh = Game.createVideo(undefined, videoID, videoWidth, videoHeight);
-            if (!(this.videoMesh instanceof BABYLON.Mesh)) {
-                return undefined;
-            }
-            this.videoMesh.position.copyFrom(aMeshes.position);
-            this.videoMesh.rotation.copyFrom(aMeshes.rotation);
-            this.videoMesh.scaling.copyFrom(aMeshes.scaling);
-            this.videoMesh.setParent(aMeshes);
-            this.videoMesh.position.copyFrom(videoPosition.multiply(aMeshes.scaling));
+            this.videoMesh = this.meshes[this.meshes.length - 1];
+            //this.videoMesh = Game.createVideo(undefined, videoID, videoWidth, videoHeight);
             this.videoMaterial = this.videoMesh.material;
             this.videoTexture = this.videoMesh.material.diffuseTexture;
-        }
-        else {
-            return undefined;
         }
         this.previousVolume = 1.0;
         this.previousVideoTexture = null;

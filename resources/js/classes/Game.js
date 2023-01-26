@@ -162,6 +162,12 @@ class Game {
         Game.meshMaterialMeshes = {};
         Game.tiledMeshes = {};
 
+        /**
+         * Map for createMeshes of Callbacks and an array of their instanced mesh IDs
+         * @type {<string, array<string>>}
+         */
+        Game.createMeshesCallbackInstancedMeshIDs = {};
+
         Game.soundDumb = null;
         Game.soundMusic = null;
         Game.soundAmbience = null;
@@ -1514,6 +1520,35 @@ class Game {
         }
         return 2;
     }
+    static loadMeshes(meshIDs, parentCallbackID = null, loadOnlyMeshes = true) {
+        if (!(meshIDs instanceof Array)) {
+            return 1;
+        }
+        let nMeshIDs = [];
+        for (let i = 0; i < meshIDs.length; i++) {
+            nMeshIDs.push(Tools.filterID(meshIDs[i]));
+        }
+        let callbackID = Tools.genUUIDv4();
+        Callback.create(callbackID, parentCallbackID, [nMeshIDs], Game.loadMeshesPhaseTwo);
+        for (let i = 0; i < nMeshIDs.length; i++) {
+            Game.loadMesh(nMeshIDs[i], callbackID, loadOnlyMeshes);
+        }
+        return 0;
+    }
+    static loadMeshesPhaseTwo(meshIDs, ignoreThis, parentCallbackID) {
+        let hasLoadedMeshes = true;
+        for (let i = 0; i < meshIDs.length; i++) {
+            if (!Game.hasLoadedMesh(meshIDs[i])) {
+                hasLoadedMeshes = false;
+            }
+        }
+        if (!hasLoadedMeshes) {
+            return 1;
+        }
+        Callback.setRun(parentCallbackID, true);
+        Callback.runParent(parentCallbackID, meshIDs);
+        return 0;
+    }
     /**
      * 
      * @param {string} meshID 
@@ -2703,7 +2738,7 @@ class Game {
      * @param  {(string|null)} [parentCallbackID] 
      * @returns {BABYLON.AbstractMesh|array|number} The created mesh
      */
-    static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null) {
+    static createMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {}, parentCallbackID = null, _callbackID = Tools.genUUIDv4()) {
         meshID = Tools.filterID(meshID);
         id = Game.generateMeshID(id, meshID);
         materialID = Tools.filterID(materialID);
@@ -2722,9 +2757,8 @@ class Game {
             }
         }
         if (!Game.hasLoadedMaterial(materialID)) {
-            let callbackID = String("createMeshPhaseOne-").concat(Tools.genUUIDv4());
-            Callback.create(callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseTwo);
-            Game.loadMaterial(materialID, "", "", {}, callbackID);
+            Callback.create(_callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseTwo);
+            Game.loadMaterial(materialID, "", "", {}, _callbackID);
             if (Game.debugMode) console.groupEnd();
             return 1;
         }
@@ -2732,12 +2766,11 @@ class Game {
         if (Game.debugMode) console.groupEnd();
         return 0;
     }
-    static createMeshPhaseTwo(id, meshID, materialID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options, response, parentCallbackID) {
+    static createMeshPhaseTwo(id, meshID, materialID, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options, response, parentCallbackID, _callbackID = Tools.genUUIDv4()) {
         if (Game.debugMode) console.group(`Running Game.createMeshPhaseTwo(${id}, ${meshID}, ${materialID}, POT, ROT, SCA, OPT, ${parentCallbackID})`);
         if (!Game.hasLoadedMesh(meshID)) {
-            let callbackID = String("createMeshPhaseTwo-").concat(Tools.genUUIDv4());
-            Callback.create(callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseThree);
-            Game.loadMesh(meshID, callbackID);
+            Callback.create(_callbackID, parentCallbackID, [id, meshID, materialID, position, rotation, scaling, options], Game.createMeshPhaseThree);
+            Game.loadMesh(meshID, _callbackID);
             if (Game.debugMode) console.groupEnd();
             return 1;
         }
@@ -2750,6 +2783,7 @@ class Game {
         let masterMesh = Game.getLoadedMesh(meshID);
         let mesh = null;
         let material = Game.getLoadedMaterial(materialID);
+        let flipRun = !(options.hasOwnProperty("skipFlipRun") && options["skipFlipRun"] == true);
         if (masterMesh.skeleton instanceof BABYLON.Skeleton) {
             if (Game.debugMode) console.info("Mesh has a skeleton.");
             if (Game.debugMode) console.info("Creating a clone of the mesh.");
@@ -2827,8 +2861,47 @@ class Game {
         if (options["isHitbox"]) {
             mesh.isHitbox = options["isHitbox"];
         }
-        Callback.runNthParent(parentCallbackID, 1, mesh);
+        Callback.runNthParent(parentCallbackID, 1, mesh, flipRun);
         if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    static createMeshes(id, meshIDs, materialID, position, rotation, scaling, options, parentCallbackID = null, _callbackID = Tools.genUUIDv4()) {
+        if (!(meshIDs instanceof Array)) {
+            return 1;
+        }
+        let nMeshIDs = [];
+        for (let i = 0; i < meshIDs.length; i++) {
+            nMeshIDs.push(Tools.filterID(meshIDs[i]));
+        }
+        if (typeof options != "object") {
+            options = {};
+        }
+        options["skipFlipRun"] = true;
+        Callback.create(_callbackID, parentCallbackID, [id, nMeshIDs, materialID, position, rotation, scaling, options], Game.createMeshesPhaseTwo);
+        if (!Game.createMeshesCallbackInstancedMeshIDs.hasOwnProperty(_callbackID)) {
+            Game.createMeshesCallbackInstancedMeshIDs[_callbackID] = [];
+        }
+        for (let i = 0; i < nMeshIDs.length; i++) {
+            Game.createMesh(
+                (i == 0 ? id : String(id).concat("-").concat(nMeshIDs[i])),
+                nMeshIDs[i],
+                materialID,
+                position,
+                rotation,
+                scaling,
+                options,
+                _callbackID);
+        }
+        return 0;
+    }
+    static createMeshesPhaseTwo(id, meshIDs, materialID, position, rotation, scaling, options, response, parentCallbackID) {
+        Game.createMeshesCallbackInstancedMeshIDs[parentCallbackID].push(response);
+        if (meshIDs.length != Game.createMeshesCallbackInstancedMeshIDs[parentCallbackID].length) {
+            return 1;
+        }
+        Callback.setRun(parentCallbackID, true);
+        Callback.runParent(parentCallbackID, Game.createMeshesCallbackInstancedMeshIDs[parentCallbackID]);
+        delete Game.createMeshesCallbackInstancedMeshIDs[parentCallbackID];
         return 0;
     }
     /**
@@ -3210,32 +3283,53 @@ class Game {
         }
         return 0;
     }
+    /**
+     * Loads meshes, successful response will be an array of filtered meshIDs belonging to entityID
+     * @param {*} instanceID 
+     * @param {*} entityID 
+     * @param {*} position 
+     * @param {*} rotation 
+     * @param {*} scaling 
+     * @param {*} options 
+     * @param {*} response 
+     * @param {*} parentCallbackID 
+     * @returns 
+     */
     static createDisplayPhaseTwo(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
-        if (!(Game.hasLoadedMesh(entity["meshIDs"][0]))) {
-            let callbackID = String("createDisplayPhaseTwo-").concat(Tools.genUUIDv4());
-            Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseThree);
-            Game.loadMesh(entity["meshIDs"][0], callbackID);
-            Game.loadTexture(entity["textureID"]);
-            Game.loadMaterial(entity["textureID"]);
-            return 1;
-        }
-        Game.createDisplayPhaseThree(instanceID, entityID, position, rotation, scaling, options, Game.getLoadedMesh(entity["meshIDs"][0]), parentCallbackID);
+        let callbackID = String("createDisplayPhaseTwo-").concat(Tools.genUUIDv4());
+        Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseThree);
+        Game.loadMeshes(entity["meshIDs"], callbackID);
+        Game.loadTexture(entity["textureID"]);
+        Game.loadMaterial(entity["textureID"]);
         return 0;
     }
+    /**
+     * 
+     * @param {*} instanceID 
+     * @param {*} entityID 
+     * @param {*} position 
+     * @param {*} rotation 
+     * @param {*} scaling 
+     * @param {*} options 
+     * @param {*} response 
+     * @param {*} parentCallbackID 
+     * @returns 
+     */
     static createDisplayPhaseThree(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
+        Game.updateCachedEntity(instanceID, {"meshIDs":response});
         let entity = Game.getCachedEntity(entityID);
         if (!(Game.hasLoadedVideo(entity["videoID"]))) {
             Game.loadVideo(entity["videoID"]);
         }
-        Game.createDisplayPhaseFour(instanceID, entityID, position, rotation, scaling, options, parentCallbackID);
+        Game.createDisplayPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID);
         return 0;
     }
     static createDisplayPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let callbackID = String("createDisplayPhaseFour-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createDisplayPhaseFive)
-        Game.createMesh(instanceID, entity["meshIDs"][0], entity["textureID"], position, rotation, scaling, options, callbackID);
+        Game.createMeshes(instanceID, entity["meshIDs"], entity["textureID"], position, rotation, scaling, options, callbackID);
         return 0;
     }
     static createDisplayPhaseFive(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
