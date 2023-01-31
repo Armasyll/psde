@@ -419,7 +419,7 @@ class EntityController extends AbstractController {
             return 2;
         }
         if (materialID != "collisionMaterial") {
-            options["createClone"] = true;
+            options["unique"] = true;
         }
         Game.createControllerAttachedMesh(meshID, materialID, boneID, position, rotation, scaling, options, this.id);
         return 0;

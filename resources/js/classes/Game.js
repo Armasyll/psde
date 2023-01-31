@@ -2687,11 +2687,11 @@ class Game {
         else {
             options["checkCollisions"] = false;
         }
-        if (options.hasOwnProperty("createClone")) {
-            options["createClone"] = options["createClone"] == true;
+        if (options.hasOwnProperty("unique")) {
+            options["unique"] = options["unique"] == true;
         }
         else {
-            options["createClone"] = false;
+            options["unique"] = false;
         }
         if (!Game.hasLoadedMaterial(materialID)) {
             if (!Game.hasAvailableTexture(materialID) && !Game.hasLoadedTexture(materialID)) {
@@ -2752,7 +2752,7 @@ class Game {
         /* I'll make a better way of doing this some day :v */
         switch (meshID) {
             case "cameraFocus": {
-                options["createClone"] = true;
+                options["unique"] = true;
                 break;
             }
         }
@@ -2784,6 +2784,12 @@ class Game {
         let mesh = null;
         let material = Game.getLoadedMaterial(materialID);
         let flipRun = !(options.hasOwnProperty("skipFlipRun") && options["skipFlipRun"] == true);
+        if (options["unique"]) {
+            materialID = String(id).concat("-uniqueMaterial");
+            material = material.clone(materialID);
+            material.id = materialID;
+            Game.setLoadedMaterial(materialID, material);
+        }
         if (masterMesh.skeleton instanceof BABYLON.Skeleton) {
             if (Game.debugMode) console.info("Mesh has a skeleton.");
             if (Game.debugMode) console.info("Creating a clone of the mesh.");
@@ -2815,9 +2821,9 @@ class Game {
                 mesh.position.set(0, -4095, 0);
                 Game.setMeshMaterial(mesh, material);
             }
-            if (options["createClone"]) {
-                if (Game.debugMode) console.info("Creating a clone of the mesh.");
-                if (Game.debugMode && Game.debugVerbosity > 3) console.log("Creating clone...");
+            if (options["unique"]) {
+                if (Game.debugMode) console.info("Creating a unique clone of the mesh.");
+                if (Game.debugMode && Game.debugVerbosity > 3) console.log("Creating unique clone...");
                 if (Game.hasMeshMaterial(meshID, materialID)) {
                     mesh = Game.getMeshMaterial(meshID, materialID).clone(id);
                 }
@@ -2882,6 +2888,9 @@ class Game {
             Game.createMeshesCallbackInstancedMeshIDs[_callbackID] = [];
         }
         for (let i = 0; i < nMeshIDs.length; i++) {
+            if (i == nMeshIDs.length - 1 && options["lastUnique"] == true) {
+                options["unique"] = true;
+            }
             Game.createMesh(
                 (i == 0 ? id : String(id).concat("-").concat(nMeshIDs[i])),
                 nMeshIDs[i],
@@ -3100,7 +3109,7 @@ class Game {
      * @param {BABYLON.Vector3} scaling 
      * @param {object} options 
      */
-    static createFurnitureMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "createClone": false, "checkCollisions": true }) {
+    static createFurnitureMesh(id = "", meshID = "missingMesh", materialID = "missingMaterial", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "unique": false, "checkCollisions": true }) {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.createFurnitureMesh");
         return Game.createMesh(id, meshID, materialID, position, rotation, scaling, options);
     }
@@ -3116,7 +3125,7 @@ class Game {
      * @param {(string|null)} [parentCallbackID] 
      * @returns {number} Integer status code
      */
-    static createFurniture(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "createClone": true, "checkCollisions": true }, parentCallbackID = null) {
+    static createFurniture(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "unique": true, "checkCollisions": true }, parentCallbackID = null) {
         instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
@@ -3268,11 +3277,15 @@ class Game {
      * @param {(string|null)} [parentCallbackID] 
      * @returns {number} Integer status code
      */
-    static createDisplay(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "createClone": true, "checkCollisions": true, "videoMeshWidth": 1, "videoMeshHeight": 0.75, "videoMeshPosition": BABYLON.Vector3.Zero() }, parentCallbackID = null) {
+    static createDisplay(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "unique": true, "checkCollisions": true, "videoMeshWidth": 1, "videoMeshHeight": 0.75, "videoMeshPosition": BABYLON.Vector3.Zero() }, parentCallbackID = null) {
         instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling);
+        if (typeof options != "object") {
+            options = {};
+        }
+        options["lastUnique"] = true;
         if (Game.hasCachedEntity(entityID)) {
             Game.createDisplayPhaseTwo(instanceID, entityID, position, rotation, scaling, options, Game.getCachedEntity(entityID));
         }
@@ -3337,6 +3350,7 @@ class Game {
         let controller = new DisplayController(instanceID, response, entity);
         controller.assign(entity, false);
         controller.sendTransforms();
+        controller.setVideo(entity["videoID"]);
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
         }
@@ -3504,7 +3518,7 @@ class Game {
      * @param {(string|null)} [parentCallbackID] 
      * @returns {number} Integer status code
      */
-    static createPlant(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { createClone: false, checkCollisions: true }, parentCallbackID = null) {
+    static createPlant(instanceID = "", entityID = "", position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = { "unique": false, checkCollisions: true }, parentCallbackID = null) {
         instanceID = Tools.filterID(instanceID, Tools.genUUIDv4());
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);

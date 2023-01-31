@@ -16,17 +16,13 @@ class DisplayController extends FurnitureController {
         }
 
         this.videoMaterial = null;
-        this.videoTexture = null;
         this.videoMesh = null;
-        if (typeof videoID == "string" && Game.hasVideo(videoID)) {
-            this.videoMesh = this.meshes[this.meshes.length - 1];
-            //this.videoMesh = Game.createVideo(undefined, videoID, videoWidth, videoHeight);
-            this.videoMaterial = this.videoMesh.material;
-            this.videoTexture = this.videoMesh.material.diffuseTexture;
-        }
         this.previousVolume = 1.0;
         this.previousVideoTexture = null;
         this.bHasRunPostConstructDisplay = false;
+        this.videoMesh = this.meshes[this.meshes.length - 1];
+        this.videoMaterial = this.videoMesh.material;
+        this.setVideo(videoID);
         DisplayController.set(this.id, this);
         this.postConstruct();
     }
@@ -79,6 +75,7 @@ class DisplayController extends FurnitureController {
     setVideo(videoTexture) {
         if (videoTexture instanceof BABYLON.Texture) {
             this.videoTexture = videoTexture;
+            this.videoMesh.material.diffuseTexture = this.videoTexture;
         }
         else {
             return 1;
