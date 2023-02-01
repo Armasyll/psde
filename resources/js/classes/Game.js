@@ -3350,7 +3350,7 @@ class Game {
         let controller = new DisplayController(instanceID, response, entity);
         controller.assign(entity, false);
         controller.sendTransforms();
-        controller.setVideo(entity["videoID"]);
+        controller.setVideo(Game.getLoadedVideo(entity["videoID"]));
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
         }

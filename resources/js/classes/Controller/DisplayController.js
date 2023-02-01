@@ -15,6 +15,7 @@ class DisplayController extends FurnitureController {
             return undefined;
         }
 
+        this.videoTexture = null;
         this.videoMaterial = null;
         this.videoMesh = null;
         this.previousVolume = 1.0;
