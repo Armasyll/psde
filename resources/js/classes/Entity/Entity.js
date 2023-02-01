@@ -47,13 +47,13 @@ class Entity extends AbstractEntity {
         /** @type {number} */
         this.currentMeshStage = 0;
         /** @type {string} */
-        this.textureID = "missingTexture";
+        this.textureID = "initialTexture";
         /** @type {Array} */
         this.textureStages = [];
         /** @type {number} */
         this.currentTextureStage = 0;
         /** @type {string} */
-        this.materialID = "missingMaterial";
+        this.materialID = "initialMaterial";
         /** @type {Array} */
         this.materialStages = [];
         /** @type {number} */
@@ -127,23 +127,31 @@ class Entity extends AbstractEntity {
         return 0;
     }
     setTextureID(textureID) {
+        textureID = Tools.filterID(textureID, "missingTexture");
+        if (textureID == "missingTexture") {
+            return 1;
+        }
         this.textureID = textureID;
         if (this.textureStages.length == 0) {
             this.addTextureStage(textureID);
             this.currentTextureStage = 0;
         }
-        if (this.materialID == "missingMaterial") {
+        if (this.materialID == "initialMaterial") {
             this.materialID = this.textureID;
         }
         return 0;
     }
     setMaterialID(materialID) {
+        materialID = Tools.filterID(materialID, "missingMaterial");
+        if (materialID == "missingMaterial") {
+            return 1;
+        }
         this.materialID = materialID;
         if (this.materialStages.length == 0) {
             this.addMaterialStage(materialID);
             this.currentMaterialStage = 0;
         }
-        if (this.textureID == "missingTexture") {
+        if (this.textureID == "initialTexture") {
             this.textureID = this.materialID;
         }
         return 0;

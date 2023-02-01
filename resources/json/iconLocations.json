@@ -119,5 +119,6 @@
     "genericBagIcon": "resources/images/icons/genericBagIcon_64.png",
     "genericMoneyIcon": "resources/images/icons/genericMoneyIcon_64.png",
     "genericShieldIcon": "resources/images/icons/genericShieldIcon_64.png",
-    "bookOfLustIcon": "resources/images/icons/items/bookOfLustIcon_64.png"
+    "bookOfLustIcon": "resources/images/icons/items/bookOfLustIcon_64.png",
+    "flatScreenMonitor01BlackIcon": "resources/images/icons/static/flatScreenMonitor01Black.png"
 }

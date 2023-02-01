@@ -12,4 +12,4 @@ EntityLogic.createFurnitureEntity("modelMKeyboard", "Model M Keyboard", "An IBN 
 
 EntityLogic.createLightingEntity("lamp01", "Lamp", "A simple lamp.", "lamp01", "lamp01", null, null, [0, 0, 1.2]);
 
-EntityLogic.createDisplayEntity("flatScreenMonitor01", "TV", "A television.", undefined, ["flatScreenMonitor01", "flatScreenMonitor01Screen"], undefined, FurnitureEnum.TELEVISION, 30, 180);
+EntityLogic.createDisplayEntity("flatScreenMonitor01", "TV", "A television.", "flatScreenMonitor01BlackIcon", ["flatScreenMonitor01", "flatScreenMonitor01Screen"], "flatScreenMonitor01Black", FurnitureEnum.TELEVISION, 30, 180);

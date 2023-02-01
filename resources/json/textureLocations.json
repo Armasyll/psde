@@ -131,5 +131,6 @@
     "cobblessConcrete02": "resources/images/textures/static/cobblessConcrete02_256_by_smeggo.png",
     "upholsteryGreen": "resources/images/textures/static/upholsteryGreen_512.png",
     "angelThrone": "resources/images/textures/characters/angelThronesTexture.png",
-    "slimeGreen": "resources/images/textures/characters/slimeGreenTexture.png"
+    "slimeGreen": "resources/images/textures/characters/slimeGreenTexture.png",
+    "flatScreenMonitor01Black": "resources/images/textures/static/flatScreenMonitor01Black.png"
 }
