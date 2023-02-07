@@ -143,7 +143,6 @@ class Transforms {
             case "connectEntityLogic": {
                 Transforms.entityLogicPort = event.ports[0];
                 Transforms.entityLogicPort.onmessage = Transforms.entityLogicWorkerOnMessage;
-                Transforms.gameWorkerPostMessage("connectEntityLogicTransformsResponse", 0, "OK", callbackID);
                 break;
             }
             case "toggleEntities": {

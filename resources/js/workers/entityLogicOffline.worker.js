@@ -513,13 +513,11 @@ class EntityLogic {
             case "connectTick": {
                 EntityLogic.tickPort = event.ports[0];
                 EntityLogic.tickPort.onmessage = EntityLogic.tickWorkerOnMessage;
-                EntityLogic.gameWorkerPostMessage("connectTickEntityLogicResponse", 0, "OK", callbackID);
                 break;
             }
             case "connectTransforms": {
                 EntityLogic.transformsPort = event.ports[0];
                 EntityLogic.transformsPort.onmessage = EntityLogic.transformsWorkerOnMessage;
-                EntityLogic.gameWorkerPostMessage("connectTransformsEntityLogicResponse", 0, "OK", callbackID);
                 break;
             }
             case "createCharacterResponse": {

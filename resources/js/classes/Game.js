@@ -242,15 +242,16 @@ class Game {
         Game.entityLogicWorker = null;
         Game.entityLogicTickChannel = null;
         Game.entityLogicTransformsChannel = null;
-        Game.bTickWorkerInitialized = false;
-        Game.bTransformsWorkerInitialized = false;
-        Game.bEntityLogicWorkerInitialized = false;
         Game.eventListeners = {};
         Game.sceneExecuteCodeActions = {};
         for (let option in options) {
             switch (option) {
                 case "assumeInitialized": {
                     Game.assumeInitialized = options["assumeInitialized"] === true;
+                    break;
+                }
+                case "assumeCurrentCellID": {
+                    Game.assumeCurrentCellID = String(options["assumeCurrentCellID"]);
                     break;
                 }
                 case "rootDirectory": {
@@ -279,6 +280,10 @@ class Game {
                 }
                 case "showCollisionBoxes": {
                     Game.showCollisionBoxes = options["showCollisionBoxes"] === true;
+                    break;
+                }
+                case "meatyThwack": {
+                    Game._playSoundTest = true;
                     break;
                 }
                 case "cell":
@@ -425,27 +430,28 @@ class Game {
         Game.entityLogicTransformsChannel = new MessageChannel();
         Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
+        Game.initializePhaseFive();
         return 0;
     }
     static initializePhaseFive() {
         if (Game.initializedPhaseFive) {
             return 0;
         }
-        if (!Game.bTickWorkerInitialized || !Game.bEntityLogicWorkerInitialized) {
-            return 0;
-        }
-        Game.initializedPhaseFive = true;
         BABYLON.Tools.Log("Initializing, Phase Five; assuming direct control");
+        Game.initializedPhaseFive = true;
         Game.gui.show();
         Game.initPointerEventListeners();
-        Game.resize(true);
         if (Game.assumeInitialized) {
-            Game.loadCellAndSetPlayerAt(Game.selectedCellID, Game.selectedPosition);
+            Game.setPlayerCell(Game.assumeCurrentCellID);
             Game.gui.mainMenu.hide();
             Game.gui.hide();
         }
         else {
             Game.gui.mainMenu.show();
+        }
+        Game.resize(true);
+        if (Game._playSoundTest) {
+            Game.playAnnoyingMeatyThwack();
         }
         return 0;
     }
@@ -4974,15 +4980,7 @@ class Game {
         if (!event.data.hasOwnProperty("cmd")) {
             return 2;
         }
-        let status = event.data["sta"];
-        let callbackID = event.data["callbackID"];
-        let message = event.data["msg"];
         switch (event.data.cmd) {
-            case "connectEntityLogicTickResponse": {
-                Game.bTickWorkerInitialized = true;
-                Game.initializePhaseFive();
-                break;
-            }
             case "sendInfo": {
                 // TODO: recalculate all scheduled events, or find a way so I don't have to (by using ticks, rounds, and turns) :v
                 Game.currentTick = event.data["msg"][0];
@@ -5052,11 +5050,6 @@ class Game {
         let callbackID = event.data["callbackID"];
         let message = event.data["msg"];
         switch (event.data["cmd"]) {
-            case "connectEntityLogicTransformsResponse": {
-                Game.bTransformsWorkerInitialized = true;
-                Game.initializePhaseFive();
-                break;
-            }
             case "enable": {
                 if (message.length > 0) {
                     for (let i in message) {
@@ -5150,15 +5143,6 @@ class Game {
         let message = event.data["msg"];
         if (Game.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
-            case "connectTransformsEntityLogicResponse": {
-                // I don't care about this (yet) :V
-                break;
-            }
-            case "connectTickEntityLogicResponse": {
-                Game.bEntityLogicWorkerInitialized = true;
-                Game.initializePhaseFive();
-                break;
-            }
             case "actionAttack":
             case "actionClose":
             case "actionDrop":
