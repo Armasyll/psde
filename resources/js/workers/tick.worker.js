@@ -855,10 +855,14 @@ class Tick {
         return 0;
     }
     static gameWorkerOnMessage(event) {
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
         switch (event.data["cmd"]) {
             case "connectEntityLogic": {
                 Tick.entityLogicPort = event.ports[0];
                 Tick.entityLogicPort.onmessage = Tick.entityLogicWorkerOnMessage;
+                Tick.gameWorkerPostMessage("connectEntityLogicTickResponse", 0, "OK", callbackID);
                 break;
             }
             case "getInfo": {
