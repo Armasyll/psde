@@ -116,7 +116,7 @@ class CharacterControllerRigidBody extends CharacterController {
                 console.info("not trying to move, falling")
             }
         }
-        if (this.anyMovement()) {
+        else if (this.anyMovement()) {
             if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("not falling, trying to move")
             }
@@ -179,68 +179,73 @@ class CharacterControllerRigidBody extends CharacterController {
                 this.collisionMesh.rotation.y = this.intendedDirection;
             }
             this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
-            if (this.movementPace == MovementPaceEnum.RUN) {
+            if (this.movementPace == MovementPaceEnum.WALK) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * dt));
+            }
+            else if (this.movementPace == MovementPaceEnum.RUN) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * dt));
             }
             else if (this.movementPace == MovementPaceEnum.AMBLE) {
                 this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.ambleSpeed * dt));
             }
-            else {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * dt));
-            }
-            if (this.intendedMovement.length() > 0.001) {
-                this.collisionMesh.moveWithCollisions(this.intendedMovement);
-                if (this.collisionMesh.position.y > this.startPosition.y) {
-                    let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                    let slope = Tools.verticalSlope(actDisp);
-                    if (slope >= this.maxSlopeLimit) {
-                        if (this.stepOffset > 0) {
-                            if (this.yDifference == 0) {
-                                this.startPosition.copyFrom(this.startPosition);
-                            }
-                            this.yDifference = this.yDifference + (this.collisionMesh.position.y - this.startPosition.y);
-                            if (this.yDifference > this.stepOffset) {
-                                this.yDifference = 0;
-                                this.collisionMesh.position.copyFrom(this.startPosition);
-                                this.endFreeFall();
-                            }
-                        }
-                        else {
-                            this.collisionMesh.position.copyFrom(this.startPosition);
-                            this.endFreeFall();
-                        }
-                    }
-                    else {
-                        this.yDifference = 0;
-                        if (slope > this.minSlopeLimit) {
-                            this.fallFrameCount = 0;
-                            this.groundedState = GroundedStateEnum.GROUND;
-                        }
-                        else {
-                            this.endFreeFall();
-                        }
-                    }
+        }
+        // Start Mitigate jittering in Y direction
+        if (Game.bUseControllerGroundRay) {
+            this.updateGroundRay();
+            let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
+                if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
+                    return true;
                 }
-                else if (this.collisionMesh.position.y < this.startPosition.y) {
-                    let actDisp = this.collisionMesh.position.subtract(this.startPosition);
-                    if (!(Tools.arePointsEqual(actDisp, this.intendedMovement, 0.001))) {
-                        if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
-                            this.endFreeFall();
-                        }
-                        else {
-                            this.fallFrameCount = 0;
-                            this.groundedState = GroundedStateEnum.GROUND;
-                        }
-                    }
-                    else {
-                        this.groundedState = GroundedStateEnum.FALL;
-                        this.fallFrameCount++;
-                    }
+                return false;
+            });
+            if (hit.hit) {
+                if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, 0.0195)) {
+                    this.intendedMovement.y = 0;
+                }
+            }
+        }
+        // End Mitigate jittering in Y direction
+        this.collisionMesh.moveWithCollisions(this.intendedMovement);
+        if (this.collisionMesh.position.y > this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            let slope = Tools.verticalSlope(actDisp);
+            if (slope >= this.maxSlopeLimit) {
+                if (this.yDifference == 0) {
+                    this.yDifferencePosition.copyFrom(this.startPosition);
+                }
+                this.yDifference = this.yDifference + (this.collisionMesh.position.y - this.startPosition.y);
+            }
+            else {
+                this.yDifference = 0;
+                if (slope > this.minSlopeLimit) {
+                    this.fallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
                 }
                 else {
                     this.endFreeFall();
                 }
             }
+        }
+        else if (this.collisionMesh.position.y < this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            if (!(Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, 0.0125))) {
+                if (Tools.verticalSlope(actDisp) <= this.minSlopeLimit) {
+                    this.endFreeFall();
+                }
+                else {
+                    this.fallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
+                }
+            }
+            else {
+                this.fallFrameCount++;
+                if (this.fallFrameCount > 60) {
+                    this.groundedState = GroundedStateEnum.FALL;
+                }
+            }
+        }
+        else {
+            this.endFreeFall();
         }
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.groupEnd();
         return 0;
