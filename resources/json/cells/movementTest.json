@@ -1,0 +1,6 @@
+{
+    "id":"movementTest",
+    "name":"Movement Test Cell",
+    "barrier":32,
+    "scenes":["resources/meshes/scenes/movementTest.babylon"]
+}

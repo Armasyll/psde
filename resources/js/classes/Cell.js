@@ -20,6 +20,7 @@ class Cell {
         this.skyboxAzimuth = 0.25;
         this.skyboxInclination = 0.0;
         this.ambientLightIntensity = 0.9;
+        this.scenes = [];
         this.collisionPlanes = [];
         this.collisionRamps = [];
         this.collisionWalls = [];
@@ -104,6 +105,10 @@ class Cell {
         return this.removeOwner();
     }
 
+    addScene(...parameters) {
+        this.scenes.push(parameters);
+        return 0;
+    }
     addCollisionWall(...parameters) {
         this.collisionWalls.push(parameters);
         return 0;
@@ -442,6 +447,11 @@ class Cell {
     }
 
     loadFromJSON(jsonBlob) {
+        if (jsonBlob.hasOwnProperty("scenes")) {
+            for (let i = 0; i < jsonBlob["scenes"].length; i++) {
+                this.addScene(jsonBlob["scenes"][i]);
+            }
+        }
         if (jsonBlob.hasOwnProperty("barrier")) {
             this.createBarrier(jsonBlob["barrier"]);
         }

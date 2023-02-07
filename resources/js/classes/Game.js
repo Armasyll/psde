@@ -4743,6 +4743,14 @@ class Game {
         else {
             Game.unloadMaterial("dayNightCycle");
         }
+        cell["scenes"].forEach((entry) => {
+            if (entry instanceof Array) {
+                Game.importScene(...entry);
+            }
+            else {
+                Game.importScene(entry);
+            }
+        });
         // materials, tiled meshes, collision meshes, meshes, then everything else
         cell["materials"].forEach((entry) => {
             if (entry instanceof Array) {

@@ -3,6 +3,7 @@
     "name":"",
     "barrier":64,
     "materials":[],
+    "scene":[],
     "meshGroups":{
         "ramps":[],
         "planes":[],
