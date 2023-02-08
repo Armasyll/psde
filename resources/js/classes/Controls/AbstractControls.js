@@ -113,7 +113,7 @@ class AbstractControls {
     }
     static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
-            Game.scene.simulatePointerMove();
+            //Game.scene.simulatePointerMove(); // Complains as of latest babylon update (5.45.0) maybe before
             Game.gui.cursor.update(mouseEvent.movementX, mouseEvent.movementY);
         }
         return 0;
