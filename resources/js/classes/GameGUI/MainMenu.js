@@ -22,8 +22,8 @@ class MainMenuGameGUI {
         let buttonKBLayoutQwerty = GameGUI.createSimpleButton("kbLayoutQwerty", "QWERTY");
         let buttonKBLayoutDvorak = GameGUI.createSimpleButton("kbLayoutDvorak", "Dvorak");
         let buttonKBLayoutAzerty = GameGUI.createSimpleButton("kbLayoutAzerty", "AZERTY");
-        let submitOnline = GameGUI.createSimpleButton("submitOnline", "Online");
-        let submitOffline = GameGUI.createSimpleButton("submitOffline", "Offline");
+        let submitOnline = GameGUI.createSimpleButton("submitOnline", "Play Online");
+        let submitOffline = GameGUI.createSimpleButton("submitOffline", "Play Offline");
         let urlLabel = GameGUI.createTextBlock("urlLabel");
         let urlButton = GameGUI.createSimpleButton("urlButton", "https://github.com/armasyll/psde");
         
