@@ -21,9 +21,9 @@ class CharacterControllerRigidBody extends CharacterController {
         this.startPosition = this.collisionMesh.position.clone();
         this.intendedDirection = 0.0;
         this.intendedMovement = new BABYLON.Vector3();
-        this.amblespeed = 0.5;
         this.walkSpeed = 1.0;
-        this.runSpeed = 2.0;
+        this.amblespeed = this.walkSpeed * 0.5;
+        this.runSpeed = this.walkSpeed * 2;
 
         this.fallTime = 0;
         this.minSlopeLimit = BABYLON.Tools.ToRadians(30);
@@ -49,6 +49,15 @@ class CharacterControllerRigidBody extends CharacterController {
         return 0;
     }
 
+    setMovementSpeed(iSpeed) {
+        this.walkSpeed = i;
+        this.amblespeed = this.walkSpeed * 0.5;
+        this.runSpeed = this.walkSpeed * 2;
+        return 0;
+    }
+    setAnimationSpeed(iSpeed) {
+        return 0;
+    }
     moveAV() {
         if (this.locked) {
             return 0;
