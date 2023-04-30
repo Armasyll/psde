@@ -25,8 +25,9 @@ EntityLogic.createItemEntity("ring02GoldSaphire", "Gold Saphire Ring", "A gold r
 
 EntityLogic.createItemEntity("toothbrushBlue01", "Blue Toothbrush", "Brushie brushie brushie!", "toothbrushBlue01Icon", "toothbrush01", "toothbrushBlue01", ItemEnum.GENERAL);
 EntityLogic.createItemEntity("bottle01", "Bottle", "A simple bottle.", "bottle01Icon", "bottle01", undefined, ItemEnum.GENERAL);
+EntityLogic.createItemEntity("mug01", "Mug", "A simple mug.", "cup01Icon", "cup01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("cup01", "Cup", "A simple cup.", "cup01Icon", "cup01", undefined, ItemEnum.GENERAL);
-EntityLogic.createItemEntity("glass01", "Glass", "A simple glass.", "glass01Icon", "glass01", undefined, ItemEnum.GENERAL);
+EntityLogic.createItemEntity("cupLarge01", "Large Cup", "A large cup.", "glass01Icon", "glass01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("plate01", "Plate", "A simple plate.", "plate01Icon", "plate01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("trumpet01", "Trumpet", "A simple trumpet.", "trumpet01Icon", "trumpet01", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("dice01", "Die", "A beige die.", "dice01Icon", "cube", "dice01Texture", ItemEnum.GENERAL);
@@ -66,12 +67,10 @@ EntityLogic.createItemEntity("stick04", "Long Stick", "A long stick.", "stick04I
 EntityLogic.createItemEntity("stick02", "Broad Stick", "A broad stick.", "stick02Icon", "stick02", "woodenMallet", ItemEnum.WEAPON);
 EntityLogic.createItemEntity("sticc", "Stick", "A stick.", "stick01Icon", "stick01", "stick01", ItemEnum.WEAPON);
 EntityLogic.createItemEntity("rocc", "Rock", "A rock.", "rock01Icon", "rock01", "rock01", ItemEnum.WEAPON);
-EntityLogic.createItemEntity("kokiriSword", "Small Sword", "A treasured sword.", undefined, "kokiriSword", "kokiriSword", ItemEnum.WEAPON);
-
-EntityLogic.createItemEntity("dekuShield", "Small Shield", "A wooden shield.", undefined, "dekuShield", "dekuShield", ItemEnum.SHIELDS);
 
 EntityLogic.createItemEntity("flawedGem", "Flawed Grey Gem", "A grey gem with a minor imperfection.", "gem03Icon", "gem03", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("regularGem", "Regular Grey Gem", "A grey gem of passing quality.", "gem04Icon", "gem04", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("exceptionalGem", "Exceptional Grey Gem", "An exceptional, grey-coloured gem.", "gem05Icon", "gem05", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("flawlessGem", "Flawless Grey Gem", "A flawless grey gem.", "gem06Icon", "gem06", undefined, ItemEnum.GENERAL);
 EntityLogic.createItemEntity("perfectGem", "Perfect Grey Gem", "A grey gem of perfect quality.", "gem08Icon", "gem08", undefined, ItemEnum.GENERAL);
+EntityLogic.createItemEntity("rupeeGem", "Rupee", "A grey gem.", "gem08Icon", "rupee", undefined, ItemEnum.GENERAL);
