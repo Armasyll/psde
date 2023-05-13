@@ -11,12 +11,11 @@ class Game {
         Game.initialized = false;
         Game.currentFrame = 0;
         Game.options = Object.assign({}, options);
-        Game.assumeInitialized = false;
-        Game.assumeCurrentCellID = null;
         Game.initializedPhaseTwo = false;
         Game.initializedPhaseThree = false;
         Game.initializedPhaseFour = false;
         Game.initializedPhaseFive = false;
+        Game.initializedPhaseSix = false;
         Game.initializingPointerEventListeners = false;
         Game.initializedPointerEventListeners = false;
         Game.rootDirectory = "";
@@ -236,7 +235,13 @@ class Game {
          */
         Game.controls = AbstractControls;
 
+        Game.bSkipMainMenu = false;
+        Game.bUseGUI = true;
         Game.gui = null;
+        Game.bConnectedTickToEntityLogic = false;
+        Game.bConnectedTransformsToEntityLogic = false;
+        Game.bConnectedEntityLogicToTick = false;
+        Game.bConnectedEntityLogicToTransforms = false;
         Game.tickWorker = null;
         Game.transformsWorker = null;
         Game.entityLogicWorker = null;
@@ -246,12 +251,8 @@ class Game {
         Game.sceneExecuteCodeActions = {};
         for (let option in options) {
             switch (option) {
-                case "assumeInitialized": {
-                    Game.assumeInitialized = options["assumeInitialized"] === true;
-                    break;
-                }
-                case "assumeCurrentCellID": {
-                    Game.assumeCurrentCellID = String(options["assumeCurrentCellID"]);
+                case "skipMainMenu": {
+                    Game.bSkipMainMenu = true;
                     break;
                 }
                 case "rootDirectory": {
@@ -290,6 +291,11 @@ class Game {
                 case "cellID": {
                     Game.selectedCellID = options["cellID"];
                     Game.selectedPosition.set(0,0,0);
+                    break;
+                }
+                case "noGUI": {
+                    Game.bUseGUI = false;
+                    Game.bSkipMainMenu = true;
                     break;
                 }
             }
@@ -360,8 +366,11 @@ class Game {
         /**
          * @type {(GameGUI,NullGUI)} GameGUI; alternative is NullGUI
          */
-        Game.gui = GameGUI;
-        Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI; can't use AdvancedDynamicTexture
+        Game.gui = null;
+        if (Game.bUseGUI) {
+            Game.gui = GameGUI;
+            Game.gui.initialize(); // Problem in BabylonNative; see CreateFullscreenUI; can't use AdvancedDynamicTexture
+        }
         Game.initFreeCamera(false, false);
         Game.initPostProcessing();
 
@@ -385,8 +394,7 @@ class Game {
         Game.transformsWorker.onmessage = Game.transformsWorkerOnMessage;
         Game.entityLogicWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/entityLogicOffline.worker.js"));
         Game.entityLogicWorker.onmessage = Game.entityLogicWorkerOnMessage;
-        Game.entityLogicTickChannel = new MessageChannel();
-
+        
         if (Game.debugMode) {
             Game.transformsWorker.postMessage({
                 "cmd": "setDebugMode",
@@ -425,29 +433,47 @@ class Game {
             }
         });
 
-        Game.tickWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTickChannel.port1]);
-        Game.entityLogicWorker.postMessage({"cmd":"connectTick","sta":0,"msg":null}, [Game.entityLogicTickChannel.port2]);
+        Game.entityLogicTickChannel = new MessageChannel();
+        Game.tickWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port1]);
+        Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port2]);
         Game.entityLogicTransformsChannel = new MessageChannel();
-        Game.transformsWorker.postMessage({"cmd":"connectEntityLogic","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port1]);
-        Game.entityLogicWorker.postMessage({"cmd":"connectTransforms","sta":0,"msg":null}, [Game.entityLogicTransformsChannel.port2]);
-        Game.initializePhaseFive();
+        Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port1]);
+        Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port2]);
+        //Game.initializePhaseFive();
+        //setTimeout(() => {Game.initializePhaseFive()}, 2000);
         return 0;
     }
     static initializePhaseFive() {
         if (Game.initializedPhaseFive) {
             return 0;
         }
-        BABYLON.Tools.Log("Initializing, Phase Five; assuming direct control");
-        Game.initializedPhaseFive = true;
-        Game.gui.show();
+        if (Game.bConnectedTickToEntityLogic && Game.bConnectedTransformsToEntityLogic && Game.bConnectedEntityLogicToTick && Game.bConnectedEntityLogicToTransforms) {
+            Game.initializedPhaseFive = true;
+            Game.initializePhaseSix();
+        }
+        return 0;
+    }
+    static initializePhaseSix() {
+        if (Game.initializedPhaseSix) {
+            return 0;
+        }
+        BABYLON.Tools.Log("Initializing, Phase Six; assuming direct control");
+        Game.initializedPhaseSix = true;
+        if (Game.bUseGUI) {
+            Game.gui.show();
+        }
         Game.initPointerEventListeners();
-        if (Game.assumeInitialized) {
-            Game.setPlayerCell(Game.assumeCurrentCellID);
-            Game.gui.mainMenu.hide();
-            Game.gui.hide();
+        if (Game.bSkipMainMenu) {
+            Game.loadCellAndSetPlayerAt();
+            if (Game.bUseGUI) {
+                Game.gui.mainMenu.hide();
+                Game.gui.hide();
+            }
         }
         else {
-            Game.gui.mainMenu.show();
+            if (Game.bUseGUI) {
+                Game.gui.mainMenu.show();
+            }
         }
         Game.resize(true);
         if (Game._playSoundTest) {
@@ -488,7 +514,9 @@ class Game {
                 Game.renderHeight = Game.engine.getRenderHeight();
             }
         }
-        Game.gui.resize();
+        if (Game.bUseGUI) {
+            Game.gui.resize();
+        }
         return 0;
     }
     static _renderLoopFunction() {
@@ -510,7 +538,9 @@ class Game {
             return 1;
         }
         if (Game.playerController.hasTarget()) {
-            Game.gui.hud.actionTooltip.update();
+            if (Game.bUseGUI) {
+                Game.gui.hud.actionTooltip.update();
+            }
         }
         if (Game.bBeforeRenderForceCameraBounds && Game.camera instanceof BABYLON.ArcRotateCamera) {
             Game.camera.alpha = Tools.moduloRadians(Game.camera.alpha);
@@ -552,8 +582,10 @@ class Game {
                 nFunction()
             });
         }
-        if (Game.gui != null && DebugGameGUI.isVisible) {
-            Game.updateDebugCollisionList();
+        if (Game.bUseGUI) {
+            if (Game.gui != null && DebugGameGUI.isVisible) {
+                Game.updateDebugCollisionList();
+            }
         }
         return 0;
     }
@@ -711,7 +743,9 @@ class Game {
         }
         Game.scene.actionManager.registerAction(Game.sceneExecuteCodeActions["longPress"]);
         Game.scene.onPointerObservable.add(Game.sceneOnPointerObservable);
-        Game.gui.cursor.unlock();
+        if (Game.bUseGUI) {
+            Game.gui.cursor.unlock();
+        }
         Game.initializedPointerEventListeners = true;
         Game.initializingPointerEventListeners = false;
         return 0;
@@ -725,7 +759,9 @@ class Game {
             return 0;
         }
         Game.initializedPointerEventListeners = false;
-        Game.gui.cursor.lock();
+        if (Game.bUseGUI) {
+            Game.gui.cursor.lock();
+        }
         Game.pointerRelease();
         if (Game.eventListeners.hasOwnProperty('click')) {
             window.document.removeEventListener("click", Game.pointerLock);
@@ -918,7 +954,7 @@ class Game {
     }
     static updateMenuKeyboardDisplayKeys() {
         if (Game.debugMode) BABYLON.Tools.Log("Running Game.updateMenuKeyboardDisplayKeys()");
-        if (Game.initialized && Game.gui.initialized) {
+        if (Game.initialized && Game.bUseGUI && Game.gui.initialized) {
             Game.gui.hud.actionTooltip.setLetter();
         }
         return 0;
@@ -3830,9 +3866,11 @@ class Game {
         }
         Game.playerController.collisionMesh.isPickable = false;
         Game.playerEntityID = controller.entityID;
-        Game.gui.hud.playerPortrait.set(Game.playerController);
-        if (Game.gui.hud.isVisible) {
-            Game.gui.hud.playerPortrait.show();
+        if (Game.bUseGUI) {
+            Game.gui.hud.playerPortrait.set(Game.playerController);
+            if (Game.gui.hud.isVisible) {
+                Game.gui.hud.playerPortrait.show();
+            }
         }
         Game.createControllerAttachedMesh("cameraFocus", "missingMaterial", "FOCUS", BABYLON.Vector3.Zero(), BABYLON.Vector3.Zero(), BABYLON.Vector3.One(), {}, controllerID, Callback.create(String("assignPlayerStatic-").concat(Tools.genUUIDv4()), parentCallbackID, [controllerID], Game.assignPlayerPhaseTwo));
         if (Game.debugMode) console.groupEnd();
@@ -3864,7 +3902,9 @@ class Game {
         if (Game.debugMode) console.group(`Running Game.unassignPlayer(${parentCallbackID})`);
         Game.transformsWorkerPostMessage("clearPlayer", 0);
         Game.initFreeCamera(false);
-        Game.gui.hud.playerPortrait.hide();
+        if (Game.bUseGUI) {
+            Game.gui.hud.playerPortrait.hide();
+        }
         let controllerID = null;
         if (Game.hasPlayerController()) {
             controllerID = Game.playerController.id;
@@ -3936,7 +3976,9 @@ class Game {
             if (Game.debugMode && Game.debugVerbosity > 9) {
                 console.groupEnd();
             }
-            Game.gui.hud.targetPortrait.update();
+            if (Game.bUseGUI) {
+                Game.gui.hud.targetPortrait.update();
+            }
             return 0;
         }
         if (Game.highlightEnabled) {
@@ -3947,10 +3989,12 @@ class Game {
             actionEnum = 0;
         }
         Game.playerController.setTarget(entityController);
-        Game.gui.hud.targetPortrait.set(entityController);
-        Game.gui.hud.targetPortrait.show();
-        Game.gui.hud.actionTooltip.set(ActionEnum.properties[actionEnum].name);
-        Game.gui.hud.actionTooltip.show();
+        if (Game.bUseGUI) {
+            Game.gui.hud.targetPortrait.set(entityController);
+            Game.gui.hud.targetPortrait.show();
+            Game.gui.hud.actionTooltip.set(ActionEnum.properties[actionEnum].name);
+            Game.gui.hud.actionTooltip.show();
+        }
         if (Game.debugMode && Game.debugVerbosity > 9) console.groupEnd();
         return 0;
     }
@@ -3966,8 +4010,10 @@ class Game {
             Game.clearHighlightedController();
         }
         Game.playerController.clearTarget();
-        Game.gui.hud.targetPortrait.hide();
-        Game.gui.hud.actionTooltip.hide();
+        if (Game.bUseGUI) {
+            Game.gui.hud.targetPortrait.hide();
+            Game.gui.hud.actionTooltip.hide();
+        }
         return 0;
     }
     /**
@@ -4063,11 +4109,17 @@ class Game {
         return 0;
     }
     static initPlayerPortraitStatsUpdateInterval() {
+        if (!Game.bUseGUI) {
+            return 0;
+        }
         clearInterval(Game.playerPortraitStatsUpdateIntervalFunction);
         Game.playerPortraitStatsUpdateIntervalFunction = setInterval(Game.gui.hud.playerPortrait.update, Game.playerPortraitStatsUpdateInterval);
         return 0;
     }
     static setPlayerPortraitStatsUpdateInterval(interval = 100) {
+        if (!Game.bUseGUI) {
+            return 0;
+        }
         if (interval > 0) {
             Game.playerPortraitStatsUpdateInterval = interval;
         }
@@ -4075,6 +4127,9 @@ class Game {
         return 0;
     }
     static clearPlayerPortraitStatsUpdateInterval() {
+        if (!Game.bUseGUI) {
+            return 0;
+        }
         clearInterval(Game.playerPortraitStatsUpdateIntervalFunction);
         return 0;
     }
@@ -4238,7 +4293,9 @@ class Game {
                 Game.playerController.hideMesh();
                 Game.camera.checkCollisions = false;
                 Game.camera.inertia = 0.75;
-                Game.gui.hud.showCrosshair();
+                if (Game.bUseGUI) {
+                    Game.gui.hud.showCrosshair();
+                }
             }
         }
         else if (!Game.playerController.meshes[0].isVisible) {
@@ -4248,7 +4305,9 @@ class Game {
             Game.camera.inertia = Game.cameraInertia;
             Game.camera.inputs.attached.pointers.angularSensibilityX = Game.cameraAngularSensitivityX;
             Game.camera.inputs.attached.pointers.angularSensibilityY = Game.cameraAngularSensitivityY;
-            Game.gui.hud.hideCrosshair();
+            if (Game.bUseGUI) {
+                Game.gui.hud.hideCrosshair();
+            }
         }
         if (Game.useCameraRay) {
             if (Game.playerController.meshes[0].isVisible && Game.cameraRay instanceof BABYLON.Ray) {
@@ -4574,8 +4633,10 @@ class Game {
     }
     static actionTalkResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionTalkResponse(${targetController.id}, ${actorController.id}, {}, ${parentCallbackID})`);
-        Game.gui.dialogue.set(response, targetController, actorController);
-        Game.gui.dialogue.show();
+        if (Game.bUseGUI) {
+            Game.gui.dialogue.set(response, targetController, actorController);
+            Game.gui.dialogue.show();
+        }
         return 0;
     }
     static actionUnequip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4898,40 +4959,56 @@ class Game {
         switch (Game.interfaceMode) {
             case InterfaceModeEnum.CHARACTER: {
                 Game.cameraPointerControlAttach();
-                Game.gui.hud.actionTooltip.unlock();
-                Game.gui.cursor.hide();
-                Game.gui.hud.show();
+                if (Game.bUseGUI) {
+                    Game.gui.hud.actionTooltip.unlock();
+                    Game.gui.cursor.hide();
+                    Game.gui.hud.show();
+                }
                 Game.controls = CharacterControls;
                 break;
             }
             case InterfaceModeEnum.DIALOGUE: {
-                Game.gui.hud.actionTooltip.lock();
+                if (Game.bUseGUI) {
+                    Game.gui.hud.actionTooltip.lock();
+                }
                 Game.cameraPointerControlDetach();
-                Game.gui.cursor.show();
+                if (Game.bUseGUI) {
+                    Game.gui.cursor.show();
+                }
                 Game.controls = DialogueControls;
                 break;
             }
             case InterfaceModeEnum.MENU: {
-                Game.gui.hud.actionTooltip.lock();
+                if (Game.bUseGUI) {
+                    Game.gui.hud.actionTooltip.lock();
+                }
                 Game.cameraPointerControlDetach();
-                Game.gui.cursor.show();
+                if (Game.bUseGUI) {
+                    Game.gui.cursor.show();
+                }
                 Game.controls = MenuControls;
                 break;
             }
             case InterfaceModeEnum.RADIAL: {
-                Game.gui.hud.actionTooltip.lock();
+                if (Game.bUseGUI) {
+                    Game.gui.hud.actionTooltip.lock();
+                }
                 Game.cameraPointerControlDetach();
                 RadialControls.reset();
-                Game.gui.cursor.hide();
-                Game.gui.hud.hideCrosshair();
-                Game.gui.hud.actionTooltip.hide();
+                if (Game.bUseGUI) {
+                    Game.gui.cursor.hide();
+                    Game.gui.hud.hideCrosshair();
+                    Game.gui.hud.actionTooltip.hide();
+                }
                 Game.controls = RadialControls;
                 break;
             }
             case InterfaceModeEnum.EDIT: {
                 Game.cameraPointerControlDetach();
                 EditControls.reset();
-                Game.gui.cursor.show();
+                if (Game.bUseGUI) {
+                    Game.gui.cursor.show();
+                }
                 Game.controls = EditControls;
                 break;
             }
@@ -4943,6 +5020,9 @@ class Game {
         return Game.interfaceMode;
     }
     static checkAndSetInterfaceMode(interfaceMode = InterfaceModeEnum.CHARACTER) {
+        if (!Game.bUseGUI) {
+            return 0;
+        }
         if (Game.gui.windowStack.length == 0) {
             return Game.setInterfaceMode(interfaceMode);
         }
@@ -4980,19 +5060,27 @@ class Game {
         if (!event.data.hasOwnProperty("cmd")) {
             return 2;
         }
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
         switch (event.data.cmd) {
+            case "connectedToEntityLogic": {
+                Game.bConnectedTickToEntityLogic = true;
+                Callback.run(callbackID);
+                break;
+            }
             case "sendInfo": {
                 // TODO: recalculate all scheduled events, or find a way so I don't have to (by using ticks, rounds, and turns) :v
-                Game.currentTick = event.data["msg"][0];
-                Game.gameTimeMultiplier = event.data["msg"][1];
-                Game.ticksPerTurn = event.data["msg"][2];
-                Game.turnsPerRound = event.data["msg"][3];
-                Game.turnTime = event.data["msg"][4];
-                Game.roundTime = event.data["msg"][5];
+                Game.currentTick = message[0];
+                Game.gameTimeMultiplier = message[1];
+                Game.ticksPerTurn = message[2];
+                Game.turnsPerRound = message[3];
+                Game.turnTime = message[4];
+                Game.roundTime = message[5];
                 break;
             }
             case "sendTimestamp": {
-                Game.currentTime = event.data["msg"][0];
+                Game.currentTime = message[0];
                 if (Game.currentCellID != null) {
                     Game.updateSkybox();
                 }
@@ -5050,6 +5138,11 @@ class Game {
         let callbackID = event.data["callbackID"];
         let message = event.data["msg"];
         switch (event.data["cmd"]) {
+            case "connectedToEntityLogic": {
+                Game.bConnectedTransformsToEntityLogic = true;
+                Callback.run(callbackID);
+                break;
+            }
             case "enable": {
                 if (message.length > 0) {
                     for (let i in message) {
@@ -5143,6 +5236,16 @@ class Game {
         let message = event.data["msg"];
         if (Game.debugMode && message) console.info(`and message`);
         switch (event.data["cmd"]) {
+            case "connectedToTick": {
+                Game.bConnectedEntityLogicToTick = true;
+                Callback.run(callbackID);
+                break;
+            }
+            case "connectedToTransforms": {
+                Game.bConnectedEntityLogicToTransforms = true;
+                Callback.run(callbackID);
+                break;
+            }
             case "actionAttack":
             case "actionClose":
             case "actionDrop":
@@ -5325,7 +5428,9 @@ class Game {
             case "getMoney": {
                 if (status == 0) {
                     let amount = Number.parseFloat(message["amount"]) || 0;
-                    Game.gui.chat.appendOutput(`${message["targetName"]} has \$${amount}.`);
+                    if (Game.bUseGUI) {
+                        Game.gui.chat.appendOutput(`${message["targetName"]} has \$${amount}.`);
+                    }
                 }
                 break;
             }
@@ -5493,7 +5598,9 @@ class Game {
             }
             case "setMoney": {
                 if (status == 0) {
-                    Game.gui.chat.appendOutput(`${message["targetName"]} has had their money set to \$${message["amount"]}.`);
+                    if (Game.bUseGUI) {
+                        Game.gui.chat.appendOutput(`${message["targetName"]} has had their money set to \$${message["amount"]}.`);
+                    }
                 }
                 break;
             }
@@ -5698,21 +5805,23 @@ class Game {
         if (!Game.hasPlayerController()) {
             return 0;
         }
-        if (Game.playerController.hasTarget() && Game.playerController.target.id == id) {
-            Game.gui.hud.targetPortrait.update();
-        }
-        else if (Game.gui.inventoryMenu.hasSelected() && Game.gui.inventoryMenu.selectedEntity.id == id) {
-            Game.gui.inventoryMenu.updateSelected();
-        }
-        if (Game.gui.inventoryMenu.isVisible) {
-            if (Game.cachedEntities[id].hasContainer) {
-                if (containerLength != Game.cachedEntities[id]["container"]["size"]) {
-                    Game.gui.inventoryMenu.update();
+        if (Game.bUseGUI) {
+            if (Game.playerController.hasTarget() && Game.playerController.target.id == id) {
+                Game.gui.hud.targetPortrait.update();
+            }
+            else if (Game.gui.inventoryMenu.hasSelected() && Game.gui.inventoryMenu.selectedEntity.id == id) {
+                Game.gui.inventoryMenu.updateSelected();
+            }
+            if (Game.gui.inventoryMenu.isVisible) {
+                if (Game.cachedEntities[id].hasContainer) {
+                    if (containerLength != Game.cachedEntities[id]["container"]["size"]) {
+                        Game.gui.inventoryMenu.update();
+                    }
                 }
             }
-        }
-        if (Game.gui.inventoryEquipmentMenu.isVisible) {
-            Game.gui.inventoryEquipmentMenu.update();
+            if (Game.gui.inventoryEquipmentMenu.isVisible) {
+                Game.gui.inventoryEquipmentMenu.update();
+            }
         }
         return 0;
     }
@@ -5750,7 +5859,9 @@ class Game {
     }
     static setDialoguePhaseTwo(id, targetController, actorController, response, parentCallbackID) {
         let json = JSON.parse(response)
-        Game.gui.dialogue.set(json);
+        if (Game.bUseGUI) {
+            Game.gui.dialogue.set(json);
+        }
         return 0;
     }
     static getEntity(id, callbackID) {

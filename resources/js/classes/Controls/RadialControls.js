@@ -26,14 +26,18 @@
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.gui.radialMenu.isVisible) {
-                    Game.gui.radialMenu.hide();
+                if (Game.bUseGUI) {
+                    if (Game.gui.radialMenu.isVisible) {
+                        Game.gui.radialMenu.hide();
+                    }
                 }
                 break;
             }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
-                Game.gui.radialMenu.hide();
+                if (Game.bUseGUI) {
+                    Game.gui.radialMenu.hide();
+                }
                 break;
             }
             case AbstractControls.useTargetedEntityCode : {

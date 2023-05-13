@@ -16,7 +16,9 @@ class EditControls extends AbstractControls {
             }
             case EditControls.rotateCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
-                    Game.gui.chat.appendOutput(`\n    Rotating ${EditControls.pickedMesh.id} by Y:${EditControls.rotationIncrementVector.y}\n`);
+                    if (Game.bUseGUI) {
+                        Game.gui.chat.appendOutput(`\n    Rotating ${EditControls.pickedMesh.id} by Y:${EditControls.rotationIncrementVector.y}\n`);
+                    }
                     EditControls.rotating = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -24,7 +26,9 @@ class EditControls extends AbstractControls {
             }
             case EditControls.scaleCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
-                    Game.gui.chat.appendOutput(`\n    Scaling ${EditControls.pickedMesh.id} by *:${EditControls.rotationIncrementVector.y}\n`);
+                    if (Game.bUseGUI) {
+                        Game.gui.chat.appendOutput(`\n    Scaling ${EditControls.pickedMesh.id} by *:${EditControls.rotationIncrementVector.y}\n`);
+                    }
                     EditControls.scaling = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -32,7 +36,9 @@ class EditControls extends AbstractControls {
             }
             case EditControls.moveCode : {
                 if (EditControls.pickedMesh instanceof BABYLON.AbstractMesh) {
-                    Game.gui.chat.appendOutput(`\n    Moving ${EditControls.pickedMesh.id}\n`);
+                    if (Game.bUseGUI) {
+                        Game.gui.chat.appendOutput(`\n    Moving ${EditControls.pickedMesh.id}\n`);
+                    }
                     EditControls.moving = true;
                     Game.camera.detachControl(Game.canvas);
                 }
@@ -121,17 +127,21 @@ class EditControls extends AbstractControls {
             }
             case AbstractControls.chatInputFocusCode : {
                 if (Game.getInterfaceMode() == InterfaceModeEnum.CHARACTER) {
-                    if (!Game.gui.chat.isFocused()) {
-                        Game.gui.chat.setFocused(true);
-                    }
-                    else {
-                        Game.gui.chat.sendInput();
+                    if (Game.bUseGUI) {
+                        if (!Game.gui.chat.isFocused()) {
+                            Game.gui.chat.setFocused(true);
+                        }
+                        else {
+                            Game.gui.chat.sendInput();
+                        }
                     }
                 }
                 break;
             }
             case AbstractControls.chatInputSubmitCode : {
-                Game.gui.chat.sendInput();
+                if (Game.bUseGUI) {
+                    Game.gui.chat.sendInput();
+                }
                 break;
             }
         }

@@ -25,7 +25,9 @@ class DialogueControls extends MenuControls {
             }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
-                Game.gui.hide();
+                if (Game.bUseGUI) {
+                    Game.gui.hide();
+                }
                 break;
             }
         }

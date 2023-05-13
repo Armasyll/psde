@@ -69,7 +69,9 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        Game.gui.cursor.pointerDown(mouseEvent);
+        if (Game.bUseGUI) {
+            Game.gui.cursor.pointerDown(mouseEvent);
+        }
         return 0;
     }
     static onMouseUp(mouseEvent) {
@@ -82,7 +84,9 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        Game.gui.cursor.pointerUp(mouseEvent);
+        if (Game.bUseGUI) {
+            Game.gui.cursor.pointerUp(mouseEvent);
+        }
         return 0;
     }
     static onClick(mouseEvent) {
@@ -95,7 +99,9 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        Game.gui.cursor.click();
+        if (Game.bUseGUI) {
+            Game.gui.cursor.click();
+        }
         return 0;
     }
     static onContext(mouseEvent) {
@@ -108,13 +114,17 @@ class AbstractControls {
         if (!Game.engine.isPointerLock) {
             return 1;
         }
-        Game.gui.cursor.context();
+        if (Game.bUseGUI) {
+            Game.gui.cursor.context();
+        }
         return 0;
     }
     static onMove(mouseEvent) {
         if (Game.engine.isPointerLock) {
             //Game.scene.simulatePointerMove(); // Complains as of latest babylon update (5.45.0) maybe before
-            Game.gui.cursor.update(mouseEvent.movementX, mouseEvent.movementY);
+            if (Game.bUseGUI) {
+                Game.gui.cursor.update(mouseEvent.movementX, mouseEvent.movementY);
+            }
         }
         return 0;
     }

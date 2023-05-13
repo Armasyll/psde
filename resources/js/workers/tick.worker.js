@@ -826,7 +826,10 @@ class Tick {
         return 0;
     }
     static entityLogicWorkerOnMessage(event) {
-        switch (event.data["msg"]) {
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
+        switch (message) {
             case "": {
                 break;
             }
@@ -855,10 +858,14 @@ class Tick {
         return 0;
     }
     static gameWorkerOnMessage(event) {
+        let status = event.data["sta"];
+        let callbackID = event.data["callbackID"];
+        let message = event.data["msg"];
         switch (event.data["cmd"]) {
             case "connectEntityLogic": {
                 Tick.entityLogicPort = event.ports[0];
                 Tick.entityLogicPort.onmessage = Tick.entityLogicWorkerOnMessage;
+                Tick.gameWorkerPostMessage("connectedToEntityLogic", 0, "Connected to EntityLogicWorker", callbackID);
                 break;
             }
             case "getInfo": {
@@ -875,7 +882,7 @@ class Tick {
                 break;
             }
             case "setTimestamp": {
-                let number = Number.parseInt(event.data["msg"][0]);
+                let number = Number.parseInt(message[0]);
                 if (isNaN(number) || number == Tick.currentTime) {
                     break;
                 }
@@ -885,7 +892,7 @@ class Tick {
             }
             case "setTurnTimeInTicks":
             case "setTurnTime": {
-                let number = Number.parseInt(event.data["msg"][0]);
+                let number = Number.parseInt(message[0]);
                 if (isNaN(number) || number == Tick.ticksPerTurn) {
                     break;
                 }
@@ -899,7 +906,7 @@ class Tick {
             }
             case "setRoundTimeInTurns":
             case "setRoundTime": {
-                let number = Number.parseInt(event.data["msg"][0]);
+                let number = Number.parseInt(message[0]);
                 if (isNaN(number) || number == Tick.turnsPerRound) {
                     break;
                 }
@@ -914,7 +921,7 @@ class Tick {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                let number = Number.parseInt(event.data["msg"][0]);
+                let number = Number.parseInt(message[0]);
                 if (isNaN(number) || number == Tick.gameTimeMultiplier) {
                     break;
                 }
@@ -930,9 +937,9 @@ class Tick {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                Tick.currentTick = Number.parseInt(event.data["msg"][0]);
-                Tick.currentTurn = Number.parseInt(event.data["msg"][1]);
-                Tick.currentRound = Number.parseInt(event.data["msg"][2]);
+                Tick.currentTick = Number.parseInt(message[0]);
+                Tick.currentTurn = Number.parseInt(message[1]);
+                Tick.currentRound = Number.parseInt(message[2]);
                 break;
             }
             case "stop": {
@@ -950,41 +957,41 @@ class Tick {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                else if (Object.keys(event.data["msg"]).length != 7) {
+                else if (Object.keys(message).length != 7) {
                     console.log("brk");
                     break;
                 }
-                addScheduledEffect(event.data["msg"][0], event.data["msg"][1], event.data["msg"][2], event.data["msg"][3], event.data["msg"][4], event.data["msg"][5], event.data["msg"][6]);
+                addScheduledEffect(message[0], message[1], message[2], message[3], message[4], message[5], message[6]);
                 break;
             }
             case "removeScheduledEffect": {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                else if (Object.keys(event.data["msg"]).length != 2) {
+                else if (Object.keys(message).length != 2) {
                     break;
                 }
-                removeAscheduledEffect(event.data["msg"][0], event.data["msg"][1]);
+                removeAscheduledEffect(message[0], message[1]);
                 break;
             }
             case "addScheduledCommand": {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                else if (Object.keys(event.data["msg"]).length != 3) {
+                else if (Object.keys(message).length != 3) {
                     break;
                 }
-                addScheduledCommand(event.data["msg"][0], event.data["msg"][1], event.data["msg"][2]);
+                addScheduledCommand(message[0], message[1], message[2]);
                 break;
             }
             case "setScheduledCommand": {
                 if (!event.data.hasOwnProperty("msg")) {
                     break;
                 }
-                else if (Object.keys(event.data["msg"]).length != 3) {
+                else if (Object.keys(message).length != 3) {
                     break;
                 }
-                setScheduledCommand(event.data["msg"][0], event.data["msg"][1], event.data["msg"][2]);
+                setScheduledCommand(message[0], message[1], message[2]);
                 break;
             }
         };

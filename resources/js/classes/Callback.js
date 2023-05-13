@@ -86,6 +86,9 @@ class Callback {
         Callback.callbacks[id] = {"parent":parentID, "params":params, "callback":callback, "hasRun":(callback == null), "status":0};
         return id;
     }
+    static createDummy(callback) {
+        return Callback.create(Tools.genUUIDv4(), null, [], callback);
+    }
     /**
      * 
      * @param {string} id 

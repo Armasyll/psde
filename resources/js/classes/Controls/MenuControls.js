@@ -15,38 +15,46 @@ class MenuControls extends AbstractControls {
         }
         switch (keyboardEvent.keyCode) {
             case AbstractControls.showInventoryCode: {
-                if (Game.gui.inventoryMenu.isVisible) {
-                    Game.gui.inventoryMenu.hide();
-                    Game.gui.hide();
-                    Game.gui.hud.show();
-                }
-                else {
-                    Game.gui.inventoryMenu.set(Game.playerEntityID);
-                    Game.gui.inventoryMenu.show();
+                if (Game.bUseGUI) {
+                    if (Game.gui.inventoryMenu.isVisible) {
+                        Game.gui.inventoryMenu.hide();
+                        Game.gui.hide();
+                        Game.gui.hud.show();
+                    }
+                    else {
+                        Game.gui.inventoryMenu.set(Game.playerEntityID);
+                        Game.gui.inventoryMenu.show();
+                    }
                 }
                 break;
             }
             case AbstractControls.showCharacterCode : {
-                if (Game.gui.characterStats.isVisible) {
-                    Game.gui.characterStats.hide();
-                    Game.gui.hide();
-                    Game.gui.hud.show();
-                }
-                else {
-                    Game.gui.characterStats.set(Game.playerEntityID);
-                    Game.gui.characterStats.show();
+                if (Game.bUseGUI) {
+                    if (Game.gui.characterStats.isVisible) {
+                        Game.gui.characterStats.hide();
+                        Game.gui.hide();
+                        Game.gui.hud.show();
+                    }
+                    else {
+                        Game.gui.characterStats.set(Game.playerEntityID);
+                        Game.gui.characterStats.show();
+                    }
                 }
                 break;
             }
             case AbstractControls.interfaceTargetedEntityCode : {
-                if (Game.gui.radialMenu.isVisible) {
-                    Game.gui.radialMenu.hide();
+                if (Game.bUseGUI) {
+                    if (Game.gui.radialMenu.isVisible) {
+                        Game.gui.radialMenu.hide();
+                    }
                 }
                 break;
             }
             case AbstractControls.UIDenyAlt:
             case AbstractControls.UIDeny: {
-                Game.gui.hide();
+                if (Game.bUseGUI) {
+                    Game.gui.hide();
+                }
                 break;
             }
         }

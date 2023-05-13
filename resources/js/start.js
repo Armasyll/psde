@@ -59,7 +59,6 @@ window.document.addEventListener("DOMContentLoaded", function() {
                 break;
             }
             default: {
-                let skip = false;
                 switch (typeof val) {
                     case "string": {
                         if (val == "false") {
@@ -74,21 +73,13 @@ window.document.addEventListener("DOMContentLoaded", function() {
                         else if (String(val).length > 0) {
                             val = String(val).replace(/[^a-zA-Z0-9]/, '').slice(0, 64);
                         }
-                        else {
-                            skip = true;
-                        }
                         break;
                     }
                     case "number":
                     case "boolean": {
                     }
-                    default: {
-                        skip = true;
-                    }
                 }
-                if (!skip) {
-                    gameOptions[String(key).replace(/[^a-zA-Z0-9]/, '').slice(0, 64)] = val;
-                }
+                gameOptions[String(key).replace(/[^a-zA-Z0-9]/, '').slice(0, 64)] = val;
             }
         }
     });
