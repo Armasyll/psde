@@ -26,6 +26,39 @@ class ChatGameGUI {
         if (ChatGameGUI.initialized != true) {
             return 1;
         }
+        ChatGameGUI.controller.width = String(ChatGameGUI.defaultWidthInPixels).concat("px");
+        ChatGameGUI.controller.height = String(ChatGameGUI.defaultHeightInPixels).concat("px");
+        return 0;
+    }
+    /**
+     * 
+     * @param {number} width Width in pixels
+     * @param {number} height Height in pixels
+     * @returns {number} Integer status code
+     */
+    static setDimensions(width = ChatGameGUI.defaultWidthInPixels, height = ChatGameGUI.defaultHeightInPixels) {
+        if (typeof width == "number") {
+            ChatGameGUI.defaultWidthInPixels = width;
+        }
+        if (typeof height == "number") {
+            ChatGameGUI.defaultHeightInPixels = height;
+        }
+        ChatGameGUI.resize();
+        return 0;
+    }
+    /**
+     * 
+     * @param {number} posX Distance from left in pixels
+     * @param {number} posY Distance from bottom in pixels
+     * @returns {number} Integer status code
+     */
+    static setPosition(posX = ChatGameGUI.posX, posY = ChatGameGUI.posY) {
+        if (typeof posX == "number") {
+            ChatGameGUI.posX = left;
+        }
+        if (typeof posY == "number") {
+            ChatGameGUI.posY = bottom;
+        }
         return 0;
     }
     static generateController() {
