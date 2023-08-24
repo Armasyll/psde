@@ -61,7 +61,6 @@ class Entity extends AbstractEntity {
         /** @type {Object} */
         this.instances = {};
 
-        this.addAvailableAction(ActionEnum.TOUCH);
         this.addAvailableAction(ActionEnum.LOOK);
         this.addSpecialProperty(SpecialPropertyEnum.EXISTS);
         this.setDefaultAction(ActionEnum.LOOK);
@@ -106,6 +105,10 @@ class Entity extends AbstractEntity {
         else {number = number|0}
         this.priceModifier = number;
         return 0;
+    }
+
+    generateDescription() {
+        return "";
     }
 
     /**

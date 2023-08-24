@@ -60,9 +60,17 @@
         return 0;
     }
     static onClick(mouseEvent) {
-        // da magic
+        // if the button exists in the radial menu
         if (Object.keys(RadialMenuGameGUI.visibleButtons).hasOwnProperty(RadialControls.currentButtonIndex)) {
-            RadialMenuGameGUI.visibleButtons[Object.keys(RadialMenuGameGUI.visibleButtons)[RadialControls.currentButtonIndex]].onPointerClickObservable._observers[0].callback();
+            let visibleButtonIndex = Object.keys(RadialMenuGameGUI.visibleButtons)[RadialControls.currentButtonIndex]
+            let visibleButtonObservable = RadialMenuGameGUI.visibleButtons[visibleButtonIndex].onPointerClickObservable;
+            // if the button has a registered observable event
+            if (visibleButtonObservable.hasOwnProperty("_observers") && visibleButtonObservable._observers instanceof Array) {
+                // if the button has a callback
+                if (visibleButtonObservable._observers.length >= 1 && visibleButtonObservable._observers[0].hasOwnProperty("callback") && typeof visibleButtonObservable._observers[0].callback == "function") {
+                    visibleButtonObservable._observers[0].callback();
+                }
+            }
         }
         return 0;
     }

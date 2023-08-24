@@ -41,6 +41,12 @@ class CreatureEntity extends Entity {
         this.cosmetics["FOOT_L"] = null;
         this.cosmetics["FOOT_R"] = null;
         /**
+         * Dialogue ID
+         * @type {string|null}
+         */
+        this.touch = null;
+        /**
+         * Dialogue ID
          * @type {string|null}
          */
         this.dialogue = null;
@@ -555,6 +561,7 @@ class CreatureEntity extends Entity {
 
         this.setSex(sex);
         this.setCreatureType(creatureType);
+        this.setCreatureSubType(creatureSubType);
         this.createContainer();
         this.generateProperties(true);
         this.generateBaseStats(true);
@@ -567,6 +574,10 @@ class CreatureEntity extends Entity {
         super.setID(id);
         CreatureEntity.set(this.id, this);
         return 0;
+    }
+
+    generateDescription() {
+        return String(`A ${this.age} year old ${String(SexEnum.properties[this.sex].name).toLowerCase()} ${String(CreatureTypeEnum.properties[this.creatureType].name).toLowerCase()} ${String(CreatureSubTypeEnum.properties[this.creatureSubType].name).toLowerCase()}.`);
     }
 
     setSoul(soul, updateSelf = true) {
@@ -850,6 +861,32 @@ class CreatureEntity extends Entity {
             this.soul.addDisposition(...parameters);
         }
         return 0;
+    }
+
+    hasTouch() {
+        return this.touch != null;
+    }
+    setTouch(touch) {
+        if (touch instanceof Dialogue) {
+            this.touch = touch.id;
+        }
+        else if (typeof touch == "string") {
+            this.touch = Tools.filterID(touch);
+        }
+        else {
+            return 2;
+        }
+        this.addAvailableAction(ActionEnum.TOUCH);
+        return 0;
+    }
+    removeTouch() {
+        this.touch = null;
+        this.removeAvailableAction(ActionEnum.TOUCH);
+        this.setDefaultAction(ActionEnum.LOOK);
+        return 0;
+    }
+    getTouch() {
+        return this.touch;
     }
 
     hasDialogue() {

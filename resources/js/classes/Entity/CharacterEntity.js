@@ -147,6 +147,10 @@ class CharacterEntity extends CreatureEntity {
         return this.getLastName();
     }
 
+    generateDescription() {
+        return String(`A ${this.age} year old ${String(SexEnum.properties[this.sex].name).toLowerCase()} ${String(CreatureTypeEnum.properties[this.creatureType].name).toLowerCase()} ${String(CreatureSubTypeEnum.properties[this.creatureSubType].name).toLowerCase()} with ${this.furColourA}-coloured ${String(PeltEnum.properties[this.peltType].name).toLowerCase()}.`);
+    }
+
     filterEquipmentSlot(equipmentSlot) {
         equipmentSlot = Tools.filterEnum(equipmentSlot, ApparelSlotEnum, false);
         if (equipmentSlot == -1) {

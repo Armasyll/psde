@@ -329,6 +329,16 @@ class EntityLogic {
                 EntityLogic.gameWorkerPostMessage("actionHold", 0, result, callbackID);
                 break;
             }
+            case "actionLook": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionLook", 1, null, callbackID);
+                    break;
+                }
+                EntityLogic.actionLook(target, actor, callbackID);
+                break;
+            }
             case "actionOpen": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
@@ -379,6 +389,16 @@ class EntityLogic {
                 let dialogue = Dialogue.get(target.getDialogue());
                 let dialogueObject = dialogue.objectify(target, actor);
                 EntityLogic.gameWorkerPostMessage("actionTalk", 0, dialogueObject, callbackID);
+                break;
+            }
+            case "actionTouch": {
+                let actor = AbstractEntity.get(message["actorID"]);
+                let target = AbstractEntity.get(message["targetID"]);
+                if (actor == 1 || target == 1) {
+                    EntityLogic.gameWorkerPostMessage("actionTouch", 1, null, callbackID);
+                    break;
+                }
+                EntityLogic.actionTouch(target, actor, callbackID);
                 break;
             }
             case "actionUnequip": {
@@ -984,6 +1004,10 @@ class EntityLogic {
         }
         return 0;
     }
+    static actionLook(target, actor, parentCallbackID) {
+        EntityLogic.gameWorkerPostMessage("actionLook", 0, target.generateDescription(), parentCallbackID);
+        return 0;
+    }
     static actionOpen(target, actor, parentCallbackID) {
         switch (target.getClassName()) {
             case "InstancedDoorEntity":
@@ -1032,7 +1056,7 @@ class EntityLogic {
         entityObj["controller"] = target.id;
         entityObj["container"] = target.container.objectifyMinimal(filter);
         obj[target.id] = JSON.stringify(entityObj);
-        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, callbackID);
+        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, parentCallbackID);
         return 0;
     }
     static actionOpenDoor(target, actor, parentCallbackID) {
@@ -1070,6 +1094,10 @@ class EntityLogic {
         if (target == EntityLogic.playerEntity || actor == EntityLogic.playerEntity) {
             EntityLogic.sendPlayerEntityUpdates();
         }
+        return 0;
+    }
+    static actionTouch(target, actor, parentCallbackID) {
+        EntityLogic.gameWorkerPostMessage("actionTouch", 0, target.getTouch(actor), parentCallbackID);
         return 0;
     }
     /**

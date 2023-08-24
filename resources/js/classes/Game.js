@@ -4367,6 +4367,10 @@ class Game {
                 }
                 break;
             }
+            case ActionEnum.TOUCH: {
+                Game.actionTouch(targetController, actorController);
+                break;
+            }
             case ActionEnum.LOOK: {
                 Game.actionLook(targetController, actorController);
                 break;
@@ -4548,6 +4552,11 @@ class Game {
         return 0;
     }
     static actionLay(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
         return 0;
     }
     static actionLook(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4556,6 +4565,14 @@ class Game {
         if (targetController == 1 || actorController == 1) {
             return 1;
         }
+        if (Game.debugMode) BABYLON.Tools.Log(`Game.actionLook(${targetController.id}, ${actorController.id})`);
+        let callbackID = String("actionLook-").concat(Tools.genUUIDv4());
+        Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionLookResponse);
+        Game.entityLogicWorkerPostMessage("actionLook", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        return 0;
+    }
+    static actionLookResponse(targetController, actorController, response, parentCallbackID) {
+        Game.gui.chat.appendOutput(response);
         return 0;
     }
     static actionOpen(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4606,6 +4623,11 @@ class Game {
         return 0;
     }
     static actionSit(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
         return 0;
     }
     static actionTake(targetController, actorController = Game.playerController, parentCallbackID = null) {
@@ -4673,6 +4695,28 @@ class Game {
         return 0;
     }
     static actionUse(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
+        return 0;
+    }
+    static actionTouch(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        targetController = Game.filterController(targetController);
+        actorController = Game.filterController(actorController);
+        if (targetController == 1 || actorController == 1) {
+            return 1;
+        }
+        if (Game.debugMode) BABYLON.Tools.Log(`Game.actionTouch(${targetController.id}, ${actorController.id})`);
+        let callbackID = String("actionTouch-").concat(Tools.genUUIDv4());
+        Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionTouchResponse);
+        Game.entityLogicWorkerPostMessage("actionTouch", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
+        return 0;
+    }
+    static actionTouchResponse(targetController, actorController, response, parentCallbackID) {
+        console.log(response);
+        console.log(parentCallbackID);
         return 0;
     }
 
@@ -5250,11 +5294,13 @@ class Game {
             case "actionClose":
             case "actionDrop":
             case "actionEquip":
+            case "actionLook":
             case "actionOpen":
             case "actionUnequip": {
                 Callback.run(callbackID, message);
                 break;
             }
+            case "actionTouch":
             case "actionTalk": {
                 if (status == 0) {
                     Callback.run(callbackID, message);

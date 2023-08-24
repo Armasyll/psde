@@ -66,9 +66,44 @@
             RadialMenuGameGUI.buttons[i] = button;
             RadialMenuGameGUI.controller.addControl(button);
             switch(i) {
+                case ActionEnum.ATTACK: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionAttack(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
                 case ActionEnum.USE: {
                     button.onPointerClickObservable.add(function() {
                         Game.actionUse(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
+                case ActionEnum.CLOSE: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionClose(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
+                case ActionEnum.CONSUME: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionConsume(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
+                case ActionEnum.HOLD: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionHold(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
+                case ActionEnum.LAY: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionLay(RadialMenuGameGUI.targetControllerID, Game.playerController);
                         RadialMenuGameGUI.hide();
                     });
                     break;
@@ -80,16 +115,16 @@
                     });
                     break;
                 }
-                case ActionEnum.READ: {
+                case ActionEnum.OPEN: {
                     button.onPointerClickObservable.add(function() {
-                        Game.actionRead(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        Game.actionOpen(RadialMenuGameGUI.targetControllerID, Game.playerController);
                         RadialMenuGameGUI.hide();
                     });
                     break;
                 }
-                case ActionEnum.LAY: {
+                case ActionEnum.READ: {
                     button.onPointerClickObservable.add(function() {
-                        Game.actionLay(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        Game.actionRead(RadialMenuGameGUI.targetControllerID, Game.playerController);
                         RadialMenuGameGUI.hide();
                     });
                     break;
@@ -108,27 +143,6 @@
                     });
                     break;
                 }
-                case ActionEnum.OPEN: {
-                    button.onPointerClickObservable.add(function() {
-                        Game.actionOpen(RadialMenuGameGUI.targetControllerID, Game.playerController);
-                        RadialMenuGameGUI.hide();
-                    });
-                    break;
-                }
-                case ActionEnum.CONSUME: {
-                    button.onPointerClickObservable.add(function() {
-                        Game.actionConsume(RadialMenuGameGUI.targetControllerID, Game.playerController);
-                        RadialMenuGameGUI.hide();
-                    });
-                    break;
-                }
-                case ActionEnum.CLOSE: {
-                    button.onPointerClickObservable.add(function() {
-                        Game.actionClose(RadialMenuGameGUI.targetControllerID, Game.playerController);
-                        RadialMenuGameGUI.hide();
-                    });
-                    break;
-                }
                 case ActionEnum.TALK: {
                     button.onPointerClickObservable.add(function() {
                         Game.actionTalk(RadialMenuGameGUI.targetControllerID, Game.playerController);
@@ -136,9 +150,9 @@
                     });
                     break;
                 }
-                case ActionEnum.ATTACK: {
+                case ActionEnum.TOUCH: {
                     button.onPointerClickObservable.add(function() {
-                        Game.actionAttack(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        Game.actionTouch(RadialMenuGameGUI.targetControllerID, Game.playerController);
                         RadialMenuGameGUI.hide();
                     });
                     break;

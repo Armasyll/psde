@@ -212,6 +212,10 @@ class AbstractEntity {
         return this.iconID;
     }
 
+    generateDescription() {
+        return "";
+    }
+
     /**
      * 
      * @param {SizeEnum} size 
