@@ -98,9 +98,10 @@ class Spell {
         this.targetType = TargetEnum.SELF;
         this.targetRadius = 0.0;
 
-        this.meshIDs = "missingMesh";
+        this.meshID = "missingMesh";
         this.materialID = "missingMaterial";
         this.textureID = "missingTexture";
+        this.animationID = "00_default";
 
         this.setSpellType(spellType);
         this.setSpellLevel(spellLevel);
@@ -389,12 +390,12 @@ class Spell {
         return this.effectsPriority;
     }
 
-    setMeshIDs(aMeshIDs) {
-        this.meshIDs = aMeshIDs;
+    setMeshID(meshID) {
+        this.meshID = MeshID;
         return 0;
     }
-    getMeshIDs() {
-        return this.meshIDs;
+    getMeshID() {
+        return this.meshID;
     }
     setTextureID(textureID) {
         this.textureID = textureID;
@@ -466,7 +467,7 @@ class Spell {
         if (spell.hasOwnProperty("effectsPriority")) {
             this.assignEffectsPriority(spell["effectsPriority"]);
         }
-        if (spell.hasOwnProperty("meshIDs")) this.setMeshIDs(spell.meshIDs);
+        if (spell.hasOwnProperty("meshID")) this.setMeshID(spell.meshID);
         if (spell.hasOwnProperty("materialID")) this.setMaterialID(spell.materialID);
         if (spell.hasOwnProperty("textureID")) this.setTextureID(spell.textureID);
         return 0;

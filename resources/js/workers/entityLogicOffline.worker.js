@@ -1029,23 +1029,19 @@ class EntityLogic {
         return 0;
     }
     static actionOpenFurniture(target, actor, parentCallbackID) {
-        /** @type {boolean} */
-        let canOpen = false;
-        if (target.isEntityLocked()) {
-            if (actor.hasItem(target.getKey())) {
-                canOpen = true;
-            }
-        }
-        else {
-            canOpen = true;
-        }
-        if (canOpen) {
+        let response = EntityLogic.generateActionOpenResponse(target, actor);
+        if (response["isOpened"]) {
             target.setOpen();
-            EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
         }
+        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, parentCallbackID);
         return 0;
     }
     static actionOpenContainer(target, actor, filter = "", parentCallbackID) {
+        let response = EntityLogic.generateActionOpenResponse(target, actor);
+        if (response["isOpened"]) {
+            target.setOpen();
+        }
+        EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
         if (!target.hasContainer()) {
             return 0;
         }
@@ -1060,26 +1056,52 @@ class EntityLogic {
         return 0;
     }
     static actionOpenDoor(target, actor, parentCallbackID) {
-        /** @type {boolean} */
-        let canOpen = false;
-        if (target.isEntityLocked()) {
-            if (actor.hasItem(target.getKey())) {
-                canOpen = true;
-            }
-        }
-        else {
-            canOpen = true;
-        }
-        if (canOpen) {
+        let response = EntityLogic.generateActionOpenResponse(target, actor);
+        if (response["isOpened"]) {
             if (target.hasTeleportMarker()) {
                 EntityLogic.loadCellAndSetPlayerAt(target.teleportMarker.getCellID(), target.teleportMarker.position, target.teleportMarker.rotation);
             }
             else {
                 target.setOpen();
-                EntityLogic.gameWorkerPostMessage("actionOpen", 0, target.getOpen(), parentCallbackID);
             }
         }
+        EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
         return 0;
+    }
+    /**
+     * How morbid.
+     * @param {CreatureController} target 
+     * @param {EntityController} actor 
+     * @param {string|null} parentCallbackID 
+     */
+    static actionOpenCreature(target, actor, parentCallbackID) {
+        return 0;
+    }
+    static generateActionOpenResponse(target, actor, soundEffects = []) {
+        let response = {"isOpened":false, "isLocked":false, "isBlocked": false, "justUnlocked": false, "soundEffects": soundEffects};
+        
+        if (target.isEntityLocked()) {
+            if (actor.hasItem(target.getKey())) {
+                response["isOpened"] = true;
+                response["isLocked"] = false;
+                response["justUnlocked"] = true;
+                response["soundEffects"].push(target.getSoundEffect("unlock"));
+                response["soundEffects"].push(target.getSoundEffect("open"));
+            }
+            else {
+                response["isLocked"] = true;
+                response["soundEffects"].push(target.getSoundEffect("unlockFailed"));
+            }
+        }
+        else if (target.isBlocked()) {
+            response["isBlocked"] = true;
+            response["soundEffects"].push(target.getSoundEffect("stuck"));
+        }
+        else {
+            response["isOpened"] = true;
+            response["soundEffectss"].push(target.getSoundEffect("open"));
+        }
+        return response;
     }
     static actionTake(target, actor, parentCallbackID) {
         /** @type {string} UUIDv4 */

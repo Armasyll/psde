@@ -7,7 +7,7 @@
  * @property {string} name
  * @property {string} description
  * @property {string} iconID
- * @property {Array.<String>} meshIDs
+ * @property {array.<string>} meshIDs
  * @property {string} materialID
  * @property {string} textureID
  * @property {(string|null)} controllerID
@@ -42,6 +42,7 @@
  * @property {Object} effects
  * @property {Object} effectsPriority
  * @property {Object} actionEffects
+ * @property {Object.<string, array.<string>>} soundEffects
  */
 class AbstractEntity {
     /**
@@ -66,7 +67,7 @@ class AbstractEntity {
         /** @type {string} */
         this.iconID = "genericItem";
         this.setIcon(iconID);
-        /** @type {string} */
+        /** @type {array.<string>} */
         this.meshIDs = [];
         /** @type {string} */
         this.materialID = "missingMaterial";
@@ -148,6 +149,12 @@ class AbstractEntity {
          * @type {Object.<ActionEnum, Object.<Effect, boolean>>}
          */
         this.actionEffects = {};
+
+        /**
+         * Sound effects to be played for ID
+         * @type {Object.<string, Array.<string>>}
+         */
+        this.soundEffects = {};
 
         this.entityLocked = false;
         AbstractEntity.set(this.id, this);
@@ -893,6 +900,119 @@ class AbstractEntity {
         return 0;
     }
 
+    setSoundEffects(id, soundEffects) {
+        this.clearSoundEffect(id);
+        return this.addSoundEffects(id, soundEffects);
+    }
+    addSoundEffects(id, soundEffects) {
+        if (id == undefined) {
+            return 1;
+        }
+        else if (soundEffect == undefined) {
+            return 1;
+        }
+        if (soundEffects instanceof Array) {
+            for (let i = 0; i < soundEffects; i++) {
+                this.addSoundEffect(id, soundEffects[i]);
+            }
+        }
+        return 0;
+    }
+    addSoundEffect(id, soundEffect) {
+        if (id == undefined) {
+            return 1;
+        }
+        else if (soundEffect == undefined) {
+            return 1;
+        }
+        if (!this.soundEffects.hasOwnProperty(id)) {
+            this.soundEffects[id] = [];
+        }
+        if (typeof soundEffect == "string") {
+            this.soundEffects[id].push(soundEffect);
+        }
+        return 0;
+    }
+    setSoundEffect(id, soundEffect) {
+        this.clearSoundEffects();
+        this.addSoundEffect(id, soundEffect);
+        return 0;
+    }
+    getSoundEffects(id) {
+        if (this.soundEffects.hasOwnProperty(id)) {
+            if (this.soundEffects[id].length > 0) {
+                return this.soundEffects[id];
+            }
+        }
+        return ["none"];
+    }
+    getSoundEffect(id) {
+        return this.getSoundEffects[0];
+    }
+    removeSoundEffect(id, soundEffect) {
+        if (id == undefined) {
+            return 1;
+        }
+        else if (soundEffect == undefined) {
+            return 1;
+        }
+
+        if (!this.soundEffects.hasOwnProperty(id)) {
+            return 0;
+        }
+
+        for (let i = 0; i < this.soundEffects[id].length; i++) {
+            if (this.soundEffects[id][i].localeCompare(soundEffect) == 0) {
+                this.soundEffects[id].splice(i, 1);
+                if (this.soundEffects[id].length == 0) {
+                    delete this.soundEffects[id];
+                }
+                break;
+            }
+        }
+        return 0;
+    }
+    removeSoundEffects(id, soundEffects) {
+        if (id == undefined) {
+            return this.clearSoundEffects();
+        }
+        else if (soundEffects == undefined) {
+            return this.clearSoundEffect(id);
+        }
+
+        if (!this.soundEffects.hasOwnProperty(id)) {
+            return 0;
+        }
+
+        if (!(soundEffects instanceof Array)) {
+            return 1;
+        }
+
+        for (let i = 0; i < soundEffects.length; i++) {
+            this.removeSoundEffect(id, soundEffects[i]);
+        }
+        return 0;
+    }
+    clearSoundEffect(id) {
+        if (!this.soundEffects.hasOwnProperty(id)) {
+            return 0;
+        }
+        for (let i = 0; i < this.soundEffects[id].length; i++) {
+            delete this.soundEffects[id][i];
+        }
+        return 0;
+    }
+    clearSoundEffects() {
+        if (Object.keys(this.soundEffects).length == 0) {
+            return 0;
+        }
+        for (let s in this.soundEffects) {
+            this.clearSoundEffect(s);
+            delete this.soundEffects[s];
+        }
+        return 0;
+    }
+
     /**
      * Entity lock, not to be confused with the functionality lock.
      * @param {boolean} entityLocked 
@@ -1070,23 +1190,10 @@ class AbstractEntity {
             obj = property.objectify();
         }
         else if (property instanceof Cosmetic) {
-            obj = {
-                "id":property.id,
-                "name":property.getName(),
-                "description":property.getDescription(),
-                "iconID":property.iconID,
-                "materialID":property.materialID,
-                "meshIDs":property.meshIDs,
-                "textureID":property.textureID,
-                "className":property.getClassName()
-            };
+            obj = property.objectify();
         }
         else if (property instanceof Dialogue) {
-            obj = {
-                "id":property.id,
-                "name":property.getTitle(),
-                "className":property.getClassName()
-            };
+            obj = property.objectify();
         }
         else if (property instanceof Effect) {
             obj = {

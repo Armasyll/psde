@@ -292,18 +292,12 @@ class DialogueOption {
         return JSON.stringify(this.objectify);
     }
     objectify() {
-        let obj = {};
-        obj["id"] = this.id;
-        if (this.dialogue instanceof Dialogue) {
-            obj["dialogue"] = this.dialogue.id;
+        return {
+            "id": this.id,
+            "dialogue": (this.hasDialogue() ? this.dialogue.id : "none"),
+            "title": this.getTitle(),
+            "className": this.getClassName()
         }
-        else {
-            obj["dialogue"] = null;
-        }
-        obj["title"] = this.title;
-        //obj["condition"] = this.condition;
-        obj["className"] = this.getClassName();
-        return obj;
     }
     isEnabled() {
         return this.enabled == true;

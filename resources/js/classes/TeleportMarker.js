@@ -97,6 +97,14 @@ class TeleportMarker {
         this.rotation = Tools.filterArray3(rotation);
         return 0;
     }
+    objectify() {
+        return {
+            "id":this.id,
+            "cellID":this.cellID,
+            "position":this.position,
+            "rotation":this.rotation
+        }
+    }
     /**
      * @returns {array} 
      */

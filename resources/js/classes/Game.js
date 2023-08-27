@@ -4594,6 +4594,9 @@ class Game {
                 targetController.doOpen();
             }
         }
+        if (response["isContainer"]) {
+            
+        }
         return 0;
     }
     static actionRead(targetController = null, actorController = Game.playerController, parentCallbackID = null) {

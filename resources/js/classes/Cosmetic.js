@@ -41,12 +41,14 @@ class Cosmetic {
     }
     setName(name) {
         this.name = Tools.filterName(name);
+        return 0;
     }
     getName() {
         return this.name;
     }
     setDescription(description) {
         this.description = Tools.filterName(description);
+        return 0;
     }
     getDescription() {
         return this.description;
@@ -86,6 +88,18 @@ class Cosmetic {
     }
     getApparelSlot() {
         return this.equipmentSlot;
+    }
+    objectify() {
+        return {
+            "id":this.id,
+            "name":this.getName(),
+            "description":this.getDescription(),
+            "iconID":this.iconID,
+            "materialID":this.materialID,
+            "meshID":this.meshID,
+            "textureID":this.textureID,
+            "className":this.getClassName()
+        };
     }
     dispose() {
         Cosmetic.remove(this.id);

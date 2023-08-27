@@ -409,28 +409,18 @@ class Container {
     objectifyMinimal(filter = 0) {
         return this.objectify(filter);
     }
-    objectify(filter = 0) {
-        filter = Tools.filterInt(filter);
+    objectify() {
         let obj = {};
         obj["className"] = this.getClassName();
         obj["id"] = this.id;
         obj["name"] = this.name;
         obj["items"] = {};
         for (let slot in this.items) {
-            if (this.items[slot] instanceof InstancedItemEntity) {
-                if (filter <= 0 || filter == this.items[slot].getItemType()) {
-                    obj["items"][slot] = {
-                        "id": this.items[slot].id,
-                        "name": this.items[slot].getName(),
-                        "description": this.items[slot].getDescription(),
-                        "iconID": this.items[slot].getIcon(),
-                        "meshID": this.items[slot].getMeshID(),
-                        "materialID": this.items[slot].getMaterialID(),
-                        "textureID": this.items[slot].getTextureID(),
-                        "weight": this.items[slot].getWeight(),
-                        "price": this.items[slot].getPrice()
-                    }
-                }
+            if (!(this.items[slot] instanceof InstancedItemEntity)) {
+                continue;
+            }
+            obj["items"][slot] = {
+                "id": this.items[slot].id
             }
         }
         obj["maxSize"] = this.maxSize;
