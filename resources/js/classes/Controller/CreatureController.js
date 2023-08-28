@@ -1410,6 +1410,9 @@ class CreatureController extends EntityController {
     }
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (objectBlob.hasOwnProperty("cosmetics") && objectBlob["cosmetics"] instanceof Object) {
+            this.assignAttachments(objectBlob["cosmetics"], this._cosmeticMeshIDsAttachedToBones);
+        }
         if (this.bHasRunAssignCreature == true) {
             return 0;
         }
@@ -1444,9 +1447,6 @@ class CreatureController extends EntityController {
             else {
                 this.sEyeScleraColour = Tools.colourNameToHex(objectBlob.eyeBackground);
             }
-        }
-        if (objectBlob.hasOwnProperty("cosmetics") && objectBlob["cosmetics"] instanceof Object) {
-            this.assignAttachments(objectBlob["cosmetics"], this._cosmeticMeshIDsAttachedToBones);
         }
         if (objectBlob.hasOwnProperty("offensiveStance")) this.offensiveStance = objectBlob.offensiveStance;
         return 0;

@@ -1384,14 +1384,7 @@ class EntityController extends AbstractController {
      */
     assign(objectBlob) {
         super.assign(objectBlob);
-        if (this.bHasRunAssignEntity == true) {
-            return 0;
-        }
-        this.bHasRunAssignEntity = true;
         if (AbstractController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
-        if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
-        if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;
-        if (objectBlob.hasOwnProperty("depth")) this.depth = objectBlob.depth;
         if (objectBlob.hasOwnProperty("defaultAction")) this.setDefaultAction(objectBlob.defaultAction);
         if (objectBlob.hasOwnProperty("availableActions")) {
             this.availableActions = {};
@@ -1405,6 +1398,11 @@ class EntityController extends AbstractController {
                 this.addHiddenAvailableAction(action);
             }
         }
+        if (this.bHasRunAssignEntity == true) {
+            if (AbstractController.debugMode) console.groupEnd();
+            return 0;
+        }
+        this.bHasRunAssignEntity = true;
         if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }

@@ -467,52 +467,46 @@ class CharacterEntity extends CreatureEntity {
             return 1;
         }
         if (AbstractEntity.debugMode) console.log(`Running <CharacterEntity> ${this.id}.equip(${instancedItemEntity.id}, ${heldSlot})`);
-        /*
-        Get an apparel slot out of whatever heldSlot is
-         */
-        if (heldSlot != "HAND_L" && heldSlot != "HAND_R") {
-            if (this.handedness == HandednessEnum.LEFT) {
-                if (this.held["HAND_L"] == null) {
-                    heldSlot = "HAND_L";
-                }
-                else if (this.held["HAND_R"] == null) {
-                    heldSlot = "HAND_R";
-                }
-                else {
-                    heldSlot = "HAND_L";
-                }
-            }
-            else {
-                if (this.held["HAND_R"] == null) {
-                    heldSlot = "HAND_R";
-                }
-                else if (this.held["HAND_L"] == null) {
-                    heldSlot = "HAND_L";
-                }
-                else {
-                    heldSlot = "HAND_R";
-                }
-            }
-        }
-        /*
-        Clear out the equipment slot if it's in use, and set its value to instancedItemEntity
-         */
-        if (this.held[heldSlot] instanceof InstancedItemEntity) {
-            if (this.held[heldSlot].id != instancedItemEntity.id) {
-                this.releaseBySlot(heldSlot, false);
-            }
-        }
-        if (instancedItemEntity instanceof InstancedWeaponEntity) {
-            if (instancedItemEntity.isTwoHanded()) {
-                if (heldSlot == "HAND_L") {
-                    this.held["HAND_R"] = instancedItemEntity;
-                }
-                else if (heldSlot == "HAND_R") {
-                    this.held["HAND_L"] = instancedItemEntity;
-                }
-            }
+        if (instancedItemEntity instanceof InstancedWeaponEntity && instancedItemEntity.isTwoHanded()) {
+            this.held["HAND_R"] = instancedItemEntity;
+            this.held["HAND_L"] = instancedItemEntity;
         }
         else {
+            /*
+            Get an apparel slot out of whatever heldSlot is
+             */
+            if (heldSlot != "HAND_L" && heldSlot != "HAND_R") {
+                if (this.handedness == HandednessEnum.LEFT) {
+                    if (this.held["HAND_L"] == null) {
+                        heldSlot = "HAND_L";
+                    }
+                    else if (this.held["HAND_R"] == null) {
+                        heldSlot = "HAND_R";
+                    }
+                    else {
+                        heldSlot = "HAND_L";
+                    }
+                }
+                else {
+                    if (this.held["HAND_R"] == null) {
+                        heldSlot = "HAND_R";
+                    }
+                    else if (this.held["HAND_L"] == null) {
+                        heldSlot = "HAND_L";
+                    }
+                    else {
+                        heldSlot = "HAND_R";
+                    }
+                }
+            }
+            /*
+            Clear out the equipment slot if it's in use, and set its value to instancedItemEntity
+             */
+            if (this.held[heldSlot] instanceof InstancedItemEntity) {
+                if (this.held[heldSlot].id != instancedItemEntity.id) {
+                    this.releaseBySlot(heldSlot, false);
+                }
+            }
             this.held[heldSlot] = instancedItemEntity;
         }
         /*

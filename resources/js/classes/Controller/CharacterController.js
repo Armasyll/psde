@@ -146,16 +146,16 @@ class CharacterController extends CreatureController {
     }
     assign(objectBlob) {
         super.assign(objectBlob);
-        if (this.bHasRunAssignCharacter == true) {
-            return 0;
-        }
-        this.bHasRunAssignCharacter = true;
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {
             this.assignAttachments(objectBlob["equipment"], this._equipmentMeshIDsAttachedToBones);
         }
         if (objectBlob.hasOwnProperty("held") && objectBlob["held"] instanceof Object) {
             this.assignAttachments(objectBlob["held"], this._equipmentMeshIDsAttachedToBones);
         }
+        if (this.bHasRunAssignCharacter == true) {
+            return 0;
+        }
+        this.bHasRunAssignCharacter = true;
         return 0;
     }
     updateID(newID) {

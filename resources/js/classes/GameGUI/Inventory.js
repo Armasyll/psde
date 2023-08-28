@@ -398,18 +398,18 @@ class InventoryGameGUI {
     }
     static updateSelected(useCachedEntity = false) {
         if (Game.debugMode) console.info("Running InventoryGameGUI.updateSelected");
-        if (InventoryGameGUI.hasSelected()) {
-            let itemID = InventoryGameGUI.selectedEntity.id;
-            let targetController = InventoryGameGUI.targetController;
-            let actorController = InventoryGameGUI.actorController;
-            InventoryGameGUI.clearSelected();
-            InventoryGameGUI.setSelected(itemID, targetController, actorController);
+        if (!InventoryGameGUI.hasSelected()) {
+            return 1;
         }
+        let itemID = InventoryGameGUI.selectedEntity.id;
+        let targetController = InventoryGameGUI.targetController;
+        let actorController = InventoryGameGUI.actorController;
+        InventoryGameGUI.clearSelected();
+        InventoryGameGUI.setSelected(itemID, targetController, actorController);
         return 0;
     }
     static setSelectedResponsePhaseTwo(itemID, targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) console.group("Running InventoryGameGUI.setSelectedResponsePhaseTwo");
-        console.log(response);
         if (!response.hasItem) {
             InventoryGameGUI.clearSelected();
             if (Game.debugMode) {
@@ -449,12 +449,20 @@ class InventoryGameGUI {
             switch (action) {
                 case ActionEnum.CONSUME : {
                     actionButton = GameGUI.createButton("actionConsumeButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionConsume(response.id, actorController, InventoryGameGUI.setSelected);});
+                    actionButton.onPointerUpObservable.add(function() {
+                        InventoryGameGUI.preAction();
+                        Game.actionConsume(response.id, actorController.id, InventoryGameGUI.setSelected);
+                        InventoryGameGUI.postAction();
+                    });
                     break;
                 }
                 case ActionEnum.DROP : {
                     actionButton = GameGUI.createButton("actionDropButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionDrop(response.id, actorController, InventoryGameGUI.setSelected);});
+                    actionButton.onPointerUpObservable.add(function() {
+                        InventoryGameGUI.preAction();
+                        Game.actionDrop(response.id, actorController.id, InventoryGameGUI.setSelected);
+                        InventoryGameGUI.postAction();
+                    });
                     break;
                 }
                 case ActionEnum.EQUIP : {
@@ -463,24 +471,32 @@ class InventoryGameGUI {
                     }
                     if (response.equipped) {
                         actionButton = GameGUI.createButton("actionUnequipButton", ActionEnum.properties[ActionEnum.UNEQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionUnequip(response.id, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionUnequip(response.id, actorController.id, InventoryGameGUI.setSelected);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     else {
                         actionButton = GameGUI.createButton("actionEquipButton", ActionEnum.properties[ActionEnum.EQUIP].name);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionEquip(response.id, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionEquip(response.id, actorController.id, InventoryGameGUI.setSelected);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     break;
                 }
                 case ActionEnum.HOLD : {
                     let buttonText = "";
                     let isHeld = false;
-                    if (!Game.cachedEntities.hasOwnProperty(targetController.entityID)) {}
-                    else if (!Game.cachedEntities[targetController.entityID].hasOwnProperty("held")) {}
+                    if (!Game.cachedEntities.hasOwnProperty(targetController.id)) {}
+                    else if (!Game.cachedEntities[targetController.id].hasOwnProperty("held")) {}
                     else {
-                        if (Game.cachedEntities[targetController.entityID]["held"]["HAND_L"] != null && Game.cachedEntities[targetController.entityID]["held"]["HAND_L"].id == response.id) {
+                        if (Game.cachedEntities[targetController.id].held?.HAND_L?.id == response.id) {
                             isHeld = true;
                         }
-                        else if (Game.cachedEntities[targetController.entityID]["held"]["HAND_R"] != null && Game.cachedEntities[targetController.entityID]["held"].hasOwnProperty("HAND_R") && Game.cachedEntities[targetController.entityID]["held"]["HAND_R"].id == response.id) {
+                        else if (Game.cachedEntities[targetController.id]["held"]?.["HAND_R"]?.id == response.id) {
                             isHeld = true;
                         }
                     }
@@ -502,21 +518,38 @@ class InventoryGameGUI {
                     }
                     if (isHeld) {
                         actionButton = GameGUI.createButton("actionReleaseButton", buttonText);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionRelease(itemID, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionRelease(itemID, actorController.id, InventoryGameGUI.setSelected);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     else {
                         actionButton = GameGUI.createButton("actionHoldButton", buttonText);
-                        actionButton.onPointerUpObservable.add(function() {Game.actionHold(itemID, actorController, InventoryGameGUI.setSelected);});
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionHold(itemID, actorController.id, InventoryGameGUI.setSelected);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     break;
                 }
                 case ActionEnum.LOOK : {
-                    actionButton = GameGUI.createButton("actionLookButton", ActionEnum.properties[action].name);
+                    //actionButton = GameGUI.createButton("actionLookButton", ActionEnum.properties[action].name);
+                    /*actionButton.onPointerUpObservable.add(function() {
+                        InventoryGameGUI.preAction();
+                        Game.actionLook(itemID, actorController.id);
+                        InventoryGameGUI.postAction();
+                    });*/
                     break;
                 }
                 case ActionEnum.READ : {
                     actionButton = GameGUI.createButton("actionReadButton", ActionEnum.properties[action].name);
-                    actionButton.onPointerUpObservable.add(function() {Game.actionRead(itemID, actorController);});
+                    actionButton.onPointerUpObservable.add(function() {
+                        InventoryGameGUI.preAction();
+                        Game.actionRead(itemID, actorController.id);
+                        InventoryGameGUI.postAction();
+                    });
                     break;
                 }
                 case ActionEnum.PUT : {
@@ -525,13 +558,25 @@ class InventoryGameGUI {
                     }
                     else if (targetController.hasInventory) {
                         actionButton = GameGUI.createButton("actionPutButton", ActionEnum.properties[action].name);
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionPut(itemID, actorController.id, targetController.id);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     break;
                 }
                 case ActionEnum.TAKE : {
-                    if (actorController == Game.playerController) {}
+                    if (actorController == Game.playerController) {
+                        break;
+                    }
                     else {
                         actionButton = GameGUI.createButton("actionTakeButton", ActionEnum.properties[action].name);
+                        actionButton.onPointerUpObservable.add(function() {
+                            InventoryGameGUI.preAction();
+                            Game.actionTake(itemID, actorController.id, targetController.id);
+                            InventoryGameGUI.postAction();
+                        });
                     }
                     break;
                 }
@@ -557,6 +602,13 @@ class InventoryGameGUI {
         for (let i = InventoryGameGUI.selectedActions.children.length - 1; i >= 0; i--) {
             InventoryGameGUI.selectedActions.removeControl(InventoryGameGUI.selectedActions.children[i]);
         }
+    }
+    static preAction() {
+        return 0;
+    }
+    static postAction() {
+        InventoryGameGUI.update()
+        return 0;
     }
     static createInventoryItemsButton(id = "", title = "", iconPath = null) {
         id = Tools.filterID(id);

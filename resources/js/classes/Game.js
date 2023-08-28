@@ -3103,6 +3103,9 @@ class Game {
         return 0;
     }
     static replaceControllerMesh(controllerID, meshID, materialID, options, parentCallbackID) {
+        if (AbstractController.get(controllerID)?.getMesh()?.name == meshID) {
+            return 0;
+        }
         Callback.setRun(parentCallbackID);
         if (Game.debugMode) console.group(`Running Game.replaceControllerMesh(${controllerID}, ${meshID}, ${materialID}, ...)`);
         if (!Game.hasLoadedMesh(meshID)) {
@@ -4463,7 +4466,7 @@ class Game {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionAttack(${targetController.id}, ${actorController.id})`);
         let callbackID = String("actionAttack-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionAttackResponse);
-        Game.entityLogicWorkerPostMessage("actionAttack", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionAttack", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         actorController.doAttack();
         return 0;
     }
@@ -4498,7 +4501,7 @@ class Game {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionClose(${targetController.id}, ${actorController.id})`);
         let callbackID = String("actionClose-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionCloseResponse);
-        Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionClose", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         return 0;
     }
     static actionCloseResponse(targetController, actorController, response, parentCallbackID) {
@@ -4516,12 +4519,12 @@ class Game {
     static actionDrop(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.hasCachedEntity(targetController)) {}
         else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
-            targetController = targetController.entityID;
+            targetController = targetController.id;
         }
         else {
             let tempController = Game.filterController(actorController);
             if (tempController instanceof EntityController) {
-                targetController = tempController.entityID;
+                targetController = tempController.id;
             }
             else {
                 return 2;
@@ -4531,7 +4534,7 @@ class Game {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionDrop(${targetController}, ${actorController.id})`);
         let callbackID = String("actionDrop-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionDropResponse);
-        Game.entityLogicWorkerPostMessage("actionDrop", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionDrop", 0, {"actorID":actorController.id, "targetID":targetController}, callbackID);
         return 0;
     }
     static actionDropResponse(targetController, actorController, response, parentCallbackID) {
@@ -4548,37 +4551,37 @@ class Game {
     static actionEquip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.hasCachedEntity(targetController)) {}
         else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
-            targetController = targetController.entityID;
+            targetController = targetController.id;
         }
         else {
             let tempController = Game.filterController(actorController);
             if (tempController instanceof EntityController) {
-                targetController = tempController.entityID;
+                targetController = tempController.id;
             }
             else {
                 return 2;
             }
         }
         actorController = Game.filterController(actorController);
-        Game.entityLogicWorkerPostMessage("actionEquip", 0, {"actorID":actorController.entityID, "targetID":targetController});
+        Game.entityLogicWorkerPostMessage("actionEquip", 0, {"actorID":actorController.id, "targetID":targetController});
         return 0;
     }
     static actionHold(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.hasCachedEntity(targetController)) {}
         else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
-            targetController = targetController.entityID;
+            targetController = targetController.id;
         }
         else {
             let tempController = Game.filterController(actorController);
             if (tempController instanceof EntityController) {
-                targetController = tempController.entityID;
+                targetController = tempController.id;
             }
             else {
                 return 2;
             }
         }
         actorController = Game.filterController(actorController);
-        Game.entityLogicWorkerPostMessage("actionHold", 0, {"actorID":actorController.entityID, "targetID":targetController});
+        Game.entityLogicWorkerPostMessage("actionHold", 0, {"actorID":actorController.id, "targetID":targetController});
         return 0;
     }
     static actionLay(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4595,10 +4598,10 @@ class Game {
         if (targetController == 1 || actorController == 1) {
             return 1;
         }
-        if (Game.debugMode) BABYLON.Tools.Log(`Game.actionLook(${targetController.id}, ${actorController.id})`);
+        if (Game.debugMode) BABYLON.Tools.Log(`Game.actionLook(${targetController?.id}, ${actorController?.id})`);
         let callbackID = String("actionLook-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionLookResponse);
-        Game.entityLogicWorkerPostMessage("actionLook", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionLook", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         return 0;
     }
     static actionLookResponse(targetController, actorController, response, parentCallbackID) {
@@ -4614,7 +4617,7 @@ class Game {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionOpen(${targetController.id}, ${actorController.id})`);
         let callbackID = String("actionOpen-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionOpenResponse);
-        Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.entityID, "targetID":targetController.entityID}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionOpen", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         return 0;
     }
     static actionOpenResponse(targetController, actorController, response, parentCallbackID) {
@@ -4645,19 +4648,19 @@ class Game {
     static actionRelease(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.hasCachedEntity(targetController)) {}
         else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
-            targetController = targetController.entityID;
+            targetController = targetController.id;
         }
         else {
             let tempController = Game.filterController(actorController);
             if (tempController instanceof EntityController) {
-                targetController = tempController.entityID;
+                targetController = tempController.id;
             }
             else {
                 return 2;
             }
         }
         actorController = Game.filterController(actorController);
-        Game.entityLogicWorkerPostMessage("actionRelease", 0, {"actorID":actorController.entityID, "targetID":targetController});
+        Game.entityLogicWorkerPostMessage("actionRelease", 0, {"actorID":actorController.id, "targetID":targetController});
         return 0;
     }
     static actionSit(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
@@ -4702,12 +4705,12 @@ class Game {
     static actionUnequip(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.hasCachedEntity(targetController)) {}
         else if (targetController instanceof Object && targetController.hasOwnProperty("entityID")) {
-            targetController = targetController.entityID;
+            targetController = targetController.id;
         }
         else {
             let tempController = Game.filterController(actorController);
             if (tempController instanceof EntityController) {
-                targetController = tempController.entityID;
+                targetController = tempController.id;
             }
             else {
                 return 2;
@@ -4716,7 +4719,7 @@ class Game {
         actorController = Game.filterController(actorController);
         let callbackID = String("actionUnequipPhaseOne-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseTwo);
-        Game.entityLogicWorkerPostMessage("actionUnequip", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
+        Game.entityLogicWorkerPostMessage("actionUnequip", 0, {"actorID":actorController.id, "targetID":targetController}, callbackID);
         return 0;
     }
     // TODO
@@ -5371,17 +5374,42 @@ class Game {
                 Callback.run(callbackID);
                 break;
             }
-            case "actionAttack":
-            case "actionClose":
-            case "actionDrop":
-            case "actionEquip":
-            case "actionLook":
-            case "actionOpen":
+            case "actionAttack": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionClose": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionDrop": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionEquip": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionHold": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionLook": {
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "actionOpen": {
+                Callback.run(callbackID, message);
+                break;
+            }
             case "actionUnequip": {
                 Callback.run(callbackID, message);
                 break;
             }
-            case "actionTouch":
+            case "actionTouch": {
+                Callback.run(callbackID, message);
+                break;
+            }
             case "actionTalk": {
                 Callback.run(callbackID, message);
                 break;
@@ -5479,6 +5507,7 @@ class Game {
                 }
                 break;
             }
+            case "getHeld":
             case "getEquipment": {
                 let target = null;
                 if (Callback.has(callbackID)) {
@@ -5710,6 +5739,10 @@ class Game {
                 Game.setCachedEntity(message["id"], message);
                 break;
             }
+            case "updateInventory": {
+                Game.gui.inventoryMenu.update();
+                break;
+            }
             default: {
                 Callback.run(callbackID, message);
             }
@@ -5872,7 +5905,8 @@ class Game {
         return 0;
     }
     static updateCachedEntity(id, object) {
-        if (Game.debugMode) console.group(`Running Game.updateCachedEntity(${id}, ...)`)
+        if (Game.debugMode) console.group(`Running Game.updateCachedEntity(${id}, ...)`);
+        if (Game.debugMode) console.log(object);
         if (!Game.cachedEntities.hasOwnProperty(id)) {
             if (Game.debugMode) {
                 console.info("entity ID doesn't already exist; aborting");
@@ -5880,8 +5914,8 @@ class Game {
             }
             return Game.getEntity(id);
         }
-        if (EntityController.has(id)) {
-            EntityController.get(id).assign(object);
+        if (AbstractController.has(id)) {
+            AbstractController.get(id).assign(object);
         }
         let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
         if (Game.cachedEntities.hasOwnProperty(id)) {
@@ -5916,7 +5950,7 @@ class Game {
         return 0;
     }
     static setCachedEntity(id, object) {
-        if (Game.debugMode) console.group(`Running Game.setCachedEntity(${id}, ...)`)
+        if (Game.debugMode) console.group(`Running Game.setCachedEntity(${id}, ...)`);
         if (Game.cachedEntities.hasOwnProperty(id)) {
             if (Game.debugMode) console.groupEnd();
             return Game.updateCachedEntity(id, object);
@@ -5948,7 +5982,7 @@ class Game {
         actorController = Game.filterController(actorController);
         let callbackID = String("setDialogue-").concat(Tools.genUUIDv4());
         Callback.create(callbackID, parentCallbackID, [id, targetController, actorController], Game.setDialoguePhaseTwo)
-        Game.entityLogicWorkerPostMessage("setDialogue", 0, {"dialogueID": id, "targetID": targetController.entityID, "actorID": actorController.entityID}, callbackID);
+        Game.entityLogicWorkerPostMessage("setDialogue", 0, {"dialogueID": id, "targetID": targetController.id, "actorID": actorController.id}, callbackID);
         return 0;
     }
     static setDialoguePhaseTwo(id, targetController, actorController, response, parentCallbackID) {

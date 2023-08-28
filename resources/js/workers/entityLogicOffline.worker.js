@@ -298,35 +298,29 @@ class EntityLogic {
                         break;
                     }
                 }
-                result = actor.removeItem(target) == 0;
-                if (!result) {
-                    EntityLogic.gameWorkerPostMessage("actionDrop", 203, null, callbackID); // !!
-                    break;
-                }
-                EntityLogic.gameWorkerPostMessage("actionDrop", 0, result, callbackID);
+                EntityLogic.gameWorkerPostMessage("actionDrop", 0, {"targetID":target.id, "actorID":actor.id, "actionDrop": (actor.removeItem(target) === 0)}, callbackID);
                 EntityLogic.gameWorkerPostMessage("createItemAtController", 0, {"entityID":target.id, "controllerID":actor.id}, callbackID);
                 break;
             }
             case "actionEquip": {
+                /** @property {CharacterEntity} actor Actor */
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
                 if (actor == 1 || target == 1) {
-                    EntityLogic.gameWorkerPostMessage("actionEquip", 1, null, callbackID);
+                    EntityLogic.gameWorkerPostMessage("actionEquip", 1, {"actorID":actorID, "targetID":targetID, "actionEquip": false}, callbackID);
                     break;
                 }
-                let result = actor.equip(target) == 0;
-                EntityLogic.gameWorkerPostMessage("actionEquip", 0, result, callbackID);
+                EntityLogic.gameWorkerPostMessage("actionEquip", 0, {"actorID":actor.id, "targetID":target.id, "actionEquip": (actor.equip(target) === 0)}, callbackID);
                 break;
             }
             case "actionHold": {
                 let actor = AbstractEntity.get(message["actorID"]);
                 let target = AbstractEntity.get(message["targetID"]);
                 if (actor == 1 || target == 1) {
-                    EntityLogic.gameWorkerPostMessage("actionHold", 1, null, callbackID);
+                    EntityLogic.gameWorkerPostMessage("actionHold", 1, {"actorID":actorID, "targetID":targetID, "actionHold": false}, callbackID);
                     break;
                 }
-                let result = actor.hold(target) == 0;
-                EntityLogic.gameWorkerPostMessage("actionHold", 0, result, callbackID);
+                EntityLogic.gameWorkerPostMessage("actionHold", 0, {"actorID":actor.id, "targetID":target.id, "actionHold": (actor.hold(target) === 0)}, callbackID);
                 break;
             }
             case "actionLook": {
@@ -658,6 +652,7 @@ class EntityLogic {
                 }
                 break;
             }
+            case "getHeld":
             case "getEquipment": {
                 if (!AbstractEntity.has(message["entityID"])) {
                     EntityLogic.gameWorkerPostMessage("getEquipment", 1, {}, callbackID);
@@ -670,6 +665,7 @@ class EntityLogic {
                     entityObj["id"] = entity.id;
                     entityObj["controller"] = entity.id;
                     entityObj["equipment"] = AbstractEntity.objectifyProperty(entity.equipment);
+                    entityObj["held"] = AbstractEntity.objectifyProperty(entity.held);
                     obj[entity.id] = entityObj;
                 }
                 EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
@@ -1945,7 +1941,7 @@ class EntityLogic {
         }
         if (property == null || !entity.hasOwnProperty(property)) {
             if (EntityLogic.debugMode) {
-                console.info(`Entity id "${entityID}" lacks property "${String(property)}"`);
+                console.info(`Entity id "${entityID.id}" lacks property "${String(property)}"`);
                 console.groupEnd();
             }
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.objectify());
@@ -1953,7 +1949,7 @@ class EntityLogic {
         }
         else if (entity.hasOwnProperty(property)) {
             if (EntityLogic.debugMode) {
-                console.info(`Entity id "${entityID}" found with property "${String(property)}"`);
+                console.info(`Entity id "${entityID.id}" found with property "${String(property)}"`);
                 console.groupEnd();
             }
             let obj = {"id":entity.id, "controller":entity.controllerID};
