@@ -659,6 +659,10 @@ class EntityLogic {
                 break;
             }
             case "getEquipment": {
+                if (!AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("getEquipment", 1, {}, callbackID);
+                    break;
+                }
                 let obj = {};
                 let entity = AbstractEntity.get(message["entityID"]);
                 if (entity != 1 && entity.hasOwnProperty("equipment")) {
@@ -672,33 +676,35 @@ class EntityLogic {
                 break;
             }
             case "getInventories": {
+                let foundAnInventory = false;
                 let obj = {};
                 for (let entityID in message["entityIDs"]) {
+                    if (!AbstractEntity.has(entityID)) {
+                        continue;
+                    }
                     let entity = AbstractEntity.get(entityID);
-                    if (entity != 1 && entity.hasContainer()) {
-                        let entityObj = {};
-                        entityObj["id"] = entity.id;
-                        entityObj["controller"] = entity.id;
-                        entityObj["container"] = entity.container.objectifyMinimal(message["filter"]);
-                        entityObj["money"] = entity.money;
-                        obj[entity.id] = JSON.stringify(entityObj);
+                    if (!entity.hasContainer()) {
+                        continue;
+                    }
+                    if (inventoryResponse.hasOwnProperty("id")) {
+                        foundAnInventory = true;
+                        obj[entity.id] = EntityLogic.generateInventoryResponse(entity);
                     }
                 }
-                EntityLogic.gameWorkerPostMessage("getInventories", 0, obj, callbackID);
+                EntityLogic.gameWorkerPostMessage("getInventories", (foundAnInventory ? 0 : 1), JSON.stringify(obj), callbackID);
                 break;
             }
             case "getInventory": {
-                let obj = {};
-                let entity = AbstractEntity.get(message["entityID"]);
-                if (entity != 1 && entity.hasContainer()) {
-                    let entityObj = {};
-                    entityObj["id"] = entity.id;
-                    entityObj["controller"] = entity.id;
-                    entityObj["container"] = entity.container.objectifyMinimal(message["filter"]);
-                    entityObj["money"] = entity.money;
-                    obj[entity.id] = JSON.stringify(entityObj);
+                if (!AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("getInventory", 1, {}, callbackID);
                 }
-                EntityLogic.gameWorkerPostMessage("getInventory", 0, obj, callbackID);
+                let entity = AbstractEntity.get(message["entityID"]);
+                if (!entity.hasContainer()) {
+                    EntityLogic.gameWorkerPostMessage("getInventory", 0, {}, callbackID);
+                }
+                else {
+                    EntityLogic.gameWorkerPostMessage("getInventory", 0, JSON.stringify(EntityLogic.generateInventoryResponse(entity)), callbackID);
+                }
                 break;
             }
             case "getMoney": {
@@ -1020,9 +1026,8 @@ class EntityLogic {
                 EntityLogic.actionOpenFurniture(target, actor, parentCallbackID);
                 break;
             }
-            case "CharacterEntity":
-            case "Container": {
-                EntityLogic.actionOpenContainer(target, actor, parentCallbackID);
+            case "CreatureEntity": {
+                EntityLogic.actionOpenCreature(target, actor, parentCallbackID);
                 break;
             }
         }
@@ -1033,26 +1038,27 @@ class EntityLogic {
         if (response["isOpened"]) {
             target.setOpen();
         }
-        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, parentCallbackID);
+        let inventoryResponse = EntityLogic.generateInventoryResponse(target, actor);
+        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, inventoryResponse, parentCallbackID);
         return 0;
     }
-    static actionOpenContainer(target, actor, filter = "", parentCallbackID) {
+    static actionOpenContainer(target, actor, parentCallbackID) {
         let response = EntityLogic.generateActionOpenResponse(target, actor);
-        if (response["isOpened"]) {
-            target.setOpen();
-        }
         EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
+        let inventoryResponse = EntityLogic.generateInventoryResponse(target, actor);
+        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, inventoryResponse, parentCallbackID);
+        return 0;
+    }
+    /**
+     * How morbid.
+     * @param {CreatureController} target 
+     * @param {EntityController} actor 
+     * @param {string|null} parentCallbackID 
+     */
+    static actionOpenCreature(target, actor, parentCallbackID) {
         if (!target.hasContainer()) {
             return 0;
         }
-        let obj = {};
-        let entityObj = {};
-        entityObj["id"] = target.id;
-        entityObj["entityType"] = target.entityType;
-        entityObj["controller"] = target.id;
-        entityObj["container"] = target.container.objectifyMinimal(filter);
-        obj[target.id] = JSON.stringify(entityObj);
-        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, obj, parentCallbackID);
         return 0;
     }
     static actionOpenDoor(target, actor, parentCallbackID) {
@@ -1068,17 +1074,8 @@ class EntityLogic {
         EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
         return 0;
     }
-    /**
-     * How morbid.
-     * @param {CreatureController} target 
-     * @param {EntityController} actor 
-     * @param {string|null} parentCallbackID 
-     */
-    static actionOpenCreature(target, actor, parentCallbackID) {
-        return 0;
-    }
-    static generateActionOpenResponse(target, actor, soundEffects = []) {
-        let response = {"isOpened":false, "isLocked":false, "isBlocked": false, "justUnlocked": false, "soundEffects": soundEffects};
+    static generateActionOpenResponse(target, actor) {
+        let response = {"isOpened":false, "isLocked":false, "isBlocked": false, "justUnlocked": false, "soundEffects": []};
         
         if (target.isEntityLocked()) {
             if (actor.hasItem(target.getKey())) {
@@ -1099,9 +1096,20 @@ class EntityLogic {
         }
         else {
             response["isOpened"] = true;
-            response["soundEffectss"].push(target.getSoundEffect("open"));
+            response["soundEffects"].push(target.getSoundEffect("open"));
         }
         return response;
+    }
+    static generateInventoryResponse(target, actor) {
+        if (!target.hasContainer()) {
+            return {};
+        }
+        return {
+            "id": target.id,
+            "entityType": target.entityType,
+            "controller": target.id,
+            "container": target.container.objectify(),
+        }
     }
     static actionTake(target, actor, parentCallbackID) {
         /** @type {string} UUIDv4 */
@@ -1710,8 +1718,8 @@ class EntityLogic {
             "addScheduledEffect",
             0,
             [
-                effect.getID(),
-                target.getID(),
+                effect.id,
+                target.id,
                 effect.getDuration(),
                 effect.getDurationInterval(),
                 effect.getIntervalType(),
@@ -1745,7 +1753,7 @@ class EntityLogic {
         EntityLogic.tickWorkerPostMessage(
             "removeScheduledEffect",
             0,
-            [effect.getID(), target.getID()]
+            [effect.id, target.id]
         );
     }
     static addScheduledCommand(addTick, target, commandString) {
@@ -1760,7 +1768,7 @@ class EntityLogic {
             return 1;
         }
         if (target instanceof AbstractEntity) {
-            target = target.getID();
+            target = target.id;
         }
         else if (!AbstractEntity.has(target)) {
             if (EntityLogic.debugMode) {console.error(`Entity (${target}) doesn't exist.`); console.groupEnd();}

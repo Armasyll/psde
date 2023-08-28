@@ -29,6 +29,7 @@
  * @property {number} godModeEffectOverride
  * @property {boolean} enabled
  * @property {boolean} locked
+ * @property {boolean} blocked
  * @property {boolean} disposing
  * @property {boolean} essential
  * @property {number} essentialOverride
@@ -79,6 +80,8 @@ class AbstractEntity {
         this.enabled = true;
         /** @type {boolean} */
         this.locked = false;
+        /** @type {boolean} */
+        this.blocked = false;
         /** @type {boolean} */
         this.disposing = false;
 
@@ -350,6 +353,14 @@ class AbstractEntity {
     }
     setLocked(isLocked = true) {
         this.locked = (isLocked == true);
+        return 0;
+    }
+
+    isBlocked() {
+        return this.blocked == true;
+    }
+    setBlocked(isBlocked = true) {
+        this.blocked = (isBlocked == true);
         return 0;
     }
 
@@ -947,7 +958,7 @@ class AbstractEntity {
         return ["none"];
     }
     getSoundEffect(id) {
-        return this.getSoundEffects[0];
+        return this.getSoundEffects(id)[0];
     }
     removeSoundEffect(id, soundEffect) {
         if (id == undefined) {

@@ -116,11 +116,11 @@ class Game {
          * @type {<string, BABYLON.Sound>}
          */
         Game.loadedSounds = {};
+        Game.soundCloneHeap = {};
         /**
          * Map of Video IDs to BABYLON.Sound; one to one
          * @type {<string, [BABYLON.Sound]>}
          */
-        Game.soundCloneHeap = {};
         Game.importingVideoLocations = true;
         /**
          * Map of Video file locations per ID
@@ -170,12 +170,13 @@ class Game {
         Game.soundDumb = null;
         Game.soundMusic = null;
         Game.soundAmbience = null;
-        Game.soundFXEnvironment = {};
-        Game.soundFXCharacters = {};
+        Game.soundEffectEnvironment = {};
+        Game.soundEffectCharacters = {};
+        Game.soundOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
         Game.soundMusicOptions = {"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
         Game.soundAmbienceOptions = {"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
-        Game.soundFXEnvironmentOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
-        Game.soundFXCharactersOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        Game.soundEffectEnvironmentOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
+        Game.soundEffectCharacterOptions = {"loop": false, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
 
         Game.meshToEntityController = {};
 
@@ -1055,16 +1056,17 @@ class Game {
      * @param {string} soundID Sound ID
      * @returns {number} Integer status code
      */
-    static loadSound(soundID = "") {
+    static loadSound(soundID = "", parentCallbackID) {
         soundID = Tools.filterID(soundID);
         if (soundID.length == 0) {
             return 2;
         }
         if (Game.hasLoadedSound(soundID)) {
+            Callback.run(parentCallbackID);
             return 0;
         }
         else if (Game.hasAvailableSound(soundID)) {
-            let loadedSound = new BABYLON.Sound(soundID, Game.soundLocations[soundID], Game.scene);
+            let loadedSound = new BABYLON.Sound(soundID, Game.soundLocations[soundID], Game.scene, ()=>{Callback.run(parentCallbackID)});
             loadedSound.name = soundID;
             Game.setLoadedSound(soundID, loadedSound);
             return 0;
@@ -1683,11 +1685,8 @@ class Game {
         return 0;
     }
     static getLoadedSound(soundID) {
-        if (!Game.hasLoadedSound(soundID) && Game.hasAvailableSound(soundID)) {
-            Game.loadSound(soundID);
-        }
         if (!Game.hasLoadedSound(soundID)) {
-            return 2;
+            return undefined;
         }
         return Game.loadedSounds[soundID];
     }
@@ -2551,7 +2550,6 @@ class Game {
             return true;
         }
         else if (Game.hasAvailableSound(soundID)) {
-            Game.loadSound(soundID);
             return true;
         }
         return false;
@@ -2561,7 +2559,6 @@ class Game {
             return Game.loadedSounds[soundID];
         }
         else if (Game.hasAvailableSound(soundID)) {
-            Game.loadSound(soundID);
             return Game.loadedSounds["missingSound"];
         }
         else {
@@ -2575,21 +2572,37 @@ class Game {
      * @param {object} options 
      * @param {string} [soundUUID] If set, the sound is cloned and assigned this ID in the Game.clonedSounds 'map'
      */
-    static playSound(soundID, options = {}, soundUUID = "") {
-        if (!Game.hasSound(soundID)) {
-            Game.loadedSounds["missingSound"].play()
+    static playSound(soundID, options = Game.soundOptions, soundUUID = "") {
+        if (!Game.hasAvailableSound(soundID)) {
             return 1;
         }
-        if (!(Game.loadedSounds[soundID] instanceof BABYLON.Sound)) {
-            return 2;
+        if (Game.hasLoadedSound(soundID)) {
+            Game.playSoundPhaseTwo(soundID, options, soundUUID);
         }
+        else {
+            let callbackID = "loadSound-" + soundID;
+            Callback.create(callbackID, null, [soundID, options, soundUUID], Game.playSoundPhaseTwo);
+            Game.loadSound(soundID, callbackID);
+        }
+        return 0;
+    }
+    static playSoundPhaseTwo(soundID, options, soundUUID, response, parentCallbackID) {
         let sound = Game.loadedSounds[soundID];
-        if (soundUUID.length > 0) {
-            sound = sound.clone();
-            Game.soundCloneHeap[soundUUID] = sound;
-        }
         if (options.hasOwnProperty("loop")) {
             sound.loop = options["loop"] == true;
+            if (options["loop"] && soundUUID.length == 0) {
+                soundUUID = Tools.genUUIDv4();
+            }
+        }
+        if (soundUUID.length > 0) {
+            if (Game.soundCloneHeap.hasOwnProperty(soundUUID)) {
+                return 0;
+            }
+            sound = sound.clone();
+            if (!Game.soundCloneHeap.hasOwnProperty(soundID)) {
+                Game.soundCloneHeap[soundID] = {};
+            }
+            Game.soundCloneHeap[soundID][soundUUID] = sound;
         }
         if (options.hasOwnProperty("autoplay")) {
             sound.autoplay = options["autoplay"] == true;
@@ -2617,14 +2630,20 @@ class Game {
         Game.soundAmbience = Game.loadedSounds[soundID];
         return Game.playSound(soundID, options);
     }
-    static playEnvironmentSoundFX(soundID, options = Game.soundFXEnvironmentOptions, soundUUID = "") {
+    static playEnvironmentSoundEffect(soundID, options = Game.soundEffectEnvironmentOptions, soundUUID = "") {
         //{"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
         if (soundUUID.size == 0) {
-            soundUUID = Tools.genUUIDv4();
+            soundUUID = soundID;
         }
         return Game.playSound(soundID, options, soundUUID);
     }
-    static playCharacterSoundFX(soundID, options = Game.soundFXCharactersOptions, soundUUID = "") {
+    static playEnvironmentSoundEffects(soundIDs, options = Game.soundEffectEnvironmentOptions) {
+        for (let i = 0; i < soundIDs.length; i++) {
+            Game.playSound(soundIDs[i], options, soundIDs[i]);
+        }
+        return 0;
+    }
+    static playCharacterSoundEffect(soundID, options = Game.soundEffectCharacterOptions, soundUUID = "") {
         if (soundUUID.size == 0) {
             soundUUID = Tools.genUUIDv4();
         }
@@ -2634,10 +2653,16 @@ class Game {
         if (!Game.hasSound(soundID)) {
             return 2;
         }
+        if (Game.soundCloneHeap.hasOwnProperty(soundID)) {
+            for (let soundUUID in Game.soundCloneHeap[soundID]) {
+                Game.soundCloneHeap[soundID][soundUUID].stop();
+                Game.soundCloneHeap[soundID][soundUUID].dispose();
+                delete Game.soundCloneHeap[soundID][soundUUID];
+            }
+        }
         if (Game.loadedSounds[soundID] instanceof BABYLON.Sound) {
             if (Game.loadedSounds[soundID].isPlaying) {
                 Game.loadedSounds[soundID].stop();
-                Game.loadedSounds[soundID].isPlaying = false;
             }
         }
         return 0;
@@ -4589,13 +4614,18 @@ class Game {
     }
     static actionOpenResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionOpenResponse(${targetController.id}, ${actorController.id})`);
+        Game.playEnvironmentSoundEffects(response["soundEffects"]);
         if (targetController instanceof DoorController || targetController instanceof FurnitureController) {
-            if (response === true) {
-                targetController.doOpen();
-            }
+            Game.actionOpenFurnitureResponse(targetController, actorController, response);
         }
-        if (response["isContainer"]) {
-            
+        else if (targetController instanceof CreatureController) {
+            Game.actionOpenCreatureResponse(targetController, actorController, response);
+        }
+        return 0;
+    }
+    static actionOpenFurnitureResponse(targetController, actorController, response) {
+        if (response["isOpened"]) {
+            targetController.doOpen();
         }
         return 0;
     }
@@ -5455,22 +5485,24 @@ class Game {
                 break;
             }
             case "getInventory": {
-                if (status == 0) {
-                    let target = null;
-                    if (Callback.has(callbackID)) {
-                        /** @type {Callback} */
-                        let callback = Callback.get(callbackID);
-                        if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
-                            target = callback["params"][0]["entityID"];
-                        }
+                if (status != 0) {
+                    break;
+                }
+                let target = "";
+                if (Callback.has(callbackID)) {
+                    /** @type {Callback} */
+                    let callback = Callback.get(callbackID);
+                    if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
+                        target = callback["params"][0]["entityID"];
                     }
-                    for (let entry in message) {
-                        let json = JSON.parse(message[entry]);
-                        Game.updateCachedEntity(json.id, json);
-                        if (entry == target) {
-                            Callback.run(callbackID, json);
-                        }
-                    }
+                }
+                let entry = JSON.parse(message);
+                if (!entry.hasOwnProperty("id")) {
+                    break;
+                }
+                Game.updateCachedEntity(entry.id, entry);
+                if (entry.id == target) {
+                    Callback.run(callbackID, entry);
                 }
                 break;
             }
@@ -5964,9 +5996,9 @@ class Game {
     }
 
     static playAnnoyingMeatyThwack() {
-        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 1169);
-        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 2420);
-        setTimeout(function() {Game.playEnvironmentSoundFX("hit", {"loop": true, "autoplay": true});}, 3666);
+        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 1169);
+        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 2420);
+        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 3666);
         return 0;
     }
 }
