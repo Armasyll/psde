@@ -34,6 +34,7 @@ class CharacterControllerRigidBody extends CharacterController {
         this.fallFrameCount = 0;
         this.fallDistance = 0;
         this.bHasRunPostConstructCharacterRigid = false;
+        this.bHasRunAssignCharacterRigidBody = false;
         this.postConstruct();
     }
     postConstruct() {
@@ -282,8 +283,18 @@ class CharacterControllerRigidBody extends CharacterController {
         }
     }
 
+    update(objectBlob) {
+        super.update();
+        this.bHasRunAssignCharacterRigidBody = false;
+        this.assign(objectBlob);
+        return 0;
+    }
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (this.bHasRunAssignCharacter == true) {
+            return 0;
+        }
+        this.bHasRunAssignCharacter = true;
         return 0;
     }
     updateID(newID) {

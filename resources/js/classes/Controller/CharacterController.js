@@ -20,6 +20,7 @@ class CharacterController extends CreatureController {
         this._equipmentMeshIDsAttachedToBones = {};
         this.helmetVisible = true;
         this.bHasRunPostConstructCharacter = false;
+        this.bHasRunAssignCharacter = true;
         CharacterController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new CharacterController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
@@ -137,8 +138,18 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
+    update(objectBlob) {
+        super.update();
+        this.bHasRunAssignCharacter = false;
+        this.assign(objectBlob);
+        return 0;
+    }
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (this.bHasRunAssignCharacter == true) {
+            return 0;
+        }
+        this.bHasRunAssignCharacter = true;
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {
             this.assignAttachments(objectBlob["equipment"], this._equipmentMeshIDsAttachedToBones);
         }

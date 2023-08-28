@@ -366,27 +366,38 @@ class InventoryGameGUI {
      * @param {EntityController} actorController The EntityController viewing the entityObject; the player controller.
      */
     static setSelected(itemID, targetController = Game.playerController, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.debugMode) console.group("Running InventoryGameGUI.setSelected");
         if (typeof itemID == "string") {}
         else if (itemID.hasOwnProperty("id")) {
             itemID = itemID.id;
         }
         else {
+            if (Game.debugMode) {
+                console.warn("Item ID is incorrect")
+                console.groupEnd();
+            }
             return 2;
         }
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
-        if (actorController == -1) {
+        if (targetController == -1) {
+            if (Game.debugMode) {
+                console.warn("Target ID is incorrect")
+                console.groupEnd();
+            }
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseOne);
+        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseTwo);
         Game.entityLogicWorkerPostMessage("hasItem", 0, {"target":targetController.entityID, "entityID":itemID}, callbackID);
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static hasSelected() {
         return InventoryGameGUI.selectedEntity instanceof Object && InventoryGameGUI.selectedEntity.hasOwnProperty("id");
     }
     static updateSelected(useCachedEntity = false) {
+        if (Game.debugMode) console.info("Running InventoryGameGUI.updateSelected");
         if (InventoryGameGUI.hasSelected()) {
             let itemID = InventoryGameGUI.selectedEntity.id;
             let targetController = InventoryGameGUI.targetController;
@@ -396,17 +407,25 @@ class InventoryGameGUI {
         }
         return 0;
     }
-    static setSelectedResponsePhaseOne(itemID, response, parentCallbackID) {
+    static setSelectedResponsePhaseTwo(itemID, targetController, actorController, response, parentCallbackID) {
+        if (Game.debugMode) console.group("Running InventoryGameGUI.setSelectedResponsePhaseTwo");
+        console.log(response);
         if (!response.hasItem) {
             InventoryGameGUI.clearSelected();
+            if (Game.debugMode) {
+                console.info(`Target entity "${targetController.entityID}" doesn't have item "${itemID}"`);
+                console.groupEnd();
+            }
             return 1;
         }
         let callbackID = Tools.genUUIDv4();
-        Callback.create(callbackID, parentCallbackID, [itemID], InventoryGameGUI.setSelectedResponsePhaseTwo);
+        Callback.create(callbackID, parentCallbackID, [itemID, targetController, actorController], InventoryGameGUI.setSelectedResponsePhaseThree);
         Game.entityLogicWorkerPostMessage("getEntity", 0, {"entityID":itemID}, callbackID);
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
-    static setSelectedResponsePhaseTwo(itemID, response, parentCallbackID) {
+    static setSelectedResponsePhaseThree(itemID, targetController, actorController, response, parentCallbackID) {
+        if (Game.debugMode) console.group("Running InventoryGameGUI.setSelectedResponsePhaseThree");
         InventoryGameGUI.selectedEntity = response;
         InventoryGameGUI.selectedName.text = response.name;
         InventoryGameGUI.selectedImage.source = Game.getIcon(response.iconID);
@@ -523,6 +542,8 @@ class InventoryGameGUI {
                 actionButton.top = ((InventoryGameGUI.selectedActions.children.length * 10) - 55) + "%";
             }
         }
+        if (Game.debugMode) console.groupEnd();
+        return 0;
     }
     /**
      * Clears the inventory menu's selected item section.

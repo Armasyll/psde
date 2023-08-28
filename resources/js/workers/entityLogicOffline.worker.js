@@ -631,17 +631,17 @@ class EntityLogic {
                 if (!(message instanceof Array)) {
                     break;
                 }
-                let ids = {};
+                let response = {};
                 message.forEach((entityID) => {
                     if (AbstractEntity.has(entityID)) {
-                        ids[entityID] = AbstractEntity.get(entityID).objectify();
+                        response[entityID] = AbstractEntity.get(entityID).objectify();
                     }
                 });
-                if (Object.keys(ids).length == 0) {
+                if (Object.keys(response).length == 0) {
                     EntityLogic.gameWorkerPostMessage("getEntities", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("getEntities", 0, ids, callbackID);
+                    EntityLogic.gameWorkerPostMessage("getEntities", 0, response, callbackID);
                 }
                 break;
             }
@@ -670,28 +670,9 @@ class EntityLogic {
                     entityObj["id"] = entity.id;
                     entityObj["controller"] = entity.id;
                     entityObj["equipment"] = AbstractEntity.objectifyProperty(entity.equipment);
-                    obj[entity.id] = JSON.stringify(entityObj);
+                    obj[entity.id] = entityObj;
                 }
                 EntityLogic.gameWorkerPostMessage("getEquipment", 0, obj, callbackID);
-                break;
-            }
-            case "getInventories": {
-                let foundAnInventory = false;
-                let obj = {};
-                for (let entityID in message["entityIDs"]) {
-                    if (!AbstractEntity.has(entityID)) {
-                        continue;
-                    }
-                    let entity = AbstractEntity.get(entityID);
-                    if (!entity.hasContainer()) {
-                        continue;
-                    }
-                    if (inventoryResponse.hasOwnProperty("id")) {
-                        foundAnInventory = true;
-                        obj[entity.id] = EntityLogic.generateInventoryResponse(entity);
-                    }
-                }
-                EntityLogic.gameWorkerPostMessage("getInventories", (foundAnInventory ? 0 : 1), JSON.stringify(obj), callbackID);
                 break;
             }
             case "getInventory": {
@@ -703,7 +684,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("getInventory", 0, {}, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("getInventory", 0, JSON.stringify(EntityLogic.generateInventoryResponse(entity)), callbackID);
+                    EntityLogic.gameWorkerPostMessage("getInventory", 0, EntityLogic.generateInventoryResponse(entity), callbackID);
                 }
                 break;
             }
@@ -800,37 +781,19 @@ class EntityLogic {
                 break;
             }
             case "hasItem": {
-                if (!message.hasOwnProperty("entityID") || !AbstractEntity.has(message["entityID"])) {
-                    EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
+                let response = {"hasItem": false}
+                if (!message.hasOwnProperty("target") || !AbstractEntity.has(message["target"])) {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 1, response, callbackID);
                     break;
                 }
-                if (message.hasOwnProperty("target")) {
-                    if (!AbstractEntity.has(message["target"])) {
-                        EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
-                        break;
-                    }
-                    let target = AbstractEntity.get(message["target"]);
-                    if (!target.hasContainer()) {
-                        EntityLogic.gameWorkerPostMessage("hasItem", 1, {"targetName": target.getName(), "targetID": target.id, "hasItem":false}, callbackID);
-                        break;
-                    }
-                    let entity = AbstractEntity.get(message["entityID"]);
-                    if (target == EntityLogic.playerEntity) {
-                        EntityLogic.sendPlayerEntityUpdates();
-                    }
-                    if (target.hasItem(entity)) {
-                        EntityLogic.gameWorkerPostMessage("hasItem", 0, {"targetName": target.getName(), "targetID": target.id, "itemName": entity.getName(), "itemID": entity.id, "hasItem":true}, callbackID);
-                    }
+                if (!message.hasOwnProperty("entityID") || !AbstractEntity.has(message["entityID"])) {
+                    EntityLogic.gameWorkerPostMessage("hasItem", 1, response, callbackID);
+                    break;
                 }
-                else if (InstancedItemEntity.has(message["entityID"])) {
-                    EntityLogic.gameWorkerPostMessage("hasItem", 0, {"hasItem":true}, callbackID);
-                }
-                else if (ItemEntity.has(message["entityID"])) {
-                    EntityLogic.gameWorkerPostMessage("hasItem", 0, {"hasItem":true}, callbackID);
-                }
-                else {
-                    EntityLogic.gameWorkerPostMessage("hasItem", 1, {"hasItem":false}, callbackID);
-                }
+                let entity = AbstractEntity.get(message["target"]);
+                let item = AbstractEntity.get(message["entityID"]);
+                response["hasItem"] = entity.hasItem(item);
+                EntityLogic.gameWorkerPostMessage("hasItem", 1, response, callbackID);
                 break;
             }
             case "hasAvailableMesh": {
@@ -1139,7 +1102,7 @@ class EntityLogic {
      * @param {object} [options] 
      */
     static gameWorkerPostMessage(command, status = 0, message, callbackID = null, options = null) {
-        let obj = {"cmd": command, "sta": status, "msg": message};
+        let obj = {"cmd": command, "sta": status, "msg": JSON.stringify(message)};
         if (callbackID) {
             obj["callbackID"] = callbackID;
         }
@@ -1960,10 +1923,12 @@ class EntityLogic {
     }
 
     static sendPlayerEntityUpdates() {
+        if (EntityLogic.debugMode) console.info(`Running EntityLogic.sendPlayerEntityUpdates`);
         EntityLogic.gameWorkerPostMessage("updateEntity", 0, EntityLogic.playerEntity.objectify());
         return 0;
     }
     static sendEntityUpdate(entityID, property = null) {
+        if (EntityLogic.debugMode) console.group(`Running EntityLogic.sendEntityUpdate`);
         let entity = null;
         if (entityID instanceof AbstractEntity) {
             entity = entityID;
@@ -1972,13 +1937,25 @@ class EntityLogic {
             entity = AbstractEntity.get(entityID);
         }
         else {
+            if (EntityLogic.debugMode) {
+                console.warn(`Entity id "${entityID}" not found`);
+                console.groupEnd();
+            }
             return 1;
         }
         if (property == null || !entity.hasOwnProperty(property)) {
+            if (EntityLogic.debugMode) {
+                console.info(`Entity id "${entityID}" lacks property "${String(property)}"`);
+                console.groupEnd();
+            }
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, entity.objectify());
             return 0;
         }
         else if (entity.hasOwnProperty(property)) {
+            if (EntityLogic.debugMode) {
+                console.info(`Entity id "${entityID}" found with property "${String(property)}"`);
+                console.groupEnd();
+            }
             let obj = {"id":entity.id, "controller":entity.controllerID};
             obj[property] = AbstractEntity.objectifyProperty(entity[property]);
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, obj);

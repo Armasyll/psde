@@ -465,11 +465,11 @@ class Game {
         }
         Game.initPointerEventListeners();
         if (Game.bSkipMainMenu) {
-            Game.loadCellAndSetPlayerAt();
             if (Game.bUseGUI) {
                 Game.gui.mainMenu.hide();
                 Game.gui.hide();
             }
+            Game.loadCellAndSetPlayerAt();
         }
         else {
             if (Game.bUseGUI) {
@@ -3877,8 +3877,13 @@ class Game {
      * @param {string} controllerID 
      */
     static assignPlayer(controllerID = "", parentCallbackID = null) {
+        if (Game.hasPlayerController() && Game.playerController.id == controllerID) {
+            return 0;
+        }
         if (Game.debugMode) console.group(`Running Game.assignPlayer(${controllerID}, ${parentCallbackID})`);
         if (!AbstractController.has(controllerID)) {
+            if (Game.debugMode) console.warn(`Controller ${controllerID} doesn't exist`);
+            if (Game.debugMode) console.groupEnd();
             return 1;
         }
         if (Game.playerController instanceof AbstractController) {
@@ -4714,9 +4719,9 @@ class Game {
         Game.entityLogicWorkerPostMessage("actionUnequip", 0, {"actorID":actorController.entityID, "targetID":targetController}, callbackID);
         return 0;
     }
+    // TODO
     static actionUnequipResponsePhaseTwo(targetController, actorController, response, parentCallbackID) {
         if (response) {
-            console.log(response);
             let callbackID = String("actionUnequipPhaseTwo-").concat(Tools.genUUIDv4());
             Callback.create(callbackID, parentCallbackID, [targetController, actorController], Game.actionUnequipResponsePhaseThree);
         }
@@ -4747,6 +4752,7 @@ class Game {
         Game.entityLogicWorkerPostMessage("actionTouch", 0, {"actorID":actorController.id, "targetID":targetController.id}, callbackID);
         return 0;
     }
+    // TODO
     static actionTouchResponse(targetController, actorController, response, parentCallbackID) {
         console.log(response);
         console.log(parentCallbackID);
@@ -5306,13 +5312,55 @@ class Game {
             if (Game.debugMode) console.groupEnd();
             return 2;
         }
-        let status = event.data["sta"];
+        if (event.data["sta"] > 1) {
+            if (Game.debugMode) {
+                console.warn(`Planned error while attempting command ${event.data["cmd"]} with callback ID ${callbackID}`);
+                console.groupEnd();
+            }
+            return 1;
+        }
         if (Game.debugMode) console.info(`with command (${event.data["cmd"]})`);
         let callbackID = event.data["callbackID"];
         if (Game.debugMode) console.info(`and callbackID (${callbackID})`);
-        let message = event.data["msg"];
+        
+        if (event.data["msg"] == null) {
+            Game._entityLogicWorkerPhaseTwo(event.data["cmd"], {}, event.data["sta"], callbackID)
+        }
+        else if (typeof event.data["msg"] != "string") {
+            if (Game.debugMode) {
+                console.warn(`Failed at message; not a string`);
+                console.log(event.data["msg"]);
+                console.groupEnd();
+            }
+            return 2;
+        }
+        let message = {}
+        try {
+            message = JSON.parse(event.data["msg"]);
+        }
+        catch (e) {
+            if (Game.debugMode) {
+                console.warn(`Failed at parsing message; not a JSON string`);
+                console.log(event.data["msg"]);
+                console.groupEnd();
+            }
+            return 2;
+        }
         if (Game.debugMode && message) console.info(`and message`);
-        switch (event.data["cmd"]) {
+        Game._entityLogicWorkerPhaseTwo(event.data["cmd"], message, event.data["sta"], callbackID)
+        if (Game.debugMode) console.groupEnd();
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} command 
+     * @param {Object} message 
+     * @param {number} status 
+     * @param {string} callbackID 
+     * @returns 
+     */
+    static _entityLogicWorkerPhaseTwo(command, message, status, callbackID) {
+        switch (command) {
             case "connectedToTick": {
                 Game.bConnectedEntityLogicToTick = true;
                 Callback.run(callbackID);
@@ -5335,12 +5383,7 @@ class Game {
             }
             case "actionTouch":
             case "actionTalk": {
-                if (status == 0) {
-                    Callback.run(callbackID, message);
-                }
-                else {
-                    Callback.setRun(callbackID, true, 2);
-                }
+                Callback.run(callbackID, message);
                 break;
             }
             case "assignPlayer": {
@@ -5352,9 +5395,7 @@ class Game {
                 break;
             }
             case "purgeCache": {
-                if (status == 0) {
-                    Game.purgeCache(Callback.create(String("entityLogicWorkerOnMessage-purgeCache-").concat(Tools.genUUIDv4()), callbackID, null, Game.purgeCacheResponse));
-                }
+                Game.purgeCache(Callback.create(String("entityLogicWorkerOnMessage-purgeCache-").concat(Tools.genUUIDv4()), callbackID, null, Game.purgeCacheResponse));
                 break;
             }
             case "createCharacter": {
@@ -5373,121 +5414,89 @@ class Game {
                 break;
             }
             case "doDeath": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doDeath();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doDeath();
                 }
                 break;
             }
             case "doLay": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doLay();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doLay();
                 }
                 break;
             }
             case "doProne": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doProne();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doProne();
                 }
                 break;
             }
             case "doSit": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doSit();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doSit();
                 }
                 break;
             }
             case "doSpawn": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doSpawn();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doSpawn();
                 }
                 break;
             }
             case "doStand": {
-                if (status == 0) {
-                    if (EntityController.has(message["controllerID"])) {
-                        EntityController.get(message["controllerID"]).doStand();
-                    }
+                if (EntityController.has(message["controllerID"])) {
+                    EntityController.get(message["controllerID"]).doStand();
                 }
                 break;
             }
             case "getDialogue": {
-                if (status == 0) {
-                    Game.setCachedDialogue(message.id, message);
+                if (!message.hasOwnProperty("id")) {
+                    break;
+                }
+                Game.setCachedDialogue(message["id"], message);
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "getDialogues": {
+                for (let entry in message) {
+                    Game.setCachedDialogue(entry, message);
                     Callback.run(callbackID, message);
                 }
                 break;
             }
-            case "getDialogues": {
-                if (status == 0) {
-                    for (let entry in message) {
-                        Game.setCachedDialogue(entry, message);
+            case "getEntity": {
+                if (!message.hasOwnProperty("id")) {
+                    break;
+                }
+                Game.setCachedEntity(message["id"], message);
+                Callback.run(callbackID, message);
+                break;
+            }
+            case "getEntities": {
+                for (let entityID in message) {
+                    Game.setCachedEntity(entityID, message[entityID]);
+                    Callback.run(callbackID, message[entityID]);
+                }
+                break;
+            }
+            case "getEquipment": {
+                let target = null;
+                if (Callback.has(callbackID)) {
+                    /** @type {Callback} */
+                    let callback = Callback.get(callbackID);
+                    if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
+                        target = callback["params"][0]["entityID"];
+                    }
+                }
+                for (let entry in message) {
+                    Game.updateCachedEntity(message["id"], message);
+                    if (entry == target) {
                         Callback.run(callbackID, message);
                     }
                 }
                 break;
             }
-            case "getEntity": {
-                if (status == 0) {
-                    Game.setCachedEntity(message["id"], message);
-                    Callback.run(callbackID, message);
-                }
-                break;
-            }
-            case "getEntities": {
-                if (status == 0) {
-                    if (message instanceof Object) {
-                        for (let entry in message) {
-                            Game.setCachedEntity(entry, message[entry]);
-                            Callback.run(callbackID, message[entry]);
-                        }
-                    }
-                }
-                break;
-            }
-            case "getEquipment": {
-                if (status == 0) {
-                    let target = null;
-                    if (Callback.has(callbackID)) {
-                        /** @type {Callback} */
-                        let callback = Callback.get(callbackID);
-                        if (callback["params"].length == 1 && callback["params"][0].hasOwnProperty("entityID")) {
-                            target = callback["params"][0]["entityID"];
-                        }
-                    }
-                    for (let entry in message) {
-                        let json = JSON.parse(message[entry]);
-                        Game.updateCachedEntity(json.id, json);
-                        if (entry == target) {
-                            Callback.run(callbackID, json);
-                        }
-                    }
-                }
-                break;
-            }
-            case "getInventories": {
-                if (status == 0) {
-                    for (let entry in message) {
-                        let json = JSON.parse(message[entry]);
-                        Game.updateCachedEntity(json.id, json);
-                    }
-                    Callback.run(callbackID, json);
-                }
-                break;
-            }
             case "getInventory": {
-                if (status != 0) {
-                    break;
-                }
                 let target = "";
                 if (Callback.has(callbackID)) {
                     /** @type {Callback} */
@@ -5496,22 +5505,19 @@ class Game {
                         target = callback["params"][0]["entityID"];
                     }
                 }
-                let entry = JSON.parse(message);
-                if (!entry.hasOwnProperty("id")) {
+                if (!message.hasOwnProperty("id")) {
                     break;
                 }
-                Game.updateCachedEntity(entry.id, entry);
-                if (entry.id == target) {
-                    Callback.run(callbackID, entry);
+                Game.updateCachedEntity(message["id"], message);
+                if (message["id"] == target) {
+                    Callback.run(callbackID, message);
                 }
                 break;
             }
             case "getMoney": {
-                if (status == 0) {
-                    let amount = Number.parseFloat(message["amount"]) || 0;
-                    if (Game.bUseGUI) {
-                        Game.gui.chat.appendOutput(`${message["targetName"]} has \$${amount}.`);
-                    }
+                let amount = Number.parseFloat(message["amount"]) || 0;
+                if (Game.bUseGUI) {
+                    Game.gui.chat.appendOutput(`${message["targetName"]} has \$${amount}.`);
                 }
                 break;
             }
@@ -5615,53 +5621,58 @@ class Game {
                 break;
             }
             case "loadCell": {
-                if (status == 0) {
-                    Game.loadCell(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadCell-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadCellResponse));
+                if (!message.hasOwnProperty("cellID")) {
+                    break;
                 }
+                Game.loadCell(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadCell-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadCellResponse));
                 break;
             }
             case "loadEntities": {
-                if (status == 0) {
-                    Game.loadEntities(message["entityIDs"], Callback.create(String("entityLogicWorkerOnMessage-loadEntities-").concat(Tools.genUUIDv4()), callbackID, message["entityIDs"], Game.loadEntitiesResponse));
+                if (!message.hasOwnProperty("entityIDs")) {
+                    break;
                 }
+                Game.loadEntities(message["entityIDs"], Callback.create(String("entityLogicWorkerOnMessage-loadEntities-").concat(Tools.genUUIDv4()), callbackID, message["entityIDs"], Game.loadEntitiesResponse));
                 break;
             }
             case "loadEntitiesByCellID": {
-                if (status == 0) {
-                    Game.loadEntitiesByCellID(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadEntitiesByCellID-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadEntitiesResponse));
+                if (!message.hasOwnProperty("cellID")) {
+                    break;
                 }
+                Game.loadEntitiesByCellID(message["cellID"], Callback.create(String("entityLogicWorkerOnMessage-loadEntitiesByCellID-").concat(Tools.genUUIDv4()), callbackID, [message["cellID"]], Game.loadEntitiesResponse));
                 break;
             }
             case "removeController": {
+                if (!message.hasOwnProperty("controllerID")) {
+                    break;
+                }
                 Game.removeController(message["controllerID"]);
                 break;
             }
             case "removeItem": {
-                if (status == 0) {
-                    if (message instanceof Array) {
-                        message.forEach((entry) => {
-                            Game.removeItem(entry);
-                        });
+                if (message instanceof Array) {
+                    message.forEach((entry) => {
+                        Game.removeItem(entry);
+                    });
+                }
+                else if (message instanceof Object) {
+                    for (let entry in message) {
+                        Game.removeItem(message[entry]);
                     }
-                    else if (message instanceof Object) {
-                        for (let entry in message) {
-                            Game.removeItem(message[entry]);
-                        }
-                    }
-                    else if (typeof message == "string") {
-                        Game.removeItem(message);
-                    }
+                }
+                else if (typeof message == "string") {
+                    Game.removeItem(message);
                 }
                 break;
             }
             case "setCachedCell": {
-                if (status == 0) {
-                    Game.setCachedCell(message["id"], message, Callback.create(String("entityLogicWorkerOnMessage-setCachedCell-").concat(Tools.genUUIDv4()), callbackID, null, Game.setCachedCellResponse));
+                if (!message.hasOwnProperty("id")) {
+                    break;
                 }
+                Game.setCachedCell(message["id"], message, Callback.create(String("entityLogicWorkerOnMessage-setCachedCell-").concat(Tools.genUUIDv4()), callbackID, null, Game.setCachedCellResponse));
                 break;
             }
             case "setControllerEntity": {
-                if (message instanceof Array) {
+                if (!(message instanceof Array)) {
                     message.forEach((entry) => {
                         if (EntityController.has(entry["controllerID"])) {
                             EntityController.get(entry["controllerID"]).setEntityID(entry["entityID"].id);
@@ -5671,17 +5682,16 @@ class Game {
                 break;
             }
             case "setDialogue": {
-                if (status == 0) {
-                    Game.setCachedDialogue(message.id, message);
-                    Callback.run(callbackID, message);
+                if (!message.hasOwnProperty("id")) {
+                    break;
                 }
+                Game.setCachedDialogue(message["id"], message);
+                Callback.run(callbackID, message);
                 break;
             }
             case "setMoney": {
-                if (status == 0) {
-                    if (Game.bUseGUI) {
-                        Game.gui.chat.appendOutput(`${message["targetName"]} has had their money set to \$${message["amount"]}.`);
-                    }
+                if (Game.bUseGUI) {
+                    Game.gui.chat.appendOutput(`${message["targetName"]} has had their money set to \$${message["amount"]}.`);
                 }
                 break;
             }
@@ -5694,24 +5704,16 @@ class Game {
                 break;
             }
             case "updateEntity": {
-                if (status == 0) {
-                    Game.setCachedEntity(message.id, message);
+                if (!message.hasOwnProperty("id")) {
+                    break;
                 }
+                Game.setCachedEntity(message["id"], message);
                 break;
             }
             default: {
-                if (status == 0) {
-                    if (message instanceof Object) {
-                        Callback.run(callbackID, message);
-                    }
-                    else if (typeof message == "string") {
-                        let json = JSON.parse(message);
-                        Callback.run(callbackID, json);
-                    }
-                }
+                Callback.run(callbackID, message);
             }
         }
-        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     /**
@@ -5870,7 +5872,12 @@ class Game {
         return 0;
     }
     static updateCachedEntity(id, object) {
+        if (Game.debugMode) console.group(`Running Game.updateCachedEntity(${id}, ...)`)
         if (!Game.cachedEntities.hasOwnProperty(id)) {
+            if (Game.debugMode) {
+                console.info("entity ID doesn't already exist; aborting");
+                console.groupEnd();
+            }
             return Game.getEntity(id);
         }
         if (EntityController.has(id)) {
@@ -5884,6 +5891,7 @@ class Game {
         }
         Object.assign(Game.cachedEntities[id], object);
         if (!Game.hasPlayerController()) {
+            if (Game.debugMode) console.groupEnd();
             return 0;
         }
         if (Game.bUseGUI) {
@@ -5904,18 +5912,23 @@ class Game {
                 Game.gui.inventoryEquipmentMenu.update();
             }
         }
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
     static setCachedEntity(id, object) {
+        if (Game.debugMode) console.group(`Running Game.setCachedEntity(${id}, ...)`)
         if (Game.cachedEntities.hasOwnProperty(id)) {
+            if (Game.debugMode) console.groupEnd();
             return Game.updateCachedEntity(id, object);
         }
         Game.cachedEntities[id] = object;
         let controller = EntityController.get(object.controller);
         if (controller == 1) {
+            if (Game.debugMode) console.groupEnd();
             return 0;
         }
         controller.assign(object, false);
+        if (Game.debugMode) console.groupEnd();
         return 0;
     }
 
@@ -5999,6 +6012,26 @@ class Game {
         setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 1169);
         setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 2420);
         setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 3666);
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} itemID item ID
+     * @param {number} amount amount of items
+     * @param {string} target Target entity ID
+     */
+    static addItem(itemID = "", amount = 1, target = Game.playerEntityID) {
+        Game.entityLogicWorkerPostMessage("addItem", 200, {"target": target, "entityID": itemID, "amount": amount});
+        return 0;
+    }
+    /**
+     * 
+     * @param {string} effectID effect ID
+     * @param {number} amount stack of effect
+     * @param {string} target Target entity ID
+     */
+    static addEffect(effectID = "", amount = 1, target = Game.playerEntityID) {
+        
         return 0;
     }
 }

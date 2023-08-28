@@ -3,8 +3,6 @@
  * @class
  * @extends {AbstractController}
  * @typedef {Object} EntityController
- * @property {string} id 
- * @property {string} entityID 
  * @property {string} texture 
  * @property {Object.<number, string>} textureStages 
  * @property {number} currentTextureStage 
@@ -53,6 +51,7 @@
  * @property {Set.<BABYLON.AbstractMesh>} _attachedMeshes 
  * @property {boolean} bUseAnimationGroups 
  * @property {boolean} bHasRunPostConstructEntity 
+ * @property {boolean} bHasRunAssignEntity 
  */
 class EntityController extends AbstractController {
     /**
@@ -118,6 +117,7 @@ class EntityController extends AbstractController {
         this._attachedMeshes = {};
         this.bUseAnimationGroups = true;
         this.bHasRunPostConstructEntity = false;
+        this.bHasRunAssignEntity = false;
         if (!entityObject.hasOwnProperty("id")) {
             return undefined;
         }
@@ -1372,12 +1372,22 @@ class EntityController extends AbstractController {
         return 0;
     }
 
+    update(objectBlob) {
+        super.update();
+        this.bHasRunAssignEntity = false;
+        this.assign(objectBlob);
+        return 0;
+    }
     /**
      * Clones the controller's values over this; but not really anything important :v
      * @param {(EntityController|object)} objectBlob 
      */
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (this.bHasRunAssignEntity == true) {
+            return 0;
+        }
+        this.bHasRunAssignEntity = true;
         if (AbstractController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
         if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;

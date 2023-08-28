@@ -56,6 +56,7 @@ class CreatureController extends EntityController {
 
         this.offensiveStance = OffensiveStanceEnum.MARTIAL;
         this.bHasRunPostConstructCreature = false;
+        this.bHasRunAssignCreature = false;
         CreatureController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new CreatureController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
@@ -1401,8 +1402,18 @@ class CreatureController extends EntityController {
         }
         return 0;
     }
+    update(objectBlob) {
+        super.update();
+        this.bHasRunAssignCreature = false;
+        this.assign(objectBlob);
+        return 0;
+    }
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (this.bHasRunAssignCreature == true) {
+            return 0;
+        }
+        this.bHasRunAssignCreature = true;
         if (objectBlob.hasOwnProperty("eyeType")) this.eEyeType = objectBlob.eyeType;
         switch (this.eEyeType) {
             case EyeEnum.SLIT: {

@@ -21,6 +21,7 @@ class DisplayController extends FurnitureController {
         this.previousVolume = 1.0;
         this.previousVideoTexture = null;
         this.bHasRunPostConstructDisplay = false;
+        this.bHasRunAssignDisplay = false;
         this.videoMesh = this.meshes[this.meshes.length - 1];
         this.videoMaterial = this.videoMesh.material;
         this.setVideo(videoID);
@@ -105,6 +106,20 @@ class DisplayController extends FurnitureController {
         return 0;
     }
 
+    update(objectBlob) {
+        super.update();
+        this.bHasRunAssignDisplay = false;
+        this.assign(objectBlob);
+        return 0;
+    }
+    assign(objectBlob) {
+        super.assign(objectBlob);
+        if (this.bHasRunAssignDisplay == true) {
+            return 0;
+        }
+        this.bHasRunAssignDisplay = true;
+        return 0;
+    }
     updateID(newID) {
         super.updateID(newID);
         DisplayController.updateID(this.id, newID);

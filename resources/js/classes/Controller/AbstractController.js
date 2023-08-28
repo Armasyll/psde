@@ -2,6 +2,22 @@
  * Abstract Controller
  * @class
  * @typedef {Object} AbstractController
+ * @property {string} id 
+ * @property {string} entityID 
+ * @property {Array.<Babylon.AbstractMesh} meshes
+ * @property {string} controller 
+ * @property {number} height 
+ * @property {number} width 
+ * @property {number} depth 
+ * @property {boolean} enabled 
+ * @property {boolean} locked 
+ * @property {boolean} disposing 
+ * @property {Babylon.Ray} targetRay 
+ * @property {Babylon.RayHelper} targetRayHelper 
+ * @property {Babylon.Ray} groundRay 
+ * @property {Babylon.RayHelper} groundRayHelper 
+ * @property {boolean} bHasRunPostConstructAbstract 
+ * @property {boolean} bHasRunAssignAbstract 
  */
 class AbstractController {
     constructor(id, aMeshes, entityObject) {
@@ -27,6 +43,7 @@ class AbstractController {
         this.groundRay = null;
         this.groundRayHelper = null;
         this.bHasRunPostConstructAbstract = false;
+        this.bHasRunAssignAbstract = false;
         AbstractController.set(this.id, this);
         this.postConstruct();
     }
@@ -179,11 +196,20 @@ class AbstractController {
         return 0;
     }
 
+    update(objectBlob) {
+        this.bHasRunAssignAbstract = false;
+        this.assign(objectBlob);
+        return 0;
+    }
     /**
      * Clones the controller's values over this; but not really anything important :v
      * @param {(AbstractController|object)} objectBlob 
      */
     assign(objectBlob) {
+        if (this.bHasRunAssignAbstract == true) {
+            return 0;
+        }
+        this.bHasRunAssignAbstract = true;
         if (AbstractController.debugMode) console.group(`Running {AbstractController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("height")) this.height = objectBlob.height;
         if (objectBlob.hasOwnProperty("width")) this.width = objectBlob.width;
