@@ -41,7 +41,7 @@
         RadialMenuGameGUI.generateOptions();
         return RadialMenuGameGUI.controller;
     }
-    static generateOptions() {
+    static generateOptions(hideActions = [ActionEnum.ATTACK, ActionEnum.LOOK]) {
         BABYLON.Tools.Log("Running RadialMenuGameGUI.generateOptions");
         let button = null;
         let skip = false;
@@ -60,6 +60,9 @@
         // Action Buttons
         for (let i in ActionEnum.properties) {
             i = Number.parseInt(i);
+            if (hideActions instanceof Array && hideActions.indexOf(i) != -1) {
+                continue;
+            }
             button = GameGUI.createSimpleButton(String(`action${ActionEnum.properties[i].name}Button`), ActionEnum.properties[i].name);
             button.color = GameGUI.color;
             button.background = GameGUI.background;
@@ -69,13 +72,6 @@
                 case ActionEnum.ATTACK: {
                     button.onPointerClickObservable.add(function() {
                         Game.actionAttack(RadialMenuGameGUI.targetControllerID, Game.playerController);
-                        RadialMenuGameGUI.hide();
-                    });
-                    break;
-                }
-                case ActionEnum.USE: {
-                    button.onPointerClickObservable.add(function() {
-                        Game.actionUse(RadialMenuGameGUI.targetControllerID, Game.playerController);
                         RadialMenuGameGUI.hide();
                     });
                     break;
@@ -157,6 +153,13 @@
                     });
                     break;
                 }
+                case ActionEnum.USE: {
+                    button.onPointerClickObservable.add(function() {
+                        Game.actionUse(RadialMenuGameGUI.targetControllerID, Game.playerController);
+                        RadialMenuGameGUI.hide();
+                    });
+                    break;
+                }
                 default: {
                     skip = true;
                 }
@@ -196,7 +199,7 @@
             return 1;
         }
         for (let actionID in entityController.availableActions) {
-            if (!entityController.hiddenAvailableActions.hasOwnProperty(actionID)) {
+            if (RadialMenuGameGUI.buttons.hasOwnProperty(actionID) && !entityController.hiddenAvailableActions.hasOwnProperty(actionID)) {
                 RadialMenuGameGUI.buttons[actionID].isEnabled = true;
                 RadialMenuGameGUI.buttons[actionID].isVisible = true;
                 RadialMenuGameGUI.visibleButtons[actionID] = RadialMenuGameGUI.buttons[actionID];
