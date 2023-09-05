@@ -23,7 +23,7 @@ class Game {
         Game.debugVerbosity = 2;
         Game.useNative = false;
         Game.useRigidBodies = true;
-        Game.bUseControllerGroundRay = true;
+        Game.bUseControllerGroundRay = false;
         Game.useShadows = false;
         Game.physicsEnabled = false;
         Game.physicsForProjectilesOnly = true;
@@ -199,6 +199,8 @@ class Game {
         Game.currentSelectedMesh = null;
         Game.playerPortraitStatsUpdateIntervalFunction = null;
         Game.playerPortraitStatsUpdateInterval = 100;
+
+        BABYLON.Engine.CollisionsEpsilon = 0.00075; // Minimize movement throw-back in the Y direction when moving :v
 
         Game.enableFirstPerson = true;
         Game.enableCameraAvatarRotation = true;
