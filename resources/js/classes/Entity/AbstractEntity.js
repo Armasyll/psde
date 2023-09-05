@@ -1215,7 +1215,7 @@ class AbstractEntity {
                 "className":property.getClassName()
             };
         }
-        else if (property instanceof Spell) {
+        else if (property instanceof SpellEntity) {
             obj = {
                 "id":property.id,
                 "name":property.getName(),

@@ -287,6 +287,16 @@ class EntityController extends AbstractController {
         }
         return this.collisionMesh instanceof BABYLON.AbstractMesh;
     }
+    setTransforms(position, rotation, scaling) {
+        this.collisionMesh.position.copyFrom(position);
+        this.collisionMesh.rotation.copyFrom(rotation);
+        this.collisionMesh.scaling.copyFrom(scaling);
+        return 0;
+    }
+    updateTransforms(dPosition, dRotation, dScaling) {
+        //this.collisionMesh.position.
+        return 0;
+    }
     sendTransforms() {
         if (this.hasCollisionMesh()) {
             Game.transformsWorkerPostMessage(

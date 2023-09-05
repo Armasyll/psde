@@ -1,21 +1,59 @@
-importScripts("../Overrides.js", "../classes/Tools.js", "../classes/DND.js", "../classes/DND5E.js");
+importScripts("../Overrides.js");
+importScripts("../classes/Tools.js");
+importScripts("../classes/DND.js");
+importScripts("../classes/DND5E.js");
 
-importScripts("../classes/Enum.js", "../classes/Callback.js");
+importScripts("../classes/Enum.js");
+importScripts("../classes/Callback.js");
 
-importScripts("../classes/ActionData.js", "../classes/Dialogue.js", "../classes/Cell.js", "../classes/TeleportMarker.js", "../classes/Cosmetic.js", "../classes/Container.js", "../classes/CharacterClass/CharacterClass.js", "../classes/CharacterClass/ClasslessClass.js", "../classes/CharacterClass/SorcererClass.js");
+importScripts("../classes/ActionData.js");
+importScripts("../classes/Dialogue.js");
+importScripts("../classes/Cell.js");
+importScripts("../classes/TeleportMarker.js");
+importScripts("../classes/Cosmetic.js");
+importScripts("../classes/Container.js");
+importScripts("../classes/CharacterClass/CharacterClass.js");
+importScripts("../classes/CharacterClass/ClasslessClass.js");
+importScripts("../classes/CharacterClass/SorcererClass.js");
 
-importScripts("../classes/Effect.js", "../classes/Spell.js");
+importScripts("../classes/Effect.js");
 
-importScripts("../classes/Entity/AbstractEntity.js", "../classes/Entity/SoulEntity.js", "../classes/Entity/Entity.js");
-importScripts("../classes/Entity/FurnitureEntity.js", "../classes/Entity/LightingEntity.js", "../classes/Entity/DisplayEntity.js", "../classes/Entity/DoorEntity.js");
-importScripts("../classes/Entity/CreatureEntity.js", "../classes/Entity/CharacterEntity.js");
-importScripts("../classes/Entity/ItemEntity.js", "../classes/Entity/BookEntity.js");
-importScripts("../classes/Entity/EquipmentEntity.js", "../classes/Entity/ClothingEntity.js", "../classes/Entity/WeaponEntity.js", "../classes/Entity/ShieldEntity.js", "../classes/Entity/KeyEntity.js");
-importScripts("../classes/Entity/ConsumableEntity.js", "../classes/Entity/PlantEntity.js");
+importScripts("../classes/Entity/AbstractEntity.js");
+importScripts("../classes/Entity/SoulEntity.js");
+importScripts("../classes/Entity/Entity.js");
+importScripts("../classes/Entity/FurnitureEntity.js");
+importScripts("../classes/Entity/LightingEntity.js");
+importScripts("../classes/Entity/DisplayEntity.js");
+importScripts("../classes/Entity/DoorEntity.js");
+importScripts("../classes/Entity/CreatureEntity.js");
+importScripts("../classes/Entity/CharacterEntity.js");
+importScripts("../classes/Entity/ItemEntity.js");
+importScripts("../classes/Entity/BookEntity.js");
+importScripts("../classes/Entity/EquipmentEntity.js");
+importScripts("../classes/Entity/ClothingEntity.js");
+importScripts("../classes/Entity/WeaponEntity.js");
+importScripts("../classes/Entity/ShieldEntity.js");
+importScripts("../classes/Entity/ProjectileEntity.js");
+importScripts("../classes/Entity/KeyEntity.js");
+importScripts("../classes/Entity/ConsumableEntity.js");
+importScripts("../classes/Entity/PlantEntity.js");
+importScripts("../classes/Entity/SpellEntity.js");
 
-importScripts("../classes/Entity/Instance/Entity.js", "../classes/Entity/Instance/FurnitureEntity.js", "../classes/Entity/Instance/LightingEntity.js", "../classes/Entity/Instance/DisplayEntity.js");
-importScripts("../classes/Entity/Instance/ItemEntity.js", "../classes/Entity/Instance/BookEntity.js", "../classes/Entity/Instance/KeyEntity.js", "../classes/Entity/Instance/EquipmentEntity.js", "../classes/Entity/Instance/ClothingEntity.js", "../classes/Entity/Instance/WeaponEntity.js", "../classes/Entity/Instance/ShieldEntity.js");
-importScripts("../classes/Entity/Instance/ConsumableEntity.js", "../classes/Entity/Instance/PlantEntity.js");
+importScripts("../classes/Entity/Instance/Entity.js");
+importScripts("../classes/Entity/Instance/FurnitureEntity.js");
+importScripts("../classes/Entity/Instance/LightingEntity.js");
+importScripts("../classes/Entity/Instance/DisplayEntity.js");
+importScripts("../classes/Entity/Instance/ItemEntity.js");
+importScripts("../classes/Entity/Instance/BookEntity.js");
+importScripts("../classes/Entity/Instance/KeyEntity.js");
+importScripts("../classes/Entity/Instance/EquipmentEntity.js");
+importScripts("../classes/Entity/Instance/ClothingEntity.js");
+importScripts("../classes/Entity/Instance/WeaponEntity.js");
+importScripts("../classes/Entity/Instance/ShieldEntity.js");
+importScripts("../classes/Entity/Instance/ProjectileEntity.js");
+importScripts("../classes/Entity/Instance/ConsumableEntity.js");
+importScripts("../classes/Entity/Instance/PlantEntity.js");
+importScripts("../classes/Entity/Instance/SpellEntity.js");
 
 /**
  * EntityLogic
@@ -268,7 +306,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("actionCast", 1, false, callbackID);
                     break;
                 }
-                let spell = Spell.get(message["spellID"]);
+                let spell = SpellEntity.get(message["spellID"]);
                 EntityLogic.actionCast(target, actor, spell, callbackID);
                 break;
             }
@@ -1644,7 +1682,7 @@ class EntityLogic {
      * @param {object} options 
      */
     static createSpell(id = "", name = "", description = "", iconID = "", aMeshIDs = [""], materialID = "", options = {}) {
-        let spell = new Spell(id, name, description, iconID);
+        let spell = new SpellEntity(id, name, description, iconID);
         spell.setMeshIDs(aMeshIDs);
         spell.setMaterialID(materialID);
         spell.assign(options);
@@ -1790,7 +1828,7 @@ class EntityLogic {
                 attackRoll += DND5E.calculateAbilityModifier(attacker.getStrength());
             }
         }
-        else if (weapon instanceof Spell) {
+        else if (weapon instanceof SpellEntity) {
             if (attacker.hasEquipmentInSlot("CHEST")) {
                 if (!attacker.hasProficiencyInEquipmentSlot("CHEST")) {
                     attackRoll = 1;
@@ -1835,7 +1873,7 @@ class EntityLogic {
         if (weapon instanceof InstancedWeaponEntity || weapon instanceof WeaponEntity) {
             damageRoll = EntityLogic.calculateDamageWithWeapon(target, attacker, weapon, critical);
         }
-        else if (weapon instanceof Spell) {
+        else if (weapon instanceof SpellEntity) {
             damageRoll = EntityLogic.calculateDamageWithSpell(target, attacker, weapon, critical);
         }
         else {

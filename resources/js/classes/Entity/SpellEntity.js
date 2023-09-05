@@ -48,14 +48,7 @@ class SpellEntity extends Entity {
      * @param {SpellTypeEnum} spellType Spell type
      */
     constructor(id = "", name = "", description = "", iconID = "missingIcon", spellType = SpellTypeEnum.UNIVERSAL, spellLevel = 0, spellSlots = 1, ritual = false) {
-        id = Tools.filterID(id);
-        if (id.length == 0) {
-            id = Tools.genUUIDv4();
-        }
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.iconID = iconID;
+        super(id, name, description, iconID);
         this.spellType = SpellTypeEnum.NONE;
         this.spellLevel = 0;
         this.spellSlotsUsed = 1;

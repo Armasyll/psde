@@ -620,7 +620,7 @@ class Cell {
         else if (property instanceof Effect) {
             obj = property.id;
         }
-        else if (property instanceof Spell) {
+        else if (property instanceof SpellEntity) {
             obj = property.id;
         }
         else if (property instanceof Set) {
