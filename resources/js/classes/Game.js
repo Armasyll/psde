@@ -14,6 +14,7 @@ class Game {
         Game.initializedPhaseTwo = false;
         Game.initializedPhaseThree = false;
         Game.initializedPhaseFour = false;
+        Game.preInitializePhaseFive = false;
         Game.initializedPhaseFive = false;
         Game.initializedPhaseSix = false;
         Game.initializingPointerEventListeners = false;
@@ -442,8 +443,6 @@ class Game {
         Game.entityLogicTransformsChannel = new MessageChannel();
         Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port2]);
-        //Game.initializePhaseFive();
-        //setTimeout(() => {Game.initializePhaseFive()}, 2000);
         return 0;
     }
     static initializePhaseFive() {
@@ -451,8 +450,17 @@ class Game {
             return 0;
         }
         if (Game.bConnectedTickToEntityLogic && Game.bConnectedTransformsToEntityLogic && Game.bConnectedEntityLogicToTick && Game.bConnectedEntityLogicToTransforms) {
+            BABYLON.Tools.Log("Initializing, Phase Five; workers working");
+            Game.preInitializePhaseFive = false;
             Game.initializedPhaseFive = true;
             Game.initializePhaseSix();
+        }
+        else if (!Game.preInitializePhaseFive) {
+            Game.preInitializePhaseFive = true;
+            setTimeout(() => {Game.initializePhaseFive()}, 2000); // Just in case
+        }
+        else {
+            Game.preInitializePhaseFive = false;
         }
         return 0;
     }
