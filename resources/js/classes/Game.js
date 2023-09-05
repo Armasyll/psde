@@ -566,9 +566,9 @@ class Game {
             CharacterController.get(characterController).moveAV();
         }
         if (Game.bBeforeRenderUpdateProjectiles) {
-            for (let projectile in Projectile.list()) {
-                if (Projectile.get(projectile).falling) {
-                    Projectile.get(projectile).moveAV();
+            for (let projectile in ProjectileEntity.list()) {
+                if (ProjectileEntity.get(projectile).falling) {
+                    ProjectileEntity.get(projectile).moveAV();
                 }
             }
         }
@@ -6042,7 +6042,7 @@ class Game {
         }
         if (Game.debugMode) BABYLON.Tools.Log(`Running Game.fireProjectileFrom(${mesh.id}, ${position}, ${rotation}, ${power})`);
         let projectile = mesh.createInstance();
-        return new Projectile(projectile, position, rotation, power);
+        return new ProjectileEntity(projectile, position, rotation, power);
     }
     static fireProjectileFromController(mesh = "arrow01", controller = Game.playerController, force = 10) {
         controller = Tools.filterClass(controller, EntityController, null);

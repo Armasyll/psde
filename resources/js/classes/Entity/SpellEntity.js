@@ -38,7 +38,7 @@
  * @property {TargetEnum} targetType
  * @property {number} targetRadius
  */
-class Spell {
+class SpellEntity extends Entity {
     /**
      * Creates a Spell
      * @param {string} id Unique ID
@@ -110,14 +110,7 @@ class Spell {
 
         this.generateProperties();
 
-        Spell.set(this.id, this);
-    }
-
-    setMeshIDs() {
-        return 0;
-    }
-    setMeshID() {
-        return 0;
+        SpellEntity.set(this.id, this);
     }
 
     generateProperties() {
@@ -420,7 +413,7 @@ class Spell {
     }
 
     assign(spell, verify = false) {
-        if (verify && !(spell instanceof Spell)) {
+        if (verify && !(spell instanceof SpellEntity)) {
             return 2;
         }
         if (spell.hasOwnProperty("prepared")) this.prepared = spell.prepared;
@@ -516,42 +509,42 @@ class Spell {
         }
     }
     dispose() {
-        Spell.remove(this.id);
+        SpellEntity.remove(this.id);
     }
     getClassName() {
         return "Spell";
     }
 
     static initialize() {
-        Spell.debugMode = false;
-        Spell.spellList = {};
+        SpellEntity.debugMode = false;
+        SpellEntity.spellList = {};
     }
     static get(id) {
-        if (Spell.has(id)) {
-            return Spell.spellList[id];
+        if (SpellEntity.has(id)) {
+            return SpellEntity.spellList[id];
         }
         return 1;
     }
     static has(id) {
-        return Spell.spellList.hasOwnProperty(id);
+        return SpellEntity.spellList.hasOwnProperty(id);
     }
     static set(id, spell) {
-        Spell.spellList[id] = spell;
+        SpellEntity.spellList[id] = spell;
         return 0;
     }
     static remove(id) {
-        delete Spell.spellList[id];
+        delete SpellEntity.spellList[id];
         return 0;
     }
     static list() {
-        return Spell.spellList;
+        return SpellEntity.spellList;
     }
     static clear() {
-        for (let i in Spell.spellList) {
-            Spell.spellList[i].dispose();
+        for (let i in SpellEntity.spellList) {
+            SpellEntity.spellList[i].dispose();
         }
-        Spell.spellList = {};
+        SpellEntity.spellList = {};
         return 0;
     }
 }
-Spell.initialize();
+SpellEntity.initialize();

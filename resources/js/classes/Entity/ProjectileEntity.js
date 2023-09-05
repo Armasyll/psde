@@ -8,7 +8,7 @@
  * @property {number} force
  * @property {number} mass
  */
-class Projectile {
+class ProjectileEntity extends ItemEntity {
     constructor(mesh, position, rotation, force = 1.0, mass = 0.25) {
         this.id = Tools.genUUIDv4();
         this.mesh = mesh;
@@ -29,7 +29,7 @@ class Projectile {
         this.rayHelper.show(Game.scene);*/
         this.hit = null;
 
-        Projectile.set(this.id, this);
+        ProjectileEntity.set(this.id, this);
     }
 
     moveAV() {
@@ -70,34 +70,34 @@ class Projectile {
     }
 
     static initialize() {
-        Projectile.projectileList = {};
+        ProjectileEntity.projectileList = {};
     }
     static get(id) {
-        if (Projectile.has(id)) {
-            return Projectile.projectileList[id];
+        if (ProjectileEntity.has(id)) {
+            return ProjectileEntity.projectileList[id];
         }
         return 1;
     }
     static has(id) {
-        return Projectile.projectileList.hasOwnProperty(id);
+        return ProjectileEntity.projectileList.hasOwnProperty(id);
     }
     static set(id, physicsProjectile) {
-        Projectile.projectileList[id] = physicsProjectile;
+        ProjectileEntity.projectileList[id] = physicsProjectile;
         return 0;
     }
     static remove(id) {
-        delete Projectile.projectileList[id];
+        delete ProjectileEntity.projectileList[id];
         return 0;
     }
     static list() {
-        return Projectile.projectileList;
+        return ProjectileEntity.projectileList;
     }
     static clear() {
-        for (let i in Projectile.projectileList) {
-            Projectile.projectileList[i].dispose();
+        for (let i in ProjectileEntity.projectileList) {
+            ProjectileEntity.projectileList[i].dispose();
         }
-        Projectile.projectileList = {};
+        ProjectileEntity.projectileList = {};
         return 0;
     }
 }
-Projectile.initialize();
+ProjectileEntity.initialize();
