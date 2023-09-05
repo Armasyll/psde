@@ -113,6 +113,13 @@ class Spell {
         Spell.set(this.id, this);
     }
 
+    setMeshIDs() {
+        return 0;
+    }
+    setMeshID() {
+        return 0;
+    }
+
     generateProperties() {
         return 0;
     }
