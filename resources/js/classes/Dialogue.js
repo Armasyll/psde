@@ -256,6 +256,9 @@ class DialogueOption {
     getDialogue() {
         return this.dialogue;
     }
+    hasDialogue() {
+        return this.dialogue instanceof Dialogue;
+    }
     setTitle(title) {
         title = Tools.filterName(title);
         if (typeof title == "string") {
