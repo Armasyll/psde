@@ -34,6 +34,7 @@ class Game {
         Game.bBeforeRenderForceCameraBounds = true;
         Game.bBeforeRenderUpdateCharacterControllers = true;
         Game.bBeforeRenderUpdateProjectiles = true;
+        Game.bBeforeRenderUpdateDoors = true;
         Game.bBeforeRenderCameraBoundsCheck = true;
 
         Game.canvas = null;
@@ -443,6 +444,7 @@ class Game {
         Game.entityLogicTransformsChannel = new MessageChannel();
         Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port2]);
+        Game.initializePhaseFive();
         return 0;
     }
     static initializePhaseFive() {
@@ -569,6 +571,13 @@ class Game {
             for (let projectile in ProjectileController.list()) {
                 if (ProjectileController.get(projectile).falling) {
                     ProjectileController.get(projectile).moveAV();
+                }
+            }
+        }
+        if (Game.bBeforeRenderUpdateDoors) {
+            for (let door in DoorController.list()) {
+                if (DoorController.get(door).moving) {
+                    DoorController.get(door).moveAV();
                 }
             }
         }

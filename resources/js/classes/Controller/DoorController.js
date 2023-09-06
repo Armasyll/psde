@@ -13,17 +13,24 @@ class DoorController extends EntityController {
         if (!this.hasMesh()) {
             return undefined;
         }
-        this.avStartRot = this.meshes[0].rotation.clone();
-        this.avEndRot = BABYLON.Vector3.Zero();
+        this.turnSpeed = Tools.RAD_90/60; // radians per second
+        this.moving = false;
+        this.startRotation = this.meshes[0].rotation.clone();
+        this.endRotation = BABYLON.Vector3.Zero();
+        //this.currentRotation = this.meshes[0].rotation.clone();
+        this.intendedRotation = BABYLON.Vector3.Zero();
         this.animated = true;
+        this.open = false;
+        this.opening = false;
+        
         if (entityObject.opensInward === true)
             this.setOpensInward();
         else
             this.setOpensOutward();
         if (entityObject.open === true)
-            this.doOpen();
+            this.forceOpen();
         else
-            this.doClose();
+            this.forceClose();
         DoorController.set(this.id, this);
         this.postConstruct();
     }
@@ -38,23 +45,91 @@ class DoorController extends EntityController {
         return 0;
     }
 
-    setOpensOutward() {
-        this.avEndRot = this.avStartRot.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
+    setOpensOutward(byDegrees = 90) {
+        this.endRotation = this.startRotation.add(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(byDegrees), 0));
         return 0;
     }
-    setOpensInward() {
-        this.avEndRot = this.avStartRot.subtract(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(90), 0));
+    setOpensInward(byDegrees = 90) {
+        this.endRotation = this.startRotation.subtract(new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(byDegrees), 0));
+        return 0;
+    }
+    moveAV() {
+        if (this.locked) {
+            return 0;
+        }
+        this.doMove();
+        return 0;
+    }
+    doMove() {
+        if (!this.moving) {
+            return 0;
+        }
+        let difference = Math.abs(this.meshes[0].rotation.y - this.intendedRotation.y);
+        if (!this.opening && difference <= 0.025) {
+            this.meshes[0].rotation.copyFrom(this.intendedRotation);
+            this.moving = false;
+            this.opening = false;
+            this.open = false;
+            return 0;
+        }
+        else if (this.opening && difference <= 0.025) {
+            this.meshes[0].rotation.copyFrom(this.intendedRotation);
+            this.moving = false;
+            this.opening = false;
+            this.open = true;
+            return 0;
+        }
+        if (this.opening) {
+            if (this.meshes[0].rotation.y < this.intendedRotation.y) {
+                this.meshes[0].rotation.y += this.turnSpeed;
+            }
+            else {
+                this.meshes[0].rotation.y -= this.turnSpeed;
+            }
+        }
+        else {
+            if (this.meshes[0].rotation.y > this.intendedRotation.y) {
+                this.meshes[0].rotation.y -= this.turnSpeed;
+            }
+            else {
+                this.meshes[0].rotation.y += this.turnSpeed;
+            }
+        }
         return 0;
     }
     doOpen() {
-        this.meshes[0].rotation = this.avEndRot;
+        this.moving = true;
+        this.opening = true;
+        this.intendedRotation = this.endRotation;
         this.removeHiddenAvailableAction(ActionEnum.CLOSE);
         this.setDefaultAction(ActionEnum.CLOSE);
         this.addHiddenAvailableAction(ActionEnum.OPEN);
         return 0;
     }
     doClose() {
-        this.meshes[0].rotation = this.avStartRot;
+        this.moving = true;
+        this.opening = false;
+        this.intendedRotation = this.startRotation;
+        this.setDefaultAction(ActionEnum.OPEN);
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        return 0;
+    }
+    forceOpen() {
+        this.moving = false;
+        this.opening = false;
+        this.open = true;
+        this.meshes[0].rotation.copyFrom(this.endRotation);
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.setDefaultAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        return 0;
+    }
+    forceClose() {
+        this.moving = false;
+        this.opening = false;
+        this.open = false;
+        this.meshes[0].rotation.copyFrom(this.startRotation);
         this.setDefaultAction(ActionEnum.OPEN);
         this.removeHiddenAvailableAction(ActionEnum.OPEN);
         this.addHiddenAvailableAction(ActionEnum.CLOSE);
@@ -68,8 +143,8 @@ class DoorController extends EntityController {
     dispose() {
         this.setLocked(true);
         this.setEnabled(false);
-        delete this.avStartRot;
-        delete this.avEndRot;
+        delete this.startRotation;
+        delete this.endRotation;
         DoorController.remove(this.id);
         super.dispose();
         return null;

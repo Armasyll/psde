@@ -1,0 +1,17 @@
+{
+    "id":"doorTest",
+    "name":"Door Test Cell",
+    "barrier":16,
+    "materials":[],
+    "meshGroups":{
+        "collidableMeshes":[
+            ["stoneFloor", "floor16x16", "stoneMaterial01", [-5, 0, -5]],
+            ["greenDoorway", "craftsmanDoorway", "greenWallpaperPlainWood", [1, 0, 0], [0, 180, 0]]
+        ]
+    },
+    "entityGroups":{
+        "doors":[
+            ["Door", "Door", null, "simpleDoor", "simpleDoor", [1, 0, -1], [0, 180, 0], [1, 1, 1]]
+        ]
+    }
+}
