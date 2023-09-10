@@ -126,14 +126,14 @@ class EntityController extends AbstractController {
         EntityController.set(this.id, this);
         if (AbstractController.debugMode) console.info(`Finished creating new EntityController(${this.id})`);
         if (AbstractController.debugMode) console.groupEnd();
-        this.postConstruct();
+        //this.postConstruct();
     }
     postConstruct() {
         if (this.bHasRunPostConstructEntity) {
             return 0;
         }
-        super.postConstruct();
         this.bHasRunPostConstructEntity = true;
+        super.postConstruct();
         return 0;
     }
     getPosition() {
@@ -162,7 +162,12 @@ class EntityController extends AbstractController {
         return this.networkID;
     }
     setCollisionMesh(mesh) {
+        if (!(mesh instanceof BABYLON.AbstractMesh)) {
+            return 1;
+        }
+        this._attachedMeshes[mesh.id] = true;
         this.collisionMesh = mesh;
+        this.collisionMesh.controller = this;
         for (let i = 0; i < this.meshes.length; i++) {
             this.meshes[i].setParent(this.collisionMesh);
         }
@@ -201,9 +206,9 @@ class EntityController extends AbstractController {
             this._attachedMeshes[this.meshes.id] = true
         }
         this.propertiesChanged = true;
-        this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
+        /*this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.x * 2;
-        this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2;
+        this.depth = this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2;*/
         if (this.meshStages.length == 0) {
             this.addMeshStage(aMeshes[0].name);
             if (aMeshes[0].hasOwnProperty("material") && aMeshes[0]["material"] instanceof BABYLON.Material) {
@@ -251,25 +256,24 @@ class EntityController extends AbstractController {
         return 0;
     }
     createCollisionMesh() {
-        let position = BABYLON.Vector3.Zero();
-        let rotation = BABYLON.Vector3.Zero();
-        if (this.hasMesh()) {
-            this.position.copyFrom(this.meshes[0].getPosition());
-            this.rotation.copyFrom(this.meshes[0].getRotation());
+        if (this.hasCollisionMesh()) {
+            this.removeCollisionMesh();
         }
-        let collisionMesh = Game.createAreaMesh(String(this.id).concat("-collisionMesh"), "CUBE", this.width, this.height, this.depth, position, rotation);
+        let collisionMesh = Game.createAreaMesh(
+            String(this.id).concat("-collisionMesh"),
+            "CUBE",
+            this.width,
+            this.height,
+            this.depth,
+            this.meshes[0].position,
+            this.meshes[0].rotation,
+            BABYLON.Vector3.One()
+        );
         if (!(collisionMesh instanceof BABYLON.AbstractMesh)) {
             return 2;
         }
-        this._attachedMeshes[collisionMesh.id] = true;
-        this.collisionMesh = collisionMesh;
-        if (this.hasMesh()) {
-            this.collisionMesh.position.copyFrom(this.meshes[0].position);
-            this.collisionMesh.rotation.copyFrom(this.meshes[0].rotation);
-            this.meshes[0].setParent(this.collisionMesh);
-        }
-        this.collisionMesh.controller = this;
-        return 0;
+        this.setCollisionMesh(collisionMesh);
+        return this.collisionMesh;
     }
     removeCollisionMesh() {
         if (!(this.hasCollisionMesh())) {
@@ -1383,7 +1387,7 @@ class EntityController extends AbstractController {
     }
 
     update(objectBlob) {
-        super.update();
+        super.update(objectBlob);
         this.bHasRunAssignEntity = false;
         this.assign(objectBlob);
         return 0;

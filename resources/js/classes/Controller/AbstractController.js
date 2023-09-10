@@ -22,6 +22,9 @@
 class AbstractController {
     constructor(id, aMeshes, entityObject) {
         if (AbstractController.debugMode) console.group(`Creating new AbstractController(${id}, aMeshes, entityObject)`);
+        if (!(entityObject instanceof Object)) {
+            return undefined;
+        }
         if (!(entityObject.hasOwnProperty("id"))) {
             if (AbstractController.debugMode) console.error(`Failed to create AbstractController ${id} due to invalid entityObject`);
             if (AbstractController.debugMode) console.groupEnd();
@@ -32,9 +35,10 @@ class AbstractController {
         this.meshes = [];
 
         this.controller = this.id;
-        this.height = 0.0;
-        this.width = 0.0;
-        this.depth = 0.0;
+        this.height = 1.0;
+        this.width = 0.25;
+        this.depth = 0.25;
+        this.baseScaling = BABYLON.Vector3.One();
         this.enabled = true;
         this.locked = false;
         this.disposing = false;
@@ -44,6 +48,7 @@ class AbstractController {
         this.groundRayHelper = null;
         this.bHasRunPostConstructAbstract = false;
         this.bHasRunAssignAbstract = false;
+        this.assign(entityObject);
         AbstractController.set(this.id, this);
         this.postConstruct();
     }
@@ -97,9 +102,10 @@ class AbstractController {
                 this.meshes[i].setParent(this.meshes[0]);
             }
         }
-        this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
+        /*this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
         this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.x * 2;
-        this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2;
+        this.width = this.meshes[0].getBoundingInfo().boundingBox.extendSize.z * 2;*/
+        this.baseScaling.copyFrom(this.meshes[0].scaling);
         if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }

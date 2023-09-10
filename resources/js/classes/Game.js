@@ -2999,6 +2999,7 @@ class Game {
      * @param {string} shape 
      * @param {number} diameter 
      * @param {number} height 
+     * @param {number} depth 
      * @param {BABYLON.Vector3} position 
      * @param {BABYLON.Vector3} [rotation] with CONE, x is incremented by RAD_90, z by RAD_180
      * @param {BABYLON.Vector3} [scaling] 
@@ -3246,7 +3247,7 @@ class Game {
     static createFurniturePhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new FurnitureController(instanceID, response, entity);
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
@@ -3324,7 +3325,7 @@ class Game {
     static createDoorPhaseFour(entityID, name, teleportMarker, meshID, materialID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new DoorController(entityID, response, entity);
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
@@ -3431,7 +3432,7 @@ class Game {
     static createDisplayPhaseFive(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new DisplayController(instanceID, response, entity);
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         controller.setVideo(Game.getLoadedVideo(entity["videoID"]));
         if (options.hasOwnProperty("compoundController")) {
@@ -3566,7 +3567,7 @@ class Game {
     static createLightingPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new LightingController(instanceID, response, entity);
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
@@ -3639,7 +3640,7 @@ class Game {
     static createPlantPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new PlantController(instanceID, response, Game.getCachedEntity(entityID));
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         if (options.hasOwnProperty("compoundController")) {
             controller.setCompoundController(options["compoundController"]);
@@ -3731,7 +3732,7 @@ class Game {
     static createItemPhaseFour(instanceID, entityID, position, rotation, scaling, options, response, parentCallbackID) {
         let entity = Game.getCachedEntity(entityID);
         let controller = new ItemController(instanceID, response, Game.getCachedEntity(entityID));
-        controller.assign(entity, false);
+        controller.update(entity, false);
         controller.sendTransforms();
         if (Game.physicsEnabled && !Game.physicsForProjectilesOnly && controller.hasCollisionMesh()) {
             Game.assignBoxPhysicsToMesh(controller["collisionMesh"], options);
@@ -3774,6 +3775,9 @@ class Game {
         position = Game.filterVector3(position);
         rotation = Game.filterVector3(rotation);
         scaling = Game.filterVector3(scaling, BABYLON.Vector3.One());
+        if (scaling.z <= 0) {
+            scaling = BABYLON.Vector3.One();
+        }
         if (Game.debugMode) console.group(`Running Game.createCharacter(${instanceID}, ${entityID}, ${position}, ${rotation}, ${scaling}, ${options}, ${parentCallbackID})`);
         let callbackID = String("createCharacterPhaseOne-").concat(Tools.genUUIDv4())
         Callback.create(callbackID, parentCallbackID, [instanceID, entityID, position, rotation, scaling, options], Game.createCharacterPhaseTwo);
@@ -3831,7 +3835,7 @@ class Game {
         else {
             controller = new CharacterControllerTransform(instanceID, [response], entity);
         }
-        controller.assign(entity);
+        controller.update(entity);
         controller.generateAttachedMeshes();
         controller.generateHitboxes();
         controller.updateTargetRay();
@@ -4750,7 +4754,7 @@ class Game {
         return 0;
     }
     static actionUnequipResponsePhaseThree(targetController, actorController, response, parentCallbackID) {
-        actorController.assign(response);
+        actorController.update(response);
         actorController.generateEquippedMeshes();
         return 0;
     }
@@ -5446,7 +5450,7 @@ class Game {
                 break;
             }
             case "createCharacter": {
-                Game.createCharacter(message["instanceID"], message["entityID"], BABYLON.Vector3.FromArray(message["position"]), null, null, message["options"], Callback.create(String("entityLogicWorkerOnMessage-createCharacter-").concat(Tools.genUUIDv4()), callbackID, [message["instanceID"], message["entityID"], message["position"]], Game.createCharacterResponse));
+                Game.createCharacter(message["instanceID"], message["entityID"], BABYLON.Vector3.FromArray(message["position"]), message["rotation"], message["scaling"], message["options"], Callback.create(String("entityLogicWorkerOnMessage-createCharacter-").concat(Tools.genUUIDv4()), callbackID, [message["instanceID"], message["entityID"], message["position"]], Game.createCharacterResponse));
                 break;
             }
             case "createDoor":
@@ -5934,7 +5938,7 @@ class Game {
             return Game.getEntity(id);
         }
         if (AbstractController.has(id)) {
-            AbstractController.get(id).assign(object);
+            AbstractController.get(id).update(object);
         }
         let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
         if (Game.cachedEntities.hasOwnProperty(id)) {
@@ -5980,7 +5984,7 @@ class Game {
             if (Game.debugMode) console.groupEnd();
             return 0;
         }
-        controller.assign(object, false);
+        controller.update(object, false);
         if (Game.debugMode) console.groupEnd();
         return 0;
     }

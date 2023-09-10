@@ -30,8 +30,8 @@ class CharacterController extends CreatureController {
         if (this.bHasRunPostConstructCharacter) {
             return 0;
         }
-        super.postConstruct();
         this.bHasRunPostConstructCharacter = true;
+        super.postConstruct();
         return 0;
     }
 
@@ -139,13 +139,14 @@ class CharacterController extends CreatureController {
     }
 
     update(objectBlob) {
-        super.update();
+        super.update(objectBlob);
         this.bHasRunAssignCharacter = false;
         this.assign(objectBlob);
         return 0;
     }
     assign(objectBlob) {
         super.assign(objectBlob);
+        if (AbstractController.debugMode) console.group(`Running {CharacterController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {
             this.assignAttachments(objectBlob["equipment"], this._equipmentMeshIDsAttachedToBones);
         }
@@ -153,9 +154,11 @@ class CharacterController extends CreatureController {
             this.assignAttachments(objectBlob["held"], this._equipmentMeshIDsAttachedToBones);
         }
         if (this.bHasRunAssignCharacter == true) {
+            if (AbstractController.debugMode) console.groupEnd();
             return 0;
         }
         this.bHasRunAssignCharacter = true;
+        if (AbstractController.debugMode) console.groupEnd();
         return 0;
     }
     updateID(newID) {

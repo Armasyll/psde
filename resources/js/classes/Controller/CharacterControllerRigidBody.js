@@ -41,8 +41,8 @@ class CharacterControllerRigidBody extends CharacterController {
         if (this.bHasRunPostConstructCharacterRigid) {
             return 0;
         }
-        super.postConstruct();
         this.bHasRunPostConstructCharacterRigid = true;
+        super.postConstruct();
         // TODO: match speeds with mesh' species
         this.amblespeed = 0.05 * this.getScaling().z;
         this.walkSpeed = 0.4 * this.getScaling().z;
@@ -284,7 +284,7 @@ class CharacterControllerRigidBody extends CharacterController {
     }
 
     update(objectBlob) {
-        super.update();
+        super.update(objectBlob);
         this.bHasRunAssignCharacterRigidBody = false;
         this.assign(objectBlob);
         return 0;

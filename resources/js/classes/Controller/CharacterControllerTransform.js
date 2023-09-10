@@ -48,8 +48,8 @@ class CharacterControllerTransform extends CharacterController {
         if (this.bHasRunPostConstructCharacterTransform) {
             return 0;
         }
-        super.postConstruct();
         this.bHasRunPostConstructCharacterTransform = true;
+        super.postConstruct();
         return 0;
     }
 
