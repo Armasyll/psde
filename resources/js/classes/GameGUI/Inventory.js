@@ -367,6 +367,7 @@ class InventoryGameGUI {
      */
     static setSelected(itemID, targetController = Game.playerController, actorController = Game.playerController, parentCallbackID = null) {
         if (Game.debugMode) console.group("Running InventoryGameGUI.setSelected");
+        InventoryGameGUI.clearSelected();
         if (typeof itemID == "string") {}
         else if (itemID.hasOwnProperty("id")) {
             itemID = itemID.id;
@@ -451,7 +452,7 @@ class InventoryGameGUI {
                     actionButton = GameGUI.createButton("actionConsumeButton", ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {
                         InventoryGameGUI.preAction();
-                        Game.actionConsume(response.id, actorController.id, InventoryGameGUI.setSelected);
+                        Game.actionConsume(response.id, actorController.id, InventoryGameGUI.updateSelected);
                         InventoryGameGUI.postAction();
                     });
                     break;
@@ -460,7 +461,7 @@ class InventoryGameGUI {
                     actionButton = GameGUI.createButton("actionDropButton", ActionEnum.properties[action].name);
                     actionButton.onPointerUpObservable.add(function() {
                         InventoryGameGUI.preAction();
-                        Game.actionDrop(response.id, actorController.id, InventoryGameGUI.setSelected);
+                        Game.actionDrop(response.id, actorController.id, InventoryGameGUI.updateSelected);
                         InventoryGameGUI.postAction();
                     });
                     break;
@@ -473,7 +474,7 @@ class InventoryGameGUI {
                         actionButton = GameGUI.createButton("actionUnequipButton", ActionEnum.properties[ActionEnum.UNEQUIP].name);
                         actionButton.onPointerUpObservable.add(function() {
                             InventoryGameGUI.preAction();
-                            Game.actionUnequip(response.id, actorController.id, InventoryGameGUI.setSelected);
+                            Game.actionUnequip(response.id, actorController.id, InventoryGameGUI.updateSelected);
                             InventoryGameGUI.postAction();
                         });
                     }
@@ -481,14 +482,13 @@ class InventoryGameGUI {
                         actionButton = GameGUI.createButton("actionEquipButton", ActionEnum.properties[ActionEnum.EQUIP].name);
                         actionButton.onPointerUpObservable.add(function() {
                             InventoryGameGUI.preAction();
-                            Game.actionEquip(response.id, actorController.id, InventoryGameGUI.setSelected);
+                            Game.actionEquip(response.id, actorController.id, InventoryGameGUI.updateSelected);
                             InventoryGameGUI.postAction();
                         });
                     }
                     break;
                 }
                 case ActionEnum.HOLD : {
-                    let buttonText = "";
                     let isHeld = false;
                     if (!Game.cachedEntities.hasOwnProperty(targetController.id)) {}
                     else if (!Game.cachedEntities[targetController.id].hasOwnProperty("held")) {}
@@ -500,35 +500,19 @@ class InventoryGameGUI {
                             isHeld = true;
                         }
                     }
-                    if (response.itemType == ItemEnum.WEAPON || response.itemType == ItemEnum.SHIELDS) {
-                        if (isHeld) {
-                            buttonText = ActionEnum.properties[ActionEnum.UNEQUIP].name;
-                        }
-                        else {
-                            buttonText = ActionEnum.properties[ActionEnum.EQUIP].name;
-                        }
-                    }
-                    else {
-                        if (isHeld) {
-                            buttonText = ActionEnum.properties[ActionEnum.RELEASE].name;
-                        }
-                        else {
-                            buttonText = ActionEnum.properties[ActionEnum.HOLD].name;
-                        }
-                    }
                     if (isHeld) {
-                        actionButton = GameGUI.createButton("actionReleaseButton", buttonText);
+                        actionButton = GameGUI.createButton("actionReleaseButton", ActionEnum.properties[ActionEnum.RELEASE].name);
                         actionButton.onPointerUpObservable.add(function() {
                             InventoryGameGUI.preAction();
-                            Game.actionRelease(itemID, actorController.id, InventoryGameGUI.setSelected);
+                            Game.actionRelease(itemID, actorController.id, InventoryGameGUI.updateSelected);
                             InventoryGameGUI.postAction();
                         });
                     }
                     else {
-                        actionButton = GameGUI.createButton("actionHoldButton", buttonText);
+                        actionButton = GameGUI.createButton("actionHoldButton", ActionEnum.properties[ActionEnum.HOLD].name);
                         actionButton.onPointerUpObservable.add(function() {
                             InventoryGameGUI.preAction();
-                            Game.actionHold(itemID, actorController.id, InventoryGameGUI.setSelected);
+                            Game.actionHold(itemID, actorController.id, InventoryGameGUI.updateSelected);
                             InventoryGameGUI.postAction();
                         });
                     }

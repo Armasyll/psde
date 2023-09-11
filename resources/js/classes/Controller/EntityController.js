@@ -1389,7 +1389,6 @@ class EntityController extends AbstractController {
     update(objectBlob) {
         super.update(objectBlob);
         this.bHasRunAssignEntity = false;
-        this.assign(objectBlob);
         return 0;
     }
     /**

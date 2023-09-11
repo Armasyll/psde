@@ -5759,7 +5759,7 @@ class Game {
                 if (!message.hasOwnProperty("id")) {
                     break;
                 }
-                Game.setCachedEntity(message["id"], message);
+                Game.updateCachedEntity(message["id"], message);
                 break;
             }
             case "updateInventory": {
@@ -5940,12 +5940,6 @@ class Game {
         if (AbstractController.has(id)) {
             AbstractController.get(id).update(object);
         }
-        let containerLength = 0; // fug it, create this on every update, i'm too lazy to think rn :v
-        if (Game.cachedEntities.hasOwnProperty(id)) {
-            if (Game.cachedEntities[id].hasContainer) {
-                containerLength = Game.cachedEntities[id]["container"]["size"];
-            }
-        }
         Object.assign(Game.cachedEntities[id], object);
         if (!Game.hasPlayerController()) {
             if (Game.debugMode) console.groupEnd();
@@ -5960,9 +5954,7 @@ class Game {
             }
             if (Game.gui.inventoryMenu.isVisible) {
                 if (Game.cachedEntities[id].hasContainer) {
-                    if (containerLength != Game.cachedEntities[id]["container"]["size"]) {
-                        Game.gui.inventoryMenu.update();
-                    }
+                    Game.gui.inventoryMenu.update();
                 }
             }
             if (Game.gui.inventoryEquipmentMenu.isVisible) {

@@ -141,7 +141,6 @@ class CharacterController extends CreatureController {
     update(objectBlob) {
         super.update(objectBlob);
         this.bHasRunAssignCharacter = false;
-        this.assign(objectBlob);
         return 0;
     }
     assign(objectBlob) {

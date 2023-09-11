@@ -2264,10 +2264,6 @@ class CreatureEntity extends Entity {
                 this._canHearConditionOverride--;
                 this._canSeeConditionOverride--;
                 this._canHoldConditionOverride--;
-                if (this instanceof CreatureEntity) {
-                    this.unequipBySlot("HAND_L");
-                    this.unequipBySlot("HAND_R");
-                }
                 this.failSucceedSavingThrowsConditionOverride["STRENGTH"]--;
                 this.failSucceedSavingThrowsConditionOverride["DEXTERITY"]--;
                 this.vantageAgainstAttackConditionOverride--;

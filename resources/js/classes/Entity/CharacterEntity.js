@@ -543,26 +543,44 @@ class CharacterEntity extends CreatureEntity {
         return 2;
     }
     releaseByInstancedEntity(instancedEntity, tellGameWorker = true) {
+        let releasedEntity = false;
         for (let heldSlot in this.held) {
-            if (this.held[heldSlot] instanceof AbstractEntity) {
-                if (this.held[heldSlot].getID() == instancedEntity.getID()) {
-                    return this.releaseBySlot(heldSlot, tellGameWorker);
-                }
+            if (!(this.held[heldSlot] instanceof AbstractEntity)) {
+                continue;
             }
+            if (this.held[heldSlot].getID() != instancedEntity.getID()) {
+                continue;
+            }
+            releasedEntity = true;
+            this.releaseBySlot(heldSlot, tellGameWorker);
         }
-        if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not held.`);
-        return 1;
+        if (releasedEntity) {
+            return 0;
+        }
+        else {
+            if (AbstractEntity.debugMode) console.log(`\tThe entity (${instancedEntity.id}) was not held.`);
+            return 1;
+        }
     }
     releaseByEntity(entity, tellGameWorker = true) {
+        let releasedEntity = false;
         for (let heldSlot in this.held) {
-            if (this.held[heldSlot] instanceof AbstractEntity) {
-                if (this.held[heldSlot].entity == entity) {
-                    return this.releaseBySlot(heldSlot, tellGameWorker);
-                }
+            if (!(this.held[heldSlot] instanceof AbstractEntity)) {
+                continue;
             }
+            if (this.held[heldSlot].entity != entity) {
+                continue;
+            }
+            releasedEntity = true;
+            this.releaseBySlot(heldSlot, tellGameWorker);
         }
-        if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not held.`);
-        return 1;
+        if (releasedEntity) {
+            return 0;
+        }
+        else {
+            if (AbstractEntity.debugMode) console.log(`\tThe entity (${entity.id}) was not held.`);
+            return 1;
+        }
     }
     releaseBySlot(heldSlot = "NONE", tellGameWorker = true) {
         tellGameWorker = tellGameWorker == true;
@@ -577,19 +595,13 @@ class CharacterEntity extends CreatureEntity {
             return 2;
         }
         if (this.held[heldSlot] == null) {
-            return 1;
+            return 0;
         }
         else if (!(this.held[heldSlot] instanceof AbstractEntity)) {
             this.held[heldSlot] = null;
-            return 1;
+            return 0;
         }
         this.held[heldSlot] = null;
-        if (this.predator) {
-            this.held[heldSlot] = InstancedWeaponEntity.get("weaponClawInstance");
-        }
-        else {
-            this.held[heldSlot] = InstancedWeaponEntity.get("weaponHandInstance");
-        }
         if (tellGameWorker) {
             this.calculateIsArmed();
             EntityLogic.sendEntityUpdate(this, "held");

@@ -286,7 +286,6 @@ class CharacterControllerRigidBody extends CharacterController {
     update(objectBlob) {
         super.update(objectBlob);
         this.bHasRunAssignCharacterRigidBody = false;
-        this.assign(objectBlob);
         return 0;
     }
     assign(objectBlob) {

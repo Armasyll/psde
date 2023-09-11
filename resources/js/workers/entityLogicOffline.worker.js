@@ -1990,7 +1990,7 @@ class EntityLogic {
                 console.info(`Entity id "${entityID.id}" found with property "${String(property)}"`);
                 console.groupEnd();
             }
-            let obj = {"id":entity.id, "controller":entity.controllerID};
+            let obj = {"id":entity.id, "controller":entity.id};
             obj[property] = AbstractEntity.objectifyProperty(entity[property]);
             EntityLogic.gameWorkerPostMessage("updateEntity", 0, obj);
             return 0;

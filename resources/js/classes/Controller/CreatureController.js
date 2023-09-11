@@ -1398,7 +1398,6 @@ class CreatureController extends EntityController {
     update(objectBlob) {
         super.update(objectBlob);
         this.bHasRunAssignCreature = false;
-        this.assign(objectBlob);
         return 0;
     }
     assign(objectBlob) {
