@@ -76,7 +76,6 @@ class CreatureController extends EntityController {
         }
         this.populateAnimatables();
         this.populateAnimationGroup();
-        console.log(`${this.id}:${this.height}`);
         return 0;
     }
 
@@ -372,7 +371,6 @@ class CreatureController extends EntityController {
         if (this.hasCollisionMesh()) {
             this.removeCollisionMesh();
         }
-        console.log(this.height);
         let collisionMesh = Game.createAreaMesh(
             String(this.id).concat("-collisionMesh"),
             "CUBE",
