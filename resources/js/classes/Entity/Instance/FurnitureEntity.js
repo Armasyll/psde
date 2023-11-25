@@ -19,6 +19,7 @@ class InstancedFurnitureEntity extends InstancedEntity {
 
         this.availableSeats = 0;
         this.usedSeats = [];
+        this.open = false;
 
         this.setAvailableSeats(entity.availableSeats);
         InstancedFurnitureEntity.set(this.id, this);
@@ -96,6 +97,33 @@ class InstancedFurnitureEntity extends InstancedEntity {
     clearSeats() {
         this.usedSeats.clear();
         return 0;
+    }
+    setOpen() {
+        if (!this.hasAvailableAction(ActionEnum.OPEN)) {
+            return 1;
+        }
+        if (this.open) {
+            return 0;
+        }
+        this.open = true;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        return 0;
+    }
+    setClose() {
+        if (!this.hasAvailableAction(ActionEnum.CLOSE)) {
+            return 1;
+        }
+        if (!this.open) {
+            return 0;
+        }
+        this.open = false;
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        return 0;
+    }
+    getOpen() {
+        return this.open;
     }
 
     /**

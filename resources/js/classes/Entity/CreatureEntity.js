@@ -559,6 +559,11 @@ class CreatureEntity extends Entity {
         this.immuneToConditionOverride = Object.assign({}, this.resistanceTo);
         this.immuneToEffectOverride = Object.assign({}, this.resistanceTo);
 
+        /**
+          @type {boolean}
+        */
+        this.open = false;
+
         this.setSex(sex);
         this.setCreatureType(creatureType);
         this.setCreatureSubType(creatureSubType);
@@ -2663,6 +2668,28 @@ class CreatureEntity extends Entity {
             return true;
         }
         return this.hasProficiency(this.getEquipmentInSlot(slot).getArmourCategory());
+    }
+
+    setOpen() {
+        if (this.open) {
+            return 0;
+        }
+        this.open = true;
+        this.removeHiddenAvailableAction(ActionEnum.CLOSE);
+        this.addHiddenAvailableAction(ActionEnum.OPEN);
+        return 0;
+    }
+    setClose() {
+        if (!this.open) {
+            return 0;
+        }
+        this.open = false;
+        this.removeHiddenAvailableAction(ActionEnum.OPEN);
+        this.addHiddenAvailableAction(ActionEnum.CLOSE);
+        return 0;
+    }
+    getOpen() {
+        return this.open;
     }
 
     objectifyMinimal() {

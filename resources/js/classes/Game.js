@@ -250,8 +250,8 @@ class Game {
         Game.tickWorker = null;
         Game.transformsWorker = null;
         Game.entityLogicWorker = null;
-        Game.entityLogicTickChannel = null;
-        Game.entityLogicTransformsChannel = null;
+        Game.entityLogicTickChannel = new MessageChannel();
+        Game.entityLogicTransformsChannel = new MessageChannel();
         Game.eventListeners = {};
         Game.sceneExecuteCodeActions = {};
         for (let option in options) {
@@ -438,10 +438,8 @@ class Game {
             }
         });
 
-        Game.entityLogicTickChannel = new MessageChannel();
         Game.tickWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port1]);
         Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port2]);
-        Game.entityLogicTransformsChannel = new MessageChannel();
         Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port1]);
         Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port2]);
         //Game.initializePhaseFive();
@@ -4645,7 +4643,9 @@ class Game {
     }
     static actionOpenResponse(targetController, actorController, response, parentCallbackID) {
         if (Game.debugMode) BABYLON.Tools.Log(`Game.actionOpenResponse(${targetController.id}, ${actorController.id})`);
-        Game.playEnvironmentSoundEffects(response["soundEffects"]);
+        if (response["soundEffects"] instanceof Array) {
+            Game.playEnvironmentSoundEffects(response["soundEffects"]);
+        }
         if (targetController instanceof DoorController || targetController instanceof FurnitureController) {
             Game.actionOpenFurnitureResponse(targetController, actorController, response);
         }

@@ -1035,8 +1035,14 @@ class EntityLogic {
         if (response["isOpened"]) {
             target.setOpen();
         }
-        let inventoryResponse = EntityLogic.generateInventoryResponse(target, actor);
-        EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, inventoryResponse, parentCallbackID);
+        if (target.hasContainer()) {
+            EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
+            let inventoryResponse = EntityLogic.generateInventoryResponse(target, actor);
+            EntityLogic.gameWorkerPostMessage("getOtherInventory", 0, inventoryResponse, parentCallbackID);
+        }
+        else {
+            EntityLogic.gameWorkerPostMessage("actionOpen", 0, response, parentCallbackID);
+        }
         return 0;
     }
     static actionOpenContainer(target, actor, parentCallbackID) {
