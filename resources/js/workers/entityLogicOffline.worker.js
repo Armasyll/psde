@@ -110,6 +110,8 @@ class EntityLogic {
         // TODO: don't be lazy, load when needed >:v
         EntityLogic.importCells(); // imports ALL the cells :V
         addEventListener('message', EntityLogic.gameWorkerOnMessage, false);
+        EntityLogic.gameWorkerPostMessage("initialized");
+        return 0;
     }
     static tickWorkerOnMessage(event) {
         if (EntityLogic.debugMode && EntityLogic.verbosity > 3) console.group(`Running EntityLogic.tickWorkerOnMessage`);

@@ -11,12 +11,15 @@ class Game {
         Game.initialized = false;
         Game.currentFrame = 0;
         Game.options = Object.assign({}, options);
-        Game.initializedPhaseTwo = false;
-        Game.initializedPhaseThree = false;
-        Game.initializedPhaseFour = false;
-        Game.preInitializePhaseFive = false;
-        Game.initializedPhaseFive = false;
-        Game.initializedPhaseSix = false;
+        Game.initializedAssets = false;
+        Game.initializedEngine = false;
+        Game.initializedWorkers = false;
+        Game.bEntityLogicWorkerInitialized = false;
+        Game.bTickWorkerInitialized = false;
+        Game.bTransformsWorkerInitialized = false;
+        Game.assignedWorkers = false;
+        Game.checkedWorkers = false;
+        Game.initializedPlayerExperience = false;
         Game.initializingPointerEventListeners = false;
         Game.initializedPointerEventListeners = false;
         Game.rootDirectory = "";
@@ -305,31 +308,31 @@ class Game {
                 }
             }
         }
-        Game.initializePhaseTwo();
+        Game.initializeAssets();
     }
-    static initializePhaseTwo() {
-        if (Game.initializedPhaseTwo) {
+    static initializeAssets() {
+        if (Game.initializedAssets) {
             return 0;
         }
-        BABYLON.Tools.Log("Initializing, Phase Two; loading lists of assets");
-        Game.initializedPhaseTwo = true;
-        Game.importMeshLocations("resources/json/meshLocations.json", Game.initializePhaseThree);
-        Game.importMeshProperties("resources/json/meshProperties.json", Game.initializePhaseThree);
-        Game.importTextureLocations("resources/json/textureLocations.json", Game.initializePhaseThree);
-        Game.importIconLocations("resources/json/iconLocations.json", Game.initializePhaseThree);
-        Game.importSoundLocations("resources/json/soundLocations.json", Game.initializePhaseThree);
-        Game.importVideoLocations("resources/json/videoLocations.json", Game.initializePhaseThree);
+        BABYLON.Tools.Log("Initializing assets");
+        Game.initializedAssets = true;
+        Game.importMeshLocations("resources/json/meshLocations.json", Game.initializeEngine);
+        Game.importMeshProperties("resources/json/meshProperties.json", Game.initializeEngine);
+        Game.importTextureLocations("resources/json/textureLocations.json", Game.initializeEngine);
+        Game.importIconLocations("resources/json/iconLocations.json", Game.initializeEngine);
+        Game.importSoundLocations("resources/json/soundLocations.json", Game.initializeEngine);
+        Game.importVideoLocations("resources/json/videoLocations.json", Game.initializeEngine);
         return 0;
     }
-    static initializePhaseThree() {
-        if (Game.initializedPhaseThree) {
+    static initializeEngine() {
+        if (Game.initializedEngine) {
             return 0;
         }
         if (Game.importingMeshLocations || Game.importingMeshProperties || Game.importingTextureLocations || Game.importingIconLocations || Game.importingSoundLocations || Game.importingVideoLocations) {
             return 1;
         }
-        BABYLON.Tools.Log("Initializing, Phase Three; setting up 3D engine");
-        Game.initializedPhaseThree = true;
+        BABYLON.Tools.Log("Initializing engine");
+        Game.initializedEngine = true;
 
         if (Game.useNative) {
             if (Game.debugMode) BABYLON.Tools.Log("Creating NativeEngine");
@@ -381,33 +384,46 @@ class Game {
 
         Game.initialized = true;
         Game.initRenderLoops();
-        Game.initializePhaseFour();
+        Game.initializeWorkers();
         return 0;
     }
-    static initializePhaseFour() {
-        if (Game.initializedPhaseFour) {
+    static initializeWorkers() {
+        if (Game.initializedWorkers) {
             return 0;
         }
-        BABYLON.Tools.Log("Initializing, Phase Four; creating workers");
-        Game.initializedPhaseFour = true;
+        BABYLON.Tools.Log("Initializing workers");
+        Game.initializedWorkers = true;
         if (Game.useNative) { // Problem in BabylonNative; no support for workers
-            return Game.initializePhaseFive();
+            return Game.initializePlayerExperience();
         }
         Game.tickWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/tick.worker.js"));
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
-        Game.transformsWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/transforms.worker.js"));
-        Game.transformsWorker.onmessage = Game.transformsWorkerOnMessage;
         Game.entityLogicWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/entityLogicOffline.worker.js"));
         Game.entityLogicWorker.onmessage = Game.entityLogicWorkerOnMessage;
-        
+        return 0;
+    }
+    static assignWorkers() {
+        if (!Game.bEntityLogicWorkerInitialized || !Game.bTickWorkerInitialized) {
+            return 1;
+        }
+        if (Game.assignedWorkers) {
+            return 0;
+        }
+        Game.assignedWorkers = true;
+        Game.tickWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTickChannel.port1]);
+        Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTickChannel.port2]);        
+        return 0;
+    }
+    static checkWorkers() {
+        if (!Game.bConnectedTickToEntityLogic || !Game.bConnectedEntityLogicToTick) {
+            return 1;
+        }
+        if (Game.checkedWorkers) {
+            return 0;
+        }
+        BABYLON.Tools.Log("Checking workers");
+        Game.checkedWorkers = true;
         if (Game.debugMode) {
-            Game.transformsWorker.postMessage({
-                "cmd": "setDebugMode",
-                "sta": 0,
-                "msg": {
-                    "debugMode": true
-                }
-            });
             Game.tickWorker.postMessage({
                 "cmd": "setDebugMode",
                 "sta": 0,
@@ -437,39 +453,15 @@ class Game {
                 "useNative": Game.useNative
             }
         });
-
-        Game.tickWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port1]);
-        Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTickChannel.port2]);
-        Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port1]);
-        Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.initializePhaseFive), [Game.entityLogicTransformsChannel.port2]);
-        //Game.initializePhaseFive();
+        Game.initializePlayerExperience();
         return 0;
     }
-    static initializePhaseFive() {
-        if (Game.initializedPhaseFive) {
+    static initializePlayerExperience() {
+        if (Game.initializedPlayerExperience) {
             return 0;
         }
-        if (Game.bConnectedTickToEntityLogic && Game.bConnectedTransformsToEntityLogic && Game.bConnectedEntityLogicToTick && Game.bConnectedEntityLogicToTransforms) {
-            BABYLON.Tools.Log("Initializing, Phase Five; workers working");
-            Game.initializedPhaseFive = true;
-            Game.preInitializePhaseFive = true;
-            Game.initializePhaseSix();
-        }
-        else if (!Game.preInitializePhaseFive) {
-            Game.preInitializePhaseFive = true;
-            setTimeout(Game.initializePhaseFive, 2000); // Just in case
-        }
-        else {
-            Game.preInitializePhaseFive = false;
-        }
-        return 0;
-    }
-    static initializePhaseSix() {
-        if (Game.initializedPhaseSix) {
-            return 0;
-        }
-        BABYLON.Tools.Log("Initializing, Phase Six; assuming direct control");
-        Game.initializedPhaseSix = true;
+        BABYLON.Tools.Log("Initializing Player Experience");
+        Game.initializedPlayerExperience = true;
         if (Game.bUseGUI) {
             Game.gui.show();
         }
@@ -5166,6 +5158,9 @@ class Game {
     }
 
     static tickWorkerOnMessage(event) {
+        if (Game.tickWorker == null) {
+            return 1;
+        }
         if (!event.data.hasOwnProperty("cmd")) {
             return 2;
         }
@@ -5173,6 +5168,11 @@ class Game {
         let callbackID = event.data["callbackID"];
         let message = event.data["msg"];
         switch (event.data.cmd) {
+            case "initialized": {
+                Game.bTickWorkerInitialized = true;
+                Game.assignWorkers();
+                break;
+            }
             case "connectedToEntityLogic": {
                 Game.bConnectedTickToEntityLogic = true;
                 Callback.run(callbackID);
@@ -5227,6 +5227,9 @@ class Game {
      * @param {(object|undefined)} [options] 
      */
     static tickWorkerPostMessage(command, status = 0, message, callbackID = null, options = null) {
+        if (Game.tickWorker == null) {
+            return 1;
+        }
         let obj = {"cmd": command, "sta": status, "msg": message};
         if (callbackID) {
             obj["callbackID"] = callbackID;
@@ -5240,6 +5243,9 @@ class Game {
         return 0;
     }
     static transformsWorkerOnMessage(event) {
+        if (Game.transformsWorker == null) {
+            return 1;
+        }
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
             return 2;
         }
@@ -5247,6 +5253,11 @@ class Game {
         let callbackID = event.data["callbackID"];
         let message = event.data["msg"];
         switch (event.data["cmd"]) {
+            case "initialized": {
+                Game.bTransformsWorkerInitialized = true;
+                Game.assignWorkers();
+                break;
+            }
             case "connectedToEntityLogic": {
                 Game.bConnectedTransformsToEntityLogic = true;
                 Callback.run(callbackID);
@@ -5320,6 +5331,9 @@ class Game {
      * @param {(object|undefined)} [options] 
      */
     static transformsWorkerPostMessage(command, status = 0, message, callbackID = null, options = null) {
+        if (Game.transformsWorker == null) {
+            return 1;
+        }
         let obj = {"cmd": command, "sta": status, "msg": message};
         if (callbackID) {
             obj["callbackID"] = callbackID;
@@ -5333,6 +5347,9 @@ class Game {
         return 0;
     }
     static entityLogicWorkerOnMessage(event) {
+        if (Game.entityLogicWorker == null) {
+            return 1;
+        }
         if (Game.debugMode) console.group(`Running Game.entityLogicWorkerOnMessage`);
         if (!event.data.hasOwnProperty("cmd") || !event.data.hasOwnProperty("msg")) {
             if (Game.debugMode) console.groupEnd();
@@ -5387,6 +5404,11 @@ class Game {
      */
     static _entityLogicWorkerPhaseTwo(command, message, status, callbackID) {
         switch (command) {
+            case "initialized": {
+                Game.bEntityLogicWorkerInitialized = true;
+                Game.assignWorkers();
+                break;
+            }
             case "connectedToTick": {
                 Game.bConnectedEntityLogicToTick = true;
                 Callback.run(callbackID);
@@ -5781,6 +5803,9 @@ class Game {
      * @param {(object|undefined)} [options] 
      */
     static entityLogicWorkerPostMessage(command, status = 0, message, callbackID = null, options = null) {
+        if (Game.entityLogicWorker == null) {
+            return 1;
+        }
         let obj = {"cmd": command, "sta": status, "msg": message};
         if (callbackID) {
             obj["callbackID"] = callbackID;

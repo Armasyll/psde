@@ -406,6 +406,7 @@ class Tick {
         Tick.scheduledCommands = {};
         Tick.start();
         addEventListener('message', Tick.gameWorkerOnMessage, false);
+        Tick.gameWorkerPostMessage("initialized");
     }
     static tick() {
         Tick.currentTime += Tick.incrementor;
@@ -816,6 +817,9 @@ class Tick {
         let obj = {"cmd": command, "sta": status, "msg": message};
         if (callbackID) {
             obj["callbackID"] = callbackID;
+        }
+        if (Tick.entityLogicPort == null) {
+            return 1;
         }
         if (options) {
             Tick.entityLogicPort.postMessage(obj, options);
