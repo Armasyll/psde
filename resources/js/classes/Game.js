@@ -121,11 +121,16 @@ class Game {
          * @type {<string, BABYLON.Sound>}
          */
         Game.loadedSounds = {};
+        /**
+         * Map of Sound UUIDs per ID; one to many
+         * @type {<string, [<string, BABYLON.Sound>]>}
+         */
         Game.soundCloneHeap = {};
         /**
-         * Map of Video IDs to BABYLON.Sound; one to one
-         * @type {<string, [BABYLON.Sound]>}
+         * Map of Sound IDs per UUID; one to one
+         * @type <string, string>
          */
+        Game.soundCloneHeapUUIDs = {};
         Game.importingVideoLocations = true;
         /**
          * Map of Video file locations per ID
@@ -439,20 +444,22 @@ class Game {
                 }
             });
         }
-        Game.tickWorker.postMessage({
-            "cmd": "useNative",
-            "sta": 0,
-            "msg": {
-                "useNative": Game.useNative
-            }
-        });
-        Game.entityLogicWorker.postMessage({
-            "cmd": "useNative",
-            "sta": 0,
-            "msg": {
-                "useNative": Game.useNative
-            }
-        });
+        if (Game.useNative) {
+            Game.tickWorker.postMessage({
+                "cmd": "useNative",
+                "sta": 0,
+                "msg": {
+                    "useNative": true
+                }
+            });
+            Game.entityLogicWorker.postMessage({
+                "cmd": "useNative",
+                "sta": 0,
+                "msg": {
+                    "useNative": true
+                }
+            });
+        }
         Game.initializePlayerExperience();
         return 0;
     }
@@ -2604,7 +2611,7 @@ class Game {
             }
         }
         if (soundUUID.length > 0) {
-            if (Game.soundCloneHeap.hasOwnProperty(soundUUID)) {
+            if (Game.soundCloneHeapUUIDs.hasOwnProperty(soundUUID)) {
                 return 0;
             }
             sound = sound.clone();
@@ -2612,6 +2619,7 @@ class Game {
                 Game.soundCloneHeap[soundID] = {};
             }
             Game.soundCloneHeap[soundID][soundUUID] = sound;
+            Game.soundCloneHeapUUIDs[soundUUID] = soundID;
         }
         if (options.hasOwnProperty("autoplay")) {
             sound.autoplay = options["autoplay"] == true;
@@ -2641,9 +2649,7 @@ class Game {
     }
     static playEnvironmentSoundEffect(soundID, options = Game.soundEffectEnvironmentOptions, soundUUID = "") {
         //{"loop": true, "startDelay": 0, "volume": 1, "playbackRate": 1, "repeat": 0, "loopDelay": 0};
-        if (soundUUID.size == 0) {
-            soundUUID = soundID;
-        }
+        soundUUID = Tools.filterID(soundUUID, Tools.genUUIDv4());
         return Game.playSound(soundID, options, soundUUID);
     }
     static playEnvironmentSoundEffects(soundIDs, options = Game.soundEffectEnvironmentOptions) {
@@ -2653,26 +2659,42 @@ class Game {
         return 0;
     }
     static playCharacterSoundEffect(soundID, options = Game.soundEffectCharacterOptions, soundUUID = "") {
-        if (soundUUID.size == 0) {
-            soundUUID = Tools.genUUIDv4();
-        }
+        soundUUID = Tools.filterID(soundUUID, Tools.genUUIDv4());
         return Game.playSound(soundID, options);
     }
-    static stopSound(soundID, soundChannel = SoundChannelEnum.NONE, soundUUID = "") {
+    static stopSound(soundID) {
         if (!Game.hasSound(soundID)) {
             return 2;
         }
         if (Game.soundCloneHeap.hasOwnProperty(soundID)) {
             for (let soundUUID in Game.soundCloneHeap[soundID]) {
-                Game.soundCloneHeap[soundID][soundUUID].stop();
-                Game.soundCloneHeap[soundID][soundUUID].dispose();
-                delete Game.soundCloneHeap[soundID][soundUUID];
+                Game.stopSoundUUID(soundUUID);
             }
         }
         if (Game.loadedSounds[soundID] instanceof BABYLON.Sound) {
             if (Game.loadedSounds[soundID].isPlaying) {
                 Game.loadedSounds[soundID].stop();
             }
+        }
+        if (Object.keys(Game.soundCloneHeap[soundID]).length == 0) {
+            delete Game.soundCloneHeap[soundID];
+        }
+        return 0;
+    }
+    static stopSoundUUID(soundUUID) {
+        if (!Game.soundCloneHeapUUIDs.hasOwnProperty(soundUUID)) {
+            return 0;
+        }
+        if (!Game.soundCloneHeap.hasOwnProperty(Game.soundCloneHeapUUIDs[soundUUID])) {
+            return 0;
+        }
+        let soundID = Game.soundCloneHeapUUIDs[soundUUID];
+        Game.soundCloneHeap[soundID][soundUUID].stop();
+        Game.soundCloneHeap[soundID][soundUUID].dispose();
+        delete Game.soundCloneHeap[soundID][soundUUID];
+        delete Game.soundCloneHeapUUIDs[soundUUID];
+        if (Object.keys(Game.soundCloneHeap[soundID]).length == 0) {
+            delete Game.soundCloneHeap[soundID];
         }
         return 0;
     }
@@ -6082,9 +6104,7 @@ class Game {
     }
 
     static playAnnoyingMeatyThwack() {
-        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 1169);
-        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 2420);
-        setTimeout(function() {Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true});}, 3666);
+        Game.playEnvironmentSoundEffect("hit", {"loop": true, "autoplay": true}, "annoyingMeatyThwack")
         return 0;
     }
     /**
