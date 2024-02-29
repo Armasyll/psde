@@ -126,6 +126,7 @@ class Transforms {
         Transforms.requestedEntities = {};
         Transforms.initialized = true;
         addEventListener('message', Transforms.gameWorkerOnMessage, false);
+        Transforms.gameWorkerPostMessage("initialized");
     }
 
     static renderIfNeeded() {

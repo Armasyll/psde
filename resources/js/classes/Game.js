@@ -26,6 +26,7 @@ class Game {
         Game.debugMode = false;
         Game.debugVerbosity = 2;
         Game.useNative = false;
+        Game.useWebGPU = false;
         Game.useRigidBodies = true;
         Game.bUseControllerGroundRay = false;
         Game.useShadows = false;
@@ -284,6 +285,10 @@ class Game {
                     Game.useNative = options["useNative"] === true;
                     break;
                 }
+                case "useWebGPU": {
+                    Game.useWebGPU = options["useWebGPU"] === true && navigator.gpu != null;
+                    break;
+                }
                 case "useRigidBodies": {
                     Game.useRigidBodies = options["useRigidBodies"] === true;
                     break;
@@ -314,6 +319,7 @@ class Game {
             }
         }
         Game.initializeAssets();
+        return 0;
     }
     static initializeAssets() {
         if (Game.initializedAssets) {
@@ -340,17 +346,48 @@ class Game {
         Game.initializedEngine = true;
 
         if (Game.useNative) {
-            if (Game.debugMode) BABYLON.Tools.Log("Creating NativeEngine");
-            Game.engine = new BABYLON.NativeEngine();
+            Game.initializeNativeEngine();
         }
         else {
             Game.canvas = document.getElementById("canvas");
             Game.canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
             Game.canvas.exitPointerLock = canvas.exitPointerLock || canvas.mozExitPointerLock;
-            if (Game.debugMode) BABYLON.Tools.Log("Creating Engine");
-            Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
-            Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
+            if (Game.useWebGPU) {
+                Game.initializeWebGPUEngine();
+            }
+            else {
+                Game.initializeWebGLEngine();
+            }
         }
+        return 0;
+    }
+    static removeEngine() {
+        Game.engine.stopRenderLoop();
+        Game.engine.dispose();
+        Game.engine = null;
+        return 0;
+    }
+    static initializeNativeEngine() {
+        if (Game.engine != null) Game.removeEngine();
+        if (Game.debugMode) BABYLON.Tools.Log("Creating NativeEngine");
+        Game.engine = new BABYLON.NativeEngine();
+        Game.initializeScene();
+    }
+    static initializeWebGLEngine() {
+        if (Game.engine != null) Game.removeEngine();
+        if (Game.debugMode) BABYLON.Tools.Log("Creating WebGL Engine");
+        Game.engine = new BABYLON.Engine(Game.canvas, false, null, false);
+        Game.engine.enableOfflineSupport = false; // Disables .manifest file errors
+        Game.initializeScene();
+    }
+    static async initializeWebGPUEngine() {
+        if (Game.engine != null) Game.removeEngine();
+        if (Game.debugMode) BABYLON.Tools.Log("Creating WebGPU Engine");
+        Game.engine = new BABYLON.WebGPUEngine(canvas);
+        await Game.engine.initAsync();
+        Game.initializeScene();
+    }
+    static initializeScene() {
         if (Game.debugMode) BABYLON.Tools.Log("Creating Scene");
         Game.scene = new BABYLON.Scene(Game.engine);
         Game.scene.autoClear = false;
@@ -403,12 +440,14 @@ class Game {
         }
         Game.tickWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/tick.worker.js"));
         Game.tickWorker.onmessage = Game.tickWorkerOnMessage;
+        Game.transformsWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/transforms.worker.js"));
+        Game.transformsWorker.onmessage = Game.transformsWorkerOnMessage;
         Game.entityLogicWorker = new Worker(String(Game.rootDirectory).concat("resources/js/workers/entityLogicOffline.worker.js"));
         Game.entityLogicWorker.onmessage = Game.entityLogicWorkerOnMessage;
         return 0;
     }
     static assignWorkers() {
-        if (!Game.bEntityLogicWorkerInitialized || !Game.bTickWorkerInitialized) {
+        if (!Game.bEntityLogicWorkerInitialized || !Game.bTickWorkerInitialized || !Game.bTransformsWorkerInitialized){
             return 1;
         }
         if (Game.assignedWorkers) {
@@ -416,11 +455,13 @@ class Game {
         }
         Game.assignedWorkers = true;
         Game.tickWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTickChannel.port1]);
-        Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTickChannel.port2]);        
+        Game.entityLogicWorkerPostMessage("connectTick", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTickChannel.port2]);
+        Game.transformsWorkerPostMessage("connectEntityLogic", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTransformsChannel.port1]);
+        Game.entityLogicWorkerPostMessage("connectTransforms", 0, null, Callback.createDummy(Game.checkWorkers), [Game.entityLogicTransformsChannel.port2]);
         return 0;
     }
     static checkWorkers() {
-        if (!Game.bConnectedTickToEntityLogic || !Game.bConnectedEntityLogicToTick) {
+        if (!Game.bConnectedTickToEntityLogic || !Game.bConnectedEntityLogicToTick || !Game.bConnectedTransformsToEntityLogic) {
             return 1;
         }
         if (Game.checkedWorkers) {
@@ -430,6 +471,13 @@ class Game {
         Game.checkedWorkers = true;
         if (Game.debugMode) {
             Game.tickWorker.postMessage({
+                "cmd": "setDebugMode",
+                "sta": 0,
+                "msg": {
+                    "debugMode": true
+                }
+            });
+            Game.transformsWorker.postMessage({
                 "cmd": "setDebugMode",
                 "sta": 0,
                 "msg": {
