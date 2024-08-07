@@ -6096,7 +6096,14 @@ class Game {
         return 0;
     }
     static setDialoguePhaseTwo(id, targetController, actorController, response, parentCallbackID) {
-        let json = JSON.parse(response)
+        let json = {};
+        if (response instanceof Object && response.hasOwnProperty("className") && response["className"] == "Dialogue") {
+            json = response;
+        }
+        else {
+            json = JSON.parse(response);
+        }
+        console.log(json);
         if (Game.bUseGUI) {
             Game.gui.dialogue.set(json);
         }

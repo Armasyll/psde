@@ -597,7 +597,7 @@ class EntityLogic {
                 let ids = {};
                 message.forEach((entityID) => {
                     if (CharacterEntity.has(entityID)) {
-                        ids[entityID] = CharacterEntity.get(entityID).stringify();
+                        ids[entityID] = CharacterEntity.get(entityID).objectify();
                     }
                 });
                 if (Object.keys(ids).length == 0) {
@@ -633,7 +633,7 @@ class EntityLogic {
                 let targetEntity = AbstractEntity.get(message["targetID"]);
                 let actorEntity = AbstractEntity.get(message["actorID"]);
                 let dialogue = Dialogue.get(message["dialogueID"]);
-                EntityLogic.gameWorkerPostMessage("getDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
+                EntityLogic.gameWorkerPostMessage("getDialogue", 0, dialogue.objectify(targetEntity, actorEntity), callbackID);
                 break;
             }
             case "getDialogues": {
@@ -646,10 +646,10 @@ class EntityLogic {
                 message["dialogueID"].forEach((dialogueID) => {
                     if (Dialogue.has(dialogueID)) {
                         let dialogue = Dialogue.get(dialogueID);
-                        ids[dialogueID] = dialogue.stringify(true, targetEntity, actorEntity);
+                        ids[dialogueID] = dialogue.objectify(true, targetEntity, actorEntity);
                         for (let option in dialogue.options) {
                             let subDialogue = dialogue.options[option].dialogue;
-                            ids[subDialogue.id] = subDialogue.stringify(true, targetEntity, actorEntity)
+                            ids[subDialogue.id] = subDialogue.objectify(true, targetEntity, actorEntity)
                         }
                     }
                 });
@@ -903,7 +903,7 @@ class EntityLogic {
                     EntityLogic.gameWorkerPostMessage("setDialogue", 1, null, callbackID);
                 }
                 else {
-                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.stringify(targetEntity, actorEntity), callbackID);
+                    EntityLogic.gameWorkerPostMessage("setDialogue", 0, dialogue.objectify(targetEntity, actorEntity), callbackID);
                 }
                 break;
             }
