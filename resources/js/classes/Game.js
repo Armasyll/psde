@@ -700,7 +700,7 @@ class Game {
                     meshes[i].material = Game.loadedMaterials["default"];
                     importedMeshes[meshes[i].id] = meshes[i];
                     if (skeletons[i] != undefined) {
-                        meshes[i].skeleon = skeletons[i];
+                        meshes[i].skeleton = skeletons[i];
                     }
                     Game.loadedMeshes[meshes[i].id] = meshes[i];
                     if (Game.debugMode && Game.debugVerbosity > 4) BABYLON.Tools.Log("Importing mesh " + meshes[i].id + " from " + file + ".");
@@ -2938,7 +2938,7 @@ class Game {
             mesh.id = id;
             mesh.material = material;
             mesh.name = meshID;
-            mesh.skeleton = masterMesh.skeleton.clone(id);
+            mesh.skeleton = masterMesh.skeleton.clone(String(id).concat("-skeleton"));
             Game.addClonedMesh(mesh, id);
             Game.setMeshMaterial(mesh, material);
         }
