@@ -28,7 +28,7 @@ class Game {
         Game.useNative = false;
         Game.useWebGPU = false;
         Game.useRigidBodies = true;
-        Game.bUseControllerGroundRay = false;
+        Game.bUseControllerGroundRay = true;
         Game.useShadows = false;
         Game.physicsEnabled = false;
         Game.physicsForProjectilesOnly = true;
@@ -699,11 +699,12 @@ class Game {
                     meshes[i].setEnabled(false);
                     meshes[i].material = Game.loadedMaterials["default"];
                     importedMeshes[meshes[i].id] = meshes[i];
+                    if (Game.debugMode && Game.debugVerbosity > 4) BABYLON.Tools.Log("Importing mesh " + meshes[i].id + " from " + file);
                     if (skeletons[i] != undefined) {
                         meshes[i].skeleton = skeletons[i];
+                        if (Game.debugMode && Game.debugVerbosity > 4) BABYLON.Tools.Log("\twith skeleton " + skeletons[i].id);
                     }
                     Game.loadedMeshes[meshes[i].id] = meshes[i];
-                    if (Game.debugMode && Game.debugVerbosity > 4) BABYLON.Tools.Log("Importing mesh " + meshes[i].id + " from " + file + ".");
                     if (meshIDs && callbackID) {
                         Callback.run(callbackID, meshes[i]);
                     }
@@ -887,7 +888,7 @@ class Game {
             Game.scene
         );
         //Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
-        //Game.camera.checkCollisions = true;
+        Game.camera.checkCollisions = true;
         //Game.camera.wheelPrecision = 100;
         Game.camera.upperRadiusLimit = Game.cameraMaxDistance;
         Game.camera.lowerRadiusLimit = Game.cameraFPDistance;
@@ -926,7 +927,7 @@ class Game {
             Game.playerController.getBoneByName("FOCUS").getAbsolutePosition(Game.playerController.collisionMesh),
             Game.scene);
         Game.camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
-        Game.camera.checkCollisions = false;
+        Game.camera.checkCollisions = true;
         Game.camera.wheelPrecision = 100;
         Game.camera.upperRadiusLimit = Game.cameraMaxDistance;
         Game.camera.lowerRadiusLimit = Game.cameraFPDistance;
@@ -1612,6 +1613,14 @@ class Game {
                     break;
                 }
             }
+            let meshIDs = [meshID];
+            if (Game.meshProperties.hasOwnProperty(meshID)) {
+                if (Game.meshProperties[meshID].hasOwnProperty("collisionMesh")) {
+                    if (loadOnlyMesh) {
+                        meshIDs.push(Game.meshProperties[meshID].collisionMesh);
+                    }
+                }
+            }
             if (loadOnlyMesh) {
                 Game.importMeshes(Game.meshLocations[meshID], [meshID], callbackID);
             }
@@ -2171,6 +2180,7 @@ class Game {
         }
         Game.tiledMeshes[id] = mesh;
         if (Game.debugMode && Game.debugVerbosity > 3) console.groupEnd();
+        Game._postCreateMesh(mesh);
         return mesh;
     }
     static createTiledGround(...params) {
@@ -2226,6 +2236,7 @@ class Game {
             Game.assignPlanePhysicsToMesh(wall, { "mass": 0 });
         }
         Game.collisionMeshes[wall.id] = true;
+        Game._postCreateMesh(wall);
         return wall;
     }
     static createCollisionWallByMesh(mesh) {
@@ -2268,6 +2279,7 @@ class Game {
             Game.assignPlanePhysicsToMesh(floor, { "mass": 0 });
         }
         Game.collisionMeshes[floor.id] = true;
+        Game._postCreateMesh(floor);
         return floor;
     }
     /**
@@ -2331,6 +2343,7 @@ class Game {
             Game.assignPlanePhysicsToMesh(ramp, { "mass": 0 });
         }
         Game.collisionMeshes[ramp.id] = true;
+        Game._postCreateMesh(ramp);
         return ramp;
     }
     static assignPlanePhysicsToMesh(mesh) {
@@ -3053,6 +3066,16 @@ class Game {
         delete Game.createMeshesCallbackInstancedMeshIDs[parentCallbackID];
         return 0;
     }
+    static _postCreateMesh(mesh) {
+        if (!Game.meshProperties.hasOwnProperty(mesh.name)) {
+            return 0;
+        }
+        if (Game.meshProperties[mesh.name].hasOwnProperty("collisionMesh")) {
+            mesh.checkCollisions = false;
+            Game.createMesh(String(mesh.id).concat("-collision"), Game.meshProperties[mesh.name].collisionMesh, Game.loadedMaterials["collisionMaterial"], mesh.position, mesh.rotation, mesh.scaling, {"checkCollisions": true});
+        }
+        return 0;
+    }
     /**
      * 
      * @param {string} id 
@@ -3108,6 +3131,7 @@ class Game {
         mesh.isVisible = true;
         mesh.setEnabled(true);
 
+        Game._postCreateMesh(mesh);
         return mesh;
     }
     /**
