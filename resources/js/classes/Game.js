@@ -548,7 +548,6 @@ class Game {
         Game.gui.chat.appendOutput("`mouse scroll` to zoom in and out");
         Game.gui.chat.appendOutput("`ESC` to access game menu");
         Game.gui.chat.appendOutput("AI typed most of this and I'm scared :V");
-
         return 0;
     }
     static initializeShadows() {

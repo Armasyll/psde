@@ -12,8 +12,8 @@ class ChatGameGUI {
         ChatGameGUI.input = null;
         ChatGameGUI.focused = false;
         ChatGameGUI.containerAlpha = 0.75;
-        ChatGameGUI.defaultWidthInPixels = GameGUI.getFontSize(24);
-        ChatGameGUI.defaultHeightInPixels = GameGUI.renderHeight / 3;
+        ChatGameGUI.defaultWidthInPixels = GameGUI.getFontSize(36);
+        ChatGameGUI.defaultHeightInPixels = GameGUI.renderHeight / 2;
         ChatGameGUI.posX = 0;
         ChatGameGUI.posY = 0;
         ChatGameGUI.interfaceMode = InterfaceModeEnum.WRITING;
