@@ -537,6 +537,18 @@ class Game {
         if (Game._playSoundTest) {
             Game.playAnnoyingMeatyThwack();
         }
+        GameGUI.chat.show();
+        Game.gui.chat.appendOutput("`W`, `A`, `S`, `D` to move");
+        Game.gui.chat.appendOutput("`E` or `left mouse click`to interact");
+        Game.gui.chat.appendOutput("`F` or `right mouse click` to open action menu for selected entity");
+        Game.gui.chat.appendOutput("`Z`, `C` to toggle prone and crouch");
+        Game.gui.chat.appendOutput("`I` to open inventory");
+        Game.gui.chat.appendOutput("`P` to open character sheet");
+        Game.gui.chat.appendOutput("`Q` or `alt` to leave dialogue");
+        Game.gui.chat.appendOutput("`mouse scroll` to zoom in and out");
+        Game.gui.chat.appendOutput("`ESC` to access game menu");
+        Game.gui.chat.appendOutput("AI typed most of this and I'm scared :V");
+
         return 0;
     }
     static initializeShadows() {
