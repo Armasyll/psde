@@ -144,6 +144,9 @@ class CharacterController extends CreatureController {
         return 0;
     }
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         if (AbstractController.debugMode) console.group(`Running {CharacterController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("equipment") && objectBlob["equipment"] instanceof Object) {

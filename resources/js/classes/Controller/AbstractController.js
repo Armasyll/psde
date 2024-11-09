@@ -212,6 +212,9 @@ class AbstractController {
      * @param {(AbstractController|object)} objectBlob 
      */
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         if (this.bHasRunAssignAbstract == true) {
             return 0;
         }

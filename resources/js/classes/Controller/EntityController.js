@@ -1396,6 +1396,9 @@ class EntityController extends AbstractController {
      * @param {(EntityController|object)} objectBlob 
      */
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         if (AbstractController.debugMode) console.group(`Running {EntityController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("defaultAction")) this.setDefaultAction(objectBlob.defaultAction);

@@ -99,15 +99,15 @@ class LightingController extends FurnitureController {
 
     /**
      * Clones the controller's values over this; but not really anything important :v
-     * @param {(LightingController|object)} controller 
+     * @param {(LightingController|object)} objectBlob 
      * @param {boolean} [verify] Set to false to skip verification
      */
-    assign(controller, verify = true) {
-        if (verify && !(controller instanceof LightingController)) {
+    assign(objectBlob, verify = true) {
+        if (verify && !(objectBlob instanceof LightingController)) {
             return 2;
         }
-        super.assign(controller, verify);
-        if (controller.hasOwnProperty("lightOn")) this.setLightOn(controller.lightOn);
+        super.assign(objectBlob, verify);
+        if (objectBlob.hasOwnProperty("lightOn")) this.setLightOn(objectBlob.lightOn);
         return 0;
     }
     updateID(newID) {

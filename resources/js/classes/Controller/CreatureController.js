@@ -1401,6 +1401,9 @@ class CreatureController extends EntityController {
         return 0;
     }
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         if (AbstractController.debugMode) console.group(`Running {CreatureController} ${this.id}.assign(controllerObject)`);
         if (objectBlob.hasOwnProperty("cosmetics") && objectBlob["cosmetics"] instanceof Object) {

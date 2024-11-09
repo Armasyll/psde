@@ -289,6 +289,9 @@ class CharacterControllerRigidBody extends CharacterController {
         return 0;
     }
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         if (this.bHasRunAssignCharacter == true) {
             return 0;

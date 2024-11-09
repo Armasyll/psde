@@ -402,6 +402,9 @@ class CharacterControllerTransform extends CharacterController {
     }
 
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         return 0;
     }

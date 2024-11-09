@@ -113,6 +113,9 @@ class DisplayController extends FurnitureController {
         return 0;
     }
     assign(objectBlob) {
+        if (!(objectBlob instanceof Object)) {
+            return 1;
+        }
         super.assign(objectBlob);
         if (this.bHasRunAssignDisplay == true) {
             return 0;
