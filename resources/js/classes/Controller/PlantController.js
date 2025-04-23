@@ -38,13 +38,13 @@ class PlantController extends EntityController {
         if (typeof id != "string") {
             id = Tools.genUUIDv4();
         }
-        this.locked = true;
+        this._locked = true;
         let mesh = Game.createPlantMesh(id, this.meshStages[stageIndex], this.materialStages[stageIndex], position, rotation, scaling);
         for (let i = 0; i < this.meshes.length; i++) {
             Game.removeMesh(this.meshes[i]);
         }
         this.meshes[0] = mesh;
-        this.locked = false;
+        this._locked = false;
         return mesh;
     }
 

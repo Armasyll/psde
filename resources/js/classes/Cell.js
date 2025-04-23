@@ -307,7 +307,7 @@ class Cell {
         if (!(options instanceof Object)) {
             options = {};
         }
-        options["locked"] = options["locked"] == true;
+        options["entityLocked"] = options["entityLocked"] == true;
         if (options["key"] == null || options["key"] instanceof AbstractEntity) {}
         else if (AbstractEntity.has(options["key"])) {
             options["key"] = AbstractEntity.get(options["key"]);

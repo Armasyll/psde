@@ -93,7 +93,7 @@ class DisplayController extends FurnitureController {
 
     setLocked(locked = true) {
         super.setLocked(locked);
-        if (this.locked) {
+        if (this._locked) {
             this.pause();
         }
         return 0;

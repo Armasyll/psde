@@ -724,7 +724,7 @@ class CreatureController extends EntityController {
     }
 
     hideAttachedMeshes() {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
@@ -743,7 +743,7 @@ class CreatureController extends EntityController {
         return 0;
     }
     showAttachedMeshes() {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(this.skeleton instanceof BABYLON.Skeleton)) {
@@ -790,7 +790,7 @@ class CreatureController extends EntityController {
 
     updateTargetRay() {
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.info(`${this.id}.updateTargetRay()`);
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(this.focusMesh instanceof BABYLON.AbstractMesh)) {
@@ -810,7 +810,7 @@ class CreatureController extends EntityController {
         return 0;
     }
     setTarget(entityController) {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(entityController instanceof EntityController)) {
@@ -839,7 +839,7 @@ class CreatureController extends EntityController {
     }
 
     setAnimationPriority(number = 0) {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         this.animationPriority = number;

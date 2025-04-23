@@ -40,7 +40,7 @@ class AbstractController {
         this.depth = 0.25;
         this.baseScaling = BABYLON.Vector3.One();
         this.enabled = true;
-        this.locked = false;
+        this._locked = false;
         this.disposing = false;
         this.targetRay = null;
         this.targetRayHelper = null;
@@ -152,7 +152,7 @@ class AbstractController {
 
     updateTargetRay() {
         if (AbstractController.debugMode && AbstractController.debugVerbosity > 3) console.info(`${this.id}.updateTargetRay()`);
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(this.targetRay instanceof BABYLON.Ray)) {
@@ -195,10 +195,10 @@ class AbstractController {
         return 0;
     }
     isLocked() {
-        return this.locked;
+        return this._locked;
     }
     setLocked(locked = true) {
-        this.locked = locked == true;
+        this._locked = locked == true;
         return 0;
     }
 

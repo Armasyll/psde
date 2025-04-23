@@ -79,7 +79,7 @@ class AbstractEntity {
         /** @type {boolean} */
         this.enabled = true;
         /** @type {boolean} */
-        this.locked = false;
+        this._locked = false;
         /** @type {boolean} */
         this.blocked = false;
         /** @type {boolean} */
@@ -167,7 +167,7 @@ class AbstractEntity {
      * @param {string} id 
      */
     setID(id) {
-        this.locked = true;
+        this._locked = true;
         if (AbstractEntity.has(id)) {
             id = Tools.genUUIDv4();
         }
@@ -179,7 +179,7 @@ class AbstractEntity {
         }
         this.id = id;
         AbstractEntity.set(this.id, this);
-        this.locked = false;
+        this._locked = false;
         return 0;
     }
     getID() {
@@ -349,10 +349,10 @@ class AbstractEntity {
     }
 
     isLocked() {
-        return this.locked == true;
+        return this._locked == true;
     }
     setLocked(isLocked = true) {
-        this.locked = (isLocked == true);
+        this._locked = (isLocked == true);
         return 0;
     }
 
@@ -1065,7 +1065,7 @@ class AbstractEntity {
         obj["holdable"] = false;
         obj["iconID"] = this.iconID || "missingIcon";
         obj["id"] = this.id;
-        obj["locked"] = this.locked;
+        obj["locked"] = this._locked;
         obj["materialID"] = this.materialID || "missingMaterial";
         obj["maxHealth"] = this.getMaxHealth();
         obj["meshIDs"] = this.meshIDs || ["missingMesh"];

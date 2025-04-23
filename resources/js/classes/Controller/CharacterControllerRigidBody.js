@@ -60,7 +60,7 @@ class CharacterControllerRigidBody extends CharacterController {
         return 0;
     }
     moveAV() {
-        if (this.locked) {
+        if (this._locked) {
             return 0;
         }
         if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
@@ -77,7 +77,7 @@ class CharacterControllerRigidBody extends CharacterController {
             }
             return 2;
         }
-        if (this.locked) {
+        if (this._locked) {
             if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
                 console.info("locked");
                 console.groupEnd();

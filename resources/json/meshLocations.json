@@ -154,6 +154,8 @@
     "craftsmanWindowDouble": "resources/meshes/static/craftsmanWalls.babylon",
     "craftsmanWindowframe": "resources/meshes/static/craftsmanWalls.babylon",
     "craftsmanWindowframeNoTrim": "resources/meshes/static/craftsmanWalls.babylon",
+    "craftsmanWindowLarge": "resources/meshes/static/craftsmanWalls.babylon",
+    "craftsmanWindowway": "resources/meshes/static/craftsmanWalls.babylon",
     "stairsCollision": "resources/meshes/static/craftsmanWalls.babylon",
     "aardwolfM": "resources/meshes/characters/aardwolf.babylon",
     "spiritN": "resources/meshes/characters/spiritN.babylon",

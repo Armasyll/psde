@@ -1175,7 +1175,7 @@ class EntityController extends AbstractController {
      * @returns {number} 
      */
     beginAnimationWithAnimatables(animation) {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (!(animation instanceof BABYLON.Animatable)) {
@@ -1220,7 +1220,7 @@ class EntityController extends AbstractController {
      * @returns {number} 
      */
     beginAnimationWithGroups(animation) {
-        if (this.locked || !this.enabled) {
+        if (this._locked || !this.enabled) {
             return 0;
         }
         if (this.bAnimationStopped || this.animationPriority >= 2) {

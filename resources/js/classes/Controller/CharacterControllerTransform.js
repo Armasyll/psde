@@ -57,7 +57,7 @@ class CharacterControllerTransform extends CharacterController {
         if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
             return 2;
         }
-        if (this.locked) {
+        if (this._locked) {
             return 0;
         }
         if (this.getParent() != undefined) {

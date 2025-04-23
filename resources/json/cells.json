@@ -4,5 +4,6 @@
     "packstreetApartment3Basement":"cells/packstreetApartment3Basement.json",
     "televisionTest":"cells/televisionTest.json",
     "movementTest":"cells/movementTest.json",
-    "doorTest":"cells/doorTest.json"
+    "doorTest":"cells/doorTest.json",
+    "couchTest":"cells/couchTest.json"
 }

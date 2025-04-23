@@ -18,7 +18,7 @@ class DoorEntity extends Entity {
         this.entityType = EntityEnum.DOOR;
         this.opensInward = false;
         this.teleportMarker = null;
-        this.entityLocked = false;
+        this.locked = false;
         this.key = null;
         this.open = false;
 
@@ -60,13 +60,13 @@ class DoorEntity extends Entity {
     }
     /**
      * Entity lock, not to be confused with the functionality lock.
-     * @param {boolean} entityLocked 
+     * @param {boolean} locked 
      */
-    setEntityLocked(entityLocked) {
-        this.entityLocked = entityLocked == true;
+    setEntityLocked(locked) {
+        this.locked = locked == true;
     }
     isEntityLocked() {
-        return this.entityLocked;
+        return this.locked;
     }
     setKey(itemEntity) {
         if (!(itemEntity instanceof ItemEntity)) {
@@ -104,7 +104,7 @@ class DoorEntity extends Entity {
         obj["key"] = AbstractEntity.objectifyProperty(this.key);
         obj["opensInward"] = this.opensInward;
         obj["teleportMarker"] = this.teleportMarker;
-        obj["entityLocked"] = this.entityLocked;
+        obj["entityLocked"] = this.locked;
         obj["key"] = this.key;
         obj["open"] = this.open;
         return obj;
@@ -142,7 +142,7 @@ class DoorEntity extends Entity {
         }
         if (entity.hasOwnProperty("opensInward")) this.setOpensInward(entity.opensInward);
         if (entity.hasOwnProperty("teleportMarker")) this.setTeleportMarker(entity.teleportMarker);
-        if (entity.hasOwnProperty("entityLocked")) this.setEntityLocked(entity.entityLocked);
+        if (entity.hasOwnProperty("locked")) this.setEntityLocked(entity.locked);
         if (entity.hasOwnProperty("key")) this.setKey(entity.key);
         if (entity.hasOwnProperty("open") && entity.open == true) {
             this.setOpen();

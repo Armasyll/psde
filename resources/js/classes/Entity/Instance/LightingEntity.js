@@ -35,19 +35,19 @@ class InstancedLightingEntity extends InstancedFurnitureEntity {
         return this.powered;
     }
     on() {
-        if (this.locked) {
+        if (this._locked) {
             return this.powered;
         }
         this.powered = true;
     }
     off() {
-        if (this.locked) {
+        if (this._locked) {
             return this.powered;
         }
         this.powered = false;
     }
     toggle() {
-        if (this.locked) {
+        if (this._locked) {
             return this.powered;
         }
         if (this.powered) {

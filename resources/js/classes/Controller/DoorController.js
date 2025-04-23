@@ -54,7 +54,7 @@ class DoorController extends EntityController {
         return 0;
     }
     moveAV() {
-        if (this.locked) {
+        if (this._locked) {
             return 0;
         }
         this.doMove();

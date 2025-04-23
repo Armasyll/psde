@@ -1,0 +1,81 @@
+{
+    "id":"couchTest",
+    "name":"Couch Test Cell",
+    "barrier":4,
+    "materials":[
+        ["whiteWallpaperPlainWood", "whiteWallpaperPlainWood", null, {"hasAlpha":true}]
+    ],
+    "meshGroups":{
+        "ramps":[],
+        "planes":[],
+        "walls":[],
+        "tiledGrounds":[
+            ["floor", [8, 8], "woodenFloorDark01", [-5, 0, -3]]
+        ],
+        "tiledCeilings":[
+            ["ceiling", [8, 8], "woodenFloorDark01", [-5, 2.9, -3]]],
+        "collidableMeshes":[
+            ["wallN0", "craftsmanDoorway", "whiteWallpaperPlainWood", [-4, 0, 4], [0, 0, 0]],
+            ["wallN1", "craftsmanWindowway", "whiteWallpaperPlainWood", [-2, 0, 4], [0, 0, 0]],
+            ["wallN1Window", "craftsmanWindowLarge", "whiteWallpaperPlainWood", [-2, 0, 4], [0, 0, 0]],
+            ["wallN2", "craftsmanWall", "whiteWallpaperPlainWood", [0, 0, 4], [0, 0, 0]],
+            ["wallN3", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, 4], [0, 0, 0]],
+            ["wallE0", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, 4], [0, 90, 0]],
+            ["wallE1", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, 2], [0, 90, 0]],
+            ["wallE2", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, 0], [0, 90, 0]],
+            ["wallE3", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, -2], [0, 90, 0]],
+            ["wallS0", "craftsmanWall", "whiteWallpaperPlainWood", [2, 0, -2], [0, 180, 0]],
+            ["wallS1", "craftsmanWall", "whiteWallpaperPlainWood", [0, 0, -2], [0, 180, 0]],
+            ["wallS2", "craftsmanWindowframe", "whiteWallpaperPlainWood", [-2, 0, -2], [0, 180, 0]],
+            ["wallS2Window", "craftsmanWindowDouble", "whiteWallpaperPlainWood", [-2, 0, -2], [0, 180, 0]],
+            ["wallS3", "craftsmanWall", "whiteWallpaperPlainWood", [-4, 0, -2], [0, 180, 0]],
+            ["wallW0", "craftsmanWall", "whiteWallpaperPlainWood", [-4, 0, -2], [0, 270, 0]],
+            ["wallW1", "craftsmanWall", "whiteWallpaperPlainWood", [-4, 0, 0], [0, 270, 0]],
+            ["wallW2", "craftsmanWall", "whiteWallpaperPlainWood", [-4, 0, 2], [0, 270, 0]],
+            ["wallW3", "craftsmanWall", "whiteWallpaperPlainWood", [-4, 0, 4], [0, 270, 0]],
+            ["couchTestDesk", "diningTable", null, [1, 0, -0.5], []]
+        ],
+        "meshes":[],
+        "planesByMesh":[]
+    },
+    "entityGroups":{
+        "doors":[
+            ["couchTestRoomDoor", "Door", null, "craftsmanDoor", "simpleDoor", [-4, 0, 5], [0, 180, 0], [1, 1, 1], {"locked": true}]
+        ],
+        "furniture":[
+            ["couchTestCouch", "loveseat01", [1, 0, 4], [0, 0, 0], [1.75, 1.75, 1.75]]
+        ],
+        "lightings":[],
+        "displays":[],
+        "items":[],
+        "plants":[],
+        "creature":[],
+        "characters":[]
+    },
+    "metaGroups":[
+        {
+            "id":"",
+            "name":"",
+            "meshGroups":{
+                "ramps":[],
+                "planes":[],
+                "walls":[],
+                "tiledGrounds":[],
+                "tiledCeilings":[],
+                "collidableMeshes":[],
+                "meshes":[],
+                "planesByMesh":[]
+            },
+            "entityGroups":{
+                "doors":[],
+                "furniture":[],
+                "lightings":[],
+                "displays":[],
+                "items":[],
+                "plants":[],
+                "creature":[],
+                "characters":[]
+            }
+        }
+    ]
+}
