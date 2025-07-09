@@ -119,105 +119,13 @@ class CharacterControllerRigidBody extends CharacterController {
     doMove() {
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`);
         this.startPosition.copyFrom(this.collisionMesh.position);
-        let dt = Game.engine.getDeltaTime() / 1000;
-        let u = this.fallTime * -Game.scene.gravity.y;
-        this.fallDistance = u * dt + -Game.scene.gravity.y * dt * dt / 2;
-        this.fallTime = this.fallTime + dt;
-        if (this.groundedState == GroundedStateEnum.FALL) {
-            this.intendedMovement.y = -this.fallDistance;
-            this.moving = true;
-            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
-                console.info("not trying to move, falling")
-            }
-        }
-        else if (this.anyMovement()) {
-            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
-                console.info("not falling, trying to move")
-            }
-            if (this.key.forward) {
-                if (this.key.strafeRight) {
-                    this.intendedDirection = this.getAlpha() + Tools.RAD_45;
-                }
-                else if (this.key.strafeLeft) {
-                    this.intendedDirection = this.getAlpha() - Tools.RAD_45;
-                }
-                else {
-                    this.intendedDirection = this.getAlpha();
-                }
-                this.moving = true;
-            }
-            else if (this.key.backward) {
-                if (this.key.strafeRight) {
-                    this.intendedDirection = this.getAlpha() + Tools.RAD_135;
-                }
-                else if (this.key.strafeLeft) {
-                    this.intendedDirection = this.getAlpha() + Tools.RAD_225;
-                }
-                else {
-                    this.intendedDirection = this.getAlpha() + Tools.RAD_180;
-                }
-                this.moving = true;
-            }
-            else if (this.key.strafeRight) {
-                this.intendedDirection = this.getAlpha() + Tools.RAD_90;
-                this.moving = true;
-            }
-            else if (this.key.strafeLeft) {
-                this.intendedDirection = this.getAlpha() - Tools.RAD_90;
-                this.moving = true;
-            }
-            else {
-                this.moving = false;
-            }
-        }
-        if (this.moving) {
-            if (this.key.shift) {
-                this.setMovementPace(MovementPaceEnum.RUN);
-            }
-            else {
-                this.setMovementPace(MovementPaceEnum.WALK);
-            }
-            if (Math.abs(this.intendedDirection - this.collisionMesh.rotation.y) > this.iRotationThreshold) {
-                /*
-                Anon_11487
-                */
-                let difference = this.intendedDirection - this.collisionMesh.rotation.y;
-                if (Math.abs(difference) > Tools.RAD_180) {
-                    difference -= Math.sign(difference) * Tools.RAD_360;
-                }
-                this.collisionMesh.rotation.y += difference * (this.turnSpeed / Game.scene.getEngine().getDeltaTime());
-                this.collisionMesh.rotation.y %= Tools.RAD_360;
-            }
-            else {
-                this.collisionMesh.rotation.y = this.intendedDirection;
-            }
-            this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
-            if (this.movementPace == MovementPaceEnum.WALK) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * dt));
-            }
-            else if (this.movementPace == MovementPaceEnum.RUN) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * dt));
-            }
-            else if (this.movementPace == MovementPaceEnum.AMBLE) {
-                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.ambleSpeed * dt));
-            }
-        }
-        // Start Mitigate jittering in Y direction
-        if (Game.bUseControllerGroundRay) {
-            this.updateGroundRay();
-            let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
-                if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
-                    return true;
-                }
-                return false;
-            });
-            if (hit.hit) {
-                if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, this.iGroundDetectionTolerance)) {
-                    this.intendedMovement.y = 0;
-                }
-            }
-        }
-        // End Mitigate jittering in Y direction
+        const deltaTimeSeconds = Game.engine.getDeltaTime() / 1000;
+        const u = this.fallTime * -Game.scene.gravity.y;
+        this.fallDistance = u * deltaTimeSeconds + -Game.scene.gravity.y * deltaTimeSeconds * deltaTimeSeconds / 2;
+        this.fallTime = this.fallTime + deltaTimeSeconds;
+
+        this.updatePlayerIntendedMovement();
+
         this.collisionMesh.moveWithCollisions(this.intendedMovement);
         if (this.collisionMesh.position.y > this.startPosition.y) {
             let actDisp = this.collisionMesh.position.subtract(this.startPosition);
@@ -261,6 +169,115 @@ class CharacterControllerRigidBody extends CharacterController {
             this.endFreeFall();
         }
         if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.groupEnd();
+        return 0;
+    }
+    updatePlayerIntendedMovement() {
+        if (this.groundedState == GroundedStateEnum.FALL) {
+            this.intendedMovement.y = -this.fallDistance;
+            this.moving = true;
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+                console.info("not trying to move, falling")
+            }
+        }
+        else if (this.anyMovement()) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+                console.info("not falling, trying to move")
+            }
+            this.alpha = this.getAlpha();
+            this.beta = this.getBeta();
+            if (this.key.forward) {
+                if (this.key.strafeRight) {
+                    this.intendedDirection = this.alpha + Tools.RAD_45;
+                }
+                else if (this.key.strafeLeft) {
+                    this.intendedDirection = this.alpha - Tools.RAD_45;
+                }
+                else {
+                    this.intendedDirection = this.alpha;
+                }
+                this.moving = true;
+            }
+            else if (this.key.backward) {
+                if (this.key.strafeRight) {
+                    this.intendedDirection = this.alpha + Tools.RAD_135;
+                }
+                else if (this.key.strafeLeft) {
+                    this.intendedDirection = this.alpha + Tools.RAD_225;
+                }
+                else {
+                    this.intendedDirection = this.alpha + Tools.RAD_180;
+                }
+                this.moving = true;
+            }
+            else if (this.key.strafeRight) {
+                this.intendedDirection = this.alpha + Tools.RAD_90;
+                this.moving = true;
+            }
+            else if (this.key.strafeLeft) {
+                this.intendedDirection = this.alpha - Tools.RAD_90;
+                this.moving = true;
+            }
+            else {
+                this.moving = false;
+            }
+        }
+
+        if (this.moving) {
+            if (this.key.shift) {
+                this.setMovementPace(MovementPaceEnum.RUN);
+            }
+            else {
+                this.setMovementPace(MovementPaceEnum.WALK);
+            }
+            let rotationDifference = this.intendedDirection - this.collisionMesh.rotation.y;
+            if (Math.abs(rotationDifference) > this.iRotationThreshold) {
+                /*
+                Anon_11487
+                */
+                if (Math.abs(rotationDifference) > Tools.RAD_180) {
+                    rotationDifference -= Math.sign(rotationDifference) * Tools.RAD_360;
+                }
+                this.collisionMesh.rotation.y += rotationDifference * (this.turnSpeed / Game.engine.getDeltaTime());
+                this.collisionMesh.rotation.y %= Tools.RAD_360;
+            }
+            else {
+                this.collisionMesh.rotation.y = this.intendedDirection;
+            }
+            this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
+            if (this.movementPace == MovementPaceEnum.WALK) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.walkSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+            else if (this.movementPace == MovementPaceEnum.RUN) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.runSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+            else if (this.movementPace == MovementPaceEnum.AMBLE) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fallDistance, this.ambleSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+        }
+                
+        if (Game.bUseControllerGroundRay) {
+            this._fixYJitter();
+        }
+        
+        return 0;
+    }
+    /**
+     * Fix jittering in Y direction
+     * @returns {number} 0
+     */
+    _fixYJitter() {
+        this.updateGroundRay();
+        let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
+            if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
+                return true;
+            }
+            return false;
+        });
+        if (hit.hit) {
+            if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, this.iGroundDetectionTolerance)) {
+                this.intendedMovement.y = 0;
+            }
+        }
         return 0;
     }
     endFreeFall() {
