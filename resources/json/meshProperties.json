@@ -4,51 +4,72 @@
             [[-0.1995, 0.011719, -1.101], [1.1995, 0.011719, 1.101]]
         ]
     },
+    "cheapChair01": {
+        "collisionMesh": "cheapChair01Collision"
+    },
     "chair01": {
+        "collisionMesh": "chair01Collision",
         "usableArea": [
             [[-0.44505, 0.375, -0.525], [0.44505, 0.375, 0.1725]]
         ]
     },
     "chair02": {
+        "collisionMesh": "chair02Collision",
         "usableArea": [
             [[-0.312497, 0.375, -0.385357], [0.312497, 0.375, 0.122455]]
         ]
     },
     "chair03": {
+        "collisionMesh": "chair02Collision",
         "usableArea": [
             [[-0.312497, 0.375, -0.385357], [0.312497, 0.375, 0.122455]]
         ]
+    },
+    "coffeeTable": {
+        "collisionMesh": "coffeeTableCollision"
     },
     "coffin01": {
         "usableArea": [
             [[-0.1995, 0.011719, -1.101], [1.1995, 0.011719, 1.101]]
         ]
     },
+    "consoleTable": {
+        "collisionMesh": "consoleTableCollision"
+    },
     "couch01": {
+        "collisionMesh": "couch01Collision",
         "usableArea": [
             [[-1.2888, 0.375, -0.525], [1.2888, 0.375, 0.1725]],
             [[-1.4808, 0.675, -0.54], [-1.2888, 0.675, 0.1875]],
             [[1.2888, 0.675, -0.54], [1.4808, 0.675, 0.1875]]
         ]
     },
-    "couch02": {
-        "usableArea": [
-            [[-1.2888, 0.375, -0.525], [1.2888, 0.375, 0.1725]],
-            [[-1.4808, 0.675, -0.54], [-1.2888, 0.675, 0.1875]],
-            [[1.2888, 0.675, -0.54], [1.4808, 0.675, 0.1875]]
-        ]
+    "cushion01": {
+        "collisionMesh": "cushion01Collision"
+    },
+    "diningTable": {
+        "collisionMesh": "diningTableCollision"
+    },
+    "lamp01": {
+        "collisionMesh": "lamp01Collision"
     },
     "lovesea01": {
+        "collisionMesh": "loveseat01Collision",
         "usableArea": [
             [[-0.82005, 0.375, -0.525], [0.82005, 0.375, 0.1725]]
         ]
     },
     "mattress01": {
+        "collisionMesh": "mattress01Collision",
         "usableArea": [
             [[-0.575258, 0.195, -1.10144], [0.575258, 0.195, 0.195]]
         ]
     },
+    "bedFrame01": {
+        "collisionMesh": "bedFrame01Collision"
+    },
     "bedMattressFrame01": {
+        "collisionMesh": "bedMattressFrame01Collision",
         "usableArea": [
             [[-0.575258, 0.375, -1.10144], [0.575258, 0.375, 0.195]]
         ]
