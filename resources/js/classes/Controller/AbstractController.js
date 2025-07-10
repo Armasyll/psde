@@ -33,6 +33,7 @@ class AbstractController {
         this.id = Tools.filterID(id, Tools.genUUIDv4());
         this.entityID = "";
         this.meshes = [];
+        this.debugMode = false;
 
         this.controller = this.id;
         this.height = 1.0;
@@ -48,6 +49,7 @@ class AbstractController {
         this.groundRayHelper = null;
         this.bHasRunPostConstructAbstract = false;
         this.bHasRunAssignAbstract = false;
+        this.collisionMesh = null;
         this.assign(entityObject);
         AbstractController.set(this.id, this);
         this.postConstruct();
@@ -67,6 +69,10 @@ class AbstractController {
     }
     hasEntityID() {
         return this.entityID != null;
+    }
+    removeEntityID() {
+        this.entityID = "";
+        return 0;
     }
     hasMesh() {
         if (!(this.meshes instanceof Array)) {
@@ -130,10 +136,22 @@ class AbstractController {
         return this.meshes;
     }
     getPosition() {
-        return this.collisionMesh.position.clone();
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.position.clone();
+        }
+        if (this.hasMesh()) {
+            return this.meshes[0].position.clone();
+        }
+        return BABYLON.Vector3.Zero();
     }
     getRotation() {
-        return this.collisionMesh.rotation.clone();
+        if (this.collisionMesh instanceof BABYLON.AbstractMesh) {
+            return this.collisionMesh.rotation.clone();
+        }
+        if (this.hasMesh()) {
+            return this.meshes[0].rotation.clone();
+        }
+        return BABYLON.Vector3.Zero();
     }
     setScaling(vector3) {
         vector3 = Game.filterVector3(vector3);
@@ -146,6 +164,13 @@ class AbstractController {
         return this.meshes[0].scaling.clone();
     }
 
+    getDirection() {
+        if (this.hasMesh()) {
+            return this.collisionMesh.getDirection(this.collisionMesh.forward);
+        }
+        return this.getRotation();
+    }
+
     generateHitboxes() {
         return 0;
     }
@@ -156,7 +181,11 @@ class AbstractController {
             return 0;
         }
         if (!(this.targetRay instanceof BABYLON.Ray)) {
-            this.targetRay = new BABYLON.Ray(this.collisionMesh.position, this.collisionMesh.getDirection(this.collisionMesh.forward), 1.524 * this.collisionMesh.scaling.y); // TODO: figure out the last parameter
+            this.targetRay = new BABYLON.Ray(
+                this.collisionMesh.position, 
+                this.collisionMesh.getDirection(this.collisionMesh.forward), 
+                1.524 * this.collisionMesh.scaling.y
+            ); // TODO: figure out the last parameter
         }
         this.targetRay.origin.copyFrom(this.collisionMesh.position);
         return 0;
@@ -243,10 +272,9 @@ class AbstractController {
         if (Game.playerController == this) {
             Game.playerController = null;
         }
-        if (updateChild) {
-            if (this.hasEntityID()) {
-                this.removeEntityID();
-            }
+        AbstractController.remove(this.id);
+        if (this.hasEntityID()) {
+            this.removeEntityID();
         }
         return null;
     }

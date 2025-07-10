@@ -203,7 +203,7 @@ class EntityController extends AbstractController {
             if (i > 0) {
                 this.meshes[i].setParent(this.meshes[0]);
             }
-            this._attachedMeshes[this.meshes.id] = true
+            this._attachedMeshes[this.meshes[i].id] = true;
         }
         this.propertiesChanged = true;
         /*this.height = this.meshes[0].getBoundingInfo().boundingBox.extendSize.y * 2;
@@ -213,11 +213,11 @@ class EntityController extends AbstractController {
             this.addMeshStage(aMeshes[0].name);
             if (aMeshes[0].hasOwnProperty("material") && aMeshes[0]["material"] instanceof BABYLON.Material) {
                 this.addMaterialStage(aMeshes[0]["material"]["name"]);
-                if (aMeshes["material"].hasOwnProperty("diffuseTexture") && aMeshes["material"]["diffuseTexture"] instanceof BABYLON.Texture) {
-                    this.addTextureStage(aMeshes["material"]["diffuseTexture"]["name"]);
+                if (aMeshes[0]["material"].hasOwnProperty("diffuseTexture") && aMeshes[0]["material"]["diffuseTexture"] instanceof BABYLON.Texture) {
+                    this.addTextureStage(aMeshes[0]["material"]["diffuseTexture"]["name"]);
                 }
                 else {
-                    this.addTextureStage(aMeshes["material"]["name"]);
+                    this.addTextureStage(aMeshes[0]["material"]["name"]);
                 }
             }
             else {
@@ -279,7 +279,7 @@ class EntityController extends AbstractController {
         if (!(this.hasCollisionMesh())) {
             return 0;
         }
-        delete this._attachedMeshes[collisionMesh.id];
+        delete this._attachedMeshes[this.collisionMesh.id];
         this.collisionMesh.controller = null;
         Game.removeMesh(this.collisionMesh);
         this.collisionMesh = null;
@@ -371,7 +371,7 @@ class EntityController extends AbstractController {
             return this.skeleton.getBoneIndexByName(bone) >= 0;
         }
         else if (typeof bone == "number") {
-            return this.skeleton.bones.hasOwnProperty(number);
+            return this.skeleton.bones.hasOwnProperty(bone);
         }
         return false;
     }
@@ -521,7 +521,7 @@ class EntityController extends AbstractController {
     attachCollisionMeshToBone(mesh, bone, position = BABYLON.Vector3.Zero(), rotation = BABYLON.Vector3.Zero(), scaling = BABYLON.Vector3.One(), options = {"checkCollisions": false}) {
         return this.attachMeshToBone(mesh, bone, position, rotation, scaling, true);
     }
-    _removeMeshReferences(meshID) {
+    _removeMeshReferences(meshIDToRemove) {
         return 0;
     }
     detachAllFromBone(bone, destroyMesh = true) {
@@ -559,7 +559,7 @@ class EntityController extends AbstractController {
             return 1;
         }
         for (let boneID in this._meshesAttachedToBones) {
-            if (this._meshesAttachedToBones[boneID] == meshID) {
+            if (this._meshesAttachedToBones[boneID].hasOwnProperty(meshID)) {
                 this.detachMeshFromBone(Game.getMesh(meshID), this.getBone(boneID), destroyMesh);
             }
         }
@@ -1497,15 +1497,17 @@ class EntityController extends AbstractController {
     static setDebugMode(debugMode) {
         if (debugMode == true) {
             AbstractController.debugMode = true;
-            for (let entityController in EntityController.entityControllerList) {
-                EntityController.entityControllerList[entityController].debugMode = true;
-            }
+            // Remove problematic instance property assignment
+            // for (let entityController in EntityController.entityControllerList) {
+            //     EntityController.entityControllerList[entityController].debugMode = true;
+            // }
         }
         else if (debugMode == false) {
             AbstractController.debugMode = false;
-            for (let entityController in EntityController.entityControllerList) {
-                EntityController.entityControllerList[entityController].debugMode = false;
-            }
+            // Remove problematic instance property assignment
+            // for (let entityController in EntityController.entityControllerList) {
+            //     EntityController.entityControllerList[entityController].debugMode = false;
+            // }
         }
         return 0;
     }

@@ -27,7 +27,6 @@ class Game {
         Game.debugVerbosity = 2;
         Game.useNative = false;
         Game.useWebGPU = false;
-        Game.useRigidBodies = true;
         Game.bUseControllerGroundRay = true;
         Game.useShadows = false;
         Game.physicsEnabled = false;
@@ -287,10 +286,6 @@ class Game {
                 }
                 case "useWebGPU": {
                     Game.useWebGPU = options["useWebGPU"] === true && navigator.gpu != null;
-                    break;
-                }
-                case "useRigidBodies": {
-                    Game.useRigidBodies = options["useRigidBodies"] === true;
                     break;
                 }
                 case "useShadows": {
@@ -3924,12 +3919,7 @@ class Game {
         let entity = Game.getCachedEntity(entityID);
         /** @type {CharacterController} */
         let controller = null;
-        if (Game.useRigidBodies) {
-            controller = new CharacterControllerRigidBody(instanceID, [response], entity);
-        }
-        else {
-            controller = new CharacterControllerTransform(instanceID, [response], entity);
-        }
+        controller = new CharacterController(instanceID, [response], entity);
         controller.update(entity);
         controller.generateAttachedMeshes();
         controller.generateHitboxes();
@@ -4802,7 +4792,10 @@ class Game {
         // TODO: actorController.play("grab");
         return 0;
     }
-    static actionTalk(targetController = Game.playerController.getTarget(), actorController = Game.playerController, parentCallbackID = null) {
+    static actionTalk(targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasPlayerController() && Game.playerController.hasTarget()) {
+            targetController = Game.playerController.getTarget();
+        }
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
         if (targetController == 1 || actorController == 1) {
@@ -6022,12 +6015,6 @@ class Game {
         }
         return 1;
     }
-    static getCachedDialogue(id) {
-        if (Game.cachedDialogues.hasOwnProperty(id)) {
-            return Game.cachedDialogues[id];
-        }
-        return 1;
-    }
     static hasCachedDialogue(id) {
         return Game.cachedDialogues.hasOwnProperty(id);
     }
@@ -6121,7 +6108,10 @@ class Game {
         Game.setCachedCell(cellID, response);
         return 0;
     }
-    static setDialogue(id = "", targetController = Game.playerController.getTarget(), actorController = Game.playerController, parentCallbackID = null) {
+    static setDialogue(id = "", targetController = null, actorController = Game.playerController, parentCallbackID = null) {
+        if (Game.hasPlayerController() && Game.playerController.hasTarget()) {
+            targetController = Game.playerController.getTarget();
+        }
         id = Tools.filterID(id);
         targetController = Game.filterController(targetController);
         actorController = Game.filterController(actorController);
@@ -6159,7 +6149,10 @@ class Game {
     static updateDebugCollisionList(target = Game.playerController) {
         return 0;
     }
-    static rayDirectionToRadians(direction = Game.camera.getForwardRay().direction) {
+    static rayDirectionToRadians(direction = null) {
+        if (Game.camera instanceof BABYLON.Camera && Game.camera.getForwardRay()) {
+            direction = Game.camera.getForwardRay().direction;
+        }
         /*if (direction.x < 0 && direction.z < 0) {
             degree >= 0;
         }
@@ -6177,7 +6170,10 @@ class Game {
         */
         return new BABYLON.Vector3(Math.acos(direction.y) + BABYLON.Tools.ToRadians(90), Math.atan2(direction.x, direction.z), 0);
     }
-    static fireProjectileFrom(mesh = "arrow01", position = Game.playerController.targetRay.origin, rotation = Game.rayDirectionToRadians(), power = 10) {
+    static fireProjectileFrom(mesh = "arrow01", position = BABYLON.Vector3.Zero(), rotation = Game.rayDirectionToRadians(), power = 10) {
+        if (Game.hasPlayerController() && Game.playerController.hasTargetRay()) {
+            position = Game.playerController.targetRay.origin;
+        }
         if (mesh instanceof BABYLON.AbstractMesh) {}
         else if (Game.hasMesh(mesh)) {
             mesh = Game.getMesh(mesh);

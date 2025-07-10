@@ -35,10 +35,10 @@ class CharacterController extends CreatureController {
         return 0;
     }
 
-    _removeMeshReferences(meshID) {
+    _removeMeshReferences(meshIDToRemove) {
         for (let boneID in this._equipmentMeshIDsAttachedToBones) {
             for (let meshID in this._equipmentMeshIDsAttachedToBones[boneID]) {
-                if (this._equipmentMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                if (meshID === meshIDToRemove) {
                     delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
                 }
             }
@@ -46,7 +46,7 @@ class CharacterController extends CreatureController {
                 delete this._equipmentMeshIDsAttachedToBones[boneID];
             }
         }
-        super._removeMeshReferences(meshID);
+        super._removeMeshReferences(meshIDToRemove);
         return 0;
     }
     detachFromAllBones(destroyMesh = true) {
@@ -54,8 +54,8 @@ class CharacterController extends CreatureController {
             return 0;
         }
         for (let boneID in this._equipmentMeshIDsAttachedToBones) {
-            for (let meshID in this._equipmentMeshIDsAttachedToBones) {
-                delete this._equipmentMeshIDsAttachedToBones[boneID][meshID];
+            for (let meshIDKey in this._equipmentMeshIDsAttachedToBones[boneID]) {
+                delete this._equipmentMeshIDsAttachedToBones[boneID][meshIDKey];
             }
         }
         super.detachFromAllBones(destroyMesh);
@@ -88,14 +88,6 @@ class CharacterController extends CreatureController {
             }
         }
         this.helmetVisible = true;
-        return 0;
-    }
-
-    detachFromAllBones(destroyMesh = true) {
-        if (!(this.skeleton instanceof BABYLON.Skeleton)) {
-            return 2;
-        }
-        super.detachFromAllBones(destroyMesh);
         return 0;
     }
 

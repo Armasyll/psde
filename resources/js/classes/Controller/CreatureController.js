@@ -57,6 +57,31 @@ class CreatureController extends EntityController {
         this.offensiveStance = OffensiveStanceEnum.MARTIAL;
         this.bHasRunPostConstructCreature = false;
         this.bHasRunAssignCreature = false;
+
+        this.fTurnSpeed = Tools.RAD_90;
+        this.bMoving = false;
+        this.startPosition = this.collisionMesh.position.clone();
+        this.fIntendedDirection = 0.0;
+        this.intendedMovement = new BABYLON.Vector3();
+        this.fWalkSpeed = 1.0;
+        this.fAmbleSpeed = this.fWalkSpeed * 0.5;
+        this.fRunSpeed = this.fWalkSpeed * 2;
+
+        this.iFallTime = 0;
+        this.fMinSlopeLimit = BABYLON.Tools.ToRadians(30);
+        this.fMaxSlopeLimit = BABYLON.Tools.ToRadians(50);
+        this.fStepOffset = 0.25;
+        this.fYDifference = 0.0;
+        this.yDifferencePosition = new BABYLON.Vector3.Zero();
+        this.iFallFrameCount = 0;
+        this.fFallDistance = 0.0;
+        this.iRotationThreshold = BABYLON.Tools.ToRadians(0.5);
+        this.iGroundDetectionTolerance = 0.0195;
+        this.iMovementComparisonTolerance = 0.0125;
+        this.iFallFrameCountMax = 60;
+        this.bHasRunPostConstructCharacterRigid = false;
+        this.bHasRunAssignCharacterRigidBody = false;
+        
         CreatureController.set(this.id, this);
         if (EntityController.debugMode) console.info(`Finished creating new CreatureController(${this.id})`);
         if (EntityController.debugMode) console.groupEnd();
@@ -74,15 +99,20 @@ class CreatureController extends EntityController {
             this.skeleton.animationPropertiesOverride.blendingSpeed = 1.0;
             this.bones["head"] = this.getBoneByName("head") || null;
         }
+        // TODO: match speeds with mesh' species
+        this.fAmbleSpeed = 0.05 * this.getScaling().z;
+        this.fWalkSpeed = 0.4 * this.getScaling().z;
+        this.fRunSpeed = 1.3 * this.getScaling().z;
+
         this.populateAnimatables();
         this.populateAnimationGroup();
         return 0;
     }
 
-    _removeMeshReferences(meshID) {
+    _removeMeshReferences(meshIDToRemove) {
         for (let boneID in this._organMeshIDsAttachedToBones) {
             for (let meshID in this._organMeshIDsAttachedToBones[boneID]) {
-                if (this._organMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                if (meshID === meshIDToRemove) {
                     delete this._organMeshIDsAttachedToBones[boneID][meshID];
                 }
             }
@@ -92,7 +122,7 @@ class CreatureController extends EntityController {
         }
         for (let boneID in this._cosmeticMeshIDsAttachedToBones) {
             for (let meshID in this._cosmeticMeshIDsAttachedToBones[boneID]) {
-                if (this._cosmeticMeshIDsAttachedToBones[boneID].hasOwnProperty(meshID)) {
+                if (meshID === meshIDToRemove) {
                     delete this._cosmeticMeshIDsAttachedToBones[boneID][meshID];
                 }
             }
@@ -100,7 +130,7 @@ class CreatureController extends EntityController {
                 delete this._cosmeticMeshIDsAttachedToBones[boneID];
             }
         }
-        super._removeMeshReferences(meshID);
+        super._removeMeshReferences(meshIDToRemove);
         return 0;
     }
     attachToHead(meshID, textureID, options) {
@@ -160,7 +190,7 @@ class CreatureController extends EntityController {
     attachToRightUpperArm(meshID = "missingMesh", textureID = "missingTexture", options = {}) {
         return this.attachMeshIDToBone(meshID, textureID, "upperArm.r", BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(60), BABYLON.Tools.ToRadians(-90)), this.baseScaling, options);
     }
-    detachFromToRightUpperArm() {
+    detachFromRightUpperArm() {
         return this.detachAllFromBone("upperArm.r");
     }
     attachToLeftForearm(meshID, textureID = "missingTexture", options) {
@@ -686,6 +716,255 @@ class CreatureController extends EntityController {
         this.setStance(StanceEnum.OVERRIDE);
         this.oOverrideAnimation = this.animationGroups["dead"];
         return 0;
+    }
+
+    setMovementSpeed(iSpeed) {
+        this.fWalkSpeed = iSpeed;
+        this.fAmbleSpeed = this.fWalkSpeed * 0.5;
+        this.fRunSpeed = this.fWalkSpeed * 2;
+        return 0;
+    }
+    setAnimationSpeed(iSpeed) {
+        return 0;
+    }
+    moveAV() {
+        if (this._locked) {
+            return 0;
+        }
+        if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
+            this.doMove();
+        }
+        return 0;
+    }
+    preMoveAV() {
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`<CharacterControllerRigidBody>${this.id}.moveAV()`)
+        if (!(this.collisionMesh instanceof BABYLON.Mesh)) {
+            if (EntityController.debugMode) {
+                console.error("missing mesh");
+                console.groupEnd();
+            }
+            return 2;
+        }
+        if (this._locked) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+                console.info("locked");
+                console.groupEnd();
+            }
+            return 0;
+        }
+        //this.updateTargetRay();
+        this.bMoving = false;
+        if (this.anyMovement() || this.groundedState == GroundedStateEnum.FALL) {
+            this.doMove();
+        }
+        else {
+            this.setMovementPace(MovementPaceEnum.NONE);
+        }
+        this.updateAnimation();
+        if (this.hasTargetRay() && this != Game.playerController) {
+            this.targetRay.direction.y = 0; // up-down
+            this.targetRay.direction.z = -this.collisionMesh.forward.z;
+        }
+        if (this.propertiesChanged) {
+            this.updateProperties();
+        }
+        if (this.bMoving) {
+            Game.transformsWorkerPostMessage(
+                "updateEntity",
+                0,
+                [this.id, new Date().getTime(), this.getPosition().toOtherArray(), this.getRotation().toOtherArray()]
+            );
+        }
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+            console.groupEnd();
+        }
+        return 0;
+    }
+    doMove() {
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.group(`${this.id}.doMove()`);
+        this.startPosition.copyFrom(this.collisionMesh.position);
+        const deltaTimeSeconds = Game.engine.getDeltaTime() / 1000;
+        const u = this.iFallTime * -Game.scene.gravity.y;
+        this.fFallDistance = u * deltaTimeSeconds + -Game.scene.gravity.y * deltaTimeSeconds * deltaTimeSeconds / 2;
+        this.iFallTime = this.iFallTime + deltaTimeSeconds;
+
+        this.updatePlayerIntendedMovement();
+
+        this.collisionMesh.moveWithCollisions(this.intendedMovement);
+        if (this.collisionMesh.position.y > this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            let slope = Tools.verticalSlope(actDisp);
+            if (slope >= this.fMaxSlopeLimit) {
+                if (this.fYDifference == 0) {
+                    this.yDifferencePosition.copyFrom(this.startPosition);
+                }
+                this.fYDifference = this.fYDifference + (this.collisionMesh.position.y - this.startPosition.y);
+            }
+            else {
+                this.fYDifference = 0;
+                if (slope > this.fMinSlopeLimit) {
+                    this.iFallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
+                }
+                else {
+                    this.endFreeFall();
+                }
+            }
+        }
+        else if (this.collisionMesh.position.y < this.startPosition.y) {
+            let actDisp = this.collisionMesh.position.subtract(this.startPosition);
+            if (!(Tools.arePointsEqual(actDisp.y, this.intendedMovement.y, this.iMovementComparisonTolerance))) {
+                if (Tools.verticalSlope(actDisp) <= this.fMinSlopeLimit) {
+                    this.endFreeFall();
+                }
+                else {
+                    this.iFallFrameCount = 0;
+                    this.groundedState = GroundedStateEnum.GROUND;
+                }
+            }
+            else {
+                this.iFallFrameCount++;
+                if (this.iFallFrameCount > this.iFallFrameCountMax) {
+                    this.groundedState = GroundedStateEnum.FALL;
+                }
+            }
+        }
+        else {
+            this.endFreeFall();
+        }
+        if (EntityController.debugMode && EntityController.debugVerbosity > 3) console.groupEnd();
+        return 0;
+    }
+    updatePlayerIntendedMovement() {
+        if (this.groundedState == GroundedStateEnum.FALL) {
+            this.intendedMovement.y = -this.fFallDistance;
+            this.bMoving = true;
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+                console.info("not trying to move, falling")
+            }
+        }
+        else if (this.anyMovement()) {
+            if (EntityController.debugMode && EntityController.debugVerbosity > 3) {
+                console.info("not falling, trying to move")
+            }
+            this.alpha = this.getAlpha();
+            this.beta = this.getBeta();
+            if (this.key.forward) {
+                if (this.key.strafeRight) {
+                    this.fIntendedDirection = this.alpha + Tools.RAD_45;
+                }
+                else if (this.key.strafeLeft) {
+                    this.fIntendedDirection = this.alpha - Tools.RAD_45;
+                }
+                else {
+                    this.fIntendedDirection = this.alpha;
+                }
+                this.bMoving = true;
+            }
+            else if (this.key.backward) {
+                if (this.key.strafeRight) {
+                    this.fIntendedDirection = this.alpha + Tools.RAD_135;
+                }
+                else if (this.key.strafeLeft) {
+                    this.fIntendedDirection = this.alpha + Tools.RAD_225;
+                }
+                else {
+                    this.fIntendedDirection = this.alpha + Tools.RAD_180;
+                }
+                this.bMoving = true;
+            }
+            else if (this.key.strafeRight) {
+                this.fIntendedDirection = this.alpha + Tools.RAD_90;
+                this.bMoving = true;
+            }
+            else if (this.key.strafeLeft) {
+                this.fIntendedDirection = this.alpha - Tools.RAD_90;
+                this.bMoving = true;
+            }
+            else {
+                this.bMoving = false;
+            }
+        }
+
+        if (this.bMoving) {
+            if (this.key.shift) {
+                this.setMovementPace(MovementPaceEnum.RUN);
+            }
+            else {
+                this.setMovementPace(MovementPaceEnum.WALK);
+            }
+            let rotationDifference = this.fIntendedDirection - this.collisionMesh.rotation.y;
+            if (Math.abs(rotationDifference) > this.iRotationThreshold) {
+                /*
+                Anon_11487
+                */
+                if (Math.abs(rotationDifference) > Tools.RAD_180) {
+                    rotationDifference -= Math.sign(rotationDifference) * Tools.RAD_360;
+                }
+                this.collisionMesh.rotation.y += rotationDifference * (this.fTurnSpeed / Game.engine.getDeltaTime());
+                this.collisionMesh.rotation.y %= Tools.RAD_360;
+            }
+            else {
+                this.collisionMesh.rotation.y = this.fIntendedDirection;
+            }
+            this.collisionMesh.rotation.y = Tools.moduloRadians(this.collisionMesh.rotation.y);
+            if (this.movementPace == MovementPaceEnum.WALK) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fFallDistance, this.fWalkSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+            else if (this.movementPace == MovementPaceEnum.RUN) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fFallDistance, this.fRunSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+            else if (this.movementPace == MovementPaceEnum.AMBLE) {
+                this.intendedMovement.copyFrom(this.collisionMesh.calcMovePOV(0, -this.fFallDistance, this.fAmbleSpeed * (Game.engine.getDeltaTime() / 1000)));
+            }
+        }
+                
+        if (Game.bUseControllerGroundRay) {
+            this._fixYJitter();
+        }
+        
+        return 0;
+    }
+    /**
+     * Fix jittering in Y direction
+     * @returns {number} 0
+     */
+    _fixYJitter() {
+        this.updateGroundRay();
+        let hit = Game.scene.pickWithRay(this.groundRay, (mesh) => {
+            if (mesh.isPickable && mesh.checkCollisions && mesh.controller != this) {
+                return true;
+            }
+            return false;
+        });
+        if (hit.hit) {
+            if (Tools.arePointsEqual(this.collisionMesh.position.y + this.intendedMovement.y, hit.pickedMesh.position.y, this.iGroundDetectionTolerance)) {
+                this.intendedMovement.y = 0;
+            }
+        }
+        return 0;
+    }
+    endFreeFall() {
+        this.iFallTime = 0;
+        this.iFallFrameCount = 0;
+        this.setGroundedState(GroundedStateEnum.GROUND);
+        return 0;
+    }
+    getAlpha() {
+        if (this == Game.playerController) {
+            return Tools.moduloRadians(Tools.RAD_90 - Game.camera.alpha); // Anon_11487
+        }
+        else {
+            return Tools.RAD_90;
+        }
+    }
+    getBeta() {
+        if (this == Game.playerController) {
+            return Tools.moduloRadians(Game.camera.beta - Tools.RAD_90);
+        }
+        else {
+            return Tools.RAD_270;
+        }
     }
 
     setGroundedState(groundedState) {
