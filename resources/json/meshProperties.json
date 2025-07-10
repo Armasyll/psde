@@ -63,7 +63,76 @@
         "videoMeshWidth": 0.98,
         "videoMeshHeight": 0.6250
     },
+    "craftsmanCorner": {
+        "collisionMesh": "craftsmanCornerCollision"
+    },
+    "craftsmanCornerNoTrim": {
+        "collisionMesh": "craftsmanCornerCollision"
+    },
+    "craftsmanDoor": {
+        "collisionMesh": "craftsmanDoorCollision"
+    },
+    "craftsmanDoorway": {
+        "collisionMesh": "craftsmanDoorwayCollision"
+    },
+    "craftsmanDoorwayNoTrim": {
+        "collisionMesh": "craftsmanDoorwayCollision"
+    },
+    "craftsmanFloorRailing": {
+        "collisionMesh": "craftsmanFloorRailingCollision"
+    },
+    "craftsmanFloorRailingLeft": {
+        "collisionMesh": "craftsmanFloorRailingLeftCollision"
+    },
+    "craftsmanFloorRailingRight": {
+        "collisionMesh": "craftsmanFloorRailingRightCollision"
+    },
     "craftsmanStairs": {
-        "collisionMesh": "stairsCollision"
+        "collisionMesh": "craftsmanStairsCollision"
+    },
+    "craftsmanStairsRailingLeft": {
+        "collisionMesh": "craftsmanStairsRailingLeftCollision"
+    },
+    "craftsmanStairsRailingRight": {
+        "collisionMesh": "craftsmanStairsRailingRightCollision"
+    },
+    "craftsmanStairWallCorner": {
+        "collisionMesh": "craftsmanStairWallCornerCollision"
+    },
+    "craftsmanStairWallSide": {
+        "collisionMesh": "craftsmanStairWallSideCollision"
+    },
+    "craftsmanWall": {
+        "collisionMesh": "craftsmanWallCollision"
+    },
+    "craftsmanWallNoBaseboard": {
+        "collisionMesh": "craftsmanWallCollision"
+    },
+    "craftsmanWallNoCrown": {
+        "collisionMesh": "craftsmanWallCollision"
+    },
+    "craftsmanWallNoTrim": {
+        "collisionMesh": "craftsmanWallCollision"
+    },
+    "craftsmanWindow": {
+        "collisionMesh": "craftsmanWindowCollision"
+    },
+    "craftsmanWindowDouble": {
+        "collisionMesh": "craftsmanWindowDoubleCollision"
+    },
+    "craftsmanWindowframe": {
+        "collisionMesh": "craftsmanWindowframeCollision"
+    },
+    "craftsmanWindowframeNoTrim": {
+        "collisionMesh": "craftsmanWindowframeCollision"
+    },
+    "craftsmanWindowLarge": {
+        "collisionMesh": "craftsmanWindowLargeCollision"
+    },
+    "craftsmanWindowway": {
+        "collisionMesh": "craftsmanWindowwayCollision"
+    },
+    "craftsmanWindowwayNoTrim": {
+        "collisionMesh": "craftsmanWindowwayCollision"
     }
 }
