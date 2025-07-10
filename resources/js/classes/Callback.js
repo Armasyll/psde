@@ -42,7 +42,7 @@ class Callback {
             return 1;
         }
         delete Callback.groupedCallbacks[id]["hasRun"];
-        Callback.groupedCallbacks[id]["callbackIDs"].clear();
+        Callback.groupedCallbacks[id]["callbackIDs"].length = 0;
         delete Callback.groupedCallbacks[id]["callbackIDs"];
         delete Callback.groupedCallbacks[id];
         return 0;
@@ -94,6 +94,9 @@ class Callback {
      * @param {string} id 
      */
     static remove(id) {
+        if (!Callback.has(id)) {
+            return 0;
+        }
         delete Callback.callbacks[id]["parent"];
         delete Callback.callbacks[id]["params"];
         delete Callback.callbacks[id]["callback"];
